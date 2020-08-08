@@ -1,0 +1,73 @@
+[
+	{
+        "Name": "Gnomad",
+        "Skills": [
+			"Mining",
+			"Masonry",
+			"Stonecarving",
+			"Woodcutting",
+			"Carpentry",
+			"Woodcarving",
+			"Smelting",
+			"Blacksmithing",
+			"Metalworking",
+			"WeaponCrafting",
+			"ArmorCrafting",
+			"Gemcutting",
+			"JewelryMaking",
+			"Weaving",
+			"Tailoring",
+			"Dying",
+			"Pottery",
+			"Leatherworking",
+			"Bonecarving",
+			"Prospecting",
+			"Tinkering",
+			"Machining",
+			"Engineering",
+			"Mechanic",
+			"AnimalHusbandry",
+			"Butchery",
+			"Fishing",
+			"Horticulture",
+			"Farming",
+			"Cooking",
+			"Brewing",
+			"Construction",
+			"Hauling"
+		]
+	},
+    {
+        "Name": "Miner",
+        "Skills": [
+            "Mining",
+            "Construction",
+            "Hauling"
+        ]
+    },
+    {
+        "Name": "Farmer",
+        "Skills": [
+            "Horticulture",
+            "Farming",
+            "Hauling"
+        ]
+    },
+    {
+        "Name": "Woodcutter",
+        "Skills": [
+            "Woodcutting",
+            "Carpentry",
+            "Woodcarving",
+            "Hauling"
+        ]
+    },
+    {
+        "Name": "Mason",
+        "Skills": [
+            "Masonry",
+            "Construction",
+            "Hauling"
+        ]
+    }
+]

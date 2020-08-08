@@ -1,0 +1,1016 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{b94a45d7-11ee-49ee-96e4-18357740f3ec}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{3ca5c4e6-1931-451e-809c-ec9675585bba}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Header Files\gfx">
+      <UniqueIdentifier>{cfe017e4-fc65-450d-acfe-a5cc0d7b530f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gfx">
+      <UniqueIdentifier>{17b4e781-7bfd-44af-a954-0195e0c673ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game">
+      <UniqueIdentifier>{432ae91e-dd09-4b33-b3d3-71594900b678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{e12e8098-1d90-4826-a01a-3618f5c83175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui">
+      <UniqueIdentifier>{d0665f7b-b00d-4f3a-83e6-ba5acc622d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui">
+      <UniqueIdentifier>{473ae3e5-c433-4a83-85d7-d60bc544916e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\base">
+      <UniqueIdentifier>{24112c18-097e-4964-83fc-10f19d2c0143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\base">
+      <UniqueIdentifier>{0424e7f2-a74b-481f-bc3a-9f5bfa877add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\base\BehaviorTree">
+      <UniqueIdentifier>{ac01b9cb-b500-4f9e-bf6c-c5e14018e170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\base\BehaviorTree">
+      <UniqueIdentifier>{83a9624e-fa15-4587-b3b7-f7bfffeb1e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\managers">
+      <UniqueIdentifier>{b5be0d74-b60f-4743-9d10-1ddbf5372004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\managers">
+      <UniqueIdentifier>{e683bf68-4a08-4e70-a32f-4a60bac80059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\creatures">
+      <UniqueIdentifier>{dd918e1a-cb17-49ff-a015-118ee71557b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\designations">
+      <UniqueIdentifier>{7776d01c-9998-4ce4-a4ea-4af264640760}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\creatures">
+      <UniqueIdentifier>{99b82f25-c6c9-4fdf-aba3-d0ad2c431622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\designations">
+      <UniqueIdentifier>{6709b53e-ae47-4013-9c8f-9f9e1c1d58ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui\xaml">
+      <UniqueIdentifier>{d706c1ef-6b08-4a4f-a7ce-3c081f15a4ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui\xaml">
+      <UniqueIdentifier>{7258be6e-d2d5-4ce9-8e64-e78d949fa09b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{deb93b60-f92a-4e34-926e-b5f8401103e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shader">
+      <UniqueIdentifier>{cebd5604-f2f0-4f24-a7a2-56a4508eeac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui\models">
+      <UniqueIdentifier>{27cbca8d-3a5d-40bd-93bc-7f7ae660397d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui\proxis">
+      <UniqueIdentifier>{aa440bd8-7334-4f82-827b-9afea4f0cd1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui\models">
+      <UniqueIdentifier>{da2cd27a-5529-4611-adee-9f9e457e5916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui\proxis">
+      <UniqueIdentifier>{f2db2c70-7c06-47a7-b6b4-e6ed23a70878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui\aggregators">
+      <UniqueIdentifier>{52a1ed36-5087-46ef-962c-cd177495f9ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui\aggregators">
+      <UniqueIdentifier>{1959fec8-1257-4673-8c1b-43530fa04c04}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\game.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\inventory.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\item.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\job.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\object.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\plant.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\world.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\worldgenerator.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\strings.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\config.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\io.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\lightmap.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\pathfinder.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\selection.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\util.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\spritefactory.cpp">
+      <Filter>Source Files\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\PathFinderThread.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\modmanager.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\fastnoise\FastNoise.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\sprite.cpp">
+      <Filter>Source Files\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\gamestate.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\networkclient.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\networkserver.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\global.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\filter.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\worldgetters.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\regionmap.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\region.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_node.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodefallback.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodeaction.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodeconditional.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodefallbackstar.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodeinverter.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_noderepeat.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_noderepeatuntilsuccess.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodesequence.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodesequencestar.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodeforcesuccess.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_factory.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\itemhistory.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\techtree.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodebbprecondition.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\behaviortree\bt_nodeforcefailure.cpp">
+      <Filter>Source Files\base\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\worldconstructions.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\db.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\dbhelper.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\logger.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\creaturemanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\eventmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\farmingmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnomemanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\workshopmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\roommanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\stockpilemanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\octree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\jobmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\mechanismmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\fluidmanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\anatomy.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\animal.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\creature.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\farm.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnome.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnomefactory.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnomeactions.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnomeconditions.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gnometrader.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\grove.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\monster.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\room.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\stockpile.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\pasture.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\automaton.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\canwork.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\neighbormanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\worldobject.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\militarymanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\creatureEquipment.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\MainMenu.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\MainPage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\SettingsPage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\LoadGamePage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\NewGamePage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\newgamesettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gamemanager.cpp">
+      <Filter>Source Files\game\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\mainwindow.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\mainwindowrenderer.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\WaitPage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\IngamePage.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\eventconnector.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\Main.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\GameGui.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\Population.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\TileInfo.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\stockpilegui.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\GameModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\LoadGameModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\NewGameModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\SettingsModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\ViewModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\PopulationModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\ProxyGameView.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\ProxyMainView.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\ProxyTileInfo.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\TileInfoModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\StockpileModel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\StockpileProxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\workshopproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\workshopgui.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\workshopmodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\agriculture.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\agriculturemodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\agricultureproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\workshop.cpp">
+      <Filter>Source Files\game\designations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\populationproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\creatureinfo.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\creatureinfomodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\creatureinfoproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatoragri.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorcreatureinfo.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorpopulation.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorrenderer.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorstockpile.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatortileinfo.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorworkshop.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatordebug.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\debugmodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\debug.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\debugproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatorneighbors.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\neighborsmodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\neighborsproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\neighbors.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\aggregatormilitary.cpp">
+      <Filter>Source Files\gui\aggregators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\militarymodel.cpp">
+      <Filter>Source Files\gui\models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\military.xaml.cpp">
+      <Filter>Source Files\gui\xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\xaml\militaryproxy.cpp">
+      <Filter>Source Files\gui\proxis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\creaturefactory.cpp">
+      <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\game\game.h">
+      <Filter>Header Files\game</Filter>
+    </QtMoc>
+    <QtMoc Include="src\base\io.h">
+      <Filter>Header Files\base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\base\pathfinder.h">
+      <Filter>Header Files\base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\base\modmanager.h">
+      <Filter>Header Files\base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\base\networkclient.h">
+      <Filter>Header Files\base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\base\networkserver.h">
+      <Filter>Header Files\base</Filter>
+    </QtMoc>
+    <QtRcc Include="gnomes.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtMoc Include="src\game\worldgenerator.h">
+      <Filter>Header Files\game</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\techtree.h">
+      <Filter>Header Files\game</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\inventory.h">
+      <Filter>Header Files\game</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\creaturemanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\eventmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\gnomemanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\workshopmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\stockpilemanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\neighbormanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\militarymanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\newgamesettings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\gamemanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\mainwindow.h">
+      <Filter>Header Files\gui</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\itemhistory.h">
+      <Filter>Header Files\game</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\eventconnector.h">
+      <Filter>Header Files\gui</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\ProxyTileInfo.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\ProxyGameView.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\ProxyMainView.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\StockpileProxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\workshopproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\agricultureproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\mainwindowrenderer.h">
+      <Filter>Header Files\gui</Filter>
+    </QtMoc>
+    <QtMoc Include="src\game\farmingmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\populationproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\creatureinfoproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatoragri.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorcreatureinfo.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorpopulation.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorrenderer.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorstockpile.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatortileinfo.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorworkshop.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatordebug.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\debugproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatorneighbors.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\neighborsproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\aggregatormilitary.h">
+      <Filter>Header Files\gui\aggregators</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gui\xaml\militaryproxy.h">
+      <Filter>Header Files\gui\proxis</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\game\item.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\job.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\object.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\plant.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\workshop.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\world.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\sprite.h">
+      <Filter>Header Files\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\strings.h">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\config.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\enums.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\filter.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\lightmap.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\priorityqueue.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\selection.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\util.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\vptr.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\position.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\spritefactory.h">
+      <Filter>Header Files\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\fastnoise\FastNoise.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\gamestate.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\global.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\regionmap.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\region.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\counter.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodefallback.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodeaction.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodeconditional.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodefallbackstar.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodeinverter.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_noderepeat.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_noderepeatuntilsuccess.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodesequence.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodesequencestar.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_tree.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodeforcesuccess.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodebbprecondition.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_nodeforcefailure.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\jobmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\roommanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\octree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\fluidmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\tile.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\animal.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\creature.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gnome.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\farm.h">
+      <Filter>Header Files\game\designations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gnometrader.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\room.h">
+      <Filter>Header Files\game\designations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\grove.h">
+      <Filter>Header Files\game\designations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\anatomy.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gnomefactory.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\automaton.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\canwork.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\worldobject.h">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\NewGamePage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\LoadGamePage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\WaitPage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\IngamePage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\Main.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\GameGui.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\Population.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\TileInfo.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\stockpilegui.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\GameModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\LoadGameModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\NewGameModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\PopulationModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\TileInfoModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\SettingsModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\StockpileModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\SettingsPage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\MainMenu.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\MainPage.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_factory.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\behaviortree\bt_node.h">
+      <Filter>Header Files\base\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\db.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\dbhelper.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\logger.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\mechanismmanager.h">
+      <Filter>Header Files\game\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\monster.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\stockpile.h">
+      <Filter>Header Files\game\designations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\ViewModel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\PathFinderThread.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\workshopgui.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\workshopmodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\agriculture.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\agriculturemodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\pasture.h">
+      <Filter>Header Files\game\designations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\creatureinfo.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\creatureinfomodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\debug.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\debugmodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\neighborsmodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\neighbors.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\militarymodel.h">
+      <Filter>Header Files\gui\models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\xaml\military.xaml.h">
+      <Filter>Header Files\gui\xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\creaturefactory.h">
+      <Filter>Header Files\game\creatures</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="content\shaders\axle_f.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\axle_v.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\selection_f.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\selection_v.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\thoughtbubble_f.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\thoughtbubble_v.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\world_f.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+    <None Include="content\shaders\world_v.glsl">
+      <Filter>Content\Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="content\tilesheet\default.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="changelog.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ingnomia.rc" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,3 @@
+[submodule "src/base/beehive"]
+	path = src/base/beehive
+	url = https://github.com/crust/beehive.git

@@ -1,0 +1,32 @@
+<root main_tree_to_execute="MainTree">
+    <!--  ===================================  -->
+    <BehaviorTree ID="MainTree">
+        <Fallback>
+            <SequenceStar name="Main">
+                <Action ID="GetTarget"/>
+                <Action ID="Move"/>
+                <Sequence>
+                    <Condition ID="TargetAdjacent"/>
+                    <Action ID="AttackTarget"/>
+                </Sequence>
+            </SequenceStar>
+            <Action ID="RandomMove"/>
+        </Fallback>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <TreeNodesModel>
+        <Action ID="AttackTarget"/>
+        <Action ID="GetTarget"/>
+        <Condition ID="IsDay"/>
+        <Condition ID="IsFemale"/>
+        <Condition ID="IsHungry"/>
+        <Condition ID="IsMale"/>
+        <Condition ID="IsNight"/>
+        <Action ID="Move"/>
+        <Action ID="RandomMove"/>
+        <Action ID="Sleep"/>
+        <Condition ID="TargetAdjacent"/>
+    </TreeNodesModel>
+    <!--  ===================================  -->
+</root>
+

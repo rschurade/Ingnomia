@@ -1,0 +1,109 @@
+<UserControl
+    x:Class="IngnomiaGUI.DebugGui"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    x:Name="DebugControl">
+    <UserControl.DataContext>
+        <local:DebugModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>					
+    </UserControl.Resources>
+	
+	<Grid x:Name="LayoutRoot">
+		<StackPanel Orientation="Horizontal">
+			<Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" Margin="2">
+				<StackPanel>
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="First">
+						<StackPanel>
+							<Image Source="buttons/skills.png" Stretch="None" />
+							<TextBlock>Misc</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Second">
+						<StackPanel>
+							<Image Source="buttons/schedule.png" Stretch="None" />
+							<TextBlock>Stuff</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Third">
+						<StackPanel>
+							<Image Source="buttons/professions.png" Stretch="None" />
+							<TextBlock>More</TextBlock>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Border>
+			
+			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2" >
+				<Grid>
+					<Grid x:Name="LayoutSkills" Visibility="{Binding ShowFirst}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="Debug first page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+						<StackPanel Grid.Row="1" Grid.Column="0">
+							<Button Content="Spawn Gnome" Command="{Binding SpawnCmd}"	CommandParameter="Gnome"/>
+							<Button Content="Spawn Trader" Command="{Binding SpawnCmd}"	CommandParameter="Trader"/>
+							<Button Content="Spawn Goblin" Command="{Binding SpawnCmd}"	CommandParameter="Goblin"/>
+						</StackPanel>
+					</Grid>
+					
+					<Grid x:Name="LayoutSchedule" Visibility="{Binding ShowSecond}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="Debug second page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+					</Grid>
+					
+					
+					<Grid x:Name="LayoutProfEdit" Visibility="{Binding ShowThird}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+					
+						<TextBlock Text="Debug third page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+					</Grid>
+					
+				</Grid>
+			</Border>
+			<Button Content="X" MaxHeight="32" Margin="2" VerticalAlignment="Top" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }" 
+				CommandParameter="DebugWindow"
+			/>
+		</StackPanel>
+	</Grid>
+
+</UserControl>

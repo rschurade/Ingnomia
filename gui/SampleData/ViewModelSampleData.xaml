@@ -1,0 +1,8 @@
+﻿<IngnomiaGUI:ViewModel xmlns:IngnomiaGUI="clr-namespace:IngnomiaGUI"
+                       Platform="Aliquam aenean vestibulum mauris"
+                       ShowMainMenu="Hidden"
+                       ShowGameGUI="Visible"
+                       State="GameRunning"
+                       WindowHeight="1080"
+                       WindowWidth="1920"
+                       />

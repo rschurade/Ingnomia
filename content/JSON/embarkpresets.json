@@ -1,0 +1,330 @@
+[
+{
+	"Name": "Gnomoria",
+	"startingItems": [{
+			"Amount": 2,
+			"Components": [{
+					"ItemID": "PickaxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "PickaxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "Pickaxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 1,
+			"Components": [{
+					"ItemID": "FellingAxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "FellingAxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "FellingAxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 128,
+			"ItemID": "Wine",
+			"MaterialID": "Apple",
+			"Type": "Item"
+		},
+		{
+			"Amount": 32,
+			"ItemID": "Bread",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 32,
+			"ItemID": "Fruit",
+			"MaterialID": "Strawberry",
+			"Type": "Item"
+		},
+		{
+			"Amount": 32,
+			"ItemID": "Grain",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 32,
+			"ItemID": "Seed",
+			"MaterialID": "Strawberry",
+			"Type": "Item"
+		},
+		{
+			"Amount": 1,
+			"Gender": "male",
+			"ItemID": "Yak",
+			"Type": "Animal"
+		},
+		{
+			"Amount": 1,
+			"Gender": "female",
+			"ItemID": "Yak",
+			"Type": "Animal"
+		}
+	]
+},
+{
+	"Name": "Easy",
+	"startingItems": [{
+			"Amount": 4,
+			"Components": [{
+					"ItemID": "PickaxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "PickaxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "Pickaxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 4,
+			"Components": [{
+					"ItemID": "FellingAxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "FellingAxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "FellingAxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 4,
+			"ItemID": "Chisel",
+			"MaterialID": "Granite",
+			"Type": "Item"
+		},
+		{
+			"Amount": 4,
+			"Components": [{
+					"ItemID": "KnifeBlade",
+					"MaterialID": "Copper"
+				},
+				{
+					"ItemID": "KnifeHilt",
+					"MaterialID": "Copper"
+				}
+			],
+			"ItemID": "Knife",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 100,
+			"ItemID": "Wine",
+			"MaterialID": "Apple",
+			"Type": "Item"
+		},
+		{
+			"Amount": 100,
+			"ItemID": "Bread",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 100,
+			"ItemID": "Beer",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 20,
+			"ItemID": "Grain",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 30,
+			"ItemID": "Seed",
+			"MaterialID": "Strawberry",
+			"Type": "Item"
+		},
+		{
+			"Amount": 20,
+			"ItemID": "Grain",
+			"MaterialID": "Barley",
+			"Type": "Item"
+		},
+		{
+			"Amount": 20,
+			"ItemID": "Seed",
+			"MaterialID": "Cotton",
+			"Type": "Item"
+		},
+		{
+			"Amount": 1,
+			"ItemID": "Needle",
+			"MaterialID": "Copper",
+			"Type": "Item"
+		},
+		{
+			"Amount": 5,
+			"Gender": "female",
+			"ItemID": "Chicken",
+			"Type": "Animal"
+		},
+		{
+			"Amount": 1,
+			"Gender": "male",
+			"ItemID": "Cow",
+			"Type": "Animal"
+		},
+		{
+			"Amount": 2,
+			"Gender": "female",
+			"ItemID": "Cow",
+			"Type": "Animal"
+		}
+	]
+},
+{
+	"Name": "Medium",
+	"startingItems": [{
+			"Amount": 2,
+			"Components": [{
+					"ItemID": "PickaxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "PickaxeBase",
+					"MaterialID": "Granite"
+				}
+			],
+			"ItemID": "Pickaxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 2,
+			"Components": [{
+					"ItemID": "FellingAxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "FellingAxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "FellingAxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Wine",
+			"MaterialID": "Apple",
+			"Type": "Item"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Bread",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Beer",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 20,
+			"ItemID": "Grain",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 30,
+			"ItemID": "Seed",
+			"MaterialID": "Strawberry",
+			"Type": "Item"
+		},
+		{
+			"Amount": 1,
+			"Gender": "male",
+			"ItemID": "Cow",
+			"Type": "Animal"
+		},
+		{
+			"Amount": 1,
+			"Gender": "female",
+			"ItemID": "Cow",
+			"Type": "Animal"
+		}
+	]
+},
+{
+	"Name": "Hard",
+	"startingItems": [{
+			"Amount": 1,
+			"Components": [{
+					"ItemID": "PickaxeHead",
+					"MaterialID": "Pine"
+				},
+				{
+					"ItemID": "PickaxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "Pickaxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 1,
+			"Components": [{
+					"ItemID": "FellingAxeHead",
+					"MaterialID": "Granite"
+				},
+				{
+					"ItemID": "FellingAxeBase",
+					"MaterialID": "Pine"
+				}
+			],
+			"ItemID": "FellingAxe",
+			"Type": "CombinedItem"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Wine",
+			"MaterialID": "Apple",
+			"Type": "Item"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Bread",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 50,
+			"ItemID": "Beer",
+			"MaterialID": "Wheat",
+			"Type": "Item"
+		},
+		{
+			"Amount": 30,
+			"ItemID": "Seed",
+			"MaterialID": "Strawberry",
+			"Type": "Item"
+		},
+		{
+			"Amount": 1,
+			"Gender": "female",
+			"ItemID": "Cow",
+			"Type": "Animal"
+		}
+	]
+}
+]

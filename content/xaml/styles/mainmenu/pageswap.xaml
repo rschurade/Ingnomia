@@ -1,0 +1,119 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions">
+	
+	
+	<Storyboard x:Key="FadeInNewGame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="NewGamePage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="NewGamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+
+	<Storyboard x:Key="FadeOutNewGame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="NewGamePage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="NewGamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	<Storyboard x:Key="FadeInLoadGame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="LoadGamePage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="LoadGamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+
+	<Storyboard x:Key="FadeOutLoadGame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="LoadGamePage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="LoadGamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	<Storyboard x:Key="FadeInSettings">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="SettingsPage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="SettingsPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	<Storyboard x:Key="FadeInWait">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WaitPage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="WaitPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+
+	<Storyboard x:Key="FadeOutSettings">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="SettingsPage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="SettingsPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	<Storyboard x:Key="FadeOutWait">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WaitPage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="WaitPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	
+	<Storyboard x:Key="FadeInMain">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="MainPage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="MainPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+
+	<Storyboard x:Key="FadeOutMain">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="MainPage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="MainPage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	<Storyboard x:Key="FadeInIngame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="IngamePage">
+			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="IngamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+
+	<Storyboard x:Key="FadeOutIngame">
+		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="IngamePage">
+			<DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Collapsed}"/>
+		</ObjectAnimationUsingKeyFrames>
+		<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsEnabled)" Storyboard.TargetName="IngamePage">
+			<DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+		</BooleanAnimationUsingKeyFrames>
+	</Storyboard>
+	
+	
+</ResourceDictionary>

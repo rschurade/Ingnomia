@@ -1,0 +1,1303 @@
+[
+    {
+        "GroupName": "Navigation",
+        "Keys": [
+            {
+                "Command": "WorldScrollLeft",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "A",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "WorldScrollRight",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "D",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "WorldScrollUp",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "W",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "WorldScrollDown",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "S",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RotateWorldCW",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": ",",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RotateWorldCCW",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": ".",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ZMinus",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": true,
+                    "Key": "-",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ZPlus",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": true,
+                    "Key": "]",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ZoomIn",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "-",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ZoomOut",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "+",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            }
+        ]
+    },
+    {
+        "GroupName": "Game",
+        "Keys": [
+			{
+                "Command": "QuickSave",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "F5",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+			{
+                "Command": "QuickLoad",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "F8",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+		
+            {
+                "Command": "ToggleFullScreen",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "F",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "OpenGnomeList",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "G",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleWalls",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "H",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleAxles",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "Q",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "OpenLastActionWindow",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "L",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "TogglePause",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "Space",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "P",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RotateSelection",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "R",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey1",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "1",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey2",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "2",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey3",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "3",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey4",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "4",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey5",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "5",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey6",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "6",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey7",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "7",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey8",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "8",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey9",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "9",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MenuButtonKey0",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "0",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            }
+        ]
+    },
+    {
+        "GroupName": "Debug",
+        "Keys": [
+            {
+                "Command": "OpenDebugWindow",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": true,
+                    "Key": "D",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleDebugMode",
+                "Desc": "",
+                "Key1": {
+                    "Alt": true,
+                    "Ctrl": false,
+                    "Key": "D",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "PrintDebug",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleOverlay",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "O",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleDebugOverlay",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "I",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ReloadShaders",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "J",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "OpenLogWindow",
+                "Desc": "open log window",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": true,
+                    "Key": "L",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "OpenBugReportWindow",
+                "Desc": "open bug report window",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "F11",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ReloadCSS",
+                "Desc": "reload css",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "F10",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ToggleRenderCreatures",
+                "Desc": "toggle render creatures",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "#",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            }
+        ]
+    },
+    {
+        "GroupName": "Actions",
+        "Keys": [
+            {
+                "Command": "Mine",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "DigHole",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ExplorativeMine",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RemoveRamp",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RemoveFloor",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RemovePlant",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MineStairsUp",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "DigStairsDown",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "DigRampDown",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreateRoom",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreateStockpile",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreateGrove",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreateFarm",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreatePasture",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CreateNoPass",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildWall",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ReplaceWall",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "V",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildWallFloor",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildFancyWall",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildFloor",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "ReplaceFloor",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildFancyFloor",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildScaffold",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildFence",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildWorkshop",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildStairs",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildRamp",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildRampCorner",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CutClipping",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "BuildItem",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "PlantTree",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "FellTree",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "Forage",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "HarvestTree",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RemoveDesignation",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "Deconstruct",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "CancelJob",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "RaisePrio",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "LowerPrio",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MagicNatureSpeedGrowth",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            },
+            {
+                "Command": "MagicGeomancyRevealOre",
+                "Desc": "",
+                "Key1": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                },
+                "Key2": {
+                    "Alt": false,
+                    "Ctrl": false,
+                    "Key": "",
+                    "Shift": false
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,141 @@
+﻿<IngnomiaGUI:GameModel xmlns:IngnomiaGUI="clr-namespace:IngnomiaGUI"
+                       Day="Cras nam aenean class"
+                       FastSpeed="True"
+                       NormalSpeed="False"
+                       Paused="True"
+                       ShowCategoryButtons="Visible"
+                       ShowCommandButtons="Visible"
+                       Sun="Integer curae"
+                       Time="Vestibulum amet curabitur aliquam"
+                       Year="Duis nunc maecenas sed praesent"
+                       >
+    <IngnomiaGUI:GameModel.CommandButtons>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+        <IngnomiaGUI:CommandButton Name="Foo"/>
+    </IngnomiaGUI:GameModel.CommandButtons>
+    <IngnomiaGUI:GameModel.BuildButtons>
+        <IngnomiaGUI:BuildButton Name="Foo"/>
+        <IngnomiaGUI:BuildButton Name="Bar"/>
+        <IngnomiaGUI:BuildButton Name="Foo"/>
+        <IngnomiaGUI:BuildButton Name="Bar"/>
+        <IngnomiaGUI:BuildButton Name="Foo"/>
+        <IngnomiaGUI:BuildButton Name="Bar"/>
+    </IngnomiaGUI:GameModel.BuildButtons>
+    <IngnomiaGUI:GameModel.BuildItems>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+        <IngnomiaGUI:BuildItem Name="Foo">
+            <IngnomiaGUI:BuildItem.RequiredItems>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1">
+                    <IngnomiaGUI:RequiredItem.Materials>
+                        <IngnomiaGUI:AvailableMaterial Name="Foo" Amount="1"></IngnomiaGUI:AvailableMaterial>
+                    </IngnomiaGUI:RequiredItem.Materials>
+                </IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+                <IngnomiaGUI:RequiredItem Name="Wood" Amount="1"></IngnomiaGUI:RequiredItem>
+            </IngnomiaGUI:BuildItem.RequiredItems>
+        </IngnomiaGUI:BuildItem>
+    </IngnomiaGUI:GameModel.BuildItems>
+</IngnomiaGUI:GameModel>

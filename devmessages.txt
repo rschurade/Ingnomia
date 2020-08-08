@@ -1,0 +1,9 @@
+Welcome to Ingnomia.
+
+This game is still under heavy development.
+
+Please report any bugs you find using the in game bug reporting tool (F11). That will also send a zipped save game to me along with the bug description.
+
+You can also report bugs, make suggestions or ask gameplay questions on Discord, Reddit or the Steam forum.
+
+Have fun.

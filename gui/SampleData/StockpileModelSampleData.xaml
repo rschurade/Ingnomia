@@ -1,0 +1,18 @@
+﻿<IngnomiaGUI:StockpileModel xmlns:IngnomiaGUI="clr-namespace:IngnomiaGUI" Name="Cras vestibulum" PullFromHere="False" PullFromOther="True" Suspended="True">
+    <IngnomiaGUI:StockpileModel.SelectedPrio>
+        <IngnomiaGUI:SpPriority Name="Nullam conubia bibendum dictumst"/>
+    </IngnomiaGUI:StockpileModel.SelectedPrio>
+    <IngnomiaGUI:StockpileModel.Filters>
+        <IngnomiaGUI:CategoryItem Name="Food" Checked="True" Expanded="False">
+            <IngnomiaGUI:CategoryItem.Children></IngnomiaGUI:CategoryItem.Children>
+        </IngnomiaGUI:CategoryItem>
+        <IngnomiaGUI:CategoryItem Name="Metal" Checked="False" Expanded="False">
+            <IngnomiaGUI:CategoryItem.Children></IngnomiaGUI:CategoryItem.Children>
+        </IngnomiaGUI:CategoryItem>
+        <IngnomiaGUI:CategoryItem Name="Misc" Expanded="True">
+            <IngnomiaGUI:CategoryItem.Children>
+                <IngnomiaGUI:GroupItem Name="Furniture" Checked="True" Expanded="False"/>
+            </IngnomiaGUI:CategoryItem.Children>
+        </IngnomiaGUI:CategoryItem>
+    </IngnomiaGUI:StockpileModel.Filters>
+</IngnomiaGUI:StockpileModel>

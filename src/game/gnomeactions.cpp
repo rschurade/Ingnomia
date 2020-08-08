@@ -1,0 +1,2558 @@
+/*	
+	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
+    Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#include "../base/config.h"
+#include "../base/db.h"
+#include "../base/gamestate.h"
+#include "../base/global.h"
+#include "../base/logger.h"
+#include "../base/pathfinder.h"
+#include "../base/position.h"
+#include "../base/util.h"
+#include "../game/creaturemanager.h"
+#include "../game/eventmanager.h"
+#include "../game/farmingmanager.h"
+#include "../game/gnomemanager.h"
+#include "../game/inventory.h"
+#include "../game/militarymanager.h"
+#include "../game/neighbormanager.h"
+#include "../game/plant.h"
+#include "../game/room.h"
+#include "../game/roommanager.h"
+#include "../game/stockpile.h"
+#include "../game/stockpilemanager.h"
+#include "../game/workshop.h"
+#include "../game/workshopmanager.h"
+#include "../game/world.h"
+#include "../gfx/sprite.h"
+#include "../gfx/spritefactory.h"
+#include "../gui/strings.h"
+#include "gnome.h"
+
+#include <QDebug>
+#include <QElapsedTimer>
+
+BT_RESULT Gnome::actionFinishJob( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFinishJob" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	//job is finished
+	cleanUpJob( true );
+
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionAbortJob( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionAbortJob" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	cleanUpJob( false );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionSleep( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionSleep" );
+	if ( halt )
+	{
+		{
+			setThoughtBubble( "" );
+			m_log.append( "I was rudely awoken." );
+			unclaimAll();
+			return BT_RESULT::IDLE;
+		}
+	}
+
+	if ( thoughtBubble() != "Sleeping" )
+	{
+		m_gainFromSleep = ( DB::select( "GainFromSleep", "Needs", "Sleep" ).toFloat() / Util::ticksPerMinute );
+		setThoughtBubble( "Sleeping" );
+		m_log.append( "Going to sleep." );
+	}
+
+	if ( m_job )
+	{
+		cleanUpJob( false );
+	}
+
+	float oldVal = m_needs["Sleep"].toFloat();
+	float newVal = oldVal + m_gainFromSleep;
+	m_needs.insert( "Sleep", newVal );
+
+	m_anatomy.heal();
+
+	unsigned int hour = qMin( 23, GameState::hour );
+	auto activity      = m_schedule[hour];
+
+	if ( newVal >= 100. && activity != ScheduleActivity::Sleep )
+	{
+		setThoughtBubble( "" );
+		m_log.append( "Woke up." );
+
+		unclaimAll();
+
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::RUNNING;
+}
+
+BT_RESULT Gnome::actionFindBed( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFindBed" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	// gnome has room and room has bed?
+	if ( m_equipment.roomID )
+	{
+		Room* room = Global::rm().getRoom( m_equipment.roomID );
+		QList<unsigned int> beds;
+		if ( room )
+		{
+			beds = room->beds();
+		}
+		if ( !beds.empty() )
+		{
+			if ( m_job )
+			{
+				cleanUpJob( false );
+			}
+
+			unsigned int bedID = beds.first();
+
+			addClaimedItem( bedID, m_id );
+			setCurrentTarget( Global::inv().getItemPos( bedID ).toString() );
+
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	// dormitory exists and has free bed?
+	QList<unsigned int> dorms = Global::rm().getDorms();
+
+	for ( auto dorm : dorms )
+	{
+		QList<unsigned int> beds;
+		Room* room = Global::rm().getRoom( dorm );
+		if ( room )
+		{
+			beds = room->beds();
+		}
+		if ( !beds.empty() )
+		{
+			for ( auto bedID : beds )
+			{
+				if ( !Global::inv().isInJob( bedID ) )
+				{
+					if ( m_job )
+					{
+						cleanUpJob( false );
+					}
+
+					addClaimedItem( bedID, m_id );
+					setCurrentTarget( Global::inv().getItemPos( bedID ).toString() );
+
+					return BT_RESULT::SUCCESS;
+				}
+			}
+		}
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionMove( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionMove" );
+	//if ( Global::debugMode )
+		//qDebug() << "actionMove" << m_currentPath.size();
+
+	if ( halt )
+	{
+		//abortJob( "actionMove - halt" );
+		return BT_RESULT::IDLE;
+	}
+	if ( !m_currentPath.empty() )
+	{
+		if ( m_currentPath[m_currentPath.size() - 1] == m_position )
+		{
+			m_currentPath.pop_back();
+		}
+	}
+	// gnome has a path, move on path and return
+	if ( !m_currentPath.empty() )
+	{
+		if ( m_animal )
+		{
+			if ( m_moveCooldown <= m_moveSpeed )
+			{
+				auto animal = Global::cm().animal( m_animal );
+				if ( animal )
+				{
+					animal->setFollowPosition( m_position );
+				}
+			}
+		}
+
+		if ( m_aggroList.size() || m_targets.size() )
+		{
+			if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
+			{
+				if ( Global::debugMode )
+					qDebug() << m_name << "target adjecent, finish movement";
+				m_currentPath.clear();
+				return BT_RESULT::SUCCESS;
+			}
+			else
+			{
+				if ( !moveOnPath() )
+				{
+					//abortJob( "actionMove - 1" );
+					return BT_RESULT::FAILURE;
+				}
+				m_currentPath.clear();
+				return BT_RESULT::RUNNING;
+			}
+		}
+
+		Position oldPos = m_position;
+
+		if ( !moveOnPath() )
+		{
+			//abortJob( "actionMove - 1" );
+			return BT_RESULT::FAILURE;
+		}
+
+		if ( m_lightIntensity && m_position != oldPos )
+		{
+			Global::w().moveLight( m_id, m_position, m_lightIntensity );
+		}
+
+		return BT_RESULT::RUNNING;
+	}
+
+	Position targetPos = currentTarget();
+
+	// check if we are already on the tile
+	if ( m_position == targetPos )
+	{
+		return BT_RESULT::SUCCESS;
+	}
+
+	PathFinderResult pfr = PathFinder::getInstance().getPath( m_id, m_position, targetPos, m_ignoreNoPass, m_currentPath );
+	switch ( pfr )
+	{
+		case PathFinderResult::NoConnection:
+			//abortJob( "actionMove - no connection - [" + m_position.toString() + "] [" + targetPos.toString() + "]" );
+			return BT_RESULT::FAILURE;
+		case PathFinderResult::Running:
+		case PathFinderResult::FoundPath:
+			return BT_RESULT::RUNNING;
+	}
+
+	return BT_RESULT::RUNNING;
+}
+
+BT_RESULT Gnome::actionFindFood( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFindFood" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	auto itemID = Global::inv().getFoodItem( m_position );
+	//m_log.append( "Looking for food." );
+
+	if ( itemID )
+	{
+		// we found food, clean up job before we set some job variables again
+		if ( m_job )
+		{
+			cleanUpJob( false );
+		}
+
+		addClaimedItem( itemID, m_id );
+		m_itemToPickUp = itemID;
+		setCurrentTarget( Global::inv().getItemPos( itemID ).toString() );
+		//m_log.append( "Found food." );
+		return BT_RESULT::SUCCESS;
+	}
+	//m_log.append( "Didn't find food." );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionFindDrink( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFindDrink" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	auto itemID = Global::inv().getDrinkItem( m_position );
+	//m_log.append( "Looking for something to drink." );
+	if ( itemID )
+	{
+		// we found food, clean up job before we set some job variables again
+		if ( m_job )
+		{
+			cleanUpJob( false );
+		}
+
+		addClaimedItem( itemID, m_id );
+		m_itemToPickUp = itemID;
+		setCurrentTarget( Global::inv().getItemPos( itemID ).toString() );
+		//m_log.append( "Found drinks." );
+		return BT_RESULT::SUCCESS;
+	}
+	//m_log.append( "Didn't find drinks." );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionFindDining( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFindDining" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	QList<unsigned int> dhl = Global::rm().getDinings();
+	//m_log.append( "Looking for a dining room." );
+	m_currentAction             = "find dining";
+	unsigned int closestChairID = 0;
+	int dist                    = 1000000;
+	for ( auto dh : dhl )
+	{
+		Room* room = Global::rm().getRoom( dh );
+		if ( room )
+		{
+			QList<unsigned int> chairs = room->chairs();
+			if ( !chairs.empty() )
+			{
+				for ( auto chairID : chairs )
+				{
+					if ( !Global::inv().isInJob( chairID ) )
+					{
+						int curDist = m_position.distSquare( Global::inv().getItemPos( chairID ), 5 );
+						if ( curDist < dist )
+						{
+							dist           = curDist;
+							closestChairID = chairID;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	if ( closestChairID != 0 )
+	{
+		addClaimedItem( closestChairID, m_id );
+		setCurrentTarget( Global::inv().getItemPos( closestChairID ) );
+
+		//m_log.append( "Found a dining room." );
+		return BT_RESULT::SUCCESS;
+	}
+
+	//m_log.append( "Didn't find a dining room." );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionEat( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionEat" );
+	if ( halt )
+	{
+		//abortJob( "actionEat - halt" );
+		return BT_RESULT::IDLE;
+	}
+
+	// first visit
+	if ( m_currentAction != "eating" )
+	{
+		//m_log.append( "Starting to eat." );
+		m_currentAction  = "eating";
+		m_taskFinishTick = GameState::tick + Util::ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+	}
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Inventory& inv = Global::inv();
+
+	if ( m_carriedItems.empty() )
+	{
+		//abortJob( "actionEat - no item" );
+		unclaimAll();
+		return BT_RESULT::FAILURE;
+	}
+	unsigned int carriedItem = m_carriedItems.first();
+	unsigned char nutrition  = inv.nutritionalValue( carriedItem );
+
+	float oldVal = m_needs["Hunger"].toFloat();
+	float newVal = qMin( 150.f, oldVal + nutrition );
+	if ( newVal > 30 )
+	{
+		m_hungryLog     = false;
+		m_veryHungryLog = false;
+	}
+
+	m_needs.insert( "Hunger", newVal );
+	m_startedEating = true;
+
+	QString logText( "I just ate a " + S::s( "$ItemName_" + inv.itemSID( carriedItem ) ) + "." );
+	//m_log.append( logText );
+
+	inv.destroyObject( carriedItem );
+	m_carriedItems.clear();
+
+	setThoughtBubble( "" );
+
+	unclaimAll();
+	//m_log.append( "Finished eating." );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionDrink( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionDrink" );
+	if ( halt )
+	{
+		//abortJob( "actionDrink - halt" );
+		return BT_RESULT::IDLE;
+	}
+
+	// first visit
+	if ( m_currentAction != "drinking" )
+	{
+		//m_log.append( "Starting to drink." );
+		m_currentAction  = "drinking";
+		m_taskFinishTick = GameState::tick + Util::ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+	}
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Inventory& inv = Global::inv();
+
+	if ( m_carriedItems.empty() )
+	{
+		//abortJob( "actionDrink - no item" );
+		unclaimAll();
+		return BT_RESULT::FAILURE;
+	}
+
+	unsigned int carriedItem = m_carriedItems.first();
+	unsigned char drinkValue = inv.drinkValue( carriedItem );
+
+	float oldVal = m_needs["Thirst"].toFloat();
+	float newVal = qMin( 150.f, oldVal + drinkValue );
+	if ( newVal > 30 )
+	{
+		m_thirstyLog    = false;
+		m_veryThirstLog = false;
+	}
+	m_needs.insert( "Thirst", newVal );
+	m_startedDrinking = false;
+
+	QString logText( "I just drank a " + S::s( "$ItemName_" + inv.itemSID( carriedItem ) ) + "." );
+	//m_log.append( logText );
+
+	inv.destroyObject( carriedItem );
+	m_carriedItems.clear();
+	setThoughtBubble( "" );
+
+	unclaimAll();
+	//m_log.append( "Finished drinking." );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionPickUpItem( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionPickUpItem" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_itemToPickUp )
+	{
+		//abortJob( "actionPickUpItem - no item" );
+		m_log.append( "Strange! Nothing to pick up." );
+		return BT_RESULT::FAILURE;
+	}
+
+	if ( m_position != Global::inv().getItemPos( m_itemToPickUp ) )
+	{
+		log( "Cannot pick up item that is not here" );
+		return BT_RESULT::FAILURE;
+	}
+
+	Global::inv().pickUpItem( m_itemToPickUp );
+
+	if ( m_btBlackBoard.contains( "ClaimedInventoryItem" ) )
+	{
+		if ( m_itemToPickUp == m_btBlackBoard.value( "ClaimedInventoryItem" ).toUInt() )
+		{
+			m_inventoryItems.append( m_itemToPickUp );
+			if ( Global::inv().itemSID( m_itemToPickUp ) == "Bandage" )
+			{
+				m_carriedBandages += 1;
+			}
+			else if ( Global::inv().nutritionalValue( m_itemToPickUp ) > 0 )
+			{
+				++m_carriedFood;
+			}
+			else if ( Global::inv().drinkValue( m_itemToPickUp ) > 0 )
+			{
+				++m_carriedDrinks;
+			}
+		}
+		else
+		{
+			m_carriedItems.append( m_itemToPickUp );
+		}
+		m_btBlackBoard.remove( "ClaimedInventoryItem" );
+	}
+	else
+	{
+		m_carriedItems.append( m_itemToPickUp );
+	}
+
+	if ( Global::inv().isInStockpile( m_itemToPickUp ) )
+	{
+		Global::spm().removeItem( m_job->stockpile(), Global::inv().getItemPos( m_itemToPickUp ), m_itemToPickUp );
+	}
+	if ( Global::inv().isInContainer( m_itemToPickUp ) )
+	{
+		Global::inv().removeItemFromContainer( m_itemToPickUp );
+	}
+
+	m_itemToPickUp = 0;
+	log( "Picked up an item. " + Global::inv().materialSID( m_itemToPickUp ) + " " + Global::inv().itemSID( m_itemToPickUp ) );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionGetJob( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionGetJob" );
+
+	if ( m_jobCooldown > 0 )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	JobManager& jm = Global::jm();
+
+#ifdef CHECKTIME
+	QElapsedTimer timer;
+	timer.start();
+	m_jobID      = jm.getJob( m_skillPriorities, m_id, m_position );
+	auto elapsed = timer.elapsed();
+	if ( elapsed > 100 )
+	{
+		qDebug() << m_name << "JobManager just needed" << elapsed << "ms for getJob";
+		Config::getInstance().set( "Pause", true );
+	}
+#else
+	QElapsedTimer et;
+	et.start();
+
+	m_jobID = jm.getJob( m_skillPriorities, m_id, m_position );
+#endif
+
+	if ( m_jobID != 0 )
+	{
+		m_jobChanged = true;
+		m_job        = jm.getJob( m_jobID );
+		if ( !m_job )
+		{
+			qDebug() << "jm returned null ptr for jobid " << m_jobID;
+			return BT_RESULT::FAILURE;
+		}
+
+		//no change to jobsprite
+		jm.setJobBeingWorked( m_jobID, false );
+		m_job->setIsWorked( true );
+		m_job->setWorkedBy( m_id );
+		m_jobID = m_jobID;
+		log( "JobType " + m_job->type() );
+		m_btBlackBoard.insert( "JobType", m_job->type() );
+		m_currentAction = "job";
+
+		bool mayTrap = DB::select( "MayTrapGnome", "Jobs", m_job->type() ).toBool();
+
+		m_workPositionQueue = PriorityQueue<Position, int>();
+
+		// determine which position is the work position
+		if ( mayTrap )
+		{
+			for ( auto s : m_job->possibleWorkPositions() )
+			{
+				Position ss( s );
+				int hasJob = Global::w().hasJob( ss );
+				m_workPositionQueue.put( ss, ( 5 - Global::w().walkableNeighbors( s ) ) * 100 + m_position.distSquare( ss ) + hasJob * 10 );
+			}
+		}
+		else
+		{
+			for ( auto s : m_job->possibleWorkPositions() )
+			{
+				Position ss( s );
+				int hasJob = Global::w().hasJob( ss );
+				//qDebug() << m_job->id() << "[" << ss.toString() << "]" ;
+				m_workPositionQueue.put( ss, m_position.distSquare( ss ) + hasJob * 10 );
+			}
+		}
+		QString logText( "Got a new " + S::s( "$SkillName_" + m_job->requiredSkill() ) + " job" );
+		log( logText );
+
+		if ( Global::debugMode )
+		{
+			auto ela = et.elapsed();
+			if ( ela > 20 )
+			{
+				if ( m_job )
+				{
+					qDebug() << "GETJOB" << m_name << ela << "ms"
+							 << "job:" << m_job->type() << m_job->pos().toString();
+				}
+			}
+		}
+
+		return BT_RESULT::SUCCESS;
+	}
+	else
+	{
+		// didn't get a suitable job, so wait some ticks before asking again
+		m_jobCooldown = 100;
+		return BT_RESULT::FAILURE;
+	}
+
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionInitAnimalJob( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionInitAnimalJob" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( !a || a->toDestroy() )
+	{
+		//abortJob( "grabAnimal()" );
+		return BT_RESULT::FAILURE;
+	}
+	a->setImmobile( true );
+	setCurrentTarget( a->getPos() );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionInitJob( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionInitJob" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+	if ( Global::debugMode )
+	{
+		log( "job pos:" + m_job->pos().toString() );
+		log( "work position queue size:" + QString::number( m_workPositionQueue.size() ) );
+	}
+	while ( !m_workPositionQueue.empty() )
+	{
+		Position currentCheckPos = m_workPositionQueue.get();
+		if ( Global::debugMode )
+			log( "Check connection: " + m_position.toString() + " " + currentCheckPos.toString() );
+
+		if ( PathFinder::getInstance().checkConnectedRegions( m_position, currentCheckPos ) )
+		{
+			// found a suitable working position
+			if ( Global::debugMode )
+				log( "Set workpos: " + currentCheckPos.toString() );
+			m_job->setWorkPos( currentCheckPos );
+			// if item input was set before ( workshop job) don't overwrite it
+			if ( m_job->posItemInput().isZero() )
+			{
+				m_job->setPosItemInput( currentCheckPos );
+			}
+
+			bool hasItems = m_job->requiredItems().size() == claimedItems().size();
+			if ( Global::debugMode )
+				log( "Has items: " + hasItems ? "true" : "false" );
+			Global::jm().setJobBeingWorked( m_jobID, m_job->requiredTool().type.isEmpty() && hasItems );
+			//log( "Init " + S::s( "$SkillName_" + m_job->requiredSkill() ) + " job done." );
+
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	//abortJob( "initJob - job not reachable " );
+	return BT_RESULT::FAILURE;
+}
+
+bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int count, bool requireSame, QStringList restriction )
+{
+	if ( !m_job )
+	{
+		return false;
+	}
+	Inventory& inv = Global::inv();
+
+	int claimed  = 0;
+	Workshop* ws = Global::wsm().workshopAt( m_job->pos() );
+	if ( ws->linkedStockpile() && Global::spm().getStockpile( ws->linkedStockpile() ) )
+	{
+		Stockpile* sp = Global::spm().getStockpile( ws->linkedStockpile() );
+		// is the whole needed number in the stockpile?
+		if ( materialSID == "any" )
+		{
+			QList<QString> materials = inv.materialsForItem( itemSID, count );
+
+			if ( requireSame )
+			{
+				for ( auto mat : materials )
+				{
+					bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
+					if ( matAllowed )
+					{
+						if ( sp->count( itemSID, materialSID ) < count )
+						{
+							return false;
+						}
+						for ( int i = 0; i < count; ++i )
+						{
+							unsigned int item = 0;
+							for ( auto spf : sp->getFields() )
+							{
+								// if exists get item from that position
+								item = Global::inv().getItemAtPos( spf->pos, true, itemSID, mat );
+								if ( item )
+								{
+									Global::inv().moveItemToPos( item, m_job->posItemInput() );
+									sp->setInfiNotFull( spf->pos );
+									addClaimedItem( item, m_job->id() );
+									++claimed;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if ( restriction.empty() )
+				{
+					for ( int i = 0; i < count; ++i )
+					{
+						unsigned int item = 0;
+						for ( auto spf : sp->getFields() )
+						{
+							// if exists get item from that position
+							item = Global::inv().getItemAtPos( spf->pos, true, itemSID, "any" );
+							if ( item )
+							{
+								Global::inv().moveItemToPos( item, m_job->posItemInput() );
+								sp->setInfiNotFull( spf->pos );
+								addClaimedItem( item, m_job->id() );
+								++claimed;
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					for ( int i = 0; i < count; ++i )
+					{
+						unsigned int item = 0;
+						for ( auto spf : sp->getFields() )
+						{
+							// if exists get item from that position
+							item = Global::inv().getItemAtPos( spf->pos, true, itemSID, "any" );
+							if ( item && restriction.contains( inv.materialSID( item ) ) )
+							{
+								Global::inv().moveItemToPos( item, m_job->posItemInput() );
+								sp->setInfiNotFull( spf->pos );
+								addClaimedItem( item, m_job->id() );
+								++claimed;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if ( claimed == count )
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if ( sp->count( itemSID, materialSID ) < count )
+			{
+				return false;
+			}
+		}
+		//if yes
+		if ( materialSID != "any" )
+		{
+			// get from linked stockpile
+			for ( int i = 0; i < count; ++i )
+			{
+				unsigned int item = 0;
+				for ( auto spf : sp->getFields() )
+				{
+					// if exists get item from that position
+					item = Global::inv().getItemAtPos( spf->pos, true, itemSID, materialSID );
+					if ( item )
+					{
+						Global::inv().moveItemToPos( item, m_job->posItemInput() );
+						sp->setInfiNotFull( spf->pos );
+						addClaimedItem( item, m_job->id() );
+						++claimed;
+						break;
+					}
+				}
+			}
+			if ( claimed == count )
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+BT_RESULT Gnome::actionClaimItems( bool halt )
+{
+	QElapsedTimer et;
+	et.start();
+
+	if ( Global::debugMode )
+		log( "actionClaimItems" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	Inventory& inv = Global::inv();
+
+	if ( claimedItems().size() )
+	{
+		qDebug() << "Error: no items should be claimed here.";
+		for ( auto vItemID : claimedItems() )
+		{
+			inv.setInJob( vItemID, 0 );
+		}
+		clearClaimedItems();
+	}
+
+	if ( m_job->type() == "CraftAtWorkshop" )
+	{
+		Workshop* ws = Global::wsm().workshopAt( m_job->pos() );
+		for ( auto component : m_job->requiredItems() )
+		{
+			QString itemSID         = component.itemSID;
+			QString materialSID     = component.materialSID;
+			bool requireSame        = component.requireSame;
+			QStringList restriction = component.materialRestriction;
+			if ( restriction.size() == 1 && restriction.first().isEmpty() )
+			{
+				restriction.clear();
+			}
+
+			int count        = component.count;
+			int countClaimed = 0;
+			// check if item exists in linked stockpile
+			if ( claimFromLinkedStockpile( itemSID, materialSID, count, requireSame, restriction ) )
+			{
+				continue;
+			}
+
+			else
+			{
+				if ( requireSame && materialSID == "any" )
+				{
+					QList<QString> materials = inv.materialsForItem( itemSID, count );
+					if ( materials.empty() )
+					{
+						return BT_RESULT::FAILURE;
+					}
+					bool found = false;
+					for ( auto mat : materials )
+					{
+						bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
+						if ( matAllowed )
+						{
+							auto items = inv.getClosestItems( m_job->pos(), true, itemSID, mat, count );
+							if ( items.size() < count )
+							{
+								continue;
+							}
+
+							for ( auto item : items )
+							{
+								addClaimedItem( item, m_job->id() );
+							}
+							found = true;
+							break;
+						}
+					}
+					if ( !found )
+					{
+						if ( Global::debugMode )
+							log( "failed to claim: " + itemSID + " " + materialSID );
+						//abortJob( "claimMaterial() not enough" );
+						return BT_RESULT::FAILURE;
+					}
+				}
+				else
+				{
+					for ( int i = 0; i < count; ++i )
+					{
+						unsigned int item = inv.getClosestItem( m_job->pos(), true, itemSID, materialSID );
+						if ( item )
+						{
+							inv.setInJob( item, true );
+							addClaimedItem( item, m_job->id() );
+						}
+						else
+						{
+							if ( Global::debugMode )
+								log( "failed to claim: " + itemSID + " " + materialSID );
+							//abortJob( "claimMaterial() not enough" );
+							return BT_RESULT::FAILURE;
+						}
+					}
+				}
+			}
+		}
+	}
+	else if ( m_job->type() == "HauleItem" )
+	{
+		for ( auto itemID : m_job->itemsToHaul() )
+		{
+			addClaimedItem( itemID, m_job->id() );
+		}
+	}
+	else
+	{
+		for ( auto component : m_job->requiredItems() )
+		{
+			int count          = component.count;
+			QString itemID     = component.itemSID;
+			QString materialID = component.materialSID;
+			if ( Global::debugMode )
+				log( "claim " + QString::number( count ) + " " + materialID + " " + itemID );
+
+			QStringList restrictions = component.materialRestriction;
+			if ( restrictions.size() == 1 && restrictions.first().isEmpty() )
+			{
+				restrictions.clear();
+			}
+
+			if ( materialID == "any" && !restrictions.empty() )
+			{
+				QSet<QString> matTypes;
+				for ( auto type : restrictions )
+				{
+					matTypes.insert( type );
+					unsigned int item = inv.getClosestItem2( m_job->pos(), true, itemID, matTypes );
+					if ( item )
+					{
+						addClaimedItem( item, m_job->id() );
+					}
+					else
+					{
+						if ( Global::debugMode )
+							log( "claim failed ##1" );
+						//abortJob( "claimMaterial()" );
+						return BT_RESULT::FAILURE;
+					}
+				}
+			}
+			else
+			{
+				for ( int i = 0; i < count; ++i )
+				{
+					unsigned int item = inv.getClosestItem( m_job->workPos(), true, itemID, materialID );
+					if ( item )
+					{
+						addClaimedItem( item, m_job->id() );
+					}
+					else
+					{
+						if ( Global::debugMode )
+							log( "claim failed ##2" );
+						//abortJob( "claimMaterial()" );
+						return BT_RESULT::FAILURE;
+					}
+				}
+			}
+		}
+	}
+
+	Global::jm().setJobBeingWorked( m_jobID, m_job->requiredTool().type.isEmpty() );
+	if ( Global::debugMode )
+		log( "actionClaimItems success" );
+
+	if ( Global::debugMode )
+	{
+		auto ela = et.elapsed();
+		if ( ela > 30 )
+		{
+			if ( m_job )
+			{
+				qDebug() << "CLAIMITEMS" << m_name << ela << "ms"
+						 << "job:" << m_job->type() << m_job->pos().toString();
+			}
+		}
+	}
+
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionFindTool( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFindTool" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+	auto rt = m_job->requiredTool();
+	if ( rt.type.isEmpty() || m_type == CreatureType::AUTOMATON )
+	{
+		setCurrentTarget( m_position );
+		return BT_RESULT::SUCCESS;
+	}
+
+	unsigned int equippedItem = m_equipment.rightHandHeld.itemID;
+	int equippedToolLevel     = Util::toolLevel( equippedItem );
+
+	if ( equippedItem )
+	{
+		if ( Global::inv().itemSID( equippedItem ) == rt.type && equippedToolLevel >= rt.level )
+		{
+			// gnome already has the required tool equipped
+			setCurrentTarget( m_position );
+			return BT_RESULT::SUCCESS;
+		}
+		else
+		{
+			// wrong tool equipped,
+			// drop tool
+			Global::inv().putDownItem( equippedItem, m_position );
+			Global::inv().setInJob( equippedItem, 0 );
+			m_equipment.rightHandHeld.itemID = 0;
+			m_equipment.rightHandHeld.item.clear();
+			m_equipment.rightHandHeld.materialID = 0;
+			m_equipment.rightHandHeld.material.clear();
+			equipHand( 0, "Right" );
+			//return BT_RESULT::RUNNING;
+		}
+	}
+	//no item equipped
+	QMap<QString, int> mc = Global::inv().materialCountsForItem( rt.type );
+	QStringList keys      = mc.keys();
+
+	Inventory& inv = Global::inv();
+	for ( auto key : keys )
+	{
+		if ( mc[key] > 0 )
+		{
+			int tl = Util::toolLevel( key );
+			if ( tl >= rt.level )
+			{
+				// there are a number of tools of the required level in the world
+				auto tool = inv.getClosestItem( m_position, true, rt.type, key );
+				if ( tool )
+				{
+					m_job->setToolPosition( inv.getItemPos( tool ) );
+					inv.setInJob( tool, m_job->id() );
+					m_btBlackBoard.insert( "ClaimedTool", tool );
+
+					setCurrentTarget( inv.getItemPos( tool ) );
+
+					return BT_RESULT::SUCCESS;
+				}
+			}
+		}
+	}
+	//abortJob( "checkTool()" );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionEquipTool( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionEquipTool" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	if ( m_job->requiredTool().type.isEmpty() || m_type == CreatureType::AUTOMATON )
+	{
+		//log( "No tool required" );
+		Global::jm().setJobBeingWorked( m_jobID, true );
+		return BT_RESULT::SUCCESS;
+	}
+
+	if ( m_equipment.rightHandHeld.itemID )
+	{
+		int equippedToolLevel = Util::toolLevel( m_equipment.rightHandHeld.itemID );
+		if ( m_equipment.rightHandHeld.item == m_job->requiredTool().type && equippedToolLevel >= m_job->requiredTool().level )
+		{
+			Global::jm().setJobBeingWorked( m_jobID, true );
+			return BT_RESULT::SUCCESS;
+		}
+	}
+
+	unsigned int claimedTool = m_btBlackBoard.value( "ClaimedTool" ).toUInt();
+	if ( claimedTool )
+	{
+		if ( m_position == Global::inv().getItemPos( claimedTool ) )
+		{
+			Global::inv().pickUpItem( claimedTool );
+			m_equipment.rightHandHeld.itemID     = claimedTool;
+			m_equipment.rightHandHeld.item       = Global::inv().itemSID( claimedTool );
+			m_equipment.rightHandHeld.materialID = Global::inv().materialUID( claimedTool );
+			m_equipment.rightHandHeld.material   = Global::inv().materialSID( claimedTool );
+
+			m_btBlackBoard.remove( "ClaimedTool" );
+
+			equipHand( claimedTool, "Right" );
+
+			Global::jm().setJobBeingWorked( m_jobID, true );
+
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	//abortJob( "pickUpTool()" );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionEquipUniform( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionEquipUniform" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
+
+	m_btBlackBoard.remove( "ClaimedUniformItem" );
+
+	QStringList conc;
+
+	if ( m_position == Global::inv().getItemPos( itemID ) )
+	{
+		Global::inv().pickUpItem( itemID );
+		Global::inv().setInJob( itemID, m_id );
+
+		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
+		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
+
+		QString itemSID          = Global::inv().itemSID( itemID );
+		unsigned int materialUID = Global::inv().materialUID( itemID );
+		QString materialSID      = Global::inv().materialSID( itemID );
+
+		auto part = Global::creaturePartLookUp.value( slot );
+
+		switch ( part )
+		{
+			case CP_ARMOR_HEAD:
+				m_equipment.head.itemID     = itemID;
+				m_equipment.head.item       = itemSID;
+				m_equipment.head.materialID = materialUID;
+				m_equipment.head.material   = materialSID;
+				break;
+			case CP_ARMOR_TORSO:
+				m_equipment.chest.itemID     = itemID;
+				m_equipment.chest.item       = itemSID;
+				m_equipment.chest.materialID = materialUID;
+				m_equipment.chest.material   = materialSID;
+				break;
+			case CP_ARMOR_ARM:
+				m_equipment.arm.itemID     = itemID;
+				m_equipment.arm.item       = itemSID;
+				m_equipment.arm.materialID = materialUID;
+				m_equipment.arm.material   = materialSID;
+				break;
+			case CP_ARMOR_HAND:
+				m_equipment.hand.itemID     = itemID;
+				m_equipment.hand.item       = itemSID;
+				m_equipment.hand.materialID = materialUID;
+				m_equipment.hand.material   = materialSID;
+				break;
+			case CP_ARMOR_LEG:
+				m_equipment.leg.itemID     = itemID;
+				m_equipment.leg.item       = itemSID;
+				m_equipment.leg.materialID = materialUID;
+				m_equipment.leg.material   = materialSID;
+				break;
+			case CP_ARMOR_FOOT:
+				m_equipment.foot.itemID     = itemID;
+				m_equipment.foot.item       = itemSID;
+				m_equipment.foot.materialID = materialUID;
+				m_equipment.foot.material   = materialSID;
+				break;
+			case CP_LEFT_HAND_HELD:
+				m_equipment.leftHandHeld.itemID     = itemID;
+				m_equipment.leftHandHeld.item       = itemSID;
+				m_equipment.leftHandHeld.materialID = materialUID;
+				m_equipment.leftHandHeld.material   = materialSID;
+				equipHand( itemID, "Left" );
+				break;
+			case CP_RIGHT_HAND_HELD:
+				m_equipment.rightHandHeld.itemID     = itemID;
+				m_equipment.rightHandHeld.item       = itemSID;
+				m_equipment.rightHandHeld.materialID = materialUID;
+				m_equipment.rightHandHeld.material   = materialSID;
+				equipHand( itemID, "Right" );
+				break;
+			case CP_BACK:
+				m_equipment.back.itemID     = itemID;
+				m_equipment.back.item       = itemSID;
+				m_equipment.back.materialID = materialUID;
+				m_equipment.back.material   = materialSID;
+				break;
+		}
+
+		updateSprite();
+
+		m_uniformWorn = true;
+
+		m_renderParamsChanged = true;
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
+{
+	auto part = Global::creaturePartLookUp.value( slot );
+
+	QString item = uniform->parts[slot].item;
+	QString material = uniform->parts[slot].material;
+
+	QString wiSID         = "";
+	QString wiMat         = "";
+	unsigned int wornItem = 0;
+
+	switch ( part )
+	{
+		case CP_ARMOR_HEAD:
+			if ( m_equipment.head.itemID )
+			{
+				wornItem = m_equipment.head.itemID;
+				wiSID    = m_equipment.head.item;
+				wiMat    = m_equipment.head.material;
+			}
+			break;
+		case CP_ARMOR_TORSO:
+			if ( m_equipment.chest.itemID )
+			{
+				wornItem = m_equipment.chest.itemID;
+				wiSID    = m_equipment.chest.item;
+				wiMat    = m_equipment.chest.material;
+			}
+			break;
+		case CP_ARMOR_ARM:
+			if ( m_equipment.arm.itemID )
+			{
+				wornItem = m_equipment.arm.itemID;
+				wiSID    = m_equipment.arm.item;
+				wiMat    = m_equipment.arm.material;
+			}
+			break;
+		case CP_ARMOR_HAND:
+			if ( m_equipment.hand.itemID )
+			{
+				wornItem = m_equipment.hand.itemID;
+				wiSID    = m_equipment.hand.item;
+				wiMat    = m_equipment.hand.material;
+			}
+			break;
+		case CP_ARMOR_LEG:
+			if ( m_equipment.leg.itemID )
+			{
+				wornItem = m_equipment.leg.itemID;
+				wiSID    = m_equipment.leg.item;
+				wiMat    = m_equipment.leg.material;
+			}
+			break;
+		case CP_ARMOR_FOOT:
+			if ( m_equipment.foot.itemID )
+			{
+				wornItem = m_equipment.foot.itemID;
+				wiSID    = m_equipment.foot.item;
+				wiMat    = m_equipment.foot.material;
+			}
+			break;
+		case CP_LEFT_HAND_HELD:
+			if ( m_equipment.leftHandHeld.itemID )
+			{
+				wornItem = m_equipment.leftHandHeld.itemID;
+				wiSID    = m_equipment.leftHandHeld.item;
+				wiMat    = m_equipment.leftHandHeld.material;
+			}
+			break;
+		case CP_RIGHT_HAND_HELD:
+			if ( m_equipment.rightHandHeld.itemID )
+			{
+				wornItem = m_equipment.rightHandHeld.itemID;
+				wiSID    = m_equipment.rightHandHeld.item;
+				wiMat    = m_equipment.rightHandHeld.material;
+			}
+			break;
+		case CP_BACK:
+			if ( m_equipment.back.itemID )
+			{
+				wornItem = m_equipment.back.itemID;
+				wiSID    = m_equipment.back.item;
+				wiMat    = m_equipment.back.material;
+			}
+			break;
+	}
+
+	if ( wornItem )
+	{
+		if ( wiSID != item || ( ( wiMat != material ) && ( material != "any" ) ) )
+		{
+			qDebug() << "Drop item:" << wiMat << wiSID << " looking for:" << material << item;
+			//drop current item
+			dropped = true;
+			Global::inv().putDownItem( wornItem, m_position );
+			Global::inv().setInJob( wornItem, 0 );
+
+			if ( item == "none" || item.isEmpty() )
+			{
+				return true;
+			}
+		}
+	}
+
+	if ( !item.isEmpty() )
+	{
+		auto itemToGet = Global::inv().getClosestItem( m_position, true, item, material );
+
+		if ( itemToGet )
+		{
+			auto pos = Global::inv().getItemPos( itemToGet );
+			Global::inv().setInJob( itemToGet, m_id );
+			m_btBlackBoard.insert( "ClaimedUniformItem", itemToGet );
+			m_btBlackBoard.insert( "ClaimedUniformItemSlot", slot );
+			setCurrentTarget( pos );
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+BT_RESULT Gnome::actionCheckUniform( bool halt = false )
+{
+	if ( GameState::tick > m_nextUniformCheckTick )
+	{
+		if ( m_roleID )
+		{
+			Uniform* uniform = Global::mil().uniform( m_roleID );
+			if ( uniform )
+			{
+				bool dropped = false;
+				bool success = false;
+				if ( checkUniformItem( "HeadArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.head.item.clear();
+						m_equipment.head.material.clear();
+						m_equipment.head.itemID     = 0;
+						m_equipment.head.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "ChestArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.chest.item.clear();
+						m_equipment.chest.material.clear();
+						m_equipment.chest.itemID     = 0;
+						m_equipment.chest.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "ArmArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.arm.item.clear();
+						m_equipment.arm.material.clear();
+						m_equipment.arm.itemID     = 0;
+						m_equipment.arm.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "HandArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.hand.item.clear();
+						m_equipment.hand.material.clear();
+						m_equipment.hand.itemID     = 0;
+						m_equipment.hand.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "LegArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.leg.item.clear();
+						m_equipment.leg.material.clear();
+						m_equipment.leg.itemID     = 0;
+						m_equipment.leg.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "FootArmor", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.foot.item.clear();
+						m_equipment.foot.material.clear();
+						m_equipment.foot.itemID     = 0;
+						m_equipment.foot.materialID = 0;
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "Back", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.back.item.clear();
+						m_equipment.back.material.clear();
+						m_equipment.back.itemID     = 0;
+						m_equipment.back.materialID = 0;
+
+						if ( m_inventoryItems.size() )
+						{
+							for ( auto item : m_inventoryItems )
+							{
+								Global::inv().setInJob( item, 0 );
+								Global::inv().putDownItem( item, m_position );
+							}
+							m_inventoryItems.clear();
+							m_carriedDrinks   = 0;
+							m_carriedFood     = 0;
+							m_carriedBandages = 0;
+						}
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "LeftHandHeld", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.leftHandHeld.item.clear();
+						m_equipment.leftHandHeld.material.clear();
+						m_equipment.leftHandHeld.itemID     = 0;
+						m_equipment.leftHandHeld.materialID = 0;
+
+						equipHand( 0, "Left" );
+					}
+					success = true;
+				}
+				else if ( checkUniformItem( "RightHandHeld", uniform, dropped ) )
+				{
+					if ( dropped )
+					{
+						m_equipment.rightHandHeld.item.clear();
+						m_equipment.rightHandHeld.material.clear();
+						m_equipment.rightHandHeld.itemID     = 0;
+						m_equipment.rightHandHeld.materialID = 0;
+
+						equipHand( 0, "Right" );
+					}
+					success = true;
+				}
+
+				if ( dropped )
+				{
+					updateSprite();
+				}
+				if ( success )
+				{
+					return BT_RESULT::SUCCESS;
+				}
+				else
+				{
+					m_nextUniformCheckTick = GameState::tick + 300;
+				}
+			}
+		}
+		else
+		{
+			if ( m_uniformWorn )
+			{
+				Uniform uniform;
+				bool dropped = false;
+				checkUniformItem( "HeadArmor", &uniform, dropped );
+				checkUniformItem( "ChestArmor", &uniform, dropped );
+				checkUniformItem( "ArmArmor", &uniform, dropped );
+				checkUniformItem( "HandArmor", &uniform, dropped );
+				checkUniformItem( "LegArmor", &uniform, dropped );
+				checkUniformItem( "FootArmor", &uniform, dropped );
+				checkUniformItem( "LeftHandHeld", &uniform, dropped );
+				checkUniformItem( "RightHandHeld", &uniform, dropped );
+				checkUniformItem( "Back", &uniform, dropped );
+				equipHand( 0, "Left" );
+				equipHand( 0, "Right" );
+				m_uniformWorn = false;
+				if ( dropped )
+				{
+					m_equipment.clearAllItems();
+					updateSprite();
+				}
+			}
+		}
+	}
+
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionUniformCleanUp( bool halt )
+{
+	auto item = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
+	Global::inv().setInJob( item, 0 );
+	m_btBlackBoard.remove( "ClaimedUniformItem" );
+	m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
+
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionCheckBandages( bool halt )
+{
+	if ( m_equipment.back.item == "Backpack" )
+	{
+		unsigned int itemToGet = 0;
+		if ( m_carryBandages && m_carriedBandages < 3 )
+		{
+			itemToGet = Global::inv().getClosestItem( m_position, true, "Bandage", "any" );
+		}
+		else if ( m_carryFood && m_carriedFood < 3 )
+		{
+			itemToGet = Global::inv().getFoodItem( m_position );
+			if ( itemToGet )
+			{
+				if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+				{
+					if ( m_carryDrinks && m_carriedDrinks < 3 )
+					{
+						itemToGet = Global::inv().getDrinkItem( m_position );
+						if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+						{
+							itemToGet = 0;
+						}
+					}
+				}
+			}
+		}
+		else if ( m_carryDrinks && m_carriedDrinks < 3 )
+		{
+			itemToGet = Global::inv().getDrinkItem( m_position );
+			if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+			{
+				itemToGet = 0;
+			}
+		}
+		if ( itemToGet )
+		{
+			auto pos = Global::inv().getItemPos( itemToGet );
+			Global::inv().setInJob( itemToGet, m_id );
+			m_itemToPickUp = itemToGet;
+			m_btBlackBoard.insert( "ClaimedInventoryItem", itemToGet );
+			setCurrentTarget( pos );
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionGetItemDropPosition( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionGetItemDropPosition" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	Position pos = m_job->posItemInput();
+	if ( pos.isZero() )
+	{
+		//abortJob( "actionGetItemDropPosition()" );
+		return BT_RESULT::FAILURE;
+	}
+	setCurrentTarget( pos );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionDropItem( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionDropItem" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+	while ( m_carriedItems.size() )
+	{
+		unsigned int carriedItem = m_carriedItems.takeFirst();
+		if ( carriedItem != 0 )
+		{
+			Inventory& inv = Global::inv();
+			inv.putDownItem( carriedItem, m_position );
+			if ( m_job->stockpile() != 0 )
+			{
+				log( "Put " + Global::inv().materialSID( carriedItem ) + " " + Global::inv().itemSID( carriedItem ) + " into stockpile at " + m_position.toString() );
+				Global::spm().insertItem( m_job->stockpile(), m_position, carriedItem );
+			}
+			//m_job->removeClaimedItem2( item );
+			return BT_RESULT::SUCCESS;
+		}
+		/*
+		else
+		{
+			qDebug() << name() << "drop item failed - null item";
+			return BT_RESULT::FAILURE;
+		}
+		*/
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionDropAllItems( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionDropItem" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	for ( auto item : m_carriedItems )
+	{
+		if ( item )
+		{
+			Inventory& inv = Global::inv();
+			inv.putDownItem( item, m_position );
+			if ( m_job->stockpile() != 0 )
+			{
+				log( "Put " + Global::inv().materialSID( item ) + " " + Global::inv().itemSID( item ) + " into stockpile at " + m_position.toString() );
+				Global::spm().insertItem( m_job->stockpile(), m_position, item );
+			}
+		}
+	}
+	m_carriedItems.clear();
+
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionGetWorkPosition( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionGetWorkPosition" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	setCurrentTarget( m_job->workPos() );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionWork( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionWork" );
+	if ( halt )
+	{
+		//abortJob( "actionWorkJob() - halt" );
+		return BT_RESULT::IDLE;
+	}
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	if ( m_job->isCanceled() )
+	{
+		//abortJob( "Canceled" );
+		return BT_RESULT::FAILURE;
+	}
+
+	//first visit
+	if ( m_currentAction != "work job" )
+	{
+		m_currentAction = "work job";
+		m_taskList      = DB::selectRows( "Jobs_Tasks", "ID", m_job->type() );
+		if ( m_taskList.size() > 0 )
+		{
+			m_currentTask = m_taskList.takeFirst();
+
+			QString skillID = m_job->requiredSkill();
+			float current   = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
+
+			ticks                = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
+			m_taskFinishTick     = GameState::tick + ticks;
+			m_totalDurationTicks = ticks;
+		}
+		else
+		{
+			// job has no task, that's for example the case with hauling jobs
+			log( "Nothing else to do." );
+			m_currentTask.clear();
+			return BT_RESULT::SUCCESS;
+		}
+	}
+
+	QString taskName = m_currentTask.value( "Task" ).toString();
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		if ( m_taskFunctions.contains( taskName + "Animate" ) )
+		{
+			m_taskFunctions[taskName + "Animate"]();
+		}
+		return BT_RESULT::RUNNING;
+	}
+
+	if ( m_taskFunctions.contains( taskName ) )
+	{
+		if ( !m_taskFunctions[taskName]() )
+		{
+			return BT_RESULT::FAILURE;
+		}
+
+		if ( m_repeatJob )
+		{
+			return BT_RESULT::RUNNING;
+		}
+
+		if ( m_taskList.size() > 0 )
+		{
+			m_currentTask = m_taskList.takeFirst();
+
+			QString skillID = m_job->requiredSkill();
+			float current   = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
+			if ( ticks > 0 )
+			{
+				ticks = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
+			}
+			m_taskFinishTick     = GameState::tick + ticks;
+			m_totalDurationTicks = ticks;
+
+			return BT_RESULT::RUNNING;
+		}
+		else
+		{
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	else
+	{
+		m_job->setCanceled();
+		//abortJob( "task name doesn't exist -" + taskName + " - "  );
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionGrabAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionGrabAnimal" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( !a || a->toDestroy() )
+	{
+		//abortJob( "grabAnimal()" );
+		return BT_RESULT::FAILURE;
+	}
+	else
+	{
+		a->setFollowID( m_id );
+		m_animal = m_job->animal();
+		return BT_RESULT::SUCCESS;
+	}
+}
+
+BT_RESULT Gnome::actionReleaseAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionReleaseAnimal" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	m_animal  = 0;
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( a )
+	{
+		a->setFollowID( 0 );
+		a->setImmobile( false );
+		a->setInJob( 0 );
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionFinalMoveAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionFinalMoveAnimal" );
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+	auto animal = Global::cm().animal( m_animal );
+	if ( animal )
+	{
+		animal->setFollowPosition( m_position );
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionButcherAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionButcherAnimal" );
+	if ( halt )
+	{
+		//abortJob( "actionButcherAnimal() - halt" );
+		return BT_RESULT::IDLE;
+	}
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	if ( m_job->isAborted() )
+	{
+		m_job->setAborted( false );
+		//abortJob( "Aborted" );
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isCanceled() )
+	{
+		//abortJob( "Canceled" );
+		return BT_RESULT::FAILURE;
+	}
+
+	//first visit?
+	if ( m_currentAction != "butcher animal" )
+	{
+		m_currentAction = "butcher animal";
+
+		QString skillID      = m_job->requiredSkill();
+		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		m_totalDurationTicks = 50; //TODO get that number from DB
+		m_taskFinishTick     = GameState::tick + 50;
+	}
+
+	QString taskName = m_currentTask.value( "Task" ).toString();
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( a )
+	{
+		a->setFollowID( 0 );
+		m_animal = 0;
+
+		if ( a->pastureID() )
+		{
+			auto pasture = Global::fm().getPasture( a->pastureID() );
+			if ( pasture )
+			{
+				pasture->removeAnimal( a->id() );
+				Global::fm().emitUpdateSignalPasture( pasture->id() );
+			}
+		}
+
+		auto onbutchlist = DB::selectRows( "Animals_OnButcher", "ID", a->species() );
+		for ( auto obv : onbutchlist )
+		{
+			auto obm       = obv;
+			QString itemID = obm.value( "ItemID" ).toString();
+			int amount     = obm.value( "Amount" ).toInt();
+			if ( a->isYoung() )
+			{
+				amount /= 2;
+			}
+			for ( int i = 0; i < amount; ++i )
+			{
+				if ( itemID == "Bone" || itemID == "Skull" )
+				{
+					Global::inv().createItem( m_job->posItemOutput(), itemID, { a->species() + "Bone" } );
+				}
+				else
+				{
+					Global::inv().createItem( m_job->posItemOutput(), itemID, { a->species() } );
+				}
+			}
+		}
+		a->destroy();
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionDyeAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionDyeAnimal" );
+	if ( halt )
+	{
+		//abortJob( "actionButcherAnimal() - halt" );
+		return BT_RESULT::IDLE;
+	}
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	if ( m_job->isAborted() )
+	{
+		m_job->setAborted( false );
+		//abortJob( "Aborted" );
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isCanceled() )
+	{
+		//abortJob( "Canceled" );
+		return BT_RESULT::FAILURE;
+	}
+
+	//first visit?
+	if ( m_currentAction != "dye animal" )
+	{
+		m_currentAction = "dye animal";
+
+		QString skillID      = m_job->requiredSkill();
+		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		m_totalDurationTicks = 50; //TODO get that number from DB
+		m_taskFinishTick     = GameState::tick + 50;
+	}
+
+	QString taskName = m_currentTask.value( "Task" ).toString();
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( a )
+	{
+		a->setFollowID( 0 );
+		m_animal = 0;
+
+		for ( auto item : claimedItems() )
+		{
+			Global::inv().pickUpItem( item );
+			Global::inv().destroyObject( item );
+		}
+		clearClaimedItems();
+
+		a->setDye( m_job->material() );
+		a->setInJob( 0 );
+
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionHarvestAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionHarvestAnimal" );
+	if ( halt )
+	{
+		//abortJob( "actionButcherAnimal() - halt" );
+		return BT_RESULT::IDLE;
+	}
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isAborted() )
+	{
+		m_job->setAborted( false );
+		//abortJob( "Aborted" );
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isCanceled() )
+	{
+		//abortJob( "Canceled" );
+		return BT_RESULT::FAILURE;
+	}
+
+	//first visit?
+	if ( m_currentAction != "harvest animal" )
+	{
+		m_currentAction = "harvest animal";
+
+		QString skillID      = m_job->requiredSkill();
+		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		m_totalDurationTicks = 100;
+		m_taskFinishTick     = GameState::tick + 100;
+	}
+
+	QString taskName = m_currentTask.value( "Task" ).toString();
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Animal* a = Global::cm().animal( m_animal );
+	if ( a )
+	{
+		QString type = a->species();
+		QString dye  = a->dye();
+
+		int amount     = a->numProduce();
+		QString itemID = a->producedItem();
+
+		if ( !dye.isEmpty() )
+		{
+			type = Util::addDyeMaterial( type, dye );
+		}
+
+		for ( int i = 0; i < amount; ++i )
+		{
+			Global::inv().createItem( m_position, itemID, { type } );
+		}
+		a->harvest();
+
+		return BT_RESULT::SUCCESS;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionTameAnimal( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionTameAnimal" );
+	if ( halt )
+	{
+		//abortJob( "actionButcherAnimal() - halt" );
+		return BT_RESULT::IDLE;
+	}
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isAborted() )
+	{
+		m_job->setAborted( false );
+		//abortJob( "Aborted" );
+		return BT_RESULT::FAILURE;
+	}
+	if ( m_job->isCanceled() )
+	{
+		//abortJob( "Canceled" );
+		return BT_RESULT::FAILURE;
+	}
+
+	//first visit?
+	if ( m_currentAction != "tame animal" )
+	{
+		m_currentAction = "tame animal";
+
+		QString skillID      = m_job->requiredSkill();
+		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		m_totalDurationTicks = 100;
+		m_taskFinishTick     = GameState::tick + 100;
+	}
+
+	if ( GameState::tick < m_taskFinishTick )
+	{
+		return BT_RESULT::RUNNING;
+	}
+
+	Animal* a = Global::cm().animal( m_job->animal() );
+	if ( a )
+	{
+		a->setTame( true );
+
+		auto pasture = Global::fm().getPastureAtPos( m_job->posItemInput() );
+
+		pasture->addAnimal( a->id() );
+		log( "Tamed a " + a->species() );
+		return BT_RESULT::SUCCESS;
+	}
+	log( "Failed to tame." );
+	//abortJob( "tame failed" );
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionAlwaysRunning( bool halt )
+{
+	return BT_RESULT::RUNNING;
+}
+
+BT_RESULT Gnome::actionAttackTarget( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionAttackTarget" );
+	Creature* creature = Global::cm().creature( m_currentAttackTarget );
+	
+	if ( creature && !creature->isDead() )
+	{
+		m_facing = getFacing( m_position, creature->getPos() );
+
+		//do we have
+		if ( m_globalCooldown <= 0 )
+		{
+			if ( m_rightHandArmed || m_leftHandArmed )
+			{
+				if ( m_rightHandCooldown <= 0 )
+				{
+					Global::logger().log( LogType::COMBAT, m_name + " attacks " + creature->name(), m_id );
+					// attack with main hand
+					creature->attack( DT_SLASH, m_anatomy.randomAttackHeight(), m_rightHandAttackSkill, m_rightHandAttackValue, m_position, m_id );
+					m_rightHandCooldown = qMax( 5, 20 - m_rightHandAttackSkill );
+					m_globalCooldown    = 5;
+				}
+				else if ( m_leftHandCooldown <= 0 )
+				{
+					// wielding an offhand weapon?
+					if ( m_leftHandHasWeapon )
+					{
+						Global::logger().log( LogType::COMBAT, m_name + " attacks " + creature->name(), m_id );
+						creature->attack( DT_SLASH, m_anatomy.randomAttackHeight(), m_leftHandAttackSkill, m_leftHandAttackValue, m_position, m_id );
+						m_leftHandCooldown = qMax( 5, 20 - m_leftHandAttackSkill );
+						m_globalCooldown   = 5;
+					}
+				}
+			}
+			else //unarmed combat
+			{
+				if ( m_rightHandCooldown <= 0 )
+				{
+					Global::logger().log( LogType::COMBAT, m_name + " punches " + creature->name(), m_id );
+					// attack with main hand
+					creature->attack( DT_BLUNT, m_anatomy.randomAttackHeight(), m_rightHandAttackSkill, m_rightHandAttackValue, m_position, m_id );
+					m_rightHandCooldown = qMax( 5, 20 - m_rightHandAttackSkill );
+					m_globalCooldown    = 5;
+				}
+				else if ( m_leftHandCooldown <= 0 )
+				{
+					// wielding an offhand weapon?
+					Global::logger().log( LogType::COMBAT, m_name + " punches " + creature->name(), m_id );
+					creature->attack( DT_BLUNT, m_anatomy.randomAttackHeight(), m_leftHandAttackSkill, m_leftHandAttackValue, m_position, m_id );
+					m_leftHandCooldown = qMax( 5, 20 - m_leftHandAttackSkill );
+					m_globalCooldown   = 5;
+				}
+			}
+		}
+		return BT_RESULT::RUNNING;
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionFindTrainingGround( bool halt )
+{
+	auto tgs = Global::wsm().getTrainingGrounds();
+
+	PriorityQueue<Workshop*, int> pq;
+
+	for ( auto tg : tgs )
+	{
+		if ( PathFinder::getInstance().checkConnectedRegions( m_position, tg->pos() ) )
+		{
+			pq.put( tg, m_position.distSquare( tg->pos() ) );
+		}
+	}
+	if ( !pq.empty() )
+	{
+		auto tg = pq.get();
+		setCurrentTarget( tg->pos() );
+		m_trainCounter   = -1;
+		m_trainingGround = tg->id();
+		return BT_RESULT::SUCCESS;
+	}
+
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionTrain( bool halt )
+{
+	if ( m_trainCounter == 0 )
+	{
+		m_log.append( "Finished Training session." );
+		m_trainCounter = -1;
+		auto ws        = Global::wsm().workshop( m_trainingGround );
+		if ( ws )
+		{
+			QString type = ws->type();
+			if ( type == "MeleeTraining" )
+			{
+				unsigned int trainer = ws->assignedGnome();
+				int skillGain        = 3;
+				if ( trainer )
+				{
+					auto tg = Global::gm().gnome( trainer );
+					if ( tg )
+					{
+						if ( tg->getPos() == ws->inputPos() )
+						{
+							if ( tg->getSkillLevel( "Melee" ) > getSkillLevel( "Melee" ) )
+							{
+								skillGain = 6;
+							}
+							if ( tg->getSkillLevel( "Dodge" ) > getSkillLevel( "Dodge" ) )
+							{
+								skillGain = 6;
+							}
+						}
+					}
+				}
+				gainSkill( "Melee", skillGain );
+				gainSkill( "Dodge", skillGain );
+				m_log.append( "Gained " + QString::number( skillGain ) + "xp in " + S::s( "$SkillName_Melee" ) );
+				m_log.append( "Gained " + QString::number( skillGain ) + "xp in " + S::s( "$SkillName_Dodge" ) );
+			}
+		}
+		m_thoughtBubble = "";
+
+		return BT_RESULT::SUCCESS;
+	}
+	else if ( m_trainCounter < 0 )
+	{
+		// starting training;
+		m_trainCounter = Util::ticksPerMinute * 15;
+	}
+	m_trainCounter  = qMax( 0, m_trainCounter - 1 );
+	m_thoughtBubble = "Combat";
+	return BT_RESULT::RUNNING;
+}
+
+BT_RESULT Gnome::actionFindTrainerPosition( bool halt )
+{
+	if ( m_assignedWorkshop )
+	{
+		auto ws = Global::wsm().workshop( m_assignedWorkshop );
+		if ( ws )
+		{
+			setCurrentTarget( ws->inputPos() );
+			return BT_RESULT::SUCCESS;
+		}
+	}
+	m_assignedWorkshop = 0;
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionSuperviseTraining( bool halt )
+{
+	if ( m_trainCounter == 0 )
+	{
+		m_log.append( "Finished trainer session." );
+		m_trainCounter = -1;
+		auto ws        = Global::wsm().workshop( m_assignedWorkshop );
+		if ( ws )
+		{
+			QString type = ws->type();
+			if ( type == "MeleeTraining" )
+			{
+				gainSkill( "Melee", 1 );
+				gainSkill( "Dodge", 1 );
+			}
+		}
+		m_thoughtBubble = "";
+
+		return BT_RESULT::SUCCESS;
+	}
+	else if ( m_trainCounter < 0 )
+	{
+		// starting training;
+		m_trainCounter = Util::ticksPerMinute * 15;
+	}
+	m_trainCounter  = qMax( 0, m_trainCounter - 1 );
+	m_thoughtBubble = "Combat";
+	return BT_RESULT::RUNNING;
+}
+
+BT_RESULT Gnome::actionGetTarget( bool halt )
+{
+	if ( Global::debugMode )
+		log( "actionGetTarget" );
+	
+	if ( m_aggroList.size() )
+	{
+		unsigned int targetID = m_aggroList.first().id;
+		Creature* creature    = Global::cm().creature( targetID );
+
+		if ( creature && !creature->isDead() )
+		{
+			m_currentAttackTarget = targetID;
+			setCurrentTarget( creature->getPos() );
+			return BT_RESULT::SUCCESS;
+		}
+		else
+		{
+			m_aggroList.removeFirst();
+			return BT_RESULT::FAILURE;
+		}
+	}
+	else
+	{
+		if ( m_targets.size() )
+		{
+			unsigned int targetID = m_targets.first();
+			Creature* creature = Global::cm().creature( targetID );
+			
+			if ( creature && !creature->isDead() )
+			{
+				m_currentAttackTarget = targetID;
+				setCurrentTarget( creature->getPos() );
+				if ( Global::debugMode )
+					qDebug() << "Target is at: " << creature->getPos().toString();
+				return BT_RESULT::SUCCESS;
+			}
+			else
+			{
+				m_targets.removeFirst();
+			}
+		}
+	}
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionDoMission( bool halt )
+{
+	if ( m_mission )
+	{
+		if ( GameState::tick >= m_nextCheckTick )
+		{
+			auto mission = Global::em().getMission( m_mission );
+
+			qDebug() << (int)mission->type << mission->startTick << mission->nextCheckTick << (int)mission->step;
+
+			switch ( mission->step )
+			{
+				case MissionStep::TRAVEL:
+				{
+					int hours = ( GameState::tick - mission->startTick ) / ( Util::ticksPerMinute * Util::minutesPerHour );
+
+					switch ( mission->type )
+					{
+						case MissionType::EXPLORE:
+						{
+							for ( auto& kingdom : Global::nm().kingdoms() )
+							{
+								if ( !kingdom.discovered && !kingdom.discoverMission )
+								{
+									if ( kingdom.distance <= hours )
+									{
+										kingdom.discoverMission = true;
+										mission->result.insert( "Success", true );
+										mission->result.insert( "DiscoveredKingdom", kingdom.id );
+										//qDebug() << "Found kingdom " << kingdom.name << kingdom.id;
+										mission->nextCheckTick = GameState::tick + ( GameState::tick - mission->startTick );
+										m_nextCheckTick        = mission->nextCheckTick;
+										mission->step          = MissionStep::RETURN;
+										return BT_RESULT::RUNNING;
+									}
+								}
+							}
+							if ( hours > 300 )
+							{
+								mission->result.insert( "Success", false );
+								//qDebug() << "Found nothing, returning";
+								mission->nextCheckTick = GameState::tick + ( GameState::tick - mission->startTick );
+								m_nextCheckTick        = mission->nextCheckTick;
+								mission->step          = MissionStep::RETURN;
+								return BT_RESULT::RUNNING;
+							}
+						}
+						break;
+						case MissionType::EMISSARY:
+						case MissionType::RAID:
+						case MissionType::SPY:
+						case MissionType::SABOTAGE:
+						{
+							if ( mission->distance <= hours )
+							{
+								mission->step = MissionStep::ACTION;
+							}
+						}
+						break;
+					}
+
+					mission->nextCheckTick = GameState::tick + Util::ticksPerDay;
+					m_nextCheckTick        = mission->nextCheckTick;
+					return BT_RESULT::RUNNING;
+				}
+				break;
+				case MissionStep::ACTION:
+					switch ( mission->type )
+					{
+						case MissionType::EXPLORE:
+							//not used
+							break;
+						case MissionType::EMISSARY:
+							Global::nm().emissary( mission );
+							break;
+						case MissionType::RAID:
+							Global::nm().raid( mission );
+							break;
+						case MissionType::SPY:
+							Global::nm().spy( mission );
+							break;
+						case MissionType::SABOTAGE:
+							Global::nm().sabotage( mission );
+							break;
+					}
+					mission->nextCheckTick = GameState::tick + mission->distance * Util::ticksPerMinute * Util::minutesPerHour;
+					m_nextCheckTick        = mission->nextCheckTick;
+					mission->step          = MissionStep::RETURN;
+					return BT_RESULT::RUNNING;
+					break;
+				case MissionStep::RETURN:
+					switch ( mission->type )
+					{
+						case MissionType::EXPLORE:
+							if ( mission->result.contains( "DiscoveredKingdom" ) )
+							{
+								unsigned int kingdomID = mission->result.value( "DiscoveredKingdom" ).toUInt();
+								Global::nm().discoverKingdom( kingdomID );
+							}
+							break;
+						case MissionType::EMISSARY:
+							break;
+						case MissionType::RAID:
+							break;
+						case MissionType::SPY:
+							break;
+						case MissionType::SABOTAGE:
+							break;
+					}
+
+					return BT_RESULT::SUCCESS;
+					break;
+			}
+		}
+		return BT_RESULT::RUNNING;
+	}
+	qDebug() << "Mission failure";
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Gnome::actionLeaveForMission( bool halt )
+{
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	Global::w().removeCreatureFromPosition( m_position, m_id );
+	m_goneOffMap = true;
+
+	Mission* mission = Global::em().getMission( m_mission );
+	if ( mission )
+	{
+		mission->leavePos = m_position;
+		mission->step     = MissionStep::TRAVEL;
+		m_nextCheckTick   = mission->nextCheckTick;
+		return BT_RESULT::SUCCESS;
+	}
+	else
+	{
+		m_mission = 0;
+		return BT_RESULT::FAILURE;
+	}
+}
+
+BT_RESULT Gnome::actionReturnFromMission( bool halt )
+{
+	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	Mission* mission = Global::em().getMission( m_mission );
+	if ( mission )
+	{
+		m_position = mission->leavePos;
+
+		mission->step = MissionStep::RETURNED;
+		mission->result.insert( "TotalTime", ( GameState::tick - mission->startTick ) / ( Util::ticksPerMinute * Util::minutesPerHour ) );
+
+		qDebug() << "Returning from mission at " << m_position.toString();
+	}
+	else
+	{
+		// this should never be reached
+		qDebug() << "Returning from mission but mission doesn't exist anymore";
+	}
+
+	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_goneOffMap = false;
+
+	m_mission       = 0;
+	m_isOnMission   = false;
+	m_nextCheckTick = 0;
+
+	return BT_RESULT::SUCCESS;
+}

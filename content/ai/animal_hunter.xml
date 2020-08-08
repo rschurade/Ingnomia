@@ -1,0 +1,57 @@
+<root main_tree_to_execute="MainTree">
+    <!--  ===================================  -->
+    <BehaviorTree ID="MainTree">
+        <Fallback>
+            <SequenceStar>
+                <Action ID="GetTarget"/>
+                <Action ID="Move"/>
+                <Sequence>
+                    <Condition ID="TargetAdjacent"/>
+                    <Action ID="AttackTarget"/>
+                </Sequence>
+            </SequenceStar>
+            <FallbackStar name="AnimalHunter">
+                <SequenceStar name="Hunt">
+                    <Condition ID="IsHungry"/>
+                    <Action ID="FindPrey"/>
+                    <Action ID="Move"/>
+                    <Action ID="KillPrey"/>
+                    <Action ID="EatPrey"/>
+                </SequenceStar>
+                <Action ID="RandomMove"/>
+            </FallbackStar>
+        </Fallback>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <TreeNodesModel>
+        <Condition ID=""/>
+        <Action ID="AttackTarget"/>
+        <Condition ID="CanHaveSex"/>
+        <Action ID="EatPrey"/>
+        <Action ID="FindPrey"/>
+        <Action ID="GetTarget"/>
+        <Action ID="GiveBirth"/>
+        <Condition ID="IsAdult"/>
+        <Condition ID="IsCarnivore"/>
+        <Condition ID="IsEgg"/>
+        <Condition ID="IsEggLayer"/>
+        <Condition ID="IsFemale"/>
+        <Condition ID="IsHerbivore"/>
+        <Condition ID="IsHungry"/>
+        <Condition ID="IsMale"/>
+        <Condition ID="IsPregnant"/>
+        <Condition ID="IsProducer"/>
+        <Condition ID="IsReadyToGiveBirth"/>
+        <Condition ID="IsWoodVermin"/>
+        <Condition ID="IsYoung"/>
+        <Action ID="KillPrey"/>
+        <Action ID="LayEgg"/>
+        <Action ID="Move"/>
+        <Action ID="Produce"/>
+        <Action ID="RandomMove"/>
+        <Condition ID="TargetAdjacent"/>
+        <Action ID="TryHaveSex"/>
+    </TreeNodesModel>
+    <!--  ===================================  -->
+</root>
+

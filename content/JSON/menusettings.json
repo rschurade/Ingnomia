@@ -1,0 +1,425 @@
+[
+  {
+	"Text": "Terrain",
+	"Icon": ":/resources/icons/terrain.png",
+	"MenuItem": [
+	  {
+		"Text": "Mine",
+		"Icon": ":/resources/icons/mine.png",
+		"MenuItem": [
+		  {
+			"Text": "Wall",
+			"Icon": ":/resources/icons/mine_wall.png",
+			"ToolTip": "Remove wall",
+			"Action": "Mine"
+		  },
+		  {
+			"Text": "Stairs Up",
+			"Icon": ":/resources/icons/mine_stairs.png",
+			"ToolTip": "Mine the wall into stairs going up",
+			"Action": "MineStairsUp"
+		  },
+		  {
+			"Text": "Ramp Up",
+			"Icon": ":/resources/icons/mine_ramp.png",
+			"ToolTip": "Mine the wall into a ramp going up",
+			"Disable": true,
+			"Action": "MineRampUp"
+		  },
+		  {
+			"Text": "Explorative Mine Wall",
+			"Icon": ":/resources/icons/mine_wall.png",
+			"ToolTip": "Remove wall and continue mining if there are embedded materials in neighboring tiles",
+			"Action": "ExplorativeMine"
+		  },
+		  {
+			"Text": "Fill Hole",
+			"Icon": ":/resources/icons/job.png",
+			"ToolTip": "Build wall in the tile below",
+			"Action": "FillHole"
+		  }
+		]
+	  },
+	  {
+		"Text": "Dig",
+		"Icon": ":/resources/icons/dig.png",
+		"MenuItem": [
+		  {
+			"Text": "Hole",
+			"Icon": ":/resources/icons/dig_hole",
+			"ToolTip": "Remove floor and section below",
+			"Action": "DigHole"
+		  },
+		  {
+			"Text": "Stairs Down",
+			"Icon": ":/resources/icons/dig_stairs",
+			"ToolTip": "Remove floor and mine section below into stairs",
+			"Action": "DigStairsDown"
+		  },
+		  {
+			"Text": "Ramp Down",
+			"Icon": ":/resources/icons/dig_ramp",
+			"ToolTip": "Remove floor and mine section below into a ramp",
+			"Action": "DigRampDown"
+		  }
+		]
+	  },
+	  {
+		"Text": "Remove Floor",
+		"Icon": ":/resources/icons/remove_floor.png",
+		"ToolTip": "Remove floor leaving the section below untouched",
+		"Action": "RemoveFloor"
+	  },
+	  /*
+	  {
+		"Text": "Remove Ramp",
+		"Icon": ":/resources/icons/remove_ramp.png",
+		"ToolTip": "Remove ramp",
+		"Disable": true,
+		"Action": "RemoveRamp"
+	  },
+	  */
+	  {
+		"Text": "Replace Wall",
+		"Icon": ":/resources/icons/replace_wall.png",
+		"ToolTip": "Replaces an existing wall with a new one",
+		"Action": "ReplaceWindowWall"
+	  },
+	  {
+		"Text": "Replace Floor",
+		"Icon": ":/resources/icons/replace_floor.png",
+		"ToolTip": "Replaces an existing floor with a new one",
+		"Action": "ReplaceWindowFloor"
+	  }/*,
+	  {
+		"Text": "Fill Hole",
+		"Icon": ":/resources/icons/job.png",
+		"ToolTip": "Build a wall from above",
+		"Action": "BuildWall"
+	  },
+	  {
+		"Text": "Hide",
+		"Icon": ":/resources/icons/job.png",
+		"ToolTip": "Set terrain to Hidden",
+		"Action": "Hide"
+	  }*/
+	]
+  },
+  {
+	"Text": "Agriculture",
+	"Icon": ":/resources/icons/agriculture.png",
+	"MenuItem": [
+	  {
+		"Text": "Farm",
+		"Icon": ":/resources/icons/agriculture.png",
+		"ToolTip": "Grow crops",
+		"Action": "CreateFarm"
+	  },
+	  {
+		"Text": "Underground Farm",
+		"Icon": ":/resources/icons/agriculture.png",
+		"ToolTip": "Grow underground crops",
+		"Disable": true,
+		"Action": "CreateUndergroundFarm"
+	  },
+	  {
+		"Text": "Pasture",
+		"Icon": ":/resources/icons/pasture.png",
+		"ToolTip": "Livestock graze in a pasture",
+		"Action": "CreatePasture"
+	  },
+	  {
+		"Text": "Grove",
+		"Icon": ":/resources/icons/grove.png",
+		"ToolTip": "Grow and harvest trees",
+		"Disable": false,
+		"Action": "CreateGrove"
+	  },
+	  {
+		"Text": "Plant Trees",
+		"Icon": ":/resources/icons/grove.png",
+		"ToolTip": "Plant trees",
+		"Action": "PlantTreeWidget"
+	  },
+	  {
+		"Text": "Fell Trees",
+		"Icon": ":/resources/icons/fell_trees.png",
+		"ToolTip": "Cut trees down",
+		"Action": "FellTree"
+	  },
+	  {
+		"Text": "Pick Fruit",
+		"Icon": ":/resources/icons/cut_clipping.png",
+		"ToolTip": "Pick a fruit from a tree",
+		"Action": "HarvestTree"
+	  },
+	  {
+		"Text": "Forage",
+		"Icon": ":/resources/icons/forage.png",
+		"ToolTip": "Forage for food",
+		"Action": "Forage"
+	  },
+	  {
+		"Text": "Remove Plant",
+		"Icon": ":/resources/icons/cancel.png",
+		"ToolTip": "Remove plant",
+		"Action": "RemovePlant"
+	  }
+	]
+  },
+  {
+	"Text": "Build",
+	"Icon": ":/resources/icons/build.png",
+	"MenuItem": [
+		{
+			"Text": "Workshop",
+			"Icon": ":/resources/icons/workshop.png",
+			"ToolTip": "Workshop",
+			"Action": "BuildWorkshopWindow"
+		},
+		{
+			"Text": "Mechanism",
+			"Icon": ":/resources/icons/gear.png",
+			"ToolTip": "Mechanism",
+			"MenuItem": [
+				{
+					"Text": "Build Mechanism",
+					"Icon": ":/resources/icons/engineering.png",
+					"ToolTip": "Build Mechanism",
+					"Action": "BuildMechanismWidget"
+				},
+				{
+					"Text": "Build Hydraulics",
+					"Icon": ":/resources/icons/hydraulics.png",
+					"ToolTip": "Build Hydraulics",
+					"Action": "BuildHydraulicsWidget"
+				}
+			]
+		},
+		{
+			"Text": "Furniture",
+			"Icon": ":/resources/icons/furniture.png",
+			"ToolTip": "Furniture",
+			"Action": "BuildFurnitureWidget"
+		},
+		{
+			"Text": "Storage",
+			"Icon": ":/resources/icons/chest.png",
+			"ToolTip": "Storage",
+			"Action": "BuildStorageWidget"
+		},
+		{
+			"Text": "Terrain",
+			"Icon": ":/resources/icons/terrain.png",
+			"ToolTip": "Terrain",
+			"MenuItem": [
+				{
+					"Text": "Build Wall",
+					"Icon": ":/resources/icons/job.png",
+					"ToolTip": "Build Wall",
+					"Action": "BuildWindowWall"
+				},
+				{
+					"Text": "Build Floor",
+					"Icon": ":/resources/icons/dig_hole.png",
+					"ToolTip": "Build Floor",
+					"Action": "BuildWindowFloor"
+				},
+				{
+					"Text": "Build Stairs",
+					"Icon": ":/resources/icons/stair.png",
+					"ToolTip": "Build Stairs",
+					"Action": "BuildWindowStairs"
+				},
+				{
+					"Text": "Build Ramps",
+					"Icon": ":/resources/icons/mine_ramp.png",
+					"ToolTip": "Build Ramps",
+					"Action": "BuildWindowRamp"
+				}
+			]
+		},
+		{
+			"Text": "Utility",
+			"Icon": ":/resources/icons/door.png",
+			"ToolTip": "Utility",
+			"Action": "BuildUtilityWidget"
+		},
+		{
+			"Text": "Farm untils",
+			"Icon": ":/resources/icons/agriculture.png",
+			"ToolTip": "FarmUtil",
+			"Action": "BuildFarmUtilWidget"
+		},
+		{
+			"Text": "Build Scaffold",
+			"Icon": ":/resources/icons/scaffolding.png",
+			"ToolTip": "Build Scaffold",
+			"Action": "BuildWindowScaffold"
+		},
+	]
+  },
+  {
+	"Text": "Designate Area",
+	"Icon": ":/resources/icons/designate_area.png",
+	"MenuItem": [
+	  {
+		"Text": "Stockpile",
+		"Icon": ":/resources/icons/chest.png",
+		"ToolTip": "Store items",
+		"Action": "CreateStockpile"
+	  },
+	  {
+		"Text": "Agriculture",
+		"Disable": true,
+		"Icon": ":/resources/icons/agriculture.png",
+		"ToolTip": "Agriculture",
+		"MenuItem": [
+			{
+				"Text": "Farm",
+				"Icon": ":/resources/icons/agriculture.png",
+				"ToolTip": "Grow crops",
+				"Action": "CreateFarm"
+			},
+			{
+				"Text": "Underground Farm",
+				"Icon": ":/resources/icons/agriculture.png",
+				"ToolTip": "Grow underground crops",
+				"Disable": true,
+				"Action": "CreateUndergroundFarm"
+			},
+			{
+				"Text": "Pasture",
+				"Icon": ":/resources/icons/pasture.png",
+				"ToolTip": "Livestock graze in a pasture",
+				"Disable": true,
+				"Action": "CreatePasture"
+			},
+			{
+				"Text": "Grove",
+				"Icon": ":/resources/icons/grove.png",
+				"ToolTip": "Grow and harvest trees",
+				"Disable": true,
+				"Action": "CreateGrove"
+			}
+		]
+	  },
+	  {
+		"Text": "Room",
+		"Icon": ":/resources/icons/room.png",
+		"ToolTip": "Room",
+		"Action": "CreateRoom"
+	  },
+	  {
+		"Text": "Guard Area",
+		"Icon": ":/resources/icons/guard.png",
+		"ToolTip": "Designate area to guard",
+		"Disable": true,
+		"Action": "CreateGuardArea"
+	  },
+	  {
+		"Text": "Patrol Route",
+		"Icon": ":/resources/icons/patrol.png",
+		"ToolTip": "Designate waypoints to patrol",
+		"Disable": true,
+		"Action": "CreatePatrolRoute"
+	  },
+	  {
+			"Text": "No pass",
+			"Icon": ":/resources/icons/remove_designation.png",
+			"ToolTip": "Designate area gnomes will not walk on.",
+			"Action": "CreateNoPass"
+		}
+	]
+  },
+  {
+	"Text": "Magic",
+	"Icon": ":/resources/icons/patrol.png",
+	"ToolTip": "Magic",
+	"MenuItem": [
+		{
+			"Text": "Nature Magic",
+			"Icon": ":/resources/icons/agriculture.png",
+			"ToolTip": "Nature magic",
+			"MenuItem": [
+				{
+					"Text": "Speed up growth",
+					"Icon": ":/resources/icons/agriculture.png",
+					"ToolTip": "Speed up growth",
+					"Action": "MagicNatureSpeedGrowth"
+				}
+			]
+		},
+		{
+			"Text": "Geomancy",
+			"Icon": ":/resources/icons/mine.png",
+			"ToolTip": "Geomancy",
+			"MenuItem": [
+				{
+					"Text": "Reveal ore",
+					"Icon": ":/resources/icons/mine.png",
+					"ToolTip": "Reveal ore",
+					"Action": "MagicGeomancyRevealOre"
+				}
+			]
+		}
+	]
+  },
+  {
+	"Text": "Job",
+	"Icon": ":/resources/icons/job.png",
+	"MenuItem": [
+	  {
+		"Text": "Suspend",
+		"Disable": true,
+		"Icon": ":/resources/icons/job.png",
+		"ToolTip": "Suspend",
+		"Action": "SuspendJob"
+	  },
+	  {
+		"Text": "Resume",
+		"Disable": true,
+		"Icon": ":/resources/icons/job.png",
+		"ToolTip": "Resume",
+		"Action": "ResumeJob"
+	  },
+	  {
+		"Text": "Cancel",
+		"Icon": ":/resources/icons/cancel.png",
+		"ToolTip": "Cancel",
+		"Action": "CancelJob"
+	  },
+	  {
+		"Text": "Raise priority",
+		"Icon": ":/resources/icons/arrow_up.png",
+		"ToolTip": "Raise the priority of a job.",
+		"Action": "RaisePrio"
+	  },
+	  {
+		"Text": "Lower priority",
+		"Icon": ":/resources/icons/arrow_down.png",
+		"ToolTip": "Lower the priority of a job.",
+		"Action": "LowerPrio"
+	  }
+	]
+  },
+  {
+	"Text": "Clean Floor",
+	"Icon": ":/resources/icons/chest.png",
+	"ToolTip": "Stock items on this floor next if possible",
+	"Disable": true,
+	"Action": "CleanFloor"
+  },
+  {
+	"Text": "Deconstruct",
+	"Icon": ":/resources/icons/deconstruct.png",
+	"ToolTip": "Deconstruct",
+	"Action": "Deconstruct"
+  },
+  {
+	"Text": "Remove Designation",
+	"Icon": ":/resources/icons/remove_designation.png",
+	"ToolTip": "Remove Designation",
+	"Action": "RemoveDesignation"
+  }
+]

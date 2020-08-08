@@ -1,0 +1,61 @@
+<root main_tree_to_execute="MainTree">
+    <!--  ===================================  -->
+    <BehaviorTree ID="MainTree">
+        <Sequence>
+            <SequenceStar>
+                <Fallback>
+                    <Action ID="GuardDogGetTarget"/>
+					<Action ID="GetTarget"/>
+                </Fallback>
+                <Action ID="Move"/>
+                <Sequence>
+                    <Condition ID="TargetAdjacent"/>
+                    <Action ID="AttackTarget"/>
+                </Sequence>
+            </SequenceStar>
+        </Sequence>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <TreeNodesModel>
+        <Action ID="AttackTarget"/>
+        <Condition ID="CanHaveSex"/>
+        <Action ID="EatPrey"/>
+        <Action ID="EnterShed"/>
+        <Action ID="FindPrey"/>
+        <Action ID="FindRandomPastureField"/>
+        <Action ID="FindRetreat"/>
+        <Action ID="FindShed"/>
+        <Action ID="GiveBirth"/>
+		<Action ID="GetTarget"/>
+        <Action ID="GuardDogGetTarget"/>
+        <Condition ID="IsAdult"/>
+        <Condition ID="IsCarnivore"/>
+        <Condition ID="IsDay"/>
+        <Condition ID="IsEgg"/>
+        <Condition ID="IsEggLayer"/>
+        <Condition ID="IsFemale"/>
+        <Condition ID="IsHerbivore"/>
+        <Condition ID="IsHungry"/>
+        <Condition ID="IsInShed"/>
+        <Condition ID="IsMale"/>
+        <Condition ID="IsNight"/>
+        <Condition ID="IsOnPasture"/>
+        <Condition ID="IsPregnant"/>
+        <Condition ID="IsProducer"/>
+        <Condition ID="IsReadyToGiveBirth"/>
+        <Condition ID="IsWoodVermin"/>
+        <Condition ID="IsYoung"/>
+        <Action ID="KillPrey"/>
+        <Action ID="LayEgg"/>
+        <Action ID="LeaveShed"/>
+        <Action ID="Move"/>
+        <Action ID="Produce"/>
+        <Action ID="RandomMove"/>
+        <SubTree ID="ShedTree"/>
+        <Action ID="Sleep"/>
+        <Condition ID="TargetAdjacent"/>
+        <Action ID="TryHaveSex"/>
+    </TreeNodesModel>
+    <!--  ===================================  -->
+</root>
+

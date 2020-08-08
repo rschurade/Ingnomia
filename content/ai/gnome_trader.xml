@@ -1,0 +1,158 @@
+<root main_tree_to_execute="MainTree">
+    <!--  ===================================  -->
+    <BehaviorTree ID="Hunger">
+        <SequenceStar name="Hunger">
+            <FallbackStar>
+                <Sequence>
+                    <Condition ID="IsHungry"/>
+                    <Action ID="FindFood"/>
+                </Sequence>
+            </FallbackStar>
+            <Action ID="Move"/>
+            <Action ID="PickUpItem"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="FindDining"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </ForceSuccess>
+            <Action ID="Eat"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobStandard">
+        <SequenceStar name="StandardJobs">
+            <Action ID="InitJob"/>
+            <Action ID="ClaimItems"/>
+            <Action ID="FindTool"/>
+            <Action ID="Move"/>
+            <Action ID="EquipTool"/>
+            <RetryUntilSuccesful num_attempts="20">
+                <Inverter>
+                    <SequenceStar>
+                        <Inverter>
+                            <Condition ID="AllItemsInPlaceForJob"/>
+                        </Inverter>
+                        <Action ID="Move"/>
+                        <Action ID="PickUpItem"/>
+                        <Action ID="GetItemDropPosition"/>
+                        <Action ID="Move"/>
+                        <Action ID="DropItem"/>
+                    </SequenceStar>
+                </Inverter>
+            </RetryUntilSuccesful>
+            <Action ID="GetWorkPosition"/>
+            <Action ID="Move"/>
+            <Action ID="Work"/>
+            <Action ID="FinishJob"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Jobs">
+        <FallbackStar>
+            <SequenceStar name="Leave">
+                <Condition ID="IsTimeToLeave"/>
+                <Action ID="GetExitPosition"/>
+                <Action ID="Move"/>
+                <Action ID="LeaveMap"/>
+            </SequenceStar>
+            <SequenceStar name="WorkAtMarketStall">
+                <Action ID="GetMarketStallPosition"/>
+                <Action ID="Move"/>
+                <Action ID="Trade"/>
+            </SequenceStar>
+        </FallbackStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="MainTree">
+        <FallbackStar name="GnomeTrader">
+            <FallbackStar name="Needs">
+                <SubTree ID="Hunger"/>
+                <SubTree ID="Thirst"/>
+                <SubTree ID="Sleepy"/>
+            </FallbackStar>
+            <SubTree ID="Jobs"/>
+        </FallbackStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Sleepy">
+        <SequenceStar name="Sleep">
+            <Condition ID="IsSleepy"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="FindBed"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </ForceSuccess>
+            <Action ID="Sleep"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Thirst">
+        <SequenceStar name="Thirst">
+            <FallbackStar>
+                <Sequence>
+                    <Condition ID="IsThirsty"/>
+                    <Action ID="FindDrink"/>
+                </Sequence>
+            </FallbackStar>
+            <Action ID="Move"/>
+            <Action ID="PickUpItem"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="FindDining"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </ForceSuccess>
+            <Action ID="Drink"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <TreeNodesModel>
+        <Condition ID="AllItemsInPlaceForJob"/>
+        <Action ID="ButcherAnimal"/>
+        <Action ID="ClaimItems"/>
+        <Action ID="Drink"/>
+        <Action ID="DropItem"/>
+        <Action ID="Eat"/>
+        <Action ID="EquipTool"/>
+        <Action ID="FindBed"/>
+        <Action ID="FindDrink"/>
+        <Action ID="FindFood"/>
+        <Action ID="FindDining"/>
+        <Action ID="FindTool"/>
+        <Action ID="FinishJob"/>
+        <Action ID="GetExitPosition"/>
+        <Action ID="GetItemDropPosition"/>
+        <Action ID="GetJob"/>
+        <Action ID="GetMarketStallPosition"/>
+        <Action ID="GetWorkPosition"/>
+        <Action ID="GrabAnimal"/>
+        <Action ID="HarvestAnimal"/>
+        <SubTree ID="Hunger"/>
+        <Action ID="InitAnimalJob"/>
+        <Action ID="InitButcherJob"/>
+        <Action ID="InitJob"/>
+        <Condition ID="IsButcherJob"/>
+        <Condition ID="IsHungry"/>
+        <Condition ID="IsSleepy"/>
+        <Condition ID="IsThirsty"/>
+        <Condition ID="IsTimeToLeave"/>
+        <Condition ID="IsVeryHungry"/>
+        <Condition ID="IsVeryThirsty"/>
+        <SubTree ID="JobStandard"/>
+        <SubTree ID="Jobs"/>
+        <Action ID="LeaveMap"/>
+        <Action ID="Move"/>
+        <Action ID="PickUpItem"/>
+        <Action ID="RandomMove"/>
+        <Action ID="ReleaseAnimal"/>
+        <Action ID="Sleep"/>
+        <SubTree ID="Sleepy"/>
+        <SubTree ID="Thirst"/>
+        <Action ID="Trade"/>
+        <Action ID="Work"/>
+    </TreeNodesModel>
+    <!--  ===================================  -->
+</root>
+

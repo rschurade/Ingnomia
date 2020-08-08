@@ -1,0 +1,325 @@
+<UserControl
+	x:Class="IngnomiaGUI.WorkshopGui"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    xmlns:local="clr-namespace:IngnomiaGUI"
+	x:Name="WorkshopControl">
+    <UserControl.DataContext>
+        <local:WorkshopModel/>
+    </UserControl.DataContext>
+	<UserControl.Resources>
+        <ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	
+	<Grid x:Name="LayoutRoot" MaxHeight="700" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<StackPanel Grid.Column="1" Orientation="Horizontal">
+			<Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" MinHeight="700" Margin="2" />
+			
+			<!--
+			#############################################################################################################################
+				Standard GUI for normal production workshops
+			#############################################################################################################################
+			-->
+			
+			<Border x:Name="TabBorderN2" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding NormalGui}">
+				<StackPanel>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding Name}" />
+					<TextBox x:Name="WSNameN" Text="{Binding Name}" Margin="10,5,10,5" />
+					<ComboBox x:Name="PrioritySelectorN" Margin="10,5,10,5"
+								ItemsSource="{Binding Priorities}"
+								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"  
+								ItemTemplate="{StaticResource ItemTemplate}" />
+					<CheckBox x:Name="CBSuspendN" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Suspend workshop." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Workshop will stop working." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					<CheckBox x:Name="CBAcceptJobsN" Content="Accept generated jobs" IsChecked="{Binding AcceptGenerated, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Accept generated jobs." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Will auto generate craft jobs for items in constructions and other workshops." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					<CheckBox x:Name="CBCraftMissingN" Content="Auto craft missing components" IsChecked="{Binding AutoCraft, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Auto craft missing components." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Generates crafting jobs in workshops for missing components." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					
+					<CheckBox x:Name="CBConnectSPN" Content="Connect to stockpile" IsChecked="{Binding LinkStockpile, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Connect stockpile." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Connect to a stockpile of maximum size 3x3." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="That stockpile must be adjacent to the input tile ." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+				</StackPanel>
+			</Border>
+			
+			<Border x:Name="TabBorderN3" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding NormalGui}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Available products" Grid.Row="0" />
+					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+						<ItemsControl ItemsSource="{Binding Products}" ItemTemplate="{StaticResource WSProductTemplate}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+						</ItemsControl>
+					</ScrollViewer>
+				</Grid>
+			</Border>
+			
+			<Border x:Name="TabBorderN4" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding NormalGui}" >
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Production line" Grid.Row="0" />
+					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+						<ItemsControl ItemsSource="{Binding Jobs}" ItemTemplate="{StaticResource WSJobTemplate}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+						</ItemsControl>
+					</ScrollViewer>
+				</Grid>
+			</Border>
+			
+			<!--
+			#############################################################################################################################
+				Butcher GUI 
+			#############################################################################################################################
+			-->
+			
+			
+			
+			<Border x:Name="TabBorderB2" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding ButcherGui}">
+				<StackPanel>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding Name}" />
+					<TextBox x:Name="WSNameB" Text="{Binding Name}" Margin="10,5,10,5" />
+					<ComboBox x:Name="PrioritySelector" Margin="10,5,10,5"
+								ItemsSource="{Binding Priorities}"
+								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"  
+								ItemTemplate="{StaticResource ItemTemplate}" />
+					<CheckBox x:Name="CBSuspendB" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Suspend workshop." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Workshop will stop working." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					
+					<CheckBox x:Name="CBButchExcess" Content="Butcher excess animals" IsChecked="{Binding ButcherExcess, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Butcher excess." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Butcher any tame animal not on a pasture." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					<CheckBox x:Name="CBButchCorpses" Content="Butcher corpses" IsChecked="{Binding ButcherCorpses, Mode=TwoWay}" Margin="10,5,10,5" >
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Butcher corpses." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Corpses must be in stockpiles to be considered." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					
+					<CheckBox x:Name="CBConnectSPB" Content="Connect to stockpile" IsChecked="{Binding LinkStockpile, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Connect stockpile." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Connect to a stockpile of maximum size 3x3." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="That stockpile must be adjacent to the input tile ." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+				</StackPanel>
+			</Border>
+			
+			<Border x:Name="TabBorder3_1" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding ButcherGui}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Butcher Animals" Grid.Row="0" />
+					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+						
+					</ScrollViewer>
+				</Grid>
+			</Border>
+			
+			<!--
+			#############################################################################################################################
+				Trader GUI 
+			#############################################################################################################################
+			-->
+			
+			<Border x:Name="TabBorderT2" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding TraderGui}">
+				<StackPanel>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding Name}" />
+					<TextBox x:Name="WSNameT" Text="{Binding Name}" Margin="10,5,10,5" />
+					<ComboBox x:Name="PrioritySelectorT" Margin="10,5,10,5"
+								ItemsSource="{Binding Priorities}"
+								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"  
+								ItemTemplate="{StaticResource ItemTemplate}" />
+					<CheckBox x:Name="CBSuspendT" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Suspend workshop." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="Workshop will stop working." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+				</StackPanel>
+			</Border>
+			
+			
+			<Border x:Name="TabBorderT4" Style="{StaticResource Panel}" MinWidth="800" MaxWidth="800" MinHeight="700" Margin="2" Visibility="{Binding TraderGui}" >
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Trade" Grid.Row="0" />
+					<Grid Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+					
+						<ToggleButton x:Name="CB1" Grid.Column="1" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="1" IsChecked="{Binding Amount1, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="1"/>
+                        <ToggleButton x:Name="CB2" Grid.Column="2" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="10" IsChecked="{Binding Amount10, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="10"/>
+                        <ToggleButton x:Name="CB3" Grid.Column="3" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="100" IsChecked="{Binding Amount100, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="100"/>
+						<ToggleButton x:Name="CB4" Grid.Column="4" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="max" IsChecked="{Binding AmountAll, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="All"/>
+					</Grid>
+					<Grid Grid.Row="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="5*"/>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="5*"/>
+						</Grid.ColumnDefinitions>
+
+						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="Trader inventory:" Grid.Row="0" Grid.Column="0" />
+						<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right">
+							<TextBlock FontSize="20" HorizontalAlignment="Right" Text="Trader value:" />
+							<TextBlock FontSize="20" HorizontalAlignment="Right" Text="{Binding TraderValue}" />
+						</StackPanel>
+
+						<ListBox x:Name="SVTraderStock" Grid.Row="1" Grid.Column="0" Margin="5" Background="{StaticResource PanelBackgroundGrey}"
+							ItemTemplate="{StaticResource TradeItemTemplate}"
+							ItemsSource="{Binding TraderStock}" 
+							SelectedItem="{Binding SelectedTraderStock, Mode=TwoWay}">
+						</ListBox>
+						
+						<Grid Grid.Row="1" Grid.Column="1">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+							</Grid.RowDefinitions>
+							
+							<Button x:Name="BTrd2L" Content="&lt;" MaxWidth="30" Command="{Binding CmdTransfer}" CommandParameter="TraderLeft" Grid.Row="1" VerticalAlignment="Bottom"/>
+							<Button x:Name="BTrd2R" Content="&gt;" MaxWidth="30" Command="{Binding CmdTransfer}" CommandParameter="TraderRight" Grid.Row="2" VerticalAlignment="Top"/>
+							
+						</Grid>
+						
+						
+						<ListBox x:Name="SVTraderOffer" Grid.Row="1" Grid.Column="2" Margin="5" Background="{StaticResource PanelBackgroundGrey}"
+							ItemTemplate="{StaticResource TradeItemTemplate}"
+							ItemsSource="{Binding TraderOffer}" 
+							SelectedItem="{Binding SelectedTraderOffer, Mode=TwoWay}">
+						</ListBox>
+						
+						<ListBox x:Name="SVPlayerStock" Grid.Row="3" Grid.Column="0" Margin="5" Background="{StaticResource PanelBackgroundGrey}"
+							ItemTemplate="{StaticResource TradeItemTemplate}"
+							ItemsSource="{Binding PlayerStock}" 
+							SelectedItem="{Binding SelectedPlayerStock, Mode=TwoWay}">
+						</ListBox>
+						
+						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="Player inventory:" Grid.Row="2" Grid.Column="0" />
+						<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right">
+							<TextBlock FontSize="20" HorizontalAlignment="Right" Text="Player value:" />
+							<TextBlock FontSize="20" HorizontalAlignment="Right" Text="{Binding PlayerValue}" />
+						</StackPanel>
+						
+						<Grid Grid.Row="3" Grid.Column="1">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+							</Grid.RowDefinitions>
+							
+							<Button x:Name="BPlr2L" Content="&lt;" MaxWidth="30" Command="{Binding CmdTransfer}" CommandParameter="PlayerLeft" Grid.Row="1" VerticalAlignment="Bottom"/>
+							<Button x:Name="BPlr2R" Content="&gt;" MaxWidth="30" Command="{Binding CmdTransfer}" CommandParameter="PlayerRight" Grid.Row="2" VerticalAlignment="Top"/>
+							
+						</Grid>
+						
+						
+						<ListBox x:Name="SVPlayerOffer" Grid.Row="3" Grid.Column="2" Margin="5" Background="{StaticResource PanelBackgroundGrey}"
+							ItemTemplate="{StaticResource TradeItemTemplate}"
+							ItemsSource="{Binding PlayerOffer}" 
+							SelectedItem="{Binding SelectedPlayerOffer, Mode=TwoWay}">
+						</ListBox>
+					</Grid>
+					<Button x:Name="BtradeR" Content="Trade" Command="{Binding CmdTrade}" Grid.Row="3" HorizontalAlignment="Center" Margin="4"/>
+				</Grid>
+			</Border>
+			
+			
+			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }" 
+				CommandParameter="WorkshopWindow">
+				<Image Source="buttons/cross.png" />
+			</Button>
+		</StackPanel>
+	</Grid>
+</UserControl>

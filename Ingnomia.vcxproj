@@ -1,0 +1,493 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B12702AD-ABFB-343A-A199-8E24837244A3}</ProjectGuid>
+    <Keyword>QtVS_v302</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Ingnomia</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <QtInstall>5.14.1</QtInstall>
+    <QtModules>core;xml;sql;opengl;network;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <QtInstall>5.14.1</QtInstall>
+    <QtModules>core;xml;sql;opengl;network;gui;widgets</QtModules>
+  </PropertyGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.30501.0</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(vstmp)\$(SolutionName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(vstmp)\$(SolutionName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;NS_DEBUG;NS_PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)include;$(QUAZIPDIR)include;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>src/pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>src/pch.h</ForcedIncludeFiles>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(STEAMDIR)lib;$(QUAZIPDIR)lib;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;quazip5.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+xcopy /Q /Y "$(SolutionDir)changelog.txt" "$(TargetDir)"
+xcopy /Q /Y "$(SolutionDir)content\ai\*.xml" "$(TargetDir)\content\ai\"
+xcopy /Q /Y "$(SolutionDir)content\data\*.xml" "$(TargetDir)\content\data\"
+xcopy /Q /Y "$(SolutionDir)content\db\*.*" "$(TargetDir)\content\db\"
+xcopy /Q /Y "$(SolutionDir)content\stuff\*.*" "$(TargetDir)\content\stuff\"
+xcopy /Q /Y "$(SolutionDir)content\JSON\*.json" "$(TargetDir)\content\JSON\"
+xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders\*.glsl"
+xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
+xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
+xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
+xcopy /Q /Y "$(STEAMDIR)bin\steam_api64.dll" "$(TargetDir)"
+$(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
+xcopy /Q /Y "$(QUAZIPDIR)bin\*.dll" "$(TargetDir)"
+xcopy /Q /Y "$(QUAZIPDIR)bin\*.pdb" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\Noesis.dll" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.dll" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)include;$(QUAZIPDIR)include;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <Optimization>Full</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>src/pch.h</PrecompiledHeaderFile>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>src/pch.h</ForcedIncludeFiles>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(STEAMDIR)lib;$(QUAZIPDIR)lib;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;quazip5.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+xcopy /Q /Y "$(SolutionDir)changelog.txt" "$(TargetDir)"
+xcopy /Q /Y "$(SolutionDir)content\ai\*.xml" "$(TargetDir)\content\ai\"
+xcopy /Q /Y "$(SolutionDir)content\data\*.xml" "$(TargetDir)\content\data\"
+xcopy /Q /Y "$(SolutionDir)content\db\*.*" "$(TargetDir)\content\db\"
+xcopy /Q /Y "$(SolutionDir)content\stuff\*.*" "$(TargetDir)\content\stuff\"
+xcopy /Q /Y "$(SolutionDir)content\JSON\*.json" "$(TargetDir)\content\JSON\"
+xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders\*.glsl"
+xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
+xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
+xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
+xcopy /Q /Y "$(STEAMDIR)bin\steam_api64.dll" "$(TargetDir)"
+$(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
+xcopy /Q /Y "$(QUAZIPDIR)bin\*.dll" "$(TargetDir)"
+xcopy /Q /Y "$(QUAZIPDIR)bin\*.pdb" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\Noesis.dll" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.dll" "$(TargetDir)"
+xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\base\behaviortree\bt_factory.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_node.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodeaction.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodebbprecondition.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodeconditional.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodefallback.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodefallbackstar.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodeforcefailure.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodeforcesuccess.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodeinverter.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_noderepeat.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_noderepeatuntilsuccess.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodesequence.cpp" />
+    <ClCompile Include="src\base\behaviortree\bt_nodesequencestar.cpp" />
+    <ClCompile Include="src\base\config.cpp" />
+    <ClCompile Include="src\base\db.cpp" />
+    <ClCompile Include="src\base\dbhelper.cpp" />
+    <ClCompile Include="src\base\fastnoise\FastNoise.cpp" />
+    <ClCompile Include="src\base\filter.cpp" />
+    <ClCompile Include="src\base\gamestate.cpp" />
+    <ClCompile Include="src\base\global.cpp" />
+    <ClCompile Include="src\base\io.cpp" />
+    <ClCompile Include="src\base\lightmap.cpp" />
+    <ClCompile Include="src\base\logger.cpp" />
+    <ClCompile Include="src\base\modmanager.cpp" />
+    <ClCompile Include="src\base\networkclient.cpp" />
+    <ClCompile Include="src\base\networkserver.cpp" />
+    <ClCompile Include="src\base\octree.cpp" />
+    <ClCompile Include="src\base\pathfinder.cpp" />
+    <ClCompile Include="src\base\PathFinderThread.cpp" />
+    <ClCompile Include="src\base\region.cpp" />
+    <ClCompile Include="src\base\regionmap.cpp" />
+    <ClCompile Include="src\base\selection.cpp" />
+    <ClCompile Include="src\base\util.cpp" />
+    <ClCompile Include="src\game\anatomy.cpp" />
+    <ClCompile Include="src\game\animal.cpp" />
+    <ClCompile Include="src\game\creaturefactory.cpp" />
+    <ClCompile Include="src\game\automaton.cpp" />
+    <ClCompile Include="src\game\canwork.cpp" />
+    <ClCompile Include="src\game\creature.cpp" />
+    <ClCompile Include="src\game\creatureEquipment.cpp" />
+    <ClCompile Include="src\game\creaturemanager.cpp" />
+    <ClCompile Include="src\game\fluidmanager.cpp" />
+    <ClCompile Include="src\game\gamemanager.cpp" />
+    <ClCompile Include="src\game\mechanismmanager.cpp" />
+    <ClCompile Include="src\game\eventmanager.cpp" />
+    <ClCompile Include="src\game\farm.cpp" />
+    <ClCompile Include="src\game\farmingmanager.cpp" />
+    <ClCompile Include="src\game\game.cpp" />
+    <ClCompile Include="src\game\gnome.cpp" />
+    <ClCompile Include="src\game\gnomeactions.cpp" />
+    <ClCompile Include="src\game\gnomeconditions.cpp" />
+    <ClCompile Include="src\game\gnomefactory.cpp" />
+    <ClCompile Include="src\game\gnomemanager.cpp" />
+    <ClCompile Include="src\game\gnometrader.cpp" />
+    <ClCompile Include="src\game\grove.cpp" />
+    <ClCompile Include="src\game\inventory.cpp" />
+    <ClCompile Include="src\game\item.cpp" />
+    <ClCompile Include="src\game\itemhistory.cpp" />
+    <ClCompile Include="src\game\job.cpp" />
+    <ClCompile Include="src\game\jobmanager.cpp" />
+    <ClCompile Include="src\game\militarymanager.cpp" />
+    <ClCompile Include="src\game\monster.cpp" />
+    <ClCompile Include="src\game\neighbormanager.cpp" />
+    <ClCompile Include="src\game\newgamesettings.cpp" />
+    <ClCompile Include="src\game\object.cpp" />
+    <ClCompile Include="src\game\pasture.cpp" />
+    <ClCompile Include="src\game\plant.cpp" />
+    <ClCompile Include="src\game\room.cpp" />
+    <ClCompile Include="src\game\roommanager.cpp" />
+    <ClCompile Include="src\game\stockpile.cpp" />
+    <ClCompile Include="src\game\stockpilemanager.cpp" />
+    <ClCompile Include="src\game\techtree.cpp" />
+    <ClCompile Include="src\game\workshop.cpp" />
+    <ClCompile Include="src\game\workshopmanager.cpp" />
+    <ClCompile Include="src\game\world.cpp" />
+    <ClCompile Include="src\game\worldconstructions.cpp" />
+    <ClCompile Include="src\game\worldgenerator.cpp" />
+    <ClCompile Include="src\game\worldgetters.cpp" />
+    <ClCompile Include="src\game\worldobject.cpp" />
+    <ClCompile Include="src\gfx\sprite.cpp" />
+    <ClCompile Include="src\gfx\spritefactory.cpp" />
+    <ClCompile Include="src\gui\aggregatoragri.cpp" />
+    <ClCompile Include="src\gui\aggregatorcreatureinfo.cpp" />
+    <ClCompile Include="src\gui\aggregatordebug.cpp" />
+    <ClCompile Include="src\gui\aggregatormilitary.cpp" />
+    <ClCompile Include="src\gui\aggregatorneighbors.cpp" />
+    <ClCompile Include="src\gui\aggregatorpopulation.cpp" />
+    <ClCompile Include="src\gui\aggregatorrenderer.cpp" />
+    <ClCompile Include="src\gui\aggregatorstockpile.cpp" />
+    <ClCompile Include="src\gui\aggregatortileinfo.cpp" />
+    <ClCompile Include="src\gui\aggregatorworkshop.cpp" />
+    <ClCompile Include="src\gui\eventconnector.cpp" />
+    <ClCompile Include="src\gui\mainwindow.cpp" />
+    <ClCompile Include="src\gui\mainwindowrenderer.cpp" />
+    <ClCompile Include="src\gui\strings.cpp" />
+    <ClCompile Include="src\gui\xaml\agriculture.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\agriculturemodel.cpp" />
+    <ClCompile Include="src\gui\xaml\agricultureproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\creatureinfo.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\creatureinfomodel.cpp" />
+    <ClCompile Include="src\gui\xaml\creatureinfoproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\debug.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\debugmodel.cpp" />
+    <ClCompile Include="src\gui\xaml\debugproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\GameGui.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\GameModel.cpp" />
+    <ClCompile Include="src\gui\xaml\IngamePage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\LoadGameModel.cpp" />
+    <ClCompile Include="src\gui\xaml\LoadGamePage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\Main.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\MainMenu.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\MainPage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\military.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\militarymodel.cpp" />
+    <ClCompile Include="src\gui\xaml\militaryproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\neighbors.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\neighborsmodel.cpp" />
+    <ClCompile Include="src\gui\xaml\neighborsproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\NewGameModel.cpp" />
+    <ClCompile Include="src\gui\xaml\NewGamePage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\Population.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\PopulationModel.cpp" />
+    <ClCompile Include="src\gui\xaml\populationproxy.cpp" />
+    <ClCompile Include="src\gui\xaml\ProxyGameView.cpp" />
+    <ClCompile Include="src\gui\xaml\ProxyMainView.cpp" />
+    <ClCompile Include="src\gui\xaml\ProxyTileInfo.cpp" />
+    <ClCompile Include="src\gui\xaml\SettingsModel.cpp" />
+    <ClCompile Include="src\gui\xaml\SettingsPage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\stockpilegui.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\StockpileModel.cpp" />
+    <ClCompile Include="src\gui\xaml\StockpileProxy.cpp" />
+    <ClCompile Include="src\gui\xaml\TileInfo.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\TileInfoModel.cpp" />
+    <ClCompile Include="src\gui\xaml\ViewModel.cpp" />
+    <ClCompile Include="src\gui\xaml\WaitPage.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\workshopgui.xaml.cpp" />
+    <ClCompile Include="src\gui\xaml\workshopmodel.cpp" />
+    <ClCompile Include="src\gui\xaml\workshopproxy.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <QtMoc Include="src\gui\aggregatortileinfo.h" />
+    <QtMoc Include="src\gui\aggregatorstockpile.h" />
+    <QtMoc Include="src\gui\aggregatorworkshop.h" />
+    <QtMoc Include="src\gui\aggregatoragri.h" />
+    <QtMoc Include="src\gui\mainwindowrenderer.h" />
+    <QtMoc Include="src\gui\aggregatorrenderer.h" />
+    <QtMoc Include="src\gui\aggregatorpopulation.h" />
+    <QtMoc Include="src\gui\aggregatorcreatureinfo.h" />
+    <QtMoc Include="src\gui\aggregatordebug.h" />
+    <QtMoc Include="src\gui\aggregatorneighbors.h" />
+    <QtMoc Include="src\gui\aggregatormilitary.h" />
+    <ClInclude Include="src\gui\xaml\agriculture.xaml.h" />
+    <ClInclude Include="src\gui\xaml\agriculturemodel.h" />
+    <QtMoc Include="src\gui\xaml\agricultureproxy.h" />
+    <ClInclude Include="src\gui\xaml\creatureinfo.xaml.h" />
+    <ClInclude Include="src\gui\xaml\creatureinfomodel.h" />
+    <QtMoc Include="src\gui\xaml\creatureinfoproxy.h" />
+    <ClInclude Include="src\gui\xaml\debug.xaml.h" />
+    <ClInclude Include="src\gui\xaml\debugmodel.h" />
+    <QtMoc Include="src\gui\xaml\debugproxy.h" />
+    <ClInclude Include="src\gui\xaml\military.xaml.h" />
+    <ClInclude Include="src\gui\xaml\militarymodel.h" />
+    <QtMoc Include="src\gui\xaml\militaryproxy.h" />
+    <ClInclude Include="src\gui\xaml\neighbors.xaml.h" />
+    <ClInclude Include="src\gui\xaml\neighborsmodel.h" />
+    <QtMoc Include="src\gui\xaml\neighborsproxy.h" />
+    <ClInclude Include="src\gui\xaml\Population.xaml.h" />
+    <ClInclude Include="src\gui\xaml\PopulationModel.h" />
+    <QtMoc Include="src\gui\xaml\ProxyTileInfo.h" />
+    <QtMoc Include="src\gui\xaml\populationproxy.h" />
+    <ClInclude Include="src\gui\xaml\stockpilegui.xaml.h" />
+    <ClInclude Include="src\gui\xaml\StockpileModel.h" />
+    <QtMoc Include="src\gui\xaml\StockpileProxy.h" />
+    <ClInclude Include="src\gui\xaml\TileInfo.xaml.h" />
+    <ClInclude Include="src\gui\xaml\TileInfoModel.h" />
+    <ClInclude Include="src\gui\xaml\workshopgui.xaml.h" />
+    <ClInclude Include="src\gui\xaml\workshopmodel.h" />
+    <QtMoc Include="src\gui\xaml\workshopproxy.h" />
+    <ClInclude Include="src\pch.h" />
+    <QtMoc Include="src\game\itemhistory.h" />
+    <QtMoc Include="src\gui\eventconnector.h" />
+    <ClInclude Include="src\gui\xaml\GameGui.xaml.h" />
+    <ClInclude Include="src\gui\xaml\GameModel.h" />
+    <ClInclude Include="src\gui\xaml\IngamePage.xaml.h" />
+    <QtMoc Include="src\gui\xaml\ProxyMainView.h" />
+    <ClInclude Include="src\gui\xaml\Main.xaml.h" />
+    <QtMoc Include="src\gui\xaml\ProxyGameView.h" />
+    <ClInclude Include="src\gui\xaml\SettingsModel.h" />
+    <ClInclude Include="src\gui\xaml\WaitPage.xaml.h" />
+    <QtMoc Include="src\game\newgamesettings.h" />
+    <QtMoc Include="src\game\gamemanager.h" />
+    <ClInclude Include="src\gui\xaml\LoadGameModel.h" />
+    <ClInclude Include="src\gui\xaml\LoadGamePage.xaml.h" />
+    <ClInclude Include="src\gui\xaml\NewGameModel.h" />
+    <ClInclude Include="src\gui\xaml\NewGamePage.xaml.h" />
+    <ClInclude Include="src\gui\xaml\ViewModel.h" />
+    <ClInclude Include="src\gui\xaml\SettingsPage.xaml.h" />
+    <ClInclude Include="src\gui\xaml\MainPage.xaml.h" />
+    <ClInclude Include="src\gui\xaml\MainMenu.xaml.h" />
+    <ClInclude Include="src\base\behaviortree\bt_node.h" />
+    <ClInclude Include="src\base\behaviortree\bt_factory.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodeaction.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodebbprecondition.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodeconditional.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodefallback.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodefallbackstar.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodeforcefailure.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodeforcesuccess.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodeinverter.h" />
+    <ClInclude Include="src\base\behaviortree\bt_noderepeat.h" />
+    <ClInclude Include="src\base\behaviortree\bt_noderepeatuntilsuccess.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodesequence.h" />
+    <ClInclude Include="src\base\behaviortree\bt_nodesequencestar.h" />
+    <ClInclude Include="src\base\behaviortree\bt_tree.h" />
+    <ClInclude Include="src\base\config.h" />
+    <ClInclude Include="src\base\counter.h" />
+    <ClInclude Include="src\base\db.h" />
+    <ClInclude Include="src\base\dbhelper.h" />
+    <ClInclude Include="src\base\enums.h" />
+    <ClInclude Include="src\base\fastnoise\FastNoise.h" />
+    <ClInclude Include="src\base\filter.h" />
+    <QtMoc Include="src\base\io.h" />
+    <ClInclude Include="src\base\gamestate.h" />
+    <ClInclude Include="src\base\global.h" />
+    <ClInclude Include="src\base\lightmap.h" />
+    <QtMoc Include="src\base\modmanager.h" />
+    <ClInclude Include="src\base\logger.h" />
+    <QtMoc Include="src\base\pathfinder.h" />
+    <ClInclude Include="src\base\PathFinderThread.h" />
+    <QtMoc Include="src\base\networkclient.h" />
+    <QtMoc Include="src\base\networkserver.h" />
+    <ClInclude Include="src\base\octree.h" />
+    <ClInclude Include="src\base\position.h" />
+    <ClInclude Include="src\base\priorityqueue.h" />
+    <ClInclude Include="src\base\region.h" />
+    <ClInclude Include="src\base\regionmap.h" />
+    <ClInclude Include="src\base\selection.h" />
+    <ClInclude Include="src\base\tile.h" />
+    <ClInclude Include="src\base\util.h" />
+    <ClInclude Include="src\base\vptr.h" />
+    <ClInclude Include="src\game\anatomy.h" />
+    <ClInclude Include="src\game\animal.h" />
+    <ClInclude Include="src\game\creaturefactory.h" />
+    <ClInclude Include="src\game\automaton.h" />
+    <ClInclude Include="src\game\canwork.h" />
+    <ClInclude Include="src\game\creature.h" />
+    <QtMoc Include="src\game\creaturemanager.h" />
+    <QtMoc Include="src\game\eventmanager.h" />
+    <ClInclude Include="src\game\mechanismmanager.h" />
+    <ClInclude Include="src\game\farm.h" />
+    <QtMoc Include="src\game\farmingmanager.h" />
+    <ClInclude Include="src\game\fluidmanager.h" />
+    <ClInclude Include="src\game\gnome.h" />
+    <ClInclude Include="src\game\gnomefactory.h" />
+    <QtMoc Include="src\game\gnomemanager.h" />
+    <ClInclude Include="src\game\gnometrader.h" />
+    <ClInclude Include="src\game\grove.h" />
+    <QtMoc Include="src\game\inventory.h" />
+    <ClInclude Include="src\game\item.h" />
+    <ClInclude Include="src\game\job.h" />
+    <ClInclude Include="src\game\jobmanager.h" />
+    <ClInclude Include="src\game\monster.h" />
+    <QtMoc Include="src\game\militarymanager.h" />
+    <QtMoc Include="src\game\neighbormanager.h" />
+    <ClInclude Include="src\game\object.h" />
+    <ClInclude Include="src\game\pasture.h" />
+    <ClInclude Include="src\game\plant.h" />
+    <ClInclude Include="src\game\stockpile.h" />
+    <ClInclude Include="src\game\room.h" />
+    <ClInclude Include="src\game\roommanager.h" />
+    <QtMoc Include="src\game\stockpilemanager.h" />
+    <QtMoc Include="src\game\techtree.h" />
+    <ClInclude Include="src\game\workshop.h" />
+    <ClInclude Include="src\game\world.h" />
+    <QtMoc Include="src\game\worldgenerator.h" />
+    <ClInclude Include="src\game\worldobject.h" />
+    <ClInclude Include="src\gfx\sprite.h" />
+    <ClInclude Include="src\gfx\spritefactory.h" />
+    <QtMoc Include="src\gui\mainwindow.h" />
+    <ClInclude Include="src\gui\strings.h" />
+    <QtMoc Include="src\game\workshopmanager.h" />
+    <QtMoc Include="src\game\game.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.cfg" />
+    <QtRcc Include="gnomes.qrc" />
+    <None Include="content\shaders\axle_f.glsl" />
+    <None Include="content\shaders\axle_v.glsl" />
+    <None Include="content\shaders\selection_f.glsl" />
+    <None Include="content\shaders\selection_v.glsl" />
+    <None Include="content\shaders\thoughtbubble_f.glsl" />
+    <None Include="content\shaders\thoughtbubble_v.glsl" />
+    <None Include="content\shaders\world_f.glsl" />
+    <None Include="content\shaders\world_v.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="changelog.txt" />
+    <Text Include="content\tilesheet\default.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ingnomia.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,37 @@
+﻿---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveMacros: 'true'
+BinPackArguments: 'true'
+BinPackParameters: 'true'
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+ColumnLimit: '0'
+Cpp11BracedListStyle: 'false'
+IncludeBlocks: 'Regroup'
+IncludeCategories:
+- Regex: '".*"'
+  Priority: 1
+- Regex: '<N(oesi)?s[[:alnum:]._/]+>'
+  Priority: 2
+- Regex: '<Q[[:alnum:]/]+>'
+  Priority: 3
+- Regex: '<[[:alnum:_]]+>'
+  Priority: 4
+- Regex: '<[[:alnum:]._]+\>'
+  Priority: 5
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+SortIncludes: 'true'
+SpaceBeforeCpp11BracedList: 'true'
+SpaceBeforeRangeBasedForLoopColon: 'true'
+SpaceInEmptyParentheses: 'false'
+SpacesInParentheses: 'true'
+TabWidth: '4'
+UseTab: ForContinuationAndIndentation
+PointerAlignment: Left
+
+...

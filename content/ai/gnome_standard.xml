@@ -1,0 +1,465 @@
+<root main_tree_to_execute="MainTree">
+    <!--  ===================================  -->
+    <BehaviorTree ID="AlarmTree">
+        <SequenceStar>
+            <Condition ID="Alarm"/>
+            <Condition ID="IsCivilian"/>
+            <Action ID="AbortJob"/>
+            <Fallback>
+                <SequenceStar>
+                    <Condition ID="IsInSafeRoom"/>
+                    <Action ID="RandomMove"/>
+                </SequenceStar>
+                <SequenceStar>
+                    <Action ID="GetSafeRoomPosition"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </Fallback>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Combat">
+        <SequenceStar>
+            <Fallback>
+                <Condition ID="IsInCombat"/>
+                <Condition ID="HasHuntTarget"/>
+            </Fallback>
+            <Action ID="AbortJob"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="GetTarget"/>
+                    <Action ID="Move"/>
+                    <Sequence>
+                        <Condition ID="TargetAdjacent"/>
+                        <Action ID="AttackTarget"/>
+                    </Sequence>
+                </SequenceStar>
+            </ForceSuccess>
+            <Condition ID="IsInCombat"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="GetUniform">
+        <SequenceStar name="GetUniform">
+            <Action ID="CheckUniform"/>
+            <Fallback>
+                <Action ID="Move"/>
+                <Action ID="UniformCleanUp"/>
+            </Fallback>
+            <Action ID="EquipUniform"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Hunger">
+        <SequenceStar>
+            <Condition ID="IsHungry"/>
+            <Sequence>
+                <SequenceStar name="Hunger">
+                    <Action ID="FindFood"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <ForceSuccess>
+                        <SequenceStar>
+                            <Action ID="FindDining"/>
+                            <Action ID="Move"/>
+                        </SequenceStar>
+                    </ForceSuccess>
+                    <Action ID="Eat"/>
+                </SequenceStar>
+                <Condition ID="IsFull"/>
+            </Sequence>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobButcherAnimal">
+        <BB_Precondition expected="ButcherAnimal" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitAnimalJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="GrabAnimal"/>
+                    <Action ID="GetItemDropPosition"/>
+                    <Action ID="Move"/>
+                    <Action ID="FinalMoveAnimal"/>
+                    <Action ID="ButcherAnimal"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobDyeAnimal">
+        <BB_Precondition expected="DyeAnimal" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitJob"/>
+                    <Action ID="ClaimItems"/>
+                    <SubTree ID="MoveAllItemsToJob"/>
+                    <Action ID="InitAnimalJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="GrabAnimal"/>
+                    <Action ID="GetItemDropPosition"/>
+                    <Action ID="Move"/>
+                    <Action ID="FinalMoveAnimal"/>
+                    <Action ID="DyeAnimal"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobHarvestAnimal">
+        <BB_Precondition expected="HarvestAnimal" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitAnimalJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="GrabAnimal"/>
+                    <Action ID="HarvestAnimal"/>
+                    <Action ID="ReleaseAnimal"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobHaulMultiple">
+        <BB_Precondition expected="HauleMultipleItems" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitJob"/>
+                    <Action ID="FindTool"/>
+                    <Action ID="Move"/>
+                    <Action ID="EquipTool"/>
+                    <Inverter>
+                        <Sequence>
+                            <Inverter>
+                                <Condition ID="AllPickedUp"/>
+                            </Inverter>
+                            <Sequence>
+                                <Action ID="Move"/>
+                                <Action ID="PickUpItem"/>
+                            </Sequence>
+                            <Action ID="ReturnAlwaysRunning"/>
+                        </Sequence>
+                    </Inverter>
+                    <Condition ID="AllPickedUp"/>
+                    <Action ID="GetItemDropPosition"/>
+                    <Action ID="Move"/>
+                    <Action ID="DropAllItems"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobLeadAnimalToPasture">
+        <BB_Precondition expected="LeadAnimalToPasture" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitAnimalJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="GrabAnimal"/>
+                    <Action ID="GetItemDropPosition"/>
+                    <Action ID="Move"/>
+                    <Action ID="FinalMoveAnimal"/>
+                    <Action ID="ReleaseAnimal"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobStandard">
+        <Fallback>
+            <SequenceStar name="StandardJobs">
+                <Action ID="InitJob"/>
+                <Action ID="ClaimItems"/>
+                <Action ID="FindTool"/>
+                <Action ID="Move"/>
+                <Action ID="EquipTool"/>
+                <SubTree ID="MoveAllItemsToJob"/>
+                <Action ID="GetWorkPosition"/>
+                <Action ID="Move"/>
+                <Action ID="Work"/>
+                <Action ID="FinishJob"/>
+            </SequenceStar>
+            <Action ID="AbortJob"/>
+        </Fallback>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="JobTameAnimal">
+        <BB_Precondition expected="TameAnimal" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitAnimalJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="TameAnimal"/>
+                    <Action ID="GrabAnimal"/>
+                    <Action ID="GetItemDropPosition"/>
+                    <Action ID="Move"/>
+                    <Action ID="FinalMoveAnimal"/>
+                    <Action ID="ReleaseAnimal"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Jobs">
+        <SequenceStar>
+            <Action ID="GetJob"/>
+            <FallbackStar>
+                <SubTree ID="JobButcherAnimal"/>
+                <SubTree ID="JobDyeAnimal"/>
+                <SubTree ID="JobLeadAnimalToPasture"/>
+                <SubTree ID="JobHarvestAnimal"/>
+                <SubTree ID="JobTameAnimal"/>
+                <SubTree ID="JobHaulMultiple"/>
+                <SubTree ID="JobStandard"/>
+            </FallbackStar>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="MainTree">
+        <Fallback>
+            <SubTree ID="AlarmTree"/>
+            <SubTree ID="Combat"/>
+            <SubTree ID="Mission"/>
+            <FallbackStar name="Needs">
+                <SubTree ID="Hunger"/>
+                <SubTree ID="Thirst"/>
+                <SubTree ID="Sleepy"/>
+            </FallbackStar>
+            <FallbackStar name="GnomeStandard">
+                <FallbackStar>
+                    <SubTree ID="GetUniform"/>
+                    <SubTree ID="PickUpBandages"/>
+                    <SubTree ID="Training"/>
+                    <SubTree ID="Trainer"/>
+                </FallbackStar>
+                <SubTree ID="Jobs"/>
+                <Action ID="RandomMove"/>
+            </FallbackStar>
+        </Fallback>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Mission">
+        <SequenceStar>
+            <Condition ID="IsOnMission"/>
+            <Action ID="AbortJob"/>
+            <Action ID="GetExitPosition"/>
+            <Action ID="Move"/>
+            <Action ID="LeaveForMission"/>
+            <Action ID="DoMission"/>
+            <Action ID="ReturnFromMission"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="MoveAllItemsToJob">
+        <Sequence>
+            <Inverter>
+                <Sequence>
+                    <Inverter>
+                        <Condition ID="AllItemsInPlaceForJob"/>
+                    </Inverter>
+                    <SequenceStar>
+                        <Action ID="Move"/>
+                        <Action ID="PickUpItem"/>
+                        <Action ID="GetItemDropPosition"/>
+                        <Action ID="Move"/>
+                        <Action ID="DropItem"/>
+                    </SequenceStar>
+                    <Action ID="ReturnAlwaysRunning"/>
+                </Sequence>
+            </Inverter>
+            <Condition ID="AllItemsInPlaceForJob"/>
+        </Sequence>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="OldMoveAllItemsToJob">
+        <FallbackStar>
+            <Condition ID="AllItemsInPlaceForJob"/>
+            <RetryUntilSuccesful num_attempts="20">
+                <Sequence>
+                    <SequenceStar>
+                        <Action ID="Move"/>
+                        <Action ID="PickUpItem"/>
+                        <Fallback>
+                            <Action ID="GetItemDropPosition"/>
+                            <Action ID="DropItem"/>
+                        </Fallback>
+                        <Fallback>
+                            <Action ID="Move"/>
+                            <Action ID="DropItem"/>
+                        </Fallback>
+                        <Action ID="DropItem"/>
+                    </SequenceStar>
+                    <Condition ID="AllItemsInPlaceForJob"/>
+                </Sequence>
+            </RetryUntilSuccesful>
+            <ForceFailure>
+                <Action ID="AbortJob"/>
+            </ForceFailure>
+        </FallbackStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="PickUpBandages">
+        <SequenceStar>
+            <Action ID="CheckBandages"/>
+            <Action ID="Move"/>
+            <Action ID="PickUpItem"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Sleepy">
+        <SequenceStar name="Sleep">
+            <Condition ID="IsSleepy"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="FindBed"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </ForceSuccess>
+            <Action ID="Sleep"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Thirst">
+        <SequenceStar>
+            <Condition ID="IsThirsty"/>
+            <Sequence>
+                <SequenceStar name="Thirst">
+                    <Action ID="FindDrink"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <ForceSuccess>
+                        <SequenceStar>
+                            <Action ID="FindDining"/>
+                            <Action ID="Move"/>
+                        </SequenceStar>
+                    </ForceSuccess>
+                    <Action ID="Drink"/>
+                </SequenceStar>
+                <Condition ID="IsDrinkFull"/>
+            </Sequence>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Trainer">
+        <SequenceStar name="Trainer">
+            <Condition ID="IsTrainer"/>
+            <Action ID="FindTrainerPosition"/>
+            <Action ID="Move"/>
+            <Action ID="SuperviseTraining"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="Training">
+        <SequenceStar name="Training">
+            <Condition ID="IsTrainingTime"/>
+            <Action ID="FindTrainingGround"/>
+            <Action ID="Move"/>
+            <Action ID="Train"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <TreeNodesModel>
+        <Action ID="AbortJob"/>
+        <Condition ID="Alarm"/>
+        <SubTree ID="AlarmTree"/>
+        <Condition ID="AllItemsInPlaceForJob"/>
+        <Condition ID="AllPickedUp"/>
+        <Action ID="AttackTarget"/>
+        <Action ID="ButcherAnimal"/>
+        <Action ID="CheckBandages"/>
+        <Action ID="CheckUniform"/>
+        <Action ID="ClaimItems"/>
+        <SubTree ID="Combat"/>
+        <Action ID="DoMission"/>
+        <Action ID="Drink"/>
+        <Action ID="DropAllItems"/>
+        <Action ID="DropItem"/>
+        <Action ID="DyeAnimal"/>
+        <Action ID="Eat"/>
+        <Action ID="EnterMap"/>
+        <Action ID="EquipTool"/>
+        <Action ID="EquipUniform"/>
+        <Action ID="FinalMoveAnimal"/>
+        <Action ID="FindBed"/>
+        <Action ID="FindDining"/>
+        <Action ID="FindDrink"/>
+        <Action ID="FindFood"/>
+        <Action ID="FindTool"/>
+        <Action ID="FindTrainerPosition"/>
+        <Action ID="FindTrainingGround"/>
+        <Action ID="FinishJob"/>
+        <Action ID="GetExitPosition"/>
+        <Action ID="GetItemDropPosition"/>
+        <Action ID="GetJob"/>
+        <Action ID="GetSafeRoomPosition"/>
+        <Action ID="GetTarget"/>
+        <SubTree ID="GetUniform"/>
+        <Action ID="GetWorkPosition"/>
+        <Action ID="GrabAnimal"/>
+        <Action ID="HarvestAnimal"/>
+        <Condition ID="HasHuntTarget"/>
+        <SubTree ID="Hunger"/>
+        <Action ID="InitAnimalJob"/>
+        <Action ID="InitButcherJob"/>
+        <Action ID="InitJob"/>
+        <Condition ID="IsButcherJob"/>
+        <Condition ID="IsCivilian"/>
+        <Condition ID="IsDrinkFull"/>
+        <Condition ID="IsFull"/>
+        <Condition ID="IsHungry"/>
+        <Condition ID="IsInCombat"/>
+        <Condition ID="IsInSafeRoom"/>
+        <Condition ID="IsOnMission"/>
+        <Condition ID="IsSleepy"/>
+        <Condition ID="IsThirsty"/>
+        <Condition ID="IsTrainer"/>
+        <Condition ID="IsTrainingTime"/>
+        <Condition ID="IsVeryHungry"/>
+        <Condition ID="IsVeryThirsty"/>
+        <SubTree ID="JobButcherAnimal"/>
+        <SubTree ID="JobDyeAnimal"/>
+        <SubTree ID="JobHarvestAnimal"/>
+        <SubTree ID="JobHaulMultiple"/>
+        <SubTree ID="JobLeadAnimalToPasture"/>
+        <SubTree ID="JobStandard"/>
+        <SubTree ID="JobTameAnimal"/>
+        <SubTree ID="Jobs"/>
+        <Action ID="LeaveForMission"/>
+        <Action ID="LeaveMap"/>
+        <SubTree ID="Mission"/>
+        <Action ID="Move"/>
+        <SubTree ID="MoveAllItemsToJob"/>
+        <SubTree ID="OldMoveAllItemsToJob"/>
+        <SubTree ID="PickUpBandages"/>
+        <Action ID="PickUpItem"/>
+        <Action ID="RandomMove"/>
+        <Action ID="ReleaseAnimal"/>
+        <Action ID="ReturnAlwaysRunning"/>
+        <Action ID="ReturnFromMission"/>
+        <Action ID="Sleep"/>
+        <SubTree ID="Sleepy"/>
+        <Action ID="SuperviseTraining"/>
+        <Action ID="TameAnimal"/>
+        <Condition ID="TargetAdjacent"/>
+        <SubTree ID="Thirst"/>
+        <Action ID="Train"/>
+        <SubTree ID="Trainer"/>
+        <SubTree ID="Training"/>
+        <Action ID="UniformCleanUp"/>
+        <Action ID="Work"/>
+    </TreeNodesModel>
+    <!--  ===================================  -->
+</root>
+

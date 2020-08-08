@@ -1,0 +1,134 @@
+<UserControl
+    x:Class="IngnomiaGUI.MilitaryGui"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    x:Name="MilitaryControl">
+    <UserControl.DataContext>
+        <local:MilitaryModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>					
+    </UserControl.Resources>
+	
+	<Grid x:Name="LayoutRoot" MinHeight="700" MaxHeight="700">
+		<StackPanel Orientation="Horizontal">
+			<Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" Margin="2">
+				<StackPanel>
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="First">
+						<StackPanel>
+							<Image Source="buttons/squads.png" Stretch="None" />
+							<TextBlock>Squads</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Second">
+						<StackPanel>
+							<Image Source="buttons/roles.png" Stretch="None" />
+							<TextBlock>Roles</TextBlock>
+						</StackPanel>
+					</Button>
+					<!--
+					<Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Third">
+						<StackPanel>
+							<Image Source="buttons/professions.png" Stretch="None" />
+							<TextBlock>More</TextBlock>
+						</StackPanel>
+					</Button>
+					-->
+				</StackPanel>
+			</Border>
+			
+			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2" >
+				<Grid>
+					<Grid x:Name="LayoutSquads" Visibility="{Binding ShowFirst}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<TextBlock Text="Military - Squads" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+						
+						<StackPanel Orientation="Horizontal" Grid.Row="1">
+							<ScrollViewer x:Name="SVSquads" CanContentScroll="True" MinWidth="1290" MaxWidth="1290"
+								HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+								<ItemsControl ItemsSource="{Binding SquadList}" ItemTemplate="{StaticResource SquadTemplate}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+								</ItemsControl>
+							</ScrollViewer>
+
+							<Button Content="+" Margin="2" FontSize="40" FontWeight="Bold" MinWidth="100" Command="{Binding AddSquadCmd }" />
+						</StackPanel>
+					</Grid>
+					
+					<Grid x:Name="LayoutRoles" Visibility="{Binding ShowSecond}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="Military - Roles" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+						
+						<StackPanel Orientation="Horizontal" Grid.Row="1">
+							<ScrollViewer x:Name="SVRoles" CanContentScroll="True" MinWidth="1290" MaxWidth="1290"
+								HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+								<ItemsControl ItemsSource="{Binding RoleList}" ItemTemplate="{StaticResource MilRoleTemplate}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+								</ItemsControl>
+							</ScrollViewer>
+
+							<Button Content="+" Margin="2" FontSize="40" FontWeight="Bold" MinWidth="100" Command="{Binding AddRoleCmd }" />
+						</StackPanel>
+					</Grid>
+					
+					
+					<Grid x:Name="LayoutWhatever" Visibility="{Binding ShowThird}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+					
+						<TextBlock Text="Military - Priorities" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+						
+					</Grid>
+					
+				</Grid>
+			</Border>
+			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }" 
+				CommandParameter="MilitaryWindow">
+				<Image Source="buttons/cross.png" />
+			</Button>
+		</StackPanel>
+	</Grid>
+
+</UserControl>
