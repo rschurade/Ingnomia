@@ -11,11 +11,16 @@ This README would normally document whatever steps are necessary to get your app
 ### How do I get set up? ###
 
 * Summary of set up
+
 The following steps describe how to compile the code and get the game running on Windows.
 
 * Dependencies
 
+Microsoft Visual Studio 2019, the community edition is free
+
 Qt currently 5.14.1
+
+I suggest using the [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) to manage your installed Qt versions
 
 [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) Download the native SDK, open the 
 Visual Studio solution and build the NoesisApp.
@@ -48,8 +53,6 @@ one. Never commit this file to the repository.
 
 The game uses a squlite database. It can be created from the .sql file in the /content/db folder or copied
 over from the installed game from Steam.
-
-* How to run tests
 
 * Deployment instructions
 
