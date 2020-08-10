@@ -144,6 +144,23 @@ bool IO::createFolders()
 		QDir().mkdir( tmpFolder );
 	}
 
+	if ( !QFile::exists( folder + "settings/keybindings.json" ) && QFile::exists( "content/JSON/keybindings.json" ) )
+	{
+		QFile::copy( "content/JSON/keybindings.json", folder + "settings/keybindings.json" );
+	}
+	if ( !QFile::exists( folder + "settings/profs.json" ) && QFile::exists( "content/JSON/profs.json" ) )
+	{
+		QFile::copy( "content/JSON/profs.json", folder + "settings/profs.json" );
+	}
+	if ( !QFile::exists( folder + "settings/config.json" ) && QFile::exists( "content/JSON/config.json" ) )
+	{
+		QFile::copy( "content/JSON/config.json", folder + "settings/config.json" );
+	}
+	if ( !QFile::exists( folder + "settings/newgame.json" ) && QFile::exists( "content/JSON/newgame.json" ) )
+	{
+		QFile::copy( "content/JSON/newgame.json", folder + "settings/newgame.json" );
+	}
+
 	folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
 
 	return QDir( folder ).exists();
