@@ -7,8 +7,9 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
-# Noesis root
+# Roots of libraries that don't use the standard directories
 set(NOESIS_ROOT "" CACHE PATH "Root to the NoesisGui sdk")
+set(STEAM_SDK_ROOT "" CACHE PATH "Root to the steam sdk")
 
 # Without this, paths are not relative in the sources list
 cmake_policy(SET CMP0076 NEW)
@@ -29,6 +30,7 @@ set_target_properties(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
 	PRIVATE
 		${NOESIS_ROOT}/Include
+		${STEAM_SDK_ROOT}/public/steam
 )
 
 add_subdirectory(src) # Sources list
