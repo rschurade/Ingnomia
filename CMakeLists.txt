@@ -28,7 +28,7 @@ set_target_properties(${PROJECT_NAME}
 # Headers
 target_include_directories(${PROJECT_NAME}
 	PRIVATE
-	${NOESIS_ROOT}/Include
+		${NOESIS_ROOT}/Include
 )
 
 add_subdirectory(src) # Sources list
@@ -37,22 +37,15 @@ add_subdirectory(src) # Sources list
 pkg_check_modules(shared
 	REQUIRED IMPORTED_TARGET
 		Qt5Core
+		Qt5Xml
+		Qt5Sql
+		Qt5OpenGL
 )
-
-## Header only libraries
-#pkg_check_modules(header_only
-#	REQUIRED IMPORTED_TARGET
-#		libfoo3
-#		libfoo4
-#)
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::shared
-
-#	INTERFACE
-#		PkgConfig::header_only
 )
 
 # Qt requieres position independent code
