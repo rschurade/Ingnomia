@@ -30,6 +30,8 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
+#include <QDebug>
+
 void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
 	materials.clear();
