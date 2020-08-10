@@ -18,7 +18,11 @@
 
 #include "mainwindow.h"
 
+#ifdef _WIN32
 #include "license.h"
+#else
+#include "_license.h"
+#endif
 
 #include "../base/config.h"
 #include "../base/global.h"

@@ -11,6 +11,10 @@ project(Ingnomia
 set(NOESIS_ROOT "" CACHE PATH "Root to the NoesisGui sdk")
 set(STEAM_SDK_ROOT "" CACHE PATH "Root to the steam sdk")
 
+# Noesis license
+set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
+set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
+
 # Without this, paths are not relative in the sources list
 cmake_policy(SET CMP0076 NEW)
 
@@ -53,6 +57,13 @@ pkg_check_modules(shared
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::shared
+)
+
+# Noesis license
+configure_file(
+	${CMAKE_SOURCE_DIR}/src/gui/_license.h.in
+	${CMAKE_SOURCE_DIR}/src/gui/_license.h
+	@ONLY
 )
 
 # Qt requieres position independent code
