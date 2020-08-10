@@ -73,7 +73,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;NS_DEBUG;NS_PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)include;$(QUAZIPDIR)include;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)\public\steam;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
