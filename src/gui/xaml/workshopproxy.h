@@ -18,7 +18,7 @@
 #pragma once
 
 #include "../aggregatorworkshop.h"
-#include "WorkshopModel.h"
+#include "workshopmodel.h"
 
 #include <QObject>
 
