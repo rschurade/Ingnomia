@@ -92,9 +92,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(STEAMDIR)lib;$(QUAZIPDIR)lib;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(STEAMDIR)\redistributable_bin\win64;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;quazip5.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
