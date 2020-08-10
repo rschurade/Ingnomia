@@ -29,6 +29,7 @@
 #include <NsCore/ReflectionDeclareEnum.h>
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
+#include <NsGui/UIElement.h>
 
 #include <QString>
 
