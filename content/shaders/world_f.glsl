@@ -65,6 +65,8 @@ const float flSize =  ( 1.0 / 32. );
 const int rightWallOffset = 4;
 const int leftWallOffset = 8;
 
+const vec3 perceivedBrightness = vec3(0.299, 0.587, 0.114);
+
 vec4 getTexel( uint spriteID, uint rot, uint animFrame )
 {
 	uint tex = ( spriteID + animFrame ) / 512;
@@ -159,57 +161,50 @@ void main()
 				texel += tmpTexel;
 			}
 
-			if( uOverlay )
+			if( uOverlay && 0 != ( vFlags & ( TF_STOCKPILE | TF_FARM | TF_GROVE | TF_PASTURE | TF_WORKSHOP | TF_ROOM | TF_NOPASS ) ) )
 			{
-				vec3 addCol = vec3( 0.0 );
+				vec3 roomColor = vec3( 0.0 );
 			
 				if( ( vFlags & TF_STOCKPILE ) > 0 ) //stockpile
 				{
-					addCol.r += 0.3;
-					addCol.g += 0.3;
+					roomColor = vec3(1, 1, 0);
 				}
 				
 				else if( ( vFlags & TF_FARM ) > 0 ) //farm
 				{
-					addCol.r += 0.1;
-					addCol.b += 0.3;
+					roomColor = vec3(0.5, 0, 1);
 				}
 				else if( ( vFlags & TF_GROVE ) > 0 ) //grove
 				{
-					addCol.b += 0.1;
-					addCol.g += 0.3;
+					roomColor = vec3(0, 1, 0.5);
 				}
 				else if( ( vFlags & TF_PASTURE ) > 0 ) 
 				{
-					addCol.g += 0.2;
-					addCol.b += 0.2;
+					roomColor = vec3(0, 0.9, 0.9);
 				}
-				
 				else if( ( vFlags & TF_WORKSHOP ) > 0 ) //workshop
 				{
 					if( ( vFlags & TF_BLOCKED ) > 0 )
 					{
-						addCol.r += 0.3;
+						roomColor = vec3(1, 0, 0);
 					}
 					else
 					{
-						addCol.r += 0.3;
-						addCol.g += 0.3;
+						roomColor = vec3(1, 1, 0);
 					}
 				}
 				else if( ( vFlags & TF_ROOM ) > 0 ) //room
 				{
-					addCol.b += 0.3;
+					roomColor = vec3(0, 0, 1);
 				}
 				else if( ( vFlags & TF_NOPASS ) > 0 ) //room
 				{
-					addCol.r += 0.3;
-					addCol.g -= 0.3;
-					addCol.b -= 0.3;
+					roomColor = vec3(1, 0, 0);
 				}
 				if( texel.a != 0 )
 				{
-					texel.rgb += addCol;
+					float brightness = dot(texel.rgb, perceivedBrightness.xyz);
+					texel.rgb = mix( roomColor, mix( texel.rgb, vec3(1,1,1) * brightness, 0.7), 0.7);
 				}
 				
 			}
@@ -440,7 +435,6 @@ void main()
 		{
 			light = max( light , uDaylight );
 		}
-		const vec3 perceivedBrightness = vec3(0.299, 0.587, 0.114);
 		float brightness = dot(texel.rgb, perceivedBrightness.xyz);
 		float lightMult = ( 1 - uLightMin ) * light + uLightMin;
 		const float minSaturation = 0.1;

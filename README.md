@@ -1,70 +1,69 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
+## How do I get set up? ##
 
 The following steps describe how to compile the code and get the game running on Windows.
 
-* Dependencies
+### Dependencies ###
 
-Microsoft Visual Studio 2019, the community edition is free
+* Microsoft Visual Studio 2019, the community edition is free
+* Qt 5.14.1
+* Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
+* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
+  Download the native SDK, open the Visual Studio solution and build the NoesisApp.
+* [Steam SDK](https://partner.steamgames.com/doc/sdk)
 
-Qt currently 5.14.1
+### Configuration ###
+You will need to provide the paths to the following dependencies in environment variables:
 
-I suggest using the [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) to manage your installed Qt versions
-
-[Noesis Gui](https://www.noesisengine.com/developers/downloads.php) Download the native SDK, open the 
-Visual Studio solution and build the NoesisApp.
-
-[Steam SDK](https://partner.steamgames.com/doc/sdk)
-
-* Configuration	
-Variables to set:
-
-	STEAMDIR
-
-	QTDIR
-
-	QUAZIPDIR
-
-	NoesisRoot
+	STEAMDIR = steamworks_sdk_xxx\sdk
+	QTDIR = 5.14.1\msvc2017_64\
+	QUAZIPDIR = quazip\build
+	NoesisRoot = noesis-3.0.4
 	
-Compilation will fail in mainwindow.cpp because of the missing file license.h Create this file in the same folder
-with the following content
-
-    #pragma once
-	const char* licenseName = "";
-	const char* licenseKey = "";
-
-The content will be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
-one. Never commit this file to the repository.
+Compilation will initially fail in `license.h` due to a missing Noesis license. \
+The content can be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
+one. \
+*Never commit this file to the repository.*
 
 	
-* Database configuration
+### Database configuration ###
 
-The game uses a squlite database. It can be created from the .sql file in the /content/db folder or copied
+The game uses a squlite database. It can be created from the .sql file in the `/content/db` folder or copied
 over from the installed game from Steam.
 
-* Deployment instructions
+### Deployment ###
 
-To run the game copy over the contents of /content/tilesheet from your Steam installation.
+To run the game copy over the contents of `/content/tilesheet` from your Steam installation.
 
-### Contribution guidelines ###
+## Contribution guidelines ##
 
-* Writing tests
-* Code review
-* Other guidelines
+Help with Ignomia is always welcome.
+
+### Making suggestions ###
+
+We love to hear about your ideas on this game! Please head straight to our [Discord](https://discord.gg/DCSmxVD) server and discuss them in the #suggestions channel. You might see them realized at some point.
+
+Please don't open tickets for suggestions on your own. That is reserved for already planed features.
+
+### Reporting bugs ###
+
+Even if you can't contribute in code, testing and reporting bugs is just as important to us. If you find something which doesn't behave right, or even crashes, feel free to open a ticket in the bugtracker.
+
+Please include only one bug per ticket, with a precise step-by-step instruction how to trigger, and search for open tickets on the same subject first.
+
+If you prefer, you may also try to reproduce bugs reported by other users. The more precise informations on a bug are, the higher the chance it can be fixed.
+
+### Code contributions ###
+
+If you know any of C++ or WPF, you can help right away! Feel free to check for open bugs, and hop over to our [Discord](https://discord.gg/DCSmxVD) channel to get you sorted in.
+
+Please provide your contributions in the form of a pull request, rebased onto the current head of development.
+
+#### License ####
+
+The contents of this repository are licensed under [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE). All contributions must adhere to the terms and conditions of this license. By submitting a pull request, you attest that you own the necessary rights on the code and you will abide to the AGPL3 license.
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+Hop over to our [Discord](https://discord.gg/DCSmxVD) server or open a ticket please.
