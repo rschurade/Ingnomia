@@ -55,7 +55,7 @@
 			<Button x:Name="IMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="Load Game" Command="{Binding LoadGame}"/>
 			<Button x:Name="IMSaveGame"  Style="{StaticResource MenuButtonStyle}" Content="Save Game" Command="{Binding SaveGame}"/>
 			<Button x:Name="IMSettings"    Style="{StaticResource MenuButtonStyle}" Content="Settings" Command="{Binding Settings}" />
-			<Button x:Name="IMQuit"      Style="{StaticResource MenuButtonStyle}" Content="Quit game" Command="{Binding Back}" />
+			<Button x:Name="IMQuit"      Style="{StaticResource MenuButtonStyle}" Content="Quit game" Command="{Binding BackToMain}" />
 		</StackPanel>
 		</Viewbox>
 	</Grid>

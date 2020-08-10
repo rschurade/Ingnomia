@@ -74,6 +74,7 @@ private:
 	const NoesisApp::DelegateCommand* GetSaveGame() const;
 	const NoesisApp::DelegateCommand* GetExit() const;
 	const NoesisApp::DelegateCommand* GetBack() const;
+	const NoesisApp::DelegateCommand* GetBackToMain() const;
 	const NoesisApp::DelegateCommand* GetResume() const;
 	const NoesisApp::DelegateCommand* GetFadeInCompleted() const;
 	const NoesisApp::DelegateCommand* GetPause() const;
@@ -95,6 +96,7 @@ private:
 	void OnLoadGame( BaseComponent* param );
 	void OnSaveGame( BaseComponent* param );
 	void OnExit( BaseComponent* param );
+	void OnBackToMain( BaseComponent* param );
 	void OnResume( BaseComponent* param );
 	void OnFadeInCompleted( BaseComponent* params );
 	void OnPause( BaseComponent* params );
@@ -115,6 +117,7 @@ private:
 	NoesisApp::DelegateCommand _continueGame;
 	NoesisApp::DelegateCommand _exit;
 	NoesisApp::DelegateCommand _back;
+	NoesisApp::DelegateCommand _backToMain;
 	NoesisApp::DelegateCommand _resume;
 	NoesisApp::DelegateCommand _fadeInCompleted;
 	NoesisApp::DelegateCommand _pause;

@@ -55,6 +55,7 @@ ViewModel::ViewModel()
 	_continueGame.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnContinueGame ) );
 	_exit.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnExit ) );
 	_back.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnBack ) );
+	_backToMain.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnBackToMain ) );
 	_resume.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnResume ) );
 	_fadeInCompleted.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnFadeInCompleted ) );
 	_pause.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnPause ) );
@@ -131,6 +132,12 @@ const DelegateCommand* ViewModel::GetExit() const
 const DelegateCommand* ViewModel::GetBack() const
 {
 	return &_back;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+const DelegateCommand* ViewModel::GetBackToMain() const
+{
+	return &_backToMain;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,6 +314,18 @@ void ViewModel::OnExit( BaseComponent* )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+void ViewModel::OnBackToMain( BaseComponent* )
+{
+	_showMainMenu = true;
+	_ingame       = false;
+	OnPropertyChanged( "ShowMainMenu" );
+	_showGameGUI = false;
+	OnPropertyChanged( "ShowGameGui" );
+	GameManager::getInstance().setShowMainMenu( true );
+	SetState( State::Main );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnBack( BaseComponent* )
 {
 	qDebug() << "ViewModel OnBack";
@@ -314,7 +333,7 @@ void ViewModel::OnBack( BaseComponent* )
 	{
 		case State::Main:
 		{
-			OnExit( nullptr );
+			//OnExit( nullptr );
 			/*
 			SetState( State::GameRunning );
 			_showMainMenu = false;
@@ -345,13 +364,13 @@ void ViewModel::OnBack( BaseComponent* )
 		case State::NewGame:
 		case State::Ingame:
 		{
-			_showMainMenu = true;
+			_showMainMenu = false;
 			_ingame       = false;
 			OnPropertyChanged( "ShowMainMenu" );
-			_showGameGUI = false;
+			_showGameGUI = true;
 			OnPropertyChanged( "ShowGameGui" );
-			GameManager::getInstance().setShowMainMenu( true );
-			SetState( State::Main );
+			GameManager::getInstance().setShowMainMenu( false );
+			SetState( State::GameRunning );
 			break;
 		}
 
@@ -447,6 +466,7 @@ NS_IMPLEMENT_REFLECTION( IngnomiaGUI::ViewModel, "IngnomiaGUI.ViewModel" )
 	NsProp( "SaveGame", &ViewModel::GetSaveGame );
 	NsProp( "Exit", &ViewModel::GetExit );
 	NsProp( "Back", &ViewModel::GetBack );
+	NsProp( "BackToMain", &ViewModel::GetBackToMain );
 	NsProp( "CmdPause", &ViewModel::GetPause );
 	NsProp( "Resume", &ViewModel::GetResume );
 	NsProp( "FadeInCompleted", &ViewModel::GetFadeInCompleted );

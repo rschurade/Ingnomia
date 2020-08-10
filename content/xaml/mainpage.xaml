@@ -56,7 +56,7 @@
 			<Button x:Name="MMSetupGame" Style="{StaticResource MenuButtonStyle}" Content="Set up Game" Command="{Binding SetupGame}"/>
 			<Button x:Name="MMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="Load Game" Command="{Binding LoadGame}"/>
 			<Button x:Name="MMSettings"    Style="{StaticResource MenuButtonStyle}" Content="Settings" Command="{Binding Settings}" />
-			<Button x:Name="MMExit"      Style="{StaticResource MenuButtonStyle}" Content="Exit" Command="{Binding Back}" />
+			<Button x:Name="MMExit"      Style="{StaticResource MenuButtonStyle}" Content="Exit" Command="{Binding Exit}" />
 			<Grid>
 				<ContentControl Style="{StaticResource HintStyle}" Content="Continue the last saved game." IsEnabled="{Binding IsMouseOver, ElementName=MMContinue}"/>
 				<ContentControl Style="{StaticResource HintStyle}" Content="Start a new game with previous settings." IsEnabled="{Binding IsMouseOver, ElementName=MMNewGame}"/>
