@@ -19,7 +19,10 @@
 #include "base/db.h"
 #include "gui/mainwindow.h"
 #include "gui/strings.h"
+
+#ifdef _WIN32
 #include "winver.h"
+#endif
 
 #include <QApplication>
 #include <QDateTime>
@@ -32,7 +35,9 @@
 #include <QtWidgets/QApplication>
 
 #include <iostream>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 QTextStream* out = 0;
 bool logToFile   = true;
@@ -66,7 +71,12 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 		//std::cout << OutputDebugStringA( debugdate.toStdString() ) << " " << message.toStdString() << endl;
 		QString text    = debugdate + " " + message + "\n";
 		std::string str = text.toStdString();
+
+#ifdef _WIN32
 		OutputDebugStringA( str.c_str() );
+#else
+		std::cerr << str;
+#endif
 	}
 	if ( logToFile )
 	{
@@ -92,6 +102,7 @@ void noOutput( QtMsgType type, const QMessageLogContext& context, const QString&
 
 int main( int argc, char* argv[] )
 {
+#ifdef _WIN32
 	DWORD verHandle = 0;
 	UINT size       = 0;
 	LPBYTE lpBuffer = NULL;
@@ -121,6 +132,9 @@ int main( int argc, char* argv[] )
 		}
 		delete[] verData;
 	}
+#else
+	QString fileVersion = "0.0.0.0";
+#endif
 
 	QCoreApplication::addLibraryPath( "." );
 
