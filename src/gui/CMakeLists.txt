@@ -1,0 +1,18 @@
+target_sources(${PROJECT_NAME}
+	PRIVATE
+		aggregatoragri.cpp
+		aggregatorcreatureinfo.cpp
+		aggregatordebug.cpp
+		aggregatormilitary.cpp
+		aggregatorneighbors.cpp
+		aggregatorpopulation.cpp
+		aggregatorrenderer.cpp
+		aggregatorstockpile.cpp
+		aggregatortileinfo.cpp
+		aggregatorworkshop.cpp
+		eventconnector.cpp
+		keybindings.cpp
+		mainwindow.cpp
+		mainwindowrenderer.cpp
+		strings.cpp
+)
