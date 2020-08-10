@@ -1022,7 +1022,7 @@ void Creature::addAggro( unsigned int target, int value )
 		AggroEntry ae { value, target };
 		m_aggroList.append( ae );
 	}
-	qSort( m_aggroList );
+	std::sort( m_aggroList.begin(), m_aggroList.end() );
 }
 
 void Creature::setTargets( QList<unsigned int> targets )

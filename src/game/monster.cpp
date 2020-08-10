@@ -180,7 +180,7 @@ void Monster::generateAggroList()
 			m_aggroList.append( ae );
 		}
 	}
-	qSort( m_aggroList );
+	std::sort( m_aggroList.begin(), m_aggroList.end() );
 }
 
 CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )

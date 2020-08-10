@@ -392,7 +392,7 @@ void MilitaryManager::moveSquadUp( unsigned int id )
 	{
 		if( m_squads[i].id == id )
 		{
-			m_squads.swap( i, i - 1 );
+			m_squads.swapItemsAt( i, i - 1 );
 			return;
 		}
 	}
@@ -404,7 +404,7 @@ void MilitaryManager::moveSquadDown( unsigned int id )
 	{
 		if( m_squads[i].id == id )
 		{
-			m_squads.swap( i, i + 1 );
+			m_squads.swapItemsAt( i, i + 1 );
 			return;
 		}
 	}
@@ -633,7 +633,7 @@ bool MilitaryManager::movePrioUp( unsigned int squadID, QString type )
 			{
 				if( squad.priorities[i].type == type )
 				{
-					squad.priorities.swap( i - 1, i );
+					squad.priorities.swapItemsAt( i - 1, i );
 					return true;
 				}
 			}
@@ -652,7 +652,7 @@ bool MilitaryManager::movePrioDown( unsigned int squadID, QString type )
 			{
 				if( squad.priorities[i].type == type )
 				{
-					squad.priorities.swap( i , i + 1 );
+					squad.priorities.swapItemsAt( i, i + 1 );
 					return true;
 				}
 			}
