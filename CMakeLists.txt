@@ -40,6 +40,7 @@ pkg_check_modules(shared
 		Qt5Xml
 		Qt5Sql
 		Qt5OpenGL
+		Qt5Network
 )
 
 # Linking
