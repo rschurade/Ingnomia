@@ -122,7 +122,7 @@ xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)\public\steam;$(QUAZIPDIR)include;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;.\src\gui;.\src\game;.\src;.\src\base;.\src\gfx;$(STEAMDIR)\public\steam;.\src\base\behaviortree;$(NoesisRoot)\Src\Packages\App\ApplicationLauncher\Include;$(NoesisRoot)\Src\Packages\App\Launcher\Include;$(NoesisRoot)\Src\Packages\App\Providers\Include;$(NoesisRoot)\Src\Packages\Render\GLRenderDevice\Include;$(NoesisRoot)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -143,9 +143,9 @@ xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(STEAMDIR)\redistributable_bin\win64;$(QUAZIPDIR)lib;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(STEAMDIR)\redistributable_bin\win64;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;quazip5.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>

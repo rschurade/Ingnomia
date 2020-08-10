@@ -18,7 +18,6 @@ You will need to provide the paths to the following dependencies in environment 
 
 	STEAMDIR = steamworks_sdk_xxx\sdk
 	QTDIR = 5.14.1\msvc2017_64\
-	QUAZIPDIR = quazip\build
 	NoesisRoot = noesis-3.0.4
 	
 Compilation will initially fail in `license.h` due to a missing Noesis license. \
