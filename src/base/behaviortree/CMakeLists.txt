@@ -1,0 +1,17 @@
+target_sources(${PROJECT_NAME}
+	PRIVATE
+		bt_factory.cpp
+		bt_nodeaction.cpp
+		bt_nodebbprecondition.cpp
+		bt_nodeconditional.cpp
+		bt_node.cpp
+		bt_nodefallback.cpp
+		bt_nodefallbackstar.cpp
+		bt_nodeforcefailure.cpp
+		bt_nodeforcesuccess.cpp
+		bt_nodeinverter.cpp
+		bt_noderepeat.cpp
+		bt_noderepeatuntilsuccess.cpp
+		bt_nodesequence.cpp
+		bt_nodesequencestar.cpp
+)
