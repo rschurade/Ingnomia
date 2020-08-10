@@ -51,7 +51,7 @@ public:
 	{
 		static GLuint counter    = 0;
 		QOpenGLExtraFunctions* f = QOpenGLContext::currentContext()->extraFunctions();
-		f->glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, counter++, strlen( c ), c );
+		f->glPushDebugGroup( GL_DEBUG_SOURCE_APPLICATION, counter++, static_cast<GLsizei>( strlen( c ) ), c );
 	}
 	~DebugScope()
 	{

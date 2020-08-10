@@ -283,7 +283,7 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 		{
 			if( prio.attitude == MilAttitude::HUNT )
 			{
-				m_targets.append( prio.huntTargets.toList() );
+				m_targets.append( prio.huntTargets.values() );
 			}
 		}
 	}

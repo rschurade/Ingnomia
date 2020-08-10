@@ -70,7 +70,7 @@ void PastureProperties::serialize( QVariantMap& out )
 	out.insert( "MaxTroughCapacity", maxTroughCapacity );
 	out.insert( "TroughContent", troughContent );
 
-	out.insert( "Food", QStringList( foodSettings.toList() ) );
+	out.insert( "Food", QStringList( foodSettings.values() ) );
 }
 
 Pasture::Pasture( QList<QPair<Position, bool>> tiles ) :

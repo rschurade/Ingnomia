@@ -511,7 +511,7 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 			{
 				if ( i > 0 )
 				{
-					m_jobList.swap( i, i - 1 );
+					m_jobList.swapItemsAt( i, i - 1 );
 					return true;
 				}
 			}
@@ -519,7 +519,7 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 			{
 				if ( i < m_jobList.size() - 1 )
 				{
-					m_jobList.swap( i, i + 1 );
+					m_jobList.swapItemsAt( i, i + 1 );
 					return true;
 				}
 			}
@@ -539,7 +539,7 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 
 void Workshop::moveJob( int pos, int newPos )
 {
-	m_jobList.swap( pos, newPos );
+	m_jobList.swapItemsAt( pos, newPos );
 	//GameState::addChange( NetworkCommand::WORKSHOPINFO, { QString::number( id() ), QJsonDocument::fromVariant( serializeJobQueue() ).toJson() } );
 }
 
