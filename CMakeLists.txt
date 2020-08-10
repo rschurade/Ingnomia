@@ -30,6 +30,7 @@ set_target_properties(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
 	PRIVATE
 		${NOESIS_ROOT}/Include
+		${NOESIS_ROOT}/Src/Packages/App/ApplicationLauncher/Include
 		${STEAM_SDK_ROOT}/public/steam
 )
 

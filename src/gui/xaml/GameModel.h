@@ -18,7 +18,7 @@
 #ifndef __GameModel_H__
 #define __GameModel_H__
 
-#include "../base/enums.h"
+#include "../../base/enums.h"
 #include "NewGameModel.h"
 
 #include <NsApp/DelegateCommand.h>
