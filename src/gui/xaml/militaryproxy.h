@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatormilitary.h"
+#include "../aggregatormilitary.h"
 #include "militarymodel.h"
 
 #include <QObject>

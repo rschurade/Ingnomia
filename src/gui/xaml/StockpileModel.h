@@ -18,7 +18,7 @@
 #ifndef __StockpileModel_H__
 #define __StockpileModel_H__
 
-#include "../gui/aggregatorstockpile.h"
+#include "../aggregatorstockpile.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>

@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatorstockpile.h"
+#include "../aggregatorstockpile.h"
 #include "StockpileModel.h"
 
 #include <QObject>

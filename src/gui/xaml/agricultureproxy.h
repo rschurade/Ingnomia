@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatoragri.h"
+#include "../aggregatoragri.h"
 #include "agriculturemodel.h"
 
 #include <QObject>

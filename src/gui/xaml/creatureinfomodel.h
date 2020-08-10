@@ -20,7 +20,7 @@
 
 #include "PopulationModel.h"
 
-#include "../gui/aggregatorcreatureinfo.h"
+#include "../aggregatorcreatureinfo.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
