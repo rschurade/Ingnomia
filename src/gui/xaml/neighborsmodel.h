@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatorneighbors.h"
+#include "../../gui/aggregatorneighbors.h"
 
 #include <QString>
 
