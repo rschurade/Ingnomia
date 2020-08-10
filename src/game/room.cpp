@@ -213,8 +213,8 @@ bool Room::checkRoofed()
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
-		Tile& tile   = Global::w().getTile( pos );
-		if ( !( tile.floorType & FloorType::FT_SOLIDFLOOR ) )
+		Tile& _tile   = Global::w().getTile( pos );
+		if ( !( _tile.floorType & FloorType::FT_SOLIDFLOOR ) )
 		{
 			roofed = false;
 			break;
