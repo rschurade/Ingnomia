@@ -18,7 +18,7 @@
 
 #include "TileInfoModel.h"
 
-#include "../base/tile.h"
+#include "../../base/tile.h"
 #include "ProxyTileInfo.h"
 
 #include <NsApp/Application.h>
