@@ -22,7 +22,7 @@
 #include <QDomDocument>
 #include <QHash>
 #include <QObject>
-#include <QvariantMap>
+#include <QVariantMap>
 
 #include <functional>
 
