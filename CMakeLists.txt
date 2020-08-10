@@ -7,6 +7,9 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+# Noesis root
+set(NOESIS_ROOT "" CACHE PATH "Root to the NoesisGui sdk")
+
 # Without this, paths are not relative in the sources list
 cmake_policy(SET CMP0076 NEW)
 
@@ -20,6 +23,12 @@ add_executable(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME}
 	PROPERTIES
 		CXX_STANDARD 17
+)
+
+# Headers
+target_include_directories(${PROJECT_NAME}
+	PRIVATE
+	${NOESIS_ROOT}/Include
 )
 
 add_subdirectory(src) # Sources list
