@@ -17,7 +17,7 @@
 */
 #include "LoadGameModel.h"
 
-#include "../base/io.h"
+#include "../../base/io.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>

@@ -17,11 +17,11 @@
 */
 #include "ProxyTileInfo.h"
 
-#include "../base/db.h"
-#include "../gamestate.h"
-#include "../gfx/sprite.h"
-#include "../gfx/spritefactory.h"
-#include "../gui/eventconnector.h"
+#include "../../base/db.h"
+#include "../../base/gamestate.h"
+#include "../../gfx/sprite.h"
+#include "../../gfx/spritefactory.h"
+#include "../eventconnector.h"
 #include "TileInfoModel.h"
 
 #include <QDebug>

@@ -18,7 +18,7 @@
 #include "neighborsmodel.h"
 #include "neighborsproxy.h"
 
-#include "../gui/strings.h"
+#include "../strings.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
