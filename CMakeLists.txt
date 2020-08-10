@@ -44,7 +44,15 @@ target_include_directories(${PROJECT_NAME}
 		${STEAM_SDK_ROOT}/public/steam
 )
 
+set(NOESIS_SOURCES "")
+
+target_sources(${PROJECT_NAME}
+	PRIVATE
+		${NOESIS_SOURCES}
+)
+
 add_subdirectory(src) # Sources list
+add_subdirectory(3rdparty)
 
 # Shared libraries
 pkg_check_modules(shared
@@ -54,12 +62,25 @@ pkg_check_modules(shared
 		Qt5Sql
 		Qt5OpenGL
 		Qt5Network
+		gl
+)
+
+find_library(STEAM steam_api
+	HINTS
+		${STEAM_SDK_ROOT}/redistributable_bin/linux64
+)
+
+find_library(NOESIS Noesis
+	HINTS
+		${NOESIS_ROOT}/Bin/linux_x86_64
 )
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::shared
+		${STEAM}
+		${NOESIS}
 )
 
 # Noesis license
