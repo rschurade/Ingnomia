@@ -16,3 +16,5 @@ target_sources(${PROJECT_NAME}
 		mainwindowrenderer.cpp
 		strings.cpp
 )
+
+add_subdirectory(xaml)
