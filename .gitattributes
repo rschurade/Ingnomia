@@ -1,0 +1,5 @@
+/src/gui/license.h 
+
+*.h diff=cpp
+*.c diff=cpp
+*.cpp diff=cpp
