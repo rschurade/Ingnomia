@@ -170,9 +170,6 @@
     <ClCompile Include="src\base\modmanager.cpp">
       <Filter>Source Files\base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\fastnoise\FastNoise.cpp">
-      <Filter>Source Files\base</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\sprite.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
@@ -535,6 +532,9 @@
     </ClCompile>
     <ClCompile Include="src\game\creaturefactory.cpp">
       <Filter>Source Files\game\creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\fastnoise\FastNoise.cpp">
+      <Filter>Source Files\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../base/fastnoise/FastNoise.h"
+#include "../../3rdparty/fastnoise/FastNoise.h"
 
 #include <QMap>
 #include <QObject>

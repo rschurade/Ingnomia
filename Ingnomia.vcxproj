@@ -173,6 +173,7 @@ xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3rdparty\fastnoise\FastNoise.cpp" />
     <ClCompile Include="src\base\behaviortree\bt_factory.cpp" />
     <ClCompile Include="src\base\behaviortree\bt_node.cpp" />
     <ClCompile Include="src\base\behaviortree\bt_nodeaction.cpp" />
@@ -190,7 +191,6 @@ xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
     <ClCompile Include="src\base\config.cpp" />
     <ClCompile Include="src\base\db.cpp" />
     <ClCompile Include="src\base\dbhelper.cpp" />
-    <ClCompile Include="src\base\fastnoise\FastNoise.cpp" />
     <ClCompile Include="src\base\filter.cpp" />
     <ClCompile Include="src\base\gamestate.cpp" />
     <ClCompile Include="src\base\global.cpp" />
