@@ -17,12 +17,12 @@
 */
 #include "agriculturemodel.h"
 
-#include "../base/gamestate.h"
-#include "../base/global.h"
-#include "../base/util.h"
+#include "../../base/gamestate.h"
+#include "../../base/global.h"
+#include "../../base/util.h"
 #include "agricultureproxy.h"
-#include "spritefactory.h"
-#include "strings.h"
+#include "../../gfx/spritefactory.h"
+#include "../strings.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>

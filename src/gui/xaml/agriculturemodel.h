@@ -29,6 +29,9 @@
 #include <NsCore/ReflectionDeclareEnum.h>
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
+#include <NsGui/ImageSource.h>
+#include <NsGui/BitmapSource.h>
+#include <NsGui/BitmapImage.h>
 
 #include <QString>
 
