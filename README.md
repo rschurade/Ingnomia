@@ -24,7 +24,7 @@ You will need to provide the paths to the following dependencies in environment 
 Compilation will initially fail in `license.h` due to a missing Noesis license. \
 The content can be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
 one. \
-*Never commit this file to the repository.*
+*Never commit this file to the repository.* (Use `git update-index --skip-worktree src/gui/license.h` to exclude from tracking.)
 
 	
 ### Database configuration ###
