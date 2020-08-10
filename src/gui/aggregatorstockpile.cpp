@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include "AggregatorStockpile.h"
+#include "aggregatorstockpile.h"
 
 #include "../base/counter.h"
 #include "../base/db.h"
