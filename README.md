@@ -14,26 +14,27 @@ The following steps describe how to compile the code and get the game running on
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 
 ### Configuration ###
-Environment variables to set:
+You will need to provide the paths to the following dependencies in environment variables:
 
 	STEAMDIR = steamworks_sdk_xxx\sdk
 	QTDIR = 5.14.1\msvc2017_64\
 	QUAZIPDIR = quazip\build
-	NoesisRoot = 
+	NoesisRoot = noesis-3.0.4
 	
-Compilation will fail in `license.h` due to a missing Noesis license. \
-The content will be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
-one. Never commit this file to the repository.
+Compilation will initially fail in `license.h` due to a missing Noesis license. \
+The content can be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
+one. \
+*Never commit this file to the repository.*
 
 	
 ### Database configuration ###
 
-The game uses a squlite database. It can be created from the .sql file in the /content/db folder or copied
+The game uses a squlite database. It can be created from the .sql file in the `/content/db` folder or copied
 over from the installed game from Steam.
 
-#### Deployment instructions ####
+### Deployment ###
 
-To run the game copy over the contents of /content/tilesheet from your Steam installation.
+To run the game copy over the contents of `/content/tilesheet` from your Steam installation.
 
 ## Contribution guidelines ##
 
