@@ -28,6 +28,8 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
+#include <QDebug>
+
 AggregatorAgri::AggregatorAgri( QObject* parent )
 {
 	qRegisterMetaType<GuiFarmInfo>();
