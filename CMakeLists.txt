@@ -7,6 +7,8 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+find_package(Qt5 REQUIRED QUIET COMPONENTS Core)
+
 # Roots of libraries that don't use the standard directories
 set(NOESIS_ROOT "" CACHE PATH "Root to the NoesisGui sdk")
 set(STEAM_SDK_ROOT "" CACHE PATH "Root to the steam sdk")
@@ -28,6 +30,7 @@ add_executable(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME}
 	PROPERTIES
 		CXX_STANDARD 17
+		AUTOMOC ON
 )
 
 # Headers
