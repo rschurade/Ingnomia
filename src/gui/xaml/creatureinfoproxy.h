@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatorcreatureinfo.h"
+#include "../aggregatorcreatureinfo.h"
 #include "creatureinfomodel.h"
 
 #include <QObject>

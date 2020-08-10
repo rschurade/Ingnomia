@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatortileinfo.h"
+#include "../aggregatortileinfo.h"
 #include "TileInfoModel.h"
 
 #include <QObject>

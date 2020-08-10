@@ -31,6 +31,9 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE
 		${NOESIS_ROOT}/Include
 		${NOESIS_ROOT}/Src/Packages/App/ApplicationLauncher/Include
+		${NOESIS_ROOT}/Src/Packages/App/Launcher/Include
+		${NOESIS_ROOT}/Src/Packages/App/Providers/Include
+		${NOESIS_ROOT}/Src/Packages/Render/GLRenderDevice/Include
 		${STEAM_SDK_ROOT}/public/steam
 )
 

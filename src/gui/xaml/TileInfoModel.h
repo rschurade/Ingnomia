@@ -18,8 +18,8 @@
 #ifndef __TileInfoModel_H__
 #define __TileInfoModel_H__
 
-#include "../base/position.h"
-#include "../gui/aggregatortileinfo.h"
+#include "../../base/position.h"
+#include "../aggregatortileinfo.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>

@@ -18,7 +18,7 @@
 #ifndef __AgricultureModel_H__
 #define __AgricultureModel_H__
 
-#include "../gui/aggregatoragri.h"
+#include "../aggregatoragri.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
