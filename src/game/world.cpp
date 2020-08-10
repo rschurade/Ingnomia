@@ -864,7 +864,11 @@ void World::processWater()
 
 struct Neighbors
 {
+#ifdef _WIN32
 	__forceinline Neighbors( unsigned int pos )
+#else
+	inline Neighbors( unsigned int pos )
+#endif
 	{
 		const auto pitchY = Global::dimX;
 		const auto pitchZ = pitchY * Global::dimY;
