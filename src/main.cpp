@@ -95,7 +95,7 @@ int main( int argc, char* argv[] )
 	DWORD verHandle = 0;
 	UINT size       = 0;
 	LPBYTE lpBuffer = NULL;
-	LPCWSTR fileName( L"gnomes.exe" );
+	LPCWSTR fileName( L"Ingnomia.exe" );
 	DWORD verSize       = GetFileVersionInfoSize( fileName, &verHandle );
 	QString fileVersion = "0.0.0.0";
 	if ( verSize != NULL )

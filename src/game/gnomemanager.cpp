@@ -37,7 +37,6 @@
 
 GnomeManager::GnomeManager()
 {
-	loadProfessions();
 }
 
 GnomeManager::~GnomeManager()

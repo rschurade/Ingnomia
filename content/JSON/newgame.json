@@ -1,0 +1,136 @@
+{
+    "allowedAnimals": {
+        "Badger": 2,
+        "Beetle": 0,
+        "BeetleEgg": 0,
+        "BlackBear": 2,
+        "Duck": 0,
+        "Fox": 1,
+        "Goat": 0,
+        "GreenFish": 0,
+        "GreyFish": 0,
+        "Lizzard": 0,
+        "Panda": 0,
+        "Porcupine": 2,
+        "Rabbit": 0,
+        "Roe": 0,
+        "Snake": 0,
+        "Spider": 0,
+        "Squirrel": 2,
+        "Stag": 0,
+        "Wolf": 1,
+        "Woodlouse": 0
+    },
+    "allowedPlants": {
+        "Blackberry": true,
+        "Carrot": true,
+        "Cotton": true,
+        "Flower1": false,
+        "Flower2": false,
+        "Flower3": false,
+        "Flower4": false,
+        "Flower5": false,
+        "Flower6": false,
+        "Flower7": false,
+        "Flower8": false,
+        "Onion": true,
+        "Strawberry": true
+    },
+    "allowedTrees": {
+        "AppleTree": true,
+        "BirchTree": true,
+        "OakTree": true,
+        "OrangeTree": true,
+        "PineTree": true
+    },
+    "dimX": 100,
+    "dimY": 100,
+    "dimZ": 130,
+    "flatness": 0,
+    "groundLevel": 100,
+    "maxPerType": 30,
+    "numAnimals": 473,
+    "numGnomes": 1,
+    "oceanSize": 5,
+    "peaceful": true,
+    "plantDensity": 50,
+    "riverSize": 1,
+    "rivers": 0,
+    "seed": "532879058",
+    "startingItems": [
+        {
+            "Amount": 2,
+            "Components": [
+                {
+                    "ItemID": "PickaxeHead",
+                    "MaterialID": "Pine"
+                },
+                {
+                    "ItemID": "PickaxeBase",
+                    "MaterialID": "Pine"
+                }
+            ],
+            "ItemID": "Pickaxe",
+            "Type": "CombinedItem"
+        },
+        {
+            "Amount": 1,
+            "Components": [
+                {
+                    "ItemID": "FellingAxeHead",
+                    "MaterialID": "Pine"
+                },
+                {
+                    "ItemID": "FellingAxeBase",
+                    "MaterialID": "Pine"
+                }
+            ],
+            "ItemID": "FellingAxe",
+            "Type": "CombinedItem"
+        },
+        {
+            "Amount": 128,
+            "ItemID": "Wine",
+            "MaterialID": "Apple",
+            "Type": "Item"
+        },
+        {
+            "Amount": 32,
+            "ItemID": "Bread",
+            "MaterialID": "Wheat",
+            "Type": "Item"
+        },
+        {
+            "Amount": 32,
+            "ItemID": "Fruit",
+            "MaterialID": "Strawberry",
+            "Type": "Item"
+        },
+        {
+            "Amount": 32,
+            "ItemID": "Grain",
+            "MaterialID": "Wheat",
+            "Type": "Item"
+        },
+        {
+            "Amount": 32,
+            "ItemID": "Seed",
+            "MaterialID": "Strawberry",
+            "Type": "Item"
+        },
+        {
+            "Amount": 1,
+            "Gender": "Male",
+            "ItemID": "Yak",
+            "Type": "Animal"
+        },
+        {
+            "Amount": 1,
+            "Gender": "Female",
+            "ItemID": "Yak",
+            "Type": "Animal"
+        }
+    ],
+    "startingZone": 10,
+    "treeDensity": 51
+}

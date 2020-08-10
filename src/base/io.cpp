@@ -264,7 +264,9 @@ bool IO::load( QString folder )
 	loadFile( folder + "game.json", jd );
 	IO::loadGame( jd );
 
+	Global::gm().init();
 	Global::mil().init();
+
 
 	PathFinder::getInstance().init();
 	Util::initAllowedInContainer();
