@@ -28,6 +28,7 @@
 #include <NsCore/ReflectionImplementEnum.h>
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
+#include <NsGui/BitmapImage.h>
 
 #include <QDebug>
 
