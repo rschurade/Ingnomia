@@ -109,10 +109,8 @@ xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders
 xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
 xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
 xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
-xcopy /Q /Y "$(STEAMDIR)bin\steam_api64.dll" "$(TargetDir)"
+xcopy /Q /Y "$(STEAMDIR)redistributable_bin\win64\steam_api64.dll" "$(TargetDir)"
 $(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
-xcopy /Q /Y "$(QUAZIPDIR)bin\*.dll" "$(TargetDir)"
-xcopy /Q /Y "$(QUAZIPDIR)bin\*.pdb" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\Noesis.dll" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.dll" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
@@ -162,10 +160,8 @@ xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders
 xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
 xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
 xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
-xcopy /Q /Y "$(STEAMDIR)bin\steam_api64.dll" "$(TargetDir)"
+xcopy /Q /Y "$(STEAMDIR)redistributable_bin\win64\steam_api64.dll" "$(TargetDir)"
 $(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
-xcopy /Q /Y "$(QUAZIPDIR)bin\*.dll" "$(TargetDir)"
-xcopy /Q /Y "$(QUAZIPDIR)bin\*.pdb" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\Noesis.dll" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.dll" "$(TargetDir)"
 xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
