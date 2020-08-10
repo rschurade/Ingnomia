@@ -24,28 +24,33 @@ set_target_properties(${PROJECT_NAME}
 
 add_subdirectory(src) # Sources list
 
-## Shared libraries
-#pkg_check_modules(shared
-#	REQUIRED IMPORTED_TARGET
-#		libfoo1
-#		libfoo2
-#)
-#
+# Shared libraries
+pkg_check_modules(shared
+	REQUIRED IMPORTED_TARGET
+		Qt5Core
+)
+
 ## Header only libraries
 #pkg_check_modules(header_only
 #	REQUIRED IMPORTED_TARGET
 #		libfoo3
 #		libfoo4
 #)
-#
-## Linking
-#target_link_libraries(${PROJECT_NAME}
-#	PRIVATE
-#		PkgConfig::shared
-#
+
+# Linking
+target_link_libraries(${PROJECT_NAME}
+	PRIVATE
+		PkgConfig::shared
+
 #	INTERFACE
 #		PkgConfig::header_only
-#)
+)
+
+# Qt requieres position independent code
+target_compile_options(${PROJECT_NAME}
+	PRIVATE
+		-fPIC
+)
 
 # Default flags
 if(UNIX AND NOT DEFINED ENV{CXXFLAGS})
