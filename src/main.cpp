@@ -226,3 +226,11 @@ int main( int argc, char* argv[] )
 	w.show();
 	return a.exec();
 }
+
+#ifdef _WIN32
+INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
+{
+	return main( 0, nullptr );
+	return 0;
+}
+#endif // _WIN32
