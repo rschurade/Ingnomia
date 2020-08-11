@@ -107,15 +107,15 @@ int main( int argc, char* argv[] )
 	UINT size       = 0;
 	LPBYTE lpBuffer = NULL;
 	LPCWSTR fileName( L"Ingnomia.exe" );
-	DWORD verSize       = GetFileVersionInfoSize( fileName, &verHandle );
+	DWORD verSize       = GetFileVersionInfoSizeW( fileName, &verHandle );
 	QString fileVersion = "0.0.0.0";
 	if ( verSize != NULL )
 	{
 		LPSTR verData = new char[verSize];
 
-		if ( GetFileVersionInfo( fileName, verHandle, verSize, verData ) )
+		if ( GetFileVersionInfoW( fileName, verHandle, verSize, verData ) )
 		{
-			if ( VerQueryValue( verData, L"\\", (VOID FAR * FAR*)&lpBuffer, &size ) )
+			if ( VerQueryValueW( verData, L"\\", (VOID FAR * FAR*)&lpBuffer, &size ) )
 			{
 				if ( size )
 				{
