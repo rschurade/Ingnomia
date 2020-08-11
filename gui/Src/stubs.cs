@@ -212,4 +212,12 @@ namespace IngnomiaGUI
     public partial class PopulationWindow : UserControl
     {
     }
+
+    public class MilitaryModel
+    {
+    }
+
+    public class NeighborsModel
+    {
+    }
 }

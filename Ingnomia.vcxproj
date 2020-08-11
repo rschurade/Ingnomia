@@ -92,22 +92,19 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(STEAMDIR)lib;$(QUAZIPDIR)lib;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(STEAMDIR)\redistributable_bin\win64;$(NoesisRoot)\Lib\windows_x86_64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;quazip5.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Noesis.lib;NoesisApp.lib;steam_api64.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
       <Command>
 xcopy /Q /Y "$(SolutionDir)changelog.txt" "$(TargetDir)"
 xcopy /Q /Y "$(SolutionDir)content\ai\*.xml" "$(TargetDir)\content\ai\"
-xcopy /Q /Y "$(SolutionDir)content\data\*.xml" "$(TargetDir)\content\data\"
 xcopy /Q /Y "$(SolutionDir)content\db\*.*" "$(TargetDir)\content\db\"
-xcopy /Q /Y "$(SolutionDir)content\stuff\*.*" "$(TargetDir)\content\stuff\"
 xcopy /Q /Y "$(SolutionDir)content\JSON\*.json" "$(TargetDir)\content\JSON\"
 xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders\*.glsl"
 xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
-xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
 xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
 xcopy /Q /Y "$(STEAMDIR)redistributable_bin\win64\steam_api64.dll" "$(TargetDir)"
 $(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
@@ -152,13 +149,10 @@ xcopy /Q /Y "$(NoesisRoot)\Bin\windows_x86_64\NoesisApp.pdb" "$(TargetDir)"
       <Command>
 xcopy /Q /Y "$(SolutionDir)changelog.txt" "$(TargetDir)"
 xcopy /Q /Y "$(SolutionDir)content\ai\*.xml" "$(TargetDir)\content\ai\"
-xcopy /Q /Y "$(SolutionDir)content\data\*.xml" "$(TargetDir)\content\data\"
 xcopy /Q /Y "$(SolutionDir)content\db\*.*" "$(TargetDir)\content\db\"
-xcopy /Q /Y "$(SolutionDir)content\stuff\*.*" "$(TargetDir)\content\stuff\"
 xcopy /Q /Y "$(SolutionDir)content\JSON\*.json" "$(TargetDir)\content\JSON\"
 xcopy /Q /Y "$(SolutionDir)content\shaders\*.glsl" "$(TargetDir)\content\shaders\*.glsl"
 xcopy /Q /Y "$(SolutionDir)content\tilesheet\*.png" "$(TargetDir)\content\tilesheet\"
-xcopy /Q /Y "$(SolutionDir)content\*.def" "$(TargetDir)\content\"
 xcopy /Q /Y "$(SolutionDir)content\xaml" "$(TargetDir)\content\xaml\" /s /e
 xcopy /Q /Y "$(STEAMDIR)redistributable_bin\win64\steam_api64.dll" "$(TargetDir)"
 $(QTDIR)\bin\windeployqt.exe --pdb --no-translations --no-webkit2 $(TargetPath)
