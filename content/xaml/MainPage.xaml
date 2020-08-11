@@ -22,7 +22,7 @@
 
 		<i:Interaction.Triggers>
 			<ei:StoryboardCompletedTrigger Storyboard="{StaticResource FadeInMain}">
-				<noesis:SetFocusAction TargetName="Start"/>
+                <noesis:SetFocusAction TargetName="MMContinue"/>
 			</ei:StoryboardCompletedTrigger>
 		</i:Interaction.Triggers>
 		

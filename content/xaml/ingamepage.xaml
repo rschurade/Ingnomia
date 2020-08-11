@@ -22,7 +22,7 @@
 
 		<i:Interaction.Triggers>
 			<ei:StoryboardCompletedTrigger Storyboard="{StaticResource FadeInIngame}">
-				<noesis:SetFocusAction TargetName="Resume"/>
+                <noesis:SetFocusAction TargetName="IMResume"/>
 			</ei:StoryboardCompletedTrigger>
 		</i:Interaction.Triggers>
 		
