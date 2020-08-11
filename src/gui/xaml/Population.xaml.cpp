@@ -30,7 +30,7 @@ PopulationWindow::PopulationWindow()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void PopulationWindow::InitializeComponent()
 {
-	GUI::LoadComponent( this, "population.xaml" );
+	GUI::LoadComponent( this, "PopulationWindow.xaml" );
 }
 
 static Noesis::ScrollViewer* getVirtualListScroller( Noesis::FrameworkElement* root )

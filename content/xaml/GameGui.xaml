@@ -1,0 +1,318 @@
+<UserControl
+	x:Class="IngnomiaGUI.GameGui"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+	xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+	FontFamily="Fonts/#8-bit Operator+"
+	x:Name="GameGuiRoot" Focusable="True" IsTabStop="False" d:DataContext="{d:DesignData /SampleData/GameModelSampleData.xaml}" d:DesignWidth="1920" d:DesignHeight="1080">
+    <UserControl.DataContext>
+        <local:GameModel/>
+    </UserControl.DataContext>
+
+    <i:Interaction.Triggers>
+        <ei:KeyTrigger FiredOn="KeyDown" Key="Escape" ActiveOnFocus="False">
+            <i:InvokeCommandAction Command="{Binding CmdBack}" />
+        </ei:KeyTrigger>
+    </i:Interaction.Triggers>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <Grid x:Name="GameGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"  FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Ingnomia" />
+
+
+        <Grid x:Name="TopRow" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="15*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="TimeGrid" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="KingdomControl" Grid.Row="0" Style="{StaticResource Panel}">
+                    <Grid x:Name="LeftInfoGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Kingdom name" />
+                        <TextBlock Grid.Row="1"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="" />
+                        <TextBlock Grid.Row="2"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="something" />
+                        <TextBlock Grid.Row="3"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="something" />
+                        <TextBlock Grid.Row="4"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Level}" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="TimeGrid2" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="TimeControl" Grid.Row="0" Style="{StaticResource Panel}">
+						<Grid x:Name="RightInfoGrid">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Grid.Row="0"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Day}" />
+								<Button x:Name="BDbg" Content="D" MaxWidth="30" Command="{Binding CmdRightCommandButton}" CommandParameter="Debug">
+							</Button>
+							</StackPanel>
+							<Grid Grid.Row="1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+								<Image Grid.Column="0" Source="{Binding TimeImagePath}" />
+								<StackPanel Grid.Column="1"> 
+									<TextBlock FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Year}" />
+									<TextBlock FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="" />
+									<TextBlock FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Time}" />
+								</StackPanel>
+							</Grid>
+							<TextBlock Grid.Row="2"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Sun}" />
+						</Grid>
+                </Border>
+                <Border x:Name="TimeControl2" Grid.Row="1" Style="{StaticResource Panel}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <ToggleButton x:Name="CB1" Grid.Column="0" Style="{StaticResource ButtonStyle1}" Content="||" IsChecked="{Binding Paused}" />
+                        <ToggleButton x:Name="CB2" Grid.Column="1" Style="{StaticResource ButtonStyle1}" Content=">" IsChecked="{Binding NormalSpeed}" />
+                        <ToggleButton x:Name="CB3" Grid.Column="2" Style="{StaticResource ButtonStyle1}" Content=">>" IsChecked="{Binding FastSpeed}" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+		<local:StockpileGui x:Name="SPGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowStockpile }" />
+		<local:WorkshopGui x:Name="WSGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowWorkshop }" />
+		<local:PopulationWindow x:Name="PopulationGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowPopulation }" />
+		<local:DebugGui x:Name="DebugGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowDebug }" />
+		<local:NeighborsGui x:Name="NeighborsGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowNeighbors }" />
+		<local:MilitaryGui x:Name="MilitaryGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowMilitary }" />
+		
+		
+		
+		<Grid x:Name="LayoutMessage" MaxHeight="400" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding ShowMessage}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			
+			<Border Grid.Column="1" Style="{StaticResource Panel}" MinWidth="70" MaxWidth="70" HorizontalAlignment="Right">
+			</Border>
+			
+			<Border Grid.Column="2" Style="{StaticResource Panel}" MinWidth="500" MaxWidth="500" MinHeight="300" MaxHeight="300">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<TextBlock Text="{Binding MessageHeader}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
+					<TextBlock VerticalAlignment="Center" FontSize="20" Grid.Row="1" TextWrapping="Wrap"
+						Text="{Binding MessageText}"/>
+						
+					<Grid Grid.Row="2" VerticalAlignment="Bottom">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+						<Button Grid.Column="0" Content="Yes" Command="{Binding MessageCmd}" MinWidth="100" CommandParameter="yes" Visibility="{Binding ShowMessageButtonYesNo}"/>
+						<Button Grid.Column="1" Content="OK"  Command="{Binding MessageCmd}" MinWidth="100" CommandParameter="ok" Visibility="{Binding ShowMessageButtonOk}"/>
+						<Button Grid.Column="2" Content="No"  Command="{Binding MessageCmd}" MinWidth="100" CommandParameter="no" Visibility="{Binding ShowMessageButtonYesNo}"/>
+					</Grid>
+						
+				</Grid>
+			</Border>
+			<!--
+			<Button Content="X" MaxHeight="32" MaxWidth="32" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="3"
+				Command="{Binding CloseMessageWindowCmd }" 
+				CommandParameter="PopWindow"
+			/> -->
+		</Grid>
+		
+		
+		
+		
+        <Grid x:Name="MiddleRow"  Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border x:Name="CommandButtonBorder" Grid.Column="0" Style="{StaticResource Panel}" Visibility="{Binding ShowCommandButtons}" VerticalAlignment="Bottom" >
+                <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                    <ItemsControl ItemsSource="{Binding CommandButtons}" ItemTemplate="{StaticResource CommandButtonTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <Border x:Name="CategoryButtonBorder" Grid.Column="1" Style="{StaticResource Panel}" Visibility="{Binding ShowCategoryButtons}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                    <ItemsControl ItemsSource="{Binding BuildButtons}" ItemTemplate="{StaticResource BuildButtonsItemTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+            <Border x:Name="BuildItemsBorder"  Grid.Column="2" Style="{StaticResource Panel}" Visibility="{Binding ShowCategoryButtons}">
+                <ScrollViewer x:Name="BuildItemScroll" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                    <ItemsControl ItemsSource="{Binding BuildItems}" ItemTemplate="{StaticResource BuildItemTemplate}"/>
+                </ScrollViewer>
+            </Border>
+			
+			<local:TileInfo x:Name="TileInfo" Grid.Column="4" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowTileInfo }" HorizontalAlignment="Right" />
+			
+			<local:CreatureInfo x:Name="CreatureInfo" 
+				Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+				Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowCreatureInfo }" />
+			
+        </Grid>
+
+
+        <Viewbox Grid.Row="2" StretchDirection="DownOnly">
+            <Grid x:Name="BottomRow" MinWidth="{Binding ActualWidth, ElementName=GameGuiRoot}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="LeftButtonBorder" Grid.Column="0" Style="{StaticResource Panel}" >
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="LCB2" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Build">
+							 <StackPanel>
+								<Image Source="buttons/build-all.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Build</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="LCB1" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Mine">
+							 <StackPanel>
+								<Image Source="buttons/mine.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Mine</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="LCB3" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Agri">
+							 <StackPanel>
+								<Image Source="buttons/agriculture.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Agriculture</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="LCB4" Style="{StaticResource SquareButton}" Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Designation">
+							 <StackPanel>
+								<Image Source="buttons/designation.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Designations</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="LCB5" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Job">
+							 <StackPanel>
+								<Image Source="buttons/jobs.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Job</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="LCB6" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+									Command="{Binding CmdLeftCommandButton}" CommandParameter="Magic">
+							 <StackPanel>
+								<Image Source="buttons/magic.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Magic</TextBlock>
+							  </StackPanel>
+						</Button>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="RightButtonBorder" Grid.Column="2" Style="{StaticResource Panel}">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="RCB2" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+							Command="{Binding CmdRightCommandButton}" CommandParameter="Kingdom">
+							 <StackPanel>
+								<Image Source="buttons/kingdom.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Kingdom</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="RCB1" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}">
+							 <StackPanel>
+								<Image Source="buttons/stockpile.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Stockpiles</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="RCB3" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+							Command="{Binding CmdRightCommandButton}" CommandParameter="Military">
+							 <StackPanel>
+								<Image Source="buttons/military.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Military</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="RCB4" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+							Command="{Binding CmdRightCommandButton}" CommandParameter="Population">
+							 <StackPanel>
+								<Image Source="buttons/population.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Population</TextBlock>
+							  </StackPanel>
+						</Button>
+                        <Button x:Name="RCB5" Style="{StaticResource SquareButton}" Width="{Binding ActualWidth, ElementName=LCB4}"
+							Command="{Binding CmdRightCommandButton}" CommandParameter="Missions">
+							 <StackPanel>
+								<Image Source="buttons/mission.png" Stretch="None" />
+								<TextBlock HorizontalAlignment="Center">Missions</TextBlock>
+							  </StackPanel>
+						</Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</UserControl>

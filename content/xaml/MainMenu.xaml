@@ -1,0 +1,88 @@
+﻿<UserControl
+	x:Class="IngnomiaGUI.MainMenu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+	xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+	FontFamily="Fonts/#8-bit Operator+"
+	x:Name="MainMenuControl" Focusable="True" IsTabStop="False">
+	
+	<UserControl.Resources>
+        <ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="styles/mainmenu/pageswap.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>					
+    </UserControl.Resources>
+	<i:Interaction.Triggers>
+        <ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.NewGame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInNewGame}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.NewGame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutNewGame}"/>
+        </ei:DataTrigger>
+		<ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.LoadGame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInLoadGame}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.LoadGame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutLoadGame}"/>
+        </ei:DataTrigger>
+		<ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.Settings}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInSettings}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.Settings}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutSettings}"/>
+        </ei:DataTrigger>
+		<ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.Wait}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInWait}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.Wait}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutWait}"/>
+        </ei:DataTrigger>
+		<ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.Ingame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInIngame}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.Ingame}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutIngame}"/>
+        </ei:DataTrigger>
+		<ei:DataTrigger Binding="{Binding State}" Value="{x:Static local:State.Main}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeInMain}"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding State}" Comparison="NotEqual" Value="{x:Static local:State.Main}">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource FadeOutMain}"/>
+        </ei:DataTrigger>
+
+    </i:Interaction.Triggers>
+	
+
+	<Grid x:Name="MenuGrid">
+		<Grid.Background>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+				<GradientStop Offset="0" Color="#FF123F61"/>
+				<GradientStop Offset="0.6" Color="#FF0E4B79"/>
+				<GradientStop Offset="0.7" Color="#FF106097"/>
+			</LinearGradientBrush>
+		</Grid.Background>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="9*"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="5*"/>
+			<ColumnDefinition Width="1*"/>
+		</Grid.ColumnDefinitions>
+		<local:MainPage     x:Name="MainPage"     Grid.Row="1" Grid.Column="1"/>
+		<local:SettingsPage x:Name="SettingsPage" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+		<local:LoadGamePage x:Name="LoadGamePage" Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+		<local:NewGamePage  x:Name="NewGamePage"  Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+		<local:WaitPage  	x:Name="WaitPage"     Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+		<local:IngamePage  	x:Name="IngamePage"   Grid.Row="1" Grid.Column="1" Visibility="Hidden"/>
+	</Grid>
+	
+</UserControl>
