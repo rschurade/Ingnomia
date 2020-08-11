@@ -18,7 +18,7 @@
 
 #include "workshopmodel.h"
 
-#include "strings.h"
+#include "../strings.h"
 #include "workshopproxy.h"
 
 #include <NsApp/Application.h>
