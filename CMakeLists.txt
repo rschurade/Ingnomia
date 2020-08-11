@@ -23,8 +23,12 @@ cmake_policy(SET CMP0076 NEW)
 include(GNUInstallDirs)
 include(FindPkgConfig)
 
+add_subdirectory(3rdparty)
+
 # The program itself
 add_executable(${PROJECT_NAME})
+
+add_dependencies(${PROJECT_NAME} fastnoise)
 
 # C++ version
 set_target_properties(${PROJECT_NAME}
@@ -45,7 +49,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 add_subdirectory(src) # Sources list
-add_subdirectory(3rdparty)
 
 # Shared libraries
 pkg_check_modules(shared
@@ -81,6 +84,7 @@ target_link_libraries(${PROJECT_NAME}
 		${STEAM}
 		${NOESIS}
 		${NOESIS_APP}
+		fastnoise
 )
 
 # Noesis license
@@ -97,7 +101,7 @@ target_compile_options(${PROJECT_NAME}
 )
 
 # Default flags
-if(UNIX AND NOT DEFINED ENV{CXXFLAGS})
+if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR DEFINED CMAKE_CXX_FLAGS))
 	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif()
 
