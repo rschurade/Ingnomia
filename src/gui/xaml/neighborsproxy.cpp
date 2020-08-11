@@ -17,7 +17,7 @@
 */
 #include "neighborsproxy.h"
 
-#include "../gui/eventconnector.h"
+#include "../eventconnector.h"
 
 #include <QDebug>
 

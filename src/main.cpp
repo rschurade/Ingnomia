@@ -19,7 +19,10 @@
 #include "base/db.h"
 #include "gui/mainwindow.h"
 #include "gui/strings.h"
+
+#ifdef _WIN32
 #include "winver.h"
+#endif
 
 #include <QApplication>
 #include <QDateTime>
@@ -32,7 +35,9 @@
 #include <QtWidgets/QApplication>
 
 #include <iostream>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 QTextStream* out = 0;
 bool logToFile   = true;
@@ -66,7 +71,12 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 		//std::cout << OutputDebugStringA( debugdate.toStdString() ) << " " << message.toStdString() << endl;
 		QString text    = debugdate + " " + message + "\n";
 		std::string str = text.toStdString();
+
+#ifdef _WIN32
 		OutputDebugStringA( str.c_str() );
+#else
+		std::cerr << str;
+#endif
 	}
 	if ( logToFile )
 	{
@@ -92,19 +102,20 @@ void noOutput( QtMsgType type, const QMessageLogContext& context, const QString&
 
 int main( int argc, char* argv[] )
 {
+#ifdef _WIN32
 	DWORD verHandle = 0;
 	UINT size       = 0;
 	LPBYTE lpBuffer = NULL;
 	LPCWSTR fileName( L"Ingnomia.exe" );
-	DWORD verSize       = GetFileVersionInfoSize( fileName, &verHandle );
+	DWORD verSize       = GetFileVersionInfoSizeW( fileName, &verHandle );
 	QString fileVersion = "0.0.0.0";
 	if ( verSize != NULL )
 	{
 		LPSTR verData = new char[verSize];
 
-		if ( GetFileVersionInfo( fileName, verHandle, verSize, verData ) )
+		if ( GetFileVersionInfoW( fileName, verHandle, verSize, verData ) )
 		{
-			if ( VerQueryValue( verData, L"\\", (VOID FAR * FAR*)&lpBuffer, &size ) )
+			if ( VerQueryValueW( verData, L"\\", (VOID FAR * FAR*)&lpBuffer, &size ) )
 			{
 				if ( size )
 				{
@@ -121,6 +132,9 @@ int main( int argc, char* argv[] )
 		}
 		delete[] verData;
 	}
+#else
+	QString fileVersion = "0.0.0.0";
+#endif
 
 	QCoreApplication::addLibraryPath( "." );
 
@@ -212,3 +226,11 @@ int main( int argc, char* argv[] )
 	w.show();
 	return a.exec();
 }
+
+#ifdef _WIN32
+INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
+{
+	return main( 0, nullptr );
+	return 0;
+}
+#endif // _WIN32

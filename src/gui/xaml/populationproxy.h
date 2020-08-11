@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatorpopulation.h"
+#include "../aggregatorpopulation.h"
 #include "PopulationModel.h"
 
 #include <QObject>

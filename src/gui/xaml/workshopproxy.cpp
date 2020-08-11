@@ -17,11 +17,11 @@
 */
 #include "workshopproxy.h"
 
-#include "../gamestate.h"
-#include "../gfx/sprite.h"
-#include "../gfx/spritefactory.h"
-#include "../global.h"
-#include "../gui/eventconnector.h"
+#include "../../base/gamestate.h"
+#include "../../gfx/sprite.h"
+#include "../../gfx/spritefactory.h"
+#include "../../base/global.h"
+#include "../eventconnector.h"
 
 #include <QDebug>
 #include <QPainter>

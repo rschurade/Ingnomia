@@ -18,7 +18,7 @@
 #ifndef __WorkshopModel_H__
 #define __WorkshopModel_H__
 
-#include "../gui/aggregatorworkshop.h"
+#include "../aggregatorworkshop.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>

@@ -17,7 +17,7 @@
 */
 #include "ProxyMainView.h"
 
-#include "../gui/eventconnector.h"
+#include "../eventconnector.h"
 #include "ViewModel.h"
 
 ProxyMainView::ProxyMainView( QObject* parent ) :

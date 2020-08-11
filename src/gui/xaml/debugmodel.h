@@ -18,7 +18,7 @@
 #ifndef __DebugModel_H__
 #define __DebugModel_H__
 
-#include "../gui/aggregatordebug.h"
+#include "../aggregatordebug.h"
 
 #include <QString>
 

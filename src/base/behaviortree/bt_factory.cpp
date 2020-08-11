@@ -17,8 +17,8 @@
 */
 #include "bt_factory.h"
 
-#include "../base/config.h"
-#include "../base/global.h"
+#include "../config.h"
+#include "../global.h"
 
 #include <QDebug>
 

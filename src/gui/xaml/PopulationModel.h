@@ -18,7 +18,7 @@
 #ifndef __PopulationModel_H__
 #define __PopulationModel_H__
 
-#include "../gui/aggregatorpopulation.h"
+#include "../aggregatorpopulation.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>

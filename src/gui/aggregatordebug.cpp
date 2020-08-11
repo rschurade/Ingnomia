@@ -17,6 +17,7 @@
 */
 #include "aggregatordebug.h"
 
+#include <QDebug>
 
 AggregatorDebug::AggregatorDebug( QObject* parent )
 {

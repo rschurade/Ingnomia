@@ -352,3 +352,23 @@ GeneratedFiles
 /src/gui/license.h
 /content/tilesheet
 /content/db/ingnomia.db
+
+# create by https://github.com/iamcco/coc-gitignore (Mon Aug 10 2020 12:20:22 GMT-0500 (hora estándar de Perú))
+# CMake.gitignore:
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# CMake.patch:
+# External projects
+*-prefix/
+
+build/

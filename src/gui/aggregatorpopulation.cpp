@@ -25,6 +25,8 @@
 #include "../game/gnomemanager.h"
 #include "../gui/strings.h"
 
+#include <QDebug>
+
 AggregatorPopulation::AggregatorPopulation( QObject* parent )
 {
 	//qRegisterMetaType<GuiGnomeScheduleInfo>();

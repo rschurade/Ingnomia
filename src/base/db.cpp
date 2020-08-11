@@ -26,6 +26,7 @@
 #include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QThread>
 
 QMutex DB::m_mutex;
 int DB::accessCounter = 0;

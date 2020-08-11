@@ -20,7 +20,7 @@
 
 #include "PopulationModel.h"
 
-#include "../gui/aggregatorcreatureinfo.h"
+#include "../aggregatorcreatureinfo.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
@@ -30,6 +30,8 @@
 #include <NsCore/ReflectionDeclareEnum.h>
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
+#include <NsGui/ImageSource.h>
+#include <NsGui/BitmapSource.h>
 
 #include <QString>
 

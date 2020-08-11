@@ -17,12 +17,12 @@
 */
 #include "creatureinfoproxy.h"
 
-#include "../base/db.h"
-#include "../gamestate.h"
-#include "../gfx/sprite.h"
-#include "../gfx/spritefactory.h"
-#include "../global.h"
-#include "../gui/eventconnector.h"
+#include "../../base/db.h"
+#include "../../base/gamestate.h"
+#include "../../gfx/sprite.h"
+#include "../../gfx/spritefactory.h"
+#include "../../base/global.h"
+#include "../eventconnector.h"
 #include "PopulationModel.h"
 
 #include <QDebug>

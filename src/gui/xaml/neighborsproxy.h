@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatorneighbors.h"
+#include "../aggregatorneighbors.h"
 #include "neighborsmodel.h"
 
 #include <QObject>

@@ -20,6 +20,7 @@
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
+#include <QRunnable>
 #include <QThread>
 
 #include <functional>

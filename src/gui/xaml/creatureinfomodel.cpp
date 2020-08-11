@@ -17,7 +17,7 @@
 */
 #include "creatureinfomodel.h"
 
-#include "CreatureInfoproxy.h"
+#include "creatureinfoproxy.h"
 
 #include "../../base/util.h"
 #include "../../game/militarymanager.h"
@@ -28,6 +28,7 @@
 #include <NsCore/ReflectionImplementEnum.h>
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
+#include <NsGui/BitmapImage.h>
 
 #include <QDebug>
 

@@ -51,7 +51,7 @@
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double> expression_t;
 typedef exprtk::parser<double> parser_t;
-typedef exprtk::parser_error::type error_t;
+typedef exprtk::parser_error::type _error_t;
 
 CanWork::CanWork( Position& pos, QString name, Gender gender, QString species ) :
 	Creature( pos, name, gender, species )
@@ -469,7 +469,7 @@ double CanWork::parseGain( QVariantMap gainMap )
 
 		for ( std::size_t i = 0; i < parser.error_count(); ++i )
 		{
-			const error_t error = parser.get_error( i );
+			const _error_t error = parser.get_error( i );
 			printf( "Error: %02d Position: %02d Type: [%s] Msg: %s Expr: %s\n", static_cast<int>( i ), static_cast<int>( error.token.position ), exprtk::parser_error::to_str( error.mode ).c_str(), error.diagnostic.c_str(), formula.c_str() );
 		}
 	}

@@ -18,7 +18,7 @@
 #ifndef __AgricultureModel_H__
 #define __AgricultureModel_H__
 
-#include "../gui/aggregatoragri.h"
+#include "../aggregatoragri.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
@@ -29,6 +29,9 @@
 #include <NsCore/ReflectionDeclareEnum.h>
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
+#include <NsGui/ImageSource.h>
+#include <NsGui/BitmapSource.h>
+#include <NsGui/BitmapImage.h>
 
 #include <QString>
 

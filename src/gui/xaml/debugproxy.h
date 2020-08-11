@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "../gui/aggregatordebug.h"
+#include "../aggregatordebug.h"
 #include "debugmodel.h"
 
 #include <QObject>

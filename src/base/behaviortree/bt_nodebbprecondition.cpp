@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include "BT_NodeBBPrecondition.h"
+#include "bt_nodebbprecondition.h"
 
 BT_NodeBBPrecondition::BT_NodeBBPrecondition( QString name, QString key, QString expected, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),

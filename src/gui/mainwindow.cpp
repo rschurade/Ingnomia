@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "MainWindow.h"
+#include "mainwindow.h"
 
 #include "license.h"
 

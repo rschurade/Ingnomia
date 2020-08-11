@@ -17,12 +17,12 @@
 */
 #include "ProxyGameView.h"
 
-#include "../gui/aggregatortileinfo.h"
-#include "../gui/aggregatorneighbors.h"
-#include "../gui/aggregatorpopulation.h"
-#include "../gui/aggregatorcreatureinfo.h"
-#include "../gui/aggregatormilitary.h"
-#include "../gui/eventconnector.h"
+#include "../aggregatortileinfo.h"
+#include "../aggregatorneighbors.h"
+#include "../aggregatorpopulation.h"
+#include "../aggregatorcreatureinfo.h"
+#include "../aggregatormilitary.h"
+#include "../eventconnector.h"
 #include "ViewModel.h"
 
 #include <QDebug>
