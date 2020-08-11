@@ -14,15 +14,6 @@ The following steps describe how to compile the code and get the game running on
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 
 ### Configuration ###
-You will need to provide the paths to the following dependencies in environment variables:
-
-	STEAMDIR = steamworks_sdk_xxx\sdk
-	NoesisRoot = noesis-3.0.4
-	
-Compilation will initially fail in `license.h` due to a missing Noesis license. \
-The content can be either a [noesis trial license](https://www.noesisengine.com/trial/) or a full license if you have 
-one. \
-*Never commit this file to the repository.* (Use `git update-index --skip-worktree src/gui/license.h` to exclude from tracking.)
 
 	
 ### Database configuration ###
