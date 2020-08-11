@@ -17,7 +17,6 @@ The following steps describe how to compile the code and get the game running on
 You will need to provide the paths to the following dependencies in environment variables:
 
 	STEAMDIR = steamworks_sdk_xxx\sdk
-	QTDIR = 5.14.1\msvc2017_64\
 	NoesisRoot = noesis-3.0.4
 	
 Compilation will initially fail in `license.h` due to a missing Noesis license. \
