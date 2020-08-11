@@ -3,3 +3,4 @@
 *.h diff=cpp
 *.c diff=cpp
 *.cpp diff=cpp
+*.rc text=auto diff=cpp

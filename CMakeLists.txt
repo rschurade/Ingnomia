@@ -65,6 +65,7 @@ add_custom_command(TARGET ${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
 	PRIVATE
 		${PROJECT_NAME}.rc
+		${PROJECT_NAME}.ico
 )
 
 add_subdirectory(src) # Sources list
