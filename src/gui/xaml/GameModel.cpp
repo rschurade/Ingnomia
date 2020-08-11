@@ -1145,6 +1145,7 @@ void GameModel::CmdLeftCommandButton( BaseComponent* param )
 			break;
 		case ButtonSelection::Mine:
 			_commandButtons->Add( MakePtr<CommandButton>( "Mine", "Mine" ) );
+			_commandButtons->Add( MakePtr<CommandButton>( "Explorative Mine", "ExplorativeMine" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Remove floor", "RemoveFloor" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Stairs down", "DigStairsDown" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Stairs up", "MineStairsUp" ) );
