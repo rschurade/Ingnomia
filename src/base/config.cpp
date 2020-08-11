@@ -79,15 +79,7 @@ bool Config::init()
 	{
 		m_settings.insert( "GUIScale", 1.0 );
 	}
-	if ( !m_settings.contains( "dataPath" ) || !QDir( m_settings["dataPath"].toString() ).exists() )
-	{
-		m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
-	}
-	auto dataPath = QDir( m_settings["dataPath"].toString() );
-	if ( !dataPath.isAbsolute() )
-	{
-		m_settings.insert( "dataPath", dataPath.absolutePath() );
-	}
+	m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
 
 	return ok;
 }
