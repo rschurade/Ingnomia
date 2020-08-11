@@ -44,23 +44,6 @@ target_include_directories(${PROJECT_NAME}
 		${STEAM_SDK_ROOT}/public/steam
 )
 
-set(NOESIS_SOURCES
-	${NOESIS_ROOT}/Src/Packages/Render/GLRenderDevice/Src/Render.GLRenderDevice.cpp
-	${NOESIS_ROOT}/Src/Packages/Render/GLRenderDevice/Src/GLRenderDevice.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Providers/Src/FastLZ.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Launcher/Src/Launcher.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Launcher/Src/CommandLine.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Providers/Src/LocalXamlProvider.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Providers/Src/LocalTextureProvider.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Providers/Src/FileTextureProvider.cpp
-	${NOESIS_ROOT}/Src/Packages/App/Providers/Src/LocalFontProvider.cpp
-)
-
-target_sources(${PROJECT_NAME}
-	PRIVATE
-		${NOESIS_SOURCES}
-)
-
 add_subdirectory(src) # Sources list
 add_subdirectory(3rdparty)
 
@@ -85,12 +68,19 @@ find_library(NOESIS Noesis
 		${NOESIS_ROOT}/Bin/linux_x86_64
 )
 
+# TODO add a target to compile the library from the Makefile in the sdk
+find_library(NOESIS_APP NoesisApp
+	HINTS
+		${NOESIS_ROOT}/Bin/linux_x86_64
+)
+
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::shared
 		${STEAM}
 		${NOESIS}
+		${NOESIS_APP}
 )
 
 # Noesis license
