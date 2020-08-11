@@ -62,11 +62,14 @@ add_custom_command(TARGET ${PROJECT_NAME}
 		${CMAKE_SOURCE_DIR}/content $<TARGET_FILE_DIR:${PROJECT_NAME}>/content
 )
 
-target_sources(${PROJECT_NAME}
-	PRIVATE
-		${PROJECT_NAME}.rc
-		${PROJECT_NAME}.ico
-)
+if(WIN32)
+	target_sources(${PROJECT_NAME}
+		PRIVATE
+			${PROJECT_NAME}.rc
+			${PROJECT_NAME}.ico
+			${PROJECT_NAME}.manifest
+	)
+endif()
 
 add_subdirectory(src) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
