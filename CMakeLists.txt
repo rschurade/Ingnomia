@@ -37,6 +37,7 @@ set_target_properties(${PROJECT_NAME}
 		CXX_STANDARD 17
 		AUTOMOC ON
 		INTERPROCEDURAL_OPTIMIZATION ON
+		INSTALL_RPATH "$ORIGIN"
 )
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
@@ -166,6 +167,20 @@ install(
 	DESTINATION "bin"
 )
 
+if(UNIX)
+	install(FILES ${NOESIS}
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
+
+	install(FILES ${NOESIS_APP}
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
+
+	install(FILES ${STEAM}
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
+endif()
+
 # Deployment helpers for Windows
 if(WIN32)
 	if(Qt5_FOUND AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
@@ -203,7 +218,7 @@ if(WIN32)
 					"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
 					$<TARGET_FILE_DIR:${PROJECT_NAME}>
 			)
-			
+
 			# copy deployment directory during installation
 			install(
 				DIRECTORY
@@ -235,9 +250,9 @@ if(WIN32)
 		${RUNTIME_DLLS}
 		DESTINATION "bin"
 	)
-	
+
 	INCLUDE_EXTERNAL_MSPROJECT("Blend" ${CMAKE_CURRENT_SOURCE_DIR}/gui/gui.csproj)
-	
+
 	target_link_libraries(${PROJECT_NAME}
 		PRIVATE
 			Version.lib
