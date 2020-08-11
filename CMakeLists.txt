@@ -192,32 +192,22 @@ if(WIN32)
 	function(deployQt foo)
 		if(TARGET Qt5::windeployqt)
 			# execute windeployqt in a tmp directory after build
-			set(STAMP "${CMAKE_CURRENT_BINARY_DIR}/windeployqt.stamp")
-			add_custom_command(OUTPUT ${STAMP}
-				DEPENDS ${foo} Qt5::windeployqt
-				COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
+			add_custom_command(TARGET ${foo}
+				POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>"
 				COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
 				# for deployment
-				COMMAND Qt5::windeployqt --pdb --no-translations --no-webkit2 --no-system-d3d-compiler --no-opengl-sw --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt" "$<TARGET_FILE_DIR:${foo}>/$<TARGET_FILE_NAME:${foo}>"
-				COMMAND ${CMAKE_COMMAND} -E touch ${STAMP}
-			)
-			
-			add_custom_target(copy_qt ALL
-				DEPENDS ${STAMP}
-			)
-			
-			add_custom_command(TARGET copy_qt
-				POST_BUILD
+				COMMAND Qt5::windeployqt --pdb --no-translations --no-webkit2 --no-system-d3d-compiler --no-opengl-sw --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>" "$<TARGET_FILE_DIR:${foo}>/$<TARGET_FILE_NAME:${foo}>"
 				COMMAND
 					${CMAKE_COMMAND} -E copy_directory
-					"${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+					"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
 					$<TARGET_FILE_DIR:${PROJECT_NAME}>
 			)
 			
 			# copy deployment directory during installation
 			install(
 				DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}/windeployqt/"
+				"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
 				DESTINATION "bin"
 			)
 		endif()
