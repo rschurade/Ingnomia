@@ -1173,6 +1173,11 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 			if ( sc.uID != m_sprites.size() )
 			{
 				qDebug() << "##" << sc.uID << m_sprites.size() << sc.itemSID << sc.materialSIDs;
+				while ( sc.uID > m_sprites.size() )
+				{
+					// Sprite was probably lost due to a deleted definition, ID won't be reused
+					m_sprites.append( nullptr );
+				}
 			}
 
 			if ( sc.creatureID )
