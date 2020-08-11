@@ -88,7 +88,7 @@ bool SpriteFactory::init()
 		if ( !m_pixmapSources.contains( tilesheet ) )
 		{
 			QPixmap pm;
-			loaded = pm.load( Config::getInstance().get( "gfxPath" ).toString() + "/" + tilesheet );
+			loaded = pm.load( Config::getInstance().get( "dataPath" ).toString() + "/tilesheet/" + tilesheet );
 			if ( !loaded )
 			{
 				loaded = pm.load( tilesheet );

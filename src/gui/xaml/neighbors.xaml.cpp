@@ -30,7 +30,7 @@ NeighborsGui::NeighborsGui()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void NeighborsGui::InitializeComponent()
 {
-	GUI::LoadComponent( this, "neighbors.xaml" );
+	GUI::LoadComponent( this, "Neighbors.xaml" );
 }
 
 bool NeighborsGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )

@@ -30,7 +30,7 @@ MilitaryGui::MilitaryGui()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MilitaryGui::InitializeComponent()
 {
-	GUI::LoadComponent( this, "military.xaml" );
+	GUI::LoadComponent( this, "MilitaryGui.xaml" );
 }
 
 bool MilitaryGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )

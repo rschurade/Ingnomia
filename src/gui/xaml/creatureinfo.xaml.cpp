@@ -30,7 +30,7 @@ CreatureInfo::CreatureInfo()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CreatureInfo::InitializeComponent()
 {
-	GUI::LoadComponent( this, "creatureinfo.xaml" );
+	GUI::LoadComponent( this, "CreatureInfo.xaml" );
 }
 
 bool CreatureInfo::ConnectEvent( BaseComponent* source, const char* event, const char* handler )

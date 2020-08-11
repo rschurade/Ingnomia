@@ -479,7 +479,7 @@ void MainWindow::noesisInit()
 
 	registerComponents();
 
-	Noesis::Ptr<Noesis::FrameworkElement> xaml = Noesis::GUI::LoadXaml<Noesis::FrameworkElement>( "main.xaml" );
+	Noesis::Ptr<Noesis::FrameworkElement> xaml = Noesis::GUI::LoadXaml<Noesis::FrameworkElement>( "Main.xaml" );
 
 	// View creation to render and interact with the user interface
 	// We transfer the ownership to a global pointer instead of a Ptr<> because there is no way

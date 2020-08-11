@@ -1,0 +1,221 @@
+<UserControl
+    x:Class="IngnomiaGUI.PopulationWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:IngnomiaGUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    x:Name="PopulationControl">
+    <UserControl.DataContext>
+        <local:PopulationModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <StackPanel Orientation="Horizontal">
+            <Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" Margin="2">
+                <StackPanel>
+                    <Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Skills">
+                        <StackPanel>
+                            <Image Source="buttons/skills.png" Stretch="None" />
+                            <TextBlock HorizontalAlignment="Center">Skills</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="Schedule">
+                        <StackPanel>
+                            <Image Source="buttons/schedule.png" Stretch="None" />
+                            <TextBlock HorizontalAlignment="Center">Schedule</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SquareButton}"
+						Command="{Binding PageCmd}" 
+						CommandParameter="ProfEdit">
+                        <StackPanel>
+                            <Image Source="buttons/professions.png" Stretch="None" />
+                            <TextBlock HorizontalAlignment="Center">Edit Prof</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2" >
+                <Grid>
+                    <Grid x:Name="LayoutSkills" Visibility="{Binding ShowSkills}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <Button Content="Name" MinWidth="185" Margin="2" Command="{Binding CmdSort}" CommandParameter="Name" />
+                            <Button Content="Professions" MinWidth="180" Margin="2" Command="{Binding CmdSort}" CommandParameter="Prof" />
+                        </StackPanel>
+
+
+                        <ScrollViewer x:Name="SVSkillHeaders" HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="0" Grid.Column="1">
+                            <ItemsControl ItemsSource="{Binding SkillHeaders}" ItemTemplate="{StaticResource PopGnomeSkillHeaderTemplate}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <ItemsControl x:Name="SVNames"
+                                      ItemsSource="{Binding Gnomes}" ItemTemplate="{StaticResource PopGnomeNameTemplate}"
+                                      Grid.Row="1" Grid.Column="0"
+                                      Style="{StaticResource VirtualList}"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        </ItemsControl>
+
+
+                        <ItemsControl x:Name="SVSkills"
+                                      ItemsSource="{Binding Gnomes}" ItemTemplate="{StaticResource PopGnomeSkillRowTemplate}"
+                                      Grid.Row="1" Grid.Column="1"
+                                      Style="{StaticResource VirtualList}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        </ItemsControl>
+                    </Grid>
+
+                    <Grid x:Name="LayoutSchedule" Visibility="{Binding ShowSchedule}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ScrollViewer x:Name="SVSchedHeaders" HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="0" Grid.Column="1">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="0" Command="{Binding CmdSetHourForAll}" CommandParameter="0" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="1" Command="{Binding CmdSetHourForAll}" CommandParameter="1" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="2" Command="{Binding CmdSetHourForAll}" CommandParameter="2" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="3" Command="{Binding CmdSetHourForAll}" CommandParameter="3" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="4" Command="{Binding CmdSetHourForAll}" CommandParameter="4" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="5" Command="{Binding CmdSetHourForAll}" CommandParameter="5" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="6" Command="{Binding CmdSetHourForAll}" CommandParameter="6" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="7" Command="{Binding CmdSetHourForAll}" CommandParameter="7" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="8" Command="{Binding CmdSetHourForAll}" CommandParameter="8" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="9" Command="{Binding CmdSetHourForAll}" CommandParameter="9" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="10" Command="{Binding CmdSetHourForAll}" CommandParameter="10" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="11" Command="{Binding CmdSetHourForAll}" CommandParameter="11" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="12" Command="{Binding CmdSetHourForAll}" CommandParameter="12" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="13" Command="{Binding CmdSetHourForAll}" CommandParameter="13" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="14" Command="{Binding CmdSetHourForAll}" CommandParameter="14" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="15" Command="{Binding CmdSetHourForAll}" CommandParameter="15" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="16" Command="{Binding CmdSetHourForAll}" CommandParameter="16" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="17" Command="{Binding CmdSetHourForAll}" CommandParameter="17" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="18" Command="{Binding CmdSetHourForAll}" CommandParameter="18" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="19" Command="{Binding CmdSetHourForAll}" CommandParameter="19" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="20" Command="{Binding CmdSetHourForAll}" CommandParameter="20" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="21" Command="{Binding CmdSetHourForAll}" CommandParameter="21" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="22" Command="{Binding CmdSetHourForAll}" CommandParameter="22" />
+                                <Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="23" Command="{Binding CmdSetHourForAll}" CommandParameter="23" />
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <ItemsControl x:Name="SchedNames"
+                                      ItemsSource="{Binding Schedules}" ItemTemplate="{StaticResource PopScheduleNameTemplate}"
+                                      Grid.Row="1" Grid.Column="0"
+                                      Style="{StaticResource VirtualList}"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        </ItemsControl>
+                        <ItemsControl x:Name="SVActivities"
+                                      ItemsSource="{Binding Schedules}" ItemTemplate="{StaticResource PopGnomeSchedRowTemplate}"
+                                      Grid.Row="1" Grid.Column="1"  Style="{StaticResource VirtualList}"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        </ItemsControl>
+                        
+                        <Grid Grid.Row="1" Grid.Column="2">
+                            <StackPanel>
+                                <Button Content="None"  MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityNoneBrush}" CommandParameter="None" />
+                                <Button Content="Eat"   MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityEatBrush}" CommandParameter="Eat" />
+                                <Button Content="Sleep" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivitySleepBrush}" CommandParameter="Sleep" />
+                                <Button Content="Train" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityTrainBrush}" CommandParameter="Train" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+
+                    <Grid x:Name="LayoutProfEdit" Visibility="{Binding ShowProfEdit}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Edit Professions" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+
+                        <Grid Grid.Row="1" Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ComboBox x:Name="ProfessionSelector" VerticalAlignment="Top" Margin="8,0,0,0" MaxHeight="28" HorizontalAlignment="Stretch"  MinWidth="180" MaxWidth="180"
+								Grid.Row="0"
+								ItemsSource="{Binding Professions}"
+								SelectedItem="{Binding Profession, Mode=TwoWay}"
+								ItemTemplate="{StaticResource PopProfessionTemplate}" />
+                            <TextBox x:Name="ProfName" Grid.Row="1" MinWidth="180" Text="{Binding ProfName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="3"/>
+                            <Button Content="new" MinWidth="180"   Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="2"
+								Command="{Binding CmdProfNew }"/>
+                            <Button Content="delete" MinWidth="180" Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="3"
+								Command="{Binding CmdProfDelete }" />
+
+                        </Grid>
+                        <ScrollViewer x:Name="ProfEditSkills" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1" Grid.Column="1" Margin="5">
+                            <ItemsControl ItemsSource="{Binding ProfSkills}" ItemTemplate="{StaticResource ProfSkillTemplate}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <ScrollViewer x:Name="AllProfSkills" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1" Grid.Column="2" Margin="5">
+                            <ItemsControl ItemsSource="{Binding AllProfSkills}" ItemTemplate="{StaticResource ProfSkillTemplate2}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+
+                </Grid>
+            </Border>
+            <Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }" 
+				CommandParameter="PopWindow">
+				<Image Source="buttons/cross.png" />
+			</Button>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

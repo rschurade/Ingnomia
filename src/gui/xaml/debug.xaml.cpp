@@ -30,7 +30,7 @@ DebugGui::DebugGui()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void DebugGui::InitializeComponent()
 {
-	GUI::LoadComponent( this, "debug.xaml" );
+	GUI::LoadComponent( this, "DebugGui.xaml" );
 }
 
 bool DebugGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
