@@ -145,7 +145,7 @@ public:
 
 	int countItemsAtPos( Position& pos );
 
-	QMap<unsigned int, Item>& allItems()
+	QHash<unsigned int, Item>& allItems()
 	{
 		return m_items;
 	}
@@ -183,7 +183,7 @@ private:
 	int m_dimY;
 	int m_dimZ;
 
-	QMap<unsigned int, Item> m_items;
+	QHash<unsigned int, Item> m_items;
 
 	PositionHash m_positionHash;
 	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;

@@ -189,16 +189,17 @@ void Inventory::loadFilter()
 
 Item* Inventory::getItem( unsigned int itemUID )
 {
-	if ( m_items.contains( itemUID ) )
+	auto it = m_items.find( itemUID );
+	if ( it != m_items.end() )
 	{
-		return &m_items[itemUID];
+		return &(*it);
 	}
 	return nullptr;
 }
 
 bool Inventory::itemExists( unsigned int itemID )
 {
-	if ( getItem( itemID ) )
+	if ( m_items.contains( itemID ) )
 	{
 		return true;
 	}
