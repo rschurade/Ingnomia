@@ -101,7 +101,7 @@ target_compile_options(${PROJECT_NAME}
 )
 
 # Default flags
-if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR DEFINED CMAKE_CXX_FLAGS))
+if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
 	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif()
 
