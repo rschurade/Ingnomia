@@ -169,12 +169,6 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 		switch ( event->key() )
 		{
 			case Qt::Key_K:
-				if ( m_view )
-				{
-					bool showMM = GameManager::getInstance().showMainMenu();
-					GameManager::getInstance().setShowMainMenu( !showMM );
-					qDebug() << "show main menu" << GameManager::getInstance().showMainMenu();
-				}
 				break;
 			case Qt::Key_D:
 				if ( event->modifiers() & Qt::ControlModifier )
