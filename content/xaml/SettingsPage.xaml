@@ -49,7 +49,7 @@
 			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
 				<TabItem Header="Game" />
 				<TabItem Header="Video">
-					<Label Content="Video Stettings" />
+					<Label Content="Video Settings" />
 				</TabItem>
 				<TabItem Header="Audio">
 					<Label Content="There is no audio yet." />
