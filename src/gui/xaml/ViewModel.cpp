@@ -332,18 +332,7 @@ void ViewModel::OnBack( BaseComponent* )
 	switch ( _state )
 	{
 		case State::Main:
-		{
-			//OnExit( nullptr );
-			/*
-			SetState( State::GameRunning );
-			_showMainMenu = false;
-			OnPropertyChanged( "ShowMainMenu" );
-            _showGameGUI = true;
-            OnPropertyChanged( "ShowGameGui" );
-            GameManager::getInstance().setShowMainMenu( false );
-            */
 			break;
-		}
 		case State::GameRunning:
 			_showMainMenu = true;
 			OnPropertyChanged( "ShowMainMenu" );
@@ -354,14 +343,22 @@ void ViewModel::OnBack( BaseComponent* )
 			break;
 		case State::Settings:
 		case State::LoadGame:
+		case State::NewGame:
 			if ( _ingame )
 			{
 				SetState( State::Ingame );
-				break;
 			}
-
+			else
+			{
+				SetState( State::Main );
+			}
+			_showMainMenu = true;
+			_showGameGUI = false;
+			OnPropertyChanged( "ShowMainMenu" );
+			OnPropertyChanged( "ShowGameGui" );
+			GameManager::getInstance().setShowMainMenu( true );
+			break;
 		case State::Start:
-		case State::NewGame:
 		case State::Ingame:
 		{
 			_showMainMenu = false;
@@ -382,10 +379,8 @@ void ViewModel::OnBack( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnResume( BaseComponent* )
 {
-	qDebug() << "ViewModel OnResume";
 	SetState( State::GameRunning );
 	_showMainMenu = false;
-	OnPropertyChanged( "ShowMainMenu" );
 	_showGameGUI = true;
 	OnPropertyChanged( "ShowGameGui" );
 	GameManager::getInstance().setShowMainMenu( false );
