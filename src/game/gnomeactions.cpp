@@ -1145,6 +1145,7 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 		if ( m_position == Global::inv().getItemPos( claimedTool ) )
 		{
 			Global::inv().pickUpItem( claimedTool );
+			Global::inv().setConstructedOrEquipped( claimedTool, true );
 			m_equipment.rightHandHeld.itemID     = claimedTool;
 			m_equipment.rightHandHeld.item       = Global::inv().itemSID( claimedTool );
 			m_equipment.rightHandHeld.materialID = Global::inv().materialUID( claimedTool );
@@ -1179,6 +1180,7 @@ BT_RESULT Gnome::actionEquipUniform( bool halt )
 	{
 		Global::inv().pickUpItem( itemID );
 		Global::inv().setInJob( itemID, m_id );
+		Global::inv().setConstructedOrEquipped( itemID, true );
 
 		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
 		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
@@ -1355,6 +1357,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 			dropped = true;
 			Global::inv().putDownItem( wornItem, m_position );
 			Global::inv().setInJob( wornItem, 0 );
+			Global::inv().setConstructedOrEquipped( wornItem, false );
 
 			if ( item == "none" || item.isEmpty() )
 			{

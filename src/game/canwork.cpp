@@ -307,7 +307,7 @@ void CanWork::cleanUpJob( bool finished )
 		for ( auto item : claimedItems() )
 		{
 			inv.setInJob( item, 0 );
-			if ( inv.isPickedUp( item ) && !inv.isConstructed( item ) )
+			if ( inv.isPickedUp( item ) && !inv.isConstructedOrEquipped( item ) )
 			{
 				inv.putDownItem( item, m_position );
 			}
@@ -317,7 +317,7 @@ void CanWork::cleanUpJob( bool finished )
 	for ( auto itemID : m_carriedItems )
 	{
 		Inventory& inv = Global::inv();
-		if ( inv.isPickedUp( itemID ) && !inv.isConstructed( itemID ) )
+		if ( inv.isPickedUp( itemID ) && !inv.isConstructedOrEquipped( itemID ) )
 		{
 			inv.putDownItem( itemID, m_position );
 		}
@@ -537,6 +537,7 @@ bool CanWork::dropEquippedItem()
 		inv.putDownItem( equippedItem, m_position );
 		inv.gravity( m_position );
 		inv.setInJob( equippedItem, 0 );
+		inv.setConstructedOrEquipped( equippedItem, false );
 		m_equipment.rightHandHeld.itemID = 0;
 		m_equipment.rightHandHeld.item.clear();
 		m_equipment.rightHandHeld.materialID = 0;
@@ -957,7 +958,7 @@ bool CanWork::construct()
 		{
 			inv.setInJob( itemUID, 0 );
 
-			if ( inv.isConstructed( itemUID ) )
+			if ( inv.isConstructedOrEquipped( itemUID ) )
 			{
 				/*
 				if( Global::inv().isContainer( itemUID ) )

@@ -422,7 +422,7 @@ void NetworkClient::processChangeCommand( QString& command )
 						}
 						case NetworkCommand::ITEMSETCONSTRUCTED:
 						{
-							Global::inv().setConstructed( args[1].toUInt(), args[2].toInt() );
+							Global::inv().setConstructedOrEquipped( args[1].toUInt(), args[2].toInt() );
 							break;
 						}
 						case NetworkCommand::ITEMSETPOS:

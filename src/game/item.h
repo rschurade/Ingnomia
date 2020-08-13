@@ -78,8 +78,8 @@ public:
 	bool isPickedUp() const;
 	void setPickedUp( bool status );
 
-	bool isConstructed() const;
-	void setIsConstructed( bool value );
+	bool isConstructedOrEquipped() const;
+	void setIsConstructedOrEquipped( bool value );
 
 	unsigned char stackSize() const;
 
@@ -118,7 +118,7 @@ private:
 	unsigned short m_itemUID     = 0;
 
 	bool m_isPickedUp    = false;
-	bool m_isConstructed = false;
+	bool m_isConstructedOrEquipped = false; // double use of the flag, should be safe because no constructed item can be equipped and vice versa
 
 	unsigned int m_isInStockpile = 0;
 	unsigned int m_isInJob       = 0;

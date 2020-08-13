@@ -101,8 +101,8 @@ public:
 
 	bool isPickedUp( unsigned int id );
 
-	bool isConstructed( unsigned int id );
-	void setConstructed( unsigned int id, bool status );
+	bool isConstructedOrEquipped( unsigned int id );
+	void setConstructedOrEquipped( unsigned int id, bool status );
 
 	void putItemInContainer( unsigned int id, unsigned int container );
 	void removeItemFromContainer( unsigned int id );

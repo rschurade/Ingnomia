@@ -918,7 +918,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 			field->requireSame = inv.requireSame( containerID );
 
 			field->capacity = inv.capacity( containerID );
-			inv.setConstructed( containerID, true );
+			inv.setConstructedOrEquipped( containerID, true );
 
 			for ( auto itemID : inv.itemsInContainer( containerID ) )
 			{
