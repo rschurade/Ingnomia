@@ -13,62 +13,92 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>					
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
-	
-	<Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
-		
-		<Grid.RenderTransform>
-			<TransformGroup>
-				<ScaleTransform ScaleX="1" ScaleY="1"/>
-				<SkewTransform/>
-				<RotateTransform/>
-				<TranslateTransform X="0" Y="0"/>
-			</TransformGroup>
-		</Grid.RenderTransform>
-		
-		<Grid.RowDefinitions>
-			<RowDefinition Height="2*"/>
-			<RowDefinition Height="9*"/>
-			<RowDefinition Height="1*"/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*"/>
-			<ColumnDefinition Width="5*"/>
-			<ColumnDefinition Width="1*"/>
-		</Grid.ColumnDefinitions>
-		
-		
-		<Viewbox Grid.Row="0" Grid.Column="1">
-			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Settings" />
-		</Viewbox>
-		<Viewbox Grid.Row="1" Grid.Column="1">
-			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
-				<TabItem Header="Game" />
-				<TabItem Header="Video">
-					<Label Content="Video Settings" />
-				</TabItem>
-				<TabItem Header="Audio">
-					<Label Content="There is no audio yet." />
-				</TabItem>
-				<TabItem Header="Controls" />
-			</TabControl>
-		</Viewbox>
-		
-		<Grid Grid.Row="2" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="Back" 
+
+    <Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
+
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                <SkewTransform/>
+                <RotateTransform/>
+                <TranslateTransform X="0" Y="0"/>
+            </TransformGroup>
+        </Grid.RenderTransform>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Viewbox Grid.Row="0" Grid.Column="1">
+            <TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Settings" />
+        </Viewbox>
+        <Viewbox Grid.Row="1" Grid.Column="1">
+            <TabControl Style="{StaticResource MainMenuTabControlStyle}">
+                <TabItem Header="Game" />
+                <TabItem Header="Video">
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Content="Display:" Margin="-274,0,0,-15" Grid.RowSpan="4" FontSize="16"/>
+                        <ComboBox HorizontalAlignment="Left" Margin="-274,0,0,-50" Grid.Row="2" VerticalAlignment="Bottom" Width="274" Grid.RowSpan="15" SelectedIndex="0">
+                            <ComboBoxItem Content="Full Screen Borderless"/>
+                            <ComboBoxItem Content="Full Screen"/>
+                            <ComboBoxItem Content="Window"/>
+                        </ComboBox>
+                        <Label Content="Resolution:" Margin="-274,0,0,-94" FontSize="16" Height="21" Grid.Row="3" VerticalAlignment="Bottom"/>
+                        <ComboBox HorizontalAlignment="Left" Margin="-274,0,0,-129" Grid.Row="3" VerticalAlignment="Bottom" Width="274" SelectedIndex="0">
+                            <ComboBoxItem Content="1920 x 1080"/>
+                        </ComboBox>
+                        <CheckBox Content=" Custom" HorizontalAlignment="Left" Margin="-274,0,0,-163" Grid.Row="3" VerticalAlignment="Bottom"/>
+                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Height="29.96" Margin="-179,0,0,-168" Grid.Row="3" VerticalAlignment="Bottom" Width="56.383"/>
+                        <Label Content="X" HorizontalAlignment="Left" Margin="-118,0,0,-164" Grid.Row="3" VerticalAlignment="Bottom" FontSize="16"/>
+                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Height="29.96" Margin="-104,0,0,-168" Grid.Row="3" VerticalAlignment="Bottom" Width="56.383"/>
+                        <CheckBox Content="Vertical Sync" HorizontalAlignment="Left" Margin="-274,0,0,-198" Grid.Row="3" VerticalAlignment="Bottom"/>
+                        <Button Content="Apply" HorizontalAlignment="Left" Margin="-196,0,0,-250" Grid.Row="3" VerticalAlignment="Bottom" Width="60" Background="#FF252A2E" BorderBrush="Black" BorderThickness="2"/>
+                        <Button Content="Back" HorizontalAlignment="Left" Margin="-274,0,0,-250" Grid.Row="3" VerticalAlignment="Bottom" Width="60" Background="#FF252A2E" BorderBrush="Black" BorderThickness="2"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Audio">
+                    <Label Content="There is no audio yet." />
+                </TabItem>
+                <TabItem Header="Controls" />
+            </TabControl>
+        </Viewbox>
+
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="Back" 
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="Accept" />
-		</Grid>
-		<TextBlock x:Name="SettingsDescription"/>
-	</Grid>
+            <Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="Accept" />
+        </Grid>
+        <TextBlock x:Name="SettingsDescription"/>
+    </Grid>
 
 </UserControl>
