@@ -166,6 +166,9 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 	{
 		switch ( event->key() )
 		{
+			case Qt::Key_H:
+				Global::wallsLowered = !Global::wallsLowered;
+				break;
 			case Qt::Key_K:
 				break;
 			case Qt::Key_D:
