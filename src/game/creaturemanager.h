@@ -70,6 +70,8 @@ public:
 	QList<QString> types();
 	QList<unsigned int> animalsByType( QString type );
 
+	bool hasPathTo( Position& pos, unsigned int creatureID );
+
 private:
 	QList<Creature*> m_creatures;
 	QList<Animal*> m_animals;

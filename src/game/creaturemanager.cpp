@@ -18,6 +18,8 @@
 #include "creaturemanager.h"
 
 #include "../base/global.h"
+#include "../base/regionmap.h"
+#include "../game/world.h"
 #include "../game/creaturefactory.h"
 #include "../game/farmingmanager.h"
 #include "../game/inventory.h"
@@ -404,4 +406,17 @@ void CreatureManager::updateLists()
 		}
 	}
 	m_dirty = false;
+}
+
+bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
+{
+	if( m_creaturesByID.contains( creatureID ) )
+	{
+		auto creature = m_creaturesByID[creatureID];
+		if( creature )
+		{
+			return Global::w().regionMap().checkConnectedRegions( pos, creature->getPos() );
+		}
+	}
+	return false;
 }

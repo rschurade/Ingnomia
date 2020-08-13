@@ -24,7 +24,7 @@
 //#include "../base/navmesh.h"
 //#include "../base/position.h"
 
-//#include "../game/creaturemanager.h"
+#include "../game/creaturemanager.h"
 //#include "../game/farmingmanager.h"
 //#include "../game/world.h"
 //#include "../game/stockpile.h"
@@ -283,7 +283,13 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 		{
 			if( prio.attitude == MilAttitude::HUNT )
 			{
-				m_targets.append( prio.huntTargets.values() );
+				for( auto targetID : prio.huntTargets.values() )
+				{
+					if( Global::cm().hasPathTo( m_position, targetID ) )
+					{
+						m_targets.append( targetID );
+					}
+				}
 			}
 		}
 	}
