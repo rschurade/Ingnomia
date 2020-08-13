@@ -832,16 +832,9 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 
 	if ( !iconString.isEmpty() )
 	{
-		QPixmap pm( ":/resources/icons/windmill.png" );
-
-		/*
-		QString text = "Builds:\n";
-		for( auto craft : DB::select( "Crafts", "Workshops", workshopID ).toString().split( "|" ) )
-		{
-			text += craft;
-			text += "\n";
-		}
-		*/
+		const auto path = Config::getInstance().get( "dataPath" ).toString() + "/xaml/buttons/" + iconString;
+		QPixmap pm( path );
+		assert( pm.width() > 0 );
 		return pm;
 	}
 	QString season = GameState::seasonString;
