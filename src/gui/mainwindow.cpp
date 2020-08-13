@@ -18,8 +18,6 @@
 
 #include "mainwindow.h"
 
-#include "license.h"
-
 #include "../base/config.h"
 #include "../base/global.h"
 #include "../base/io.h"
@@ -28,6 +26,7 @@
 #include "../game/gamemanager.h"
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
+#include "license.h"
 #include "mainwindowrenderer.h"
 #include "xaml/GameGui.xaml.h"
 #include "xaml/GameModel.h"
@@ -39,8 +38,6 @@
 #include "xaml/MainPage.xaml.h"
 #include "xaml/NewGameModel.h"
 #include "xaml/NewGamePage.xaml.h"
-#include "xaml/neighbors.xaml.h"
-#include "xaml/neighborsmodel.h"
 #include "xaml/Population.xaml.h"
 #include "xaml/PopulationModel.h"
 #include "xaml/SettingsModel.h"
@@ -56,12 +53,13 @@
 #include "xaml/creatureinfomodel.h"
 #include "xaml/debug.xaml.h"
 #include "xaml/debugmodel.h"
+#include "xaml/military.xaml.h"
+#include "xaml/militarymodel.h"
+#include "xaml/neighbors.xaml.h"
+#include "xaml/neighborsmodel.h"
 #include "xaml/stockpilegui.xaml.h"
 #include "xaml/workshopgui.xaml.h"
 #include "xaml/workshopmodel.h"
-#include "xaml/military.xaml.h"
-#include "xaml/militarymodel.h"
-
 
 #include <NsApp/Launcher.h>
 #include <NsApp/LocalFontProvider.h>
@@ -402,6 +400,24 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 				}
 			}
 		}
+	}
+}
+
+void MainWindow::focusInEvent( QFocusEvent* e )
+{
+	if ( m_view )
+	{
+		m_view->Activate();
+		noesisTick();
+	}
+}
+
+void MainWindow::focusOutEvent( QFocusEvent* e )
+{
+	if ( m_view )
+	{
+		m_view->Deactivate();
+		noesisTick();
 	}
 }
 
