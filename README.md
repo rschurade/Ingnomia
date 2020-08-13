@@ -10,7 +10,7 @@ The following steps describe how to compile the code and get the game running on
 * Qt 5.14.1
 * Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
 * [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
-  Download the native SDK, open the Visual Studio solution and build the NoesisApp.
+  Download the native SDK, open the Visual Studio solution and build the NoesisApp in *Debug* configuration.
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 
 ### Configuration ###

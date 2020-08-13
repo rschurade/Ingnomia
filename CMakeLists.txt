@@ -146,6 +146,12 @@ get_target_property(SOURCE_LIST ${PROJECT_NAME} SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCE_LIST})
 
 # Default flags
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+		NS_DEBUG
+		NS_PROFILE
+)
+
 if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
 	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif()
@@ -168,7 +174,7 @@ install(TARGETS ${PROJECT_NAME}
 install(
 	DIRECTORY
 	$<TARGET_FILE_DIR:${PROJECT_NAME}>/content
-	DESTINATION "bin"
+	DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 if(UNIX)
@@ -227,7 +233,7 @@ if(WIN32)
 			install(
 				DIRECTORY
 				"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
-				DESTINATION "bin"
+				DESTINATION ${CMAKE_INSTALL_BINDIR}
 			)
 		endif()
 	endfunction()
@@ -252,7 +258,7 @@ if(WIN32)
 	install(
 		FILES
 		${RUNTIME_DLLS}
-		DESTINATION "bin"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
 	INCLUDE_EXTERNAL_MSPROJECT("Blend" ${CMAKE_CURRENT_SOURCE_DIR}/gui/gui.csproj)
