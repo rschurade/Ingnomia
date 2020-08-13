@@ -663,14 +663,6 @@ void GnomeManager::setInMission( unsigned int gnomeID, unsigned int missionID )
 	}
 }
 
-void GnomeManager::setTargets( unsigned int gnomeID, QList<unsigned int> targets )
-{
-	if ( m_gnomesByID.contains( gnomeID ) )
-	{
-		m_gnomesByID[gnomeID]->setTargets( targets );
-	}
-}
-
 QString GnomeManager::name( unsigned int gnomeID )
 {
 	if ( m_gnomesByID.contains( gnomeID ) )

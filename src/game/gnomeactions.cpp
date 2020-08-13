@@ -209,7 +209,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 			}
 		}
 
-		if ( m_aggroList.size() || m_targets.size() )
+		if ( m_currentAttackTarget )
 		{
 			if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
 			{
@@ -2346,42 +2346,85 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 {
 	if ( Global::debugMode )
 		log( "actionGetTarget" );
-	
-	if ( m_aggroList.size() )
-	{
-		unsigned int targetID = m_aggroList.first().id;
-		Creature* creature    = Global::cm().creature( targetID );
 
-		if ( creature && !creature->isDead() )
+	const Squad* squad = Global::mil().getSquadForGnome( m_id );
+	if ( !m_currentAttackTarget && squad )
+	{
+		const Creature* bestCandidate = nullptr;
+		unsigned int bestDistance = std::numeric_limits<unsigned int>::max();
+
+		// Search for targets already attacked by squad mates first
+		for (const auto& gnomeID : squad->gnomes)
 		{
-			m_currentAttackTarget = targetID;
-			setCurrentTarget( creature->getPos() );
+			const Gnome* gnome = Global::gm().gnome( gnomeID );
+			if ( gnome && gnome->m_currentAttackTarget )
+			{
+				const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
+				if ( Global::cm().hasPathTo( m_position, creature->id() ) )
+				{
+					const auto dist = m_position.distSquare( creature->getPos() );
+					bestDistance  = dist;
+					bestCandidate = creature;
+					// Any legal match is a good hit
+					break;
+				}
+			}
+		}
+		if ( !bestCandidate )
+		{
+			// Next search for hunting targets, anything we could reach
+			for ( const auto& prio : squad->priorities )
+			{
+				if ( prio.attitude == MilAttitude::HUNT )
+				{
+					//!TODO Sort huntTargets into buckets by regionm so hasPathTo will never fail
+					for ( const auto& targetID : prio.huntTargets.values() )
+					{
+						const Creature* creature = Global::cm().creature( targetID );
+						if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
+						{
+							const auto dist = m_position.distSquare( creature->getPos() );
+							if ( dist < bestDistance )
+							{
+								bestDistance  = dist;
+								bestCandidate = creature;
+							}
+						}
+					}
+					// Got the closest target
+					if ( bestCandidate )
+					{
+						break;
+					}
+				}
+			}
+		}
+		//!TODO Loop again to check for "attack on sight" target class
+		if ( bestCandidate )
+		{
+			m_currentAttackTarget = bestCandidate->id();
+			setCurrentTarget( bestCandidate->getPos() );
 			return BT_RESULT::SUCCESS;
 		}
-		else
-		{
-			m_aggroList.removeFirst();
-			return BT_RESULT::FAILURE;
-		}
 	}
-	else
+
+	if ( !m_currentAttackTarget && m_aggroList.size() )
 	{
-		if ( m_targets.size() )
+		while ( m_aggroList.size() )
 		{
-			unsigned int targetID = m_targets.first();
-			Creature* creature = Global::cm().creature( targetID );
-			
-			if ( creature && !creature->isDead() )
+			unsigned int targetID = m_aggroList.first().id;
+			Creature* creature    = Global::cm().creature( targetID );
+
+			//!TODO Check if creature isn't in "flee" category
+			if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
 			{
 				m_currentAttackTarget = targetID;
 				setCurrentTarget( creature->getPos() );
-				if ( Global::debugMode )
-					qDebug() << "Target is at: " << creature->getPos().toString();
 				return BT_RESULT::SUCCESS;
 			}
 			else
 			{
-				m_targets.removeFirst();
+				m_aggroList.pop_front();
 			}
 		}
 	}

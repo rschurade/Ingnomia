@@ -271,27 +271,21 @@ BT_RESULT Gnome::conditionIsCivilian( bool halt )
 
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 {
-	if( m_targets.size() )
-	{
-		return BT_RESULT::SUCCESS;
-	}
-
 	auto squad = Global::mil().getSquadForGnome( m_id );
 	if( squad )
 	{
 		for( const auto& prio : squad->priorities )
 		{
-			if( prio.attitude == MilAttitude::HUNT )
-			{
-				for( auto targetID : prio.huntTargets.values() )
+			if( prio.attitude == MilAttitude::HUNT && !prio.huntTargets.empty() )
+				for ( const auto& targetID : prio.huntTargets.values() )
 				{
-					if( Global::cm().hasPathTo( m_position, targetID ) )
+					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
+					if ( Global::cm().hasPathTo( m_position, targetID ) )
 					{
-						m_targets.append( targetID );
+						return BT_RESULT::SUCCESS;
 					}
 				}
-			}
 		}
 	}
-	return m_targets.isEmpty() ? BT_RESULT::FAILURE : BT_RESULT::SUCCESS;
+	return BT_RESULT::FAILURE;
 }

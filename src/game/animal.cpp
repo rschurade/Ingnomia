@@ -954,7 +954,7 @@ BT_RESULT Animal::actionMove( bool halt )
 	// gnome has a path, move on path and return
 	if ( !m_currentPath.empty() )
 	{
-		if ( m_aggroList.size() || m_targets.size() )
+		if ( m_currentAttackTarget )
 		{
 			if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
 			{

@@ -108,8 +108,6 @@ public:
 
 	void setInMission( unsigned int gnomeID, unsigned int missionID );
 
-	void setTargets( unsigned int gnomeID, QList<unsigned int> targets );
-
 	QString name( unsigned int gnomeID );
 	
 	unsigned int roleID( unsigned int gnomeID );

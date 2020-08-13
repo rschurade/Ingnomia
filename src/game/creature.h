@@ -226,8 +226,6 @@ public:
 
 	void addAggro( unsigned int target, int value );
 
-	void setTargets( QList<unsigned int> targets );
-
 	virtual void updateAttackValues();
 
 	QStringList needIDs() const;
@@ -317,7 +315,6 @@ protected:
 	qint8 m_facingAfterMove = -1;
 
 	unsigned int m_currentAttackTarget = 0;
-	QList<unsigned int> m_targets;
 	bool m_goneOffMap = false;
 
 	QVariantMap m_btBlackBoard;
