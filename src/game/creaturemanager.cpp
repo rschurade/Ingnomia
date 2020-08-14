@@ -17,6 +17,7 @@
 */
 #include "creaturemanager.h"
 
+#include "../base/db.h"
 #include "../base/global.h"
 #include "../base/regionmap.h"
 #include "../game/world.h"
@@ -43,6 +44,13 @@ void CreatureManager::reset()
 
 	m_countPerType.clear();
 	m_creaturesPerType.clear();
+
+	// add monster entries for monsters that aren't typically on the map so they can appear in the squad priority list
+	auto monsters = DB::ids( "Monsters" );
+	for( auto monster : monsters )
+	{
+		m_countPerType.insert( monster, 0 );
+	}
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )

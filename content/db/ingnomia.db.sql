@@ -12676,6 +12676,10 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_MosaicFloor',
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GroupName_Sand','Soil');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GroupName_Clay','Soil');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_any (same)','any (same)');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CreatureName_Goblin','Goblin');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CreatureName_MantSoldier','Mant soldier');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CreatureName_MantWorker','Mant worker');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CreatureName_MantQueen','Mant queen');
 INSERT INTO "TreeLayouts" ("ID") VALUES ('PineTree');
 INSERT INTO "TreeLayouts" ("ID") VALUES ('AppleTree');
 INSERT INTO "TreeLayouts" ("ID") VALUES ('OrangeTree');
