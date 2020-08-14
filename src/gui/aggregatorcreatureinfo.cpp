@@ -71,11 +71,62 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 		}
 
 		emit signalCreatureUpdate( m_info );
+		return;
 	}
 	else
 	{
-		m_currentID = 0;
+		auto monster = Global::cm().monster( id );
+		if( monster )
+		{
+			m_info.name = monster->name();
+			m_info.id = id;
+			//m_info.profession = monster->profession();
+
+			m_info.str = monster->attribute( "Str" );
+			m_info.con = monster->attribute( "Con" );
+			m_info.dex = monster->attribute( "Dex" );
+			m_info.intel = monster->attribute( "Int" );
+			m_info.wis = monster->attribute( "Wis" );
+			m_info.cha = monster->attribute( "Cha" );
+
+			m_info.hunger = 100; //monster->need( "Hunger" );
+			m_info.thirst = 100; //monster->need( "Thirst" );
+			m_info.sleep = 100; //monster->need( "Sleep" );
+			m_info.happiness = 100; //monster->need( "Happiness" );
+			
+			m_info.activity = "Doing something. tbi";
+			emit signalCreatureUpdate( m_info );
+			return;
+		}
+		else
+		{
+			auto animal = Global::cm().animal( id );
+			if( animal )
+			{
+				m_info.name = animal->name();
+				m_info.id = id;
+				//m_info.profession = animal->profession();
+
+				m_info.str = animal->attribute( "Str" );
+				m_info.con = animal->attribute( "Con" );
+				m_info.dex = animal->attribute( "Dex" );
+				m_info.intel = animal->attribute( "Int" );
+				m_info.wis = animal->attribute( "Wis" );
+				m_info.cha = animal->attribute( "Cha" );
+
+				m_info.hunger = animal->hunger();
+				m_info.thirst = 100; //animal->need( "Thirst" );
+				m_info.sleep = 100; //animal->need( "Sleep" );
+				m_info.happiness = 100; //animal->need( "Happiness" );
+			
+				m_info.activity = "Doing something. tbi";
+				emit signalCreatureUpdate( m_info );
+				return;
+			}
+		}
+		
 	}
+	m_currentID = 0;
 }
 
 

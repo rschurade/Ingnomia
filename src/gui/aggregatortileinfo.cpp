@@ -69,6 +69,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		m_tileInfo.tileID     = tileID;
 		m_tileInfo.numGnomes  = Global::gm().gnomesAtPosition( pos ).size();
 		m_tileInfo.numAnimals = Global::cm().animalsAtPosition( pos ).size();
+		m_tileInfo.numMonsters = Global::cm().monstersAtPosition( pos ).size();
 		m_tileInfo.numItems   = Global::inv().countItemsAtPos( pos );
 
 		World& world = Global::w();
@@ -159,6 +160,17 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					gct.text = "Animal: " + S::s( "$CreatureName_" + animal->name() );
 					gct.id = animal->id();
 					m_tileInfo.creatures.append( gct );
+				}
+			}
+			if ( m_tileInfo.numMonsters )
+			{
+				for ( auto monster : Global::cm().monstersAtPosition( pos ) )
+				{
+					GuiTICreatureInfo gct;
+					gct.text = "Monster: " + S::s( "$CreatureName_" + monster->name() );
+					gct.id = monster->id();
+					m_tileInfo.creatures.append( gct );
+					qDebug() << "#### add monster";
 				}
 			}
 		}

@@ -163,7 +163,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 
 	// tt is always present
 	uint32_t activeItems = 1;
-	if ( tileInfo.numGnomes > 0 || tileInfo.numAnimals > 0 )
+	if ( tileInfo.numGnomes > 0 || tileInfo.numAnimals > 0 || tileInfo.numMonsters > 0 )
 	{
 		if ( !_tabItems->Contains( _tabItemElements.tc ) )
 		{
