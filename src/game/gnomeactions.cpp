@@ -99,7 +99,7 @@ BT_RESULT Gnome::actionSleep( bool halt )
 	m_anatomy.heal();
 
 	unsigned int hour = qMin( 23, GameState::hour );
-	auto activity      = m_schedule[hour];
+	auto activity     = m_schedule[hour];
 
 	if ( newVal >= 100. && activity != ScheduleActivity::Sleep )
 	{
@@ -180,7 +180,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 	if ( Global::debugMode )
 		log( "actionMove" );
 	//if ( Global::debugMode )
-		//qDebug() << "actionMove" << m_currentPath.size();
+	//qDebug() << "actionMove" << m_currentPath.size();
 
 	if ( halt )
 	{
@@ -1265,7 +1265,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 {
 	auto part = Global::creaturePartLookUp.value( slot );
 
-	QString item = uniform->parts[slot].item;
+	QString item     = uniform->parts[slot].item;
 	QString material = uniform->parts[slot].material;
 
 	QString wiSID         = "";
@@ -2165,7 +2165,7 @@ BT_RESULT Gnome::actionAttackTarget( bool halt )
 	if ( Global::debugMode )
 		log( "actionAttackTarget" );
 	Creature* creature = Global::cm().creature( m_currentAttackTarget );
-	
+
 	if ( creature && !creature->isDead() )
 	{
 		m_facing = getFacing( m_position, creature->getPos() );
@@ -2347,89 +2347,106 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 	if ( Global::debugMode )
 		log( "actionGetTarget" );
 
-	const Squad* squad = Global::mil().getSquadForGnome( m_id );
-	if ( !m_currentAttackTarget && squad )
+	// Unset current attack target if invalidated
+	if (m_currentAttackTarget)
+	{
+		const Creature* creature = Global::cm().creature( m_currentAttackTarget );
+		if (!creature || creature->isDead() || !Global::cm().hasPathTo(m_position, creature->id()))
+		{
+			m_currentAttackTarget = 0;
+			m_thoughtBubble       = "";
+		}
+	}
+
+	if ( !m_currentAttackTarget )
 	{
 		const Creature* bestCandidate = nullptr;
-		unsigned int bestDistance = std::numeric_limits<unsigned int>::max();
+		unsigned int bestDistance     = std::numeric_limits<unsigned int>::max();
 
-		// Search for targets already attacked by squad mates first
-		for (const auto& gnomeID : squad->gnomes)
+		const Squad* squad = Global::mil().getSquadForGnome( m_id );
+		if ( squad )
 		{
-			const Gnome* gnome = Global::gm().gnome( gnomeID );
-			if ( gnome && gnome->m_currentAttackTarget )
+			// Search for targets already attacked by squad mates first
+			for ( const auto& gnomeID : squad->gnomes )
 			{
-				const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
-				if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
+				const Gnome* gnome = Global::gm().gnome( gnomeID );
+				if ( gnome && gnome->m_currentAttackTarget )
 				{
-					const auto dist = m_position.distSquare( creature->getPos() );
-					bestDistance  = dist;
-					bestCandidate = creature;
-					// Any legal match is a good hit
-					break;
+					const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
+					if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
+					{
+						const auto dist = m_position.distSquare( creature->getPos() );
+						bestDistance    = dist;
+						bestCandidate   = creature;
+						// Any legal match is a good hit
+						break;
+					}
 				}
 			}
-		}
-		if ( !bestCandidate )
-		{
-			// Next search for hunting targets, anything we could reach
-			for ( const auto& prio : squad->priorities )
+			if ( !bestCandidate )
 			{
-				if ( prio.attitude == MilAttitude::HUNT )
+				// Next search for hunting targets, anything we could reach
+				for ( const auto& prio : squad->priorities )
 				{
-					const auto& targetSet = Global::cm().animalsByType( prio.type );
-					//!TODO Sort huntTargets into buckets by regionm so hasPathTo will never fail
-					for ( const auto& targetID : targetSet )
+					if ( prio.attitude == MilAttitude::HUNT )
 					{
-						const Creature* creature = Global::cm().creature( targetID );
-						if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
+						const auto& targetSet = Global::cm().animalsByType( prio.type );
+						//!TODO Sort huntTargets into buckets by regionm so hasPathTo will never fail
+						for ( const auto& targetID : targetSet )
 						{
-							const auto dist = m_position.distSquare( creature->getPos() );
-							if ( dist < bestDistance )
+							const Creature* creature = Global::cm().creature( targetID );
+							if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
 							{
-								bestDistance  = dist;
-								bestCandidate = creature;
+								const auto dist = m_position.distSquare( creature->getPos() );
+								if ( dist < bestDistance )
+								{
+									bestDistance  = dist;
+									bestCandidate = creature;
+								}
 							}
 						}
-					}
-					// Got the closest target
-					if ( bestCandidate )
-					{
-						break;
+						// Got the closest target
+						if ( bestCandidate )
+						{
+							break;
+						}
 					}
 				}
 			}
 		}
 		//!TODO Loop again to check for "attack on sight" target class
+
+		if ( !bestCandidate )
+		{
+			while ( m_aggroList.size() )
+			{
+				unsigned int targetID = m_aggroList.first().id;
+				Creature* creature    = Global::cm().creature( targetID );
+
+				//!TODO Check if creature isn't in "flee" category
+				if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
+				{
+					const auto dist = m_position.distSquare( creature->getPos() );
+					bestDistance    = dist;
+					bestCandidate   = creature;
+					break;
+				}
+				else
+				{
+					m_aggroList.pop_front();
+				}
+			}
+		}
+
 		if ( bestCandidate )
 		{
 			m_currentAttackTarget = bestCandidate->id();
 			setCurrentTarget( bestCandidate->getPos() );
+			m_thoughtBubble = "Combat";
 			return BT_RESULT::SUCCESS;
 		}
 	}
-
-	if ( !m_currentAttackTarget && m_aggroList.size() )
-	{
-		while ( m_aggroList.size() )
-		{
-			unsigned int targetID = m_aggroList.first().id;
-			Creature* creature    = Global::cm().creature( targetID );
-
-			//!TODO Check if creature isn't in "flee" category
-			if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
-			{
-				m_currentAttackTarget = targetID;
-				setCurrentTarget( creature->getPos() );
-				return BT_RESULT::SUCCESS;
-			}
-			else
-			{
-				m_aggroList.pop_front();
-			}
-		}
-	}
-	return BT_RESULT::FAILURE;
+	return m_currentAttackTarget ? BT_RESULT::SUCCESS : BT_RESULT::FAILURE;
 }
 
 BT_RESULT Gnome::actionDoMission( bool halt )
