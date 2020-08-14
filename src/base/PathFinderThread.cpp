@@ -43,7 +43,7 @@ void PathFinderThread::run()
 	m_callback( findPath() );
 }
 
-bool PathFinderThread::evalPos( const Position& current, const Position& next, std::map<Position, Position>& cameFrom, std::map<Position, double>& costSoFar, PriorityQueue<Position, double>& frontier )
+bool PathFinderThread::evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier )
 {
 	const Tile& tile = Global::w().getTile( next );
 
@@ -51,13 +51,18 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 	{
 		if ( m_ignoreNoPass || !( tile.flags & TileFlag::TF_NOPASS ) )
 		{
-			double new_cost = costSoFar[current] + cost( current, next );
-			if ( !costSoFar.count( next ) || new_cost < costSoFar[next] )
+			double new_cost = path[current].cost + cost( current, next );
+			// Try insert, doesn't overwrite if already visited
+			auto nextIt   = path.insert( { next, { new_cost, current } } );
+			auto& oldPath = nextIt.first->second;
+			// If actually new or at least cheaper
+			if ( nextIt.second || new_cost < oldPath.cost )
 			{
-				costSoFar[next] = new_cost;
-				double priority = new_cost + heuristic( next, m_goal );
+				// then update costs and priority
+				oldPath.cost     = new_cost;
+				oldPath.previous = current;
+				double priority  = new_cost + heuristic( next, m_goal );
 				frontier.put( next, priority );
-				cameFrom[next] = current;
 			}
 			return true;
 		}
@@ -65,7 +70,7 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 	return false;
 }
 
-bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::map<Position, Position>& cameFrom, std::map<Position, double>& costSoFar, PriorityQueue<Position, double>& frontier )
+bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier )
 {
 	const Tile& rampTopTile = Global::w().getTile( rampPos );
 
@@ -80,14 +85,20 @@ bool PathFinderThread::evalRampPos( const Position& current, const Position& ram
 	{
 		if ( m_ignoreNoPass || !( tile.flags & TileFlag::TF_NOPASS ) )
 		{
-			double new_cost = costSoFar[current] + cost( current, next );
-			if ( !costSoFar.count( next ) || new_cost < costSoFar[next] )
+			double new_cost = path[current].cost + cost( current, next );
+			// Try insert, doesn't overwrite if already visited
+			auto nextIt   = path.insert( { next, { new_cost, current } } );
+			auto& oldPath = nextIt.first->second;
+			// If actually new or at least cheaper
+			if ( nextIt.second || new_cost < oldPath.cost )
 			{
-				costSoFar[next] = new_cost;
-				double priority = new_cost + heuristic( next, m_goal );
+				// then update costs and priority
+				oldPath.cost     = new_cost;
+				oldPath.previous = current;
+				double priority  = new_cost + heuristic( next, m_goal );
 				frontier.put( next, priority );
-				cameFrom[next] = current;
 			}
+
 			return true;
 		}
 	}
@@ -97,15 +108,17 @@ bool PathFinderThread::evalRampPos( const Position& current, const Position& ram
 PathFinderThread::Path PathFinderThread::findPath()
 {
 	//qDebug() << "find path " << m_start.toString() << " " << m_goal.toString();
-	std::map<Position, Position> cameFrom;
-	std::map<Position, double> costSoFar;
+	std::unordered_map<Position, PathElement> pathField;
 	PriorityQueue<Position, double> frontier;
+
+	// Take a pessimistic guess for how many positions we need to visit
+	const size_t expectedPositions = m_start.distSquare( m_goal, 3 ) / 8;
+	pathField.reserve( expectedPositions );
 
 	frontier.put( m_start, 0 );
 
-	cameFrom[m_start]  = m_start;
-	costSoFar[m_start] = 0;
-	bool found         = false;
+	pathField.insert( { m_start, PathElement { 0.0, m_start } } );
+	bool found = false;
 	while ( !frontier.empty() )
 	{
 		//qDebug() << frontier.size();
@@ -123,40 +136,40 @@ PathFinderThread::Path PathFinderThread::findPath()
 		bool west  = false;
 
 		auto next = current.northOf();
-		north     = evalPos( current, next, cameFrom, costSoFar, frontier );
-		evalRampPos( current, next, cameFrom, costSoFar, frontier );
+		north     = evalPos( current, next, pathField, frontier );
+		evalRampPos( current, next, pathField, frontier );
 
 		next = current.eastOf();
-		east = evalPos( current, next, cameFrom, costSoFar, frontier );
-		evalRampPos( current, next, cameFrom, costSoFar, frontier );
+		east = evalPos( current, next, pathField, frontier );
+		evalRampPos( current, next, pathField, frontier );
 
 		next  = current.southOf();
-		south = evalPos( current, next, cameFrom, costSoFar, frontier );
-		evalRampPos( current, next, cameFrom, costSoFar, frontier );
+		south = evalPos( current, next, pathField, frontier );
+		evalRampPos( current, next, pathField, frontier );
 
 		next = current.westOf();
-		west = evalPos( current, next, cameFrom, costSoFar, frontier );
-		evalRampPos( current, next, cameFrom, costSoFar, frontier );
+		west = evalPos( current, next, pathField, frontier );
+		evalRampPos( current, next, pathField, frontier );
 
 		if ( north && east )
 		{
 			next = current.neOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 		if ( east && south )
 		{
 			next = current.seOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 		if ( south && west )
 		{
 			next = current.swOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 		if ( west && north )
 		{
 			next = current.nwOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 
 		Tile& curTile = Global::w().getTile( current );
@@ -164,24 +177,24 @@ PathFinderThread::Path PathFinderThread::findPath()
 		if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
 		{
 			next = current.aboveOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 		if ( (bool)( curTile.floorType & ( FT_STAIRTOP | FT_SCAFFOLD ) ) )
 		{
 			next = current.belowOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 		if ( (bool)( curTile.wallType & ( WT_RAMP ) ) )
 		{
 			auto above = current.aboveOf();
 			next       = above.northOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 			next = above.eastOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 			next = above.southOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 			next = above.westOf();
-			evalPos( current, next, cameFrom, costSoFar, frontier );
+			evalPos( current, next, pathField, frontier );
 		}
 	}
 
@@ -192,7 +205,7 @@ PathFinderThread::Path PathFinderThread::findPath()
 		while ( next != m_start )
 		{
 			path.push_back( next );
-			next = cameFrom[next];
+			next = pathField[next].previous;
 		}
 	}
 	else

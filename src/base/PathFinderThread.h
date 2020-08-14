@@ -56,6 +56,12 @@ private:
 		return sqrt( abs( lhs.x - rhs.x ) + abs( lhs.y - rhs.y ) + 2 * abs( lhs.z - rhs.z ) );
 	}
 
-	bool evalPos( const Position& current, const Position& next, std::map<Position, Position>& cameFrom, std::map<Position, double>& costSoFar, PriorityQueue<Position, double>& frontier );
-	bool evalRampPos( const Position& current, const Position& next, std::map<Position, Position>& cameFrom, std::map<Position, double>& costSoFar, PriorityQueue<Position, double>& frontier );
+	struct PathElement
+	{
+		double cost;
+		Position previous;
+	};
+
+	bool evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
+	bool evalRampPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
 };

@@ -134,6 +134,11 @@ struct Position
 		//return x + 4096 * y + 16777216 * z;
 	}
 
+	constexpr unsigned int toHashBase() const
+	{
+		return (z << 20) + (y << 10) + x;
+	}
+
 	bool valid() const
 	{
 		// Usuable volume excludes 1 row/col in each X and Y, so neighbours are addressable for read-only
@@ -205,7 +210,19 @@ struct Position
 };
 Q_DECLARE_TYPEINFO( Position, Q_PRIMITIVE_TYPE );
 
-inline uint qHash( const Position& key, uint seed )
+constexpr uint qHash( const Position& key, uint seed )
 {
-	return qHash( key.toInt(), seed );
+	return qHash( key.toHashBase(), seed );
 }
+namespace std
+{
+template <>
+struct hash<Position>
+{
+	inline std::size_t operator()( const Position& k ) const
+	{
+		return std::hash<unsigned int>()( k.toHashBase() );
+	}
+};
+
+} // namespace std
