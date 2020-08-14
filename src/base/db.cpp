@@ -38,20 +38,22 @@ QSqlQuery DB::m_itemCreateQuery;
 void DB::init()
 {
 	QMutexLocker lock( &DB::m_mutex );
-	auto fileDB = QSqlDatabase::addDatabase( "QSQLITE", "file" );
-	fileDB.setDatabaseName( Config::getInstance().get( "dataPath" ).toString() + "/db/" + "ingnomia.db" );
 
-	if ( !fileDB.open() )
-	{
-		qDebug() << "Error: connection with file DB fail";
-		exit( 0 );
-	}
-	else
-	{
-		qDebug() << "File DB: connection ok";
-	}
+	QFile file( Config::getInstance().get( "dataPath" ).toString() + "/db/" + "ingnomia.db.sql" );
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString sql = file.readAll();
+    file.close();
 
-	copyDB( fileDB, getDB() );
+	QSqlQuery destQuery( getDB() );
+
+	auto statements = sql.split( ";" );
+	for( auto s: statements )
+	{
+		if ( !destQuery.exec( s ) )
+		{
+			qDebug() << destQuery.lastError();
+		}
+	}
 
 	resetLiveTables();
 }
@@ -77,26 +79,6 @@ QSqlDatabase& DB::getDB()
 	return m_connections[thread];
 }
 
-void DB::saveDB()
-{
-	/*
-	auto fileDB = QSqlDatabase::addDatabase( "QSQLITE", "file2" );
-	fileDB.setDatabaseName( Config::getInstance().get( "dataPath" ).toString() + "/db/" + "ingnomia2.db" );
- 
-	if ( !fileDB.open() )
-	{
-		qDebug() << "Error: connection with file DB fail";
-		exit( 0 );
-	}
-	else
-	{
-		qDebug() << "File DB: connection ok";
-	}
-	*/
-	auto fileDB = QSqlDatabase::database( "file" );
-	copyDB( getDB(), fileDB );
-}
-
 void DB::resetLiveTables()
 {
 	return;
@@ -111,115 +93,6 @@ void DB::resetLiveTables()
 	m_itemCreateQuery = QSqlQuery();
 
 	m_itemCreateQuery.prepare( "INSERT INTO v_Items ( UID, position, spriteID, itemUID, materialUID, itemSID, materialSID, category, \"group\", pickedUp, isConstructed, inStockpile, inJob, isContainer, inContainer, madeBy , quality, \"value\", eatValue, drinkValue, color, hasComponents, componentOf, isTool, lightIntensity, stackSize ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
-}
-
-void DB::copyDB( QSqlDatabase& src, QSqlDatabase& dst )
-{
-	QSqlQuery srcQuery( src );
-	QSqlQuery destQuery( dst );
-
-	auto tables = src.tables();
-	tables.sort();
-
-	for ( auto table : tables )
-	{
-		//qDebug() << "##" << table;
-		if ( !srcQuery.exec( QString( "SELECT sql FROM sqlite_master WHERE tbl_name = \"%1\"" ).arg( table ) ) )
-		{
-			qDebug() << srcQuery.lastError();
-			qDebug() << table << "return 1";
-			return;
-		}
-		QString tableCreateStr;
-
-		if ( srcQuery.next() )
-		{
-			tableCreateStr = srcQuery.value( 0 ).toString();
-			//qDebug() << tableCreateStr;
-		}
-
-		// drop destTable if exists
-		if ( !destQuery.exec( QString( "DROP TABLE IF EXISTS \"%1\"" ).arg( table ) ) )
-		{
-			qDebug() << destQuery.lastError();
-			qDebug() << table << "return 2";
-			return;
-		}
-
-		// create new one
-		if ( !destQuery.exec( tableCreateStr ) )
-		{
-			qDebug() << destQuery.lastError();
-			qDebug() << table << "return 5";
-			return;
-		}
-
-		// copy all entries
-		if ( !srcQuery.exec( QString( "SELECT * FROM \"%1\"" ).arg( table ) ) )
-		{
-			qDebug() << srcQuery.lastError();
-			qDebug() << table << "return 3";
-			return;
-		}
-
-		dst.transaction();
-
-		QSqlRecord record = srcQuery.record();
-		QStringList names;
-		QStringList placeholders;
-		QList<QVariant> values;
-
-		for ( int i = 0; i < record.count(); ++i )
-		{
-			names << record.fieldName( i );
-			placeholders << ":" + record.fieldName( i );
-
-			//QVariant value = srcQuery.value( i );
-			//values << value;
-			/*
-			if ( value.type() == QVariant::String )
-			{
-				values << "\"" + value.toString() + "\"";
-			}
-			else
-			{
-				values << value;
-			}
-			*/
-		}
-
-		// build new query
-		QString queryStr;
-		queryStr.append( "INSERT INTO " + table );
-		QString tns;
-		for ( auto tn : names )
-		{
-			tns += "\"" + tn + "\", ";
-		}
-		tns.remove( tns.size() - 2, 2 );
-		queryStr.append( " (" + tns + ") " );
-		//queryStr.append( " (" + names.join(", ") + ") " );
-		queryStr.append( " VALUES (" + placeholders.join( ", " ) + ");" );
-
-		destQuery.prepare( queryStr );
-
-		while ( srcQuery.next() )
-		{
-			for ( int i = 0; i < record.count(); ++i )
-			{
-				destQuery.bindValue( i, srcQuery.value( i ) );
-			}
-
-			if ( !destQuery.exec() )
-			{
-				qDebug() << destQuery.lastError();
-				qDebug() << tableCreateStr;
-				qDebug() << table << "return 4";
-				return;
-			}
-		}
-		dst.commit();
-	}
 }
 
 int DB::getAccessCounter()

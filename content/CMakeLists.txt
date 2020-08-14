@@ -5,7 +5,7 @@ file(GLOB_RECURSE SOURCE_LIST
 	"*.xaml"
 	"*.otf"
 	"*.png"
-	"*.db"
+	"*.sql"
 )
 
 target_sources(${PROJECT_NAME}

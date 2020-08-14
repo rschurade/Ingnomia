@@ -36,8 +36,6 @@ public:
 	static void init();
 	static void resetLiveTables();
 
-	static void saveDB();
-
 	static QVariant execQuery( QString query );
 	static QVariantList execQuery2( QString query );
 	static QSqlQuery execQuery3( QString query, bool& ok );
@@ -79,7 +77,6 @@ public:
 
 private:
 	static QSqlDatabase& getDB();
-	static void copyDB( QSqlDatabase& src, QSqlDatabase& dst );
 
 	static QMutex m_mutex;
 

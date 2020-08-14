@@ -18,10 +18,6 @@ The following steps describe how to compile the code and get the game running on
 	
 ### Database configuration ###
 
-The game uses a squlite database. It can be created from the ingnomia.db.sql file in the `/content/db` folder or copied
-over from the installed game from Steam. If you are on windows disable hide file extensions for known files. The file
-used by the game is ingnomia.db NOT ingnomia.db.sql
-
 ### Deployment ###
 
 To run the game copy over the contents of `/content/tilesheet` from your Steam installation.
