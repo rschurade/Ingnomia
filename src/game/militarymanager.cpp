@@ -150,13 +150,24 @@ Squad::Squad( const QVariantMap& in )
 
 	if( in.contains( "Priorities" ) )
 	{
+		QSet<QString> typeSet;
 		auto vl = in.value( "Priorities" ).toList();
 		for( auto vEntry : vl )
 		{
 			auto vm = vEntry.toMap();
 			auto type = vm.value( "Type" ).toString();
+			typeSet.insert( type );
 			TargetPriority tp { type, (MilAttitude)vm.value( "Attitude" ).toInt() };
 			priorities.append( tp );
+		}
+		auto types = Global::cm().types();
+		for( auto type : types )
+		{
+			if( !typeSet.contains( type ) )
+			{
+				TargetPriority tp { type, MilAttitude::_IGNORE };
+				priorities.append( tp );
+			}
 		}
 	}
 	else
@@ -230,7 +241,7 @@ void MilitaryManager::init()
 
 void MilitaryManager::save()
 {
-	auto vm = Global::mil().serialize();
+	auto vm = serialize();
 	vm.remove( "Squads" );
 	QJsonObject jo = QJsonObject::fromVariantMap( vm );
 	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/military.json", jo );

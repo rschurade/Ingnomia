@@ -25,6 +25,7 @@
 #include "../game/farmingmanager.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
+#include "../game/newgamesettings.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -51,6 +52,16 @@ void CreatureManager::reset()
 	{
 		m_countPerType.insert( monster, 0 );
 	}
+
+	auto animals = DB::ids( "Animals" );
+	for ( auto animal : animals )
+	{
+		if ( NewGameSettings::getInstance().isChecked( animal ) )
+		{
+			m_countPerType.insert( animal, 0 );
+		}
+	}
+
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )

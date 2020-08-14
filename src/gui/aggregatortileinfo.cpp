@@ -170,7 +170,6 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					gct.text = "Monster: " + S::s( "$CreatureName_" + monster->name() );
 					gct.id = monster->id();
 					m_tileInfo.creatures.append( gct );
-					qDebug() << "#### add monster";
 				}
 			}
 		}
