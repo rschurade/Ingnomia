@@ -2360,7 +2360,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 			if ( gnome && gnome->m_currentAttackTarget )
 			{
 				const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
-				if ( Global::cm().hasPathTo( m_position, creature->id() ) )
+				if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
 				{
 					const auto dist = m_position.distSquare( creature->getPos() );
 					bestDistance  = dist;
