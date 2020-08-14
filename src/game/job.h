@@ -58,6 +58,7 @@ private:
 	bool m_aborted          = false;
 	bool m_componentMissing = false;
 	bool m_mayTrap          = false;
+	bool m_destroyOnAbort	= false;
 
 	bool m_jobIsWorked      = false;
 	unsigned int m_workedBy = 0;
@@ -197,6 +198,9 @@ public:
 
 	void setMayTrap( bool value );
 	bool mayTrap();
+
+	void setDestroyOnAbort( bool value );
+	bool destroyOnAbort();
 
 	void setCraftID( QString craftID );
 	QString craftID();

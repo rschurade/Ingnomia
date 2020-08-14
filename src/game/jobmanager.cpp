@@ -1010,7 +1010,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 	{
 		Job& job = m_jobList[jobID];
 
-		if ( job.isCanceled() )
+		if ( job.isCanceled() || job.destroyOnAbort() )
 		{
 			job.setIsWorked( false );
 			cancelJob( job.pos() );

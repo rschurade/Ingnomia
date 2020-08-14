@@ -43,6 +43,7 @@ Job::Job( QVariantMap in )
 	m_aborted          = in.value( "Aborted" ).toBool();
 	m_componentMissing = in.value( "ComponentMissing" ).toBool();
 	m_mayTrap          = in.value( "MayTrap" ).toBool();
+	m_destroyOnAbort   = in.value( "DestroyOnAbort" ).toBool();
 
 	m_jobIsWorked = in.value( "JobIsWorked" ).toBool();
 	m_workedBy    = in.value( "JobWorkedBy" ).toUInt();
@@ -102,6 +103,7 @@ QVariant Job::serialize()
 	out.insert( "Aborted", m_aborted );
 	out.insert( "ComponentMissing", m_componentMissing );
 	out.insert( "MayTrap", m_mayTrap );
+	out.insert( "DestroyOnAbort", m_destroyOnAbort );
 
 	out.insert( "JobIsWorked", m_jobIsWorked );
 	out.insert( "JobWorkedBy", m_workedBy );
@@ -161,6 +163,7 @@ Job::Job( const Job& other )
 	m_aborted          = other.m_aborted;
 	m_componentMissing = other.m_componentMissing;
 	m_mayTrap          = other.m_mayTrap;
+	m_destroyOnAbort   = other.m_destroyOnAbort;
 
 	m_jobIsWorked = other.m_jobIsWorked;
 	m_workedBy    = other.m_workedBy;
@@ -540,4 +543,14 @@ void Job::setCraftID( QString craftID )
 QString Job::craftID()
 {
 	return m_craftID;
+}
+
+void Job::setDestroyOnAbort( bool value )
+{
+	m_destroyOnAbort = value;
+}
+	
+bool Job::destroyOnAbort()
+{
+	return m_destroyOnAbort;
 }
