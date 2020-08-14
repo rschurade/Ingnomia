@@ -95,7 +95,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 
 	_cmdBuild.SetExecuteFunc( MakeDelegate( this, &BuildItem::onCmdBuild ) );
 
-	_requiredItems = *new Noesis::ObservableCollection<RequiredItem>();
+	_requiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
 
 	switch ( type )
 	{
@@ -105,7 +105,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 			{
 				if ( !row.value( "ItemID" ).toString().isEmpty() )
 				{
-					auto item = MakePtr<RequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() );
+					auto item = MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() );
 
 					_requiredItems->Add( item );
 				}
@@ -128,7 +128,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 		{
 			for ( auto row : DB::selectRows( "Constructions_Components", sid ) )
 			{
-				_requiredItems->Add( MakePtr<RequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
+				_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
 			}
 
 			QStringList mats;
@@ -152,12 +152,12 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 			{
 				for ( auto row : rows )
 				{
-					_requiredItems->Add( MakePtr<RequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
+					_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
 				}
 			}
 			else
 			{
-				_requiredItems->Add( MakePtr<RequiredItem>( sid, 1 ) );
+				_requiredItems->Add( MakePtr<NRequiredItem>( sid, 1 ) );
 			}
 
 
@@ -187,7 +187,7 @@ QString BuildItem::sid() const
 	return _sid;
 }
 
-Noesis::ObservableCollection<RequiredItem>* BuildItem::requiredItems() const
+Noesis::ObservableCollection<NRequiredItem>* BuildItem::requiredItems() const
 {
 	return _requiredItems;
 }
@@ -239,7 +239,7 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-RequiredItem::RequiredItem( QString sid, int amount )
+NRequiredItem::NRequiredItem( QString sid, int amount )
 {
 	_name   = S::s( "$ItemName_" + sid ).toStdString().c_str();
 	_sid    = sid;
@@ -261,27 +261,27 @@ RequiredItem::RequiredItem( QString sid, int amount )
 	SetSelectedMaterial( _availableMaterials->Get( 0 ) );
 }
 
-const char* RequiredItem::GetName() const
+const char* NRequiredItem::GetName() const
 {
 	return _name.Str();
 }
 
-const QString RequiredItem::sid()
+const QString NRequiredItem::sid()
 {
 	return _sid;
 }
 
-const char* RequiredItem::amount() const
+const char* NRequiredItem::amount() const
 {
 	return _amount.Str();
 }
 
-Noesis::ObservableCollection<AvailableMaterial>* RequiredItem::availableMaterials() const
+Noesis::ObservableCollection<AvailableMaterial>* NRequiredItem::availableMaterials() const
 {
 	return _availableMaterials;
 }
 
-void RequiredItem::SetSelectedMaterial( AvailableMaterial* mat )
+void NRequiredItem::SetSelectedMaterial( AvailableMaterial* mat )
 {
 	if ( _selectedMaterial != mat )
 	{
@@ -290,7 +290,7 @@ void RequiredItem::SetSelectedMaterial( AvailableMaterial* mat )
 	}
 }
 
-AvailableMaterial* RequiredItem::GetSelectedMaterial() const
+AvailableMaterial* NRequiredItem::GetSelectedMaterial() const
 {
 	return _selectedMaterial;
 }
@@ -1412,12 +1412,12 @@ NS_IMPLEMENT_REFLECTION( BuildItem )
 	NsProp( "Image", &BuildItem::getBitmapSource );
 }
 
-NS_IMPLEMENT_REFLECTION( RequiredItem )
+NS_IMPLEMENT_REFLECTION( NRequiredItem )
 {
-	NsProp( "Name", &RequiredItem::GetName );
-	NsProp( "Amount", &RequiredItem::amount );
-	NsProp( "Materials", &RequiredItem::availableMaterials );
-	NsProp( "SelectedMaterial", &RequiredItem::GetSelectedMaterial, &RequiredItem::SetSelectedMaterial );
+	NsProp( "Name", &NRequiredItem::GetName );
+	NsProp( "Amount", &NRequiredItem::amount );
+	NsProp( "Materials", &NRequiredItem::availableMaterials );
+	NsProp( "SelectedMaterial", &NRequiredItem::GetSelectedMaterial, &NRequiredItem::SetSelectedMaterial );
 }
 
 NS_IMPLEMENT_REFLECTION( AvailableMaterial )

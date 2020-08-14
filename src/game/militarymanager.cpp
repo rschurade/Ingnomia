@@ -342,6 +342,15 @@ Uniform* MilitaryManager::uniform( unsigned int roleID )
 	return nullptr;
 }
 
+Uniform MilitaryManager::uniformCopy( unsigned int roleID )
+{
+	if ( m_roles.contains( roleID ) )
+	{
+		return m_roles[roleID].uniform;
+	}
+	return Uniform();
+}
+
 
 
 

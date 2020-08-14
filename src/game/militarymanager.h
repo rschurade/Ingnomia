@@ -126,6 +126,7 @@ public:
 	QVariantMap serialize();
 
 	Uniform* uniform( unsigned int roleID );
+	Uniform uniformCopy( unsigned int roleID );
 
 	MilitaryRole* role( unsigned int id );
 

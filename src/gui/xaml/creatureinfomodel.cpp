@@ -134,21 +134,37 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	m_bitmapLRing =	m_bitmapLRingEmpty;
 	m_bitmapRRing =	m_bitmapRRingEmpty;
 
-	if( info.uniform )
+	if( info.equipment.head.itemID )
 	{
-		m_bitmapHead = createUniformImg( "ArmorHead", info.uniform->parts.value( "HeadArmor" ), info.equipment->head );
-		m_bitmapChest = createUniformImg( "ArmorChest", info.uniform->parts.value( "ChestArmor" ), info.equipment->chest );
-		m_bitmapArms = createUniformImg( "ArmorArms", info.uniform->parts.value( "ArmArmor" ), info.equipment->arm );
-		m_bitmapHands = createUniformImg( "ArmorHands", info.uniform->parts.value( "HandArmor" ), info.equipment->hand );
-		m_bitmapLegs = createUniformImg( "ArmorLegs", info.uniform->parts.value( "LegArmor" ), info.equipment->leg );
-		m_bitmapFeet = createUniformImg( "ArmorFeet", info.uniform->parts.value( "FootArmor" ), info.equipment->foot );
-		//m_bitmapLHeld = createUniformImg( "LeftHandHeld", info.uniform->parts.value( "LeftHandHeld" ) );
-		//m_bitmapRHeld = createUniformImg( "RightHandHeld", info.uniform->parts.value( "RightHandHeld" ) );
-		//m_bitmapBack = createUniformImg( "Back", info.uniform );
-		//m_bitmapNeck = createUniformImg( "", info.uniform );
-		//m_bitmapLRing = createUniformImg( "", info.uniform );
-		//m_bitmapRRing = createUniformImg( "", info.uniform );
+		m_bitmapHead = createUniformImg( "ArmorHead", info.uniform.parts.value( "HeadArmor" ), info.equipment.head );
 	}
+	if( info.equipment.chest.itemID )
+	{
+		m_bitmapChest = createUniformImg( "ArmorChest", info.uniform.parts.value( "ChestArmor" ), info.equipment.chest );
+	}
+	if( info.equipment.arm.itemID )
+	{
+		m_bitmapArms = createUniformImg( "ArmorArms", info.uniform.parts.value( "ArmArmor" ), info.equipment.arm );
+	}
+	if( info.equipment.hand.itemID )
+	{
+		m_bitmapHands = createUniformImg( "ArmorHands", info.uniform.parts.value( "HandArmor" ), info.equipment.hand );
+	}
+	if( info.equipment.leg.itemID )
+	{
+		m_bitmapLegs = createUniformImg( "ArmorLegs", info.uniform.parts.value( "LegArmor" ), info.equipment.leg );
+	}
+	if( info.equipment.foot.itemID )
+	{
+		m_bitmapFeet = createUniformImg( "ArmorFeet", info.uniform.parts.value( "FootArmor" ), info.equipment.foot );
+	}
+	//m_bitmapLHeld = createUniformImg( "LeftHandHeld", info.uniform->parts.value( "LeftHandHeld" ) );
+	//m_bitmapRHeld = createUniformImg( "RightHandHeld", info.uniform->parts.value( "RightHandHeld" ) );
+	//m_bitmapBack = createUniformImg( "Back", info.uniform );
+	//m_bitmapNeck = createUniformImg( "", info.uniform );
+	//m_bitmapLRing = createUniformImg( "", info.uniform );
+	//m_bitmapRRing = createUniformImg( "", info.uniform );
+	
 	OnPropertyChanged( "ImgHead" );
 	OnPropertyChanged( "ImgChest" );
 	OnPropertyChanged( "ImgArms" );

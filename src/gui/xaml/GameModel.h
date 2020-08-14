@@ -100,10 +100,10 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class RequiredItem final : public NoesisApp::NotifyPropertyChangedBase
+class NRequiredItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
-	RequiredItem( QString sid, int amount );
+	NRequiredItem( QString sid, int amount );
 
 	const char* GetName() const;
 	const char* amount() const;
@@ -123,7 +123,7 @@ private:
 
 	Noesis::Ptr<Noesis::ObservableCollection<AvailableMaterial>> _availableMaterials;
 
-	NS_DECLARE_REFLECTION( RequiredItem, Noesis::BaseComponent )
+	NS_DECLARE_REFLECTION( NRequiredItem, Noesis::BaseComponent )
 };
 
 enum class BuildItemType
@@ -141,7 +141,7 @@ public:
 
 	const char* GetName() const;
 	QString sid() const;
-	Noesis::ObservableCollection<RequiredItem>* requiredItems() const;
+	Noesis::ObservableCollection<NRequiredItem>* requiredItems() const;
 
 private:
 	Noesis::String _name;
@@ -149,7 +149,7 @@ private:
 	BuildItemType _type;
 	Noesis::Ptr<Noesis::BitmapSource> _bitmapSource;
 
-	Noesis::Ptr<Noesis::ObservableCollection<RequiredItem>> _requiredItems;
+	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> _requiredItems;
 
 	void onCmdBuild( BaseComponent* param );
 

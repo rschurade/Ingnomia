@@ -1030,7 +1030,7 @@ void Gnome::assignWorkshop( unsigned int id )
 	m_assignedWorkshop = id;
 }
 
-Equipment& Gnome::equipment()
+Equipment Gnome::equipment()
 {
 	return m_equipment;
 }

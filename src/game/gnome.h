@@ -92,7 +92,7 @@ public:
 
 	void assignWorkshop( unsigned int id );
 
-	Equipment& equipment();
+	Equipment equipment();
 
 	QString rightHandItem();
 	QString rightHandAttackSkill();
