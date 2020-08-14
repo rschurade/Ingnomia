@@ -276,8 +276,10 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 	{
 		for( const auto& prio : squad->priorities )
 		{
-			if( prio.attitude == MilAttitude::HUNT && !prio.huntTargets.empty() )
-				for ( const auto& targetID : prio.huntTargets.values() )
+			if ( prio.attitude == MilAttitude::HUNT )
+			{
+				const auto& targetSet = Global::cm().animalsByType( prio.type );
+				for ( const auto& targetID : targetSet )
 				{
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
 					if ( Global::cm().hasPathTo( m_position, targetID ) )
@@ -285,6 +287,7 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 						return BT_RESULT::SUCCESS;
 					}
 				}
+			}
 		}
 	}
 	return BT_RESULT::FAILURE;

@@ -156,7 +156,6 @@ Squad::Squad( const QVariantMap& in )
 			auto vm = vEntry.toMap();
 			auto type = vm.value( "Type" ).toString();
 			TargetPriority tp { type, (MilAttitude)vm.value( "Attitude" ).toInt() };
-			tp.huntTargets = Global::cm().animalsByType( type ).toSet();
 			priorities.append( tp );
 		}
 	}
@@ -166,7 +165,6 @@ Squad::Squad( const QVariantMap& in )
 		for( auto type : types )
 		{
 			TargetPriority tp { type, MilAttitude::_IGNORE };
-			tp.huntTargets = Global::cm().animalsByType( type ).toSet();
 			priorities.append( tp );
 		}
 	}
@@ -595,27 +593,6 @@ void MilitaryManager::onSetAttitude( unsigned int squadID, QString type, MilAtti
 				if( prio.type == type )
 				{
 					prio.attitude = attitude;
-
-					switch( attitude )
-					{
-						case MilAttitude::HUNT:
-							if( Global::cm().count( type ) > 0 )
-							{
-								prio.huntTargets = Global::cm().animalsByType( type ).toSet();
-							}
-							break;
-						case MilAttitude::ATTACK:
-							prio.huntTargets.clear();
-							break;
-						case MilAttitude::_IGNORE:
-							prio.huntTargets.clear();
-							break;
-						case MilAttitude::AVOID:
-							prio.huntTargets.clear();
-							break;
-					}
-					
-
 					return;
 				}
 			}
@@ -657,39 +634,6 @@ bool MilitaryManager::movePrioDown( unsigned int squadID, QString type )
 				}
 			}
 		}
-	}
-	return false;
-}
-
-bool MilitaryManager::updateTargets( unsigned int squadID )
-{
-	auto squ = squad( squadID );
-	if( squ )
-	{
-		auto prios = squ->priorities;
-
-		for( auto& prio : prios )
-		{
-			switch( prio.attitude )
-			{
-				case MilAttitude::HUNT:
-					if( Global::cm().count( prio.type ) > 0 )
-					{
-						prio.huntTargets = Global::cm().animalsByType( prio.type ).toSet();
-					}
-					break;
-				case MilAttitude::ATTACK:
-					prio.huntTargets.clear();
-					break;
-				case MilAttitude::_IGNORE:
-					prio.huntTargets.clear();
-					break;
-				case MilAttitude::AVOID:
-					prio.huntTargets.clear();
-					break;
-			}
-		}
-		return true;
 	}
 	return false;
 }

@@ -2377,8 +2377,9 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 			{
 				if ( prio.attitude == MilAttitude::HUNT )
 				{
+					const auto& targetSet = Global::cm().animalsByType( prio.type );
 					//!TODO Sort huntTargets into buckets by regionm so hasPathTo will never fail
-					for ( const auto& targetID : prio.huntTargets.values() )
+					for ( const auto& targetID : targetSet )
 					{
 						const Creature* creature = Global::cm().creature( targetID );
 						if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
