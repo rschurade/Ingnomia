@@ -80,7 +80,11 @@
 											<Image Source="{Binding ImgBack}" Stretch="Uniform"/>
 										</StackPanel>
 									</Button>
-									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="25" Canvas.Top="0" />
+									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="25" Canvas.Top="0" >
+										<StackPanel>
+											<Image Source="{Binding ImgNeck}" Stretch="Uniform"/>
+										</StackPanel>
+									</Button>
 									
 									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="20" Canvas.Top="80" >
 										<StackPanel>
@@ -93,8 +97,16 @@
 										</StackPanel>
 									</Button>
 									
-									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="20" Canvas.Top="130" />
-									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="120" Canvas.Top="130" />
+									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="20" Canvas.Top="130" >
+										<StackPanel>
+											<Image Source="{Binding ImgLRing}" Stretch="Uniform"/>
+										</StackPanel>
+									</Button>
+									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="120" Canvas.Top="130" >
+										<StackPanel>
+											<Image Source="{Binding ImgRRing}" Stretch="Uniform"/>
+										</StackPanel>
+									</Button>
 									
 									
 									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="10" Canvas.Top="190" >

@@ -64,10 +64,12 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 		if( gnome->roleID() )
 		{
 			m_info.uniform = Global::mil().uniform( gnome->roleID() );
+			m_info.equipment = &gnome->equipment();
 		}
 		else
 		{
 			m_info.uniform = nullptr;
+			m_info.equipment = nullptr;
 		}
 
 		emit signalCreatureUpdate( m_info );

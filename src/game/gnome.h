@@ -92,7 +92,7 @@ public:
 
 	void assignWorkshop( unsigned int id );
 
-	const Equipment& equipment();
+	Equipment& equipment();
 
 	QString rightHandItem();
 	QString rightHandAttackSkill();

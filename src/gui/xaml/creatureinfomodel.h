@@ -36,6 +36,8 @@
 #include <QString>
 
 class CreatureInfoProxy;
+struct UniformItem;
+struct EquipmentItem;
 
 namespace Noesis
 {
@@ -119,7 +121,22 @@ private:
 	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRing;
 	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRing;
 
-	Noesis::Ptr<Noesis::BitmapSource> createUniformImg( QString slot, Uniform* uniform );
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHeadEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapChestEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapArmsEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHandsEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLegsEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapFeetEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLHeldEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRHeldEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapBackEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapNeckEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRingEmpty;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRingEmpty;
+	bool m_emptySlotsInitialized = false;
+
+	Noesis::Ptr<Noesis::BitmapSource> createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem );
+	Noesis::Ptr<Noesis::BitmapSource> createEmptyUniformImg( QString spriteID );
 
 
 	NS_DECLARE_REFLECTION( CreatureInfoModel, NotifyPropertyChangedBase )

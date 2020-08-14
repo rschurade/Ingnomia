@@ -22,6 +22,7 @@
 #include <QObject>
 
 struct Uniform;
+struct Equipment;
 
 struct GuiCreatureInfo
 {
@@ -42,6 +43,7 @@ struct GuiCreatureInfo
 	QString activity;
 
 	Uniform* uniform = nullptr;
+	Equipment* equipment = nullptr;
 };
 Q_DECLARE_METATYPE( GuiCreatureInfo )
 

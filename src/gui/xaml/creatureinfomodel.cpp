@@ -21,6 +21,7 @@
 
 #include "../../base/util.h"
 #include "../../game/militarymanager.h"
+#include "../../gfx/spritefactory.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -103,27 +104,47 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	OnPropertyChanged( "Happiness" );
 	OnPropertyChanged( "Activity" );
 
-	m_bitmapHead = nullptr;
-	m_bitmapChest = nullptr;
-	m_bitmapArms =  nullptr;
-	m_bitmapHands = nullptr;
-	m_bitmapLegs = nullptr; 
-	m_bitmapFeet = nullptr; 
-	m_bitmapLHeld = nullptr;
-	m_bitmapRHeld = nullptr;
-	m_bitmapBack = nullptr; 
+	if( ! m_emptySlotsInitialized )
+	{
+		m_bitmapHeadEmpty = createEmptyUniformImg( "UIEmptySlotHead" );
+		m_bitmapChestEmpty = createEmptyUniformImg( "UIEmptySlotChest" );
+		m_bitmapArmsEmpty = createEmptyUniformImg( "UIEmptySlotArms" );
+		m_bitmapHandsEmpty = createEmptyUniformImg( "UIEmptySlotHands" );
+		m_bitmapLegsEmpty = createEmptyUniformImg( "UIEmptySlotLegs" );
+		m_bitmapFeetEmpty = createEmptyUniformImg( "UIEmptySlotFeet" );
+		m_bitmapLHeldEmpty = createEmptyUniformImg( "UIEmptySlotShield" );
+		m_bitmapRHeldEmpty = createEmptyUniformImg( "UIEmptySlotWeapon" );
+		//m_bitmapBackEmpty = createEmptyUniformImg( "UIEmptySlot" );
+		m_bitmapNeckEmpty = createEmptyUniformImg( "UIEmptySlotNeck" );
+		m_bitmapLRingEmpty = createEmptyUniformImg( "UIEmptySlotRing" );
+		m_bitmapRRingEmpty = createEmptyUniformImg( "UIEmptySlotRing" );
+		m_emptySlotsInitialized = true;
+	}
+
+	m_bitmapHead  = m_bitmapHeadEmpty;
+	m_bitmapChest = m_bitmapChestEmpty;
+	m_bitmapArms  = m_bitmapArmsEmpty;
+	m_bitmapHands = m_bitmapHandsEmpty;
+	m_bitmapLegs  = m_bitmapLegsEmpty;
+	m_bitmapFeet  = m_bitmapFeetEmpty;
+	m_bitmapLHeld = m_bitmapLHeldEmpty;
+	m_bitmapRHeld = m_bitmapRHeldEmpty;
+	m_bitmapBack  = m_bitmapBackEmpty;
+	m_bitmapNeck  = m_bitmapNeckEmpty;
+	m_bitmapLRing =	m_bitmapLRingEmpty;
+	m_bitmapRRing =	m_bitmapRRingEmpty;
 
 	if( info.uniform )
 	{
-		m_bitmapHead = createUniformImg( "HeadArmor", info.uniform );
-		m_bitmapChest = createUniformImg( "ChestArmor", info.uniform );
-		m_bitmapArms = createUniformImg( "ArmArmor", info.uniform );
-		m_bitmapHands = createUniformImg( "HandArmor", info.uniform );
-		m_bitmapLegs = createUniformImg( "LegArmor", info.uniform );
-		m_bitmapFeet = createUniformImg( "FootArmor", info.uniform );
-		m_bitmapLHeld = createUniformImg( "LeftHandHeld", info.uniform );
-		m_bitmapRHeld = createUniformImg( "RightHandHeld", info.uniform );
-		m_bitmapBack = createUniformImg( "Back", info.uniform );
+		m_bitmapHead = createUniformImg( "ArmorHead", info.uniform->parts.value( "HeadArmor" ), info.equipment->head );
+		m_bitmapChest = createUniformImg( "ArmorChest", info.uniform->parts.value( "ChestArmor" ), info.equipment->chest );
+		m_bitmapArms = createUniformImg( "ArmorArms", info.uniform->parts.value( "ArmArmor" ), info.equipment->arm );
+		m_bitmapHands = createUniformImg( "ArmorHands", info.uniform->parts.value( "HandArmor" ), info.equipment->hand );
+		m_bitmapLegs = createUniformImg( "ArmorLegs", info.uniform->parts.value( "LegArmor" ), info.equipment->leg );
+		m_bitmapFeet = createUniformImg( "ArmorFeet", info.uniform->parts.value( "FootArmor" ), info.equipment->foot );
+		//m_bitmapLHeld = createUniformImg( "LeftHandHeld", info.uniform->parts.value( "LeftHandHeld" ) );
+		//m_bitmapRHeld = createUniformImg( "RightHandHeld", info.uniform->parts.value( "RightHandHeld" ) );
+		//m_bitmapBack = createUniformImg( "Back", info.uniform );
 		//m_bitmapNeck = createUniformImg( "", info.uniform );
 		//m_bitmapLRing = createUniformImg( "", info.uniform );
 		//m_bitmapRRing = createUniformImg( "", info.uniform );
@@ -137,24 +158,51 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	OnPropertyChanged( "ImgLeftHand" );
 	OnPropertyChanged( "ImgRightHand" );
 	OnPropertyChanged( "ImgBack" );
+	OnPropertyChanged( "ImgNeck" );
+	OnPropertyChanged( "ImgLRing" );
+	OnPropertyChanged( "ImgRRing" );
 }
 
-Noesis::Ptr<Noesis::BitmapSource> CreatureInfoModel::createUniformImg( QString slot, Uniform* uniform )
+Noesis::Ptr<Noesis::BitmapSource> CreatureInfoModel::createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem )
 {
-	auto part = uniform->parts.value( slot );
-	if( part.item.isEmpty() )
+	if( uItem.item.isEmpty() || eItem.itemID == 0 )
 	{
 		return nullptr;
 	}
 	QStringList mats;
-	mats.append( part.material );
-	QPixmap pm = Util::createItemImage2( part.item, mats );
+	mats.append( eItem.material );
 
-	std::vector<unsigned char> buffer;
+	auto sprite = Global::sf().createSprite( "UI" + uItem.type + slot, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
 
-	Util::createBufferForNoesisImage( pm, buffer );
+		std::vector<unsigned char> buffer;
 
-	return BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Util::createBufferForNoesisImage( pm, buffer );
+
+		return BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	}
+	return nullptr;
+}
+
+Noesis::Ptr<Noesis::BitmapSource> CreatureInfoModel::createEmptyUniformImg( QString spriteID )
+{
+	QStringList mats; 
+	mats.append( "any" );
+	
+	auto sprite = Global::sf().createSprite( spriteID, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+
+		std::vector<unsigned char> buffer;
+
+		Util::createBufferForNoesisImage( pm, buffer );
+
+		return BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	}
+	return nullptr;
 }
 
 const char* CreatureInfoModel::GetName() const { return m_name.Str(); }
@@ -226,4 +274,7 @@ NS_IMPLEMENT_REFLECTION( CreatureInfoModel, "IngnomiaGUI.CreatureInfoModel" )
 	NsProp( "ImgLeftHand",  &CreatureInfoModel::getBitmapSourceLHeld );
 	NsProp( "ImgRightHand", &CreatureInfoModel::getBitmapSourceRHeld );
 	NsProp( "ImgBack" ,     &CreatureInfoModel::getBitmapSourceBack );
+	NsProp( "ImgNeck" ,     &CreatureInfoModel::getBitmapSourceNeck );
+	NsProp( "ImgLRing",     &CreatureInfoModel::getBitmapSourceLRing );
+	NsProp( "ImgRRing" ,     &CreatureInfoModel::getBitmapSourceRRing );
 }
