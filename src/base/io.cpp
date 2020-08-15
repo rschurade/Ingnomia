@@ -57,6 +57,8 @@
 #include <QSaveFile>
 #include <QStandardPaths>
 
+#include <unordered_set>
+
 int IO::version = 0;
 
 IO::IO( QObject* parent ) :
@@ -145,7 +147,7 @@ bool IO::createFolders()
 	}
 
 	QString exePath = QCoreApplication::applicationDirPath();
-	
+
 	if ( !QFile::exists( folder + "settings/profs.json" ) && QFile::exists( exePath + "/content/JSON/profs.json" ) )
 	{
 		QFile::copy( exePath + "/content/JSON/profs.json", folder + "settings/profs.json" );
@@ -288,7 +290,6 @@ bool IO::load( QString folder )
 	Global::gm().init();
 	Global::mil().init();
 
-
 	PathFinder::getInstance().init();
 	Util::initAllowedInContainer();
 
@@ -343,7 +344,24 @@ bool IO::load( QString folder )
 	loadFile( folder + "config.json", jd );
 	IO::loadConfig( jd );
 
-	
+	// Migration for 0.7.5 games where gnomes had stored their own ID in job field of items
+	{
+		std::unordered_set<unsigned int> legalJobs;
+		for ( const auto& job : Global::jm().allJobs() )
+		{
+			legalJobs.emplace( job.id() );
+		}
+
+		for ( auto& item : Global::inv().allItems() )
+		{
+			const auto job = item.isInJob();
+			if ( job && !legalJobs.count( job ) )
+			{
+				item.setInJob( 0 );
+				qWarning() << "item " + QString::number( item.id() ) + " had illegal job";
+			}
+		}
+	}
 
 	qDebug() << "loading game took: " + QString::number( timer.elapsed() ) + " ms";
 	return true;
@@ -358,7 +376,7 @@ QString IO::versionString( QString folder )
 
 	QVariantMap vm = ja.toVariantList().first().toMap();
 
-	if( vm.contains( "Version" ) )
+	if ( vm.contains( "Version" ) )
 	{
 		return vm.value( "Version" ).toString();
 	}
@@ -445,7 +463,6 @@ bool IO::loadGame( QJsonDocument& jd )
 		auto map = doc.first().toMap();
 		GameState::load( map );
 	}
-
 
 	for ( auto vMat : GameState::addedMaterials )
 	{
@@ -679,7 +696,7 @@ QJsonArray IO::jsonArrayMonsters( int startIndex, int amount )
 		qDebug() << "jsonArrayMonsters";
 	QJsonArray ja;
 
-	int i          = startIndex;
+	int i         = startIndex;
 	auto monsters = Global::cm().monsters();
 
 	while ( i < monsters.size() && amount > 0 )
@@ -1386,14 +1403,14 @@ bool IO::saveFile( QString url, const QJsonDocument& jd )
 bool IO::loadFile( QString url, QJsonDocument& ja )
 {
 	QFile file( url );
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QString val = file.readAll();
-    file.close();
+	file.open( QIODevice::ReadOnly | QIODevice::Text );
+	QString val = file.readAll();
+	file.close();
 
 	QJsonParseError error;
-    ja = QJsonDocument::fromJson( val.toUtf8(), &error );
+	ja = QJsonDocument::fromJson( val.toUtf8(), &error );
 
-	if( error.error == QJsonParseError::NoError )
+	if ( error.error == QJsonParseError::NoError )
 	{
 		return true;
 	}
