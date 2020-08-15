@@ -398,6 +398,7 @@ void IO::sanitize()
 				const bool carried = 0 != carriedItems.count( item.id() );
 				if ( !worn && !carried )
 				{
+					item.setIsConstructedOrEquipped( false );
 					Global::inv().putDownItem( item.id(), item.getPos() );
 					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
 				}
