@@ -1273,6 +1273,10 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 				return true;
 			}
 		}
+		else
+		{
+			return false;
+		}
 	}
 
 	if ( !item.isEmpty() )
@@ -2579,64 +2583,25 @@ bool Gnome::equipItem()
 
 		auto part = Global::creaturePartLookUp.value( slot );
 
-		switch ( part )
+		auto& itemSlot = m_equipment.getSlot( part );
+		if ( itemSlot.itemID )
 		{
-			case CP_ARMOR_HEAD:
-				m_equipment.head.itemID     = itemID;
-				m_equipment.head.item       = itemSID;
-				m_equipment.head.materialID = materialUID;
-				m_equipment.head.material   = materialSID;
-				break;
-			case CP_ARMOR_TORSO:
-				m_equipment.chest.itemID     = itemID;
-				m_equipment.chest.item       = itemSID;
-				m_equipment.chest.materialID = materialUID;
-				m_equipment.chest.material   = materialSID;
-				break;
-			case CP_ARMOR_ARM:
-				m_equipment.arm.itemID     = itemID;
-				m_equipment.arm.item       = itemSID;
-				m_equipment.arm.materialID = materialUID;
-				m_equipment.arm.material   = materialSID;
-				break;
-			case CP_ARMOR_HAND:
-				m_equipment.hand.itemID     = itemID;
-				m_equipment.hand.item       = itemSID;
-				m_equipment.hand.materialID = materialUID;
-				m_equipment.hand.material   = materialSID;
-				break;
-			case CP_ARMOR_LEG:
-				m_equipment.leg.itemID     = itemID;
-				m_equipment.leg.item       = itemSID;
-				m_equipment.leg.materialID = materialUID;
-				m_equipment.leg.material   = materialSID;
-				break;
-			case CP_ARMOR_FOOT:
-				m_equipment.foot.itemID     = itemID;
-				m_equipment.foot.item       = itemSID;
-				m_equipment.foot.materialID = materialUID;
-				m_equipment.foot.material   = materialSID;
-				break;
-			case CP_LEFT_HAND_HELD:
-				m_equipment.leftHandHeld.itemID     = itemID;
-				m_equipment.leftHandHeld.item       = itemSID;
-				m_equipment.leftHandHeld.materialID = materialUID;
-				m_equipment.leftHandHeld.material   = materialSID;
-				equipHand( itemID, "Left" );
-				break;
-			case CP_RIGHT_HAND_HELD:
-				m_equipment.rightHandHeld.itemID     = itemID;
-				m_equipment.rightHandHeld.item       = itemSID;
-				m_equipment.rightHandHeld.materialID = materialUID;
-				m_equipment.rightHandHeld.material   = materialSID;
-				equipHand( itemID, "Right" );
-				break;
-			case CP_BACK:
-				m_equipment.back.itemID     = itemID;
-				m_equipment.back.item       = itemSID;
-				m_equipment.back.materialID = materialUID;
-				m_equipment.back.material   = materialSID;
-				break;
+			qWarning() << "Trying to equip into occupied slot!";
+			Global::inv().putDownItem( itemSlot.itemID, m_position );
+			Global::inv().setInJob( itemSlot.itemID, 0 );
+			Global::inv().setConstructedOrEquipped( itemSlot.itemID, false );
+		}
+		itemSlot.itemID = itemID;
+		itemSlot.item   = itemSID;
+		itemSlot.materialID = materialUID;
+		itemSlot.material   = materialSID;
+		if (part == CP_LEFT_HAND_HELD)
+		{
+			equipHand( itemID, "Left" );
+		}
+		else if (part == CP_RIGHT_HAND_HELD )
+		{
+			equipHand( itemID, "Right" );
 		}
 
 		updateSprite();

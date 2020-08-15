@@ -299,13 +299,6 @@ unsigned int Item::isInJob() const
 
 void Item::setInJob( unsigned int job )
 {
-	if ( job )
-	{
-		if( !Global::jm().allJobs().contains( job ) )
-		{
-			qWarning() << "Illegal job!";
-		}
-	}
 	m_isInJob = job;
 }
 

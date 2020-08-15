@@ -118,6 +118,7 @@ struct Equipment
 	void clearAllItems();
 	Equipment( const QVariantMap& in );
 	float getDamageReduction( CreaturePart part );
+	EquipmentItem& getSlot( CreaturePart part );
 
 	Equipment() {};
 };
