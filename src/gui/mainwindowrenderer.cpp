@@ -435,6 +435,7 @@ void MainWindowRenderer::updateRenderParams()
 		m_lightMin = 0.3f;
 
 	m_rotation = Config::getInstance().get( "rotation" ).toInt();
+	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
 
 	m_overlay      = Config::getInstance().get( "overlay" ).toBool();
 	m_debug        = Global::debugMode;

@@ -668,6 +668,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 		Position thisPos( pos + offsets[i % 6] );
 		Global::w().getFloorLevelBelow( thisPos, false );
 		Global::gm().addGnome( thisPos );
+		Config::getInstance().set( "viewLevel", thisPos.z + 5 );
 	}
 
 	Inventory& inv = Global::inv();
