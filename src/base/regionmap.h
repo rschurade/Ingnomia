@@ -52,8 +52,16 @@ public:
 
 private:
 	std::vector<unsigned int> m_regionMap;
-	QMap<unsigned int, Region> m_regions;
-	QMap<std::pair<unsigned int, unsigned int>, bool> m_cachedConnections;
+	std::vector<Region> m_regions;
+
+	struct mHash
+	{
+		inline std::size_t operator()( const std::pair<unsigned int, unsigned int>& s ) const noexcept
+		{
+			return std::hash<std::size_t> {}( static_cast<std::size_t>( s.first ) ^ ( static_cast<std::size_t>( s.second ) << 32 ) );
+		}
+	};
+	std::unordered_map<std::pair<unsigned int, unsigned int>, bool, mHash> m_cachedConnections;
 
 	int m_dimX = 0;
 	int m_dimY = 0;

@@ -75,7 +75,7 @@ void RegionMap::initRegions()
 	World& world = Global::w();
 
 	m_regions.clear();
-	m_regions.insert( 0, Region( 0 ) );
+	m_regions.emplace_back( 0 );
 	m_regionMap.clear();
 	m_regionMap.resize( world.world().size() );
 	for ( auto i = 0; i < m_regionMap.size(); ++i )
@@ -97,8 +97,7 @@ void RegionMap::initRegions()
 					// assign new region numer
 					unsigned int id               = m_regions.size();
 					m_regionMap[index( x, y, z )] = id;
-					Region r( id );
-					m_regions.insert( id, r );
+					m_regions.emplace_back( id );
 
 					floodFill( 0, id, x, y, z );
 				}
@@ -412,8 +411,7 @@ void RegionMap::updatePositionSetWalkable( const Position& pos )
 				// if no neighbor with region, start new region
 				unsigned int id           = m_regions.size();
 				m_regionMap[index( pos )] = id;
-				Region r( id );
-				m_regions.insert( id, r );
+				m_regions.emplace_back( id );
 			}
 			else
 			{
@@ -527,8 +525,7 @@ bool RegionMap::checkSplit( const Position& pos )
 		{
 			unsigned int id                                           = m_regions.size();
 			m_regionMap[index( Position( pos.x - 1, pos.y, pos.z ) )] = id;
-			Region r( id );
-			m_regions.insert( id, r );
+			m_regions.emplace_back( id );
 			//qDebug() << "flood fill 2 : " << Position( pos.x-1, pos.y, pos.z ).toString();
 			floodFill( region1, id, pos.x - 1, pos.y, pos.z );
 			splitRegions( region1, id );
@@ -571,7 +568,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			unsigned int id                                           = m_regions.size();
 			m_regionMap[index( Position( pos.x + 1, pos.y, pos.z ) )] = id;
 			Region r( id );
-			m_regions.insert( id, r );
+			m_regions.emplace_back( id );
 			//qDebug() << "flood fill 2 : " << Position( pos.x+1, pos.y, pos.z ).toString();
 			floodFill( region2, id, pos.x + 1, pos.y, pos.z );
 			splitRegions( region2, id );
@@ -604,8 +601,7 @@ bool RegionMap::checkSplit( const Position& pos )
 				{
 					unsigned int id                                           = m_regions.size();
 					m_regionMap[index( Position( pos.x, pos.y - 1, pos.z ) )] = id;
-					Region r( id );
-					m_regions.insert( id, r );
+					m_regions.emplace_back( id );
 					//qDebug() << "flood fill 2 : " << Position( pos.x, pos.y-1, pos.z ).toString();
 					floodFill( region3, id, pos.x, pos.y - 1, pos.z );
 					splitRegions( region3, id );
@@ -743,10 +739,10 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 	{
 		std::swap( start, goal );
 	}
-	auto it = m_cachedConnections.constFind( std::make_pair( start, goal ) );
+	const auto it = m_cachedConnections.find( std::make_pair( start, goal ) );
 	if ( it != m_cachedConnections.end() )
 	{
-		return it.value();
+		return it->second;
 	}
 	//qDebug() << "check connection between " << start << goal;
 	QQueue<unsigned int> floodQueue;
@@ -769,14 +765,14 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 		unsigned int currentRegionID = floodQueue.dequeue();
 		if ( currentRegionID == goal )
 		{
-			m_cachedConnections.insert( std::make_pair( start, goal ), true );
+			m_cachedConnections.insert( { std::make_pair( start, goal ), true } );
 			return true;
 		}
 		for ( auto con : region( currentRegionID ).connectionsTo() )
 		{
 			if ( con == goal )
 			{
-				m_cachedConnections.insert( std::make_pair( start, goal ), true );
+				m_cachedConnections.insert( { std::make_pair( start, goal ), true } );
 				return true;
 			}
 			if ( !visited.contains( con ) )
@@ -789,7 +785,7 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 		{
 			if ( con == goal )
 			{
-				m_cachedConnections.insert( std::make_pair( start, goal ), true );
+				m_cachedConnections.insert( { std::make_pair( start, goal ), true } );
 				return true;
 			}
 			if ( !visited.contains( con ) )
@@ -799,7 +795,7 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 			}
 		}
 	}
-	m_cachedConnections.insert( std::make_pair( start, goal ), false );
+	m_cachedConnections.insert( { std::make_pair( start, goal ), false } );
 	//qDebug() << "no connection";
 	return false;
 }
@@ -815,6 +811,7 @@ bool RegionMap::checkConnectedRegions( const Position& start, const Position& go
 	*/
 	return checkConnectedRegions( regionID( start ), regionID( goal ) );
 }
+
 
 std::vector<Position> RegionMap::connectedNeighborsUp( const Position& pos )
 {
