@@ -427,6 +427,8 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_waterQuality = Config::getInstance().get( "waterQuality" ).toInt();
 
+	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
+
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
 
@@ -435,7 +437,6 @@ void MainWindowRenderer::updateRenderParams()
 		m_lightMin = 0.3f;
 
 	m_rotation = Config::getInstance().get( "rotation" ).toInt();
-	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
 
 	m_overlay      = Config::getInstance().get( "overlay" ).toBool();
 	m_debug        = Global::debugMode;
