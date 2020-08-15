@@ -939,7 +939,6 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 						unsigned int item = inv.getClosestItem( m_job->pos(), true, itemSID, materialSID );
 						if ( item )
 						{
-							inv.setInJob( item, true );
 							addClaimedItem( item, m_job->id() );
 						}
 						else

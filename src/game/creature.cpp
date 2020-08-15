@@ -1070,11 +1070,6 @@ void Creature::clearClaimedItems()
 	m_claimedItems.clear();
 }
 
-QList<unsigned int> Creature::claimedItems()
-{
-	return m_claimedItems;
-}
-
 void Creature::log( QString txt )
 {
 	if ( m_log.size() > 0 )

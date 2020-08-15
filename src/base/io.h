@@ -35,6 +35,8 @@ public:
 	static QString save( bool autosave = false );
 	bool load( QString folder );
 
+	void sanitize();
+
 	static bool saveCompatible( QString folder );
 	static QString versionString( QString folder );
 	static int versionInt( QString folder );

@@ -113,6 +113,7 @@ struct Equipment
 	EquipmentItem rightHandHeld;
 	EquipmentItem back;
 
+	QList<unsigned int> wornItems() const;
 	QVariantMap serialize();
 	void clearAllItems();
 	Equipment( const QVariantMap& in );
@@ -261,6 +262,16 @@ public:
 		return m_inventoryItems;
 	}
 
+	QList<unsigned int> carriedItems() const
+	{
+		return m_carriedItems;
+	}
+
+	QList<unsigned int> claimedItems()
+	{
+		return m_claimedItems;
+	}
+
 	bool isAnimal() { return m_type == CreatureType::ANIMAL; }
 	bool isMonster() { return m_type == CreatureType::MONSTER; }
 
@@ -402,7 +413,6 @@ protected:
 	void removeClaimedItem( unsigned int item );
 	void unclaimAll();
 	void clearClaimedItems();
-	QList<unsigned int> claimedItems();
 };
 
 struct CreatureCompare

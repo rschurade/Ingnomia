@@ -35,6 +35,30 @@ EquipmentItem::EquipmentItem( const QVariantMap& in )
 	materialID = in.value( "MaterialID" ).toUInt();
 }
 
+QList<unsigned int> Equipment::wornItems() const
+{
+	QList<unsigned int> items;
+	EquipmentItem const *const equipmentSlots[] = {
+		&head,
+		&chest,
+		&arm,
+		&hand,
+		&leg,
+		&foot,
+		&leftHandHeld,
+		&rightHandHeld,
+		&back,
+	};
+	for ( const auto& slot : equipmentSlots )
+	{
+		if (slot->itemID)
+		{
+			items.append( slot->itemID );
+		}
+	}
+	return items;
+}
+
 QVariantMap Equipment::serialize()
 {
 	QVariantMap vEqui;

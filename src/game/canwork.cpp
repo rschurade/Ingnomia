@@ -313,7 +313,7 @@ void CanWork::cleanUpJob( bool finished )
 			}
 		}
 	}
-	if( m_btBlackBoard.contains( "" ) )
+	if( m_btBlackBoard.contains( "ClaimedUniformItem" ) )
 	{
 		auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
 		inv.setInJob( itemID, 0 );
