@@ -88,7 +88,7 @@ public:
 	unsigned int madeBy() const;
 	void setMadeBy( unsigned int creatureID );
 
-	QList<unsigned int> containedItems() const;
+	const QSet<unsigned int>& containedItems() const;
 	unsigned char capacity() const;
 	bool requireSame() const;
 

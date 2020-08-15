@@ -252,13 +252,14 @@ bool Item::isContainer() const
 	return false;
 }
 
-QList<unsigned int> Item::containedItems() const
+const QSet<unsigned int>& Item::containedItems() const
 {
 	if ( m_extraData )
 	{
-		return m_extraData->containedItems.values();
+		return m_extraData->containedItems;
 	}
-	return {};
+	static const QSet<unsigned int> nullopt;
+	return nullopt;
 }
 
 unsigned char Item::capacity() const

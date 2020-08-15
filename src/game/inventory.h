@@ -141,7 +141,7 @@ public:
 	void setColor( unsigned int item, QString color );
 	unsigned int color( unsigned int item );
 
-	QList<unsigned int> itemsInContainer( unsigned int container );
+	const QSet<unsigned int>& itemsInContainer( unsigned int container );
 
 	int countItemsAtPos( Position& pos );
 

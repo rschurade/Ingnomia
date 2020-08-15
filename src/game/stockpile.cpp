@@ -373,7 +373,7 @@ unsigned int Stockpile::getJob()
 									unsigned int firstItem = 0;
 									if ( inv.itemsInContainer( infi->containerID ).size() )
 									{
-										firstItem = inv.itemsInContainer( infi->containerID ).first();
+										firstItem = *inv.itemsInContainer( infi->containerID ).begin();
 									}
 									else if ( infi->reservedItems.size() )
 									{
@@ -608,7 +608,7 @@ unsigned int Stockpile::getCleanUpJob()
 					unsigned int firstItem = 0;
 					if ( inv.itemsInContainer( infi->containerID ).size() )
 					{
-						firstItem = inv.itemsInContainer( infi->containerID ).first();
+						firstItem = *inv.itemsInContainer( infi->containerID ).begin();
 					}
 					else if ( infi->reservedItems.size() )
 					{
@@ -938,7 +938,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 					// if an item is already in the container and the container requires same
 					if ( field->requireSame && inv.itemsInContainer( containerID ).size() )
 					{
-						unsigned int firstItem = inv.itemsInContainer( containerID ).first();
+						unsigned int firstItem = *inv.itemsInContainer( containerID ).begin();
 						if ( inv.isSameTypeAndMaterial( item, firstItem ) )
 						{
 							inv.putItemInContainer( item, containerID );

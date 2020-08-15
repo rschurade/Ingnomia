@@ -1623,7 +1623,7 @@ bool Inventory::requireSame( unsigned int id )
 	return false;
 }
 
-QList<unsigned int> Inventory::itemsInContainer( unsigned int containerID )
+const QSet<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
 {
 	//DB::execQuery2( "SELECT UID FROM v_items WHERE inContainer = \"" + QString::number( containerID ) + "\"" );
 	auto container = getItem( containerID );
@@ -1631,7 +1631,8 @@ QList<unsigned int> Inventory::itemsInContainer( unsigned int containerID )
 	{
 		return container->containedItems();
 	}
-	return QList<unsigned int>();
+	static const QSet<unsigned int> nullopt;
+	return nullopt;
 }
 
 unsigned char Inventory::nutritionalValue( unsigned int id )
