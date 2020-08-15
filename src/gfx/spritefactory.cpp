@@ -1213,7 +1213,10 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 {
 	QString season = GameState::seasonString;
-
+	if( season.isEmpty() )
+	{
+		season = "Spring";
+	}
 	if ( sprite->anim )
 	{
 		for ( int frame = 0; frame < 4; ++frame )

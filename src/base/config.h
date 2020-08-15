@@ -34,8 +34,6 @@ private:
 	Config( Config const& copy );            // Not Implemented
 	Config& operator=( Config const& copy ); // Not Implemented
 
-	bool loadFromFile();
-
 	QVariantMap m_settings;
 
 	QMutex m_mutex;

@@ -144,22 +144,26 @@ bool IO::createFolders()
 		QDir().mkdir( tmpFolder );
 	}
 
-	if ( !QFile::exists( folder + "settings/keybindings.json" ) && QFile::exists( "content/JSON/keybindings.json" ) )
+	QString exePath = QCoreApplication::applicationDirPath();
+	
+	if ( !QFile::exists( folder + "settings/profs.json" ) && QFile::exists( exePath + "/content/JSON/profs.json" ) )
 	{
-		QFile::copy( "content/JSON/keybindings.json", folder + "settings/keybindings.json" );
+		QFile::copy( exePath + "/content/JSON/profs.json", folder + "settings/profs.json" );
 	}
-	if ( !QFile::exists( folder + "settings/profs.json" ) && QFile::exists( "content/JSON/profs.json" ) )
+	if ( !QFile::exists( folder + "settings/config.json" ) && QFile::exists( exePath + "/content/JSON/config.json" ) )
 	{
-		QFile::copy( "content/JSON/profs.json", folder + "settings/profs.json" );
+		QFile::copy( exePath + "/content/JSON/config.json", folder + "settings/config.json" );
 	}
-	if ( !QFile::exists( folder + "settings/config.json" ) && QFile::exists( "content/JSON/config.json" ) )
+	if ( !QFile::exists( folder + "settings/newgame.json" ) && QFile::exists( exePath + "/content/JSON/newgame.json" ) )
 	{
-		QFile::copy( "content/JSON/config.json", folder + "settings/config.json" );
+		QFile::copy( exePath + "/content/JSON/newgame.json", folder + "settings/newgame.json" );
 	}
-	if ( !QFile::exists( folder + "settings/newgame.json" ) && QFile::exists( "content/JSON/newgame.json" ) )
+	/*
+	if ( !QFile::exists( folder + "settings/keybindings.json" ) && QFile::exists( exePath + "/content/JSON/keybindings.json" ) )
 	{
-		QFile::copy( "content/JSON/newgame.json", folder + "settings/newgame.json" );
+		QFile::copy( exePath + "/content/JSON/keybindings.json", folder + "settings/keybindings.json" );
 	}
+	*/
 
 	folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
 

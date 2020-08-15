@@ -45,13 +45,12 @@ bool Config::init()
 
 	if ( !IO::loadFile( folder + "settings/config.json", jd ) )
 	{
-		ok = loadFromFile();
-		jd = QJsonDocument::fromVariant( m_settings );
-		IO::saveFile( folder + "settings/config.json", jd );
+		return false;
 	}
 
 	m_settings = jd.toVariant().toMap();
 
+	/*
 	if ( !IO::loadFile( folder + "settings/keybindings.json", jd ) )
 	{
 		if ( QFile::exists( "keybindings.json" ) )
@@ -59,7 +58,7 @@ bool Config::init()
 			QFile::copy( "keybindings.json", folder + "settings/keybindings.json" );
 		}
 	}
-
+	*/
 	// add values to exisiting confings
 	if ( !m_settings.contains( "XpMod" ) || m_settings.value( "XpMod" ).toInt() != 250 )
 	{
@@ -82,37 +81,6 @@ bool Config::init()
 	m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
 
 	return ok;
-}
-
-bool Config::loadFromFile()
-{
-	QDir path( "config.cfg" );
-	qDebug() << path.absolutePath();
-	QFile configFile( path.absolutePath() );
-
-	if ( !configFile.open( QIODevice::ReadOnly ) )
-	{
-		qDebug( "config file unreadable" );
-		return false;
-	}
-	QTextStream ts( &configFile );
-	QString nl;
-
-	while ( !ts.atEnd() )
-	{
-		nl = ts.readLine();
-		//For commenting out stuff in the setfiles
-		if ( !nl.startsWith( "#" ) )
-		{
-			QStringList sl = nl.split( " " );
-			if ( sl.size() > 1 )
-			{
-				m_settings[sl[0]].setValue( sl[1] );
-			}
-		}
-	}
-
-	return true;
 }
 
 QVariant Config::get( QString key )
