@@ -97,18 +97,18 @@ public:
 
 	~Job();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
-	unsigned int id();
+	unsigned int id() const;
 
-	QString type();
+	QString type() const;
 	void setType( QString type );
 
-	QString requiredSkill();
+	QString requiredSkill() const;
 	void setRequiredSkill( QString skill );
 
 	void setDescription( QString desc );
-	QString description();
+	QString description() const;
 
 	// position of the tile being worked
 	Position pos() const;
@@ -134,78 +134,78 @@ public:
 	QList<Position> origWorkPosOffsets();
 	void setOrigWorkPosOffsets( QString offsets );
 
-	bool isWorked();
+	bool isWorked() const;
 	void setIsWorked( bool v );
 
-	unsigned char rotation();
+	unsigned char rotation() const;
 	void setRotation( unsigned char rot );
 
-	QList<unsigned int> itemsToHaul();
+	QList<unsigned int> itemsToHaul() const;
 	void addItemToHaul( unsigned int );
 
-	QString item();
+	QString item() const;
 	void setItem( QString item );
 
-	unsigned int stockpile();
+	unsigned int stockpile() const;
 	void setStockpile( unsigned int sp );
 
-	unsigned int animal();
+	unsigned int animal() const;
 	void setAnimal( unsigned int animal );
 
-	unsigned int automaton();
+	unsigned int automaton() const;
 	void setAutomaton( unsigned int automaton );
 
-	unsigned int mechanism();
+	unsigned int mechanism() const;
 	void setMechanism( unsigned int animal );
 
-	QString material();
+	QString material() const;
 	void setMaterial( QString material );
 
 	void setComponentMissing( bool v );
-	bool componenentMissing();
+	bool componenentMissing() const;
 
-	QList<RequiredItem> requiredItems();
+	QList<RequiredItem> requiredItems() const;
 	void addRequiredItem( int count, QString item, QString material, QStringList materialRestriction, bool requireSame = false );
 
-	int distanceSquare( Position& pos, int zWeight = 1 );
+	int distanceSquare( Position& pos, int zWeight = 1 ) const;
 
-	bool noJobSprite();
+	bool noJobSprite() const;
 	void setNoJobSprite( bool v );
 
-	QVariantMap craft();
+	QVariantMap craft() const;
 	void setCraft( QVariantMap craft );
 
 	void setCanceled();
-	bool isCanceled();
+	bool isCanceled() const;
 
 	void setAborted( bool v );
-	bool isAborted();
+	bool isAborted() const;
 
 	void setWorkedBy( unsigned int gnomeID );
-	unsigned int workedBy();
+	unsigned int workedBy() const;
 
-	RequiredTool requiredTool();
+	RequiredTool requiredTool() const;
 	void setRequiredTool( QString toolID, quint8 level );
 
 	void setConversionMaterial( QString material );
-	QString conversionMaterial();
+	QString conversionMaterial() const;
 
 	void setAmount( int amount );
-	int amount();
+	int amount() const;
 
 	void setSpell( QString spell );
-	QString spell();
+	QString spell() const;
 
 	void setMayTrap( bool value );
-	bool mayTrap();
+	bool mayTrap() const;
 
 	void setDestroyOnAbort( bool value );
-	bool destroyOnAbort();
+	bool destroyOnAbort() const;
 
 	void setCraftID( QString craftID );
-	QString craftID();
+	QString craftID() const;
 
 	void raisePrio();
 	void lowerPrio();
-	int priority();
+	int priority() const;
 };

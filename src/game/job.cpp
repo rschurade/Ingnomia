@@ -88,7 +88,7 @@ Job::Job( QVariantMap in )
 	m_spell       = in.value( "Spell" ).toString();
 }
 
-QVariant Job::serialize()
+QVariant Job::serialize() const
 {
 	QVariantMap out;
 	out.insert( "ID", m_id );
@@ -112,7 +112,7 @@ QVariant Job::serialize()
 	out.insert( "RequiredToolLevel", m_requiredTool.level ); // int level
 
 	QVariantList ril;
-	for ( auto ri : m_requiredItems )
+	for ( const auto& ri : m_requiredItems )
 	{
 		QVariantMap rim;
 		rim.insert( "Count", ri.count );
@@ -198,12 +198,12 @@ Job::~Job()
 {
 }
 
-unsigned int Job::id()
+unsigned int Job::id() const
 {
 	return m_id;
 }
 
-QString Job::type()
+QString Job::type() const
 {
 	return m_type;
 }
@@ -212,7 +212,7 @@ void Job::setType( QString type )
 	m_type = type;
 }
 
-QString Job::requiredSkill()
+QString Job::requiredSkill() const
 {
 	return m_requiredSKill;
 }
@@ -225,7 +225,7 @@ void Job::setDescription( QString desc )
 {
 	m_description = desc;
 }
-QString Job::description()
+QString Job::description() const
 {
 	return m_description;
 }
@@ -303,7 +303,7 @@ void Job::setOrigWorkPosOffsets( QString offsets )
 	}
 }
 
-bool Job::isWorked()
+bool Job::isWorked() const
 {
 	return m_jobIsWorked;
 }
@@ -312,7 +312,7 @@ void Job::setIsWorked( bool v )
 	m_jobIsWorked = v;
 }
 
-unsigned char Job::rotation()
+unsigned char Job::rotation() const
 {
 	return m_rotation;
 }
@@ -321,7 +321,7 @@ void Job::setRotation( unsigned char rot )
 	m_rotation = rot;
 }
 
-QList<unsigned int> Job::itemsToHaul()
+QList<unsigned int> Job::itemsToHaul() const
 {
 	return m_itemsToHaul;
 }
@@ -331,7 +331,7 @@ void Job::addItemToHaul( unsigned int item )
 	m_itemsToHaul.append( item );
 }
 
-QString Job::item()
+QString Job::item() const
 {
 	return m_item;
 }
@@ -340,7 +340,7 @@ void Job::setItem( QString item )
 	m_item = item;
 }
 
-unsigned int Job::stockpile()
+unsigned int Job::stockpile() const
 {
 	return m_stockpile;
 }
@@ -349,12 +349,12 @@ void Job::setStockpile( unsigned int sp )
 	m_stockpile = sp;
 }
 
-int Job::distanceSquare( Position& pos, int zWeight )
+int Job::distanceSquare( Position& pos, int zWeight ) const
 {
-	return ( m_position.x - pos.x ) * ( m_position.x - pos.x ) + ( m_position.y - pos.y ) * ( m_position.y - pos.y ) + ( m_position.z - pos.z ) * ( m_position.z - pos.z ) * zWeight;
+	return pos.distSquare( pos, zWeight );
 }
 
-QString Job::material()
+QString Job::material() const
 {
 	return m_material;
 }
@@ -363,7 +363,7 @@ void Job::setMaterial( QString material )
 	m_material = material;
 }
 
-bool Job::noJobSprite()
+bool Job::noJobSprite() const
 {
 	return m_noJobSprite;
 }
@@ -376,12 +376,12 @@ void Job::setComponentMissing( bool v )
 {
 	m_componentMissing = v;
 }
-bool Job::componenentMissing()
+bool Job::componenentMissing() const
 {
 	return m_componentMissing;
 }
 
-QList<RequiredItem> Job::requiredItems()
+QList<RequiredItem> Job::requiredItems() const
 {
 	return m_requiredItems;
 }
@@ -399,7 +399,7 @@ void Job::addRequiredItem( int count, QString item, QString material, QStringLis
 	m_requiredItems.append( ri );
 }
 
-QVariantMap Job::craft()
+QVariantMap Job::craft() const
 {
 	return m_craft;
 }
@@ -414,7 +414,7 @@ void Job::setCanceled()
 	m_canceled = true;
 }
 
-bool Job::isCanceled()
+bool Job::isCanceled() const
 {
 	return m_canceled;
 }
@@ -424,7 +424,7 @@ void Job::setAborted( bool v )
 	m_aborted = v;
 }
 
-bool Job::isAborted()
+bool Job::isAborted() const
 {
 	return m_aborted;
 }
@@ -434,12 +434,12 @@ void Job::setWorkedBy( unsigned int gnomeID )
 	m_workedBy = gnomeID;
 }
 
-unsigned int Job::workedBy()
+unsigned int Job::workedBy() const
 {
 	return m_workedBy;
 }
 
-RequiredTool Job::requiredTool()
+RequiredTool Job::requiredTool() const
 {
 	return m_requiredTool;
 }
@@ -455,7 +455,7 @@ void Job::setConversionMaterial( QString material )
 	m_conversionMaterial = material;
 }
 
-QString Job::conversionMaterial()
+QString Job::conversionMaterial() const
 {
 	return m_conversionMaterial;
 }
@@ -465,12 +465,12 @@ void Job::setAmount( int amount )
 	m_amount = amount;
 }
 
-int Job::amount()
+int Job::amount() const
 {
 	return m_amount;
 }
 
-unsigned int Job::animal()
+unsigned int Job::animal() const
 {
 	return m_animal;
 }
@@ -480,7 +480,7 @@ void Job::setAnimal( unsigned int animal )
 	m_animal = animal;
 }
 
-unsigned int Job::automaton()
+unsigned int Job::automaton() const
 {
 	return m_automaton;
 }
@@ -490,7 +490,7 @@ void Job::setAutomaton( unsigned int automaton )
 	m_automaton = automaton;
 }
 
-unsigned int Job::mechanism()
+unsigned int Job::mechanism() const
 {
 	return m_mechanism;
 }
@@ -505,7 +505,7 @@ void Job::setSpell( QString spell )
 	m_spell = spell;
 }
 
-QString Job::spell()
+QString Job::spell() const
 {
 	return m_spell;
 }
@@ -515,7 +515,7 @@ void Job::setMayTrap( bool value )
 	m_mayTrap = value;
 }
 
-bool Job::mayTrap()
+bool Job::mayTrap() const
 {
 	return m_mayTrap;
 }
@@ -530,7 +530,7 @@ void Job::lowerPrio()
 	m_priority = qMax( 0, m_priority - 1 );
 }
 
-int Job::priority()
+int Job::priority() const
 {
 	return m_priority;
 }
@@ -540,7 +540,7 @@ void Job::setCraftID( QString craftID )
 	m_craftID = craftID;
 }
 
-QString Job::craftID()
+QString Job::craftID() const
 {
 	return m_craftID;
 }
@@ -550,7 +550,7 @@ void Job::setDestroyOnAbort( bool value )
 	m_destroyOnAbort = value;
 }
 	
-bool Job::destroyOnAbort()
+bool Job::destroyOnAbort() const
 {
 	return m_destroyOnAbort;
 }
