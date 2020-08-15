@@ -11,16 +11,24 @@ The following steps describe how to compile the code and get the game running on
 * Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
 * [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
   Download the native SDK, open the Visual Studio solution and build the NoesisApp in *Debug* configuration.
+  For using Noesis in a development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
+* CMake 3.16 or newer
 
-### Configuration ###
+### Build ###
 
-	
-### Database configuration ###
+```bash
+cp -r "<EXISTING_INGOMIA_INSTALLATION>/content/tilesheet" /content
+mkdir build && cd build
+cmake .. \
+-DQt5_DIR="<QTINSTALLDIR>/<ARCH>/lib/cmake/Qt5" \
+-DSTEAM_SDK_DIR="<STEAMSDKDIR>/sdk" \
+-DNOESIS_ROOT="<NOESISDIR>" \
+-DNOESIS_LICENSE_NAME="<TRIAL_LICENSE_NAME>" \
+-DNOESIS_LICENSE_KEY="<TRIAL_LICENSE_KEY>"
+```
 
-### Deployment ###
-
-To run the game copy over the contents of `/content/tilesheet` from your Steam installation.
+If no errors have occured, proceed building the project with the chose build system.
 
 ## Contribution guidelines ##
 
