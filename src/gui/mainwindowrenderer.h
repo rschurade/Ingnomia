@@ -159,6 +159,7 @@ public slots:
 	void onAxelData( const AxleDataInfo& data );
 
 	void paintWorld();
+	void onRenderParamsChanged();
 
 signals:
 	void redrawRequired();

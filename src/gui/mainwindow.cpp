@@ -139,6 +139,7 @@ void MainWindow::toggleFullScreen()
 		w->showNormal();
 		m_isFullScreen = false;
 	}
+	m_renderer->onRenderParamsChanged();
 }
 
 void MainWindow::keyPressEvent( QKeyEvent* event )
@@ -168,6 +169,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 		{
 			case Qt::Key_H:
 				Global::wallsLowered = !Global::wallsLowered;
+				m_renderer->onRenderParamsChanged();
 				break;
 			case Qt::Key_K:
 				break;
@@ -176,6 +178,12 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				{
 					Global::debugMode = !Global::debugMode;
 				}
+				else
+				{
+					auto& config = Config::getInstance();
+					config.set( "overlay", !config.get( "overlay" ).toBool() );
+				}
+				m_renderer->onRenderParamsChanged();
 				break;
 			case Qt::Key_F:
 				toggleFullScreen();
@@ -432,7 +440,7 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
 	Config::getInstance().set( "viewLevel", viewLevel );
 
-	m_renderer->setViewLevel( viewLevel );
+	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
@@ -452,7 +460,7 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
 	Config::getInstance().set( "viewLevel", viewLevel );
 
-	m_renderer->setViewLevel( viewLevel );
+	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
