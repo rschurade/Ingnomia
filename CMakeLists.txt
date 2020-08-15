@@ -71,6 +71,12 @@ if(WIN32)
 	)
 endif()
 
+target_sources(${PROJECT_NAME}
+	PRIVATE
+		Changelog.md
+		README.md
+)
+
 add_subdirectory(src) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
