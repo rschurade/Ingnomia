@@ -44,6 +44,8 @@ public:
 	static QString qualitySID( int rank );
 	static float qualityMod( int rank );
 
+	static QString itemGroup( QString itemID );
+
 private:
 	DBHelper()  = delete;
 	~DBHelper() = delete;
@@ -59,4 +61,5 @@ private:
 	static QMap<int, bool> m_itemIsContainerCache;
 	static QMap<int, QString> m_qualitySIDCache;
 	static QMap<int, float> m_qualityModCache;
+	static QMap<QString, QString> m_itemGroupCache;
 };

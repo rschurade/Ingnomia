@@ -42,11 +42,6 @@
     <BehaviorTree ID="GetUniform">
         <SequenceStar name="GetUniform">
             <Action ID="CheckUniform"/>
-            <Fallback>
-                <Action ID="Move"/>
-                <Action ID="UniformCleanUp"/>
-            </Fallback>
-            <Action ID="EquipUniform"/>
         </SequenceStar>
     </BehaviorTree>
     <!--  ===================================  -->
@@ -214,7 +209,10 @@
     <!--  ===================================  -->
     <BehaviorTree ID="Jobs">
         <SequenceStar>
-            <Action ID="GetJob"/>
+            <Fallback>
+                <Action ID="CheckUniform"/>
+                <Action ID="GetJob"/>
+            </Fallback>
             <FallbackStar>
                 <SubTree ID="JobButcherAnimal"/>
                 <SubTree ID="JobDyeAnimal"/>
@@ -239,7 +237,6 @@
             </FallbackStar>
             <FallbackStar name="GnomeStandard">
                 <FallbackStar>
-                    <SubTree ID="GetUniform"/>
                     <SubTree ID="PickUpBandages"/>
                     <SubTree ID="Training"/>
                     <SubTree ID="Trainer"/>

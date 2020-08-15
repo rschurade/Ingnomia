@@ -178,6 +178,8 @@ public:
 	bool itemsChanged();
 	void setItemsChanged();
 
+	QString itemGroup( unsigned int itemID );
+
 private:
 	int m_dimX;
 	int m_dimY;

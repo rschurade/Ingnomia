@@ -304,14 +304,21 @@ void CanWork::cleanUpJob( bool finished )
 	Inventory& inv = Global::inv();
 	if ( !claimedItems().empty() )
 	{
-		for ( auto item : claimedItems() )
+		for ( auto itemID : claimedItems() )
 		{
-			inv.setInJob( item, 0 );
-			if ( inv.isPickedUp( item ) && !inv.isConstructedOrEquipped( item ) )
+			inv.setInJob( itemID, 0 );
+			if ( inv.isPickedUp( itemID ) && !inv.isConstructedOrEquipped( itemID ) )
 			{
-				inv.putDownItem( item, m_position );
+				inv.putDownItem( itemID, m_position );
 			}
 		}
+	}
+	if( m_btBlackBoard.contains( "" ) )
+	{
+		auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
+		inv.setInJob( itemID, 0 );
+		m_btBlackBoard.remove( "ClaimedUniformItem" );
+		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
 	}
 
 	for ( auto itemID : m_carriedItems )

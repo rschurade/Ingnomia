@@ -103,6 +103,8 @@ public:
 
 	void setAllowedCarryItems( bool bandages, bool food, bool drinks );
 
+	bool equipItem();
+
 protected:
 	float m_gainFromSleep = 0.035f;
 
@@ -165,7 +167,6 @@ protected:
 	BT_RESULT actionDropItem( bool halt );
 	BT_RESULT actionDropAllItems( bool halt );
 	BT_RESULT actionEquipTool( bool halt );
-	BT_RESULT actionEquipUniform( bool halt );
 	BT_RESULT actionCheckUniform( bool halt );
 	BT_RESULT actionCheckBandages( bool halt );
 	BT_RESULT actionUniformCleanUp( bool halt );

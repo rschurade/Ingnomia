@@ -1901,3 +1901,13 @@ void Inventory::setItemsChanged()
 {
 	m_itemsChanged = true;
 }
+
+QString Inventory::itemGroup( unsigned int itemID )
+{
+	auto item = getItem( itemID );
+	if ( item )
+	{
+		return DBH::itemGroup( item->itemSID() );
+	}
+	return "";
+}

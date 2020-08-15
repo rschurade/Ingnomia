@@ -326,7 +326,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.head.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["HeadArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.head.itemID );
 						bs += "HeadArmor";
 						hairConcealed = true;
 						pm.insert( "Material", m_equipment.head.material );
@@ -336,7 +336,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.chest.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["ChestArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.chest.itemID );
 						bs += "ChestArmor";
 						pm.insert( "Material", m_equipment.chest.material );
 					}
@@ -345,7 +345,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["ArmArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
 						bs += "LeftArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -354,7 +354,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["ArmArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
 						bs += "RightArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -363,7 +363,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["HandArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
 						bs += "LeftHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -372,7 +372,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["HandArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
 						bs += "RightHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -381,7 +381,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["FootArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
 						bs += "LeftFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -390,7 +390,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += uniform->parts["FootArmor"].type;
+						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
 						bs += "RightFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -569,7 +569,6 @@ void Gnome::initTaskMap()
 	m_behaviors.insert( "EquipTool", std::bind( &Gnome::actionEquipTool, this, _1 ) );
 	m_behaviors.insert( "FindTool", std::bind( &Gnome::actionFindTool, this, _1 ) );
 
-	m_behaviors.insert( "EquipUniform", std::bind( &Gnome::actionEquipUniform, this, _1 ) );
 	m_behaviors.insert( "CheckUniform", std::bind( &Gnome::actionCheckUniform, this, _1 ) );
 	m_behaviors.insert( "CheckBandages", std::bind( &Gnome::actionCheckBandages, this, _1 ) );
 	m_behaviors.insert( "UniformCleanUp", std::bind( &Gnome::actionUniformCleanUp, this, _1 ) );
@@ -655,6 +654,7 @@ void Gnome::initTaskMap()
 	m_taskFunctions.insert( "Install", std::bind( &Gnome::install, this ) );
 	m_taskFunctions.insert( "Uninstall", std::bind( &Gnome::uninstall, this ) );
 	m_taskFunctions.insert( "SoundAlarm", std::bind( &Gnome::soundAlarm, this ) );
+	m_taskFunctions.insert( "EquipItem", std::bind( &Gnome::equipItem, this ) );
 }
 
 void Gnome::addNeed( QString id, int level )

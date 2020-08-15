@@ -29,6 +29,7 @@ QMap<QString, int> DBHelper::m_itemUIDCache;
 QMap<int, bool> DBHelper::m_itemIsContainerCache;
 QMap<int, QString> DBHelper::m_qualitySIDCache;
 QMap<int, float> DBHelper::m_qualityModCache;
+QMap<QString, QString> DBHelper::m_itemGroupCache;
 
 /*
 QStringList DBHelper::getWorkPositions( QString jobID )
@@ -166,4 +167,15 @@ float DBHelper::qualityMod( int rank )
 	}
 	m_qualityModCache.insert( rank, modifier );
 	return modifier;
+}
+
+QString DBH::itemGroup( QString itemID )
+{
+	if ( m_itemGroupCache.contains( itemID ) )
+	{
+		return m_itemGroupCache.value( itemID );
+	}
+	QString itemGroup = DB::select( "ItemGroup", "Items", itemID ).toString();
+	m_itemGroupCache.insert( itemID, itemGroup );
+	return itemGroup;
 }

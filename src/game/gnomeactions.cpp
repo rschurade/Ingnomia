@@ -588,7 +588,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 		jm.setJobBeingWorked( m_jobID, false );
 		m_job->setIsWorked( true );
 		m_job->setWorkedBy( m_id );
-		m_jobID = m_jobID;
+
 		log( "JobType " + m_job->type() );
 		m_btBlackBoard.insert( "JobType", m_job->type() );
 		m_currentAction = "job";
@@ -1164,105 +1164,15 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
-BT_RESULT Gnome::actionEquipUniform( bool halt )
-{
-	if ( Global::debugMode )
-		log( "actionEquipUniform" );
-	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
 
-	auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
-
-	m_btBlackBoard.remove( "ClaimedUniformItem" );
-
-	QStringList conc;
-
-	if ( m_position == Global::inv().getItemPos( itemID ) )
-	{
-		Global::inv().pickUpItem( itemID );
-		Global::inv().setInJob( itemID, m_id );
-		Global::inv().setConstructedOrEquipped( itemID, true );
-
-		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
-		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
-
-		QString itemSID          = Global::inv().itemSID( itemID );
-		unsigned int materialUID = Global::inv().materialUID( itemID );
-		QString materialSID      = Global::inv().materialSID( itemID );
-
-		auto part = Global::creaturePartLookUp.value( slot );
-
-		switch ( part )
-		{
-			case CP_ARMOR_HEAD:
-				m_equipment.head.itemID     = itemID;
-				m_equipment.head.item       = itemSID;
-				m_equipment.head.materialID = materialUID;
-				m_equipment.head.material   = materialSID;
-				break;
-			case CP_ARMOR_TORSO:
-				m_equipment.chest.itemID     = itemID;
-				m_equipment.chest.item       = itemSID;
-				m_equipment.chest.materialID = materialUID;
-				m_equipment.chest.material   = materialSID;
-				break;
-			case CP_ARMOR_ARM:
-				m_equipment.arm.itemID     = itemID;
-				m_equipment.arm.item       = itemSID;
-				m_equipment.arm.materialID = materialUID;
-				m_equipment.arm.material   = materialSID;
-				break;
-			case CP_ARMOR_HAND:
-				m_equipment.hand.itemID     = itemID;
-				m_equipment.hand.item       = itemSID;
-				m_equipment.hand.materialID = materialUID;
-				m_equipment.hand.material   = materialSID;
-				break;
-			case CP_ARMOR_LEG:
-				m_equipment.leg.itemID     = itemID;
-				m_equipment.leg.item       = itemSID;
-				m_equipment.leg.materialID = materialUID;
-				m_equipment.leg.material   = materialSID;
-				break;
-			case CP_ARMOR_FOOT:
-				m_equipment.foot.itemID     = itemID;
-				m_equipment.foot.item       = itemSID;
-				m_equipment.foot.materialID = materialUID;
-				m_equipment.foot.material   = materialSID;
-				break;
-			case CP_LEFT_HAND_HELD:
-				m_equipment.leftHandHeld.itemID     = itemID;
-				m_equipment.leftHandHeld.item       = itemSID;
-				m_equipment.leftHandHeld.materialID = materialUID;
-				m_equipment.leftHandHeld.material   = materialSID;
-				equipHand( itemID, "Left" );
-				break;
-			case CP_RIGHT_HAND_HELD:
-				m_equipment.rightHandHeld.itemID     = itemID;
-				m_equipment.rightHandHeld.item       = itemSID;
-				m_equipment.rightHandHeld.materialID = materialUID;
-				m_equipment.rightHandHeld.material   = materialSID;
-				equipHand( itemID, "Right" );
-				break;
-			case CP_BACK:
-				m_equipment.back.itemID     = itemID;
-				m_equipment.back.item       = itemSID;
-				m_equipment.back.materialID = materialUID;
-				m_equipment.back.material   = materialSID;
-				break;
-		}
-
-		updateSprite();
-
-		m_uniformWorn = true;
-
-		m_renderParamsChanged = true;
-		return BT_RESULT::SUCCESS;
-	}
-	return BT_RESULT::FAILURE;
-}
 
 bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 {
+	if( m_jobID )
+	{
+		return false;
+	}
+
 	auto part = Global::creaturePartLookUp.value( slot );
 
 	QString item     = uniform->parts[slot].item;
@@ -1352,7 +1262,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 	{
 		if ( wiSID != item || ( ( wiMat != material ) && ( material != "any" ) ) )
 		{
-			qDebug() << "Drop item:" << wiMat << wiSID << " looking for:" << material << item;
+			log( "Drop item:" + wiMat + " " + wiSID + " looking for:" + material + " " + item );
 			//drop current item
 			dropped = true;
 			Global::inv().putDownItem( wornItem, m_position );
@@ -1373,12 +1283,36 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 		if ( itemToGet )
 		{
 			auto pos = Global::inv().getItemPos( itemToGet );
-			Global::inv().setInJob( itemToGet, m_id );
+			
 			m_btBlackBoard.insert( "ClaimedUniformItem", itemToGet );
 			m_btBlackBoard.insert( "ClaimedUniformItemSlot", slot );
-			setCurrentTarget( pos );
+			
+			auto& jm = Global::jm();
+			
+			m_jobID = jm.addJob( "EquipItem", pos, 0, true );
+			
+			if ( m_jobID != 0 )
+			{
+				m_jobChanged = true;
+				m_job        = jm.getJob( m_jobID );
+				if( m_job )
+				{
+					Global::inv().setInJob( itemToGet, m_jobID );
+					//no change to jobsprite
+					jm.setJobBeingWorked( m_jobID, true );
+					m_job->setIsWorked( true );
+					m_job->setWorkedBy( m_id );
+					m_job->setDestroyOnAbort( true );
+					log( "JobType " + m_job->type() );
+					m_btBlackBoard.insert( "JobType", m_job->type() );
+					m_currentAction = "job";
 
-			return true;
+					m_workPositionQueue = PriorityQueue<Position, int>();
+					m_workPositionQueue.put( pos, m_position.distSquare( pos ) );
+
+					return true;
+				}
+			}
 		}
 	}
 
@@ -2619,4 +2553,101 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 	m_nextCheckTick = 0;
 
 	return BT_RESULT::SUCCESS;
+}
+
+bool Gnome::equipItem()
+{
+	if ( Global::debugMode )
+		log( "actionEquipUniform" );
+
+	auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
+	m_btBlackBoard.remove( "ClaimedUniformItem" );
+
+	QStringList conc;
+
+	if ( m_position == Global::inv().getItemPos( itemID ) )
+	{
+		Global::inv().pickUpItem( itemID );
+		Global::inv().setInJob( itemID, 0 );
+		Global::inv().setConstructedOrEquipped( itemID, true );
+
+		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
+		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
+
+		QString itemSID          = Global::inv().itemSID( itemID );
+		unsigned int materialUID = Global::inv().materialUID( itemID );
+		QString materialSID      = Global::inv().materialSID( itemID );
+
+		auto part = Global::creaturePartLookUp.value( slot );
+
+		switch ( part )
+		{
+			case CP_ARMOR_HEAD:
+				m_equipment.head.itemID     = itemID;
+				m_equipment.head.item       = itemSID;
+				m_equipment.head.materialID = materialUID;
+				m_equipment.head.material   = materialSID;
+				break;
+			case CP_ARMOR_TORSO:
+				m_equipment.chest.itemID     = itemID;
+				m_equipment.chest.item       = itemSID;
+				m_equipment.chest.materialID = materialUID;
+				m_equipment.chest.material   = materialSID;
+				break;
+			case CP_ARMOR_ARM:
+				m_equipment.arm.itemID     = itemID;
+				m_equipment.arm.item       = itemSID;
+				m_equipment.arm.materialID = materialUID;
+				m_equipment.arm.material   = materialSID;
+				break;
+			case CP_ARMOR_HAND:
+				m_equipment.hand.itemID     = itemID;
+				m_equipment.hand.item       = itemSID;
+				m_equipment.hand.materialID = materialUID;
+				m_equipment.hand.material   = materialSID;
+				break;
+			case CP_ARMOR_LEG:
+				m_equipment.leg.itemID     = itemID;
+				m_equipment.leg.item       = itemSID;
+				m_equipment.leg.materialID = materialUID;
+				m_equipment.leg.material   = materialSID;
+				break;
+			case CP_ARMOR_FOOT:
+				m_equipment.foot.itemID     = itemID;
+				m_equipment.foot.item       = itemSID;
+				m_equipment.foot.materialID = materialUID;
+				m_equipment.foot.material   = materialSID;
+				break;
+			case CP_LEFT_HAND_HELD:
+				m_equipment.leftHandHeld.itemID     = itemID;
+				m_equipment.leftHandHeld.item       = itemSID;
+				m_equipment.leftHandHeld.materialID = materialUID;
+				m_equipment.leftHandHeld.material   = materialSID;
+				equipHand( itemID, "Left" );
+				break;
+			case CP_RIGHT_HAND_HELD:
+				m_equipment.rightHandHeld.itemID     = itemID;
+				m_equipment.rightHandHeld.item       = itemSID;
+				m_equipment.rightHandHeld.materialID = materialUID;
+				m_equipment.rightHandHeld.material   = materialSID;
+				equipHand( itemID, "Right" );
+				break;
+			case CP_BACK:
+				m_equipment.back.itemID     = itemID;
+				m_equipment.back.item       = itemSID;
+				m_equipment.back.materialID = materialUID;
+				m_equipment.back.material   = materialSID;
+				break;
+		}
+
+		updateSprite();
+
+		m_uniformWorn = true;
+
+		m_renderParamsChanged = true;
+		return true;
+	}
+
+
+	return false;
 }
