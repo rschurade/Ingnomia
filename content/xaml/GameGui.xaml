@@ -107,9 +107,15 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <ToggleButton x:Name="CB1" Grid.Column="0" Style="{StaticResource ButtonStyle1}" Content="||" IsChecked="{Binding Paused}" />
-                        <ToggleButton x:Name="CB2" Grid.Column="1" Style="{StaticResource ButtonStyle1}" Content=">" IsChecked="{Binding NormalSpeed}" />
-                        <ToggleButton x:Name="CB3" Grid.Column="2" Style="{StaticResource ButtonStyle1}" Content=">>" IsChecked="{Binding FastSpeed}" />
+                        <ToggleButton x:Name="CB1" Grid.Column="0" Style="{StaticResource ButtonStyle1}" IsChecked="{Binding Paused}" >
+							<Image Source="buttons/pause.png" Stretch="None" />
+						</ToggleButton>
+                        <ToggleButton x:Name="CB2" Grid.Column="1" Style="{StaticResource ButtonStyle1}" IsChecked="{Binding NormalSpeed}" >
+							<Image Source="buttons/slow.png" Stretch="None" />
+						</ToggleButton>
+                        <ToggleButton x:Name="CB3" Grid.Column="2" Style="{StaticResource ButtonStyle1}" IsChecked="{Binding FastSpeed}" >
+							<Image Source="buttons/fast.png" Stretch="None" />
+						</ToggleButton>
                     </Grid>
                 </Border>
             </Grid>
