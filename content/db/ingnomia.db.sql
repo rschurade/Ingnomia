@@ -869,6 +869,9 @@ INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFlo
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('DigStairsDown','DigStairsDown',NULL,0,0,0,0,1);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('DigRampDown','DigRampDown',NULL,0,0,1,0,1);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateRoom',NULL,NULL,0,1,1,0,0);
+INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateDorm',NULL,NULL,0,1,1,0,0);
+INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateDining',NULL,NULL,0,1,1,0,0);
+INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateHospital',NULL,NULL,0,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateStockpile',NULL,NULL,0,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateGrove',NULL,NULL,0,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('CreateFarm',NULL,NULL,0,1,1,0,0);
@@ -917,6 +920,9 @@ INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forb
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('DigRampDown','0 0 0','SelectionFloor',0,'Floor','AnyWall|Mechanism');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('DigRampDown','0 0 -1','Ramp',1,'Floor|Wall','Construction|Job|Mechanism');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateRoom','0 0 0','SolidSelectionFloor',0,'Floor|Walkable','AnyWall');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateDorm','0 0 0','SolidSelectionFloor',0,'Floor|Walkable','AnyWall');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateDining','0 0 0','SolidSelectionFloor',0,'Floor|Walkable','AnyWall');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateHospital','0 0 0','SolidSelectionFloor',0,'Floor|Walkable','AnyWall');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateStockpile','0 0 0','SolidSelectionFloor',0,'Floor|Walkable','AnyWall');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateGrove','0 0 0','SolidSelectionFloor',0,'Floor|Soil','Wall|Construction|Designation|Job|Plant');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('CreateFarm','0 0 0','SolidSelectionFloor',0,'Floor|Soil|Walkable','Wall|Tree|Construction|Designation|Job');

@@ -128,6 +128,8 @@ public:
 	const char* GetName() const;
 	const char* GetID() const;
 
+	unsigned int uid() { return m_id; }
+
 private:
 	Noesis::String m_name;
 	unsigned int m_id;
@@ -144,7 +146,8 @@ enum class TileInfoMode
 	Creatures,
 	Designation,
 	Job,
-	Stockpile
+	Stockpile,
+	Room
 
 };
 
@@ -165,11 +168,13 @@ private:
 	Noesis::ObservableCollection<ItemTabItem>* getItemTabItems() const;
 	Noesis::ObservableCollection<CreatureTabItem>* getCreatureTabItems() const;
 	Noesis::ObservableCollection<TabItem>* getMiniSPContents() const;
+	Noesis::ObservableCollection<CreatureTabItem>* getPossibleTennants() const;
 
 	const char* GetShowTerrain() const;
 	const char* GetShowItems() const;
 	const char* GetShowCreatures() const;
 	const char* GetShowDesignation() const;
+	const char* GetShowDesignationRoom() const;
 	const char* GetShowJob() const;
 	const char* GetShowMiniSP() const;
 
@@ -217,8 +222,14 @@ private:
 	Noesis::String m_jobWorker;
 	Noesis::String m_requiredTool;
 
+	unsigned int m_designationID = 0;
 	Noesis::String m_designationName;
 	TileFlag m_designationFlag = TileFlag::TF_NONE;
+	RoomType m_roomType = RoomType::NotSet;
+	bool m_hasRoof = false;
+	bool m_isEnclosed = false;
+	bool m_hasAlarmBell = false;
+	Noesis::String m_beds;
 
 	TileInfoMode _mode = TileInfoMode::Terrain;
 
@@ -235,6 +246,12 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<TerrainTabItem>> _terrainTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<ItemTabItem>> _itemTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _creatureTabItems;
+	
+	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _possibleTennants;
+	void SetTennant( CreatureTabItem* tennant );
+	CreatureTabItem* GetTennant() const;
+	CreatureTabItem* m_tennant = nullptr;
+
 
 	Noesis::String m_miniStockpileName;
 	Noesis::Ptr<Noesis::ObservableCollection<TabItem>> _miniSPContents;
@@ -242,6 +259,16 @@ private:
 	{
 		return m_miniStockpileName.Str();
 	}
+
+	const char* GetVisRoomAssign() const;
+	const char* GetVisRoomValue() const;
+	const char* GetVisBeds() const;
+	const char* GetVisAlarm() const;
+	const char* GetRoomValue() const;
+	const char* GetBeds() const;
+	const char* GetEnclosed() const;
+	const char* GetRoofed() const;
+
 
 
 

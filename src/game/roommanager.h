@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../base/position.h"
+#include "../game/room.h"
 
 #include <QSet>
 
@@ -45,7 +46,7 @@ public:
 
 	void onTick( quint64 tick );
 
-	void addRoom( Position firstClick, QList<QPair<Position, bool>> fields );
+	void addRoom( Position firstClick, QList<QPair<Position, bool>> fields, RoomType type );
 	void addNoPass( Position firstClick, QList<QPair<Position, bool>> fields );
 	void load( QVariantMap vals );
 

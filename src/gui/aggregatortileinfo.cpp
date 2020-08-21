@@ -77,6 +77,8 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 		m_tileInfo.flags = tile.flags;
 
+		m_tileInfo.possibleTennants.clear();
+
 		m_tileInfo.wall        = "";
 		m_tileInfo.floor       = "";
 		m_tileInfo.embedded    = "";
@@ -249,7 +251,48 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 			break;
 			case TileFlag::TF_ROOM:
+			{
+				auto ro = Global::rm().getRoomAtPos( pos );
+				if( ro )
+				{
+					m_tileInfo.designationID   = ro->id();
+					m_tileInfo.designationName = ro->name();
+					m_tileInfo.roomType = ro->type();
+					m_tileInfo.tennant = ro->owner();
+					ro->checkEnclosed();
+					m_tileInfo.isEnclosed = ro->enclosed();
+					ro->checkRoofed();
+					m_tileInfo.hasRoof = ro->roofed();
+					m_tileInfo.hasAlarmBell = ro->hasAlarmBell();
+
+					QList<unsigned int>beds = ro->beds();
+					int countFree = beds.size();
+					for( auto b : beds )
+					{
+						if( Global::inv().isInJob( b ) )
+						{
+							--countFree;
+						}
+					}
+					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( beds.size() );
+
+					for( auto gnome : Global::gm().gnomes() )
+					{
+						GuiTICreatureInfo gci{ gnome->name(), gnome->id() };
+						if( gnome->ownedRoom() )
+						{
+							if( gnome->ownedRoom() == ro->id() )
+							{
+								m_tileInfo.tennant = gnome->id();
+							}
+							gci.text += " (R)";
+						}
+						m_tileInfo.possibleTennants.append( gci );
+					}
+
+				}
 				break;
+			}
 		}
 
 		emit signalUpdateTileInfo( m_tileInfo );
@@ -290,5 +333,28 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 			}
 		}
 		emit signalUpdateSPInfo( m_spInfo );
+	}
+}
+
+void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int gnomeID )
+{
+	auto room = Global::rm().getRoom( designationID );
+	if( room )
+	{
+		qDebug() << "room" << designationID << "set owner" << gnomeID;
+		auto oldOwner = room->owner();
+
+		room->setOwner( gnomeID );
+		auto gnome = Global::gm().gnome( gnomeID );
+		if( gnome )
+		{
+			gnome->setOwnedRoom( designationID );
+		}
+
+		auto oldGnome = Global::gm().gnome( oldOwner );
+		if( oldGnome )
+		{
+			oldGnome->setOwnedRoom( 0 );
+		}
 	}
 }

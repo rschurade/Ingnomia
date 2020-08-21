@@ -1160,11 +1160,14 @@ void GameModel::CmdLeftCommandButton( BaseComponent* param )
 			_commandButtons->Add( MakePtr<CommandButton>( "Remove plant", "RemovePlant" ) );
 			break;
 		case ButtonSelection::Designation:
+			_commandButtons->Add( MakePtr<CommandButton>( "Stockpile", "CreateStockpile" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Farm", "CreateFarm" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Grove", "CreateGrove" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Pasture", "CreatePasture" ) );
-			_commandButtons->Add( MakePtr<CommandButton>( "Room", "CreateRoom" ) );
-			_commandButtons->Add( MakePtr<CommandButton>( "Stockpile", "CreateStockpile" ) );
+			_commandButtons->Add( MakePtr<CommandButton>( "Personal Room", "CreateRoom" ) );
+			_commandButtons->Add( MakePtr<CommandButton>( "Dormitory", "CreateDorm" ) );
+			_commandButtons->Add( MakePtr<CommandButton>( "Dining Hall", "CreateDining" ) );
+			_commandButtons->Add( MakePtr<CommandButton>( "Hospital", "CreateHospital" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Forbidden", "CreateNoPass" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Guard", "CreateGuardArea" ) );
 			_commandButtons->Add( MakePtr<CommandButton>( "Remove", "RemoveDesignation" ) );

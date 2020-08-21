@@ -22,7 +22,6 @@
 #include "../game/inventory.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
-#include "../game/room.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
 
@@ -52,7 +51,7 @@ void RoomManager::onTick( quint64 tick )
 	}
 }
 
-void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fields )
+void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fields, RoomType type )
 {
 	if ( m_allRoomTiles.contains( firstClick.toInt() ) )
 	{
@@ -78,6 +77,24 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 				m_allRoomTiles.insert( p.first.toInt(), sp.id() );
 			}
 		}
+		sp.setType( type );
+
+		switch( type )
+		{
+			case RoomType::PersonalRoom:
+				sp.setName( "Personal Room" );
+				break;
+			case RoomType::Dorm:
+				sp.setName( "Dormitory" );
+				break;
+			case RoomType::Hospital:
+				sp.setName( "Hospital" );
+				break;
+			case RoomType::Dining:
+				sp.setName( "Dining Room" );
+				break;
+		}
+
 		m_rooms.insert( sp.id(), sp );
 		m_lastAdded = sp.id();
 	}
@@ -267,7 +284,7 @@ bool RoomManager::isDining( Position pos )
 		if ( m_rooms.contains( roomID ) )
 		{
 			auto room = m_rooms.value( roomID );
-			if ( room.type() == Dining )
+			if ( room.type() == RoomType::Dining )
 			{
 				return true;
 			}
@@ -284,7 +301,7 @@ bool RoomManager::allowBell( Position pos )
 		if ( m_rooms.contains( roomID ) )
 		{
 			auto room = m_rooms.value( roomID );
-			if ( room.type() == Dining )
+			if ( room.type() == RoomType::Dining )
 			{
 				return true;
 				/*
@@ -336,7 +353,7 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 	if ( m_rooms.contains( roomID ) )
 	{
 		auto room = m_rooms.value( roomID );
-		if ( room.type() == Dining )
+		if ( room.type() == RoomType::Dining )
 		{
 			auto pos = room.firstBellPos();
 
@@ -365,7 +382,7 @@ bool RoomManager::cancelAlarmJob( unsigned int roomID )
 	if ( m_rooms.contains( roomID ) )
 	{
 		auto room = m_rooms.value( roomID );
-		if ( room.type() == Dining )
+		if ( room.type() == RoomType::Dining )
 		{
 			auto posList = room.allBellPos();
 

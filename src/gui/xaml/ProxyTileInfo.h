@@ -37,6 +37,8 @@ public:
 
 	void requestStockpileItems( unsigned int tileID );
 
+	void setTennant( unsigned int designationID, unsigned int gnomeID );
+
 private:
 	IngnomiaGUI::TileInfoModel* m_parent = nullptr;
 
@@ -48,4 +50,5 @@ signals:
 	void signalTerrainCommand( unsigned int tileID, QString cmd );
 	void signalManageCommand( unsigned int tileID );
 	void signalRequestStockpileItems( unsigned int tileID );
+	void signalSetTennant( unsigned int designationID, unsigned int gnomeID );
 };

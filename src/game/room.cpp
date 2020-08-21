@@ -92,7 +92,7 @@ QVariant Room::serialize()
 	out.insert( "Owner", m_owner );
 	out.insert( "LastUpdate", m_lastUpdateTick );
 	out.insert( "Active", m_active );
-	out.insert( "Type", m_type );
+	out.insert( "Type", (unsigned char)m_type );
 
 	QVariantList fields;
 	for ( auto field : m_fields )

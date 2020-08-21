@@ -694,7 +694,22 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 	}
 	if ( m_action == "CreateRoom" )
 	{
-		Global::rm().addRoom( m_firstClick, m_selection );
+		Global::rm().addRoom( m_firstClick, m_selection, RoomType::PersonalRoom );
+		return;
+	}
+	if ( m_action == "CreateDorm" )
+	{
+		Global::rm().addRoom( m_firstClick, m_selection, RoomType::Dorm );
+		return;
+	}
+	if ( m_action == "CreateDining" )
+	{
+		Global::rm().addRoom( m_firstClick, m_selection, RoomType::Dining );
+		return;
+	}
+	if ( m_action == "CreateHospital" )
+	{
+		Global::rm().addRoom( m_firstClick, m_selection, RoomType::Hospital );
 		return;
 	}
 	if ( m_action == "CreateNoPass" )

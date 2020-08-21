@@ -27,7 +27,7 @@
 #include <QPair>
 #include <QtGlobal>
 
-enum RoomType
+enum class RoomType : unsigned char
 {
 	NotSet,
 	PersonalRoom,
@@ -141,5 +141,5 @@ private:
 
 	QString m_name = "Room";
 
-	RoomType m_type = NotSet;
+	RoomType m_type = RoomType::NotSet;
 };

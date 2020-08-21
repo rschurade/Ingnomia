@@ -92,6 +92,47 @@
 				<!-- <local:Agriculture x:Name="Agriculture" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowAgriculture }" HorizontalAlignment="Right" /> -->
 				<local:Agriculture x:Name="Agriculture" />
 			</Grid>
+			<Grid Visibility="{Binding ShowDesignationRoom}" >
+				<StackPanel>
+					<StackPanel>
+						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding DesignationName}" />
+						
+						<StackPanel Orientation="Horizontal" Visibility="{Binding VisRoomAssign}" Margin="2,20,2,20">
+							<TextBlock FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Assign to:" MinWidth="150" />
+							<ComboBox x:Name="PrioritySelectorN" MinWidth="200" Margin="2"
+								ItemsSource="{Binding PossibleTennants}"
+								SelectedItem="{Binding Tennant, Mode=TwoWay}"  
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Visibility="{Binding VisRoomValue}">
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Value:" MinWidth="150"/>
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding RoomValue}"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Enclosed:" MinWidth="150"/>
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Enclosed}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Has Roof:" MinWidth="150"/>
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Roofed}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Visibility="{Binding VisBeds}">
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Beds:" MinWidth="150"/>
+							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Beds}" />
+						</StackPanel>
+						<CheckBox Content="Sound the Alarm!" IsChecked="{Binding Alarm, Mode=TwoWay}" Margin="2,20,2,2" FontSize="18" Visibility="{Binding VisAlarm}">
+							<CheckBox.ToolTip>
+								<StackPanel Width="500" Background="#FF365264">
+									<TextBlock Text="Sound the Alarm!" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" 
+										Padding="0,2" TextAlignment="Center"/>
+									<TextBlock Text="Civilian gnomes will retreat here." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" 
+										Padding="0,2" TextAlignment="Center"/>
+								</StackPanel>
+							</CheckBox.ToolTip>
+						</CheckBox>
+					</StackPanel>
+				</StackPanel>
+			</Grid>
 			<Grid Visibility="{Binding ShowJob}" >
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">

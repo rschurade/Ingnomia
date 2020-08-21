@@ -19,6 +19,8 @@
 
 #include "../base/tile.h"
 
+#include "../game/roommanager.h"
+
 #include "aggregatorstockpile.h"
 
 #include <QObject>
@@ -61,10 +63,18 @@ struct GuiTileInfo
 
 	QList<GuiTICreatureInfo> creatures;
 	QList<GuiItemInfo> items;
+	QList<GuiTICreatureInfo> possibleTennants;
+	unsigned int tennant = 0;
 
 	unsigned int designationID = 0;
 	TileFlag designationFlag   = TileFlag::TF_NONE;
 	QString designationName;
+
+	RoomType roomType = RoomType::NotSet;
+	bool hasAlarmBell = false;
+	bool isEnclosed = false;
+	bool hasRoof = false;
+	QString beds;
 };
 
 Q_DECLARE_METATYPE( GuiTileInfo )
@@ -88,6 +98,7 @@ public slots:
 	void onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet );
 	void onUpdateTileInfo( unsigned int tileID );
 	void onRequestStockpileItems( unsigned int tileID );
+	void onSetTennant( unsigned int designationID, unsigned int gnomeID );
 
 signals:
 	void signalShowTileInfo( unsigned int id );
