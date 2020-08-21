@@ -199,7 +199,14 @@ void Pasture::addTile( Position& pos )
 	grofi.pos = pos;
 	m_fields.insert( pos.toInt(), grofi );
 
-	m_properties.max = m_fields.size() / m_properties.animalSize;
+	if( m_properties.animalSize != 0 )
+	{
+		m_properties.max = m_fields.size() / m_properties.animalSize;
+	}
+	else
+	{
+		m_properties.max = 0;
+	}
 }
 
 // farming manager calls this on hour changed
@@ -646,7 +653,14 @@ bool Pasture::removeTile( Position& pos )
 		m_properties.firstPos = Position();
 	}
 
-	m_properties.max       = m_fields.size() / m_properties.animalSize;
+	if( m_properties.animalSize != 0 )
+	{
+		m_properties.max = m_fields.size() / m_properties.animalSize;
+	}
+	else
+	{
+		m_properties.max = 0;
+	}
 	m_properties.maxMale   = qMin( m_properties.max, m_properties.maxMale );
 	m_properties.maxFemale = qMin( m_properties.max, m_properties.maxFemale );
 
@@ -872,7 +886,14 @@ void Pasture::setAnimalType( QString type )
 	{
 		int numPlots = m_fields.size();
 
-		m_properties.max       = numPlots / m_properties.animalSize;
+		if( m_properties.animalSize != 0 )
+		{
+			m_properties.max = m_fields.size() / m_properties.animalSize;
+		}
+		else
+		{
+			m_properties.max = 0;
+		}
 		m_properties.maxMale   = m_properties.max;
 		m_properties.maxFemale = m_properties.max;
 	}
