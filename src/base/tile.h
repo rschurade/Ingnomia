@@ -103,6 +103,8 @@ enum class TileFlag : quint64
 	TF_PIPE              = 0x08000000,
 	TF_AQUIFIER          = 0x10000000,
 	TF_DEAQUIFIER        = 0x20000000,
+	TF_TRANSPARENT       = 0x40000000,
+	TF_OVERSIZE          = 0x80000000,
 };
 
 bool operator|( const TileFlag& a, const TileFlag& b ) = delete;

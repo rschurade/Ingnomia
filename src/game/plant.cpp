@@ -407,6 +407,7 @@ bool Plant::fell()
 							Position newPos = m_position + offset;
 							world.setWallSprite( newPos, 0, 0 );
 							world.clearTileFlag( newPos, TileFlag::TF_OCCUPIED );
+							world.clearTileFlag( newPos, TileFlag::TF_OVERSIZE );
 							if ( world.floorType( newPos ) & FT_SOLIDFLOOR )
 							{
 								world.setTileFlag( newPos, TileFlag::TF_WALKABLE );
@@ -559,6 +560,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 			world.setWallSprite( pos, sprite->uID, Util::rotString2Char( vm.value( "Rotation" ).toString() ) );
 			world.clearTileFlag( pos, TileFlag::TF_WALKABLE );
 			world.setTileFlag( pos, TileFlag::TF_OCCUPIED );
+			world.setTileFlag( pos, TileFlag::TF_OVERSIZE );
 
 			Global::gm().forceMoveGnomes( pos, extractPos );
 			Global::cm().forceMoveAnimals( pos, extractPos );
