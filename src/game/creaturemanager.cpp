@@ -198,6 +198,11 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 
 		m_dirty = true;
 
+		if( creature->hasTransparency() )
+		{
+			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+		}
+
 		return id;
 	}
 	return 0;
@@ -230,6 +235,11 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 		list.append( id );
 
 		m_dirty = true;
+
+		if( creature->hasTransparency() )
+		{
+			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+		}
 
 		return id;
 	}

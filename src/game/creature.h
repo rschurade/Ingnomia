@@ -277,6 +277,8 @@ public:
 	bool isAnimal() { return m_type == CreatureType::ANIMAL; }
 	bool isMonster() { return m_type == CreatureType::MONSTER; }
 
+	bool hasTransparency() { return m_hasTransparency; }
+
 protected:
 	virtual void loadBehaviorTree( QString id ) final;
 	virtual void initTaskMap() = 0;
@@ -380,6 +382,8 @@ protected:
 	bool m_isOnMission      = false;
 	unsigned int m_mission  = 0;
 	quint64 m_nextCheckTick = 0;
+
+	bool m_hasTransparency = false;
 
 	QHash<QString, std::function<BT_RESULT( bool )>> m_behaviors;
 	QHash<QString, std::function<bool( void )>> m_taskFunctions;

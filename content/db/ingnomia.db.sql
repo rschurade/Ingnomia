@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS "Animals" (
 	"Pasture"	BOOLEAN,
 	"PastureSize"	DOUBLE,
 	"Prey"	VARCHAR(50),
-	"IsMulti"	BOOLEAN
+	"IsMulti"	BOOLEAN,
+	"HasTransp"	BOOLEAN
 );
 DROP TABLE IF EXISTS "Animals_OnButcher";
 CREATE TABLE IF NOT EXISTS "Animals_OnButcher" (
@@ -1104,42 +1105,42 @@ INSERT INTO "Anatomy_Parts" ("ID","ID2","Parent","IsInside","Height","Side","Fac
 INSERT INTO "Anatomy_Parts" ("ID","ID2","Parent","IsInside","Height","Side","Facing","HP","IsVital") VALUES ('BirdBig','LeftLung','Torso','true','Middle','Left','Both',1,1);
 INSERT INTO "Anatomy_Parts" ("ID","ID2","Parent","IsInside","Height","Side","Facing","HP","IsVital") VALUES ('BirdBig','RightLung','Torso','true','Middle','Right','Both',1,1);
 INSERT INTO "Anatomy_Parts" ("ID","ID2","Parent","IsInside","Height","Side","Facing","HP","IsVital") VALUES ('Dummy','Torso',NULL,'false','Middle','Center','Both',50,1);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Panda',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Rabbit',1,0,'Animal',NULL,0,'Vegetable',3.0,1,1.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Chicken',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Duck',1,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Goose',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Pig',0,0,'Animal',NULL,0,'Vegetable|Grain',10.0,1,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Shepherd',0,0,'AnimalGuardDog',NULL,1,'Meat',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('CatTabby',0,0,'Animal',NULL,1,'Meat',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('CatBlack',0,0,'Animal',NULL,1,'Meat',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Porcupine',1,0,'Animal',NULL,0,'Fruit',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Fox',1,0,'AnimalNightHunter',NULL,0,'Meat',10.0,0,2.0,'Chicken|Goose',0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Wolf',1,0,'AnimalHunter',NULL,0,'Meat',10.0,0,2.0,'Rabbit',0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Stag',1,0,'Animal',NULL,0,'Hay|Grain',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Roe',1,0,'Animal',NULL,0,'Hay|Grain',10.0,0,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Goat',1,0,'Animal',NULL,0,'Hay|Grain',10.0,1,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Sheep',0,0,'Animal',NULL,0,'Hay|Grain',9.0,1,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Badger',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Lizzard',1,0,'Animal',NULL,0,'Fruit|Vegetable',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Squirrel',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('BlackBear',1,0,'Animal',NULL,0,'Meat|Fruit',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Llama',0,0,'Animal',NULL,0,'Hay|Grain',8.0,1,3.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Yak',0,0,'Animal',NULL,0,'Hay|Grain',12.0,1,4.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Cow',0,0,'Animal',NULL,0,'Hay|Grain',12.0,1,4.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Emu',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,2.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Spider',1,0,'Animal',NULL,0,'Meat',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Snake',1,0,'Animal',NULL,0,'Meat',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('BeetleEgg',1,0,'Animal',NULL,0,'none',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Beetle',1,0,'Animal',NULL,0,'Meat|Fruit|Vegetable',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('Woodlouse',1,0,'Animal',NULL,0,'RawWood|Plank',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('GreyFish',1,1,'Animal',NULL,0,'Seed|Grain',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('GreenFish',1,1,'Animal',NULL,0,'Seed|Grain',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('CrystalSnake',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('ZygYoung',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('ZygYouth',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('ZygAdult',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0);
-INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti") VALUES ('ZygSenior',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Panda',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Rabbit',1,0,'Animal',NULL,0,'Vegetable',3.0,1,1.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Chicken',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Duck',1,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Goose',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,1.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Pig',0,0,'Animal',NULL,0,'Vegetable|Grain',10.0,1,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Shepherd',0,0,'AnimalGuardDog',NULL,1,'Meat',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('CatTabby',0,0,'Animal',NULL,1,'Meat',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('CatBlack',0,0,'Animal',NULL,1,'Meat',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Porcupine',1,0,'Animal',NULL,0,'Fruit',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Fox',1,0,'AnimalNightHunter',NULL,0,'Meat',10.0,0,2.0,'Chicken|Goose',0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Wolf',1,0,'AnimalHunter',NULL,0,'Meat',10.0,0,2.0,'Rabbit',0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Stag',1,0,'Animal',NULL,0,'Hay|Grain',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Roe',1,0,'Animal',NULL,0,'Hay|Grain',10.0,0,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Goat',1,0,'Animal',NULL,0,'Hay|Grain',10.0,1,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Sheep',0,0,'Animal',NULL,0,'Hay|Grain',9.0,1,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Badger',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Lizzard',1,0,'Animal',NULL,0,'Fruit|Vegetable',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Squirrel',1,0,'Animal',NULL,0,'Fruit',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('BlackBear',1,0,'Animal',NULL,0,'Meat|Fruit',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Llama',0,0,'Animal',NULL,0,'Hay|Grain',8.0,1,3.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Yak',0,0,'Animal',NULL,0,'Hay|Grain',12.0,1,4.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Cow',0,0,'Animal',NULL,0,'Hay|Grain',12.0,1,4.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Emu',0,0,'Animal',NULL,0,'Seed|Grain',0.0,1,2.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Spider',1,0,'Animal',NULL,0,'Meat',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Snake',1,0,'Animal',NULL,0,'Meat',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('BeetleEgg',1,0,'Animal',NULL,0,'none',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Beetle',1,0,'Animal',NULL,0,'Meat|Fruit|Vegetable',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('Woodlouse',1,0,'Animal',NULL,0,'RawWood|Plank',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('GreyFish',1,1,'Animal',NULL,0,'Seed|Grain',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('GreenFish',1,1,'Animal',NULL,0,'Seed|Grain',0.0,0,0.0,NULL,0,0);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('CrystalSnake',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0,1);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('ZygYoung',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0,1);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('ZygYouth',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0,1);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('ZygAdult',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0,1);
+INSERT INTO "Animals" ("ID","AllowInWild","Aquatic","BehaviorTree","Biome","Embark","Food","GestationDays","Pasture","PastureSize","Prey","IsMulti","HasTransp") VALUES ('ZygSenior',1,0,'Animal','Mushroom',0,'none',0.0,0,0.0,NULL,0,1);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Panda',4.0,'Meat',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Panda',4.0,'Bone',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Rabbit',2.0,'Meat',NULL);

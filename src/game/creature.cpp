@@ -715,6 +715,26 @@ void Creature::move( Position oldPos )
 
 		Global::w().removeCreatureFromPosition( oldPos, m_id );
 		Global::w().insertCreatureAtPosition( m_position, m_id );
+
+		if( m_hasTransparency )
+		{
+			Global::w().setTileFlag( m_position, TileFlag::TF_TRANSPARENT );
+			// check if no other creatures with transparency on tile
+			bool transp = false;
+			for( auto c : Global::cm().creaturesAtPosition( oldPos ) )
+			{
+				if( c->hasTransparency() )
+				{
+					transp = true;
+					break;
+				}
+			}
+			if( !transp )
+			{
+				Global::w().clearTileFlag( oldPos, TileFlag::TF_TRANSPARENT );
+			}
+		}
+
 		m_renderParamsChanged = true;
 	}
 }
