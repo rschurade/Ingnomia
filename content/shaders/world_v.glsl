@@ -26,6 +26,8 @@
 #define TF_WALKABLEMONSTERS     0x00400000
 #define TF_PASTURE              0x00800000
 #define TF_INDIRECT_SUNLIGHT    0x01000000
+#define TF_TRANSPARENT          0x40000000
+#define TF_OVERSIZE             0x80000000
 
 #define WATER_TOP               0x01
 #define WATER_EDGE              0x02
@@ -253,7 +255,19 @@ void main()
 
 	const bool uIsWall = aPos.z != 0;
 
-	vTexCoords = vec2( aPos.x, 1.0 - aPos.y );
+	vec2 vVertexCoords;
+	if( ( vFlags & TF_OVERSIZE ) != 0 )
+	{
+		// Round to full sprite extent, for sprites which are not adhering to regular tile bounding boxes
+		vVertexCoords.x = round(aPos.x);
+		vVertexCoords.y = round(aPos.y);
+	}
+	else
+	{
+		vVertexCoords = aPos.xy;
+	}
+
+	vTexCoords = vec2( vVertexCoords.x, 1.0 - vVertexCoords.y );
 	block1 = uvec4(floorSprite, jobFloorSprite, wallSprite, jobWallSprite);
 	block2 = uvec4(itemSprite, creatureSprite, vFluidLevelPacked1, uIsWall);
 	block3 = uvec4(vFlags, vFlags2, vLightLevel, vVegetationLevel);
@@ -282,7 +296,7 @@ void main()
 	}
 	else
 	{
-		vec3 worldPos = project( rotate( tile ), aPos.xy, uIsWall );
+		vec3 worldPos = project( rotate( tile ), vVertexCoords.xy, uIsWall );
 		gl_Position = uTransform * vec4( worldPos, 1.0 );
 	}
 }

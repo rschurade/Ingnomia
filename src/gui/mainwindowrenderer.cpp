@@ -108,9 +108,9 @@ void MainWindowRenderer::initializeGL()
 
 	float vertices[] = {
 		// Wall layer
-		0.f, 1.f, 1.f, // top left
+		0.f, .8f, 1.f, // top left
 		0.f, .2f, 1.f, // bottom left
-		1.f, 1.f, 1.f, // top right
+		1.f, .8f, 1.f, // top right
 		1.f, .2f, 1.f, // bottom right
 
 		// floor layer
