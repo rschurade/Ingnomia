@@ -61,7 +61,7 @@
 									<RowDefinition Height="Auto"/>
 								</Grid.RowDefinitions>
 								
-								<TextBlock FontSize="20" HorizontalAlignment="Center" Text="Uniform" Grid.Row="0" />
+								<TextBlock FontSize="20" HorizontalAlignment="Center" Text="Equipment" Grid.Row="0" />
 								
 								<!-- Uniform doll  -->
 								<Canvas Width="180" Height="280" Grid.Row="1">
