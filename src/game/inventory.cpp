@@ -1912,3 +1912,29 @@ QString Inventory::itemGroup( unsigned int itemID )
 	}
 	return "";
 }
+
+QList<QString> Inventory::allMats( unsigned int itemID )
+{
+	auto item = getItem( itemID );
+	if ( item )
+	{
+		QStringList out;
+
+		auto comps = item->components();
+		if( comps.size() )
+		{
+			for( const auto& comp : comps )
+			{
+				out.append( DBH::materialSID( comp.materialUID ) );
+			}
+		}
+		else
+		{
+			out.append( item->materialSID() );
+		}
+
+
+		return out;
+	}
+	return QStringList();
+}

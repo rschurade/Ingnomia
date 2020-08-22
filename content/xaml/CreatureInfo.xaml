@@ -111,12 +111,12 @@
 									
 									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="10" Canvas.Top="190" >
 										<StackPanel>
-											<Image Source="{Binding ImgLeftHand}" Stretch="Uniform"/>
+											<Image Source="{Binding ImgRightHand}" Stretch="Uniform"/>
 										</StackPanel>
 									</Button>
 									<Button Style="{StaticResource SquareButton}" FontSize="12" MinWidth="40" MaxWidth="40" Canvas.Left="130" Canvas.Top="190" >
 										<StackPanel>
-											<Image Source="{Binding ImgRightHand}" Stretch="Uniform"/>
+											<Image Source="{Binding ImgLeftHand}" Stretch="Uniform"/>
 										</StackPanel>
 									</Button>
 									

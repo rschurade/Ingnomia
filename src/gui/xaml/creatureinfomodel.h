@@ -136,6 +136,7 @@ private:
 	bool m_emptySlotsInitialized = false;
 
 	Noesis::Ptr<Noesis::BitmapSource> createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem );
+	Noesis::Ptr<Noesis::BitmapSource> createItemImg( const EquipmentItem& eItem );
 	Noesis::Ptr<Noesis::BitmapSource> createEmptyUniformImg( QString spriteID );
 
 

@@ -24,6 +24,7 @@ QVariantMap EquipmentItem::serialize()
 	out.insert( "Material", material );
 	out.insert( "ItemID", itemID );
 	out.insert( "MaterialID", materialID );
+	out.insert( "AllMats", allMats );
 	return out;
 }
 
@@ -33,6 +34,7 @@ EquipmentItem::EquipmentItem( const QVariantMap& in )
 	material   = in.value( "Material" ).toString();
 	itemID     = in.value( "ItemID" ).toUInt();
 	materialID = in.value( "MaterialID" ).toUInt();
+	allMats	   = in.value( "AllMats" ).toStringList();
 }
 
 QList<unsigned int> Equipment::wornItems() const

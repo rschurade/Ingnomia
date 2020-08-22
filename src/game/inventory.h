@@ -180,6 +180,8 @@ public:
 
 	QString itemGroup( unsigned int itemID );
 
+	QList<QString> allMats( unsigned int itemID );
+
 private:
 	int m_dimX;
 	int m_dimY;

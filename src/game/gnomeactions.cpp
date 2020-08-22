@@ -2598,10 +2598,12 @@ bool Gnome::equipItem()
 		if (part == CP_LEFT_HAND_HELD)
 		{
 			equipHand( itemID, "Left" );
+			itemSlot.allMats = Global::inv().allMats( itemID );
 		}
 		else if (part == CP_RIGHT_HAND_HELD )
 		{
 			equipHand( itemID, "Right" );
+			itemSlot.allMats = Global::inv().allMats( itemID );
 		}
 
 		updateSprite();

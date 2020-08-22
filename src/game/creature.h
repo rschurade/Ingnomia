@@ -85,6 +85,7 @@ struct EquipmentItem
 	QString material        = "";
 	unsigned int itemID     = 0;
 	unsigned int materialID = 0;
+	QStringList allMats;
 
 	QVariantMap serialize();
 	EquipmentItem( const QVariantMap& in );

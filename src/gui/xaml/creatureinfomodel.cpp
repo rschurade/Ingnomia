@@ -114,7 +114,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 		m_bitmapFeetEmpty = createEmptyUniformImg( "UIEmptySlotFeet" );
 		m_bitmapLHeldEmpty = createEmptyUniformImg( "UIEmptySlotShield" );
 		m_bitmapRHeldEmpty = createEmptyUniformImg( "UIEmptySlotWeapon" );
-		//m_bitmapBackEmpty = createEmptyUniformImg( "UIEmptySlot" );
+		m_bitmapBackEmpty = createEmptyUniformImg( "UIEmptySlotBack" );
 		m_bitmapNeckEmpty = createEmptyUniformImg( "UIEmptySlotNeck" );
 		m_bitmapLRingEmpty = createEmptyUniformImg( "UIEmptySlotRing" );
 		m_bitmapRRingEmpty = createEmptyUniformImg( "UIEmptySlotRing" );
@@ -158,8 +158,14 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		m_bitmapFeet = createUniformImg( "ArmorFeet", info.uniform.parts.value( "FootArmor" ), info.equipment.foot );
 	}
-	//m_bitmapLHeld = createUniformImg( "LeftHandHeld", info.uniform->parts.value( "LeftHandHeld" ) );
-	//m_bitmapRHeld = createUniformImg( "RightHandHeld", info.uniform->parts.value( "RightHandHeld" ) );
+	if( info.equipment.leftHandHeld.itemID )
+	{
+		m_bitmapLHeld = createItemImg( info.equipment.leftHandHeld );
+	}
+	if( info.equipment.rightHandHeld.itemID )
+	{
+		m_bitmapRHeld = createItemImg( info.equipment.rightHandHeld );
+	}
 	//m_bitmapBack = createUniformImg( "Back", info.uniform );
 	//m_bitmapNeck = createUniformImg( "", info.uniform );
 	//m_bitmapLRing = createUniformImg( "", info.uniform );
@@ -177,6 +183,37 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	OnPropertyChanged( "ImgNeck" );
 	OnPropertyChanged( "ImgLRing" );
 	OnPropertyChanged( "ImgRRing" );
+}
+
+Noesis::Ptr<Noesis::BitmapSource> CreatureInfoModel::createItemImg( const EquipmentItem& eItem )
+{
+	if( eItem.itemID == 0 )
+	{
+		return nullptr;
+	}
+	QStringList mats;
+	if( eItem.allMats.size() )
+	{
+		mats = eItem.allMats;
+	}
+	else
+	{
+		mats.append( eItem.material );
+		mats.append( "Pine" );
+	}
+
+	auto sprite = Global::sf().createSprite( "UI" + eItem.item, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+
+		std::vector<unsigned char> buffer;
+
+		Util::createBufferForNoesisImage( pm, buffer );
+
+		return BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	}
+	return nullptr;
 }
 
 Noesis::Ptr<Noesis::BitmapSource> CreatureInfoModel::createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem )
