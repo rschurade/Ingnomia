@@ -657,3 +657,20 @@ bool MilitaryManager::movePrioDown( unsigned int squadID, QString type )
 	}
 	return false;
 }
+
+void MilitaryManager::setRoleCivilian( unsigned int roleID, bool value )
+{
+	if ( m_roles.contains( roleID ) )
+	{
+		m_roles[roleID].isCivilian = value;
+	}
+}
+
+bool MilitaryManager::roleIsCivilian( unsigned int roleID )
+{
+	if ( m_roles.contains( roleID ) )
+	{
+		return m_roles[roleID].isCivilian;
+	}
+	return false;
+}

@@ -20,6 +20,7 @@
 #include "../base/counter.h"
 #include "../base/db.h"
 #include "../base/dbhelper.h"
+#include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
@@ -264,6 +265,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					ro->checkRoofed();
 					m_tileInfo.hasRoof = ro->roofed();
 					m_tileInfo.hasAlarmBell = ro->hasAlarmBell();
+					m_tileInfo.alarm = GameState::alarm;
 
 					QList<unsigned int>beds = ro->beds();
 					int countFree = beds.size();
@@ -356,5 +358,26 @@ void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int 
 		{
 			oldGnome->setOwnedRoom( 0 );
 		}
+	}
+}
+
+void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
+{
+	switch( GameState::alarm )
+	{
+		case 0:
+			// create alarm job
+			if( Global::rm().createAlarmJob( designationID ) )
+			{
+				GameState::alarm = 1;
+			}
+			break;
+		case 1:
+			//cancel alarm job;
+			Global::rm().cancelAlarmJob( designationID );
+		case 2:
+			GameState::alarmRoomID = 0;
+			GameState::alarm = 0;
+			break;
 	}
 }

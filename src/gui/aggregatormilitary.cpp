@@ -274,3 +274,8 @@ void AggregatorMilitary::onSetRole( unsigned int gnomeID, unsigned int roleID )
 {
 	Global::gm().setRoleID( gnomeID, roleID );
 }
+
+void AggregatorMilitary::onSetRoleCivilian( unsigned int roleID, bool value )
+{
+	Global::mil().setRoleCivilian( roleID, value );
+}

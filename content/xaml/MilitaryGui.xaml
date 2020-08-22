@@ -19,7 +19,7 @@
 		</ResourceDictionary>					
     </UserControl.Resources>
 	
-	<Grid x:Name="LayoutRoot" MinHeight="700" MaxHeight="700">
+	<Grid MinHeight="700" MaxHeight="700">
 		<StackPanel Orientation="Horizontal">
 			<Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" Margin="2">
 				<StackPanel>
@@ -52,7 +52,7 @@
 				</StackPanel>
 			</Border>
 			
-			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2" >
+			<Border Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2" >
 				<Grid>
 					<Grid x:Name="LayoutSquads" Visibility="{Binding ShowFirst}">
 						<Grid.RowDefinitions>
@@ -77,7 +77,7 @@
 						</StackPanel>
 					</Grid>
 					
-					<Grid x:Name="LayoutRoles" Visibility="{Binding ShowSecond}">
+					<Grid Visibility="{Binding ShowSecond}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="1*"/>
@@ -106,7 +106,7 @@
 					</Grid>
 					
 					
-					<Grid x:Name="LayoutWhatever" Visibility="{Binding ShowThird}">
+					<Grid Visibility="{Binding ShowThird}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="1*"/>

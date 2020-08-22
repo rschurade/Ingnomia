@@ -51,6 +51,8 @@ public:
 	void setArmorType( unsigned int roleID, QString slot, QString type, QString material );
 	void setRole( unsigned int gnomeID, unsigned int roleID );
 
+	void setRoleCivilian( unsigned int roleID, bool value );
+
 private:
 	IngnomiaGUI::MilitaryModel* m_parent = nullptr;
 
@@ -80,4 +82,5 @@ signals:
 	void signalRenameRole( unsigned int id, QString newName );
 	void signalSetArmorType( unsigned int roleID, QString slot, QString type, QString material );
 	void signalSetRole( unsigned int gnomeID, unsigned int roleID );
+	void signalSetRoleCivilian( unsigned int roleID, bool value );
 };

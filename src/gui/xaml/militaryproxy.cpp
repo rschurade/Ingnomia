@@ -41,6 +41,7 @@ MilitaryProxy::MilitaryProxy( QObject* parent ) :
 	connect( this, &MilitaryProxy::signalRenameRole, EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::onRenameRole, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalSetArmorType, EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::onSetArmorType, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalSetRole, EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::onSetRole, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalSetRoleCivilian, EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::onSetRoleCivilian, Qt::QueuedConnection );
 
 	connect( EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::signalSquads, this, &MilitaryProxy::onSquads, Qt::QueuedConnection );
 	connect( EventConnector::getInstance().aggregatorMilitary(), &AggregatorMilitary::signalPriorities, this, &MilitaryProxy::onPriorities, Qt::QueuedConnection );
@@ -173,4 +174,9 @@ void MilitaryProxy::onPossibleMaterials( unsigned int roleID, const QString slot
 void MilitaryProxy::setRole( unsigned int gnomeID, unsigned int roleID )
 {
 	emit signalSetRole( gnomeID, roleID );
+}
+
+void MilitaryProxy::setRoleCivilian( unsigned int roleID, bool value )
+{
+	emit signalSetRoleCivilian( roleID, value );
 }

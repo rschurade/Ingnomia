@@ -263,10 +263,12 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 
 BT_RESULT Gnome::conditionIsCivilian( bool halt )
 {
-	//TODO reimplement this when roles are in
-
+	bool roleIsCivilian = Global::mil().roleIsCivilian( m_roleID);
+	if( m_roleID == 0 || roleIsCivilian )
+	{
+		return BT_RESULT::SUCCESS;
+	}
 	return BT_RESULT::FAILURE;
-	
 }
 
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )

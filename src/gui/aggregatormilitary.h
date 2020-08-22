@@ -121,6 +121,7 @@ public slots:
 	void onRemoveRole( unsigned int id );
 	void onRenameRole( unsigned int id, QString newName );
 	void onSetRole( unsigned int gnomeID, unsigned int roleID );
+	void onSetRoleCivilian( unsigned int roleID, bool value );
 
 	void onSetArmorType( unsigned int roleID, QString slot, QString type, QString material );
 

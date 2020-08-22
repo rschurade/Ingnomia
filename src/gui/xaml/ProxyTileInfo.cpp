@@ -36,6 +36,7 @@ ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	connect( this, &ProxyTileInfo::signalRequestStockpileItems, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
 
 	connect( this, &ProxyTileInfo::signalSetTennant, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetAlarm, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
 
 	connect( EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
 }
@@ -83,4 +84,9 @@ void ProxyTileInfo::onUpdateStockpileInfo( const GuiStockpileInfo& info )
 void ProxyTileInfo::setTennant( unsigned int designationID, unsigned int gnomeID )
 {
 	emit signalSetTennant( designationID, gnomeID );
+}
+
+void ProxyTileInfo::setAlarm( unsigned int designationID, bool value )
+{
+	emit signalSetAlarm( designationID, value );
 }

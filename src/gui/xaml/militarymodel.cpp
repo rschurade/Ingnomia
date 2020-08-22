@@ -328,6 +328,22 @@ void RoleItem::updatePossibleMaterials( QString slot, QStringList mats )
 	}
 }
 
+bool RoleItem::GetCivilian() const
+{
+	return m_civilian;
+}
+	
+void RoleItem::SetCivilian( bool value )
+{
+	if( m_civilian != value )
+	{
+		m_civilian = value;
+		m_proxy->setRoleCivilian( m_id, value );
+	}
+}
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 MilitaryModel::MilitaryModel()
@@ -639,6 +655,7 @@ NS_IMPLEMENT_REFLECTION( RoleItem, "IngnomiaGUI.RoleItem" )
 	NsProp( "ConfigureUniformCmd", &RoleItem::getShowConfigCmd );
 	NsProp( "ShowConfig", &RoleItem::getShowConfig );
 	NsProp( "UniformItems", &RoleItem::getUniformItems );
+	NsProp( "Civilian", &RoleItem::GetCivilian, &RoleItem::SetCivilian );
 }
 
 NS_IMPLEMENT_REFLECTION( UniformModelItem, "IngnomiaGUI.UniformModelItem" )

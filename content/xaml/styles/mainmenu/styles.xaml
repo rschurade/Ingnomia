@@ -1048,7 +1048,8 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="1*"/>
 						<RowDefinition Height="1*"/>
-						<RowDefinition Height="13*"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="12*"/>
 					</Grid.RowDefinitions>
 					<Button Content="Uniform" MaxHeight="50" FontSize="18" Margin="2" VerticalAlignment="Top" Command="{Binding ConfigureUniformCmd }" Grid.Row="0"/>
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Top"  Grid.Row="1" Margin="2">
@@ -1063,8 +1064,20 @@
 						<Button Content="-&gt;" MaxWidth="50" MaxHeight="50" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowRightArrow}"
 							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveRoleRightCmd }"	
 							CommandParameter="{Binding ID}"/>
+						
 					</StackPanel>
-					
+					<CheckBox Content="Civilian!" IsChecked="{Binding Civilian, Mode=TwoWay}" Margin="2,20,2,2" FontSize="18" Grid.Row="2">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="If enabled this role counts as civilian." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+									Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="The gnome will retreat to an appropriate" FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+									Padding="0,2" TextAlignment="Center"/>
+								<TextBlock Text="area in case of an alarm." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+									Padding="0,2" TextAlignment="Center"/>
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
 				</Grid>
 			</Border>
 			<Border Background="{StaticResource PanelBackgroundGrey}" Margin="4" MinWidth="500" MaxWidth="500" Visibility="{Binding ShowConfig}" Grid.Column="1"

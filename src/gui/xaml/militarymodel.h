@@ -271,6 +271,9 @@ public:
 	unsigned int getID() { return m_id; }
 	void updatePossibleMaterials( QString slot, QStringList mats );
 
+	bool GetCivilian() const;
+	void SetCivilian( bool value );
+
 private:
 	unsigned int m_id = 0;
 	Noesis::String m_idString;
@@ -281,6 +284,8 @@ private:
 	bool m_showRightArrow = false;
 
 	bool m_showConfig = false;
+
+	bool m_civilian = false;
 
 	const char* getShowLeftArrow() const { return m_showLeftArrow ? "Visible" : "Hidden"; }
 	const char* getShowRightArrow() const { return m_showRightArrow ? "Visible" : "Hidden"; }

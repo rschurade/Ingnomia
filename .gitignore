@@ -372,3 +372,4 @@ _deps
 *-prefix/
 
 build/
+/content/db/*.db

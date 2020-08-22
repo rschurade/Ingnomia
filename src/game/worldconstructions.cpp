@@ -1117,7 +1117,12 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 		Global::w().setItemSprite( pos, 0 );
 	}
-	//qDebug() << "##" << type << group;
+	//qDebug() << "##" << type << group << itemSID;
+	// TODO remove this workaround
+	if( itemSID == "AlarmBell" )
+	{
+		group = "AlarmBell";
+	}
 
 	addToUpdateList( pos );
 	switch ( m_constrItemSID2ENUM.value( type ) )
@@ -1262,7 +1267,11 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 
 		QString type  = constr.value( "Type" ).toString();
 		QString group = constr.value( "Group" ).toString();
-
+		// TODO remove this workaround
+		if( Global::inv().itemSID( itemID ) == "AlarmBell" )
+		{
+			group = "AlarmBell";
+		}
 		switch ( m_constrItemSID2ENUM.value( type ) )
 		{
 			case CI_STORAGE:

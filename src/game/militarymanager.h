@@ -151,6 +151,8 @@ public:
 
 	void save();
 
+	bool roleIsCivilian( unsigned int roleID );
+
 private:
 	QMutex m_mutex;
 
@@ -196,4 +198,6 @@ public slots:
 
 	bool movePrioUp( unsigned int squadID, QString type );
 	bool movePrioDown( unsigned int squadID, QString type );
+
+	void setRoleCivilian( unsigned int roleID, bool value );
 };
