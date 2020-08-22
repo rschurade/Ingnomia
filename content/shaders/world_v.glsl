@@ -76,10 +76,6 @@ layout(std430, binding = 0) readonly restrict buffer tileData1
 } tileData;
 
 uniform bool uWallsLowered;
-
-uniform bool uPaintSolid;
-uniform bool uPaintCreatures;
-uniform bool uPaintWater;
 uniform bool uPaintFrontToBack;
 
 uvec3 rotate(uvec3 pos)
@@ -174,18 +170,15 @@ void main()
 	uint itemSprite = 0;
 	uint jobFloorSprite = 0;
 	uint jobWallSprite = 0;
-	if(uPaintSolid)
+	uint creatureSprite = 0;
+	// Render in first pass if no transparency effects, and in second pass otherwise
+	if( uPaintFrontToBack ^^ ( vFlags & TF_TRANSPARENT ) != 0 )
 	{
 		floorSprite = tileData.data[index].floorSpriteUID;
 		wallSprite = tileData.data[index].wallSpriteUID;
 		itemSprite = tileData.data[index].itemSpriteUID;
 		jobFloorSprite = tileData.data[index].jobSpriteFloorUID;
 		jobWallSprite = tileData.data[index].jobSpriteWallUID;
-	}
-
-	uint creatureSprite = 0;
-	if(uPaintCreatures)
-	{
 		creatureSprite = tileData.data[index].creatureSpriteUID;
 	}
 	
@@ -197,7 +190,7 @@ void main()
 	uint vFluidLevelPacked1 = 0;
 	uint vFluidFlags = 0;
 
-	if(uPaintWater)
+	if( !uPaintFrontToBack )
 	{
 		const uvec3 above = uvec3(tile.xy, tile.z + 1);
 		const uvec3 offsetLeft = rotateOffset( uvec3( 0, 1, 0 ) );

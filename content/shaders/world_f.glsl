@@ -56,7 +56,6 @@ uniform int uWaterTex;
 uniform int uWorldRotation;
 uniform bool uOverlay;
 uniform bool uDebug;
-uniform bool uDebugOverlay;
 uniform bool uWallsLowered;
 uniform float uDaylight;
 uniform float uLightMin;

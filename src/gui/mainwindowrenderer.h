@@ -108,8 +108,6 @@ private:
 	int m_renderDepth   = 10;
 	bool m_overlay      = true;
 	bool m_debug        = false;
-	bool m_debugOverlay = false;
-	int m_waterQuality  = 0;
 
 	struct RenderVolume
 	{
@@ -140,8 +138,6 @@ private:
 	ThoughtBubbleInfo m_thoughBubbles;
 	AxleDataInfo m_axleData;
 	QVector<QVector<TileDataUpdate>> m_pendingUpdates;
-
-	bool m_renderDown = false;
 
 public slots:
 	void initializeGL();

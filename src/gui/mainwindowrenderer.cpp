@@ -425,8 +425,6 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_renderDepth = Config::getInstance().get( "renderDepth" ).toInt();
 
-	m_waterQuality = Config::getInstance().get( "waterQuality" ).toInt();
-
 	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
@@ -440,16 +438,12 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_overlay      = Config::getInstance().get( "overlay" ).toBool();
 	m_debug        = Global::debugMode;
-	m_debugOverlay = false; // Config::getInstance().get( "debugOverlay" ).toBool();
-
-	m_renderDown = Config::getInstance().get( "renderMode" ).toString() == "down";
 
 	m_projectionMatrix.setToIdentity();
 	m_projectionMatrix.ortho( -m_width / 2, m_width / 2, -m_height / 2, m_height / 2, -( m_volume.max.x + m_volume.max.y + m_volume.max.z + 1 ), -m_volume.min.z );
 	m_projectionMatrix.scale( m_scale, m_scale );
 	m_projectionMatrix.translate( m_moveX, -m_moveY );
 
-	m_paintCreatures = Config::getInstance().get( "renderCreatures" ).toBool();
 	/*
 	QString msg = "Move: " + QString::number( m_moveX ) + ", " + QString::number( m_moveY ) + " z-Level: " + QString::number( m_viewLevel ); 
 	qDebug() << msg;
@@ -540,10 +534,7 @@ void MainWindowRenderer::paintWorld()
 
 		paintSelection();
 
-		if ( m_paintCreatures )
-		{
-			paintThoughtBubbles();
-		}
+		paintThoughtBubbles();
 
 		if ( Global::showAxles )
 		{
@@ -605,13 +596,10 @@ void MainWindowRenderer::paintTiles()
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	m_worldShader->setUniformValue( "uOverlay", m_overlay );
 	m_worldShader->setUniformValue( "uDebug", m_debug );
-	m_worldShader->setUniformValue( "uDebugOverlay", m_debugOverlay );
 	m_worldShader->setUniformValue( "uWallsLowered", Global::wallsLowered );
 
 	m_worldShader->setUniformValue( "uUndiscoveredTex", Global::undiscoveredUID * 4 );
 	m_worldShader->setUniformValue( "uWaterTex", Global::waterSpriteUID * 4 );
-
-	m_worldShader->setUniformValue( "uPaintCreatures", m_paintCreatures );
 
 	if ( GameState::daylight )
 	{
@@ -633,23 +621,16 @@ void MainWindowRenderer::paintTiles()
 	glDepthMask( true );
 
 	m_worldShader->setUniformValue( "uPaintFrontToBack", true );
-	m_worldShader->setUniformValue( "uPaintSolid", true );
-	m_worldShader->setUniformValue( "uPaintWater", m_waterQuality == 0 );
-
 	glDrawElementsInstanced( GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, 0, tiles );
 
-	// All done with depth writes, everything beyond is layered
+	//!TODO Transparency pass is too early, all the stuff rendered later is still missing
+	// Second pass includes transparency
+	m_worldShader->setUniformValue( "uPaintFrontToBack", false );
 	glEnable( GL_BLEND );
-	glDepthMask( false );
+	glDrawElementsInstanced( GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void*)( sizeof( GLushort ) * 6 ), tiles );
 
-	if ( m_waterQuality >= 1 )
-	{
-		m_worldShader->setUniformValue( "uPaintFrontToBack", false );
-		m_worldShader->setUniformValue( "uPaintSolid", false );
-		m_worldShader->setUniformValue( "uPaintCreatures", false );
-		m_worldShader->setUniformValue( "uPaintWater", true );
-		glDrawElementsInstanced( GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void*)( sizeof( GLushort ) * 6 ), tiles );
-	}
+	// All done with depth writes, everything beyond is layered
+	glDepthMask( false );
 
 	m_worldShader->release();
 }
