@@ -516,6 +516,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 				case SEL_MECHANISM:
 					if ( Global::mcm().hasMechanism( pos ) )
 						return false;
+					break;
 				case SEL_JOB:
 					if ( world.hasJob( testPos ) )
 						return false;
