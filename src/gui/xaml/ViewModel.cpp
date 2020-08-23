@@ -382,6 +382,7 @@ void ViewModel::OnResume( BaseComponent* )
 	SetState( State::GameRunning );
 	_showMainMenu = false;
 	_showGameGUI = true;
+	OnPropertyChanged( "ShowMainMenu" );
 	OnPropertyChanged( "ShowGameGui" );
 	GameManager::getInstance().setShowMainMenu( false );
 }
