@@ -54,7 +54,7 @@ protected:
 	QOpenGLShaderProgram* m_selectionShader     = nullptr;
 	QOpenGLShaderProgram* m_axleShader          = nullptr;
 
-	GLuint m_textures[32];
+	GLuint m_textures[32] = { 0 };
 	GLuint m_tileBo       = 0;
 	GLuint m_tileUpdateBo = 0;
 	GLuint m_vbo          = 0;

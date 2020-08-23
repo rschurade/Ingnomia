@@ -75,6 +75,53 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
 	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
 	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
+
+	qDebug() << "initialize GL ...";
+	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
+	connect( this, &MainWindowRenderer::redrawRequired, m_parent, &MainWindow::redraw );
+
+	if ( !initializeOpenGLFunctions() )
+	{
+		qDebug() << "failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3";
+		qCritical() << "failed to initialize OpenGL functions core 4.3 - exiting";
+		QMessageBox msgBox;
+		msgBox.setText( "Failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3" );
+		msgBox.exec();
+		exit( 0 );
+	}
+
+	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VENDOR ) );
+	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VERSION ) );
+	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_RENDERER ) );
+
+	qDebug() << m_parent->context()->format();
+
+	QOpenGLExtraFunctions* f = QOpenGLContext::currentContext()->extraFunctions();
+	GLDEBUGPROC logHandler   = []( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) -> void
+	{
+		static const std::unordered_map<GLenum, const char*> debugTypes = {
+			{ GL_DEBUG_TYPE_ERROR, "Error" },
+			{ GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DeprecatedBehavior" },
+			{ GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UndefinedBehavior" },
+			{ GL_DEBUG_TYPE_PORTABILITY, "Portability" },
+			{ GL_DEBUG_TYPE_PERFORMANCE, "Performance" },
+			{ GL_DEBUG_TYPE_MARKER, "Marker" },
+			{ GL_DEBUG_TYPE_OTHER, "Other" },
+			{ GL_DEBUG_TYPE_PUSH_GROUP, "Push" },
+			{ GL_DEBUG_TYPE_POP_GROUP, "Pop" }
+		};
+		static const std::unordered_map<GLenum, const char*> severities = {
+			{ GL_DEBUG_SEVERITY_LOW, "low" },
+			{ GL_DEBUG_SEVERITY_MEDIUM, "medium" },
+			{ GL_DEBUG_SEVERITY_HIGH, "high" },
+			{ GL_DEBUG_SEVERITY_NOTIFICATION, "notify" },
+		};
+		if ( severity == GL_DEBUG_SEVERITY_NOTIFICATION && !Global::debugMode )
+			return;
+		qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
+	};
+	glEnable( GL_DEBUG_OUTPUT );
+	f->glDebugMessageCallback( logHandler, nullptr );
 }
 MainWindowRenderer ::~MainWindowRenderer()
 {
@@ -82,30 +129,6 @@ MainWindowRenderer ::~MainWindowRenderer()
 
 void MainWindowRenderer::initializeGL()
 {
-	qDebug() << "initialize GL ...";
-	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
-	connect( this, &MainWindowRenderer::redrawRequired, m_parent, &MainWindow::redraw );
-
-	if ( !initializeOpenGLFunctions() )
-	{
-		QMessageBox msgBox;
-		msgBox.setText( "Failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.2" );
-		msgBox.exec();
-		qDebug() << "failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.2";
-		qCritical() << "failed to initialize OpenGL functions core 4.2 - exiting";
-		exit( 0 );
-	}
-
-	std::string glVendor   = reinterpret_cast<char const*>( glGetString( GL_VENDOR ) );
-	std::string glVersion  = reinterpret_cast<char const*>( glGetString( GL_VERSION ) );
-	std::string glRenderer = reinterpret_cast<char const*>( glGetString( GL_RENDERER ) );
-
-	qDebug() << glVendor.c_str();
-	qDebug() << glRenderer.c_str();
-	qDebug() << glVersion.c_str();
-
-	qDebug() << m_parent->context()->format();
-
 	float vertices[] = {
 		// Wall layer
 		0.f, .8f, 1.f, // top left
@@ -436,8 +459,8 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_rotation = Config::getInstance().get( "rotation" ).toInt();
 
-	m_overlay      = Config::getInstance().get( "overlay" ).toBool();
-	m_debug        = Global::debugMode;
+	m_overlay = Config::getInstance().get( "overlay" ).toBool();
+	m_debug   = Global::debugMode;
 
 	m_projectionMatrix.setToIdentity();
 	m_projectionMatrix.ortho( -m_width / 2, m_width / 2, -m_height / 2, m_height / 2, -( m_volume.max.x + m_volume.max.y + m_volume.max.z + 1 ), -m_volume.min.z );

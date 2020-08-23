@@ -614,12 +614,12 @@ void MainWindow::initializeGL()
 {
 	QOpenGLWindow::initializeGL();
 
+	m_renderer = new MainWindowRenderer( this );
+	m_renderer->initializeGL();
+
 	noesisInit();
 	m_timer = new QTimer( this );
 	connect( m_timer, &QTimer::timeout, this, &MainWindow::noesisTick );
-
-	m_renderer = new MainWindowRenderer( this );
-	m_renderer->initializeGL();
 
 	update();
 }
