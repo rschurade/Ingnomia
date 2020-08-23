@@ -51,6 +51,7 @@ public:
 	char yOffset     = 0;
 	float opacity    = 1.0;
 	bool anim        = false;
+	bool hasTransp   = false;
 	QMap<int, int> randomNumbers;
 	QString m_type = "";
 };

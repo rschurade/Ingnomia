@@ -52,7 +52,8 @@ struct DefNode
 	int numFrames;
 	QString childPos;
 	QList<int> randomWeights;
-	bool rot90;
+	bool rot90 = false;
+	bool hasTransp = false;
 
 	//DefNode* parent;
 	QMap<QString, DefNode*> childs;

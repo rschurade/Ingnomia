@@ -764,6 +764,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	parent->tint            = def.value( "Tint" ).toString();
 	parent->baseSprite      = def.value( "BaseSprite" ).toString();
 	parent->defaultMaterial = def.value( "DefaultMaterial" ).toString();
+	parent->hasTransp       = def.value( "HasTransp" ).toBool();
 
 	/*
 	if( def.contains( "ByItems" ) )
@@ -902,6 +903,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		SpritePixmap* sprite = new SpritePixmap( pm, m_offset );
 		sprite->applyEffect( node->effect );
 		sprite->applyTint( node->tint, materialSID );
+		sprite->hasTransp = node->hasTransp;
 		return sprite;
 	}
 
@@ -916,6 +918,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 
 		sr->applyEffect( node->effect );
 		sr->applyTint( node->tint, materialSID );
+		sr->hasTransp = node->hasTransp;
 		return sr;
 	}
 	if ( node->childs.size() && node->childs.first()->type == "Season" )
@@ -927,6 +930,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		}
 		ss->applyEffect( node->effect );
 		ss->applyTint( node->tint, materialSID );
+		ss->hasTransp = node->hasTransp;
 		return ss;
 	}
 	if ( node->childs.contains( itemSID ) )
@@ -942,6 +946,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		}
 		sf->applyEffect( node->effect );
 		sf->applyTint( node->tint, materialSID );
+		sf->hasTransp = node->hasTransp;
 		return sf;
 	}
 
@@ -975,6 +980,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 				s->combine( s2, season, 3, 3 );
 			}
 		}
+		s->hasTransp = node->hasTransp;
 		return s;
 	}
 	if ( node->type == "RandomNode" )
@@ -983,6 +989,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		Sprite* rs       = getBaseSprite( node->childs["Random" + QString::number( randomNumber )], itemSID, materialSIDs );
 		rs->applyEffect( node->childs["Random" + QString::number( randomNumber )]->effect );
 		rs->applyTint( node->childs["Random" + QString::number( randomNumber )]->tint, materialSID );
+		rs->hasTransp = node->hasTransp;
 		return rs;
 	}
 
@@ -994,6 +1001,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 			Sprite* pm = getBaseSprite( node->childs[materialType], itemSID, materialSIDs );
 			pm->applyEffect( node->effect );
 			pm->applyTint( node->tint, materialSID );
+			pm->hasTransp = node->hasTransp;
 			return pm;
 		}
 
@@ -1003,6 +1011,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 			Sprite* pm = getBaseSprite( node->childs[materialSID], itemSID, materialSIDs );
 			pm->applyEffect( node->effect );
 			pm->applyTint( node->tint, materialSID );
+			pm->hasTransp = node->hasTransp;
 			return pm;
 		}
 		// if no other hit
@@ -1013,6 +1022,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 				Sprite* pm = getBaseSprite( node->childs[node->defaultMaterial], itemSID, materialSIDs );
 				pm->applyEffect( node->effect );
 				pm->applyTint( node->tint, materialSID );
+				pm->hasTransp = node->hasTransp;
 				return pm;
 			}
 			else
@@ -1020,6 +1030,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 				Sprite* pm = getBaseSprite( node->childs.first(), itemSID, materialSIDs, materialID );
 				pm->applyEffect( node->effect );
 				pm->applyTint( node->tint, materialSID );
+				pm->hasTransp = node->hasTransp;
 				return pm;
 			}
 		}

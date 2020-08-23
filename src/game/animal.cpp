@@ -44,7 +44,7 @@ Animal::Animal( QString species, Position& pos, Gender gender, bool adult ) :
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_btName   = avm.value( "BehaviorTree" ).toString();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	m_hasTransparency  = avm.value( "HasTransp" ).toBool();
+	
 	m_isMulti = avm.value( "IsMulti" ).toBool();
 
 	int hungerRand = ( rand() % 20 ) - 10;
@@ -90,8 +90,7 @@ Animal::Animal( QVariantMap in ) :
 
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	m_hasTransparency  = avm.value( "HasTransp" ).toBool();
-
+	
 	m_hunger = qMax( -10.f, in.value( "Hunger" ).toFloat() );
 
 	QVariantMap m_stateMap;
@@ -232,6 +231,7 @@ void Animal::updateSprite()
 		}
 		if ( sprite )
 		{
+			m_hasTransparency  = sprite->hasTransp;
 			m_spriteID = sprite->uID;
 		}
 		else
