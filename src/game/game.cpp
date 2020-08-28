@@ -62,7 +62,12 @@ Game::Game()
 	m_millisecondsSlow = DB::select( "Value_", "Time", "MillisecondsSlow" ).toInt();
 	m_millisecondsFast = DB::select( "Value_", "Time", "MillisecondsFast" ).toInt();
 
+	GameState::tick = 1;
 	GameState::hour = 9;
+	GameState::minute = 0;
+	GameState::day    = 1;
+	GameState::season = 0; // zero based, 0-numSeasons, typically 4 can be modded
+	GameState::year   = 1;
 
 	QString dt = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
 	GameState::currentDayTime = dt;
