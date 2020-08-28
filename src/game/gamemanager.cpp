@@ -208,6 +208,8 @@ void GameManager::createNewGame()
 	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
 	wg.generate();
 
+	GameState::peaceful = NewGameSettings::getInstance().isPeaceful();
+	Global::nm().reset();
 	Global::mcm().init();
 	Global::mil().init();
 	Global::w().regionMap().initRegions();
