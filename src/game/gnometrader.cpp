@@ -36,7 +36,6 @@ TraderDefinition::TraderDefinition( QVariantMap& in )
 	for( auto vItem : vItems )
 	{
 		auto vin = vItem.toMap();
-		Gender gender = ( vin.value( "Gender" ).toString() == "Male" ) ? Gender::MALE : Gender::FEMALE;
 		int amount = 1;
 		if( vin.contains( "Amount" ) )
 		{
@@ -46,7 +45,8 @@ TraderDefinition::TraderDefinition( QVariantMap& in )
 		TraderItem ti{	vin.value( "Type" ).toString(), 
 						vin.value( "Item" ).toString(), 
 						vin.value( "Material" ).toString(), 
-						gender, vin.value( "Quality" ).value<unsigned char>(), 
+						vin.value( "Gender" ).toString(), 
+						vin.value( "Quality" ).value<unsigned char>(), 
 						vin.value( "Value_").toInt(), 
 						amount,
 						vin.value( "Reserved" ).toInt() };
@@ -67,8 +67,7 @@ void TraderDefinition::serialize( QVariantMap& out )
 		vItem.insert( "Type", item.type );
 		vItem.insert( "Item", item.itemSID );
 		vItem.insert( "Material", item.materialSID );
-		QString gender = item.gender == Gender::MALE ? "Male" : "Female";
-		vItem.insert( "Gender", gender );
+		vItem.insert( "Gender", item.gender );
 		vItem.insert( "Quality", item.quality );
 		vItem.insert( "Value_", item.value );
 		vItem.insert( "Amount", item.amount );
@@ -244,8 +243,13 @@ void GnomeTrader::setInventory( QVariantList items )
 
 		if ( amount > 0 )
 		{
-			Gender gender = ( entry.value( "Gender" ).toString() == "Male" ) ? Gender::MALE : Gender::FEMALE;
-			TraderItem ti{ entry.value( "Type" ).toString(), entry.value( "Item" ).toString(), entry.value( "Material" ).toString(), gender, entry.value( "Quality" ).value<unsigned char>(), entry.value( "Value_").toInt(), amount, 0 };
+			TraderItem ti{  entry.value( "Type" ).toString(), 
+						    entry.value( "Item" ).toString(), 
+						    entry.value( "Material" ).toString(), 
+							entry.value( "Gender" ).toString(), 
+							entry.value( "Quality" ).value<unsigned char>(), 
+							entry.value( "Value_").toInt(), 
+							amount, 0 };
 			
 			m_traderDefinition.items.append( ti );
 		}

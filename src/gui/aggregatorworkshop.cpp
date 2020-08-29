@@ -316,7 +316,7 @@ void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 
 		if( item.type == "Animal" )
 		{
-			gti.materialSIDorGender = ( item.gender == Gender::MALE ) ? "Male" : "Female";
+			gti.materialSIDorGender = item.gender;
 			gti.name = 	gti.materialSIDorGender + " " + S::s( "$CreatureName_" + gti.itemSID ) + " (" + QString::number( gti.value ) + ")";
 		}
 		else
@@ -416,7 +416,7 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 					
 				for( auto& item : items )
 				{
-					if( item.itemSID == itemSID && item.materialSID == materialSID && item.quality == quality )
+					if( item.itemSID == itemSID && ( item.materialSID == materialSID || item.gender == materialSID ) && item.quality == quality )
 					{
 						item.reserved = qMin( item.amount, item.reserved + count );
 
@@ -586,7 +586,9 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							{
 								for( int i = 0; i < item.reserved; ++i )
 								{
-									Global::cm().addCreature( CreatureType::ANIMAL, item.itemSID, workshop->outputPos(), item.gender, true, true );
+									Gender gender = item.gender == "Male" ? Gender::MALE : Gender::FEMALE;
+
+									Global::cm().addCreature( CreatureType::ANIMAL, item.itemSID, workshop->outputPos(), gender, true, true );
 								}
 							}
 							else

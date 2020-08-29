@@ -465,7 +465,21 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 		}
 		case EventType::TRADER:
 		{
-			eventID = "EventTrader";
+			{
+			
+				NeighborKingdom k;
+				k.distance = 0;
+				k.economy = KingdomEconomy::ANIMALBREEDING;
+				k.nextTrader = GameState::tick;
+				k.wealth = KingdomWealth::VERYRICH;
+				k.type = KingdomType::GNOME;
+
+				eventID = "EventTrader";
+
+				addTraderEvent( k );
+
+				return;
+			}
 			break;
 		}
 		case EventType::INVASION:

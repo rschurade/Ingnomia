@@ -24,7 +24,7 @@ struct TraderItem {
 	QString type;
 	QString itemSID;
 	QString materialSID;
-	Gender gender = Gender::MALE;
+	QString gender;
 	unsigned char quality = 0;
 	int value = 0;
 	int amount = 0;
