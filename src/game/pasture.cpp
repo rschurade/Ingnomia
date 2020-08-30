@@ -858,6 +858,27 @@ void Pasture::addFood( unsigned int itemID )
 	m_properties.troughContent += 10;
 }
 
+int Pasture::maxHay()
+{
+	return m_properties.maxHay;
+}
+
+void Pasture::setMaxHay( int value )
+{
+	m_properties.maxHay = value;
+}
+
+int Pasture::foodLevel()
+{
+	return m_properties.troughContent;
+}
+
+int Pasture::maxFoodLevel()
+{
+	return m_properties.maxTroughCapacity;
+}
+
+
 bool Pasture::eatFromTrough()
 {
 	if ( m_properties.troughContent > 0 )

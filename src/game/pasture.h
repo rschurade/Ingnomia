@@ -126,6 +126,10 @@ public:
 
 	bool harvestHay();
 	void setHarvestHay( bool harvest );
+	int maxHay();
+	void setMaxHay( int value );
+	int foodLevel();
+	int maxFoodLevel();
 
 	int maxNumber();
 	int animalSize();

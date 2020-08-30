@@ -253,6 +253,10 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 			m_pastureInfo.animalType  = past->animalType();
 			m_pastureInfo.harvest     = past->harvest();
 			m_pastureInfo.harvestHay  = past->harvestHay();
+			m_pastureInfo.hayMax      = past->maxHay();
+			m_pastureInfo.hayCurrent  = Global::inv().itemCount( "Hay", "Grass" );
+			m_pastureInfo.foodMax     = past->maxFoodLevel();
+			m_pastureInfo.foodCurrent = past->foodLevel();
 
 			m_pastureInfo.food.clear();
 
@@ -291,6 +295,10 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 				m_pastureInfo.total      = 0;
 				m_pastureInfo.maxNumber  = 0;
 				m_pastureInfo.animalSize = 0;
+				m_pastureInfo.hayMax     = 0;
+				m_pastureInfo.hayCurrent = 0;
+				m_pastureInfo.foodMax    = 0;
+				m_pastureInfo.foodCurrent= 0;
 			}
 
 			onRequestProductInfo( AgriType::Pasture, m_pastureInfo.ID );

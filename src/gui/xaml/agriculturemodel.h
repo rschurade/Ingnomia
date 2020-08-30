@@ -288,6 +288,11 @@ private:
 	const char* GetNumItems() const;
 	const char* GetNumPlants() const;
 
+	const char* GetFoodStatus() const;
+	const char* GetHayStatus() const;
+	const char* GetMaxHay() const;
+	void SetMaxHay( const char* value );
+
 	Noesis::ObservableCollection<AcPriority>* GetPrios() const;
 	void SetSelectedPriority( AcPriority* prio );
 	AcPriority* GetSelectedPriority() const;
@@ -383,7 +388,11 @@ private:
 	bool m_plantTrees           = true;
 	bool m_fellTrees            = false;
 	bool m_pickFruits           = true;
-	
+	Noesis::String m_foodStatus = "0/0";
+	Noesis::String m_hayStatus  = "0/";
+	Noesis::String m_maxHay     = "100";
+
+
 	bool m_productSelect = false;
 	bool m_manageWindow = false;
 	bool m_pastureFoodSelect = false;

@@ -508,6 +508,10 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	m_numFemale  = ( QString::number( info.numFemale ) + "/" ).toStdString().c_str();
 	m_maxMale    = ( QString::number( info.maxMale ) ).toStdString().c_str();
 	m_maxFemale  = ( QString::number( info.maxFemale ) ).toStdString().c_str();
+	m_foodStatus = ( QString::number( info.foodCurrent ) + "/" + QString::number( info.foodMax ) ).toStdString().c_str();
+	m_hayStatus  = ( QString::number( info.hayCurrent ) + "/" ).toStdString().c_str();
+	m_maxHay     = ( QString::number( info.hayMax ) ).toStdString().c_str();
+
 
 	m_pastureAnimals->Clear();
 
@@ -524,6 +528,9 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	OnPropertyChanged( "VisManageAnimals" );
 	OnPropertyChanged( "PastureAnimals" );
 	OnPropertyChanged( "ShowManageWindow" );
+	OnPropertyChanged( "MaxHay" );
+	OnPropertyChanged( "HayStatus" );
+	OnPropertyChanged( "FoodStatus" );
 
 	m_bitmapSource = nullptr;
 	if ( !info.product.animalID.isEmpty() )
@@ -1015,6 +1022,36 @@ void AgricultureModel::onShowPastureFood( BaseComponent* param )
 	OnPropertyChanged( "ShowPasture" );
 }
 
+const char* AgricultureModel::GetFoodStatus() const
+{
+	return m_foodStatus.Str();
+}
+
+const char* AgricultureModel::GetHayStatus() const
+{
+	return m_hayStatus.Str();
+}
+
+const char* AgricultureModel::GetMaxHay() const
+{
+	return m_maxHay.Str();
+}
+
+void AgricultureModel::SetMaxHay( const char* value )
+{
+	if( value )
+	{
+		QString qValue = value;
+		bool ok;
+		int val = qValue.toInt( &ok );
+		if( ok )
+		{
+			qDebug() << "set max hay to: " << value;
+			m_maxHay = value;
+		}
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
@@ -1065,6 +1102,10 @@ NS_IMPLEMENT_REFLECTION( AgricultureModel, "IngnomiaGUI.AgricultureModel" )
 	NsProp( "ManageAnimalsBack", &AgricultureModel::GetManageAnimalsBack );
 	NsProp( "HarvestHay", &AgricultureModel::GetHarvestHay, &AgricultureModel::SetHarvestHay );
 	NsProp( "Tame", &AgricultureModel::GetTame, &AgricultureModel::SetTame );
+
+	NsProp( "FoodStatus", &AgricultureModel::GetFoodStatus );
+	NsProp( "HayStatus", &AgricultureModel::GetHayStatus );
+	NsProp( "MaxHay", &AgricultureModel::GetMaxHay, &AgricultureModel::SetMaxHay );
 
 	NsProp( "PlantTrees", &AgricultureModel::GetPlantTrees, &AgricultureModel::SetPlantTrees );
 	NsProp( "FellTrees", &AgricultureModel::GetFellTrees, &AgricultureModel::SetFellTrees );

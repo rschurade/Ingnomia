@@ -153,12 +153,12 @@
 				<CheckBox x:Name="CBHarvestA" Content="Harvest animals" IsChecked="{Binding Harvest, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16"/>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox x:Name="CBHarvestHayA" Content="Harvest hay" IsChecked="{Binding HarvestHay, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16" MinWidth="200"/>
-					<TextBlock Grid.Column="0" FontSize="16" Text="0/" TextAlignment="Right" MinWidth="100" Margin="10,4,10,4"/>
+					<TextBlock Grid.Column="0" FontSize="16" Text="{Binding HayStatus}" TextAlignment="Right" MinWidth="100" Margin="10,4,10,4"/>
 					<TextBox  FontSize="16"  Text="{Binding MaxHay}" MinWidth="80" Margin="10,4,10,4"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock Grid.Column="0" FontSize="16" Text="Stored Food" MinWidth="200" Margin="10,4,10,4"/>
-					<TextBlock Grid.Column="0" FontSize="16" Text="0/0" MinWidth="100" Margin="10,4,10,4"/>
+					<TextBlock Grid.Column="0" FontSize="16" Text="{Binding FoodStatus}" MinWidth="100" Margin="10,4,10,4"/>
 					<Button Width="80" Content="Settings" Command="{Binding CmdShowPastureFood}" CommandParameter="Show" Margin="10,4,10,0"/>
 				</StackPanel>
 			</StackPanel>

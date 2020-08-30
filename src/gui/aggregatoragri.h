@@ -120,6 +120,11 @@ struct GuiPastureInfo
 	int maxFemale  = 0;
 	int animalSize = 0;
 
+	int foodMax    = 0;
+	int foodCurrent= 0;
+	int hayMax     = 0;
+	int hayCurrent = 0;
+
 	QList<GuiPastureFoodItem> food;
 
 	GuiAnimal product;
