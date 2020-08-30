@@ -112,6 +112,7 @@ public:
 	Position randomFieldPos();
 	Position findShed();
 
+	QSet<QString>& foodSettings();
 	void addFoodSetting( QString itemSID, QString materialSID );
 	void removeFoodSetting( QString itemSID, QString materialSID );
 	void addFood( unsigned int itemID );

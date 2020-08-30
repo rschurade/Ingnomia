@@ -187,6 +187,48 @@ private:
 	NS_DECLARE_REFLECTION( PlantSelectRow, Noesis::BaseComponent )
 };
 
+
+
+class FoodSelectEntry : public Noesis::BaseComponent
+{
+public:
+	FoodSelectEntry( const GuiPastureFoodItem& item, AgricultureProxy* proxy );
+
+	const char* GetName() const;
+
+	bool getChecked() const;
+	void setChecked( bool value );
+
+private:
+	Noesis::String m_name;
+	QString m_itemSID;
+	QString m_materialSID;
+	bool m_checked = false;
+
+	AgricultureProxy* m_proxy = nullptr;
+
+	const Noesis::ImageSource* getBitmapSource() const
+	{
+		return m_bitmapSource;
+	}
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapSource;
+
+	NS_DECLARE_REFLECTION( FoodSelectEntry, Noesis::BaseComponent )
+};
+
+class FoodSelectRow : public Noesis::BaseComponent
+{
+public:
+	FoodSelectRow( QList<GuiPastureFoodItem> plants, AgricultureProxy* proxy );
+
+private:
+	Noesis::ObservableCollection<FoodSelectEntry>* GetFoods() const;
+
+	Noesis::Ptr<Noesis::ObservableCollection<FoodSelectEntry>> m_entries;
+
+	NS_DECLARE_REFLECTION( FoodSelectRow, Noesis::BaseComponent )
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class AgricultureModel final : public NoesisApp::NotifyPropertyChangedBase
 {
@@ -226,6 +268,7 @@ private:
 	const char* GetShowPlantSelect() const;
 	const char* GetShowAnimalSelect() const;
 	const char* GetShowTreeSelect() const;
+	const char* GetShowPastureFoodSelect() const;
 
 	const char* GetTilled() const;
 	const char* GetPlanted() const;
@@ -279,6 +322,12 @@ private:
 	}
 	NoesisApp::DelegateCommand m_manageAnimalsBackCmd;
 
+	void onShowPastureFood( BaseComponent* param );
+	const NoesisApp::DelegateCommand* GetShowPastureFoodCmd() const
+	{
+		return &m_showPastureFoodCmd;
+	}
+	NoesisApp::DelegateCommand m_showPastureFoodCmd;
 
 	Noesis::ObservableCollection<PlantSelectRow>* GetPlants() const
 	{
@@ -303,6 +352,12 @@ private:
 		return m_pastureAnimals;
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<PastureAnimalEntry>> m_pastureAnimals;
+
+	Noesis::ObservableCollection<FoodSelectRow>* GetFoods() const
+	{
+		return m_foodRows;
+	}
+	Noesis::Ptr<Noesis::ObservableCollection<FoodSelectRow>> m_foodRows;
 
 	AgricultureProxy* m_proxy = nullptr;
 
@@ -331,6 +386,7 @@ private:
 	
 	bool m_productSelect = false;
 	bool m_manageWindow = false;
+	bool m_pastureFoodSelect = false;
 
 	QString m_gui;
 

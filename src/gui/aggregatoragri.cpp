@@ -254,6 +254,8 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 			m_pastureInfo.harvest     = past->harvest();
 			m_pastureInfo.harvestHay  = past->harvestHay();
 
+			m_pastureInfo.food.clear();
+
 			if ( !past->animalType().isEmpty() )
 			{
 				past->getInfo( m_pastureInfo.numPlots, m_pastureInfo.numMale, m_pastureInfo.numFemale );
@@ -262,6 +264,22 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 				m_pastureInfo.maxMale    = past->m_properties.maxMale;
 				m_pastureInfo.maxFemale  = past->m_properties.maxFemale;
 				m_pastureInfo.total      = m_pastureInfo.numMale + m_pastureInfo.numFemale;
+
+				auto foodSettings = past->foodSettings();
+
+				auto foods = DB::select( "Food", "Animals", past->animalType() ).toString();
+
+				for( auto food : foods.split( "|" ) )
+				{
+					auto mats = Global::inv().materialsForItem( food, 0 );
+
+					for( auto mat : mats )
+					{
+						QString name = S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + food );
+						GuiPastureFoodItem pfi{ food, mat, name, foodSettings.contains( food + "_" + mat ) };
+						m_pastureInfo.food.append( pfi );
+					}
+				}
 			}
 			else
 			{
@@ -596,4 +614,28 @@ void AggregatorAgri::onSetButchering( unsigned int animalID, bool value )
 void AggregatorAgri::onRequestPastureAnimalInfo( unsigned int pastureID )
 {
 	onRequestProductInfo( AgriType::Pasture, pastureID );
+}
+
+void AggregatorAgri::onRequestPastureFoodInfo( unsigned int pastureID )
+{
+	onRequestProductInfo( AgriType::Pasture, pastureID );
+}
+
+void AggregatorAgri::onSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked )
+{
+	if ( m_pastureInfo.ID == pastureID )
+	{
+		auto pasture = Global::fm().getPasture( pastureID );
+		if ( pasture )
+		{
+			if( checked )
+			{
+				pasture->addFoodSetting( itemSID, materialSID );
+			}
+			else
+			{
+				pasture->removeFoodSetting( itemSID, materialSID );
+			}
+		}
+	}
 }

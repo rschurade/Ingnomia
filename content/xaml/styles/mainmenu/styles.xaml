@@ -578,6 +578,31 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
+	
+	
+	<DataTemplate x:Key="FoodEntryTemplate">
+		<ToggleButton Style="{StaticResource ButtonStyle1}" IsChecked="{Binding Checked}" >
+			<StackPanel>
+				<Image Source="{Binding Image}" />
+			</StackPanel>
+			<Button.ToolTip>
+				<StackPanel Background="#FF365264">
+					<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
+				</StackPanel>
+			</Button.ToolTip>
+		</ToggleButton>
+	</DataTemplate>
+	
+	<DataTemplate x:Key="FoodRowTemplate">
+		<ItemsControl  ItemsSource="{Binding Foods}" ItemTemplate="{StaticResource FoodEntryTemplate}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+		</ItemsControl>
+	</DataTemplate>
+	
 
 	<DataTemplate x:Key="AnimalEntryTemplate">
 		<Button x:Name="AET_Button" Style="{StaticResource SquareButton}" Width="50" 

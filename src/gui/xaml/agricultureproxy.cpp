@@ -48,6 +48,8 @@ AgricultureProxy::AgricultureProxy( QObject* parent ) :
 	connect( this, &AgricultureProxy::signalSetMaxFemale, EventConnector::getInstance().aggregatorAgri(), &AggregatorAgri::onSetMaxFemale, Qt::QueuedConnection );
 	connect( this, &AgricultureProxy::signalSetButchering, EventConnector::getInstance().aggregatorAgri(), &AggregatorAgri::onSetButchering, Qt::QueuedConnection );
 	connect( this, &AgricultureProxy::signalRequestPastureAnimalInfo, EventConnector::getInstance().aggregatorAgri(), &AggregatorAgri::onRequestPastureAnimalInfo, Qt::QueuedConnection );
+	connect( this, &AgricultureProxy::signalRequestPastureFoodInfo, EventConnector::getInstance().aggregatorAgri(), &AggregatorAgri::onRequestPastureFoodInfo, Qt::QueuedConnection );
+	connect( this, &AgricultureProxy::signalSetFoodItemChecked, EventConnector::getInstance().aggregatorAgri(), &AggregatorAgri::onSetFoodItemChecked, Qt::QueuedConnection );
 }
 
 AgricultureProxy::~AgricultureProxy()
@@ -179,4 +181,14 @@ void AgricultureProxy::setButchering( unsigned int animalId, bool value )
 void AgricultureProxy::requestPastureAnimalInfo()
 {
 	emit signalRequestPastureAnimalInfo( m_AgricultureID );
+}
+
+void AgricultureProxy::requestPastureFoodInfo()
+{
+	emit signalRequestPastureFoodInfo( m_AgricultureID );
+}
+
+void AgricultureProxy::setFoodItemChecked( QString itemSID, QString materialSID, bool checked )
+{
+	emit signalSetFoodItemChecked( m_AgricultureID, itemSID, materialSID, checked );
 }

@@ -838,6 +838,11 @@ Position Pasture::findShed()
 	return Position();
 }
 
+QSet<QString>& Pasture::foodSettings()
+{
+	return m_properties.foodSettings;
+}
+
 void Pasture::addFoodSetting( QString itemSID, QString materialSID )
 {
 	m_properties.foodSettings.insert( itemSID + "_" + materialSID );

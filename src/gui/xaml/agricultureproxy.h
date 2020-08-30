@@ -46,8 +46,11 @@ public:
 	void requestGlobalTreeInfo();
 
 	void requestPastureAnimalInfo();
+	void requestPastureFoodInfo();
 
 	void setButchering( unsigned int animalId, bool value );
+
+	void setFoodItemChecked( QString itemSID, QString materialSID, bool checked );
 
 private:
 	IngnomiaGUI::AgricultureModel* m_parent = nullptr;
@@ -76,4 +79,6 @@ signals:
 	void signalSetMaxFemale( unsigned int designationID, int max );
 	void signalSetButchering( unsigned int animalId, bool value );
 	void signalRequestPastureAnimalInfo( unsigned int pastureID );
+	void signalRequestPastureFoodInfo( unsigned int pastureID );
+	void signalSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked );
 };

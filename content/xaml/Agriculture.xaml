@@ -148,11 +148,38 @@
 								ItemsSource="{Binding Priorities}"
 								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"  
 								ItemTemplate="{StaticResource ItemTemplate}" />
-				<CheckBox x:Name="CBSuspendA" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5" FontSize="16"/>
-				<CheckBox x:Name="CBTameA" Content="Tame wild animals" IsChecked="{Binding Tame, Mode=TwoWay}" Margin="10,5,10,5" FontSize="16"/>
-				<CheckBox x:Name="CBHarvestA" Content="Harvest animals" IsChecked="{Binding Harvest, Mode=TwoWay}" Margin="10,5,10,5" FontSize="16"/>
-				<CheckBox x:Name="CBHarvestHayA" Content="Harvest hay" IsChecked="{Binding HarvestHay, Mode=TwoWay}" Margin="10,5,10,5" FontSize="16"/>
+				<CheckBox x:Name="CBSuspendA" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16"/>
+				<CheckBox x:Name="CBTameA" Content="Tame wild animals" IsChecked="{Binding Tame, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16"/>
+				<CheckBox x:Name="CBHarvestA" Content="Harvest animals" IsChecked="{Binding Harvest, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16"/>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox x:Name="CBHarvestHayA" Content="Harvest hay" IsChecked="{Binding HarvestHay, Mode=TwoWay}" Margin="10,4,10,4" FontSize="16" MinWidth="200"/>
+					<TextBlock Grid.Column="0" FontSize="16" Text="0/" TextAlignment="Right" MinWidth="100" Margin="10,4,10,4"/>
+					<TextBox  FontSize="16"  Text="{Binding MaxHay}" MinWidth="80" Margin="10,4,10,4"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Grid.Column="0" FontSize="16" Text="Stored Food" MinWidth="200" Margin="10,4,10,4"/>
+					<TextBlock Grid.Column="0" FontSize="16" Text="0/0" MinWidth="100" Margin="10,4,10,4"/>
+					<Button Width="80" Content="Settings" Command="{Binding CmdShowPastureFood}" CommandParameter="Show" Margin="10,4,10,0"/>
+				</StackPanel>
 			</StackPanel>
+			
+			<Grid x:Name="TabPastureFood" Visibility="{Binding ShowPastureFoodSelect}" >
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="8*"/>
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Horizontal" Grid.Row="0">
+					<Button Width="80" Content="Back" Command="{Binding CmdShowPastureFood}" CommandParameter="Back" />
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Select food for troughs" Margin="10,5,10,5" />
+				</StackPanel>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding FoodRows}" ItemTemplate="{StaticResource FoodRowTemplate}">
+					
+					</ItemsControl>
+                </ScrollViewer>
+			</Grid>
+			
+			
 			
 			<Grid x:Name="TabManageAnimals" Visibility="{Binding ShowManageWindow}" >
 				<Grid.RowDefinitions>

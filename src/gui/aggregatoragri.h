@@ -90,6 +90,14 @@ struct GuiFarmInfo
 };
 Q_DECLARE_METATYPE( GuiFarmInfo )
 
+struct GuiPastureFoodItem
+{
+	QString itemSID;
+	QString materialSID;
+	QString name;
+	bool checked = false;
+};
+
 struct GuiPastureInfo
 {
 	unsigned int ID = 0;
@@ -111,6 +119,8 @@ struct GuiPastureInfo
 	int maxMale    = 0;
 	int maxFemale  = 0;
 	int animalSize = 0;
+
+	QList<GuiPastureFoodItem> food;
 
 	GuiAnimal product;
 	QList<GuiPastureAnimal> animals;
@@ -181,6 +191,9 @@ public slots:
 
 	void onSetButchering( unsigned int animalID, bool value );
 	void onRequestPastureAnimalInfo( unsigned int pastureID );
+	void onRequestPastureFoodInfo( unsigned int pastureID );
+
+	void onSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked );
 
 signals:
 	void signalShowAgri( unsigned int id );
