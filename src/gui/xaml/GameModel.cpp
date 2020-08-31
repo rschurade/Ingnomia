@@ -355,49 +355,77 @@ GameModel::GameModel()
 
 void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )
 {
-	_year = ( "Year " + QString::number( year ) ).toStdString().c_str();
-
-	QString dayString;
-
-	switch ( day )
 	{
-		case 1:
-			dayString = "1st day of ";
-			break;
-		case 2:
-			dayString = "2nd day of ";
-			break;
-		case 3:
-			dayString = "3rd day of ";
-			break;
-		default:
-			dayString = QString::number( day ) + "th day of ";
-			break;
+		const auto tmp = ( "Year " + QString::number( year ) ).toStdString();
+		if ( tmp.compare( _year.Str() ) != 0 )
+		{
+			_year = tmp.c_str();
+			OnPropertyChanged( "Year" );
+		}
 	}
-	_day = ( dayString + season ).toStdString().c_str();
 
-	_time = ( QString( "%1" ).arg( hour, 2, 10, QChar( '0' ) ) + ":" + QString( "%1" ).arg( minute, 2, 10, QChar( '0' ) ) ).toStdString().c_str();
+	{
+		QString dayString;
 
-	_sun = sunStatus.toStdString().c_str();
+		switch ( day )
+		{
+			case 1:
+				dayString = "1st day of ";
+				break;
+			case 2:
+				dayString = "2nd day of ";
+				break;
+			case 3:
+				dayString = "3rd day of ";
+				break;
+			default:
+				dayString = QString::number( day ) + "th day of ";
+				break;
+		}
+		const auto tmp = ( dayString + season ).toStdString();
+		if ( tmp.compare( _year.Str() ) != 0 )
+		{
+			_day = tmp.c_str();
+			OnPropertyChanged( "Day" );
+		}
+	}
 
-	OnPropertyChanged( "Year" );
-	OnPropertyChanged( "Day" );
-	OnPropertyChanged( "Time" );
-	OnPropertyChanged( "Sun" );
+	{
+		_time = ( QString( "%1" ).arg( hour, 2, 10, QChar( '0' ) ) + ":" + QString( "%1" ).arg( minute, 2, 10, QChar( '0' ) ) ).toStdString().c_str();
+		OnPropertyChanged( "Time" );
+	}
 
-	QString path = "Images/clock/";
-	if( season == "Spring" ) path += "s";
-	else if( season == "Summer" ) path += "u";
-	else if( season == "Autumn" ) path += "v";
-	else path += "w";
+	{
+		const auto tmp = sunStatus.toStdString();
+		if ( tmp.compare( _sun.Str() ) != 0 )
+		{
+			_sun = tmp.c_str();
+			OnPropertyChanged( "Sun" );
+		}
+	}
 
-	hour /= 2;
-	path += QStringLiteral( "%1" ).arg( hour, 2, 10, QLatin1Char( '0' ) );
-	path += ".png";
+	{
+		QString path = "Images/clock/";
+		if ( season == "Spring" )
+			path += "s";
+		else if ( season == "Summer" )
+			path += "u";
+		else if ( season == "Autumn" )
+			path += "v";
+		else
+			path += "w";
 
+		hour /= 2;
+		path += QStringLiteral( "%1" ).arg( hour, 2, 10, QLatin1Char( '0' ) );
+		path += ".png";
 
-	_timeImagePath = path.toStdString().c_str();
-	OnPropertyChanged( "TimeImagePath" );
+		const auto tmp = path.toStdString();
+		if ( tmp.compare( _timeImagePath.Str() ) != 0 )
+		{
+			_timeImagePath = tmp.c_str();
+			OnPropertyChanged( "TimeImagePath" );
+		}
+	}
 
 }
 
