@@ -248,23 +248,6 @@ void main()
 
 	const bool uIsWall = aPos.z != 0;
 
-	vec2 vVertexCoords;
-	if( ( vFlags & TF_OVERSIZE ) != 0 )
-	{
-		// Round to full sprite extent, for sprites which are not adhering to regular tile bounding boxes
-		vVertexCoords.x = round(aPos.x);
-		vVertexCoords.y = round(aPos.y);
-	}
-	else
-	{
-		vVertexCoords = aPos.xy;
-	}
-
-	vTexCoords = vec2( vVertexCoords.x, 1.0 - vVertexCoords.y );
-	block1 = uvec4(floorSprite, jobFloorSprite, wallSprite, jobWallSprite);
-	block2 = uvec4(itemSprite, creatureSprite, vFluidLevelPacked1, uIsWall);
-	block3 = uvec4(vFlags, vFlags2, vLightLevel, vVegetationLevel);
-
 	// Check if rendering is applicable at all for the current tile and rendering pass...
 	if(
 		((vFlags & TF_UNDISCOVERED) != 0 && uWallsLowered)
@@ -289,6 +272,23 @@ void main()
 	}
 	else
 	{
+		vec2 vVertexCoords;
+		if( ( vFlags & TF_OVERSIZE ) != 0 )
+		{
+			// Round to full sprite extent, for sprites which are not adhering to regular tile bounding boxes
+			vVertexCoords.x = floor(aPos.x + 0.5);
+			vVertexCoords.y = floor(aPos.y + 0.5);
+		}
+		else
+		{
+			vVertexCoords = aPos.xy;
+		}
+
+		vTexCoords = vec2( vVertexCoords.x, 1.0 - vVertexCoords.y );
+		block1 = uvec4(floorSprite, jobFloorSprite, wallSprite, jobWallSprite);
+		block2 = uvec4(itemSprite, creatureSprite, vFluidLevelPacked1, uIsWall);
+		block3 = uvec4(vFlags, vFlags2, vLightLevel, vVegetationLevel);
+
 		vec3 worldPos = project( rotate( tile ), vVertexCoords.xy, uIsWall );
 		gl_Position = uTransform * vec4( worldPos, 1.0 );
 	}
