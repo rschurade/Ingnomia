@@ -467,6 +467,7 @@ void Workshop::addJob( QString craftID, int mode, int number, QStringList mats )
 		ii.itemSID     = compRow.value( "ItemID" ).toString();
 		ii.amount      = compRow.value( "Amount" ).toInt();
 		ii.materialSID = mats[i];
+		ii.requireSame = compRow.value( "RequireSame" ).toBool();
 		cj.requiredItems.append( ii );
 	}
 	m_jobList.append( cj );
@@ -1187,10 +1188,12 @@ void Workshop::setLinkedStockpile( bool link )
 	{
 		m_properties.linkedStockpile = 0;
 	}
+	qDebug() << "linked stockpile:" << m_properties.linkedStockpile;
 }
 
 unsigned int Workshop::getPossibleStockpile()
 {
+	qDebug() << "Workshop::getPossibleStockpile()";
 	const Position candidates[]  = {
 		m_properties.posIn.northOf(),
 		m_properties.posIn.westOf(),
@@ -1200,7 +1203,7 @@ unsigned int Workshop::getPossibleStockpile()
 	Position spPos;
 	bool isStockpile = false;
 
-	for ( const auto& candidate : candidates)
+	for ( const auto& candidate : candidates )
 	{
 		if ( Global::w().getTileFlag( candidate ) & TileFlag::TF_STOCKPILE )
 		{

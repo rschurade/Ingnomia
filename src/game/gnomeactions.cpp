@@ -738,8 +738,9 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
 					if ( matAllowed )
 					{
-						if ( sp->count( itemSID, materialSID ) < count )
+						if ( sp->count( itemSID, mat ) < count )
 						{
+							qDebug() << "##4" << itemSID << materialSID;
 							return false;
 						}
 						for ( int i = 0; i < count; ++i )
@@ -786,6 +787,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 				}
 				else
 				{
+					qDebug() << "##3 restriction";
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
