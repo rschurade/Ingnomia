@@ -410,6 +410,13 @@ void IO::sanitize()
 				}
 			}
 		}
+		for( auto& ws : Global::wsm().workshops() )
+		{
+			for( auto& vitem : ws->sourceItems() )
+			{
+				Global::inv().pickUpItem( vitem.toUInt() );
+			}
+		}
 	}
 }
 
