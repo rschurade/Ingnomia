@@ -1,0 +1,126 @@
+name: CMake
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RelWithDebInfo
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-2019]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get latest CMake
+      # Using 'latest' branch, the latest CMake is installed.
+      uses: lukka/get-cmake@latest
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: '${{ github.workspace }}/Qt/'
+        key: ${{ runner.os }}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        dir: '${{ github.workspace }}/Qt/'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    - name: Download Steam
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-steam
+      with:
+        file-url: 'https://github.com/Ext3h/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip'
+
+    - name: Unpack Steam
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-steam.outputs.file-path }}
+        pathTarget: steamworks_sdk
+
+    - name: Download Noesis
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-noesis
+      with:
+        file-url: 'https://github.com/Ext3h/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.4.zip'
+
+    - name: Unpack Noesis
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-noesis.outputs.file-path }}
+        pathTarget: noesis_sdk
+
+    - name: Fix permissions
+      if: (!startsWith(matrix.os, 'windows'))
+      shell: bash
+      run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
+      
+    - name: Find msbuild
+      if: (startsWith(matrix.os, 'windows'))
+      uses: microsoft/setup-msbuild@v1.0.1
+      id: msbuild
+
+    - name: Build Noesis App (Linux)
+      if: (!startsWith(matrix.os, 'windows'))
+      shell: bash
+      working-directory: ${{github.workspace}}/noesis_sdk/Build
+      run: make -f NoesisGUI-linux-x86_64.mk CONFIG=Debug NoesisApp
+
+    - name: Build Noesis App (Windows)
+      if: (startsWith(matrix.os, 'windows'))
+      shell: pwsh
+      working-directory: ${{github.workspace}}/noesis_sdk/Build
+      run: |
+        MSBuild.exe NoesisGUI-win-x86_64.sln -target:NoesisApp:Rebuild -p:Configuration=Debug -m
+
+    - name: Create Build Environment
+      run: cmake -E make_directory build
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      env:
+        NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
+        NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
+      run: |
+        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" 
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        cmake --build . --config ${{env.BUILD_TYPE}} --target Ingnomia
+        
+    - name: Install
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        cmake --install . --prefix ../install --config ${{env.BUILD_TYPE}}
+
+    - name: Build Blend project
+      if: (startsWith(matrix.os, 'windows'))
+      working-directory: ${{github.workspace}}/gui
+      shell: pwsh
+      # Ignore errors for now
+      run: |
+        MSBuild.exe gui.csproj ; exit 0
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{matrix.os}}
+        path: |
+          install/
+          !**./*.iobj
+          !**./*.ipdb
