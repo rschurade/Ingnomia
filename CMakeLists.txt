@@ -80,19 +80,6 @@ target_sources(${PROJECT_NAME}
 add_subdirectory(src) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
-if (UNIX)
-	# Shared libraries
-	pkg_check_modules(shared
-		REQUIRED IMPORTED_TARGET
-			Qt5Core
-			Qt5Xml
-			Qt5Sql
-			Qt5OpenGL
-			Qt5Network
-			gl
-	)
-endif()
-
 if(UNIX)
 	find_library(STEAM steam_api
 		HINTS
@@ -268,6 +255,7 @@ if(WIN32)
 	)
 
 	INCLUDE_EXTERNAL_MSPROJECT("Blend" ${CMAKE_CURRENT_SOURCE_DIR}/gui/gui.csproj)
+	set_target_properties("Blend" PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 	target_link_libraries(${PROJECT_NAME}
 		PRIVATE
