@@ -594,18 +594,15 @@ void IO::loadWorld( QDataStream& in )
 	world.clear();
 	world.reserve( dimX * dimY * dimZ );
 
-	quint16 wallType;
-	quint16 floorType;
-	quint8 flow;
-
-#ifdef SAVEREGIONINFO
-	quint32 region;
-#endif
-
 	while ( !in.atEnd() )
 	{
+		quint16 wallType;
+		quint16 floorType;
+		quint64 tileFlags;
+		quint8 flow;
+
 		Tile tile;
-		in >> tile.flags;
+		in >> tileFlags;
 		in >> wallType;
 		in >> tile.wallMaterial;
 		in >> floorType;
@@ -620,6 +617,7 @@ void IO::loadWorld( QDataStream& in )
 		in >> tile.wallSpriteUID;
 		in >> tile.floorSpriteUID;
 		in >> tile.itemSpriteUID;
+		tile.flags     = (TileFlag)tileFlags;
 		tile.wallType  = (WallType)wallType;
 		tile.floorType = (FloorType)floorType;
 		tile.flow      = (WaterFlow)flow;
