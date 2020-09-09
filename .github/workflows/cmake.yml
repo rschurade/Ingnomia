@@ -116,6 +116,14 @@ jobs:
       # Ignore errors for now
       run: |
         MSBuild.exe gui.csproj ; exit 0
+        
+    - name: Remove old artifacts
+      # Work around default 90 day retention, or this would exceed free storage quota
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '1 hour'
+        skip-tags: true
+        skip-recent: 5
 
     - uses: actions/upload-artifact@v2
       with:
