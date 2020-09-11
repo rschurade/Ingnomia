@@ -22,7 +22,7 @@ cp -r "<EXISTING_INGOMIA_INSTALLATION>/content/tilesheet" /content
 mkdir build && cd build
 cmake .. \
 -DQt5_DIR="<QTINSTALLDIR>/<ARCH>/lib/cmake/Qt5" \
--DSTEAM_SDK_DIR="<STEAMSDKDIR>/sdk" \
+-DSTEAM_SDK_ROOT="<STEAMSDKDIR>/sdk" \
 -DNOESIS_ROOT="<NOESISDIR>" \
 -DNOESIS_LICENSE_NAME="<TRIAL_LICENSE_NAME>" \
 -DNOESIS_LICENSE_KEY="<TRIAL_LICENSE_KEY>"
@@ -53,6 +53,8 @@ If you prefer, you may also try to reproduce bugs reported by other users. The m
 If you know any of C++ or WPF, you can help right away! Feel free to check for open bugs, and hop over to our [Discord](https://discord.gg/DCSmxVD) channel to get you sorted in.
 
 Please provide your contributions in the form of a pull request, rebased onto the current head of development.
+
+When forking the project on Github, you should add `NOESIS_LICENSE_KEY` and `NOESIS_LICENSE_NAME` as secrets in your repositories configuration under Settings/Secrets. If not provided, CI builds will fail for your fork.
 
 #### License ####
 
