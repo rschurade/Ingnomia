@@ -115,8 +115,9 @@ jobs:
       shell: pwsh
       # Ignore errors for now
       run: |
-        MSBuild.exe gui.csproj ; exit 0
-        
+        MSBuild.exe --target:restore gui.csproj
+        MSBuild.exe gui.csproj
+
     - name: Remove old artifacts
       # Work around default 90 day retention, or this would exceed free storage quota
       uses: c-hive/gha-remove-artifacts@v1

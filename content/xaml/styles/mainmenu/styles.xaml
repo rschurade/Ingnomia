@@ -585,11 +585,11 @@
 			<StackPanel>
 				<Image Source="{Binding Image}" />
 			</StackPanel>
-			<Button.ToolTip>
+            <ToggleButton.ToolTip>
 				<StackPanel Background="#FF365264">
 					<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 				</StackPanel>
-			</Button.ToolTip>
+			</ToggleButton.ToolTip>
 		</ToggleButton>
 	</DataTemplate>
 	
