@@ -115,7 +115,7 @@ jobs:
       shell: pwsh
       # Ignore errors for now
       run: |
-        MSBuild.exe --target:restore gui.csproj
+        MSBuild.exe -t:restore gui.csproj
         MSBuild.exe gui.csproj
 
     - name: Remove old artifacts
