@@ -29,11 +29,11 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QDir>
+#include <QFileIconProvider>
 #include <QStandardPaths>
 #include <QSurfaceFormat>
 #include <QWindow>
 #include <QtWidgets/QApplication>
-#include <QFileIconProvider>
 
 #include <iostream>
 #ifdef _WIN32
@@ -236,5 +236,12 @@ INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT n
 {
 	return main( 0, nullptr );
 	return 0;
+}
+
+extern "C"
+{
+	// Request use of dedicated GPUs for NVidia/AMD/iGPU mixed setups
+	__declspec( dllexport ) DWORD NvOptimusEnablement                  = 1;
+	__declspec( dllexport ) DWORD AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif // _WIN32
