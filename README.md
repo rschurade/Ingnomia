@@ -2,7 +2,7 @@
 
 ## How do I get set up? ##
 
-The following steps describe how to compile the code and get the game running on Windows.
+The following steps describe how to compile the code and get the game running on Windows and Linux.
 
 ### Dependencies ###
 
@@ -10,7 +10,7 @@ The following steps describe how to compile the code and get the game running on
 * Qt 5.14.1
 * Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
 * [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
-  Download the native SDK, open the Visual Studio solution and build the NoesisApp in *Debug* configuration.
+  Download the native SDK for your OS and build the NoesisApp in *Debug* configuration.
   For using Noesis in a development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 * CMake 3.16 or newer
