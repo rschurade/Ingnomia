@@ -42,7 +42,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-steam
       with:
-        file-url: 'https://github.com/Ext3h/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip'
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip'
 
     - name: Unpack Steam
       uses: DuckSoft/extract-7z-action@v1.0
@@ -54,7 +54,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-noesis
       with:
-        file-url: 'https://github.com/Ext3h/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.4.zip'
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.4.zip'
 
     - name: Unpack Noesis
       uses: DuckSoft/extract-7z-action@v1.0
