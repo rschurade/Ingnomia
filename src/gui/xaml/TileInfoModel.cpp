@@ -356,10 +356,12 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 
 	m_jobName      = tileInfo.jobName.toStdString().c_str();
 	m_jobWorker    = tileInfo.jobWorker.toStdString().c_str();
+	m_jobPriority  = tileInfo.jobPriority.toStdString().c_str();
 	m_requiredTool = tileInfo.requiredTool.toStdString().c_str();
 
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
+	OnPropertyChanged( "JobPriority" );
 	OnPropertyChanged( "RequiredTool" );
 
 	OnPropertyChanged( "TileID" );
@@ -691,6 +693,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	
 	NsProp( "JobName", &TileInfoModel::GetJobName );
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
+	NsProp( "JobWorker", &TileInfoModel::GetJobPriority );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );
