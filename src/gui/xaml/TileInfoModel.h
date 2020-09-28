@@ -186,6 +186,10 @@ private:
 	{
 		return m_jobWorker.Str();
 	}
+	const char* GetJobPriority() const
+	{
+		return m_jobPriority.Str();
+	}
 	const char* GetRequiredTool() const
 	{
 		return m_requiredTool.Str();
@@ -220,6 +224,7 @@ private:
 
 	Noesis::String m_jobName;
 	Noesis::String m_jobWorker;
+	Noesis::String m_jobPriority;
 	Noesis::String m_requiredTool;
 
 	unsigned int m_designationID = 0;

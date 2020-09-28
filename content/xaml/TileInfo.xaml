@@ -144,6 +144,10 @@
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobWorker}" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
+					        <TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Job Priority:" />
+					  	<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobPriority}" />
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
 						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required tool:" />
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredTool}" />
 					</StackPanel>
