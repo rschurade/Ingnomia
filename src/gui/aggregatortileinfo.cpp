@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <string>
 
 #include "aggregatortileinfo.h"
 
@@ -198,7 +197,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				m_tileInfo.requiredTool = rt.type + " level " + QString::number( rt.level );
 			}
 
-			m_tileInfo.jobPriority = std::to_string(job->priority()).c_str();
+			m_tileInfo.jobPriority = QString::number(job->priority());
 		}
 
 		m_tileInfo.designationID   = 0;
