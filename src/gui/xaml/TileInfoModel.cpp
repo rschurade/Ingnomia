@@ -688,7 +688,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 
 	NsProp( "JobName", &TileInfoModel::GetJobName );
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
-	NsProp( "JobWorker", &TileInfoModel::GetJobPriority );
+	NsProp( "JobPriority", &TileInfoModel::GetJobPriority );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );
