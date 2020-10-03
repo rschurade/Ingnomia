@@ -1,7 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.8.0
+## [unreleased]
+
+### Fixed
+- message window not disappearing after clicking an answer button if game is unpaused, 
+  game not possible to unpause now when message window is open
+### Added
+
+### Changed
+
+### Removed
+
+
+
+## [0.8.0]
 ### Fixed
 - Isolated simulation thread from UI thread, so they don't share data.
   UI components are now split into a UI controller living in t he UI thread and a data aggregation component living in the simulation thread.

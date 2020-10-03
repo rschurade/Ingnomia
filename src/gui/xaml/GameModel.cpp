@@ -755,11 +755,18 @@ void GameModel::setShowMilitary( bool value )
 
 void GameModel::setGameSpeed( GameSpeed value )
 {
-	if ( GameManager::getInstance().gameSpeed() != value )
+	if( m_showMessageWindow )
 	{
-		GameManager::getInstance().setGameSpeed( value );
+		GameManager::getInstance().setPaused( true );
 	}
-	GameManager::getInstance().setPaused( false );
+	else
+	{
+		if ( GameManager::getInstance().gameSpeed() != value )
+		{
+			GameManager::getInstance().setGameSpeed( value );
+		}
+		GameManager::getInstance().setPaused( false );
+	}
 	OnPropertyChanged( "Paused" );
 	OnPropertyChanged( "NormalSpeed" );
 	OnPropertyChanged( "FastSpeed" );
@@ -1352,11 +1359,8 @@ void GameModel::onMessageButtonCmd( BaseComponent* param )
 			auto gme = m_messageQueue.takeFirst();
 			eventMessage( gme.id, gme.title, gme.msg, gme.pause, gme.yesno );
 		}
-		else
-		{
-			OnPropertyChanged( "ShowMessage" );
-		}
 	}
+	OnPropertyChanged( "ShowMessage" );
 }
 
 void GameModel::eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno )
