@@ -18,9 +18,7 @@
 #pragma once
 
 #include "../base/tile.h"
-
 #include "../game/roommanager.h"
-
 #include "aggregatorstockpile.h"
 
 #include <QObject>
@@ -59,6 +57,7 @@ struct GuiTileInfo
 
 	QString jobName;
 	QString jobWorker;
+	QString jobPriority;
 	QString requiredTool;
 
 	QList<GuiTICreatureInfo> creatures;
@@ -72,8 +71,8 @@ struct GuiTileInfo
 
 	RoomType roomType = RoomType::NotSet;
 	bool hasAlarmBell = false;
-	bool isEnclosed = false;
-	bool hasRoof = false;
+	bool isEnclosed   = false;
+	bool hasRoof      = false;
 	QString beds;
 	bool alarm = false;
 };

@@ -128,7 +128,10 @@ public:
 	const char* GetName() const;
 	const char* GetID() const;
 
-	unsigned int uid() { return m_id; }
+	unsigned int uid()
+	{
+		return m_id;
+	}
 
 private:
 	Noesis::String m_name;
@@ -186,6 +189,10 @@ private:
 	{
 		return m_jobWorker.Str();
 	}
+	const char* GetJobPriority() const
+	{
+		return m_jobPriority.Str();
+	}
 	const char* GetRequiredTool() const
 	{
 		return m_requiredTool.Str();
@@ -220,15 +227,16 @@ private:
 
 	Noesis::String m_jobName;
 	Noesis::String m_jobWorker;
+	Noesis::String m_jobPriority;
 	Noesis::String m_requiredTool;
 
 	unsigned int m_designationID = 0;
 	Noesis::String m_designationName;
 	TileFlag m_designationFlag = TileFlag::TF_NONE;
-	RoomType m_roomType = RoomType::NotSet;
-	bool m_hasRoof = false;
-	bool m_isEnclosed = false;
-	bool m_hasAlarmBell = false;
+	RoomType m_roomType        = RoomType::NotSet;
+	bool m_hasRoof             = false;
+	bool m_isEnclosed          = false;
+	bool m_hasAlarmBell        = false;
 	Noesis::String m_beds;
 	bool m_alarm = false;
 
@@ -247,12 +255,11 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<TerrainTabItem>> _terrainTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<ItemTabItem>> _itemTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _creatureTabItems;
-	
+
 	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _possibleTennants;
 	void SetTennant( CreatureTabItem* tennant );
 	CreatureTabItem* GetTennant() const;
 	CreatureTabItem* m_tennant = nullptr;
-
 
 	Noesis::String m_miniStockpileName;
 	Noesis::Ptr<Noesis::ObservableCollection<TabItem>> _miniSPContents;
@@ -272,7 +279,6 @@ private:
 
 	bool GetAlarm() const;
 	void SetAlarm( bool value );
-
 
 	NS_DECLARE_REFLECTION( TileInfoModel, NotifyPropertyChangedBase )
 };

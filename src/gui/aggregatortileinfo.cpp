@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
 #include "aggregatortileinfo.h"
 
 #include "../base/counter.h"
@@ -179,6 +180,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		auto job                = Global::jm().getJobAtPos( pos );
 		m_tileInfo.jobName      = "";
 		m_tileInfo.jobWorker    = "";
+		m_tileInfo.jobPriority  = "";
 		m_tileInfo.requiredTool = "";
 		if ( job )
 		{
@@ -194,6 +196,8 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			{
 				m_tileInfo.requiredTool = rt.type + " level " + QString::number( rt.level );
 			}
+
+			m_tileInfo.jobPriority = QString::number( job->priority() );
 		}
 
 		m_tileInfo.designationID   = 0;

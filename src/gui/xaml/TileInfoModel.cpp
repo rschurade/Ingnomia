@@ -153,7 +153,7 @@ TileInfoModel::TileInfoModel()
 	_cmdTab.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdTab ) );
 	_cmdTerrain.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdTerrain ) );
 	_cmdManage.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdManage ) );
-	_miniSPContents = *new ObservableCollection<TabItem>();
+	_miniSPContents   = *new ObservableCollection<TabItem>();
 	_possibleTennants = *new ObservableCollection<CreatureTabItem>();
 }
 
@@ -208,31 +208,31 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 		if ( flags & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE ) )
 		{
 			m_proxy->sendManageCommand( m_tileID );
-			if( _mode == TileInfoMode::Stockpile )
+			if ( _mode == TileInfoMode::Stockpile )
 			{
 				_mode = TileInfoMode::Designation;
 			}
 		}
-		else if( flags & TileFlag::TF_STOCKPILE )
+		else if ( flags & TileFlag::TF_STOCKPILE )
 		{
 			m_proxy->requestStockpileItems( m_tileID );
-			if( _mode == TileInfoMode::Designation )
+			if ( _mode == TileInfoMode::Designation )
 			{
 				_mode = TileInfoMode::Stockpile;
 			}
 		}
-		else if( flags & TileFlag::TF_WORKSHOP )
+		else if ( flags & TileFlag::TF_WORKSHOP )
 		{
 			_mode = TileInfoMode::Terrain;
 		}
-		else if( flags & TileFlag::TF_ROOM )
+		else if ( flags & TileFlag::TF_ROOM )
 		{
-			m_roomType = tileInfo.roomType;
-			m_hasRoof = tileInfo.hasRoof;
-			m_isEnclosed = tileInfo.isEnclosed;
+			m_roomType     = tileInfo.roomType;
+			m_hasRoof      = tileInfo.hasRoof;
+			m_isEnclosed   = tileInfo.isEnclosed;
 			m_hasAlarmBell = tileInfo.hasAlarmBell;
-			m_beds = tileInfo.beds.toStdString().c_str();
-			m_alarm = tileInfo.alarm;
+			m_beds         = tileInfo.beds.toStdString().c_str();
+			m_alarm        = tileInfo.alarm;
 		}
 	}
 	else
@@ -337,18 +337,18 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 
 	_possibleTennants->Clear();
 	m_tennant = nullptr;
-	if( !tileInfo.possibleTennants.empty() )
+	if ( !tileInfo.possibleTennants.empty() )
 	{
 		_possibleTennants->Add( MakePtr<CreatureTabItem>( "unassigned", 0 ) );
-		for( const auto& gnome : tileInfo.possibleTennants )
+		for ( const auto& gnome : tileInfo.possibleTennants )
 		{
 			_possibleTennants->Add( MakePtr<CreatureTabItem>( gnome.text, gnome.id ) );
-			if( tileInfo.tennant == gnome.id )
+			if ( tileInfo.tennant == gnome.id )
 			{
 				m_tennant = _possibleTennants->Get( _possibleTennants->Count() - 1 );
 			}
 		}
-		if( !m_tennant )
+		if ( !m_tennant )
 		{
 			m_tennant = _possibleTennants->Get( 0 );
 		}
@@ -356,10 +356,12 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 
 	m_jobName      = tileInfo.jobName.toStdString().c_str();
 	m_jobWorker    = tileInfo.jobWorker.toStdString().c_str();
+	m_jobPriority  = tileInfo.jobPriority.toStdString().c_str();
 	m_requiredTool = tileInfo.requiredTool.toStdString().c_str();
 
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
+	OnPropertyChanged( "JobPriority" );
 	OnPropertyChanged( "RequiredTool" );
 
 	OnPropertyChanged( "TileID" );
@@ -377,8 +379,6 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	OnPropertyChanged( "Beds" );
 	OnPropertyChanged( "Enclosed" );
 	OnPropertyChanged( "Roofed" );
-
-
 
 	OnPropertyChanged( "ShowTerrain" );
 	OnPropertyChanged( "ShowItems" );
@@ -420,7 +420,6 @@ Noesis::ObservableCollection<CreatureTabItem>* TileInfoModel::getPossibleTennant
 {
 	return _possibleTennants;
 }
-
 
 const NoesisApp::DelegateCommand* TileInfoModel::GetCmdTab() const
 {
@@ -534,7 +533,6 @@ const char* TileInfoModel::GetShowDesignationRoom() const
 	return "Hidden";
 }
 
-
 const char* TileInfoModel::GetShowJob() const
 {
 	if ( _mode == TileInfoMode::Job )
@@ -559,11 +557,10 @@ void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 
 	_miniSPContents->Clear();
 
-	for( auto is : info.summary )
+	for ( auto is : info.summary )
 	{
 		_miniSPContents->Add( MakePtr<IngnomiaGUI::TabItem>( QString::number( is.count ) + " " + is.materialName + " " + is.itemName, "" ) );
 	}
-
 
 	OnPropertyChanged( "MiniStockpileName" );
 	OnPropertyChanged( "MiniStockpileContents" );
@@ -576,13 +573,13 @@ Noesis::ObservableCollection<IngnomiaGUI::TabItem>* TileInfoModel::getMiniSPCont
 
 void TileInfoModel::SetTennant( CreatureTabItem* tennant )
 {
-	if( tennant && m_tennant != tennant )
+	if ( tennant && m_tennant != tennant )
 	{
 		m_tennant = tennant;
 		m_proxy->setTennant( m_designationID, tennant->uid() );
 	}
 }
-	
+
 CreatureTabItem* TileInfoModel::GetTennant() const
 {
 	return m_tennant;
@@ -590,7 +587,7 @@ CreatureTabItem* TileInfoModel::GetTennant() const
 
 const char* TileInfoModel::GetVisRoomAssign() const
 {
-	if( m_roomType == RoomType::PersonalRoom )
+	if ( m_roomType == RoomType::PersonalRoom )
 	{
 		return "Visible";
 	}
@@ -599,7 +596,7 @@ const char* TileInfoModel::GetVisRoomAssign() const
 
 const char* TileInfoModel::GetVisRoomValue() const
 {
-	if( m_roomType == RoomType::PersonalRoom || m_roomType == RoomType::Dining )
+	if ( m_roomType == RoomType::PersonalRoom || m_roomType == RoomType::Dining )
 	{
 		return "Visible";
 	}
@@ -608,7 +605,7 @@ const char* TileInfoModel::GetVisRoomValue() const
 
 const char* TileInfoModel::GetVisBeds() const
 {
-	if( m_roomType == RoomType::Dorm || m_roomType == RoomType::Hospital )
+	if ( m_roomType == RoomType::Dorm || m_roomType == RoomType::Hospital )
 	{
 		return "Visible";
 	}
@@ -617,7 +614,7 @@ const char* TileInfoModel::GetVisBeds() const
 
 const char* TileInfoModel::GetVisAlarm() const
 {
-	if( m_roomType == RoomType::Dining && m_hasAlarmBell )
+	if ( m_roomType == RoomType::Dining && m_hasAlarmBell )
 	{
 		return "Visible";
 	}
@@ -636,16 +633,16 @@ const char* TileInfoModel::GetBeds() const
 
 const char* TileInfoModel::GetEnclosed() const
 {
-	if( m_isEnclosed)
+	if ( m_isEnclosed )
 	{
 		return "yes";
 	}
 	return "no";
 }
-	
+
 const char* TileInfoModel::GetRoofed() const
 {
-	if( m_hasRoof )
+	if ( m_hasRoof )
 	{
 		return "yes";
 	}
@@ -659,7 +656,7 @@ bool TileInfoModel::GetAlarm() const
 
 void TileInfoModel::SetAlarm( bool value )
 {
-	if( m_alarm != value )
+	if ( m_alarm != value )
 	{
 		m_alarm = value;
 		m_proxy->setAlarm( m_designationID, value );
@@ -688,9 +685,10 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "TerrainTab", &TileInfoModel::getTerrainTabItems );
 	NsProp( "ItemTab", &TileInfoModel::getItemTabItems );
 	NsProp( "CreatureTab", &TileInfoModel::getCreatureTabItems );
-	
+
 	NsProp( "JobName", &TileInfoModel::GetJobName );
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
+	NsProp( "JobPriority", &TileInfoModel::GetJobPriority );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );
