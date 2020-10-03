@@ -89,13 +89,13 @@ const char* BuildButton::GetImage() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 {
-	_name = name.toStdString().c_str();
-	_sid  = sid;
-	_type = type;
+	m_name = name.toStdString().c_str();
+	m_sid  = sid;
+	m_type = type;
 
-	_cmdBuild.SetExecuteFunc( MakeDelegate( this, &BuildItem::onCmdBuild ) );
+	m_cmdBuild.SetExecuteFunc( MakeDelegate( this, &BuildItem::onCmdBuild ) );
 
-	_requiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
+	m_requiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
 
 	switch ( type )
 	{
@@ -107,7 +107,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 				{
 					auto item = MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() );
 
-					_requiredItems->Add( item );
+					m_requiredItems->Add( item );
 				}
 			}
 
@@ -121,14 +121,14 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 
 			Util::createBufferForNoesisImage( pm, buffer );
 
-			_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
 		}
 		break;
 		case BuildItemType::Terrain:
 		{
 			for ( auto row : DB::selectRows( "Constructions_Components", sid ) )
 			{
-				_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
+				m_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
 			}
 
 			QStringList mats;
@@ -141,7 +141,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 
 			Util::createBufferForNoesisImage( pm, buffer );
 
-			_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
 		}
 		break;
 		case BuildItemType::Item:
@@ -152,12 +152,12 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 			{
 				for ( auto row : rows )
 				{
-					_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
+					m_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
 				}
 			}
 			else
 			{
-				_requiredItems->Add( MakePtr<NRequiredItem>( sid, 1 ) );
+				m_requiredItems->Add( MakePtr<NRequiredItem>( sid, 1 ) );
 			}
 
 
@@ -171,7 +171,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 
 			Util::createBufferForNoesisImage( pm, buffer );
 
-			_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
 		}
 		break;
 	}
@@ -179,43 +179,55 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 
 const char* BuildItem::GetName() const
 {
-	return _name.Str();
+	return m_name.Str();
 }
 
 QString BuildItem::sid() const
 {
-	return _sid;
+	return m_sid;
 }
 
 Noesis::ObservableCollection<NRequiredItem>* BuildItem::requiredItems() const
 {
-	return _requiredItems;
+	return m_requiredItems;
 }
 
 const NoesisApp::DelegateCommand* BuildItem::GetCmdBuild() const
 {
-	return &_cmdBuild;
+	return &m_cmdBuild;
+}
+
+const char* BuildItem::GetShowReplaceButton() const
+{
+	if( m_type == BuildItemType::Terrain )
+	{
+		if( m_sid.endsWith( "Wall" ) || m_sid.endsWith( "Floor" ) || m_sid.startsWith( "FancyFloor" ) ||  m_sid.startsWith( "FancyWall" ) )
+		{
+			return "Visible";
+		}
+	}
+	return "Hidden";
 }
 
 const ImageSource* BuildItem::getBitmapSource() const
 {
-	return _bitmapSource;
+	return m_bitmapSource;
 }
 
 void BuildItem::onCmdBuild( BaseComponent* param )
 {
 	QStringList mats;
-	for ( int i = 0; i < _requiredItems->Count(); ++i )
+	for ( int i = 0; i < m_requiredItems->Count(); ++i )
 	{
-		auto item = _requiredItems->Get( i );
+		auto item = m_requiredItems->Get( i );
 		auto mat  = item->GetSelectedMaterial();
 		mats.append( mat->sid() );
 	}
 
 	Selection::getInstance().setMaterials( mats );
-	Selection::getInstance().setItemID( _sid );
+	Selection::getInstance().setItemID( m_sid );
 
-	switch ( _type )
+	switch ( m_type )
 	{
 		case BuildItemType::Workshop:
 		{
@@ -224,9 +236,15 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		break;
 		case BuildItemType::Terrain:
 		{
-			QString type = DB::select( "Type", "Constructions", _sid ).toString();
-
-			Selection::getInstance().setAction( "Build" + type );
+			QString type = DB::select( "Type", "Constructions", m_sid ).toString();
+			if( param )
+			{
+				Selection::getInstance().setAction( param->ToString().Str() + type );
+			}
+			else
+			{
+				Selection::getInstance().setAction( "Build" + type );
+			}
 		}
 		break;
 		case BuildItemType::Item:
@@ -237,6 +255,7 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 	}
 	EventConnector::getInstance().onBuild();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NRequiredItem::NRequiredItem( QString sid, int amount )
@@ -1440,6 +1459,7 @@ NS_IMPLEMENT_REFLECTION( BuildItem )
 	NsProp( "Name", &BuildItem::GetName );
 	NsProp( "RequiredItems", &BuildItem::requiredItems );
 	NsProp( "Build", &BuildItem::GetCmdBuild );
+	NsProp( "ShowReplaceButton", &BuildItem::GetShowReplaceButton );
 	NsProp( "Image", &BuildItem::getBitmapSource );
 }
 

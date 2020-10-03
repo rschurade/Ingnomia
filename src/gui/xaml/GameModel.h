@@ -144,19 +144,21 @@ public:
 	Noesis::ObservableCollection<NRequiredItem>* requiredItems() const;
 
 private:
-	Noesis::String _name;
-	QString _sid;
-	BuildItemType _type;
-	Noesis::Ptr<Noesis::BitmapSource> _bitmapSource;
+	Noesis::String m_name;
+	QString m_sid;
+	BuildItemType m_type;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapSource;
 
-	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> _requiredItems;
+	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> m_requiredItems;
+
+	const char* GetShowReplaceButton() const;
 
 	void onCmdBuild( BaseComponent* param );
 
 	const NoesisApp::DelegateCommand* GetCmdBuild() const;
 	const Noesis::ImageSource* getBitmapSource() const;
 
-	NoesisApp::DelegateCommand _cmdBuild;
+	NoesisApp::DelegateCommand m_cmdBuild;
 
 	NS_DECLARE_REFLECTION( BuildItem, Noesis::BaseComponent )
 };

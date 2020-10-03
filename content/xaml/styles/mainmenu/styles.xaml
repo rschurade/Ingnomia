@@ -390,7 +390,11 @@
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 				</ItemsControl>
-                <Button Content="Build" HorizontalAlignment="Right" Padding="2" Command="{Binding Build}"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Button Content="Replace" HorizontalAlignment="Right" Margin="2" Padding="2" Visibility="{Binding ShowReplaceButton}"
+						Command="{Binding Build}" CommandParameter="Replace"/>
+					<Button Content="Build" HorizontalAlignment="Right" Margin="2" Padding="2" Command="{Binding Build}" CommandParameter="Build"/>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 		
