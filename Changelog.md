@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 0.8.0
 ### Fixed
 - Isolated simulation thread from UI thread, so they don't share data.
   UI components are now split into a UI controller living in t he UI thread and a data aggregation component living in the simulation thread.
@@ -30,7 +30,7 @@ All notable changes to this project will be documented in this file.
 - Replace explicit squad target control by behavior settings for Squad.
 - Move Uniform assignment from squad position to individual gnome.
   Gnomes can now have a uniform without being assigned to a squad, but they still need a squad to control their combat behavior.
-- Allow arbitrarily sized quads, up from only 5 slots.
+- Allow arbitrarily sized squads, up from only 5 slots.
 - Speed up high level pathability tests.
 - Speed up A* pathfinding.
 - Speed up liquid simulation.
