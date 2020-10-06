@@ -177,11 +177,15 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				}
 			}
 		}
+		// wrap job into a sub-object?
 		auto job                = Global::jm().getJobAtPos( pos );
 		m_tileInfo.jobName      = "";
 		m_tileInfo.jobWorker    = "";
 		m_tileInfo.jobPriority  = "";
 		m_tileInfo.requiredTool = "";
+		m_tileInfo.requiredToolAvailable = ""; // currently just 'exists'
+		m_tileInfo.requiredItems.clear(); // exists & is reachable
+		m_tileInfo.workPositions = "";
 		if ( job )
 		{
 			m_tileInfo.jobName = job->type();
@@ -198,6 +202,21 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 
 			m_tileInfo.jobPriority = QString::number( job->priority() );
+			m_tileInfo.requiredToolAvailable = rt.available ? "Yes" : "No";
+
+			for (auto rim : job->requiredItems() )
+			{
+				// SID vs UID vs ID?
+				// Item item = Global::inv().combinedID(rim.SID);
+				QString line = rim.itemSID + ": " + (rim.available ? "Handy" : "Lacking");
+				m_tileInfo.requiredItems.append(line);
+			}
+
+			// gnome available
+
+			// work positions
+			// could also call 'isReachable' but that does a lot of stuff
+			m_tileInfo.workPositions = QVariant( job->possibleWorkPositions().size() > 0 ).toString();
 		}
 
 		m_tileInfo.designationID   = 0;

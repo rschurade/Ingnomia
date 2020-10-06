@@ -34,12 +34,19 @@ struct RequiredItem
 	QString materialSID;
 	QStringList materialRestriction;
 	bool requireSame = false;
+
+	// only reset when 'requiredItemsExist()' is called
+	// only used for GUI info display
+	bool available = false;
 };
 
 struct RequiredTool
 {
 	QString type;
 	quint8 level = 0;
+
+	// only used for GUI info display
+	bool available = false;
 };
 
 class Job
@@ -56,6 +63,7 @@ private:
 
 	bool m_canceled         = false;
 	bool m_aborted          = false;
+        // is used in various places to reset job status
 	bool m_componentMissing = false;
 	bool m_mayTrap          = false;
 	bool m_destroyOnAbort	= false;
@@ -65,13 +73,13 @@ private:
 
 	RequiredTool m_requiredTool;
 	QList<RequiredItem> m_requiredItems;
-
+  
 	Position m_position;
 	Position m_posItemInput;
 	Position m_posItemOutput;
 	Position m_toolPosition;
 	Position m_workPosition;
-	QList<Position> m_posibleWorkPositions;
+	QList<Position> m_possibleWorkPositions;
 	QList<Position> m_origWorkPosOffsets;
 
 	int m_amount = 1;
@@ -162,7 +170,7 @@ public:
 	void setMaterial( QString material );
 
 	void setComponentMissing( bool v );
-	bool componenentMissing() const;
+	bool componentMissing() const;
 
 	QList<RequiredItem> requiredItems() const;
 	void addRequiredItem( int count, QString item, QString material, QStringList materialRestriction, bool requireSame = false );

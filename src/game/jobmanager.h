@@ -62,7 +62,7 @@ private:
 	bool isEnclosedBySameType( unsigned int jobID );
 
 	bool requiredToolExists( unsigned int jobID );
-	bool requiredItemsExist( unsigned int jobID );
+	bool requiredItemsAvail( unsigned int jobID );
 
 	bool insertIntoPositionHash( unsigned int jobID );
 	void removeFromPositionHash( unsigned int jobID );

@@ -69,7 +69,7 @@ Job::Job( QVariantMap in )
 	m_posItemOutput        = in.value( "PositionItemOutput" );
 	m_toolPosition         = in.value( "ToolPosition" );
 	m_workPosition         = in.value( "WorkPosition" );
-	m_posibleWorkPositions = Util::variantList2Position( in.value( "PossibleWorkPositions" ).toList() );
+	m_possibleWorkPositions = Util::variantList2Position( in.value( "PossibleWorkPositions" ).toList() );
 	m_origWorkPosOffsets   = Util::variantList2Position( in.value( "OriginalWorkPositions" ).toList() );
 
 	m_amount             = in.value( "Amount" ).toInt();
@@ -129,7 +129,7 @@ QVariant Job::serialize() const
 	out.insert( "PositionItemOutput", m_posItemOutput.toString() );
 	out.insert( "ToolPosition", m_toolPosition.toString() );
 	out.insert( "WorkPosition", m_workPosition.toString() );
-	out.insert( "PossibleWorkPositions", Util::positionList2Variant( m_posibleWorkPositions ) );
+	out.insert( "PossibleWorkPositions", Util::positionList2Variant( m_possibleWorkPositions ) );
 	out.insert( "OriginalWorkPositions", Util::positionList2Variant( m_origWorkPosOffsets ) );
 
 	out.insert( "Amount", m_amount );
@@ -176,7 +176,7 @@ Job::Job( const Job& other )
 	m_posItemOutput        = other.m_posItemOutput;
 	m_toolPosition         = other.m_toolPosition;
 	m_workPosition         = other.m_workPosition;
-	m_posibleWorkPositions = other.m_posibleWorkPositions;
+	m_possibleWorkPositions = other.m_possibleWorkPositions;
 	m_origWorkPosOffsets   = other.m_origWorkPosOffsets;
 
 	m_amount             = other.m_amount;
@@ -277,16 +277,16 @@ void Job::setWorkPos( const Position& pos )
 
 QList<Position> Job::possibleWorkPositions()
 {
-	return m_posibleWorkPositions;
+	return m_possibleWorkPositions;
 }
 
 void Job::addPossibleWorkPosition( const Position& wp )
 {
-	m_posibleWorkPositions.append( wp );
+	m_possibleWorkPositions.append( wp );
 }
 void Job::clearPossibleWorkPositions()
 {
-	m_posibleWorkPositions.clear();
+	m_possibleWorkPositions.clear();
 }
 
 QList<Position> Job::origWorkPosOffsets()
@@ -376,7 +376,7 @@ void Job::setComponentMissing( bool v )
 {
 	m_componentMissing = v;
 }
-bool Job::componenentMissing() const
+bool Job::componentMissing() const
 {
 	return m_componentMissing;
 }
@@ -448,6 +448,10 @@ void Job::setRequiredTool( QString toolID, quint8 level )
 {
 	m_requiredTool.type  = toolID;
 	m_requiredTool.level = level;
+
+	if ( toolID.isEmpty()) {
+	  m_requiredTool.available = true;
+	}
 }
 
 void Job::setConversionMaterial( QString material )

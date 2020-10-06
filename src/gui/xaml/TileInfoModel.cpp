@@ -155,6 +155,9 @@ TileInfoModel::TileInfoModel()
 	_cmdManage.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdManage ) );
 	_miniSPContents   = *new ObservableCollection<TabItem>();
 	_possibleTennants = *new ObservableCollection<CreatureTabItem>();
+
+	// embedded observable
+	_jobTabRequiredItems = *new ObservableCollection<Noesis::String>();
 }
 
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
@@ -354,15 +357,27 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 		}
 	}
 
+	_jobTabRequiredItems->Clear();
+	for ( auto ri : tileInfo.requiredItems )
+	{
+		_jobTabRequiredItems->Add( Noesis::String(ri.toStdString()) );
+	}
+
+	
 	m_jobName      = tileInfo.jobName.toStdString().c_str();
 	m_jobWorker    = tileInfo.jobWorker.toStdString().c_str();
 	m_jobPriority  = tileInfo.jobPriority.toStdString().c_str();
 	m_requiredTool = tileInfo.requiredTool.toStdString().c_str();
+	m_requiredToolAvailable = tileInfo.requiredToolAvailable.toStdString().c_str();
+	m_workablePosition = tileInfo.workPositions.toStdString().c_str();
 
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
 	OnPropertyChanged( "JobPriority" );
 	OnPropertyChanged( "RequiredTool" );
+	OnPropertyChanged( "RequiredToolAvailable" );
+	OnPropertyChanged( "RequiredItems" );
+	OnPropertyChanged( "WorkablePosition" );
 
 	OnPropertyChanged( "TileID" );
 	OnPropertyChanged( "TabItems" );
@@ -420,6 +435,12 @@ Noesis::ObservableCollection<CreatureTabItem>* TileInfoModel::getPossibleTennant
 {
 	return _possibleTennants;
 }
+
+Noesis::ObservableCollection<Noesis::String>* TileInfoModel::getRequiredItems() const
+{
+	return _jobTabRequiredItems;
+}
+
 
 const NoesisApp::DelegateCommand* TileInfoModel::GetCmdTab() const
 {
@@ -691,6 +712,9 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
 	NsProp( "JobPriority", &TileInfoModel::GetJobPriority );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
+	NsProp( "RequiredToolAvailable", &TileInfoModel::GetRequiredToolAvailable );
+	NsProp( "RequiredItems", &TileInfoModel::GetRequiredItems );
+	NsProp( "WorkablePosition", &TileInfoModel::GetWorkablePosition );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );
 

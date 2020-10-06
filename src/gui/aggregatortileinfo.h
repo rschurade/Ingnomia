@@ -59,6 +59,9 @@ struct GuiTileInfo
 	QString jobWorker;
 	QString jobPriority;
 	QString requiredTool;
+	QString requiredToolAvailable;
+	QList<QString> requiredItems;
+	QString workPositions;
 
 	QList<GuiTICreatureInfo> creatures;
 	QList<GuiItemInfo> items;
