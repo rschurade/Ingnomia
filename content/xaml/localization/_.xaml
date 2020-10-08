@@ -50,4 +50,19 @@
 	<system:String x:Key="Agriculture_PickFruit">Agriculture_PickFruit</system:String>
 	<system:String x:Key="Agriculture_FellTrees">Agriculture_FellTrees</system:String>
 	<system:String x:Key="Agriculture_SelectTreeType">Agriculture_SelectTreeType</system:String>
+
+	<!--{StaticResource CreatureInfo_}-->
+	<system:String x:Key="CreatureInfo_">CreatureInfo_</system:String>
+	<system:String x:Key="CreatureInfo_Happiness">CreatureInfo_Happiness</system:String>
+	<system:String x:Key="CreatureInfo_Sleep">CreatureInfo_Sleep</system:String>
+	<system:String x:Key="CreatureInfo_Thirst">CreatureInfo_Thirst</system:String>
+	<system:String x:Key="CreatureInfo_Hunger">CreatureInfo_Hunger</system:String>
+	<system:String x:Key="CreatureInfo_Cha">CreatureInfo_Cha</system:String>
+	<system:String x:Key="CreatureInfo_Wis">CreatureInfo_Wis</system:String>
+	<system:String x:Key="CreatureInfo_Int">CreatureInfo_Int</system:String>
+	<system:String x:Key="CreatureInfo_Con">CreatureInfo_Con</system:String>
+	<system:String x:Key="CreatureInfo_Dex">CreatureInfo_Dex</system:String>
+	<system:String x:Key="CreatureInfo_Str">CreatureInfo_Str</system:String>
+	<system:String x:Key="CreatureInfo_Inventory">CreatureInfo_Inventory</system:String>
+	<system:String x:Key="CreatureInfo_Equipment">CreatureInfo_Equipment</system:String>
 </ResourceDictionary>
