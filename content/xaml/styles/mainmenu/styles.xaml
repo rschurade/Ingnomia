@@ -180,7 +180,7 @@
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="FontSize" Value="16" />
-		<Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" />
+		<Setter Property="MinWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
 		<Setter Property="VerticalAlignment" Value="Top" />
 	</Style>
 
