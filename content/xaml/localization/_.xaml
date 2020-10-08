@@ -1,0 +1,20 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+	<!-- String resource that can be localized -->
+	<system:String x:Key="MainPage_Ingnomia">MainPage_Ingnomia</system:String>
+	<system:String x:Key="MainPage_Continue">MainPage_Continue</system:String>
+	<system:String x:Key="MainPage_NewGame">MainPage_NewGame</system:String>
+	<system:String x:Key="MainPage_SetUpGame">MainPage_SetUpGame</system:String>
+	<system:String x:Key="MainPage_LoadGame">MainPage_LoadGame</system:String>
+	<system:String x:Key="MainPage_Settings">MainPage_Settings</system:String>
+	<system:String x:Key="MainPage_Exit">MainPage_Exit</system:String>
+	<system:String x:Key="MainPage_Hint_MMContinue">MainPage_Hint_MMContinue</system:String>
+	<system:String x:Key="MainPage_Hint_MMNewGame">MainPage_Hint_MMNewGame</system:String>
+	<system:String x:Key="MainPage_Hint_MMSetupGame">MainPage_Hint_MMSetupGame</system:String>
+	<system:String x:Key="MainPage_Hint_MMLoadGame">MainPage_Hint_MMLoadGame</system:String>
+	<system:String x:Key="MainPage_Hint_MMSettings">MainPage_Hint_MMSettings</system:String>
+	<system:String x:Key="MainPage_Hint_MMExit">MainPage_Hint_MMExit</system:String>
+</ResourceDictionary>
