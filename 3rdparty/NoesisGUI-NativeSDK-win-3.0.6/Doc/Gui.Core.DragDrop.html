@@ -1,0 +1,584 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Drag-and-Drop Overview - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI tutorial about Drag &amp; Drop" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.DragDrop.html" />
+<meta name="twitter:title" content="Drag-and-Drop Overview | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI tutorial about Drag &amp; Drop" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Drag-and-Drop Overview | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-07-13 13:54:01" />
+<meta property="og:description" content="NoesisGUI tutorial about Drag &amp; Drop" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.DragDrop.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.DragDrop.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="drag-and-drop-overview">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Drag-and-Drop Overview</h1>
+
+<p><img alt="github" class="align-middle" src="github.png" /> <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Samples/Inventory">Tutorial Data</a></p>
+<p>This tutorial provides an overview of drag-and-drop support in NoesisGUI. Drag-and-drop commonly refers to a method of data transfer that involves using a mouse (or some other pointing device) to select one or more objects, dragging these objects over some desired drop target in the user interface, and dropping them.</p>
+<blockquote>
+<img alt="DragDropImg1.png" src="DragDropImg1.png" />
+</blockquote>
+<div class="section" id="drag-and-drop-support">
+<h1>Drag-and-Drop Support</h1>
+<p>Drag-and-drop operations typically involve two parties: a <em>drag source</em> from which the dragged object originates and a <em>drop target</em> which receives the dropped object. The drag source and drop target must be UI elements in the same application.</p>
+<p>The type and number of objects that can be manipulated with drag-and-drop is completely arbitrary. For example, files, folders, and selections of content are some of the more common objects manipulated through drag-and-drop operations.</p>
+<p>The particular actions performed during a drag-and-drop operation are application specific, and often determined by context. For example, dragging a selection of files from one folder to another on the same storage device moves the files by default, whereas dragging files from another device to a local folder copies the files by default.</p>
+<p>In NoesisGUI, any <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> can participate in drag-and-drop. The events and methods required for drag-and-drop operations are defined in the <a class="reference external" href="Gui.Core._DragDrop.html">DragDrop</a> class. The <em>UIElement</em> classes contain aliases for the <em>DragDrop</em> attached events so that the events appear in the class members list when a <em>UIElement</em> is inherited as a base element. Event handlers that are associated to these events are connected to the underlying <em>DragDrop</em> attached event and receive the same event data instance. For more information, see the <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> <em>Drop</em> event.</p>
+</div>
+<div class="section" id="data-transfer">
+<h1>Data Transfer</h1>
+<p>A drag-and-drop operation is analogous to a copy-and-paste operation that is used to transfer data from one object to another. Both types of operations require:</p>
+<ul class="simple">
+<li>A source object that provides the data.</li>
+<li>A way to temporarily store the transferred data.</li>
+<li>A target object that receives the data.</li>
+</ul>
+<p>In a copy-and-paste operation, the system clipboard is used to temporarily store the transferred data; in a drag-and-drop operation, an object is used to store the data.</p>
+<p>The drag source initiates a drag-and-drop operation by calling the static <a class="reference external" href="Gui.Core._DragDrop.html">DragDrop</a> <em>DoDragDrop</em> method and passing the transferred data to it. The drop target should know how to obtain the desired information from the data object received in the event.</p>
+<p>The source and target of a drag-and-drop operation are UI elements; however, the data that is actually being transferred typically does not have a visual representation. You can write code to provide a visual representation of the data that is dragged, such as occurs when dragging files in Windows Explorer. By default, feedback is provided to the user by changing the cursor to represent the effect that the drag-and-drop operation will have on the data, such as whether the data will be moved or copied.</p>
+<div class="section" id="drag-and-drop-effects">
+<h2>Drag-and-Drop Effects</h2>
+<p>Drag-and-drop operations can have different effects on the transferred data. For example, you can copy the data or you can move the data. NoesisGUI defines a <em>DragDropEffects</em> enumeration that you can use to specify the effect of a drag-and-drop operation.</p>
+<p>In the drag source, you can specify the effects that the source will allow in the <em>DoDragDrop</em> method. In the drop target, you can specify the effect that the target intends in the <em>Effects</em> property of the <em>DragEventArgs</em> class. When the drop target specifies its intended effect in the <em>DragOver</em> event, that information is passed back to the drag source in the <em>GiveFeedback</em> event. The drag source uses this information to inform the user what effect the drop target intends to have on the data. When the data is dropped, the drop target specifies its actual effect in the <em>Drop</em> event. When the drop operation is completed that information is passed back to the drag source on the callback supplied to the <em>DoDragDrop</em> method. If the drop target returns an effect that is not in the drag sources list of <em>allowedEffects</em>, the drag-and-drop operation is cancelled without any data transfer occurring.</p>
+<p>It is important to remember that in NoesisGUI, the <em>DragDropEffects</em> values are only used to provide communication between the drag source and the drop target regarding the effects of the drag-and-drop operation. The actual effect of the drag-and-drop operation depends on you to write the appropriate code in your application.</p>
+<p>For example, the drop target might specify that the effect of dropping data on it is to move the data. However, to move the data, it must be both added to the target element and removed from the source element. The source element might indicate that it allows moving the data, but if you do not provide the code to remove the data from the source element, the end result will be that the data is copied, and not moved.</p>
+</div>
+</div>
+<div class="section" id="drag-and-drop-events">
+<h1>Drag-and-Drop Events</h1>
+<p>Drag-and-drop operations support an event driven model. Both the drag source and the drop target use a standard set of events to handle drag-and-drop operations. The following tables summarize the standard drag-and-drop events. These are <em>attached events</em> on the <a class="reference external" href="Gui.Core._DragDrop.html">DragDrop</a> class.</p>
+<div class="section" id="drag-source-events">
+<h2>Drag Source Events</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Event</th>
+<th class="head">Summary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>GiveFeedback</td>
+<td>This event occurs continuously during a drag-and-drop operation, and enables the drag source to give feedback information to the user. This feedback is commonly given by changing the appearance of the mouse pointer to indicate the effects allowed by the drop target. This is a bubbling event.</td>
+</tr>
+<tr><td>QueryContinueDrag</td>
+<td>This event occurs when there is a change in the keyboard or mouse button states during a drag-and-drop operation, and enables the drop source to cancel the drag-and-drop operation depending on the key/button states. This is a bubbling event.</td>
+</tr>
+<tr><td>PreviewGiveFeedback</td>
+<td>Tunneling version of <em>GiveFeedback</em>.</td>
+</tr>
+<tr><td>PreviewQueryContinueDrag</td>
+<td>Tunneling version of <em>QueryContinueDrag</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="drop-target-events">
+<h2>Drop Target Events</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Event</th>
+<th class="head">Summary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>DragEnter</td>
+<td>This event occurs when an object is dragged into the drop target's boundary. This is a bubbling event.</td>
+</tr>
+<tr><td>DragLeave</td>
+<td>This event occurs when an object is dragged out of the drop target's boundary. This is a bubbling event.</td>
+</tr>
+<tr><td>DragOver</td>
+<td>This event occurs continuously while an object is dragged (moved) within the drop target's boundary. This is a bubbling event.</td>
+</tr>
+<tr><td>Drop</td>
+<td>This event occurs when an object is dropped on the drop target. This is a bubbling event.</td>
+</tr>
+<tr><td>PreviewDragEnter</td>
+<td>Tunneling version of <em>DragEnter</em>.</td>
+</tr>
+<tr><td>PreviewDragLeave</td>
+<td>Tunneling version of <em>DragLeave</em>.</td>
+</tr>
+<tr><td>PreviewDragOver</td>
+<td>Tunneling version of <em>DragOver</em>.</td>
+</tr>
+<tr><td>PreviewDrop</td>
+<td>Tunneling version of <em>Drop</em>.</td>
+</tr>
+</tbody>
+</table>
+<p>To handle drag-and-drop events for instances of an object, add handlers for the events listed in the preceding tables. To handle drag-and-drop events at the class level, override the corresponding virtual <em>OnEvent</em> and <em>OnPreviewEvent</em> methods.</p>
+</div>
+</div>
+<div class="section" id="implementing-drag-and-drop">
+<h1>Implementing Drag-and-Drop</h1>
+<p>A UI element can be a drag source, a drop target, or both. To implement basic drag-and-drop, you write code to initiate the drag-and-drop operation and to process the dropped data. You can enhance the drag-and-drop experience by handling optional drag-and-drop events.</p>
+<p>To implement basic drag-and-drop, you will complete the following tasks:</p>
+<ul>
+<li><p class="first">Identify the element that will be a drag source. A drag source can be any <em>UIElement</em>. We recommend using a <a class="reference external" href="App.Interactivity.Behaviors.html">behavior</a> for this purpose.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DragItemBehavior</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">NoesisApp</span><span class="o">::</span><span class="n">BehaviorT</span><span class="o">&lt;</span><span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ItemsControl</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Inventory}&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ItemsControl.ItemTemplate&gt;</span>
+      <span class="nt">&lt;DataTemplate&gt;</span>
+        <span class="nt">&lt;ContentControl</span> <span class="na">Content=</span><span class="s">&quot;{Binding}&quot;</span> <span class="na">Style=</span><span class="s">&quot;{StaticResource Style.InventorySlot}&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;i:Interaction.Behaviors&gt;</span>
+              <span class="nt">&lt;local:DragItemBehavior/&gt;</span>
+            <span class="nt">&lt;/i:Interaction.Behaviors&gt;</span>
+        <span class="nt">&lt;/ContentControl&gt;</span>
+    <span class="nt">&lt;/DataTemplate&gt;</span>
+  <span class="nt">&lt;/ItemsControl.ItemTemplate&gt;</span>
+<span class="nt">&lt;/ItemsControl&gt;</span>
+</pre></div>
+</li>
+<li><p class="first">Create an event handler on the drag source that will initiate the drag-and-drop operation. The event is typically the <em>MouseMove</em> event.</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DragItemBehavior</span><span class="o">::</span><span class="n">OnAttached</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">*</span> <span class="n">control</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+  <span class="n">control</span><span class="o">-&gt;</span><span class="n">PreviewMouseMove</span><span class="p">()</span> <span class="o">+=</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">MakeDelegate</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DragItemBehavior</span><span class="o">::</span><span class="n">OnMouseMove</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li><p class="first">In the drag source event handler, call the <em>DoDragDrop</em> method to initiate the drag-and-drop operation. In the <em>DoDragDrop</em> call, specify the drag source, the data to be transferred, the allowed effects and an optional callback to be notified of the result of the drop operation.</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DragItemBehavior</span><span class="o">::</span><span class="n">OnMouseMove</span><span class="p">(</span><span class="n">Noesis</span><span class="o">::</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">sender</span><span class="p">,</span> <span class="k">const</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">MouseEventArgs</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">_mouseClicked</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">*</span> <span class="n">control</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+
+    <span class="n">Slot</span><span class="o">*</span> <span class="n">slot</span> <span class="o">=</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">DynamicCast</span><span class="o">&lt;</span><span class="n">Slot</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">control</span><span class="o">-&gt;</span><span class="n">GetContent</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">slot</span> <span class="o">!=</span> <span class="k">nullptr</span> <span class="o">&amp;&amp;</span> <span class="n">slot</span><span class="o">-&gt;</span><span class="n">GetItem</span><span class="p">()</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">slot</span><span class="o">-&gt;</span><span class="n">StartDragging</span><span class="p">();</span>
+
+      <span class="n">Noesis</span><span class="o">::</span><span class="n">DragDrop</span><span class="o">::</span><span class="n">DoDragDrop</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">slot</span><span class="p">,</span> <span class="n">DragDropEffects_Move</span><span class="p">,</span>
+        <span class="p">[](</span><span class="n">Noesis</span><span class="o">::</span><span class="n">DependencyObject</span><span class="o">*</span> <span class="n">source</span><span class="p">,</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">UIElement</span><span class="o">*</span> <span class="n">target</span><span class="p">,</span>
+           <span class="k">const</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">Point</span><span class="o">&amp;</span> <span class="n">dropPoint</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">effects</span><span class="p">)</span>
+        <span class="p">{</span>
+          <span class="n">Slot</span><span class="o">*</span> <span class="n">slot</span> <span class="o">=</span> <span class="p">(</span><span class="n">Slot</span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">;</span>
+          <span class="n">slot</span><span class="o">-&gt;</span><span class="n">EndDragging</span><span class="p">();</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="n">_mouseClicked</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li><p class="first">Identify the element that will be a drop target. A drop target can be any <em>UIElement</em>. Here we can also use a <a class="reference external" href="App.Interactivity.Behaviors.html">behavior</a>.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DropItemBehavior</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">NoesisApp</span><span class="o">::</span><span class="n">BehaviorT</span><span class="o">&lt;</span><span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ItemsControl</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Equipment}&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ItemsControl.ItemTemplate&gt;</span>
+      <span class="nt">&lt;DataTemplate&gt;</span>
+        <span class="nt">&lt;ContentControl</span> <span class="na">Content=</span><span class="s">&quot;{Binding}&quot;</span> <span class="na">Style=</span><span class="s">&quot;{StaticResource Style.EquipmentSlot}&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;i:Interaction.Behaviors&gt;</span>
+              <span class="nt">&lt;local:DropItemBehavior/&gt;</span>
+            <span class="nt">&lt;/i:Interaction.Behaviors&gt;</span>
+        <span class="nt">&lt;/ContentControl&gt;</span>
+    <span class="nt">&lt;/DataTemplate&gt;</span>
+  <span class="nt">&lt;/ItemsControl.ItemTemplate&gt;</span>
+<span class="nt">&lt;/ItemsControl&gt;</span>
+</pre></div>
+</li>
+<li><p class="first">On the drop target, set the <em>AllowDrop</em> property to true.</p>
+</li>
+<li><p class="first">In the drop target, create a <em>Drop</em> event handler to process the dropped data.</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DropItemBehavior</span><span class="o">::</span><span class="n">OnAttached</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">*</span> <span class="n">control</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+  <span class="n">control</span><span class="o">-&gt;</span><span class="n">SetAllowDrop</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+  <span class="n">control</span><span class="o">-&gt;</span><span class="n">PreviewDrop</span><span class="p">()</span> <span class="o">+=</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">MakeDelegate</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DropItemBehavior</span><span class="o">::</span><span class="n">OnDrop</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li><p class="first">In the <em>Drop</em> event handler, extract the data from the <em>DragEventArgs</em>.</p>
+</li>
+<li><p class="first">In the <em>Drop</em> event handler, use the data to perform the desired drag-and-drop operation.</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">DropItemBehavior</span><span class="o">::</span><span class="n">OnDrop</span><span class="p">(</span><span class="n">Noesis</span><span class="o">::</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">sender</span><span class="p">,</span> <span class="k">const</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">DragEventArgs</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Noesis</span><span class="o">::</span><span class="n">ContentControl</span><span class="o">*</span> <span class="n">control</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+
+  <span class="n">Slot</span><span class="o">*</span> <span class="n">sourceSlot</span> <span class="o">=</span> <span class="p">(</span><span class="n">Slot</span><span class="o">*</span><span class="p">)</span><span class="n">e</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
+  <span class="n">Slot</span><span class="o">*</span> <span class="n">targetSlot</span> <span class="o">=</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">DynamicCast</span><span class="o">&lt;</span><span class="n">Slot</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">control</span><span class="o">-&gt;</span><span class="n">GetContent</span><span class="p">());</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">targetSlot</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">targetSlot</span><span class="o">-&gt;</span><span class="n">IsDropAllowed</span><span class="p">())</span>
+    <span class="p">{</span>
+      <span class="n">Item</span><span class="o">*</span> <span class="n">draggedItem</span> <span class="o">=</span> <span class="n">sourceSlot</span><span class="o">-&gt;</span><span class="n">GetItem</span><span class="p">();</span>
+      <span class="n">sourceSlot</span><span class="o">-&gt;</span><span class="n">SetItem</span><span class="p">(</span><span class="n">targetSlot</span><span class="o">-&gt;</span><span class="n">GetItem</span><span class="p">());</span>
+      <span class="n">targetSlot</span><span class="o">-&gt;</span><span class="n">SetItem</span><span class="p">(</span><span class="n">draggedItem</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+      <span class="n">e</span><span class="p">.</span><span class="n">effects</span> <span class="o">=</span> <span class="n">DragDropEffects_None</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">e</span><span class="p">.</span><span class="n">handled</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+</ul>
+<p>You can enhance your drag-and-drop implementation by handling optional drag source and drop target events, as shown in the following tasks:</p>
+<ul class="simple">
+<li>To transfer custom data or multiple data items, create your own data type to pass to the <em>DoDragDrop</em> method.</li>
+<li>To perform additional actions during a drag, handle the <em>DragEnter</em>, <em>DragOver</em>, and <em>DragLeave</em> events on the drop target.</li>
+<li>To change the appearance of the mouse pointer, handle the <em>GiveFeedback</em> event on the drag source.</li>
+<li>To change how the drag-and-drop operation is canceled, handle the <em>QueryContinueDrag</em> event on the drag source.</li>
+</ul>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#drag-and-drop-support" id="id1">Drag-and-Drop Support</a></li>
+<li><a class="reference internal" href="#data-transfer" id="id2">Data Transfer</a><ul>
+<li><a class="reference internal" href="#drag-and-drop-effects" id="id3">Drag-and-Drop Effects</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#drag-and-drop-events" id="id4">Drag-and-Drop Events</a><ul>
+<li><a class="reference internal" href="#drag-source-events" id="id5">Drag Source Events</a></li>
+<li><a class="reference internal" href="#drop-target-events" id="id6">Drop Target Events</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implementing-drag-and-drop" id="id7">Implementing Drag-and-Drop</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>NoesisGUI 1.1 Changelog - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI 1.1 release notes" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.Changelog_v11.html" />
+<meta name="twitter:title" content="NoesisGUI 1.1 Changelog | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI 1.1 release notes" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="NoesisGUI 1.1 Changelog | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="NoesisGUI 1.1 release notes" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.Changelog_v11.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.Changelog_v11.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="changelog document" id="noesisgui-1-1-changelog">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">NoesisGUI 1.1 Changelog</h1>
+
+<div class="section" id="version-1-1-14">
+<h1>Version 1.1.14</h1>
+<ul class="simple">
+<li>Support for prefixes when using static extensions: <tt class="docutils literal">{x:Static local:Settings.BaseColor}</tt>.</li>
+<li>Removed UseLayoutRounding from styles, so user can decide the behavior of the whole UI tree just by setting the value in the root.</li>
+<li><tt class="docutils literal">Unity</tt> Added TryLoadXaml to API.</li>
+<li><tt class="docutils literal">Unity</tt> Improved compatibility with Unity 4.6.</li>
+<li><tt class="docutils literal">Fixed</tt> Bindings with LostFocus/Explicit UpdateSourceTriggerMode where not working properly.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when clicking on TabItems (Linux).</li>
+<li><tt class="docutils literal">Fixed</tt> LinearGradientBrush not working in Absolute mode when used on certain Paths.</li>
+<li><tt class="docutils literal">Fixed</tt> Layout process of Grid with many items could produce an unhandled exception.</li>
+<li><tt class="docutils literal">Fixed</tt> DependencyProperty value storage not properly constructed when unserializing a StaticResourceExpression.</li>
+<li><tt class="docutils literal">Fixed</tt> Setting DataContext property from a Binding using parent DataContext.</li>
+<li><tt class="docutils literal">Fixed</tt> Calculation of PlaneProjection when surface size was 0.</li>
+<li><tt class="docutils literal">Fixed</tt> Binding inside DataTemplate using RelativeSource AncestorType not working if parent outside the DataTemplate visual tree.</li>
+<li><tt class="docutils literal">Fixed</tt> Comparing Pens was causing unnecessary tessellations per frame.</li>
+<li><tt class="docutils literal">Fixed</tt> Problem with ClearLocalValue() and inherited properties.</li>
+<li><tt class="docutils literal">Fixed</tt> In OSX, Alt key was not working properly.</li>
+<li><tt class="docutils literal">Fixed</tt> PPAA artifacts.</li>
+<li><tt class="docutils literal">Fixed</tt> Geometry being clipped by far plane when applying 3D transformations on Retina displays.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash on Nvidia Shield tablets.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when moving ListView columns by dragging the column header.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash in OSX when accessing empty clipboard.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Crash when focused item was removed in Unity while application is not focused.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Dumps are now generated in $(PROJECT)/Dumps folder.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-13">
+<h1>Version 1.1.13</h1>
+<ul class="simple">
+<li><tt class="docutils literal">Unity</tt> XAMLs with a Window root are no longer accepted in Unity. A proper error is shown at build time.</li>
+<li><tt class="docutils literal">Unity</tt> Noesis.Extend.IsExtendType(type) is cached to speed up .As&lt;T&gt; conversions.</li>
+<li><tt class="docutils literal">Fixed</tt> Controls inside a template with event handlers added in constructor were ignored.</li>
+<li><tt class="docutils literal">Fixed</tt> UpdateSourceTrigger default value for TextBox.Text property was not correctly set to LostFocus.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash on x64 when creating several renderers.</li>
+<li><tt class="docutils literal">Fixed</tt> PropertyChangedCallback being ignored when using default(string) as default value.</li>
+<li><tt class="docutils literal">Fixed</tt> Incorrect Extended instance being registered if another BaseComponent is created in its constructor.</li>
+<li><tt class="docutils literal">Fixed</tt> BaseComponent.AsType was failing when used with extended types.</li>
+<li><tt class="docutils literal">Fixed</tt> HitTesting failing on Popups.</li>
+<li><tt class="docutils literal">Fixed</tt> Bugs in TabControl when used along with ItemsSource property.</li>
+<li><tt class="docutils literal">Fixed</tt> Improved error reporting in VisualTreeHelper and LogicalTreeHelper.</li>
+<li><tt class="docutils literal">Fixed</tt> Slider moves erratically when receiving several Mouse events between updates.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-12">
+<h1>Version 1.1.12</h1>
+<ul class="simple">
+<li>Added support for LineHeight in TextBlock.</li>
+<li>Support for TabControl using ItemsSource property.</li>
+<li>Support for GridLength animation.</li>
+<li>Support for xml:space=&quot;preserve&quot;.</li>
+<li>Changed TabItem in the DefaultStyle so content gets stretched as in WPF styles.</li>
+<li>Support for using Projection property in Blend WPF projects.</li>
+<li><tt class="docutils literal">Fixed</tt> Noesis.UserControlSource not needed in not final classes.</li>
+<li><tt class="docutils literal">Fixed</tt> DefaultStyle padding bindings.</li>
+<li><tt class="docutils literal">Fixed</tt> Button not reacting to interaction when changing Visibility per frame.</li>
+<li><tt class="docutils literal">Fixed</tt> VS2013 compilation issues.</li>
+<li><tt class="docutils literal">Fixed</tt> XCode 6 issues.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash in ComboBox when using a UIElement as SelectionBoxItem.</li>
+<li><tt class="docutils literal">Fixed</tt> Some Bindings to UserControl root were failing when using the UserControl inside another xaml.</li>
+<li><tt class="docutils literal">Unity</tt> Support for passing string to HeaderedContentControl.SetHeader().</li>
+<li><tt class="docutils literal">Unity</tt> Exposed UIElement.UpdateLayout() to C#.</li>
+<li><tt class="docutils literal">Unity</tt> Under certain conditions, Image Effects affects to NoesisGUI.</li>
+<li><tt class="docutils literal">Unity</tt> DX9 Render glitches when resizing fixed.</li>
+<li><tt class="docutils literal">Unity</tt> No longer crashing when changing DX9 &lt;-&gt; DX11 in Player settings. There is a bug in Unity about this.</li>
+<li><tt class="docutils literal">Unity</tt> Several functions in UnityBindings not properly protected against exceptions were crashing Unity.</li>
+<li><tt class="docutils literal">Unity</tt> Subclassed controls used inside a Template now correctly clone their properties.</li>
+<li><tt class="docutils literal">Unity</tt> Error displayed when switching to a platform that is not active in NoesisGUI settings.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-11">
+<h1>Version 1.1.11</h1>
+<ul class="simple">
+<li>PPAA algorithm improved. Now it works properly with animations and it is faster.</li>
+<li>Experimental support added for profiling CPU and Memory using NoesisGUI console.</li>
+<li>Added support for more system types (int16, int32, uint16, uint32, single and double) in a ResourceDictionary. Fixed also the XAML parser because it was using the assembly name instead of the namespace to expand type name.</li>
+<li><tt class="docutils literal">Fixed</tt> TemplateTriggerProvider was trying to invalidate the properties of an object that was being destroyed.</li>
+<li><tt class="docutils literal">Fixed</tt> Line geometry was not correctly updated when changing the thickness of the stroke. This bug could also affect other geometries.</li>
+<li><tt class="docutils literal">Fixed</tt> An incorrect type of value could be assigned to a dependency property coming from a StaticResource.</li>
+<li><tt class="docutils literal">Fixed</tt> TextTrimming incorrectly generating extra line.</li>
+<li><tt class="docutils literal">Fixed</tt> Problem when item being removed in the SelectionChanged handler or any other Mouse event handler.</li>
+<li><tt class="docutils literal">Fixed</tt> ItemContainerStyle bindings to data item properties are now working.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;IsSelected&quot;</span> <span class="na">Value=</span><span class="s">&quot;{Binding IsItemSelected, Mode=TwoWay}&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+<ul class="simple">
+<li><tt class="docutils literal">Unity</tt> functions for injecting input events added.</li>
+<li><tt class="docutils literal">Unity</tt> GUI render no longer affected by Unity Post Processing. Added a toggle to revert to previous behavior.</li>
+<li><tt class="docutils literal">Unity</tt> Try versions of FindStringResource and FindTypeResource added.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Error inside FindStringResource and FindTypeResource functions was crashing Unity.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Ramps not properly rendered when activating  Linear Color Space in Player Settings.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> more keycode problem fixed in Linux.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-10">
+<h1>Version 1.1.10</h1>
+<ul class="simple">
+<li>BaseButton.Command exported to Unity/C#.</li>
+<li>Unity: Implemented mechanism to detect package upgrades.</li>
+<li><tt class="docutils literal">Fixed</tt> Setter serializing a Command set in its Value member.</li>
+<li><tt class="docutils literal">Fixed</tt> Container not found when calling ItemsControl.GetContainerFromItem passing the container itself.</li>
+<li><tt class="docutils literal">Fixed</tt> TreeViewItem failing to select the item if already had the focus.</li>
+<li><tt class="docutils literal">Fixed</tt> SelectionChanged event not working when using a ComboBox with template</li>
+<li><tt class="docutils literal">Fixed</tt> Crash on application exit.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Mac Shortcuts not working (CMD+key)</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-9">
+<h1>Version 1.1.9</h1>
+<ul class="simple">
+<li>Added constructor for RotateTransform and SkewTransform with parameters for easier initialization.</li>
+<li>Added support for serializing boxed items in a collection.</li>
+<li>SelectionBoxItemTemplate is now a read-only property like in WPF.</li>
+<li>DX9Texture and GLTexture constructors now receive an isInverted boolean.</li>
+<li>Dependency to libbfd eliminated in Linux.</li>
+<li>Reading from the clipboard implemented in Linux.</li>
+<li><tt class="docutils literal">Unity</tt> Support for setting log filename and dumps folder by creating a noesis.ini in StreamingAssets folder.</li>
+<li><tt class="docutils literal">Unity</tt> Now XAML are processed after their corresponding .cs, if any, is built by Unity.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for split application binaries in Android.</li>
+<li><tt class="docutils literal">Unity</tt> Renamed mobile exported function Noesis_UnityRenderEvent to avoid name conflicts with other third parties.</li>
+<li><tt class="docutils literal">Unity</tt> UnityRenderHook library renamed to NoesisUnityRenderHook.</li>
+<li><tt class="docutils literal">Unity</tt> Software keyboard management re-factorized to facilitate user override.</li>
+<li><tt class="docutils literal">Unity</tt> Unity tutorial updated with information about how to override default software keyboard behavior.</li>
+<li><tt class="docutils literal">Fixed</tt> problem with consecutive MouseDown events in OS X standalone.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash in bindings with nested paths.</li>
+<li><tt class="docutils literal">Fixed</tt> RoutedEventConverter working in events with a namespace prefix.</li>
+<li><tt class="docutils literal">Fixed</tt> Binding to inherited DataContext not resolved on Freezables.</li>
+<li><tt class="docutils literal">Fixed</tt> Bindings don't update when Path doesn't resolve the first time.</li>
+<li><tt class="docutils literal">Fixed</tt> ProgressBar Indicator element was not updated after modifying Minimum or Maximum properties.</li>
+<li><tt class="docutils literal">Fixed</tt> ProgressBar default template was making the control to grow to infinite when Value==Maximum.</li>
+<li><tt class="docutils literal">Fixed</tt> Resource look-up from inside a DataTemplate was broken.</li>
+<li><tt class="docutils literal">Fixed</tt> GridLengthConverter was not taking into account Auto (NaN) value when converting from a numeric value.</li>
+<li><tt class="docutils literal">Fixed</tt> Support for complex namespace (A.B.C) prefix in PropertyPath.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Problem when modifying a property defined in the base class of a Unity extended class.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Mouse and keyboard events handled properly in Linux.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-8">
+<h1>Version 1.1.8</h1>
+<ul class="simple">
+<li>Added support for SelectAll command (Ctrl+A) to the TextBox.</li>
+<li>TextBlock: Justify implemented, Wrap implemented (we only had WrapWithOverflow) and Trimming implemented. Added a new xaml in the Text tutorial showing all the combinations.</li>
+<li>Added support for RenderOptions.BitmapScalingMode. Created a new entry in the Image tutorial explaining it.</li>
+<li><tt class="docutils literal">Unity</tt> Changed default 3D scene used as background in our samples because performance was not good on old mobiles.</li>
+<li><tt class="docutils literal">Unity</tt> Now XAMLs are automatically built if they were modified during Editor Play.</li>
+<li><tt class="docutils literal">Fixed</tt> Runtime Error on Progress Bar Animation: the target name 'IndicatorIndeterminate' cannot be found in the xaml namescope.</li>
+<li><tt class="docutils literal">Fixed</tt> Error handling improved when trying to use Items collection while ItemsSource is set. Class documentation updated to explain this scenario.</li>
+<li><tt class="docutils literal">Fixed</tt> Items displayed twice when being added to a ComboBox.</li>
+<li><tt class="docutils literal">Fixed</tt> Small Arc CW flag not working properly.</li>
+<li><tt class="docutils literal">Fixed</tt> In rare cases DirectX9 device creation was failing. Solves the error with standalone applications not using the Gui.Launcher.</li>
+<li><tt class="docutils literal">Fixed</tt> In Viewbox.SetChild, old child could be accessed after destroyed.</li>
+<li><tt class="docutils literal">Fixed</tt> NameScope of UserControl not correctly copied when used as the root of a template.</li>
+<li><tt class="docutils literal">Fixed</tt> Touch events not working properly when a scale was being applied to a ScrollViewer.</li>
+<li><tt class="docutils literal">Fixed</tt> Numeric converters are now able to convert from integer to float and vice versa.</li>
+<li><tt class="docutils literal">Fixed</tt> ProgressBar control was assuming that its template always contained &quot;PART_Track&quot; and &quot;PART_Indicator&quot; elements. Now it is optional.</li>
+<li><tt class="docutils literal">Fixed</tt> StaticResource evaluation in templates, it was not reapplied and resource look-up could fail (crash in Browser Gallery when changing theme).</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-7">
+<h1>Version 1.1.7</h1>
+<ul class="simple">
+<li><tt class="docutils literal">Unity</tt> Added HitTest sample to Unity First Steps Tutorial.</li>
+<li><tt class="docutils literal">Fixed</tt> Error with files and paths containing Unicode characters.</li>
+<li><tt class="docutils literal">Fixed</tt> Error with ListBoxItem container not found.</li>
+<li><tt class="docutils literal">Fixed</tt> Text wrapping being applied when it shouldn't due to precisions problems.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash in Mouse::SetOver.</li>
+<li><tt class="docutils literal">Fixed</tt> SetCaretIndex() right after SetText() have no effect issue.</li>
+<li><tt class="docutils literal">Fixed</tt> Performance issues with Storyboard of Duration=0 and RepeatBehavior=Forever.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when rendering stroked text.</li>
+<li><tt class="docutils literal">Fixed</tt> ContentPresenter incorrectly raising an error when another ContentPresenter was present in the same template.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Crash when device was lost in scenes using Unity Render Textures as XAML images.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Casting fix in BaseComponent.As&lt;T&gt;.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-6">
+<h1>Version 1.1.6</h1>
+<ul class="simple">
+<li>Added Debug Marks wrapping GUI render for PIX or similar.</li>
+<li>Input managers (keyboard, mouse, touch) created before connecting content to Renderer so they are available when controls are initialized.</li>
+<li>Improved text rendering quality when vertically flipped (for example, rendering to an OpenGL texture).</li>
+<li><tt class="docutils literal">Unity</tt> Added support for CornerRadius properties in extended classes.</li>
+<li><tt class="docutils literal">Fixed</tt> Text rendering problem with kerning and space characters that was causing strange wrappings.</li>
+<li><tt class="docutils literal">Fixed</tt> Plugins extension set to .dylib in OSX. It was incorrectly set to .so</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox not capturing correctly focus when inside another control.</li>
+<li><tt class="docutils literal">Fixed</tt> TabControl content layout was not deterministic.</li>
+<li><tt class="docutils literal">Fixed</tt> DataTemplate were not found when stored by type in a ResourceDictionary.</li>
+<li><tt class="docutils literal">Fixed</tt> ItemsPresenter was not filled with items sometimes when ItemsControl.ItemsSource was set.</li>
+<li><tt class="docutils literal">Fixed</tt> RoutedUICommand::Create(), text and name parameters were used incorrectly.</li>
+<li><tt class="docutils literal">Fixed</tt> UserControl root element used by VisualStateManager to look for VisualStateGroups must be the UserControl.Content, instead of the template root child as it occurs in the rest of Controls.</li>
+<li><tt class="docutils literal">Fixed</tt> ItemsControl not regenerating items when ItemsPanel or ItemsTemplate properties are modified.</li>
+<li><tt class="docutils literal">Fixed</tt> ItemsControl not correctly cloned when it was part of a template.</li>
+<li><tt class="docutils literal">Fixed</tt> ContextMenu defined in a Style or ResourceDictionary was not opening.</li>
+<li><tt class="docutils literal">Fixed</tt> TouchMove and TouchUp were not correctly promoted to mouse events when hit testing returned null.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when changing selected item in a ComboBox with a SelectionBoxItemTemplate set.</li>
+<li><tt class="docutils literal">Fixed</tt> Unnecessary clipping when mixing elements with different UseLayoutRounding values.</li>
+<li><tt class="docutils literal">Fixed</tt> Horizontal size of ComboBox Popup gets clipped if inside a Viewbox bigger than screen width.</li>
+<li><tt class="docutils literal">Fixed</tt> Improved error descriptions from filesystem.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Error when trying to register classes from assemblies returning empty reflection information.</li>
+<li><tt class="docutils literal">Unity</tt> Fixed problem when noesisGUI was not the only native plugin present in an Unity project.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> rare crash when pressing Stop inside the editor.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-5">
+<h1>Version 1.1.5</h1>
+<ul class="simple">
+<li>Implemented CombinedGeometry GetBounds and Contains point.</li>
+<li>Improvements to integration tutorial regarding saving and restoring state. Fixed GL sample.</li>
+<li>Added IVGLFont::GetGlyphAdvance() function.</li>
+<li><tt class="docutils literal">Unity</tt> UIRenderer fully qualified in Unity to avoid name collisions.</li>
+<li><tt class="docutils literal">Unity</tt> Touch sample improved with scale min/max values.</li>
+<li><tt class="docutils literal">Unity</tt> Exposed Noesis.Font class. Font.GetGlyphAdvance(uint ch) returns the advance for the specified character.</li>
+<li><tt class="docutils literal">Unity</tt> Improved memory efficiency of proxies.</li>
+<li><tt class="docutils literal">Unity</tt> Improved the stability of the plugin. Now the error handler mechanism is a lot faster inside the Editor and more robust.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when GPU queries not supported.</li>
+<li><tt class="docutils literal">Fixed</tt> Problems with TextBox.MaxLength when inserting non-ascii tex.</li>
+<li><tt class="docutils literal">Fixed</tt> Problem with KeyboardNavigation using arrow keys.</li>
+<li><tt class="docutils literal">Fixed</tt> FrameworkElement Width &amp; Height value validation. It was failing for NaN values.</li>
+<li><tt class="docutils literal">Fixed</tt> Glitch when rendering text rotated by 180 degrees.</li>
+<li><tt class="docutils literal">Fixed</tt> RenderNodes correctly unconnected on Renderer destruction. This was causing crashes on shutdown.</li>
+<li><tt class="docutils literal">Fixed</tt> ContentPresenter and ItemsPresenter now disconnects content when template is removed.</li>
+<li><tt class="docutils literal">Fixed</tt> In rare occasions IRenderer::WaitForUpdate() was locking for ever.</li>
+<li><tt class="docutils literal">Fixed</tt> Tab/Directional navigation: now selected item gets the focus.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> UnityEditor.DockArea.OnGUI() error messages.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Memory leak when returning const references from math structs.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Classes belonging to C# proxies are now always destroyed in the main thread. It was unsafe doing it in the garbage collector thread.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> ControlGallery sample working in iPad retina.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-4">
+<h1>Version 1.1.4</h1>
+<ul class="simple">
+<li>Support for specifying a StaticResource in the Binding.Source property of a xaml.</li>
+<li>Support for using ItemsControl directly in a xaml.</li>
+<li>Support for &quot;./&quot; in UriConverter paths.</li>
+<li>Minimal improvements to Images Tutorial in the section &quot;Generating Images at Runtime&quot;.</li>
+<li>Substitution of glyphs not found in the font file with the <a class="reference external" href="http://www.fileformat.info/info/unicode/char/0fffd/index.htm">replacement character</a>. (U+FFFD or a simple question mark).</li>
+<li>UI Clipboard implemented using operating system clipboard.</li>
+<li>Improved error messages when parsing SVG paths.</li>
+<li>Improvements to <a class="reference external" href="Gui.Core._ClassHierarchy.html">Class Hierarchy</a> documentation. Class methods added.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for PropertyChangedCallback when creating PropertyMetadata for dependency properties.</li>
+<li><tt class="docutils literal">Unity</tt> Removed &quot;using Noesis&quot; from Unity samples. Now all class names are fully qualified to avoid name collisions with user classes.</li>
+<li><tt class="docutils literal">Unity</tt> UserControls defined in samples moved to Assets/NoesisGUI/UserControls. This folder will contain any UserControl we develop.</li>
+<li><tt class="docutils literal">Unity</tt> Added DependencyProperty.RegisterAttached() function to match WPF API.</li>
+<li><tt class="docutils literal">Unity</tt> Improved API for Point, Transform2, Transform3, Matrix2, Matrix3, Matrix4. Deleted the 'f' at the end of the class name. For example, Transform2f has been renamed to Transform2.</li>
+<li><tt class="docutils literal">Fixed</tt> Added error message when NullExtension can't find target property.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug with IUITreeNode when setting DataContext property to itself.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug in TwoWay bindings when binding expression needed a full reevaluation.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug in nested ResourceDictionaries when they are loaded more than once.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug when selecting text during GotFocus event after clicking down over TextBox.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug in TextBox not accepting characters with accents.</li>
+<li><tt class="docutils literal">Fixed</tt> Robustness improvements when using very small or very big matrices.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug in TimeManager when transferring animations from a loaded xaml to the Renderer TimeManager.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug when calculating the transformed bounds of a render node.</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox edit problems on OSX.</li>
+<li><tt class="docutils literal">Fixed</tt> Changes to Clip geometry are now correctly notified to Visual, to update its bounding box.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Rendered content was lagging one frame from Unity. This implied lagging performance to user.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Crash when an Unity texture used by a xaml was destroyed.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Occasional crash when closing.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Bug in UnityBindings that were not restoring focused element after window deactivation.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Bug in UnityBindings when an error was thrown while freeing RendererInfo resources during shutting down.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Problems with StreamGeometryContext not closing on dispose solved.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Memory leaks.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Texture2D flickering in Android.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> &quot;Noesis.dll not unloaded&quot; error after stopping Unity Player.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-3">
+<h1>Version 1.1.3</h1>
+<ul class="simple">
+<li>PPAA algorithm (antialiasing emulation without using GPU full-scene antialiasing) reimplemented from scratch. Now it is faster and without glitches.</li>
+<li>Improved tessellation algorithm. Better generation of triangles.</li>
+<li>Improvements to XAML parser: crashes fixed, error messages improved.</li>
+<li>Improved CompilerSettings.h to avoid polluting clients code.</li>
+<li>Improved threading performance of XamlPlayer.</li>
+<li>New statistics panel added to XamlPlayer (F2, SHIFT + F2)</li>
+<li>New debug modes in XamlPlayer: wireframe (CTRL + W), overdraw (CRTL + O) and color batch (CTRL + B).</li>
+<li>Size optimization in our binaries. The size of noesis.dll has been reduced.</li>
+<li>Added support for FontFamily syntax &quot;FontPath/FontFile.ext#FontFamily&quot;. This syntax is used by Blend when you add a font file (a .ttf for example) to the project and select it.</li>
+<li>Exposed TextBox.CaretIndex property.</li>
+<li>Improvements to documentation: new core documents (memory, reference counting, boxing, delegates) added to index.</li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.Optimizing.html">Optimizing NoesisGUI Performance</a>.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for modifying scripts while in Play mode.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for creating a TextureSource from any type of UnityEngine.Texture objects (video, render texture, texture).</li>
+<li><tt class="docutils literal">Unity</tt> BindingOperations exposed to Unity.</li>
+<li><tt class="docutils literal">Unity</tt> Debugging flags exposed in NoesisGUI component.</li>
+<li><tt class="docutils literal">Fixed</tt> Update Z-order when inserting a child in a VisualCollection.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when using a TemplateBinding outside a ControlTemplate.</li>
+<li><tt class="docutils literal">Fixed</tt> Opacity groups rendering glitches.</li>
+<li><tt class="docutils literal">Fixed</tt> Projection glitches.</li>
+<li><tt class="docutils literal">Fixed</tt> Renderer stats were not working.</li>
+<li><tt class="docutils literal">Fixed</tt> Geometry loses quality when placed closer to right side of screen due to half float precision.</li>
+<li><tt class="docutils literal">Fixed</tt> Border issue when drawing images.</li>
+<li><tt class="docutils literal">Fixed</tt> When Building resources that use Binding, sometimes the properties were not bound properly.</li>
+<li><tt class="docutils literal">Fixed</tt> Bindings were not using the target property converter if available.</li>
+<li><tt class="docutils literal">Fixed</tt> ComboBoxItem IsSelected was not updating ComboBox.SelectedItem correctly.</li>
+<li><tt class="docutils literal">Fixed</tt> StreamGeometryContext now calls automatically StreamGeometry.Close() when is destroyed, as it occurs in WPF.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash in XamlPlayer when resizing.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> As&lt;T&gt;() crashes.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Memory issues. XAML resources were not properly unloaded from memory.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-2">
+<h1>Version 1.1.2</h1>
+<ul class="simple">
+<li>ScrollViewer: implemented PanningMode, PanningDeceleration and PanningRatio.</li>
+<li>Implemented inertia in touch manipulations.</li>
+<li>Implemented PasswordBox control.</li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.TouchTutorial.html">Touch and Manipulation</a></li>
+<li>SamplesGallery demo added to OSX SDK.</li>
+<li>Added constructors for PropertyPath and Binding accepting a DependencyProperty as path.</li>
+<li>Improved Image tutorial with a note about premultiplied alpha.</li>
+<li>Improved Unity tutorial with information about stencil buffer.</li>
+<li><tt class="docutils literal">Unity</tt> Support for Unity standalone in batchmode.</li>
+<li><tt class="docutils literal">Unity</tt> RenderTexture reimplemented. Now the implementation is a lot simpler. OSX crashes fixed.</li>
+<li><tt class="docutils literal">Unity</tt> Mouse events are ignored in mobile platforms. We only consider Touches.</li>
+<li><tt class="docutils literal">Unity</tt> All scene samples moved to the same folder. Added a default 3D scene.</li>
+<li><tt class="docutils literal">Unity</tt> Optimized the size of commands sent to the GPU.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> offscreen images in render to texture and deferred rendering.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> hit testing when 2+ render to texture being used.</li>
+<li><tt class="docutils literal">Unity</tt> Added an icon for NoesisGUI component.</li>
+<li><tt class="docutils literal">Unity</tt> Errors and warnings displayed in the component.</li>
+<li><tt class="docutils literal">Unity</tt> Added menus for Release Notes and Bug Reporting.</li>
+<li><tt class="docutils literal">Unity</tt> New Touch sample.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for creating PropertyMetadata using an extended Unity Type as default value.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for dependency properties of enum type.</li>
+<li><tt class="docutils literal">Unity</tt> Improved error checking when working with user controls and dependency properties.</li>
+<li><tt class="docutils literal">Fixed</tt> Recursion problems during layout process that occurred sometimes with ScrollViewers.</li>
+<li><tt class="docutils literal">Fixed</tt> Enabled MipMapping in GUI images.</li>
+<li><tt class="docutils literal">Fixed</tt> Images changing size when being updated.</li>
+<li><tt class="docutils literal">Fixed</tt> Loading errors in SamplesGallery demo.</li>
+<li><tt class="docutils literal">Fixed</tt> memory problem with Dependency Objects in OSX 64bits.</li>
+<li><tt class="docutils literal">Fixed</tt> Right aligned text manages now correctly trailing spaces on ending lines.</li>
+<li><tt class="docutils literal">Fixed</tt> Added error messages when non valid items are inserted into a collection.</li>
+<li><tt class="docutils literal">Fixed</tt> Proxies not raising Destroyed event and bindings crashed on shutdown.</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox losing focus when virtual keyboard was shown.</li>
+<li><tt class="docutils literal">Fixed</tt> Dependency Object validate callback was being called with an invalid pointer to the value.</li>
+<li><tt class="docutils literal">Fixed</tt> Memory overflow when handling errors (this is the main reason v1.1.1 was so unstable).</li>
+<li><tt class="docutils literal">Fixed</tt> Parser now ignores Setter/Trigger/Condition values when property is not found.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> managed exceptions crashing Unity in OS X.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Unity scene disappearing in iOS and Android.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> headers for missing functions in proxies.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> PPA gets disabled on resize.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-1">
+<h1>Version 1.1.1</h1>
+<ul class="simple">
+<li>Implemented the following multi touch events (working in Unity, iOS, Android and Windows8). Documentation and samples will be added in the next version.<ul>
+<li>TouchDown</li>
+<li>TouchMove</li>
+<li>TouchUp</li>
+<li>TouchEnter</li>
+<li>TouchLeave</li>
+<li>GotTouchCapture</li>
+<li>LostTouchCapture</li>
+<li>ManipulationStarting</li>
+<li>ManipulationStarted</li>
+<li>ManipulationDelta</li>
+<li>ManipulationCompleted</li>
+</ul>
+</li>
+<li>Added IRenderer::TouchDown, IRenderer::TouchMove, IRenderer::TouchUp to inject touch events.</li>
+<li>Improvements in error reporting for 64 bits platforms.</li>
+<li><tt class="docutils literal">Fixed</tt> An element that needed to be clipped because of max size constraints was not always being clipped.</li>
+<li><tt class="docutils literal">Fixed</tt> ComboBox item selection crash when holding mouse button.</li>
+<li><tt class="docutils literal">Fixed</tt> crash when using an empty ListView in xaml.</li>
+<li><tt class="docutils literal">Fixed</tt> strange random crash in UIElement.</li>
+<li>New converters for MatrixTransform and Transform (eg: &lt;Rectangle RenderTransform=&quot;1 0 0 1 50 50&quot;/&gt;).</li>
+<li><tt class="docutils literal">Fixed</tt> Unity crashing when building xamls using incorrect DependencyProperties. Now an error is displayed.</li>
+<li>Support for DependencyProperties of type Color, Point, Rect, Size and Thickness.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> Dependency properties in Unity extended classes were being serialized twice.</li>
+<li><tt class="docutils literal">Unity</tt> Added support for UnityEngine.RenderTexture to create a TextureSource within Unity. Now, Unity scene renders can be integrated inside NoesisGUI panels.</li>
+<li><tt class="docutils literal">Unity</tt> <tt class="docutils literal">Fixed</tt> RoutedEventArgs.source was missing.</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-0">
+<h1>Version 1.1.0</h1>
+<ul class="simple">
+<li><tt class="docutils literal">Unity</tt> Improved C# API. Please read tutorials because old code need to be updated.</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>No more need of a swigCPtr member, custom constructors, Dispose or static Register function on extended classes.</li>
+<li>Dependency properties are now registered in the static class constructor.</li>
+<li>Classes are now extended by specifying the [Noesis.Extended] class attribute.</li>
+<li>UserControl associated xaml is now specified by the [Noesis.UserControlSource(string)] class attribute.</li>
+<li>Notifications of property changes are now done using NotifyPropertyChanged(string).</li>
+<li>SuppressUnmanagedCodeSecurity attribute added to PInvoke functions.</li>
+<li>Improvements to the following documentation:<ul>
+<li>Unity3D Tutorial.</li>
+<li>Extending NoesisGUI Tutorial.</li>
+<li>Commands Tutorial.</li>
+<li>UserControl Tutorial. Includes new ColorPicker sample.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li><tt class="docutils literal">Unity</tt> Added support for changing Image.Source at runtime by creating a TextureSource from a UnityEngine.Texture2D.</li>
+<li>Two new sections added to Images Tutorial: 9-Slice Scaling and Generating Images at Runtime.</li>
+<li>Added FrameworkElement.GetTemplateChild() and FrameworkTemplate.FindName() was modified to accept a templated parent element like in WPF.</li>
+<li><tt class="docutils literal">Unity</tt> Added Enable Keyboard/Mouse toggle to NoesisGUIPanel component in Unity.</li>
+<li><tt class="docutils literal">Unity</tt> Missing functions and types exposed to Unity API:<ul>
+<li>ListBox.SelectedItems.</li>
+<li>ListView and ListViewItem.</li>
+<li>Nullable types for Color, Point, Rect, Size and Thickness.</li>
+</ul>
+</li>
+<li>Improved Binding.StringFormat implementation. Updated Binding tutorial.</li>
+<li>Markup parser in XamlImporter improved.</li>
+<li><tt class="docutils literal">Fixed</tt> Storyboard is constructed now with the children collection always created.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when using a StoryBoard that can't resolve target names.</li>
+<li><tt class="docutils literal">Fixed</tt> Bug when an exception was thrown while creating a Renderer.</li>
+<li><tt class="docutils literal">Fixed</tt> Commas are now optional specifying a MatrixTransform.Transform in xaml.</li>
+<li><tt class="docutils literal">Fixed</tt> Text blurriness in positions above 1024px.</li>
+<li><tt class="docutils literal">Fixed</tt> Slider.IsMoveToPointEnabled was not working properly for vertical sliders.</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Problems with Alt+Tab when in fullscreen.</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Error messages with internal path &quot;Unity/Unity/&quot; cleaned.</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Fixed rendering glitches in standalone.</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-4">
+<h1>Version 1.0.4</h1>
+<ul class="simple">
+<li>New platform: Linux, native runtime and Unity standalone player</li>
+<li>New 64 bits platforms for OS X and Windows</li>
+<li>Size of runtimes considerably reduced</li>
+<li>Default style modified to reflect local properties set in controls. For example &lt;Button Background=&quot;Red&quot;/&gt; now renders a button with a red background, instead of using the default color for the style</li>
+<li>New sample in ControlGallery showing buttons with different styles</li>
+<li>Implemented Mouse.GetPosition() relative to an element</li>
+<li><tt class="docutils literal">Unity</tt> VisualTreeHelper.HitTest exposed to Unity</li>
+<li><tt class="docutils literal">Unity</tt> HitTesting for render texture using RaycastHit.textureCoord. GameObject needs a valid MeshCollider. Unity tutorial updated</li>
+<li><tt class="docutils literal">Fixed</tt> Fixed ListBox crashing when changing items that use ItemTemplate</li>
+<li><tt class="docutils literal">Fixed</tt> When changing style of the inner ScrollViewer of a TextBox internal TextBoxView was not correctly set and measured</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox clipping was lost when the style of the internal ScrollViewer changed</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox was not updating the insertion point and selection indexes when Text property was set through code</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> UV coordinates were vertically flipped with respect to Unity convention</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Null string objects in unity are now treated as string.Empty</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Improved stability when errors happening in native</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Fixed a rare crash when resizing Unity standalone</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-3">
+<h1>Version 1.0.3</h1>
+<ul class="simple">
+<li>New Tutorial: <a class="reference external" href="Gui.Core.BlendTutorial.unity.html">First Steps with Blend in Unity</a></li>
+<li>Added StreamGeometry converter to allow things like this: &lt;StreamGeometry&gt;M0,0 L100,0&lt;/StreamGeometry&gt;</li>
+<li>Implemented callbacks for showing software keyboard on touch devices</li>
+<li>Improved text rendering with transforms. Now text inside a Viewbox displays without blurriness</li>
+<li><tt class="docutils literal">Unity</tt> Improved error messages when building resources</li>
+<li><tt class="docutils literal">Unity</tt> An error is shown when executing on a platform whose resource cache was not built</li>
+<li><tt class="docutils literal">Unity</tt> Many small fixes that improve Unity stability</li>
+<li><tt class="docutils literal">Fixed</tt> Offscreen atlas algorithm giving negatives values and crashing sometimes</li>
+<li><tt class="docutils literal">Fixed</tt> Masking problems that were causing scrollviewers clipping issues</li>
+<li><tt class="docutils literal">Fixed</tt> sdcard accessing problems solved in android</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Problems with properties in C# on classes extending NoesisGUI</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> TextBox.AcceptsReturn not working</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-2">
+<h1>Version 1.0.2</h1>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Deferred lighting issues</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Render artifacts with DirectX. NoesisGUI was corrupting the scene of Unity</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> OpenGL stencil buffer glitches</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Render performance was very poor on some GPU cards</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Unity scripts updated, robustness against errors improved</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> LoadScene is now possible in Unity</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Problem with properties in c#. They were not properly serialized. Read-only properties crashing.</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Input event args are now correctly exported to Unity</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Shift key was ignored due to a bug in Unity Event.current notification</li>
+<li><tt class="docutils literal">Fixed</tt> <tt class="docutils literal">Unity</tt> Navigation tab working now for Unity</li>
+<li>Shader used for masks optimized in GL ES</li>
+<li>Improved batching of draw image</li>
+<li><tt class="docutils literal">Fixed</tt> Compatibility problem in Windows8, noesis library was not unloaded correctly</li>
+<li>Gui/3rdParty package copied to <a class="reference external" href="https://github.com/Noesis/noesisgui-contrib">https://github.com/Noesis/noesisgui-contrib</a></li>
+<li>Fixed broken links to Tutorials. Now, each tutorial is a zip included inside the documentation</li>
+<li>Improvements to index documentation. Now tutorials for native and unity are separated</li>
+<li>Improvements to Styling Tutorial. Sample using Themes added.</li>
+<li>Improvements to Text Tutorial informing about .font resources</li>
+<li>Grid issues:<ul>
+<li>Static functions for setting grid attached properties were using the incorrect type.</li>
+<li>Modifications of grid attached properties were not notifying to the parent grid. The same happened for DockPanel Dock attached property.</li>
+</ul>
+</li>
+<li>TextBox events (KeyDown, KeyUp, TextInput, etc) were not calling user handlers.</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-1">
+<h1>Version 1.0.1</h1>
+<ul class="simple">
+<li>Unity: NoesisGUI menu moved from Component to Window top menu entry because Unity3D is buggy and our menu was disappearing sometimes.</li>
+<li>Text tutorial improved.</li>
+<li>README file and root index.html added to .unitypackage.</li>
+<li>Minor changes to Unity tutorial.</li>
+<li>SamplesGallery builds needed resources automatically. Now it doesn't crash the first time it is executed.</li>
+<li><tt class="docutils literal">Fixed</tt> XamlPlayer crashing when maximized</li>
+<li><tt class="docutils literal">Fixed</tt> Unity was unable to build .xaml resources when the active platform was not PC &amp; MAC.</li>
+<li><tt class="docutils literal">Fixed</tt> Improved Unity stability. Crashes when clicking Play or Stop resolved.</li>
+<li><tt class="docutils literal">Fixed</tt> inheriting from extended classes in Unity was not working.</li>
+<li><tt class="docutils literal">Fixed</tt> Added namespace to Unity class name so xamls designed in Blend using namespaces work correctly.</li>
+<li><tt class="docutils literal">Fixed</tt> Binding FallbackValue was not serialized correctly when it contains a boxed value.</li>
+<li><tt class="docutils literal">Fixed</tt> ControlGallery TextBlock sample was missing.</li>
+<li><tt class="docutils literal">Fixed</tt> Clipping problems in Unity 4.2.</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-0">
+<h1>Version 1.0.0</h1>
+<ul class="simple">
+<li>All tutorials have been improved. Many examples were outdated. Now every sample that is mentioned in the documentation is included in the package Gui/Tutorials and can be viewed with XamlPlayer. Following the suggestions from beta testers we have explained those concepts that were not clear.</li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.ExtendingTutorial.html">Extending NoesisGUI</a>.</li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.CommandsTutorial.html">Commands</a></li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.DataBindingTutorial.html">Bindings</a></li>
+<li>API for integration NoesisGUI within an application has been simplified.</li>
+<li>Unity improvements:<ul>
+<li>Setting a SDK is not needed anymore.</li>
+<li>File Resources .xaml and .font can be stored in any directory of the project. There are no restrictions now.</li>
+<li>Links for documentation included inside unity.</li>
+<li>New samples added.</li>
+<li>New platforms added: OS X and iOS.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-0-9-9">
+<h1>Version 0.9.9</h1>
+<div class="section" id="features">
+<h2>Features</h2>
+<ul class="simple">
+<li>OpenGL renderer optimized. Many improvements have been incorporated.</li>
+<li>Improved OpenGL ES 2.X implementation optimized for tiled based architectures. Now samples run fine in Android.</li>
+<li>New platform: iOS. iPhone and iPad supported with iOS 5 or later.</li>
+<li>New SDK platform: Mac OS X v10.5 or later. This SDK is yet experimental and not as complete as the Windows version.</li>
+<li>Support for multisample added in GL. For now only the extensions APPLE_framebuffer_multisample, EXT_framebuffer_multisample and EXT_multisampled_render_to_texture are supported.</li>
+<li>Opacity Groups (aka Render to Texture) have been heavily optimized. Now, you must indicate the resolution of off-screen surfaces when constructing a xaml renderer. By default, two extra textures of the same resolution are created.</li>
+<li>Improvements to the <a class="reference external" href="Gui.Core.SDKGuide.html">Integration Tutorial</a>. iOS integration described. Simplified interface for loading a xaml and setting up the renderer.</li>
+<li>Tessellation quality improved. Now the aspect of curves at medium quality is better.</li>
+<li>Glyph atlases are now a single channel (A8) texture on mobile platforms.</li>
+<li>Added default style support that is loaded by default with each xaml. Can be overridden by IUISystem::SetTheme().</li>
+<li>Added support for strings in ResourceDictionary.</li>
+<li>Unity improvements:<ul>
+<li>New unity directory layout following the suggestions from the forum.</li>
+<li>UserControls can be created now on Unity.</li>
+<li><a class="reference external" href="Gui.Core.Unity3DTutorial.html">Unity3d Tutorial</a> updated with UserControl, Binding and Commands information.</li>
+<li>Primitives sample updated with a ListBox and a ColorPicker.</li>
+<li>New LoadXaml function.</li>
+<li>Extended classes are automatically registered now.</li>
+<li>NoesisGui API is now inside the namespace Noesis.</li>
+<li>Added Noesis.Reflection.DoLaunchChangedEvent() function to implement INotifyPropertyChange in Unity extended classes.</li>
+<li>New demo, Shooter Demo, distributed as an standalone unity project.</li>
+<li>Video tutorial created with the <a class="reference external" href="http://vimeo.com/65549290">Shooter Demo</a>.</li>
+<li>Added a Command (MVVM) example.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="bug-fixes">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> Masking (Stencil) was not working properly on several scenarios.</li>
+<li><tt class="docutils literal">Fixed</tt> DependencyProperty was not taking into account Condition.SourceName to search for the property in the appropriate type.</li>
+<li><tt class="docutils literal">Fixed</tt> DynamicResourceExpression was not returning UnsetValue when resource key was not found.</li>
+<li><tt class="docutils literal">Fixed</tt> VisualState and VisualTransition were not implementing IUITreeNode and name lookups failed.</li>
+<li><tt class="docutils literal">Fixed</tt> BindingExpression was failing when DataContext was being set from code.</li>
+<li><tt class="docutils literal">Fixed</tt> Thickness, Point and Size parsers accepting now &quot; &quot; and &quot;,&quot; as separators.</li>
+<li><tt class="docutils literal">Fixed</tt> UnityDeviceDX9 rendering xamls to textures and to camera in the same scene were failing.</li>
+<li><tt class="docutils literal">Fixed</tt> Problems reloading NoesisGUI components in standalone mode.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash when rendering to a texture that was not being used.</li>
+<li><tt class="docutils literal">Fixed</tt> Atlases between surfaces was not shared properly (same glyphs were inserted several times).</li>
+<li><tt class="docutils literal">Fixed</tt> When closing a Pop-up sometimes it was clearing any binding set in the IsOpen property.</li>
+<li><tt class="docutils literal">Fixed</tt> TextBox handling Unicode characters properly.</li>
+<li><tt class="docutils literal">Fixed</tt> Bugged animation in Button Pressed state in NoesisStyle.</li>
+<li>PlaneProjection FOV adjusted to match WPF.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-8">
+<h1>Version 0.9.8</h1>
+<div class="section" id="id1">
+<h2>Features</h2>
+<ul class="simple">
+<li>Many improvements in the integration layer between NoesisUI C++ API and Mono. Now, Noesis classes can be extended to create new controls. All samples upgraded with the new improvements.</li>
+<li>Unity pipeline simplified. Now changes to assets are automatically detected. You can be editing a XAML, save the changes and the results are automatically shown on Unity.</li>
+<li>New Unity sample: Primitives.</li>
+<li><a class="reference external" href="Gui.Core.Unity3DTutorial.html">Unity3d Tutorial</a> updated.</li>
+<li>Android platform. This is the first release to include runtime support for Android. Both standalone and Unity environment are supported. Although this is still a preliminary work and many optimizations are pending, all the samples are working properly.</li>
+<li>Improvements to the <a class="reference external" href="Gui.Core.SDKGuide.html">Integration Tutorial</a>. Android integration described.</li>
+<li>Functions in GUI receiving a BaseComponent* that accept a boxed value, are now overloaded with a string parameter to make it easier to use in this case (90% of the time). The functions affected are:<ul>
+<li>IList: Set, Add, Insert</li>
+<li>ContentControl: SetContent</li>
+<li>ContentPresenter: SetContent</li>
+<li>FrameworkElement: SetTag</li>
+</ul>
+</li>
+<li>Added more documentation to <a class="reference external" href="Gui.Core._ClassHierarchy.html">Class Hierarchy</a> list. All main classes are now documented.</li>
+<li>OpenGL renderer optimized.</li>
+<li>New tutorial: <em>OpenSceneGraph integration</em>.</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> Unity crash when the device is lost.</li>
+<li><tt class="docutils literal">Fixed</tt> Items in ItemsControl not updated when using ItemSource external collection.</li>
+<li><tt class="docutils literal">Fixed</tt> xaml being modified with Unity editor in play mode</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-7">
+<h1>Version 0.9.7</h1>
+<div class="section" id="id6">
+<h2>Features</h2>
+<ul class="simple">
+<li>New Unity demos: MasterMind, RenderToTexture and Primitives.</li>
+<li>New sample: CarHud</li>
+<li>Implemented render to texture in Unity</li>
+<li>UnityExporter console application deprecated. A new tool is implemented directly inside the editor of Unity3d</li>
+<li>Improvements to <a class="reference external" href="Gui.Core.Unity3DTutorial.html">Unity3d Tutorial</a>, describing all the things that are new</li>
+<li>Several improvements to text rendering. Subpixel positioning implemented.</li>
+<li>OpenGL RenderSystem implementation</li>
+<li>Improvements to the <a class="reference external" href="Gui.Core.SDKGuide.html">Integration Tutorial</a>. OpenGL integration described</li>
+<li>XamlPlayer: Drag&amp;Drop feature removed. It was confusing to the user where resources could be dragged from</li>
+<li>XamlPlayer: new resource browser panel added to select the XAML to load</li>
+<li>XamlPlayer: animations panel now shows a list of storyboards each one with its own play / pause / stop buttons.</li>
+<li>XamlPlayer: wait for vsync when rendering. When the window is not active, it stops continuously rendering</li>
+<li>Improvements to the <a class="reference external" href="Gui.Core._ClassHierarchy.html">Class Hierarchy</a> documentation. All supported classes, with properties and events are summarized.</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> If available the OS/2 table of OpenType fonts is used. Same behavior than WPF.</li>
+<li><tt class="docutils literal">Fixed</tt> DrawText snapping parameter removed. Now text is like the rest of primitives, that are aligned at integer positions</li>
+<li><tt class="docutils literal">Fixed</tt> Text rendering with alpha was not correct</li>
+<li><tt class="docutils literal">Fixed</tt> tessellation of circles generated extra triangles in some scenarios</li>
+<li>Improvements to BuildTool that sometimes never returned. Background and foreground color properly restored</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-6">
+<h1>Version 0.9.6</h1>
+<div class="section" id="id11">
+<h2>Features</h2>
+<ul class="simple">
+<li>New demo: TicTacToe.</li>
+<li>New demo: SamplesGallery. Added as a scene to the unity package too.</li>
+<li>New tutorial: <a class="reference external" href="Gui.Core.LayoutPanelTutorial.html">Layout &amp; Panels</a>.</li>
+<li>New tutorial: <em>OGRE Tutorial</em>.</li>
+<li>New samples: Brushes, Butterfly, Canvas, DockPanel, Grid, Palette, ProgressBar, StackPanel, StatusBar, ToolBar, Tiger, WrapPanel.</li>
+<li>Improvements to the Unity runtime. Now it is smaller and faster. Errors are properly handled now.</li>
+<li>Changes to Enums in C#. For example, HorizontalAlignment_Center is now HorizontalAlignment.Center.</li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li>Many bugs fixed related to bindings of NoesisGui to C# (affecting the Unity runtime).</li>
+<li><tt class="docutils literal">Fixed</tt> Unity runtime crashing on exit.</li>
+<li><tt class="docutils literal">Fixed</tt> LineGeometry was not calculating correctly its bounds when a non identity transform was used.</li>
+<li><tt class="docutils literal">Fixed</tt> Compilation errors with Visual Studio 2010.</li>
+<li><tt class="docutils literal">Fixed</tt> UserControl was not copying correctly triggers during loading process.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-5">
+<h1>Version 0.9.5</h1>
+<div class="section" id="id13">
+<h2>Features</h2>
+<ul class="simple">
+<li>New tutorial: <a class="reference external" href="Gui.Core.Unity3DTutorial.html">Unity3d Tutorial</a></li>
+<li>Improvements to the <a class="reference external" href="Gui.Core.SDKGuide.html">Integration Tutorial</a></li>
+<li>Fonts with embedded bitmaps were not properly rendered.</li>
+<li>New IStoryboard interface.</li>
+<li>Implemented PauseStoryboard, ResumeStoryboard and StopStoryboard triggers actions.</li>
+<li>Added Pause/Resume/Stop buttons to XamlPlayer animations panel.</li>
+<li>Improvements to stroke generation.</li>
+<li>DirectX InputSystem no longer used in the SDK.</li>
+<li>PixelWidth and PixelHeight properties added to BitmapSource and TextureSource.</li>
+<li>Many functions have been changed from receiving a smart pointer to a raw pointer.</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> EventTrigger was not invoking trigger actions with the correct target and namescope.</li>
+<li><tt class="docutils literal">Fixed</tt> Focused Button was not launching Click event when space bar was pressed.</li>
+<li><tt class="docutils literal">Fixed</tt> PropertyPath path was being serialized twice.</li>
+<li><tt class="docutils literal">Fixed</tt> When a merged dictionary contains more than one merged dictionary, an incorrect error was thrown.</li>
+<li><tt class="docutils literal">Fixed</tt> PushTransform matrix multiplication order in UIElement was wrong</li>
+<li><tt class="docutils literal">Fixed</tt> Compilation errors with Visual Studio 2010</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-4">
+<h1>Version 0.9.4</h1>
+<div class="section" id="id17">
+<h2>Features</h2>
+<ul class="simple">
+<li>New exporter for <a class="reference external" href="http://www.texturepacker.com/">TexturePacker</a> inside <em>Gui/3rdParty/Content/TexturePacker</em>. With this plugin atlases that are compatible with NoesisGui can be generated. See the <a class="reference external" href="Gui.Core.ImagesTutorial.html">Images Tutorial</a>.</li>
+<li>Animations on sample <em>Time.xaml</em> are now not launched automatically, use the animation panel to launch them.</li>
+<li>Support for Triggers in DataTemplates.</li>
+<li>ListView control implemented with column reordering, and <em>ListView.xaml</em> sample added to Gui/Samples.</li>
+<li>Improvements to text rendering quality.</li>
+<li>Support for stroking text in TextBlock. See included <em>Text.xaml</em> example in Gui/Samples.</li>
+<li>TextBox control implemented with Copy/Cut/Paste commands. <em>TextBox.xaml</em> example added to Gui/Samples.</li>
+<li>ScrollBar and Slider controls now react to key input gestures when control is focused.</li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> Track element was not taking IsDirectionReversed into account in arrange code to layout DecreaseButton and IncreaseButton correctly.</li>
+<li><tt class="docutils literal">Fixed</tt> Crash building a Style without a TargetType.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-3">
+<h1>Version 0.9.3</h1>
+<div class="section" id="id19">
+<h2>Features</h2>
+<ul class="simple">
+<li>Added ImageSource.Width and ImageSource.Height properties.</li>
+<li>ImageSource now uses image resolution to calculate its size (width and height) in device independent units.</li>
+<li>All TileBrush tiling modes (None, Tile, FlipX, FlipY, FlipXY) correctly implemented.</li>
+<li>New <a class="reference external" href="Gui.Core.ImagesTutorial.html">tutorial</a> for images added. Related examples added: ImageAtlas, ImageBrushStretch, ImageBrushTile and ImageBrushViewBox.</li>
+<li>Automatic atlases no longer generated. Now atlases must be created manually.</li>
+<li>Image.Source and ImageBrush.ImageSource properties are now of ImageSource type. Added ImageSourceConverter to convert image paths into a valid ImageSource (TextureSource if a texture compiler is available, or BitmapSource otherwise).</li>
+<li>XamlPlayer now shows and can launch animations found in the Resources property of the loaded XAML root.</li>
+<li>New option in XamlPlayer to view loaded XAML in wireframe mode.</li>
+<li>Support for Style.BasedOn property implemented.</li>
+</ul>
+</div>
+<div class="section" id="id20">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> GridView.ColumnHeaderContainerStyle property was registered with a wrong name.</li>
+<li><tt class="docutils literal">Fixed</tt> ClipToBounds was not correctly implemented.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-2">
+<h1>Version 0.9.2</h1>
+<div class="section" id="id21">
+<h2>Features</h2>
+<ul class="simple">
+<li>Xaml files that define a ResourceDictionary are now cached when they are loaded for the first time.</li>
+<li>Mouse CaptureMode SubTree implemented.</li>
+<li>Now ComboBoxes, Menus and ContextMenus capture the mouse while its Popup is open.</li>
+<li>Added a Find() function to IDictionary so Contains() + Get() consecutive calls can be optimized.</li>
+<li>INameScope FindName() now returns a raw pointer.</li>
+<li>IUITreeNode FindNodeResource() and FindNodeName() now return a raw pointer.</li>
+</ul>
+</div>
+<div class="section" id="id22">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> Behaviour of Popup and its StaysOpen property was not correct.</li>
+<li><tt class="docutils literal">Fixed</tt> Problems with HitTest clipping and opacity groups inside Popup elements.</li>
+<li><tt class="docutils literal">Fixed</tt> The order of events raised when Keyboard focus changed is now correct: if the PreviewGotKeyboardFocus event or the PreviewLostKeyboardFocus event is handled, keyboard focus does not change.</li>
+<li><tt class="docutils literal">Fixed</tt> Destroying a ContextMenu or ToolTip while its popup is open was crashing.</li>
+<li><tt class="docutils literal">Fixed</tt> Referencing resources of a merged dictionary inside another merged dictionary was failing.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-1">
+<h1>Version 0.9.1</h1>
+<div class="section" id="id23">
+<h2>Features</h2>
+<ul class="simple">
+<li>Added ResetInputState() to IRenderer, so mouse buttons and keys that were pressed can be reseted when an application is deactivated.</li>
+<li>Optimized Border geometry generation using StreamGeometryContext, and now is robust against limit cases (corners bigger than border size, etc.).</li>
+<li>UIResource dependencies are now stored as GUID instead of strings (it is recommended to rebuild UI resources).</li>
+<li>Implemented PushClip drawing context command (to be used within OnRender).</li>
+<li>Added Timeline Completed event to reflection so it can be used from XAML.</li>
+<li>Optimized PropertyPath memory space used by instances, and path is now parsed and serialized to avoid parsing in runtime as much as possible (it is recommended to rebuild UI resources).</li>
+<li>Added static methods to RelativeSource to obtain unique instances of Self, TemplatedParent, or PreviousData relative sources.</li>
+<li>Improvements to XamlReader to detect errors writing markup extensions or the {} escape sequence.</li>
+</ul>
+</div>
+<div class="section" id="id24">
+<h2>Bug fixes</h2>
+<ul class="simple">
+<li><tt class="docutils literal">Fixed</tt> DependencyProperties that Inherits didn't notify OnSubPropertyChanged correctly.</li>
+<li><tt class="docutils literal">Fixed</tt> Grid layout of star cells was failing when there were 2 or more cells with the same measure size.</li>
+<li><tt class="docutils literal">Fixed</tt> Track that was part of a ScrollBar didn't specify a minimum size for the Thumb control.</li>
+<li><tt class="docutils literal">Fixed</tt> BlendTutorial color selector sliders were not correctly initialized.</li>
+<li><tt class="docutils literal">Fixed</tt> ListBox in single selection mode was failing when Ctrl clicking an item.</li>
+<li><tt class="docutils literal">Fixed</tt> Some DependencyObject derived classes were not constructing the UI tree correctly, causing failures during resource look up.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="version-0-9-0">
+<h1>Version 0.9.0</h1>
+<p>First version released in the private beta program.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#version-1-1-14" id="id25">Version 1.1.14</a></li>
+<li><a class="reference internal" href="#version-1-1-13" id="id26">Version 1.1.13</a></li>
+<li><a class="reference internal" href="#version-1-1-12" id="id27">Version 1.1.12</a></li>
+<li><a class="reference internal" href="#version-1-1-11" id="id28">Version 1.1.11</a></li>
+<li><a class="reference internal" href="#version-1-1-10" id="id29">Version 1.1.10</a></li>
+<li><a class="reference internal" href="#version-1-1-9" id="id30">Version 1.1.9</a></li>
+<li><a class="reference internal" href="#version-1-1-8" id="id31">Version 1.1.8</a></li>
+<li><a class="reference internal" href="#version-1-1-7" id="id32">Version 1.1.7</a></li>
+<li><a class="reference internal" href="#version-1-1-6" id="id33">Version 1.1.6</a></li>
+<li><a class="reference internal" href="#version-1-1-5" id="id34">Version 1.1.5</a></li>
+<li><a class="reference internal" href="#version-1-1-4" id="id35">Version 1.1.4</a></li>
+<li><a class="reference internal" href="#version-1-1-3" id="id36">Version 1.1.3</a></li>
+<li><a class="reference internal" href="#version-1-1-2" id="id37">Version 1.1.2</a></li>
+<li><a class="reference internal" href="#version-1-1-1" id="id38">Version 1.1.1</a></li>
+<li><a class="reference internal" href="#version-1-1-0" id="id39">Version 1.1.0</a></li>
+<li><a class="reference internal" href="#version-1-0-4" id="id40">Version 1.0.4</a></li>
+<li><a class="reference internal" href="#version-1-0-3" id="id41">Version 1.0.3</a></li>
+<li><a class="reference internal" href="#version-1-0-2" id="id42">Version 1.0.2</a></li>
+<li><a class="reference internal" href="#version-1-0-1" id="id43">Version 1.0.1</a></li>
+<li><a class="reference internal" href="#version-1-0-0" id="id44">Version 1.0.0</a></li>
+<li><a class="reference internal" href="#version-0-9-9" id="id45">Version 0.9.9</a><ul>
+<li><a class="reference internal" href="#features" id="id46">Features</a></li>
+<li><a class="reference internal" href="#bug-fixes" id="id47">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-8" id="id48">Version 0.9.8</a><ul>
+<li><a class="reference internal" href="#id1" id="id49">Features</a></li>
+<li><a class="reference internal" href="#id5" id="id50">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-7" id="id51">Version 0.9.7</a><ul>
+<li><a class="reference internal" href="#id6" id="id52">Features</a></li>
+<li><a class="reference internal" href="#id10" id="id53">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-6" id="id54">Version 0.9.6</a><ul>
+<li><a class="reference internal" href="#id11" id="id55">Features</a></li>
+<li><a class="reference internal" href="#id12" id="id56">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-5" id="id57">Version 0.9.5</a><ul>
+<li><a class="reference internal" href="#id13" id="id58">Features</a></li>
+<li><a class="reference internal" href="#id16" id="id59">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-4" id="id60">Version 0.9.4</a><ul>
+<li><a class="reference internal" href="#id17" id="id61">Features</a></li>
+<li><a class="reference internal" href="#id18" id="id62">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-3" id="id63">Version 0.9.3</a><ul>
+<li><a class="reference internal" href="#id19" id="id64">Features</a></li>
+<li><a class="reference internal" href="#id20" id="id65">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-2" id="id66">Version 0.9.2</a><ul>
+<li><a class="reference internal" href="#id21" id="id67">Features</a></li>
+<li><a class="reference internal" href="#id22" id="id68">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-1" id="id69">Version 0.9.1</a><ul>
+<li><a class="reference internal" href="#id23" id="id70">Features</a></li>
+<li><a class="reference internal" href="#id24" id="id71">Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-9-0" id="id72">Version 0.9.0</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

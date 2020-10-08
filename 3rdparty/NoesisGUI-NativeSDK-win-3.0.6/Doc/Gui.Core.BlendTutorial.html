@@ -1,0 +1,1046 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Blend Integration Tutorial - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="Tutorial about using Blend with NoesisGUI" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.BlendTutorial.html" />
+<meta name="twitter:title" content="Blend Integration Tutorial | NoesisGUI" />
+<meta name="twitter:description" content="Tutorial about using Blend with NoesisGUI" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Blend Integration Tutorial | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="Tutorial about using Blend with NoesisGUI" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.BlendTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.BlendTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="blend-integration-tutorial">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Blend Integration Tutorial</h1>
+
+<p><img alt="github" class="align-middle" src="github.png" /> <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Samples/BlendTutorial">Tutorial Data</a></p>
+<div class="section" id="introduction">
+<h1>Introduction</h1>
+<div class="section" id="what-is-blend">
+<h2>What is Blend?</h2>
+<p>Microsoft Blend is a <em>visual tool</em> for creating eye candy, vector based, graphical <em>user interfaces</em>. You build an interface by drawing shapes and paths, drawing controls such as buttons and list boxes, making the pieces of your application respond to mouse clicks and other user input, and styling everything to look uniquely your own.</p>
+<p>What you see on the design surface in Blend while you create your interface is what users will see when they run your application.</p>
+<p>In Blend, you work on real pieces of a working application, but you can still draw and style everything as easily as you can in other illustration software, or event import your designs from other popular vector graphics tools like <em>Adobe Illustrator</em>. When you want to draw something that represents an interactive control, you can actually select an available control (such as a button or a list box) and then style it, or create your control from scratch; in any case, the powerful skinning mechanism will allow to fully customize the visual appearance.</p>
+</div>
+<div class="section" id="what-does-blend-produce">
+<h2>What does Blend produce?</h2>
+<p>Blend produces a visual design that is represented by a text file in <a class="reference external" href="Gui.Core.XamlIntroduction.html">XAML</a> format. Just as HTML is the markup language for web applications, XAML is the markup language for Blend applications. These XAML files, together with other resources such as images or fonts, will be the input of NoesisGUI applications.</p>
+<p>This tutorial is based on <em>Microsoft Blend for Visual Studio</em>, and will show you how to use it to design application user interfaces to be imported and executed by NoesisGUI framework.</p>
+</div>
+</div>
+<div class="section" id="blend-editor">
+<h1>Blend Editor</h1>
+<div class="section" id="supported-assets">
+<h2>Supported Assets</h2>
+<p>The following sections describe the functionality provided by Blend that is implemented by NoesisGUI. As NoesisGUI becomes more mature this subset will be increased with new releases.</p>
+<div class="section" id="controls">
+<h3>Controls</h3>
+<p>Blend has a huge control palette available to the user. At this time not all controls are supported in NoesisGUI framework, but a big set of the most important are ready to be used. The following chart shows a quick view of the main controls supported in the current version. For further info follow <a class="reference external" href="Gui.Core.ControlsTutorial.html">Controls tutorial</a>.</p>
+<blockquote>
+<img alt="BlendTutorialImg1.png" src="BlendTutorialImg1.png" />
+</blockquote>
+</div>
+<div class="section" id="panels">
+<h3>Panels</h3>
+<p>Panels determine the layout (size and position) of their content, formed by other interface elements. Arranging user interface elements simply with static pixel-based coordinates and static pixel-based sizes can work in limited environments, but these types of interfaces can't correctly deal with different screen resolutions and dimensions, user settings such as font sizes, or content that changes in unpredictable ways (such as text being translated into different languages).</p>
+<p>Blend defines a variety of panels enough to avoid the problems mentioned above and to create any type of application. NoesisGUI framework implements the following <a class="reference external" href="Gui.Core._Panel.html">Panel</a> classes from among those provided by Blend. More information can be found in the <a class="reference external" href="Gui.Core.LayoutPanelTutorial.html">Layout and Panels tutorial</a>.</p>
+<blockquote>
+<img alt="BlendTutorialImg2.png" src="BlendTutorialImg2.png" />
+</blockquote>
+</div>
+<div class="section" id="shapes">
+<h3>Shapes</h3>
+<p>A <a class="reference external" href="Gui.Core._Shape.html">Shape</a> is a basic 2D drawing that combines a <a class="reference external" href="Gui.Core._Geometry.html">Geometry</a> with a <a class="reference external" href="Gui.Core._Pen.html">Pen</a> (for drawing outlines) and a <a class="reference external" href="Gui.Core._Brush.html">Brush</a>  (for filling the geometry). Shapes can be directly placed in a user interface without custom code or a complex hierarchy of objects. Shape objects share the following common properties.</p>
+<ul class="simple">
+<li><strong>Fill</strong>: describes how the interior of the shape is painted.</li>
+<li><strong>Stroke</strong>: describes how the shape's outline is painted.</li>
+<li><strong>StrokeThickness</strong>: describes the thickness of the shape's outline.</li>
+<li><strong>Strecth</strong>: describes how the shape stretches to fill the available space in its container.</li>
+</ul>
+<p>NoesisGUI implements the following shapes. For further info follow <a class="reference external" href="Gui.Core.ShapesTutorial.html">Shapes tutorial</a>.</p>
+<blockquote>
+<img alt="BlendTutorialImg3.png" src="BlendTutorialImg3.png" />
+</blockquote>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p class="last">Virtually all shapes are supported because all of them can be converted to Path by clicking on the shape and doing 'Path -&gt; Convert to Path'. Follow this approach if you need a Shape that is not supported by Noesis.</p>
+</div>
+</div>
+<div class="section" id="behaviors">
+<h3>Behaviors</h3>
+<p><a class="reference external" href="App.Interactivity.Behaviors.html">Behaviors</a> are reusable pieces of packaged code that can be dragged onto any object and then fine-tuned by changing their properties to add interactivity to your application. Behaviors have a <em>trigger</em>, an <em>action</em> and usually a target:</p>
+<ul class="simple">
+<li>The <em>trigger</em> is the event that invokes the behavior. The most useful triggers are user interface control events (like clicking) and those invoked by changes to system states (like storyboards ending or properties changing).</li>
+<li>The <em>action</em> specifies what the behavior should do. For example, an action might be to run a storyboard, or change a property of an element.</li>
+<li>The <em>target</em> is the element which the behavior will act upon.</li>
+</ul>
+<p>The following <em>Behaviors</em> classes are implemented in NoesisGUI. More information can be found in the <a class="reference external" href="App.Interactivity.Behaviors.html">Interactivity tutorial</a>.</p>
+<blockquote>
+<img alt="BlendTutorialImg30.png" src="BlendTutorialImg30.png" />
+</blockquote>
+</div>
+<div class="section" id="effects">
+<h3>Effects</h3>
+<p>Effects are simple pixel processing operations. An effect takes a bitmap source as an input and produces a new bitmap after applying the effect, such as a blur or drop shadow. Each effect exposes properties to control it.</p>
+<p>Effects can be applied to <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> objects, such as a <a class="reference external" href="Gui.Core._Button.html">Button</a> or <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a>. When you set an effect to a layout container, such as <a class="reference external" href="Gui.Core._DockPanel.html">DockPanel</a> or <a class="reference external" href="Gui.Core._Canvas.html">Canvas</a>, the effect is applied to the visual tree of the element or visual, including all of its child elements.</p>
+<p>The architecture to support effects is not yet implemented by NoesisGUI.</p>
+</div>
+</div>
+<div class="section" id="supported-project-types">
+<h2>Supported Project Types</h2>
+<p>When creating a new project, Blend shows the following dialog:</p>
+<img alt="BlendTutorialImg4.png" src="BlendTutorialImg4.png" />
+<p>There are several types of technologies supported by Blend: <em>WPF</em>, <em>Silverlight</em> and <em>UWP</em>. Microsoft designed <em>WPF</em> to provide a consistent programming model for the development of desktop applications. <em>Silverlight</em> was created later to bring the power of <em>WPF</em> to the web. <em>Silverlight</em> defines a simpler runtime but in comparison to <em>WPF</em> it has a few differences: it implements less controls, it has more limited styling capabilities (triggers), however includes a new property that simulates 3D transformations applied to graphic elements, the <em>Projection</em> property.</p>
+<p>Currently NoesisGUI supports the creation of <em>WPF</em> and <em>Silverlight</em> projects from Blend.</p>
+<p>For this tutorial we will create a fully functional application using the <a class="reference external" href="Gui.Core.ApplicationTutorial.html">application framework</a>.</p>
+</div>
+<div class="section" id="creating-main-window-ui">
+<h2>Creating Main Window UI</h2>
+<p>Use Blend to add and organize controls and graphical elements within the application main window (if you are not familiar with this tool, you should read this <a class="reference external" href="https://docs.microsoft.com/en-us/visualstudio/designers/creating-a-ui-by-using-blend-for-visual-studio">Blend user guide</a> to learn the basics on how to use it). Controls and other elements can be selected in Blend from the <em>Assets</em> tab or directly from the appropriate buttons on the left tool bar.</p>
+<p>After some work we ended with something similar to this:</p>
+<img alt="BlendTutorialImg5.png" src="BlendTutorialImg5.png" />
+</div>
+<div class="section" id="control-styling">
+<h2>Control Styling</h2>
+<p>It's important to understand the different techniques to change the visual appearance of an element. <em>Style</em>, <em>Template</em> and <em>Theme</em> are the base concepts to unveil and master the customization capabilities that XAML has to offer. We recommend reading this brief <a class="reference external" href="Gui.Core.StylingTutorial.html">introduction to Styles and Templates</a>, along as the Blend documentation about the matter.</p>
+<p>For our application we can add a personal look by adding our custom control styles. To organize resources we will create a new <a class="reference external" href="Gui.Core._ResourceDictionary.html">ResourceDictionary</a> and place all style definitions there:</p>
+<img alt="BlendTutorialImg6.png" src="BlendTutorialImg6.png" />
+<img alt="BlendTutorialImg7.png" src="BlendTutorialImg7.png" />
+<p>We will begin style edition by selecting one of the window controls, the &quot;AddButton&quot; for example, and then go to the <em>Format</em> menu -&gt; <em>Edit Style</em> -&gt; <em>Create Empty...</em></p>
+<img alt="BlendTutorialImg8.png" src="BlendTutorialImg8.png" />
+<p>Then we customize button style by setting some properties. And finally we create the button template that will give our personal appearance to the button.</p>
+<img alt="BlendTutorialImg9.png" src="BlendTutorialImg9.png" />
+<img alt="BlendTutorialImg10.png" src="BlendTutorialImg10.png" />
+<p>After creating and editing the styles and templates of all the controls we are using, our main window looks like this:</p>
+<img alt="BlendTutorialImg11.png" src="BlendTutorialImg11.png" />
+</div>
+<div class="section" id="user-controls">
+<h2>User Controls</h2>
+<p>Sometimes we need to create controls that can be reused in other applications. In this case it is best to create a user control consisting of standard controls, so that control can assimilate the appearance of the application where it is used, while maintaining the logic needed to operate unchanged. Now we will add a <a class="reference external" href="Gui.Core._UserControl.html">UserControl</a> for our application to define a color selector:</p>
+<img alt="BlendTutorialImg6.png" src="BlendTutorialImg6.png" />
+<img alt="BlendTutorialImg12.png" src="BlendTutorialImg12.png" />
+<p>The user control appearance is defined by the composition of standard controls. Then we add the logic to manage the color selector, and the control is ready to use in our application:</p>
+<img alt="BlendTutorialImg13.png" src="BlendTutorialImg13.png" />
+<p>More detailed information is available in the <a class="reference external" href="Gui.Core.UserControlTutorial.html">user controls</a> tutorial.</p>
+</div>
+<div class="section" id="fonts">
+<h2>Fonts</h2>
+<p>NoesisGUI framework allows the use of local resource <a class="reference external" href="Gui.Core.TextTutorial.html">fonts</a> in your application. First you need to include the font in your project:</p>
+<img alt="BlendTutorialImg14.png" src="BlendTutorialImg14.png" />
+<p>Then the font can be referenced in the XAML as a local resource:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Window</span> <span class="na">FontFamily=</span><span class="s">&quot;Fonts/#WeblySleek UI Normal&quot;</span><span class="nt">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="animation">
+<h2>Animation</h2>
+<p>Animation can make an attractive user interface even more spectacular and usable. By just animating a background color or applying an animated transform, you can create dramatic screen transitions or provide helpful visual cues.</p>
+<p>Using a tool like Blend eases this process even more. What follows next is a brief introduction to the animation system using Blend.</p>
+<p>More information about animations in NoesisGUI can be found in the <a class="reference external" href="Gui.Core.AnimationTutorial.html">animation tutorial</a></p>
+<div class="section" id="the-storyboard">
+<h3>The Storyboard</h3>
+<p>All the animations created from Blend are based on a timeline called <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>. Inside a <em>Storyboard</em>, animation changes are inserted like in a music score, using groups of keyframes that affect a number of properties. The animation tells which property is going to be animated, and the keyframes inside the animation specify which value is going to take the property over the time.</p>
+</div>
+<div class="section" id="where-to-apply-a-storyboard">
+<h3>Where to apply a storyboard</h3>
+<p>Storyboards can be applied in 3 situations:</p>
+<ul class="simple">
+<li>As a response to a <em>routed event</em> (using an <a class="reference external" href="Gui.Core._EventTrigger.html">EventTrigger</a>, both used directly over a <a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a> or inside a <a class="reference external" href="Gui.Core._Style.html">Style</a> or <a class="reference external" href="Gui.Core._FrameworkTemplate.html">Template</a>).</li>
+</ul>
+<blockquote>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Button.Triggers&gt;</span>
+    <span class="nt">&lt;EventTrigger</span> <span class="na">RoutedEvent=</span><span class="s">&quot;Button.Click&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;BeginStoryboard&gt;</span>
+        <span class="nt">&lt;Storyboard</span> <span class="err">...</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/BeginStoryboard&gt;</span>
+    <span class="nt">&lt;/EventTrigger&gt;</span>
+  <span class="nt">&lt;/Button.Triggers&gt;</span>
+<span class="nt">&lt;/Button&gt;</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Rectangle&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Style.Triggers&gt;</span>
+    <span class="nt">&lt;EventTrigger</span> <span class="na">RoutedEvent=</span><span class="s">&quot;UIElement.MouseEnter&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;BeginStoryboard&gt;</span>
+        <span class="nt">&lt;Storyboard</span> <span class="err">...</span><span class="nt">/&gt;</span>
+     <span class="nt">&lt;/BeginStoryboard&gt;</span>
+    <span class="nt">&lt;/EventTrigger&gt;</span>
+  <span class="nt">&lt;/Style.Triggers&gt;</span>
+<span class="nt">&lt;/Button&gt;</span>
+</pre></div>
+</blockquote>
+<ul class="simple">
+<li>As a response to the activation or deactivation of a <em>property</em> (inside a <em>Style</em> or a <em>Template</em>).</li>
+</ul>
+<blockquote>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Rectangle&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Style.Triggers&gt;</span>
+    <span class="nt">&lt;Trigger</span> <span class="na">Property=</span><span class="s">&quot;IsMouseOver&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Trigger.EnterActions&gt;</span>
+        <span class="nt">&lt;BeginStoryboard&gt;</span>
+          <span class="nt">&lt;Storyboard</span> <span class="err">...</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/BeginStoryboard&gt;</span>
+      <span class="nt">&lt;/Trigger.EnterActions&gt;</span>
+    <span class="nt">&lt;/Trigger&gt;</span>
+  <span class="nt">&lt;/Style.Triggers&gt;</span>
+<span class="nt">&lt;/Button&gt;</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ControlTemplate</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Border</span> <span class="na">x:Name=</span><span class="s">&quot;border&quot;</span> <span class="err">...</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ControlTemplate.Triggers&gt;</span>
+    <span class="nt">&lt;Trigger</span> <span class="na">Property=</span><span class="s">&quot;IsMouseOver&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Trigger.EnterActions&gt;</span>
+        <span class="nt">&lt;BeginStoryboard&gt;</span>
+          <span class="nt">&lt;Storyboard</span> <span class="err">...</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/BeginStoryboard&gt;</span>
+      <span class="nt">&lt;/Trigger.EnterActions&gt;</span>
+    <span class="nt">&lt;/Trigger&gt;</span>
+  <span class="nt">&lt;/ControlTemplate.Triggers&gt;</span>
+<span class="nt">&lt;/ControlTemplate&gt;</span>
+</pre></div>
+</blockquote>
+<ul class="simple">
+<li>In a <em>visual state</em> (inside a <em>Template</em>).</li>
+</ul>
+<blockquote>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ControlTemplate</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Border</span> <span class="na">x:Name=</span><span class="s">&quot;border&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;VisualStateManager.VisualStateGroups&gt;</span>
+      <span class="nt">&lt;VisualStateGroup</span> <span class="na">x:Name=</span><span class="s">&quot;CommonStates&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;VisualState</span> <span class="na">x:Name=</span><span class="s">&quot;Normal&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;VisualState</span> <span class="na">x:Name=</span><span class="s">&quot;MouseOver&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Storyboard</span> <span class="err">...</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/VisualState&gt;</span>
+        <span class="nt">&lt;VisualState</span> <span class="na">x:Name=</span><span class="s">&quot;Pressed&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/VisualStateGroup&gt;</span>
+    <span class="nt">&lt;/VisualStateManager.VisualStateGroups&gt;</span>
+    ...
+  <span class="nt">&lt;/Border&gt;</span>
+<span class="nt">&lt;/ControlTemplate&gt;</span>
+</pre></div>
+</blockquote>
+</div>
+<div class="section" id="a-simple-animation">
+<h3>A simple animation</h3>
+<p>Let's take a simple <a class="reference external" href="Gui.Core._Rectangle.html">Rectangle</a> to make some animations to it.</p>
+<img alt="BlendTutorialAnimationImg1.png" src="BlendTutorialAnimationImg1.png" />
+<p>After drawing the rectangle, go to the <em>Objects and Timeline</em> window, and click on the <em>New</em> button on the right to create a new <em>Storyboard</em>.</p>
+<img alt="BlendTutorialAnimationImg2.png" src="BlendTutorialAnimationImg2.png" />
+<p>Give a name to the <em>Storyboard</em> and create it.</p>
+<img alt="BlendTutorialAnimationImg3.png" src="BlendTutorialAnimationImg3.png" />
+<p>Now in the <em>Objects and Timeline</em> window the newly created storyboard appears. Moving the time bar in the timeline sets the exact time when property changes will be executed during the animation</p>
+<img alt="BlendTutorialAnimationImg4.png" src="BlendTutorialAnimationImg4.png" />
+<p>When a new animation is created, Blend enters in the recording state automatically. This means that any change made in the design window or in the element properties are being recorded into the animation timeline, just in the time where the time bar is pointing.</p>
+<img alt="BlendTutorialAnimationImg5.png" src="BlendTutorialAnimationImg5.png" />
+<p>Now we can start animating our rectangle. We are going to start changing the color of the background to red at time 0, and then we want to start a progressive change to green for 1 second. So we move the time bar to time 0 seconds, and change the background property to red value while the recording button is still active (in red). The change in the background property is registered in the timeline as a new <a class="reference external" href="Gui.Animation._KeyFrame.html">KeyFrame</a> in the position where the time bar is located at that exact moment.</p>
+<img alt="BlendTutorialAnimationImg6.png" src="BlendTutorialAnimationImg6.png" />
+<p>To insert the green color value we move the time bar to 1 second and change the color of the rectangle. Blend will represent this in the timeline as a continous line.</p>
+<img alt="BlendTutorialAnimationImg7.png" src="BlendTutorialAnimationImg7.png" />
+<p>Once a <em>KeyFrame</em> is inserted, the transition from the previous one can be modified selecting the keyframe in the timeline window and changing the <a class="reference external" href="Gui.Animation._KeySpline.html">KeySpline</a> or <a class="reference external" href="Gui.Animation._EasingFunctionBase.html">EasingFunction</a>.</p>
+<p>With the <em>KeySpline</em> window the transition curve can be fine tuned to the user desires. In this example we create a transition that starts to change slowly, then in the middle of the transition it speeds up, and finally it ends reaching the next <em>KeyFrame</em> value slowly again.</p>
+<img alt="BlendTutorialAnimationImg8.png" src="BlendTutorialAnimationImg8.png" />
+<p>With the <em>EasingFunction</em> window the user can choose between a number of predefined effects that affects the exit from the previous <em>KeyFrame</em> to the selected one (<em>In</em>), the entrance to the new <em>KeyFrame</em> value (<em>Out</em>) or both (<em>InOut</em>).</p>
+<img alt="BlendTutorialAnimationImg9.png" src="BlendTutorialAnimationImg9.png" />
+<p>Some of the predefined effects have additional values that can be tweaked by the user.</p>
+<img alt="BlendTutorialAnimationImg10.png" src="BlendTutorialAnimationImg10.png" />
+<p>We can also control the number of repetions that the animation is going to be executed. For this, we can right click over the animated property in the timeline.</p>
+<img alt="BlendTutorialAnimationImg11.png" src="BlendTutorialAnimationImg11.png" />
+<p>And set the number of repetitions, or select <em>Forever</em> so the animation is playing countinously</p>
+<img alt="BlendTutorialAnimationImg12.png" src="BlendTutorialAnimationImg12.png" />
+<p>Finally, we can assign the animation to an <a class="reference external" href="Gui.Core._EventTrigger.html">EventTrigger</a> so it starts, for example, when the mouse enters the rectangle. We can use the <em>Triggers</em> panel for this.</p>
+<img alt="BlendTutorialAnimationImg13.png" src="BlendTutorialAnimationImg13.png" />
+</div>
+<div class="section" id="animations-using-visualstates">
+<h3>Animations using VisualStates</h3>
+<p>The <a class="reference external" href="Gui.Animation._VisualState.html">VisualState</a> system is a powerful mechanism to change and animate properties based on the internal state of objects. The states are hard-coded inside every control, and the template elements can react to the states using animations that play when a change between states occurs.</p>
+<p>For our example, we put a button into the design view, and then we edit its template. The <em>States</em> panel will show something like this.</p>
+<img alt="BlendTutorialAnimationImg14.png" src="BlendTutorialAnimationImg14.png" />
+<p>Selecting the <em>Normal</em> state we could create the default template we are going to use for our <em>Button</em>. In this case, a gray rounded rectangle is drawn.</p>
+<img alt="BlendTutorialAnimationImg15.png" src="BlendTutorialAnimationImg15.png" />
+<p>Now we want that when the button is in the <em>MouseOver</em> state, the color of our background changes to dark gray. So we select the <em>MouseOver</em> state, and as the recoding button is active (exactly the same as when we were creating an animation) we can change the value of the ellipse to blue, so Blend detects the change and creates a new storyboard for the <em>MouseOver</em> state. In this case, Blend assigns the <em>MouseOver</em> name to the storyboard, because it's going to be executed only when the button enters in that state.</p>
+<img alt="BlendTutorialAnimationImg16.png" src="BlendTutorialAnimationImg16.png" />
+<p>VisualStates provides a very easy and powerful way to create animations. Beside the Storyboard that is played for every state, a dynamic animation is created to make a smooth transition between the property values set in every state. The duration of this dynamic animation and the curve that is applied to make the transitions between states can be controlled using the <em>Default transition</em> icon present in every group of VisualStates. For example, if we want a transition time of 0.5s using a Bounce animation curve, we could enter the following values.</p>
+<img alt="BlendTutorialAnimationImg17.png" src="BlendTutorialAnimationImg17.png" />
+<p>And even the transition values between specific states could be introduced. This allows even more control on the animations. For example, we could specify a different duration and effect for the transition from <em>Normal</em> to <em>MouseOver</em></p>
+<img alt="BlendTutorialAnimationImg18.png" src="BlendTutorialAnimationImg18.png" />
+<p>We used some animations in our control templates to add more appeal to our application appearance.</p>
+</div>
+</div>
+</div>
+<div class="section" id="c-implementation">
+<h1>C++ Implementation</h1>
+<p>Now that all design and artwork is completed we have to implement the logic. Blend creates two types of files for every item that is added to the project: a XAML file and a C# file that is usually called <em>code-behind</em>. A matching class to the element defined in the XAML is created along with the methods that will respond to the desired events. The user is free to modify this code and add the logic to be executed as response to the events, or even add any other method or property that is required by the application. This powerful feature of separating visual definition from logic code allows a efficient workflow because programmers and designers can work separately on each part.</p>
+<p>For NoesisGUI to work, we need to translate that C# code-behind to C++, and the first step will be to create a <a class="reference external" href="Gui.Core.ExtendingTutorial.html">Noesis component</a> that matches each class created by Blend.</p>
+<div class="section" id="application">
+<h2>Application</h2>
+<p>In our tutorial we have an <em>Application</em> derived class that contains the <em>App.xaml</em> code behind. That file was created automatically by Blend and can be modified using Blend code editor:</p>
+<div class="highlight"><span class="filename">App.xaml.cs</span><pre><span></span><span class="k">using</span> <span class="nn">System.Windows</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">BlendTutorial</span>
+<span class="p">{</span>
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Interaction logic for App.xaml</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">App</span> <span class="p">:</span> <span class="n">Application</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <em>App.xaml</em> refers to this class using the <em>x:Class</em> extension. And, as we can see, it follows the form <em>Namespace.ClassName</em>:</p>
+<div class="highlight"><span class="filename">App.xaml</span><pre><span></span><span class="nt">&lt;Application</span>
+      <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+      <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+<span class="hll">      <span class="na">x:Class=</span><span class="s">&quot;BlendTutorial.App&quot;</span>
+</span>      <span class="na">StartupUri=</span><span class="s">&quot;MainWindow.xaml&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Application.Resources&gt;</span>
+    <span class="nt">&lt;ResourceDictionary&gt;</span>
+      <span class="nt">&lt;ResourceDictionary.MergedDictionaries&gt;</span>
+        <span class="nt">&lt;ResourceDictionary</span> <span class="na">Source=</span><span class="s">&quot;Resources.xaml&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/ResourceDictionary.MergedDictionaries&gt;</span>
+    <span class="nt">&lt;/ResourceDictionary&gt;</span>
+  <span class="nt">&lt;/Application.Resources&gt;</span>
+<span class="nt">&lt;/Application&gt;</span>
+</pre></div>
+<p>To match that class we have to create a C++ component that derives from <em>Application</em> and that has <em>BlendTutorial.App</em> as TypeId.</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">BlendTutorial</span>
+<span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">App</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">Application</span>
+<span class="p">{</span>
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">App</span><span class="p">,</span> <span class="n">Application</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsMeta</span><span class="o">&lt;</span><span class="n">TypeId</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;BlendTutorial.App&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="mainwindow">
+<h2>MainWindow</h2>
+<p>For the <em>MainWindow.xaml</em> file, Blend created a Window derived class and added an event handler for each event managed by the class:</p>
+<div class="highlight"><span class="filename">MainWindow.xaml</span><pre><span></span><span class="nt">&lt;Window</span>
+        <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+        <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+        <span class="na">xmlns:d=</span><span class="s">&quot;http://schemas.microsoft.com/expression/blend/2008&quot;</span>
+        <span class="na">xmlns:mc=</span><span class="s">&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;</span>
+        <span class="na">xmlns:local=</span><span class="s">&quot;clr-namespace:BlendTutorial&quot;</span> <span class="na">mc:Ignorable=</span><span class="s">&quot;d&quot;</span>
+<span class="hll">        <span class="na">x:Class=</span><span class="s">&quot;BlendTutorial.MainWindow&quot;</span>
+</span>        <span class="na">x:Name=</span><span class="s">&quot;Window&quot;</span>
+        <span class="na">Title=</span><span class="s">&quot;Noesis - Getting started with Blend&quot;</span>
+        <span class="na">Width=</span><span class="s">&quot;800&quot;</span> <span class="na">Height=</span><span class="s">&quot;480&quot;</span> <span class="na">Background=</span><span class="s">&quot;Gray&quot;</span> <span class="na">UseLayoutRounding=</span><span class="s">&quot;True&quot;</span>
+        <span class="na">FontFamily=</span><span class="s">&quot;Fonts/#WeblySleek UI Normal&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid</span> <span class="na">x:Name=</span><span class="s">&quot;LayoutRoot&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;8*&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;2*&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">x:Name=</span><span class="s">&quot;ContainerBorder&quot;</span> <span class="na">BorderBrush=</span><span class="s">&quot;DimGray&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;10&quot;</span>
+            <span class="na">CornerRadius=</span><span class="s">&quot;2&quot;</span> <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">Padding=</span><span class="s">&quot;1&quot;</span> <span class="na">ClipToBounds=</span><span class="s">&quot;True&quot;</span>
+            <span class="na">PreviewMouseLeftButtonDown=</span><span class="s">&quot;ContainerBorder_MouseDown&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Canvas</span> <span class="na">x:Name=</span><span class="s">&quot;ContainerCanvas&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;Viewbox</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Top&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;StackPanel</span> <span class="na">Margin=</span><span class="s">&quot;0,10,10,10&quot;</span> <span class="na">Width=</span><span class="s">&quot;150&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Button</span> <span class="na">x:Name=</span><span class="s">&quot;AddButton&quot;</span> <span class="na">Content=</span><span class="s">&quot;Add&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,3&quot;</span> <span class="na">Click=</span><span class="s">&quot;AddButton_Click&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Button</span> <span class="na">x:Name=</span><span class="s">&quot;RemoveButton&quot;</span> <span class="na">Content=</span><span class="s">&quot;Remove&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,10&quot;</span>
+                <span class="na">Click=</span><span class="s">&quot;RemoveButton_Click&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Expander</span> <span class="na">Header=</span><span class="s">&quot;Position&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,10&quot;</span> <span class="na">IsExpanded=</span><span class="s">&quot;True&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+              <span class="nt">&lt;ColumnDefinition/&gt;</span>
+              <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;2*&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+            <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+              <span class="nt">&lt;RowDefinition/&gt;</span>
+              <span class="nt">&lt;RowDefinition/&gt;</span>
+            <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+            <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Left &quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Right&quot;</span>
+                       <span class="na">Margin=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;PositionLeft&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,3&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span>
+                    <span class="na">Maximum=</span><span class="s">&quot;{Binding ActualWidth, ElementName=ContainerCanvas}&quot;</span>
+                    <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Top &quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Right&quot;</span>
+                       <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;PositionTop&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,3&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span>
+                    <span class="na">Maximum=</span><span class="s">&quot;{Binding ActualHeight, ElementName=ContainerCanvas}&quot;</span>
+                    <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Grid&gt;</span>
+        <span class="nt">&lt;/Expander&gt;</span>
+        <span class="nt">&lt;Expander</span> <span class="na">Header=</span><span class="s">&quot;Size&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,10&quot;</span> <span class="na">IsExpanded=</span><span class="s">&quot;True&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+              <span class="nt">&lt;ColumnDefinition/&gt;</span>
+              <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;2*&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+            <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+              <span class="nt">&lt;RowDefinition/&gt;</span>
+              <span class="nt">&lt;RowDefinition/&gt;</span>
+            <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+            <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Width &quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Right&quot;</span>
+                       <span class="na">Margin=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;SizeWidth&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,3&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span>
+                    <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;200&quot;</span> <span class="na">Minimum=</span><span class="s">&quot;10&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Height &quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Right&quot;</span>
+                       <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;SizeHeight&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span>
+                    <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;200&quot;</span> <span class="na">Minimum=</span><span class="s">&quot;10&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Grid&gt;</span>
+        <span class="nt">&lt;/Expander&gt;</span>
+        <span class="nt">&lt;Expander</span> <span class="na">Header=</span><span class="s">&quot;Color&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,10&quot;</span> <span class="na">IsExpanded=</span><span class="s">&quot;True&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;StackPanel</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span> <span class="na">Orientation=</span><span class="s">&quot;Vertical&quot;</span> <span class="na">ToggleButton.Checked=</span><span class="s">&quot;RadioButton_Checked&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;RadioButton</span> <span class="na">x:Name=</span><span class="s">&quot;FillSelected&quot;</span> <span class="na">Content=</span><span class="s">&quot;Fill&quot;</span> <span class="na">IsChecked=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;RadioButton</span> <span class="na">x:Name=</span><span class="s">&quot;StrokeSelected&quot;</span> <span class="na">Content=</span><span class="s">&quot;Stroke&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,0,3&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;local:ColorSelector</span> <span class="na">x:Name=</span><span class="s">&quot;ColorSelect&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/StackPanel&gt;</span>
+        <span class="nt">&lt;/Expander&gt;</span>
+      <span class="nt">&lt;/StackPanel&gt;</span>
+    <span class="nt">&lt;/Viewbox&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+<span class="nt">&lt;/Window&gt;</span>
+</pre></div>
+<div class="highlight"><span class="filename">MainWindow.xaml.cs</span><pre><span></span><span class="k">using</span> <span class="nn">System.Windows</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Controls</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Data</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Media</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Shapes</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Input</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">BlendTutorial</span>
+<span class="p">{</span>
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Interaction logic for MainWindow.xaml</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">MainWindow</span> <span class="p">:</span> <span class="n">Window</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nf">MainWindow</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="n">InitializeComponent</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">AddButton_Click</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">RoutedEventArgs</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">RemoveButton_Click</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">RoutedEventArgs</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">ContainerBorder_MouseDown</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">MouseButtonEventArgs</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">RadioButton_Checked</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">RoutedEventArgs</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>To match that class we have to create a C++ component that derives from <em>Window</em> and that has <em>BlendTutorial.MainWindow</em> as TypeId. In addition, we must <a class="reference external" href="Gui.Core.EventsTutorial.html">connect</a> the functions that match the event handlers defined in MainWindow.xaml file:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">BlendTutorial</span>
+<span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">MainWindow</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">Window</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">MainWindow</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">InitializeComponent</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">InitializeComponent</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Noesis</span><span class="o">::</span><span class="n">GUI</span><span class="o">::</span><span class="n">LoadComponent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;MainWindow.xaml&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">bool</span> <span class="n">ConnectEvent</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">source</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">event</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">handler</span><span class="p">)</span> <span class="k">override</span>
+    <span class="p">{</span>
+        <span class="n">NS_CONNECT_EVENT</span><span class="p">(</span><span class="n">Button</span><span class="p">,</span> <span class="n">Click</span><span class="p">,</span> <span class="n">AddButton_Click</span><span class="p">);</span>
+        <span class="n">NS_CONNECT_EVENT</span><span class="p">(</span><span class="n">Button</span><span class="p">,</span> <span class="n">Click</span><span class="p">,</span> <span class="n">RemoveButton_Click</span><span class="p">);</span>
+        <span class="n">NS_CONNECT_EVENT</span><span class="p">(</span><span class="n">Border</span><span class="p">,</span> <span class="n">PreviewMouseLeftButtonDown</span><span class="p">,</span> <span class="n">ContainerBorder_MouseDown</span><span class="p">);</span>
+        <span class="n">NS_CONNECT_ATTACHED_EVENT</span><span class="p">(</span><span class="n">ToggleButton</span><span class="p">,</span> <span class="n">Checked</span><span class="p">,</span> <span class="n">RadioButton_Checked</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">AddButton_Click</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">RoutedEventArgs</span><span class="o">&amp;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">RemoveButton_Click</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">RoutedEventArgs</span><span class="o">&amp;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">ContainerBorder_MouseDown</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">MouseButtonEventArgs</span><span class="o">&amp;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">RadioButton_Checked</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">RoutedEventArgs</span><span class="o">&amp;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">,</span> <span class="n">Window</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsMeta</span><span class="o">&lt;</span><span class="n">TypeId</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;BlendTutorial.MainWindow&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>Named elements of the XAML file can be stored during element initialization to facilitate logic implementation:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">BlendTutorial</span>
+<span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">MainWindow</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">Window</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">MainWindow</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">InitializeComponent</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">InitializeComponent</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Noesis</span><span class="o">::</span><span class="n">GUI</span><span class="o">::</span><span class="n">LoadComponent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;MainWindow.xaml&quot;</span><span class="p">);</span>
+
+        <span class="n">_containerCanvas</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">Canvas</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;ContainerCanvas&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_containerCanvas</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">_positionLeft</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">Slider</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;PositionLeft&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_positionLeft</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">_positionTop</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">Slider</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;PositionTop&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_positionTop</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">_sizeWidth</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">Slider</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;SizeWidth&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_sizeWidth</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">_sizeHeight</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">Slider</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;SizeHeight&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_sizeHeight</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">_fillSelected</span> <span class="o">=</span> <span class="n">FindName</span><span class="o">&lt;</span><span class="n">RadioButton</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;FillSelected&quot;</span><span class="p">);</span> <span class="n">NS_ASSERT</span><span class="p">(</span><span class="n">_fillSelected</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">Canvas</span><span class="o">*</span> <span class="n">_containerCanvas</span><span class="p">;</span>
+    <span class="n">Slider</span><span class="o">*</span> <span class="n">_positionLeft</span><span class="p">;</span>
+    <span class="n">Slider</span><span class="o">*</span> <span class="n">_positionTop</span><span class="p">;</span>
+    <span class="n">Slider</span><span class="o">*</span> <span class="n">_sizeWidth</span><span class="p">;</span>
+    <span class="n">Slider</span><span class="o">*</span> <span class="n">_sizeHeight</span><span class="p">;</span>
+    <span class="n">RadioButton</span><span class="o">*</span> <span class="n">_fillSelected</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="section" id="colorselector">
+<h2>ColorSelector</h2>
+<p>The last class created by Blend is the one associated with our <em>ColorSelector</em> user control.</p>
+<div class="highlight"><span class="filename">ColorSelector.xaml</span><pre><span></span> <span class="nt">&lt;UserControl</span>
+     <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+     <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+     <span class="na">xmlns:d=</span><span class="s">&quot;http://schemas.microsoft.com/expression/blend/2008&quot;</span>
+     <span class="na">xmlns:mc=</span><span class="s">&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;</span> <span class="na">mc:Ignorable=</span><span class="s">&quot;d&quot;</span>
+<span class="hll">     <span class="na">x:Class=</span><span class="s">&quot;BlendTutorial.ColorSelector&quot;</span>
+</span>     <span class="na">x:Name=</span><span class="s">&quot;ColorSelectorRoot&quot;</span>
+     <span class="na">Foreground=</span><span class="s">&quot;{StaticResource BlendTutorialForeground}&quot;</span>
+     <span class="na">Slider.ValueChanged=</span><span class="s">&quot;Slider_ValueChanged&quot;</span>
+     <span class="na">d:DesignWidth=</span><span class="s">&quot;200&quot;</span> <span class="na">d:DesignHeight=</span><span class="s">&quot;100&quot;</span><span class="nt">&gt;</span>
+
+     <span class="nt">&lt;Grid</span> <span class="na">x:Name=</span><span class="s">&quot;LayoutRoot&quot;</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+             <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+             <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+             <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+             <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+         <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+             <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;1*&quot;</span><span class="nt">/&gt;</span>
+             <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;2*&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+         <span class="nt">&lt;Rectangle</span> <span class="na">RadiusX=</span><span class="s">&quot;2&quot;</span> <span class="na">RadiusY=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.RowSpan=</span><span class="s">&quot;4&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,5,0&quot;</span><span class="nt">&gt;</span>
+             <span class="nt">&lt;Rectangle.Fill&gt;</span>
+                 <span class="nt">&lt;LinearGradientBrush</span> <span class="na">StartPoint=</span><span class="s">&quot;0,0&quot;</span> <span class="na">EndPoint=</span><span class="s">&quot;0,15&quot;</span> <span class="na">MappingMode=</span><span class="s">&quot;Absolute&quot;</span>
+                                      <span class="na">SpreadMethod=</span><span class="s">&quot;Repeat&quot;</span><span class="nt">&gt;</span>
+                     <span class="nt">&lt;GradientStop</span> <span class="na">Color=</span><span class="s">&quot;Gray&quot;</span> <span class="na">Offset=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+                     <span class="nt">&lt;GradientStop</span> <span class="na">Color=</span><span class="s">&quot;Silver&quot;</span> <span class="na">Offset=</span><span class="s">&quot;0.5&quot;</span><span class="nt">/&gt;</span>
+                     <span class="nt">&lt;GradientStop</span> <span class="na">Color=</span><span class="s">&quot;White&quot;</span> <span class="na">Offset=</span><span class="s">&quot;0.5001&quot;</span><span class="nt">/&gt;</span>
+                     <span class="nt">&lt;GradientStop</span> <span class="na">Color=</span><span class="s">&quot;Gainsboro&quot;</span> <span class="na">Offset=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+                 <span class="nt">&lt;/LinearGradientBrush&gt;</span>
+             <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+         <span class="nt">&lt;/Rectangle&gt;</span>
+         <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;ColorRect&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{Binding Color, ElementName=ColorSelectorRoot}&quot;</span>
+                    <span class="na">Stroke=</span><span class="s">&quot;{StaticResource BlendTutorialBorderBrush}&quot;</span> <span class="na">RadiusX=</span><span class="s">&quot;2&quot;</span> <span class="na">RadiusY=</span><span class="s">&quot;2&quot;</span>
+                    <span class="na">Grid.RowSpan=</span><span class="s">&quot;4&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,0,5,0&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;R&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span>
+                 <span class="na">Margin=</span><span class="s">&quot;10,1,0,1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;255&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;G&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span>
+                 <span class="na">Margin=</span><span class="s">&quot;10,1,0,1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;255&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;B&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span>
+                 <span class="na">Margin=</span><span class="s">&quot;10,1,0,1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;255&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;Slider</span> <span class="na">x:Name=</span><span class="s">&quot;A&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;3&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span>
+                 <span class="na">Margin=</span><span class="s">&quot;10,1,0,1&quot;</span> <span class="na">Maximum=</span><span class="s">&quot;255&quot;</span> <span class="na">SmallChange=</span><span class="s">&quot;1&quot;</span> <span class="na">LargeChange=</span><span class="s">&quot;10&quot;</span> <span class="na">Value=</span><span class="s">&quot;255&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;R&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+                    <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;G&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+                    <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;B&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+                    <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;A&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+                    <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+     <span class="nt">&lt;/Grid&gt;</span>
+ <span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<div class="highlight"><span class="filename">ColorSelector.xaml.cs</span><pre><span></span><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Controls</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Windows.Media</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">BlendTutorial</span>
+<span class="p">{</span>
+    <span class="c1">/// &lt;summary&gt;</span>
+    <span class="c1">/// Interaction logic for ColorSelector.xaml</span>
+    <span class="c1">/// &lt;/summary&gt;</span>
+    <span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">ColorSelector</span> <span class="p">:</span> <span class="n">UserControl</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nf">ColorSelector</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="n">InitializeComponent</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="n">DependencyProperty</span> <span class="n">ColorProperty</span> <span class="p">=</span> <span class="n">DependencyProperty</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="s">&quot;Color&quot;</span><span class="p">,</span>
+            <span class="k">typeof</span><span class="p">(</span><span class="n">SolidColorBrush</span><span class="p">),</span> <span class="k">typeof</span><span class="p">(</span><span class="n">ColorSelector</span><span class="p">),</span>
+            <span class="k">new</span> <span class="nf">PropertyMetadata</span><span class="p">(</span><span class="k">null</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedCallback</span><span class="p">(</span><span class="n">OnColorChanged</span><span class="p">)));</span>
+
+        <span class="k">public</span> <span class="n">SolidColorBrush</span> <span class="n">Color</span>
+        <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="n">SolidColorBrush</span><span class="p">)</span><span class="n">GetValue</span><span class="p">(</span><span class="n">ColorProperty</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">set</span> <span class="p">{</span> <span class="n">SetValue</span><span class="p">(</span><span class="n">ColorProperty</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span> <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">OnColorChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">Windows</span><span class="p">.</span><span class="n">DependencyPropertyChangedEventArgs</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">Slider_ValueChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">Windows</span><span class="p">.</span><span class="n">RoutedPropertyChangedEventArgs</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>To match that user control we have to create a C++ component that derives from <em>UserControl</em> and that has <em>BlendTutorial.ColorSelector</em> as TypeId. We must connect the function that manages changes in the sliders, and register the dependency property defined by the ColorSelector.</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">BlendTutorial</span>
+<span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">ColorSelector</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">UserControl</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">ColorSelector</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">InitializeComponent</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="n">SolidColorBrush</span><span class="o">*</span> <span class="n">GetColor</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">GetValue</span><span class="o">&lt;</span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">SolidColorBrush</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">ColorProperty</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetColor</span><span class="p">(</span><span class="n">SolidColorBrush</span><span class="o">*</span> <span class="n">color</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">SetValue</span><span class="o">&lt;</span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">SolidColorBrush</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">ColorProperty</span><span class="p">,</span> <span class="n">color</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="n">DependencyProperty</span><span class="o">*</span> <span class="n">ColorProperty</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">InitializeComponent</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Noesis</span><span class="o">::</span><span class="n">GUI</span><span class="o">::</span><span class="n">LoadComponent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;ColorSelector.xaml&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">bool</span> <span class="n">ConnectEvent</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">source</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">event</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">handler</span><span class="p">)</span> <span class="k">override</span>
+    <span class="p">{</span>
+        <span class="n">NS_CONNECT_EVENT</span><span class="p">(</span><span class="n">Slider</span><span class="p">,</span> <span class="n">ValueChanged</span><span class="p">,</span> <span class="n">Slider_ValueChanged</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="kt">void</span> <span class="n">OnColorChanged</span><span class="p">(</span><span class="n">DependencyObject</span><span class="o">*</span> <span class="n">d</span><span class="p">,</span> <span class="k">const</span> <span class="n">DependencyPropertyChangedEventArgs</span><span class="o">&amp;</span> <span class="cm">/*e*/</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">Slider_ValueChanged</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">RoutedPropertyChangedEventArgs</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;&amp;</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">ColorSelector</span><span class="p">,</span> <span class="n">UserControl</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsMeta</span><span class="o">&lt;</span><span class="n">TypeId</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;BlendTutorial.ColorSelector&quot;</span><span class="p">);</span>
+
+        <span class="n">UIElementData</span><span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="n">NsMeta</span><span class="o">&lt;</span><span class="n">UIElementData</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TypeOf</span><span class="o">&lt;</span><span class="n">SelfClass</span><span class="o">&gt;</span><span class="p">());</span>
+        <span class="n">data</span><span class="o">-&gt;</span><span class="n">RegisterProperty</span><span class="o">&lt;</span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">SolidColorBrush</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">ColorProperty</span><span class="p">,</span> <span class="s">&quot;Color&quot;</span><span class="p">,</span>
+            <span class="n">PropertyMetadata</span><span class="o">::</span><span class="n">Create</span><span class="p">(</span><span class="n">Brushes</span><span class="o">::</span><span class="n">Transparent</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Clone</span><span class="p">(),</span>
+                <span class="o">&amp;</span><span class="n">ColorSelector</span><span class="o">::</span><span class="n">OnColorChanged</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id5">Introduction</a><ul>
+<li><a class="reference internal" href="#what-is-blend" id="id6">What is Blend?</a></li>
+<li><a class="reference internal" href="#what-does-blend-produce" id="id7">What does Blend produce?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#blend-editor" id="id8">Blend Editor</a><ul>
+<li><a class="reference internal" href="#supported-assets" id="id9">Supported Assets</a><ul>
+<li><a class="reference internal" href="#controls" id="id10">Controls</a></li>
+<li><a class="reference internal" href="#panels" id="id11">Panels</a></li>
+<li><a class="reference internal" href="#shapes" id="id12">Shapes</a></li>
+<li><a class="reference internal" href="#behaviors" id="id13">Behaviors</a></li>
+<li><a class="reference internal" href="#effects" id="id14">Effects</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#supported-project-types" id="id15">Supported Project Types</a></li>
+<li><a class="reference internal" href="#creating-main-window-ui" id="id16">Creating Main Window UI</a></li>
+<li><a class="reference internal" href="#control-styling" id="id17">Control Styling</a></li>
+<li><a class="reference internal" href="#user-controls" id="id18">User Controls</a></li>
+<li><a class="reference internal" href="#fonts" id="id19">Fonts</a></li>
+<li><a class="reference internal" href="#animation" id="id20">Animation</a><ul>
+<li><a class="reference internal" href="#the-storyboard" id="id21">The Storyboard</a></li>
+<li><a class="reference internal" href="#where-to-apply-a-storyboard" id="id22">Where to apply a storyboard</a></li>
+<li><a class="reference internal" href="#a-simple-animation" id="id23">A simple animation</a></li>
+<li><a class="reference internal" href="#animations-using-visualstates" id="id24">Animations using VisualStates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#c-implementation" id="id25">C++ Implementation</a><ul>
+<li><a class="reference internal" href="#application" id="id26">Application</a></li>
+<li><a class="reference internal" href="#mainwindow" id="id27">MainWindow</a></li>
+<li><a class="reference internal" href="#colorselector" id="id28">ColorSelector</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

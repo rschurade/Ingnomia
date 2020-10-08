@@ -1,0 +1,1139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Data Binding - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI provides a simple and powerful way to auto-update data between the business model and the user interface" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.DataBindingTutorial.html" />
+<meta name="twitter:title" content="Data Binding | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI provides a simple and powerful way to auto-update data between the business model and the user interface" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Data Binding | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="NoesisGUI provides a simple and powerful way to auto-update data between the business model and the user interface" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.DataBindingTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.DataBindingTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="data-binding">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Data Binding</h1>
+
+<p><img alt="github" class="align-middle" src="github.png" /> <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Samples/DataBinding">Tutorial Data</a></p>
+<p>NoesisGUI provides a simple and powerful way to auto-update data between the business model and the user interface. This mechanism is called <em>Data Binding</em>.
+They key to data binding is a <a class="reference external" href="Gui.Core._Binding.html">Binding</a> object that &quot;glues&quot; two properties together and keeps a channel of communication open between them. You can set a <em>Binding</em> once, and then have it do all the synchronization work for the remainder of the application's lifetime.</p>
+<p>In this tutorial we will explain the different ways you might want to use data binding.</p>
+<div class="section" id="using-binding-in-xaml">
+<h1>Using <em>Binding</em> in XAML</h1>
+<img alt="DataBindingTutorialImg1.jpg" src="DataBindingTutorialImg1.jpg" />
+<p>To use <em>Binding</em> in XAML, you directly set the target property to a <em>Binding</em> instance and then use the standard markup extension syntax to set its properties. The following example shows a simple binding between the text of a <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a> and a <a class="reference external" href="Gui.Core._Label.html">Label</a> that reflects the typed value:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;StackPanel</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+    <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;TextBox</span> <span class="na">x:Name=</span><span class="s">&quot;textbox&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Label</span> <span class="na">Content=</span><span class="s">&quot;{Binding Text, ElementName=textbox}&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/StackPanel&gt;</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">The source of a data binding can be a normal property or a <em>DependencyProperty</em>. The target property of the binding must be a <em>DependencyProperty</em>.</p>
+</div>
+</div>
+<div class="section" id="data-context">
+<h1>Data Context</h1>
+<p>It is quite common for many elements in the same UI to bind the same source object. For this reason, noesisGUI supports specifying an implicit data source rather than explicitly marking every <em>Binding</em> with  <em>Source</em>, <em>RelativeSource</em> or <em>ElementName</em>. This implicit data source is also known as a <em>data context</em>.</p>
+<p>To designate a source object as a data context, simply find a common parent element and set its <em>DataContext</em> property to the source object. When encountering  <em>Binding</em> without an explicit source object, noesisGUI traverses up the logical tree until it finds a non null <em>DataContext</em>. Here is an example of setting a data context that will be used for all of the examples to come:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;UserControl.Resources&gt;</span>
+    <span class="nt">&lt;DataModel</span> <span class="na">x:Name=</span><span class="s">&quot;dataModel&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/UserControl.Resources&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">DataContext=</span><span class="s">&quot;{StaticResource dataModel}&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">In real projects is more common setting the data context by code</p>
+</div>
+</div>
+<div class="section" id="binding-to-plain-properties">
+<h1>Binding to Plain Properties</h1>
+<p>NoesisGUI supports any normal property on any object as a data-binding source. For example, the following XAML binds several properties that belong to instances found in the current data context:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;UserControl.Resources&gt;</span>
+    <span class="nt">&lt;DataModel1</span> <span class="na">x:Name=</span><span class="s">&quot;dataModel&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;DataModel1.Person&gt;</span>
+        <span class="nt">&lt;Person</span> <span class="na">Weight=</span><span class="s">&quot;90&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Person.Name&gt;</span>
+            <span class="nt">&lt;Name</span> <span class="na">First=</span><span class="s">&quot;John&quot;</span> <span class="na">Last=</span><span class="s">&quot;Doe&quot;</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Person.Name&gt;</span>
+        <span class="nt">&lt;/Person&gt;</span>
+      <span class="nt">&lt;/DataModel1.Person&gt;</span>
+    <span class="nt">&lt;/DataModel1&gt;</span>
+  <span class="nt">&lt;/UserControl.Resources&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">DataContext=</span><span class="s">&quot;{StaticResource dataModel}&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+              <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Name.First}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Name.Last}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Weight}&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<p>There is a big caveat to using a plain property as a data-binding source, however. Because such properties have no automatic plumbing for change notification, the target is not kept up to date as the source property value changes without doing a little extra work. To keep the target and source properties synchronized, the source object must implement the <em>INotifyPropertyChanged</em> interface.</p>
+<div class="section" id="c-implementation">
+<h2>C++ implementation</h2>
+<p>There are a few important details you must pay attention to whenever you implement a data model in C++:</p>
+<ul class="simple">
+<li>The base class <em>NotifyPropertyChangedBase</em> already implements the interface <em>INotifyPropertyChanged</em> for us</li>
+<li>Expose properties using <a class="reference external" href="Gui.Core.CppArchitectureGuide.html#reflection">reflection macros</a> macros with getter and setter functions</li>
+<li>In each setter, check if the property changed event must be fired</li>
+</ul>
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="k">class</span> <span class="nc">Name</span><span class="o">:</span> <span class="k">public</span> <span class="n">NotifyPropertyChangedBase</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">GetFirst</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_first</span><span class="p">.</span><span class="n">Str</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetFirst</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">first</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_first</span> <span class="o">!=</span> <span class="n">first</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_first</span> <span class="o">=</span> <span class="n">first</span><span class="p">;</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">GetLast</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_last</span><span class="p">.</span><span class="n">Str</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetLast</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">last</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_last</span> <span class="o">!=</span> <span class="n">last</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_last</span> <span class="o">=</span> <span class="n">last</span><span class="p">;</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;Last&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">String</span> <span class="n">_first</span><span class="p">;</span>
+    <span class="n">String</span> <span class="n">_last</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">Name</span><span class="p">,</span> <span class="n">NotifyPropertyChangedBase</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Name</span><span class="o">::</span><span class="n">GetFirst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Name</span><span class="o">::</span><span class="n">SetFirst</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Last&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Name</span><span class="o">::</span><span class="n">GetLast</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Name</span><span class="o">::</span><span class="n">SetLast</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="o">:</span> <span class="k">public</span> <span class="n">NotifyPropertyChangedBase</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Name</span><span class="o">*</span> <span class="n">GetName</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetName</span><span class="p">(</span><span class="n">Name</span><span class="o">*</span> <span class="n">name</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_name</span> <span class="o">!=</span> <span class="n">name</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_name</span><span class="p">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kt">float</span> <span class="n">GetWeight</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_weight</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetWeight</span><span class="p">(</span><span class="k">const</span> <span class="kt">float</span> <span class="n">weight</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_weight</span> <span class="o">!=</span> <span class="n">weight</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_weight</span> <span class="o">=</span> <span class="n">weight</span><span class="p">;</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;Weight&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Name</span><span class="o">&gt;</span> <span class="n">_name</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">_weight</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">Person</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Person</span><span class="o">::</span><span class="n">GetName</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Person</span><span class="o">::</span><span class="n">SetName</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Weight&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Person</span><span class="o">::</span><span class="n">GetWeight</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Person</span><span class="o">::</span><span class="n">SetWeight</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">DataModel1</span><span class="o">:</span> <span class="k">public</span> <span class="n">NotifyPropertyChangedBase</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Person</span><span class="o">*</span> <span class="n">GetPerson</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_person</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetPerson</span><span class="p">(</span><span class="n">Person</span><span class="o">*</span> <span class="n">person</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_person</span> <span class="o">!=</span> <span class="n">person</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_person</span><span class="p">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">person</span><span class="p">);</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;Person&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">_person</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">DataModel1</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Person&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DataModel1</span><span class="o">::</span><span class="n">GetPerson</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DataModel1</span><span class="o">::</span><span class="n">SetPerson</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h2>C# implementation</h2>
+<p>Things are a lot easier in C#. You just basically need to implement the <em>INotifyPropertyChanged</em> interface.</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">Name</span><span class="p">:</span> <span class="n">INotifyPropertyChanged</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="kt">string</span> <span class="n">_first</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">First</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_first</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_first</span> <span class="p">!=</span> <span class="k">value</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_first</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">PropertyChanged</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedEventArgs</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">string</span> <span class="n">_last</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Last</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_last</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_last</span> <span class="p">!=</span> <span class="k">value</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_last</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">PropertyChanged</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedEventArgs</span><span class="p">(</span><span class="s">&quot;Last&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">event</span> <span class="n">PropertyChangedEventHandler</span> <span class="n">PropertyChanged</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Person</span><span class="p">:</span> <span class="n">INotifyPropertyChanged</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">Name</span> <span class="n">_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">Name</span> <span class="n">Name</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_name</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_name</span> <span class="p">!=</span> <span class="k">value</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_name</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">PropertyChanged</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedEventArgs</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">float</span> <span class="n">_weight</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">Weight</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_weight</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_weight</span> <span class="p">!=</span> <span class="k">value</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_weight</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">PropertyChanged</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedEventArgs</span><span class="p">(</span><span class="s">&quot;Weight&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">event</span> <span class="n">PropertyChangedEventHandler</span> <span class="n">PropertyChanged</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">DataModel1</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">Person</span> <span class="n">_person</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">Person</span> <span class="n">Person</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_person</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_person</span> <span class="p">!=</span> <span class="k">value</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_person</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">PropertyChanged</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">new</span> <span class="n">PropertyChangedEventArgs</span><span class="p">(</span><span class="s">&quot;Person&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">event</span> <span class="n">PropertyChangedEventHandler</span> <span class="n">PropertyChanged</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="indexed-properties">
+<h2>Indexed Properties</h2>
+<p>In C#, <em>Indexed Properties</em> can be used as source of a data-binding. That way, you can write something like this:</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span><span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">PhoneNumber</span> <span class="p">{</span><span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Contacts</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">Persons</span> <span class="p">{</span><span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;}</span>
+
+    <span class="k">public</span> <span class="n">Person</span> <span class="k">this</span><span class="p">[</span><span class="kt">string</span> <span class="n">Name</span><span class="p">]</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="n">Persons</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Name</span> <span class="p">==</span> <span class="n">Name</span><span class="p">).</span><span class="n">FirstOrDefault</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;TextBox</span> <span class="na">Text=</span><span class="s">&quot;{Binding Contacts[John].PhoneNumber}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">Only indexers with the key type being int or string are supported in noesisGUI.</p>
+</div>
+</div>
+<div class="section" id="stringformat">
+<h2>StringFormat</h2>
+<p>If you need to format the text display of a given value, you can do so using the <em>StringFormat</em> attribute in the binding declaration. With <em>StringFormat</em> you can format the output of information without using code behind or value converters.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;UserControl.Resources&gt;</span>
+    <span class="nt">&lt;DataModel1</span> <span class="na">x:Name=</span><span class="s">&quot;dataModel&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;DataModel1.Person&gt;</span>
+        <span class="nt">&lt;Person</span> <span class="na">Weight=</span><span class="s">&quot;90&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Person.Name&gt;</span>
+            <span class="nt">&lt;Name</span> <span class="na">First=</span><span class="s">&quot;John&quot;</span> <span class="na">Last=</span><span class="s">&quot;Doe&quot;</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Person.Name&gt;</span>
+        <span class="nt">&lt;/Person&gt;</span>
+      <span class="nt">&lt;/DataModel1.Person&gt;</span>
+    <span class="nt">&lt;/DataModel1&gt;</span>
+  <span class="nt">&lt;/UserControl.Resources&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">DataContext=</span><span class="s">&quot;{StaticResource dataModel}&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+              <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Name.First}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Name.Last}&quot;</span> <span class="nt">/&gt;</span>
+<span class="hll">    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Person.Weight, StringFormat=Weight is {0:F2}}&quot;</span> <span class="nt">/&gt;</span>
+</span>  <span class="nt">&lt;/StackPanel&gt;</span>
+
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<p>More examples of StringFormat:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Amount, StringFormat={}{0:D}}&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Amount, StringFormat=Total: {0:D}}&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Amount, StringFormat=Total: {0:D} units}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">Notice the '{}' just after the StringFormat attribute? What that is doing is escaping the text after the '=' sign. This is needed because there is no text after the '=' sign</p>
+</div>
+<p><a class="reference external" href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings">Standard</a>, <a class="reference external" href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings">Custom</a> and <a class="reference external" href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting">Composite</a> .NET Numeric Format String are supported.</p>
+<div class="section" id="standard-numeric-format-strings">
+<h3>Standard Numeric Format strings</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="11%" />
+<col width="44%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Format specifier</th>
+<th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;C&quot; or &quot;c&quot;</td>
+<td>Currency</td>
+<td>A currency value</td>
+<td>123.456 (&quot;C&quot;) ➡ $123,46</td>
+</tr>
+<tr><td>&quot;D&quot; or &quot;d&quot;</td>
+<td>Decimal</td>
+<td>Integer digits with optional negative sign</td>
+<td>1234 (&quot;D&quot;) ➡ 1234</td>
+</tr>
+<tr><td>&quot;E&quot; or &quot;e&quot;</td>
+<td>Exponential</td>
+<td>Exponential notification</td>
+<td>1052.0329112756 (&quot;E&quot;) ➡ 1.052033E+003</td>
+</tr>
+<tr><td>&quot;F&quot; or &quot;f&quot;</td>
+<td>Fixed-point</td>
+<td>Integral and decimal digits with optional negative sign</td>
+<td>234.567 (&quot;F&quot;) ➡ 1234.57</td>
+</tr>
+<tr><td>&quot;G&quot; or &quot;g&quot;</td>
+<td>General</td>
+<td>The more compact of either fixed-point or scientific notation</td>
+<td>-123.456 (&quot;G&quot;) ➡ -123.456</td>
+</tr>
+<tr><td>&quot;N&quot; or &quot;n&quot;</td>
+<td>Number</td>
+<td>Integral and decimal digits, group separators, and a decimal
+separator with optional negative sign</td>
+<td>1234.567 (&quot;N&quot;) ➡ 1,234.57</td>
+</tr>
+<tr><td>&quot;P&quot; or &quot;p&quot;</td>
+<td>Percent</td>
+<td>Number multiplied by 100 and displayed with a percent symbol</td>
+<td>1 (&quot;P&quot;) ➡ 100.00 %</td>
+</tr>
+<tr><td>&quot;R&quot; or &quot;r&quot;</td>
+<td>Round-trip</td>
+<td>A string that can round-trip to an identical number</td>
+<td>123456789.12345678 (&quot;R&quot;) ➡ 123456789.12345678</td>
+</tr>
+<tr><td>&quot;X&quot; or &quot;x&quot;</td>
+<td>Hexadecimal</td>
+<td>A hexadecimal string</td>
+<td>255 (&quot;X&quot;) ➡ FF</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="custom-numeric-format-strings">
+<h3>Custom numeric format strings</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="12%" />
+<col width="44%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Format specifier</th>
+<th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;0&quot;</td>
+<td>Zero placeholder</td>
+<td>Replaces the zero with the corresponding digit if one is
+present; otherwise, zero appears in the result string</td>
+<td>1234.5678 (&quot;00000&quot;) ➡ 01235</td>
+</tr>
+<tr><td>&quot;#&quot;</td>
+<td>Digit placeholder</td>
+<td>Replaces the &quot;#&quot; symbol with the corresponding digit if one
+is present;  otherwise, no digit appears in the result string</td>
+<td>1234.5678 (&quot;#####&quot;) ➡ 1235</td>
+</tr>
+<tr><td>&quot;.&quot;</td>
+<td>Decimal point</td>
+<td>Determines the location of the decimal separator in the
+result string</td>
+<td>0.45678 (&quot;0.00&quot;) ➡ 0.46</td>
+</tr>
+<tr><td>&quot;,&quot;</td>
+<td>Group separator
+and number
+scaling</td>
+<td>Serves as both a group separator and a number scaling
+specifier. As a group separator, it inserts a localized group
+separator character between each group. As a number scaling
+specifier, it divides a number by 1000 for each comma
+specified</td>
+<td><p class="first">2147483647 (&quot;##,#&quot;) ➡ 2,147,483,647</p>
+<p class="last">2147483647 (&quot;#,#,,&quot;) ➡ 2,147</p>
+</td>
+</tr>
+<tr><td>&quot;%&quot;</td>
+<td>Percentage
+placeholder</td>
+<td>Multiplies a number by 100 and inserts a localized percentage
+symbol in the result string</td>
+<td>0.3697 (&quot;%#0.00&quot;) ➡ %36.97</td>
+</tr>
+<tr><td>&quot;E0&quot;</td>
+<td>Exponential
+notation</td>
+<td>If followed by at least one 0 (zero), formats the result
+using exponential notation. The case of &quot;E&quot; or &quot;e&quot; indicates
+the case of the exponent symbol in the result string. The
+number of zeros following the &quot;E&quot; or &quot;e&quot; character determines
+the minimum number of digits in the exponent. A plus sign (+)
+indicates that a sign character always precedes the exponent.
+A minus sign (-) indicates that a sign character precedes only
+negative exponents</td>
+<td><p class="first">987654 (&quot;#0.0e0&quot;) ➡ 98.8e4</p>
+<p>1.8901385E-16 (&quot;0.0e+00&quot;) ➡ 1.9e-16</p>
+<p class="last">1503.92311 (&quot;0.0##e+00&quot;) ➡ 1.504e+03</p>
+</td>
+</tr>
+<tr><td>&quot;\&quot;</td>
+<td>Escape character</td>
+<td>Causes the next character to be interpreted as a literal
+rather than as a custom format specifier</td>
+<td>87654 (&quot;\###00\#&quot;) ➡ #987654#</td>
+</tr>
+<tr><td>'string'</td>
+<td>Literal string
+delimiter</td>
+<td>Indicates that the enclosed characters should be copied to
+the result string unchanged</td>
+<td>68 (&quot;# 'degrees'&quot;) ➡ 68 degrees</td>
+</tr>
+<tr><td>;</td>
+<td>Section separator</td>
+<td>Defines sections with separate format strings for positive,
+negative, and zero numbers</td>
+<td>12.345 (&quot;#0.0#;(#0.0#);-0-&quot;) ➡ 12.35</td>
+</tr>
+<tr><td>Other</td>
+<td>All other
+characters</td>
+<td>The character is copied to the result string unchanged</td>
+<td>68 (&quot;# °&quot;) ➡ 68 °</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="binding-dependency-properties">
+<h1>Binding Dependency Properties</h1>
+<p>Dependency properties have plumbing for change notifications built in. This facility is the key to noesisGUI's ability to keep the target property and source property in sync. You don't need to use <em>INotifyPropertyChange</em> when you implement Dependency Properties. In fact, this should be the preferred method for creating bindable properties if you are deriving from <a class="reference external" href="Gui.DependencySystem._DependencyObject.html">DependencyObject</a>.</p>
+<p>Dependency Properties are created imperatively in the code behind of the visual element, for example:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+    <span class="na">x:Class=</span><span class="s">&quot;View2&quot;</span>
+    <span class="na">x:Name=</span><span class="s">&quot;root&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBox</span> <span class="na">Text=</span><span class="s">&quot;{Binding ElementName=root, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding ElementName=root, Path=Text}&quot;</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<p>As you can see we are setting the <em>Mode</em> property of the <em>Binding</em>. It can be set to one of the following values of the <em>BindingMode</em> enumeration:</p>
+<img alt="DataBindingTutorialImg2.jpg" src="DataBindingTutorialImg2.jpg" />
+<ul class="simple">
+<li><strong>OneWay</strong>: The target is updated whenever the source changes.</li>
+<li><strong>TwoWay</strong>: A change to either the target or source updates the other.</li>
+<li><strong>OneWayToSource</strong>: The opposite of <em>OneWay</em>. The source is updated whenever the target changes.</li>
+<li><strong>OneTime</strong>: This works just like <em>OneWay</em>, except changes to the source are not reflected at the target. The target retains a snapshot of the source at the time the <em>Binding</em> is initiated.</li>
+</ul>
+<p><em>TwoWay</em> binding is appropriate for data-bounds forms, where you might have <em>TextBoxes</em> that get filled with data that the user is allowed to change. In fact, whereas most dependency properties default to <em>OneWay</em> binding, dependency properties such as <em>TextBox.Text</em> default to <em>TwoWay</em> binding.</p>
+<p>We are also using the <em>UpdateSourceTrigger</em> property. When using <em>TwoWay</em> or <em>OneWayToSource</em> binding, you might want different behaviors for when and how the source gets updated. For example, if a user types in a <em>TwoWay</em> data-bound <em>TextBox</em>, do you want the source to be updated with each keystroke, or only when the user is done typing? Binding enables you to control such behavior with its <em>UpdateSourceTrigger</em> property.</p>
+<p><em>UpdateSourceTrigger</em> can be set to a member of the <em>UpdateSourceTrigger</em> enumeration, which has the following values:</p>
+<ul class="simple">
+<li><strong>PropertyChanged</strong>: The source is updated whenever the target property value changes.</li>
+<li><strong>LostFocus</strong>: When the target property value changes, the source is only updated after the target element loses focus.</li>
+<li><strong>Explicit</strong>: The source is only updated when you make an explicit call to <em>BindingExpression.UpdateSource</em>.</li>
+</ul>
+<p>Just as different properties have different default <em>Mode</em> settings, they also have different default <em>UpdateSourceTrigger</em> settings. <em>TextBox.Text</em> defaults to <em>LostFocus</em>.</p>
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="k">class</span> <span class="nc">View2</span><span class="o">:</span> <span class="k">public</span> <span class="n">UserControl</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">GetText</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">GetValue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TextProperty</span><span class="p">).</span><span class="n">Str</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">SetText</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">text</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">SetValue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TextProperty</span><span class="p">,</span> <span class="n">text</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">const</span> <span class="n">DependencyProperty</span><span class="o">*</span> <span class="n">TextProperty</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">View2</span><span class="p">,</span> <span class="n">UserControl</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">UIElementData</span><span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="n">NsMeta</span><span class="o">&lt;</span><span class="n">UIElementData</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TypeOf</span><span class="o">&lt;</span><span class="n">SelfClass</span><span class="o">&gt;</span><span class="p">());</span>
+        <span class="n">data</span><span class="o">-&gt;</span><span class="n">RegisterProperty</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TextProperty</span><span class="p">,</span> <span class="s">&quot;Text&quot;</span><span class="p">,</span>
+            <span class="n">FrameworkPropertyMetadata</span><span class="o">::</span><span class="n">Create</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">),</span> <span class="n">FrameworkOptions_None</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">class</span> <span class="nc">View2</span><span class="p">:</span> <span class="n">UserControl</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">DependencyProperty</span> <span class="n">TextProperty</span> <span class="p">=</span> <span class="n">DependencyProperty</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="s">&quot;Text&quot;</span><span class="p">,</span> <span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span>
+        <span class="k">typeof</span><span class="p">(</span><span class="n">View2</span><span class="p">),</span> <span class="k">new</span> <span class="n">PropertyMetadata</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">));</span>
+
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Text</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="kt">string</span><span class="p">)</span><span class="n">GetValue</span><span class="p">(</span><span class="n">TextProperty</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">SetValue</span><span class="p">(</span><span class="n">TextProperty</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="binding-to-a-collection">
+<h1>Binding to a Collection</h1>
+<p>So far we've only discussed binding to single objects, however, binding to a data collection is a common scenario. For example, a common scenario is to use an <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a> such as a <a class="reference external" href="Gui.Core._ListBox.html">ListBox</a>, <a class="reference external" href="Gui.Controls._ListView.html">ListView</a>, or <a class="reference external" href="Gui.Core._TreeView.html">TreeView</a> to display a data collection.</p>
+<p>It would make sense to create a <em>Binding</em> with <em>ListBox.Items</em> as the target property, but, alas, <em>Items</em> is not a dependency property. But <em>ListBox</em> (and all other <em>ItemsControl</em>) have an <em>ItemsSource</em> dependency property that exist specifically for this data-binding scenario.</p>
+<img alt="DataBindingTutorialImg3.jpg" src="DataBindingTutorialImg3.jpg" />
+<div class="highlight"><pre><span></span><span class="nt">&lt;ListBox</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Source={StaticResource items}}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+<p>For the target property to stay updated with changes to the source collection, the source collection must implement an interface called <em>INotifyCollectionChanged</em>. Fortunately, noesisGUI already has a built-in class that does this work for you. It is called <a class="reference external" href="Gui.Core._ObservableCollection.html">ObservableCollection</a>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+    <span class="na">Width=</span><span class="s">&quot;600&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;DataModel3</span> <span class="na">x:Name=</span><span class="s">&quot;dataModel&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;DataTemplate</span> <span class="na">x:Key=</span><span class="s">&quot;TaskTemplate&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid&gt;</span>
+        <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+          <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;Auto&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+
+        <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;15&quot;</span> <span class="na">Height=</span><span class="s">&quot;10&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{Binding Color}&quot;</span> <span class="na">Stroke=</span><span class="s">&quot;Transparent&quot;</span>
+                   <span class="na">StrokeThickness=</span><span class="s">&quot;0&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5, 0, 5, 0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Name}&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5, 0, 5, 0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Scale, StringFormat=P0}&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5, 0, 5, 0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Pos}&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5, 0, 5, 0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Grid&gt;</span>
+    <span class="nt">&lt;/DataTemplate&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;ListBox</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">DataContext=</span><span class="s">&quot;{StaticResource dataModel}&quot;</span>
+      <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Players}&quot;</span>
+      <span class="na">ItemTemplate=</span><span class="s">&quot;{StaticResource TaskTemplate}&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>Note that we are using the <em>ItemTemplate</em> property to control how each item is rendered. This property is set to an instance of a <a class="reference external" href="Gui.Core._DataTemplate.html">DataTemplate</a>. <em>DataTemplate</em> derives from <a class="reference external" href="Gui.Core._FrameworkTemplate.html">FrameworkTemplate</a>. Therefore, it has a <em>VisualTree</em> content property that can be set to an arbitrary tree of <em>FrameworkElements</em>.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">For very simple cases you can use the <strong>DisplayMemberPath</strong> property present on all <em>ItemsControls</em>. This property works hand in hand with <em>ItemsSource</em>. If you set it to an appropriate property path, the corresponding property value gets rendered for each item.</p>
+</div>
+<p>When you apply a data template, it is implicitly given an appropriate data context. When applied as an <em>ItemTemplate</em>, the data context is implicitly the current item in <em>ItemsSource</em>.</p>
+<img alt="DataBindingTutorialImg6.jpg" src="DataBindingTutorialImg6.jpg" />
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="k">class</span> <span class="nc">Player</span><span class="o">:</span> <span class="k">public</span> <span class="n">BaseComponent</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Player</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="n">Player</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">name</span><span class="p">,</span> <span class="n">Color</span> <span class="n">color</span><span class="p">,</span> <span class="kt">float</span> <span class="n">scale</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">pos</span><span class="p">)</span><span class="o">:</span> <span class="n">_name</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">_scale</span><span class="p">(</span><span class="n">scale</span><span class="p">),</span>
+        <span class="n">_pos</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span> <span class="n">_color</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">SolidColorBrush</span><span class="o">&gt;</span><span class="p">(</span><span class="n">color</span><span class="p">))</span> <span class="p">{}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">String</span> <span class="n">_name</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">_scale</span><span class="p">;</span>
+    <span class="n">String</span> <span class="n">_pos</span><span class="p">;</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Brush</span><span class="o">&gt;</span> <span class="n">_color</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">Player</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Player</span><span class="o">::</span><span class="n">_name</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Scale&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Player</span><span class="o">::</span><span class="n">_scale</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Pos&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Player</span><span class="o">::</span><span class="n">_pos</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Color&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Player</span><span class="o">::</span><span class="n">_color</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">DataModel3</span><span class="o">:</span> <span class="k">public</span> <span class="n">BaseComponent</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">DataModel3</span><span class="p">()</span><span class="o">:</span> <span class="n">_players</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">ObservableCollection</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;&gt;</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">_players</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player0&quot;</span><span class="p">,</span> <span class="n">Color</span><span class="o">::</span><span class="n">Red</span><span class="p">,</span> <span class="mf">1.0f</span><span class="p">,</span> <span class="s">&quot;(0,0,0)&quot;</span><span class="p">));</span>
+        <span class="n">_players</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player1&quot;</span><span class="p">,</span> <span class="n">Color</span><span class="o">::</span><span class="n">Gray</span><span class="p">,</span> <span class="mf">0.75f</span><span class="p">,</span> <span class="s">&quot;(0,30,0)&quot;</span><span class="p">));</span>
+        <span class="n">_players</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player2&quot;</span><span class="p">,</span> <span class="n">Color</span><span class="o">::</span><span class="n">Orange</span><span class="p">,</span> <span class="mf">0.50f</span><span class="p">,</span> <span class="s">&quot;(0,-10,0)&quot;</span><span class="p">));</span>
+        <span class="n">_players</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player3&quot;</span><span class="p">,</span> <span class="n">Color</span><span class="o">::</span><span class="n">Green</span><span class="p">,</span> <span class="mf">0.85f</span><span class="p">,</span> <span class="s">&quot;(0,-10,0)&quot;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="n">ObservableCollection</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;*</span> <span class="n">GetPlayers</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_players</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">ObservableCollection</span><span class="o">&lt;</span><span class="n">Player</span><span class="o">&gt;&gt;</span> <span class="n">_players</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">DataModel3</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Players&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DataModel3</span><span class="o">::</span><span class="n">GetPlayers</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">Player</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">Player</span><span class="p">(</span><span class="kt">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">Color</span> <span class="n">color</span><span class="p">,</span> <span class="kt">float</span> <span class="n">scale</span><span class="p">,</span> <span class="kt">string</span> <span class="n">pos</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Name</span> <span class="p">=</span> <span class="n">name</span><span class="p">;</span>
+        <span class="n">Color</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SolidColorBrush</span><span class="p">(</span><span class="n">color</span><span class="p">);</span>
+        <span class="n">Scale</span> <span class="p">=</span> <span class="n">scale</span><span class="p">;</span>
+        <span class="n">Pos</span> <span class="p">=</span> <span class="n">pos</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">Brush</span> <span class="n">Color</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">Scale</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Pos</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">DataModel3</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">DataModel3</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Players</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ObservableCollection</span><span class="p">&lt;</span><span class="n">Player</span><span class="p">&gt;();</span>
+        <span class="n">Players</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Player</span><span class="p">(</span><span class="s">&quot;Player0&quot;</span><span class="p">,</span> <span class="n">Colors</span><span class="p">.</span><span class="n">Red</span><span class="p">,</span> <span class="m">1.0f</span><span class="p">,</span> <span class="s">&quot;(0,0,0)&quot;</span><span class="p">));</span>
+        <span class="n">Players</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Player</span><span class="p">(</span><span class="s">&quot;Player1&quot;</span><span class="p">,</span> <span class="n">Colors</span><span class="p">.</span><span class="n">Gray</span><span class="p">,</span> <span class="m">0.75f</span><span class="p">,</span> <span class="s">&quot;(0,30,0)&quot;</span><span class="p">));</span>
+        <span class="n">Players</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Player</span><span class="p">(</span><span class="s">&quot;Player2&quot;</span><span class="p">,</span> <span class="n">Colors</span><span class="p">.</span><span class="n">Orange</span><span class="p">,</span> <span class="m">0.50f</span><span class="p">,</span> <span class="s">&quot;(0,-10,0)&quot;</span><span class="p">));</span>
+        <span class="n">Players</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Player</span><span class="p">(</span><span class="s">&quot;Player3&quot;</span><span class="p">,</span> <span class="n">Colors</span><span class="p">.</span><span class="n">Green</span><span class="p">,</span> <span class="m">0.85f</span><span class="p">,</span> <span class="s">&quot;(0,-10,0)&quot;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">ObservableCollection</span><span class="p">&lt;</span><span class="n">Player</span><span class="p">&gt;</span> <span class="n">Players</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>A special subclasss of <em>DataTemplate</em> exists for working with <strong>hierarchical</strong> data. This class is called <a class="reference external" href="Gui.Core._HierarchicalDataTemplate.html">HierarchicalDataTemplate</a>. It not only enables you to change the presentation of such data, but enables you to directly bind a hierarchy of objects to an element that intrinsically understands hierarchies, such as a <em>TreeView</em> or <em>Menu</em> control.</p>
+<p>The idea is to use <em>HierarchicalDataTemplate</em> for every data typein the hierarchy but then use a simple <em>DataTemplate</em> for any leaf nodes. Each data template gives you the option to customize the rendering of the data type, but <em>HierarchicalDataTemplate</em> also enables you to specify its children in the hierarchy by setting its <em>ItemsSource</em> propery.</p>
+<img alt="DataBindingTutorialImg7.jpg" class="align-right" src="DataBindingTutorialImg7.jpg" />
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;LeagueList</span> <span class="na">x:Key=</span><span class="s">&quot;items&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;HierarchicalDataTemplate</span> <span class="na">DataType=</span><span class="s">&quot;League&quot;</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Path=Divisions}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Foreground=</span><span class="s">&quot;LightCyan&quot;</span> <span class="na">Text=</span><span class="s">&quot;{Binding Path=Name}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/HierarchicalDataTemplate&gt;</span>
+    <span class="nt">&lt;HierarchicalDataTemplate</span> <span class="na">DataType=</span><span class="s">&quot;Division&quot;</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Path=Teams}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Foreground=</span><span class="s">&quot;Snow&quot;</span> <span class="na">Text=</span><span class="s">&quot;{Binding Path=Name}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/HierarchicalDataTemplate&gt;</span>
+    <span class="nt">&lt;DataTemplate</span> <span class="na">DataType=</span><span class="s">&quot;Team&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Foreground=</span><span class="s">&quot;Moccasin&quot;</span> <span class="na">Text=</span><span class="s">&quot;{Binding Path=Name}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/DataTemplate&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;TreeView</span> <span class="na">DataContext=</span><span class="s">&quot;{StaticResource items}&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TreeViewItem</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Leagues}&quot;</span> <span class="na">Header=</span><span class="s">&quot;My Soccer Leagues&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/TreeView&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="value-converters">
+<h1>Value Converters</h1>
+<p>Whereas data templates can customize they way certain target values are rendered, value converters can morph the source value into a completely different target value. They enable you to plug in custom logic without giving up the benefits of data binding.</p>
+<p>Value converters are often used to reconcile a source and target that are different data types. For example, you could change the background or foreground color of an element on the value of some non-<em>Brush</em> data source. Or, you could use it to simply enhance the information being displayed without the need for separate elements, such as adding an &quot;item(s)&quot; suffix to a raw count.</p>
+<img alt="DataBindingTutorialImg4.jpg" src="DataBindingTutorialImg4.jpg" />
+<p>For example, the following XAML toggles the visibility of an element based on the <em>IsChecked</em> property of a <a class="reference external" href="Gui.Core._CheckBox.html">CheckBox</a> using a converter named <a class="reference external" href="Gui.Core._BooleanToVisibilityConverter.html">BooleanToVisibilityConverter</a>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">Background=</span><span class="s">&quot;Gray&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;BooleanToVisibilityConverter</span> <span class="na">x:Key=</span><span class="s">&quot;converter&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;CheckBox</span> <span class="na">x:Name=</span><span class="s">&quot;checkBox&quot;</span> <span class="na">Content=</span><span class="s">&quot;Show Button&quot;</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Click&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;{Binding ElementName=checkBox, Path=IsChecked,</span>
+<span class="s">            Converter={StaticResource converter}}&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>You can create your own converters by inheriting from <em>BaseValueConverter</em>. An example is shown in the <a class="reference external" href="Gui.Core.ExtendingTutorial.html">Extending Tutorial</a>.</p>
+</div>
+<div class="section" id="solar-system-example">
+<h1>Solar System Example</h1>
+<img alt="DataBindingTutorialImg5.jpg" src="DataBindingTutorialImg5.jpg" />
+<p>This <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Samples/DataBinding">example</a> summarizes all the concepts presented at this tutorial. It basically consists of a <a class="reference external" href="Gui.Core._ListBox.html">ListBox</a> bound to an <a class="reference external" href="Gui.Core._ObservableCollection.html">ObservableCollection</a> of <em>SolarSystemObject</em> items.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ListBox</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Source={StaticResource solarSystem}, Path=SolarSystemObjects}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+<p>The look of each planet is defined by a <a class="reference external" href="Gui.Core._DataTemplate.html">DataTemplate</a> that uses data binding and a converter to generate the final look.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">This sample was adapted from the sample <a class="reference external" href="https://sudonull.com/post/203827-WPF-Binding-The-power-of-styles-and-templates-in-WPF">The power of Styles and Templates in WPF</a></p>
+</div>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#using-binding-in-xaml" id="id5">Using <em>Binding</em> in XAML</a></li>
+<li><a class="reference internal" href="#data-context" id="id6">Data Context</a></li>
+<li><a class="reference internal" href="#binding-to-plain-properties" id="id7">Binding to Plain Properties</a><ul>
+<li><a class="reference internal" href="#c-implementation" id="id8">C++ implementation</a></li>
+<li><a class="reference internal" href="#id1" id="id9">C# implementation</a></li>
+<li><a class="reference internal" href="#indexed-properties" id="id10">Indexed Properties</a></li>
+<li><a class="reference internal" href="#stringformat" id="id11">StringFormat</a><ul>
+<li><a class="reference internal" href="#standard-numeric-format-strings" id="id12">Standard Numeric Format strings</a></li>
+<li><a class="reference internal" href="#custom-numeric-format-strings" id="id13">Custom numeric format strings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#binding-dependency-properties" id="id14">Binding Dependency Properties</a></li>
+<li><a class="reference internal" href="#binding-to-a-collection" id="id15">Binding to a Collection</a></li>
+<li><a class="reference internal" href="#value-converters" id="id16">Value Converters</a></li>
+<li><a class="reference internal" href="#solar-system-example" id="id17">Solar System Example</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

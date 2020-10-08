@@ -1,0 +1,659 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>First steps with NoesisGUI and Unreal - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="Get started with Unreal Engine and NoesisGUI in this introductory tutorial" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html" />
+<meta name="twitter:title" content="First steps with NoesisGUI and Unreal | NoesisGUI" />
+<meta name="twitter:description" content="Get started with Unreal Engine and NoesisGUI in this introductory tutorial" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="First steps with NoesisGUI and Unreal | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-25 11:35:43" />
+<meta property="og:description" content="Get started with Unreal Engine and NoesisGUI in this introductory tutorial" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.UnrealTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="first-steps-with-noesisgui-and-unreal">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">First steps with NoesisGUI and Unreal</h1>
+
+<img alt="unreal.png" class="align-left" src="unreal.png" />
+<p>This document will guide you through the process of setting up the NoesisGUI Unreal Engine plugin. Noesis entirely replaces Unreal UI offering a much more convenient and efficient approach. You will learn how to start editing the samples included in NoesisGUI plugin and how to create new games from scratch. NoesisGUI is deeply integrated with Unreal; XAMLs appear as native resources that directly use assets imported by Unreal like <em>Textures</em>, <em>FontFaces</em> and <em>Sounds</em>. It is strongly recommended that you read the rest of <a class="reference external" href="Gui.Core.Index.html">tutorials</a> to familiarize yourself with the basic concepts of XAML and Noesis architecture. Some knowledge of Unreal Engine is also assumed, but this document attempts to be as thorough as possible.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="section" id="installation">
+<h1>Installation</h1>
+<p>You can download the latest version of the plugin directly from <a class="reference external" href="https://www.noesisengine.com/developers/downloads.php">our website</a>. The zip file contains an Unreal project with some samples and the plugin ready to be used.</p>
+<blockquote>
+<img alt="UnrealTutorialImg1.png" src="UnrealTutorialImg1.png" />
+</blockquote>
+<p>NoesisGUI works with versions of Unreal Engine installed through the Epic Games Launcher as well as those built by yourself from the source code in GitHub. And it can be installed as either an <em>Engine Plugin</em> or a <em>Game Plugin</em>.</p>
+<div class="section" id="engine-plugin">
+<h2>Engine Plugin</h2>
+<p>If you want to use it as an Engine plugin please extract the contents of <em>Plugins/NoesisGUI</em> folder from the downloaded file into <em>[UE4Root]/Engine/Plugins/NoesisGUI</em>. <em>[UE4Root]</em> is the directory where you installed the engine from the Epic Games Launcher, or the directory where you cloned the UnrealEngine GitHub repository.</p>
+</div>
+<div class="section" id="game-plugin">
+<h2>Game Plugin</h2>
+<p>If you want to use it as a Game plugin, so other game projects don't use it, please extract the contents of <em>Plugins/NoesisGUI</em> folder into <em>[ProjectRoot]/Plugins/NoesisGUI</em>, being <em>[ProjectRoot]</em> the directory where you have your <em>.uproject</em> file.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<p>Within the zip file we provide a project with a few working samples. You can find a map asset for each one in the '<em>Content</em>' folder root. We also provide <a class="reference external" href="https://en.wikipedia.org/wiki/Microsoft_Blend">Microsoft Blend</a> projects for each sample inside '<em>Assets</em>' folder.</p>
+<p>Along with the samples you will find a <em>Theme</em> folder (xaml and font sources inside Assets folder) which defines <a class="reference external" href="Gui.Core.ApplicationTutorial.html#noesis-theme">default styles</a> for all UI controls and are a good start to create your own game styles.</p>
+<p>A lot more examples can be found at our <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Samples">GitHub</a> repository.</p>
+<img alt="UnrealTutorialImg2.png" src="UnrealTutorialImg2.png" />
+</div>
+<div class="section" id="configuring-noesisgui">
+<h1>Configuring NoesisGUI</h1>
+<p>At this point the plugin should be ready to use, so we can proceed to enable it and configure some settings for your project.</p>
+<p>Run the Unreal Engine editor. You may get an alert on the bottom right corner alerting you that new plugins have been installed. If you don't, open the Plugins dialog from the Edit menu, and select UI from the category list on the left. You can enable the plugin from the right hand panel.</p>
+<img alt="UnrealTutorialImg3.png" src="UnrealTutorialImg3.png" />
+<p>You can also do this manually by modifying your Project's .uproject file to add the plugin dependency, like this:</p>
+<div class="highlight"><pre><span></span><span class="s2">&quot;Plugins&quot;</span><span class="p">:</span> <span class="p">[</span>
+   <span class="p">{</span>
+      <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;NoesisGUI&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;Enabled&quot;</span><span class="p">:</span> <span class="n">true</span>
+   <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+<p>With the plugin enabled, you can configure some NoesisGUI global settings for your project. You can find them by opening the NoesisGUI top menu and selecting <em>Settings</em>. These settings have sensible default values, so if you're unsure about them you can just leave them as they are. Modifying some of these settings will require you to restart the editor for the changes to take effect.</p>
+<img alt="UnrealTutorialImg4.png" src="UnrealTutorialImg4.png" />
+<img alt="UnrealTutorialImg5.png" src="UnrealTutorialImg5.png" />
+</div>
+<div class="section" id="project-setup">
+<h1>Project Setup</h1>
+<p>The process to set up you project to work with NoesisGUI depends on whether it is a Blueprint-only project or a C++ project.</p>
+<ul>
+<li><p class="first">For a Blueprint-only project, enabling the plugin as described above is all you need to do.</p>
+</li>
+<li><p class="first">For a C++ project, there are two additional steps. First, you must add the module dependencies to your project. To do that, simply add the following line to you module's ModuleRules derived class (in your module's .Build.cs file):</p>
+<div class="highlight"><pre><span></span><span class="n">PrivateDependencyModuleNames</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">[]</span> <span class="p">{</span> <span class="s">&quot;Noesis&quot;</span><span class="p">,</span> <span class="s">&quot;NoesisRuntime&quot;</span> <span class="p">});</span>
+</pre></div>
+<p>Next, you have to #include the necessary headers for your project. To simplify this we've created a single header file you can include, preferably in your game project's PCH file. Just add the following line:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;NoesisRuntime.h&quot;</span><span class="cp"></span>
+</pre></div>
+</li>
+</ul>
+</div>
+<div class="section" id="noesisgui-integration">
+<h1>NoesisGUI Integration</h1>
+<p>With the NoesisGUI plugin for Unreal Engine you have all the power of the native NoesisGUI SDK at your disposal. There are a few particularities about the use that will be explained later, but the bottom line is that everything that can be done with the native SDK will work in Unreal Engine.</p>
+<p>But we wanted to provide an easy way to allow users to leverage the power of NoesisGUI using Unreal Engine's Blueprints. A mechanism is provided that allows <em>Bindings</em> to <em>Blueprint</em> properties, without having to write a signle line of C++ code.</p>
+<p>With this approach NoesisGUI will be more accesible for everyone, but at the same time will allow more advanced users to use the native SDK directly, with the complete set of features available to them as in any other platform.</p>
+</div>
+<div class="section" id="assets">
+<h1>Assets</h1>
+<p>At this point you're ready to start using NoesisGUI in your project. The first step is importing your assets. These will consist of XAML files, fonts and images. The easiest way to work with NoesisGUI assets in Unreal Engine is to put them in your game's Content folder. They will be automatically imported into Unreal Engine, and any modifications you make will be automatically re-imported. After import, your XAML files will appear in Unreal Engine's Content Browser as <em>NoesisXaml</em> assets, while your images will appear as <em>Texture2Ds</em> and fonts will appear as <em>FontFaces</em>.</p>
+<img alt="UnrealTutorialImg6.png" src="UnrealTutorialImg6.png" />
+<div class="section" id="absolute-uris">
+<h2>Absolute URIs</h2>
+<p>When importing your XAML files, these may contain references to other XAML files, as well as images and fonts, as stated above. These references may be in the form of relative or absolut URIs. When working with absolute URIs in Unreal Engine, by default these are considered as relative to the Content folder of your game project.</p>
+<p>Alternatively, the plugin relies on Unreal Engine's Auto Reimport feature to map source asset directories to folders in the Content Browser. If you want to keep your XAML project separate from your game's assets, add a new entry to the Auto Reimport settings. You can find them by opening the Editor Preferences dialog from the Edit menu, then scrolling down to the General section on the left panel, and finally Loading &amp; Saving. The settings are in the Auto Reimport category, hidden by default on the extended options.</p>
+<img alt="UnrealTutorialImg7.png" src="UnrealTutorialImg7.png" />
+<p>Within each mapped folder, absolute URIs will be placed directly in the mount point folder in the Content Browser.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p class="last">Our samples use this approach to keep Blend project and source files separated from unreal assets in Content folder.</p>
+</div>
+<p>If files outside of these folders (Autor Reimport folders and the game's Content folder) are referenced as dependencies, the Content folder will be considered its root, and the assets will be placed in folders starting with __, which is the result of making the source paths relative to the Content folder.</p>
+<p>Please refer to the document <a class="reference external" href="Gui.Core.URIs.html">URIs in NoesisGUI</a> for more information.</p>
+</div>
+</div>
+<div class="section" id="views">
+<h1>Views</h1>
+<p>Now that you have your assets imported into the game, you have to create a View for it. The easiest way is by right-clicking on any xaml asset and select <em>Add to Viewport</em>. This will create and configure a View automatically, and add it to current Level map so you can rapidly see the UI rendered in the viewport when playing.</p>
+<img alt="UnrealTutorialImg8.png" src="UnrealTutorialImg8.png" />
+<p>A <em>NoesisView</em> is also an Unreal Engine <em>UMG Widget</em>. This means that you can use it wherever a native UMG Widget is used, so if you're familiar with Unreal Engine's UMG system it will be very simple to get up and running with NoesisGUI. Please, refer to the document <a class="reference external" href="https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/CreatingWidgets/index.html">Creating Widgets</a> for information about how to manually add a NoesisView to your viewport and how to handle input. Because a NoesisView is also an UMG Widget it means you can also create 3D UI elements by using a Widget Component. Please, refer to the document <a class="reference external" href="https://docs.unrealengine.com/latest/INT/Engine/Components/Widget/">Widget Components</a> for more information.</p>
+<p>Double-clicking the View asset will open the familiar Blueprint Class editor. Press the <em>Class Settings</em> button on the top toolbar to edit the View properties.</p>
+<img alt="UnrealTutorialImg9.png" src="UnrealTutorialImg9.png" />
+<p>The most important of all is the <em>XAML</em> property. Here you'll reference the <em>NoesisXaml</em> for which you want to create the View. <em>Enable PPAA</em> allows you to enable <a class="reference external" href="Gui.Core.AntialiasingTutorial.html">per-primitive antialiasing</a>, in case you're not using multisampling on your main render target. <em>Tessellation Quality</em> lets you select the degree of subdivision for your path geometry. Remember to compile and save your NoesisView before using it.</p>
+<img alt="UnrealTutorialImg10.png" src="UnrealTutorialImg10.png" />
+<p>The following Level Blueprint will render the View in the screen.</p>
+<img alt="UnrealTutorialImg11.png" src="UnrealTutorialImg11.png" />
+</div>
+<div class="section" id="property-binding">
+<h1>Property Binding</h1>
+<p>One of the most powerful features of NoesisGUI is the support for a <em>Model-View-ViewModel</em> pattern through <a class="reference external" href="Gui.Core.DataBindingTutorial.html">Data Binding</a>. This is made even more powerful in Unreal Engine by combining it with the graphical scripting capabilities provided by Blueprints.</p>
+<p>When you create a NoesisView for a NoesisXaml and you create a Widget from it, the instantiated object itself is set as the <em>Data Context</em>. You can also override this behaviour by calling the function <em>Set Data Context</em> on the NoesisView itself and specifying a different Unreal Engine Object.</p>
+<p>Whether you decide to use the NoesisView or any other Object as the Data Context, you can define in properties that can be bound to your XAML, as described in the aforementioned document. You can define a property in two ways:</p>
+<ul class="simple">
+<li>As a <strong>variable</strong>. The name of the property for binding purposes will be the name of the variable.</li>
+</ul>
+<img alt="UnrealTutorialImg12.png" src="UnrealTutorialImg12.png" />
+<ul class="simple">
+<li>As a <strong>Get function</strong> that has no input parameters and a single output parameter, with alternatively a <strong>Set function</strong> with no output parameters and a single input parameter of the same type as the output parameter of the Get function. The name of the property for binding purposes will be the name of the function without the Get/Set prefix.</li>
+</ul>
+<img alt="UnrealTutorialImg13.png" src="UnrealTutorialImg13.png" />
+<p>Here's a table with the types supported for Data Binding and the corresponding native NoesisGUI SDK types. Whenever there was a native Unreal Engine type that could work we've decided to use that instead of creating a new type.</p>
+<blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Unreal Engine Type</th>
+<th class="head">NoesisGUI Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Boolean</td>
+<td>bool</td>
+</tr>
+<tr><td>Integer</td>
+<td>int32_t</td>
+</tr>
+<tr><td>Float</td>
+<td>float</td>
+</tr>
+<tr><td>String</td>
+<td>NsString</td>
+</tr>
+<tr><td>Text</td>
+<td>NsString</td>
+</tr>
+<tr><td>Color</td>
+<td>Noesis::Color</td>
+</tr>
+<tr><td>Vector2D</td>
+<td>Noesis::Point</td>
+</tr>
+<tr><td>Box2D</td>
+<td>Noesis::Rect</td>
+</tr>
+<tr><td>NoesisSize</td>
+<td>Noesis::Size</td>
+</tr>
+<tr><td>NoesisThickness</td>
+<td>Noesis::Thickness</td>
+</tr>
+<tr><td>NoesisCornerRadius</td>
+<td>Noesis::CornerRadius</td>
+</tr>
+<tr><td>Timespan</td>
+<td>Noesis::TimeSpan</td>
+</tr>
+<tr><td>NoesisDuration</td>
+<td>Noesis::Duration</td>
+</tr>
+<tr><td>NoesisKeyTime</td>
+<td>Noesis::KeyTime</td>
+</tr>
+<tr><td>Texture2D</td>
+<td>Noesis::ImageSource</td>
+</tr>
+<tr><td>TextureRenderTarget2D</td>
+<td>Noesis::ImageSource</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The plugin also supports custom Blueprint <em>Enums</em>, <em>Structures</em> and <em>Classes</em>. Blueprint Structures and Classes work similarly and they both expose their members as sub-properties. The difference is that Structures are treated as atomic objects, and the performance characteristics are different. We recommend you use Blueprint Classes for long lived objects, and Blueprint Structures for small objects with shorter lifespans that don't require a full Blueprint Class.</p>
+<p>We also support <em>Arrays</em> of the aforementioned types, which are exposed as a List to the Binding system.</p>
+<p>Additionally we support binding of Blueprint functions to NoesisGUI <em>Commands</em>. A function that either takes no parameters, or takes a parameter of a compatible Unreal Engine type from the table above, and has no output function will be turned into a functor implementing the <em>Noesis::ICommand</em> interface. If you also add a function with the same name but prefixed with <em>CanExecute</em> that takes either no parameters, or a parameter of the same type as the matching Command function, and returns a Boolean, it will be used to decide whether the command can be executed.</p>
+<img alt="UnrealTutorialImg14.png" src="UnrealTutorialImg14.png" />
+<div class="section" id="property-change-notifications">
+<h2>Property change notifications</h2>
+<p>Performance is a key concern of NoesisGUI. For this reason, instead of polling all the data sources for all bound properties in every update, it uses a reactive model in which the user notifies NoesisGUI that a property has changed and the system updates the minimum possible set of its internal structures affected by that change.</p>
+<p>In the NoesisGUI Native SDK this is achieved by having your classes implement the Noesis::INotifyPropertyChanged or Noesis::INotifyCollectionChanged interfaces. The typical implementation exposes Set functions that compare the new value with the old and notify any potential listeners if they are different.</p>
+<p>To simplify this in Unreal Engine, we've provided custom nodes that you can use in your Blueprint code that replace the standard Set Property and array operations with custom versions that, additionally notify listeners if necessary. Here's a table with the native Unreal Engine nodes and the corresponding NoesisGUI ones:</p>
+<blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Unreal Engine Node</th>
+<th class="head">NoesisGUI Node</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Set</td>
+<td>Set w/ NotifyChanged</td>
+</tr>
+<tr><td>Add (Array)</td>
+<td>Add w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Add Unique (Array)</td>
+<td>Add Unique w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Shuffle (Array)</td>
+<td>Shuffle w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Append Array (Array)</td>
+<td>Append Array w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Insert (Array)</td>
+<td>Insert w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Remove Index (Array)</td>
+<td>Remove Index w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Remove Item (Array)</td>
+<td>Remove Item w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Clear (Array)</td>
+<td>Clear w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Resize (Array)</td>
+<td>Resize w/ NotifyArrayChanged</td>
+</tr>
+<tr><td>Set Array Elem (Array)</td>
+<td>Set Array Elem w/ NotifyArrayChanged</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<img alt="UnrealTutorialImg15.png" src="UnrealTutorialImg15.png" />
+<p>Using this function is the most convenient way to notify NoesisGUI of changes in your data. But sometimes it is necessary to manually notify that a property has changed. This is the case, for example, when a property is implemented as a pair of Get/Set functions, that are not bound to a variable and therefore don't allow you to use these nodes. For these situations you can manually call the functions NotifyChanged and NotifyArrayChanged, passing the name of the property.</p>
+<img alt="UnrealTutorialImg16.png" src="UnrealTutorialImg16.png" />
+</div>
+</div>
+<div class="section" id="performance-stats">
+<h1>Performance stats</h1>
+<p>NoesisGUI main tasks are profiled using Unreal stats system.</p>
+<p>The following command shows information about the time spent processing input events, updating the views, and generating the render commands. It also shows the total memory allocated through Noesis:</p>
+<blockquote>
+<div class="highlight"><pre><span></span>stat Noesis
+</pre></div>
+</blockquote>
+<img alt="UnrealTutorialImg17.png" src="UnrealTutorialImg17.png" />
+<p>Inside Unreal's GPU category you can find the time spent rendering Noesis UI:</p>
+<blockquote>
+<div class="highlight"><pre><span></span>stat GPU
+</pre></div>
+</blockquote>
+<img alt="UnrealTutorialImg18.png" src="UnrealTutorialImg18.png" />
+</div>
+<div class="section" id="logging-and-debugging">
+<h1>Logging and debugging</h1>
+<p>If following the previous steps you still can't see your NoesisGUI interface, the first step would be to take a look at the Output Log window. You can select the verbosity of the output from the plugin settings, as described above. The default setting is Quiet, and won't output anything. Normal will allow you to discover common errors, and Binding also provides extra information about the Binding system which is separated form the rest as it can be quite detailed.</p>
+<p>Additionally logging messages in NoesisGUI have several levels of verbosity. Here is a table with the levels defined by NoesisGUI and how they map to Unreal Engine:</p>
+<blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">NoesisGUI Verbosity Level</th>
+<th class="head">Unreal Engine Verbosity</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Trace</td>
+<td>VeryVerbose</td>
+</tr>
+<tr><td>Debug</td>
+<td>Verbose</td>
+</tr>
+<tr><td>Info</td>
+<td>Log</td>
+</tr>
+<tr><td>Warning</td>
+<td>Warning</td>
+</tr>
+<tr><td>Error</td>
+<td>Error</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>You can filter the NoesisGUI log messages by selecting the LogNoesis category from the Categories drop down list.</p>
+<img alt="UnrealTutorialImg19.png" src="UnrealTutorialImg19.png" />
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#installation" id="id1">Installation</a><ul>
+<li><a class="reference internal" href="#engine-plugin" id="id2">Engine Plugin</a></li>
+<li><a class="reference internal" href="#game-plugin" id="id3">Game Plugin</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples" id="id4">Examples</a></li>
+<li><a class="reference internal" href="#configuring-noesisgui" id="id5">Configuring NoesisGUI</a></li>
+<li><a class="reference internal" href="#project-setup" id="id6">Project Setup</a></li>
+<li><a class="reference internal" href="#noesisgui-integration" id="id7">NoesisGUI Integration</a></li>
+<li><a class="reference internal" href="#assets" id="id8">Assets</a><ul>
+<li><a class="reference internal" href="#absolute-uris" id="id9">Absolute URIs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#views" id="id10">Views</a></li>
+<li><a class="reference internal" href="#property-binding" id="id11">Property Binding</a><ul>
+<li><a class="reference internal" href="#property-change-notifications" id="id12">Property change notifications</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#performance-stats" id="id13">Performance stats</a></li>
+<li><a class="reference internal" href="#logging-and-debugging" id="id14">Logging and debugging</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

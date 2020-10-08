@@ -1,0 +1,828 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>C++ Architecture Guide - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="Description of core helpers and architecture exposed by NoesisGUI C++ SDK." name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.CppArchitectureGuide.html" />
+<meta name="twitter:title" content="C++ Architecture Guide | NoesisGUI" />
+<meta name="twitter:description" content="Description of core helpers and architecture exposed by NoesisGUI C++ SDK." />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="C++ Architecture Guide | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-07-13 13:54:01" />
+<meta property="og:description" content="Description of core helpers and architecture exposed by NoesisGUI C++ SDK." />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.CppArchitectureGuide.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.CppArchitectureGuide.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="c-architecture-guide">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">C++ Architecture Guide</h1>
+
+<p>Although NoesisGUI is based on <em>WPF</em>, a C# framework, many of the core concepts exposed in that API do not directly translate to C++. For example, reflection, a key concept for data binding, is not available in C++. There is also no notion of garbage collection in C++. With the purpose of creating a C++ API easier to use, NoesisGUI exposes a few helpers that contribute to make the transition from C# painless and more efficient. Please read carefully the following sections if you are going to use Noesis in C++ language.</p>
+<div class="section" id="headers-and-namespaces">
+<h1>Headers and Namespaces</h1>
+<p>NoesisGUI headers are grouped by modules (prefixed by <em>Ns</em>). The whole API is exposed in the <em>namespace Noesis</em>.</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;NsCore/Stream.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsCore/File.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsCore/Log.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsCore/Hash.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsCore/SpinMutex.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsRender/Texture.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsRender/RenderTarget.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;NsGui/TextureProvider.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">Noesis</span><span class="p">;</span>
+</pre></div>
+<p>In case you don't want to manually pick each header we also provide a single header, <em>'NoesisPCH.h'</em>, exposing all NoesisGUI API. This is specially useful when using precompiled headers.</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;NoesisPCH.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">Noesis</span><span class="p">;</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">Noesis <a class="reference external" href="Gui.Core.ApplicationTutorial.html">Application Framework</a>, a helper library not part of core is exposed in a different namespace, <em>NoesisApp</em>, and its headers are not included in <em>NoesisPCH.h</em>.</p>
+</div>
+</div>
+<div class="section" id="reference-counting">
+<h1>Reference Counting</h1>
+<p>In Noesis each object contains a reference counter that control its lifetime. The reference counter is initialized to 1 when the instance is created using the <em>new operator</em>. This counter is increased or decreased each time <em>AddReference()</em> or <em>Release()</em> is invoked. If an object's reference count reaches zero it is automatically destroyed using the <em>operator delete</em>.</p>
+<div class="highlight"><pre><span></span><span class="c1">// Create a new instance. Reference counter is &#39;1&#39; at this point</span>
+<span class="n">Brush</span><span class="o">*</span> <span class="n">color</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SolidColorBrush</span><span class="p">(</span><span class="n">Color</span><span class="o">::</span><span class="n">Red</span><span class="p">);</span>
+
+<span class="c1">//...</span>
+
+<span class="c1">// Release instance and delete it if reference counter reaches zero</span>
+<span class="n">color</span><span class="o">-&gt;</span><span class="n">Release</span><span class="p">();</span>
+</pre></div>
+<p>You should never destroy Noesis instances using the <em>operator delete</em> because there could be more objects holding references and you would be ignoring them. You should use <em>Release()</em> instead. There are a few asserts in the implementation of <em>BaseRefCounted</em> detecting this kind of scenarios.</p>
+<p>References to components can be manually handled using <em>AddReference()</em> and <em>Release()</em>. For example:</p>
+<div class="highlight"><pre><span></span><span class="n">Brush</span><span class="o">*</span> <span class="n">color0</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SolidColorBrush</span><span class="p">(</span><span class="n">Color</span><span class="o">::</span><span class="n">Red</span><span class="p">);</span>     <span class="c1">// Ref &#39;1&#39; - Created</span>
+
+<span class="n">Brush</span><span class="o">*</span> <span class="n">color1</span> <span class="o">=</span> <span class="n">color0</span><span class="p">;</span>
+<span class="n">color0</span><span class="o">-&gt;</span><span class="n">AddReference</span><span class="p">();</span>                              <span class="c1">// Ref &#39;1&#39; -&gt; &#39;2&#39;</span>
+
+<span class="c1">//...</span>
+
+<span class="n">color0</span><span class="o">-&gt;</span><span class="n">Release</span><span class="p">();</span>                                   <span class="c1">// Ref &#39;2&#39; -&gt; &#39;1&#39;</span>
+<span class="n">color1</span><span class="o">-&gt;</span><span class="n">Release</span><span class="p">();</span>                                   <span class="c1">// Ref &#39;1&#39; -&gt; &#39;0&#39; - Destroyed</span>
+</pre></div>
+<p>To avoid manually handling the reference counter, Noesis provides <em>Ptr&lt;&gt;</em>, a smart pointer that automatically handles lifetime of objects by doing <em>AddReference()</em> and <em>Release()</em>. <em>Ptr&lt;&gt;</em> overloads certain operators in order to behave similar to a pointer but ensuring that
+objects are deleted when they are no longer needed, to avoid memory leaks.</p>
+<div class="highlight"><pre><span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Brush</span><span class="o">&gt;</span> <span class="n">color0</span> <span class="o">=</span> <span class="o">*</span><span class="k">new</span> <span class="n">SolidColorBrush</span><span class="p">(</span><span class="n">Color</span><span class="o">::</span><span class="n">Red</span><span class="p">);</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Brush</span><span class="o">&gt;</span> <span class="n">color1</span><span class="p">(</span><span class="n">color0</span><span class="p">);</span>
+
+<span class="c1">//...</span>
+
+<span class="c1">// color0 and color1 are automatically destroyed when they go out of scope</span>
+</pre></div>
+<p><em>BaseRefCounted</em> objects start with reference counter set to 1. When they are stored inside a <em>Ptr&lt;&gt;</em> the counter is increased by 1 again. As you can see in the example above, to avoid having to do a manual Release() to cancel that extra reference, <em>Ptr&lt;&gt;</em> supports being constructed from a reference. In this case the reference counter is not incremented again. We also provide a better and more convenient alternative using <em>MakePtr</em>:</p>
+<div class="highlight"><pre><span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Brush</span><span class="o">&gt;</span> <span class="n">color0</span> <span class="o">=</span> <span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">SolidColorBrush</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Color</span><span class="o">::</span><span class="n">Red</span><span class="p">);</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Brush</span><span class="o">&gt;</span> <span class="n">color1</span><span class="p">(</span><span class="n">color0</span><span class="p">);</span>
+
+<span class="c1">//...</span>
+
+<span class="c1">// color0 and color1 are automatically destroyed when they go out of scope</span>
+</pre></div>
+<p><em>Ptr&lt;&gt;</em> implicitly converts to raw pointers, so most of the times its usage is totally transparent and you don't need to care about the details.</p>
+<div class="highlight"><pre><span></span><span class="c1">// Read XAMLs from current working directory</span>
+<span class="n">GUI</span><span class="o">::</span><span class="n">SetXamlProvider</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">LocalXamlProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">));</span>
+
+<span class="c1">// Renderer initialization with an OpenGL device</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">RenderDevice</span><span class="o">&gt;</span> <span class="n">device</span> <span class="o">=</span> <span class="n">GLFactory</span><span class="o">::</span><span class="n">CreateDevice</span><span class="p">();</span>
+<span class="n">_view</span><span class="o">-&gt;</span><span class="n">GetRenderer</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Init</span><span class="p">(</span><span class="n">device</span><span class="p">);</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">For performance purposes, refcounted instances created in the stack are also supported. In this case is very important to make sure that no extra references are pending at destruction time. <em>BaseRefCounted</em> will assert if that scenario is detected.</p>
+</div>
+</div>
+<div class="section" id="boxing">
+<h1>Boxing</h1>
+<p>Sometimes basic types or structs need to be converted to <em>BaseComponent</em>. This adds the overhead of the polymorphism to the type, the reference counter and the allocation in the heap, but in some scenarios this is needed, for example when implementing value converters.</p>
+<p>The mechanism of converting a stack-type instance to a component is called <em>boxing</em> and is performed using <em>Boxing::Box()</em>:</p>
+<div class="highlight"><pre><span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;</span> <span class="n">boxed</span> <span class="o">=</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">Box</span><span class="p">(</span><span class="mf">50.0f</span><span class="p">);</span>
+</pre></div>
+<p>The reverse operation is called <em>unboxing</em>. A boxed value is unboxed using <em>Boxing::Unbox()</em>:</p>
+<div class="highlight"><pre><span></span><span class="kt">float</span> <span class="n">val</span> <span class="o">=</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">CanUnbox</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">boxed</span><span class="p">)</span> <span class="o">?</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">Unbox</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">boxed</span><span class="p">)</span> <span class="o">:</span> <span class="mf">0.0f</span><span class="p">;</span>
+</pre></div>
+<p>Although boxing is optimized internally (for example using pools to avoid memory allocations) it should be avoided whenever possible because it cannot be considered a 'fast' operation. The following snippet implement a thousand converter. Note how the input value is given as a <em>BaseComponent</em> instance that needs to be unboxed and how the result is boxed to a <em>BaseComponent</em> instance.</p>
+<div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">ThousandConverter</span><span class="o">::</span><span class="n">TryConvert</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">Type</span><span class="o">*</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="o">*</span><span class="p">,</span> <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;&amp;</span> <span class="n">result</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Boxing</span><span class="o">::</span><span class="n">CanUnbox</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="kt">char</span> <span class="n">str</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+        <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">Unbox</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+        <span class="n">snprintf</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="s">&quot;%.2f K&quot;</span><span class="p">,</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">v</span> <span class="o">/</span> <span class="mf">1000.0f</span><span class="p">);</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">Box</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="nullables">
+<h1>Nullables</h1>
+<p><em>Nullable</em> types are instances of the <em>Noesis::Nullable&lt;T&gt;</em> struct. A nullable type can represent the correct range of values for its underlying types, plus an additional <em>null</em> value. For example, a <em>Nullable&lt;bool&gt;</em> can be assigned the values '<em>true</em>', '<em>false</em>' or '<em>null</em>'. Use the <em>HasValue</em> and <em>GetValue</em> functions to test for null and retrieve the value, as shown in the following example:</p>
+<div class="highlight"><pre><span></span><span class="n">Nullable</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">a</span><span class="p">.</span><span class="n">HasValue</span><span class="p">());</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">);</span>
+
+<span class="n">Nullable</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">HasValue</span><span class="p">());</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="nb">false</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">GetValue</span><span class="p">()</span> <span class="o">==</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">You can assign a value and compare against a value with nullables just as you would for and ordinary value type.</p>
+</div>
+<p>Objects based on nullable types are only boxed if the object is non-null. If <em>HasValue</em> is <em>false</em>, the object reference is assigned to <em>null</em> instead of boxing:</p>
+<div class="highlight"><pre><span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">Boxing</span><span class="o">::</span><span class="n">Box</span><span class="p">(</span><span class="n">Nullable</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="k">nullptr</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">obj</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="delegates">
+<h1>Delegates</h1>
+<p><em>Delegate</em> is a generic implementation for <em>callbacks</em>. Delegates in Noesis are implemented very similar to <em>.NET</em> delegates. Delegates ensure that the callback method is type-safe. Delegates also integrate the ability to call multiple methods sequentially and support the calling of static methods as well as instance methods.</p>
+<div class="section" id="declaring-delegates">
+<h2>Declaring Delegates</h2>
+<p>A delegate is declared using a function signature. For example:</p>
+<div class="highlight"><pre><span></span><span class="c1">/// A delegate with void return and two parameters: int and float</span>
+<span class="n">Delegate</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">d</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="section" id="non-member-methods">
+<h2>Non-member Methods</h2>
+<p>The following code add a static method to the delegate and invoke it:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">Print</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="kt">float</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d %4.3f&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// Create and Bind the delegate</span>
+    <span class="n">Delegate</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">Print</span><span class="p">;</span>
+
+    <span class="c1">// Invoke</span>
+    <span class="n">d</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mf">10.0f</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="member-methods">
+<h2>Member Methods</h2>
+<p>In a similar way, instance methods can be bound to the delegate:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Printer</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Print</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">string</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// Create the instance</span>
+    <span class="n">Printer</span> <span class="n">printer</span><span class="p">;</span>
+
+    <span class="c1">// Create and Bind the delegate</span>
+    <span class="n">Delegate</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="n">MakeDelegate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">printer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Printer</span><span class="o">::</span><span class="n">Print</span><span class="p">);</span>
+
+    <span class="c1">// Invoke</span>
+    <span class="n">d</span><span class="p">(</span><span class="s">&quot;hi :)&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="lambdas">
+<h2>Lambdas</h2>
+<p>C++11 lambda expressions can also be used:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Delegate</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">,</span> <span class="kt">uint32_t</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">uint32_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">};</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">d</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">)</span> <span class="o">==</span> <span class="mi">579</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="multidelegates">
+<h2>MultiDelegates</h2>
+<p>A delegate can be bound to several callbacks using the overloaded operators '<em>+=</em>' and '<em>-=</em>':</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Printer</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Print</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">string</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Printer: %s&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Screen</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Print</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">string</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Screen: %s&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// Create the instances</span>
+    <span class="n">Printer</span> <span class="n">printer</span><span class="p">;</span>
+    <span class="n">Screen</span> <span class="n">screen</span><span class="p">;</span>
+
+    <span class="c1">// Create and Bind the delegate</span>
+    <span class="n">Delegate</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">delegate</span><span class="p">;</span>
+
+    <span class="n">delegate</span> <span class="o">+=</span> <span class="n">MakeDelegate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">printer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Printer</span><span class="o">::</span><span class="n">Print</span><span class="p">);</span>
+    <span class="n">delegate</span> <span class="o">+=</span> <span class="n">MakeDelegate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">screen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Screen</span><span class="o">::</span><span class="n">Print</span><span class="p">);</span>
+
+    <span class="c1">// Invoke. This line will call all the callbacks</span>
+    <span class="n">delegate</span><span class="p">(</span><span class="s">&quot;hi :)&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>When using <em>MultiDelegates</em> the returning value from the delegate invocation is the one obtained from the last invocation.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">In contrast with C#, delegates do not increment the reference counter of the target instance. This is done to avoid creating circular references that appears when a delegate points back to the object that contains it. This implies that before destroying an instance that is the target of a delegate it must be removed from the delegate.</p>
+</div>
+</div>
+</div>
+<div class="section" id="reflection">
+<h1>Reflection</h1>
+<p>Reflection is the ability of a program to inspect in run-time the structure and state of the data with the possibility of modifying it. Languages as Java or C# incorporate such functionality by default. However, in C++ language it is not possible to obtain this kind of information directly.</p>
+<div class="section" id="classes">
+<h2>Classes</h2>
+<p>Noesis provides a few macros to easily incorporate reflection information to <em>classes</em> and <em>structs</em>. This is normally used to expose reflection information from client code to Noesis, for example when using <a class="reference external" href="Gui.Core.DataBindingTutorial.html">Data Binding</a> connecting <em>Views</em> and <em>Models</em>.</p>
+<p>There are two kind of macros, a declaration macro (<em>NS_DECLARE_REFLECTION</em>) that you normally use in headers:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="nl">Quest</span><span class="p">:</span> <span class="k">public</span> <span class="n">BaseComponent</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">completed</span><span class="p">;</span>
+    <span class="n">NsString</span> <span class="n">title</span><span class="p">;</span>
+    <span class="n">NsString</span> <span class="n">description</span><span class="p">;</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">ImageSource</span><span class="o">&gt;</span> <span class="n">image</span><span class="p">;</span>
+
+    <span class="n">NS_DECLARE_REFLECTION</span><span class="p">(</span><span class="n">Quest</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">ViewModel</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">NotifyPropertyChangedBase</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">SetSelectedQuest</span><span class="p">(</span><span class="n">Quest</span><span class="o">*</span> <span class="n">value</span><span class="p">);</span>
+    <span class="n">Quest</span><span class="o">*</span> <span class="nf">GetSelectedQuest</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">ObservableCollection</span><span class="o">&lt;</span><span class="n">Quest</span><span class="o">&gt;&gt;</span> <span class="n">_quests</span><span class="p">;</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Quest</span><span class="o">&gt;</span> <span class="n">_selectedQuest</span><span class="p">;</span>
+
+    <span class="n">NS_DECLARE_REFLECTION</span><span class="p">(</span><span class="n">ViewModel</span><span class="p">,</span> <span class="n">NotifyPropertyChangedBase</span><span class="p">)</span>
+<span class="p">};</span>
+</pre></div>
+<p>And the implementation macro (<em>NS_IMPLEMENT_REFLECTION</em>), to be used in <em>.cpp</em> files:</p>
+<div class="highlight"><pre><span></span><span class="n">NS_IMPLEMENT_REFLECTION</span><span class="p">(</span><span class="n">Quest</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Title&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Quest</span><span class="o">::</span><span class="n">title</span><span class="p">);</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Image&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Quest</span><span class="o">::</span><span class="n">image</span><span class="p">);</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Description&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Quest</span><span class="o">::</span><span class="n">description</span><span class="p">);</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Completed&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Quest</span><span class="o">::</span><span class="n">completed</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">NS_IMPLEMENT_REFLECTION</span><span class="p">(</span><span class="n">ViewModel</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;Quests&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ViewModel</span><span class="o">::</span><span class="n">_quests</span><span class="p">);</span>
+    <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;SelectedQuest&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ViewModel</span><span class="o">::</span><span class="n">GetSelectedQuest</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ViewModel</span><span class="o">::</span><span class="n">SetSelectedQuest</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>Instead of using two macros, you can use only one, but it is not recommended because it will add extra bloating to your headers slightly increasing build time. If possible avoid it although sometimes is mandatory, for example with templates.</p>
+<div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">Vector2</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">x</span><span class="p">;</span>
+    <span class="n">T</span> <span class="n">y</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">Vector2</span><span class="p">,</span> <span class="n">NoParent</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Vector2</span><span class="o">::</span><span class="n">x</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Vector2</span><span class="o">::</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Note how <em>NsProp</em> can be used to directly expose member variables, getters and setters or just getters (for read-only properties). For example:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Game</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">NotifyPropertyChangedBase</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">SetSelectedTeam</span><span class="p">(</span><span class="kt">int</span> <span class="n">selectedTeam</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">_selectedTeam</span> <span class="o">!=</span> <span class="n">selectedTeam</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">_selectedTeam</span> <span class="o">=</span> <span class="n">selectedTeam</span><span class="p">;</span>
+            <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="s">&quot;SelectedTeam&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">GetSelectedTeam</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_selectedTeam</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Collection</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;*</span> <span class="n">GetVisibleTeams</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_visibleTeams</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">int</span> <span class="n">_selectedTeam</span><span class="p">;</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;&gt;</span> <span class="n">_visibleTeams</span><span class="p">;</span>
+
+    <span class="n">NS_IMPLEMENT_INLINE_REFLECTION</span><span class="p">(</span><span class="n">Game</span><span class="p">,</span> <span class="n">NotifyPropertyChangedBase</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;SelectedTeam&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Game</span><span class="o">::</span><span class="n">GetSelectedTeam</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Game</span><span class="o">::</span><span class="n">SetSelectedTeam</span><span class="p">);</span>
+        <span class="n">NsProp</span><span class="p">(</span><span class="s">&quot;VisibleTeams&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">Game</span><span class="o">::</span><span class="n">GetVisibleTeams</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="section" id="enumerations">
+<h2>Enumerations</h2>
+<p>Enumerations require a different set of macros. <em>NS_DECLARE_REFLECTION_ENUM</em>, for the header, must be used in the <em>global</em> namespace.</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Scoreboard</span>
+<span class="p">{</span>
+    <span class="k">enum</span> <span class="k">class</span> <span class="nc">Team</span>
+    <span class="p">{</span>
+        <span class="n">Alliance</span><span class="p">,</span>
+        <span class="n">Horde</span><span class="p">,</span>
+    <span class="p">};</span>
+
+    <span class="k">enum</span> <span class="k">class</span> <span class="nc">Class</span>
+    <span class="p">{</span>
+        <span class="n">Fighter</span><span class="p">,</span>
+        <span class="n">Rogue</span><span class="p">,</span>
+        <span class="n">Hunter</span><span class="p">,</span>
+        <span class="n">Mage</span><span class="p">,</span>
+        <span class="n">Cleric</span><span class="p">,</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="n">NS_DECLARE_REFLECTION_ENUM</span><span class="p">(</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Team</span><span class="p">)</span>
+<span class="n">NS_DECLARE_REFLECTION_ENUM</span><span class="p">(</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="p">)</span>
+</pre></div>
+<p>And <em>NS_IMPLEMENT_REFLECTION_ENUM</em> for the implementation file.</p>
+<div class="highlight"><pre><span></span><span class="n">NS_IMPLEMENT_REFLECTION_ENUM</span><span class="p">(</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Team</span><span class="p">,</span> <span class="s">&quot;Scoreboard.Team&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Alliance&quot;</span><span class="p">,</span> <span class="n">Team</span><span class="o">::</span><span class="n">Alliance</span><span class="p">);</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Horde&quot;</span><span class="p">,</span> <span class="n">Team</span><span class="o">::</span><span class="n">Horde</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">NS_IMPLEMENT_REFLECTION_ENUM</span><span class="p">(</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="p">,</span> <span class="s">&quot;Scoreboard.Class&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Fighter&quot;</span><span class="p">,</span> <span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">Fighter</span><span class="p">);</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Rogue&quot;</span><span class="p">,</span> <span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">Rogue</span><span class="p">);</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Hunter&quot;</span><span class="p">,</span> <span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">Hunter</span><span class="p">);</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Mage&quot;</span><span class="p">,</span> <span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">Mage</span><span class="p">);</span>
+    <span class="n">NsVal</span><span class="p">(</span><span class="s">&quot;Cleric&quot;</span><span class="p">,</span> <span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">Cleric</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">Similar to classes, you can use just a single macro, NS_IMPLEMENT_INLINE_REFLECTION_ENUM</p>
+</div>
+</div>
+<div class="section" id="factory">
+<h2>Factory</h2>
+<p>In case you need to instantiate a class from a XAML, for example a converter or user control, it must be registered in the component factory before it can be used in XAML. Our application framework expose a virtual function for that purpose, <em>RegisterComponents</em>. Find more information about in the <a class="reference external" href="Gui.Core.ExtendingTutorial.html">Extending NoesisGUI</a> tutorial.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AppLauncher</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">ApplicationLauncher</span>
+<span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">RegisterComponents</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span>
+    <span class="p">{</span>
+        <span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">MainWindow</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">App</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">ThousandConverter</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">EnumConverter</span><span class="o">&lt;</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Team</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+        <span class="n">RegisterComponent</span><span class="o">&lt;</span><span class="n">EnumConverter</span><span class="o">&lt;</span><span class="n">Scoreboard</span><span class="o">::</span><span class="n">Class</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">Enums are not directly registered. EnumConverter must be used for that purpose.</p>
+</div>
+<p>Once a class is registered in the factory it can be used in XAML. For example:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+    <span class="na">xmlns:local=</span><span class="s">&quot;clr-namespace:Scoreboard&quot;</span>
+    <span class="na">x:Class=</span><span class="s">&quot;Scoreboard.MainWindow&quot;</span>
+    <span class="na">FontFamily=</span><span class="s">&quot;Fonts/#Cheboygan&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;UserControl.Resources&gt;</span>
+    <span class="nt">&lt;ResourceDictionary&gt;</span>
+        <span class="nt">&lt;local:ThousandConverter</span> <span class="na">x:Key=</span><span class="s">&quot;ThousandConverter&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ResourceDictionary&gt;</span>
+  <span class="nt">&lt;/UserControl.Resources&gt;</span>
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="interfaces">
+<h2>Interfaces</h2>
+<p>In the rare case you need to implement interfaces, <em>NsImpl</em> helper must be used in the corresponding reflection section.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">NS_IMPLEMENT_INTERFACE_FIXUP must also be used to automatically implement a few internal functions needed by Noesis::Interface</p>
+</div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NotifyPropertyChangedBase</span><span class="o">:</span> <span class="k">public</span> <span class="n">BaseComponent</span><span class="p">,</span> <span class="k">public</span> <span class="n">INotifyPropertyChanged</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">/// From INotifyPropertyChanged</span>
+    <span class="c1">//@{</span>
+    <span class="n">PropertyChangedEventHandler</span><span class="o">&amp;</span> <span class="n">PropertyChanged</span><span class="p">()</span> <span class="k">override</span> <span class="k">final</span><span class="p">;</span>
+    <span class="c1">//@}</span>
+
+    <span class="n">NS_IMPLEMENT_INTERFACE_FIXUP</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">OnPropertyChanged</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">name</span><span class="p">);</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">PropertyChangedEventHandler</span> <span class="n">_propertyChanged</span><span class="p">;</span>
+
+    <span class="n">NS_DECLARE_REFLECTION</span><span class="p">(</span><span class="n">NotifyPropertyChangedBase</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">)</span>
+<span class="p">};</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="n">NS_IMPLEMENT_REFLECTION</span><span class="p">(</span><span class="n">NotifyPropertyChangedBase</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NsImpl</span><span class="o">&lt;</span><span class="n">INotifyPropertyChanged</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rtti">
+<h1>RTTI</h1>
+<p>Having reflection macros in a class also enables safe casts at run-time. This is very similar to the standard <em>dynamic_cast</em> but using <em>DynamicCast</em> instead. For example:</p>
+<div class="highlight"><pre><span></span><span class="n">Freezable</span><span class="o">*</span> <span class="nf">IsFreezableValue</span><span class="p">(</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Freezable</span><span class="o">*</span> <span class="n">freezable</span> <span class="o">=</span> <span class="n">DynamicCast</span><span class="o">&lt;</span><span class="n">Freezable</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">freezable</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">freezable</span><span class="o">-&gt;</span><span class="n">IsFrozen</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">freezable</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p><em>DynamicPtrCast</em> is also available in case a dynamic cast from <em>Ptr&lt;&gt;</em> to <em>Ptr&lt;&gt;</em> is needed. Note that this is more efficient than manually getting the pointer using <em>GetPtr()</em> and doing the cast with <em>DynamicCast</em>.</p>
+<div class="highlight"><pre><span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BaseComponent</span><span class="o">&gt;</span> <span class="n">value</span> <span class="o">=</span> <span class="n">GetLocalValue</span><span class="p">();</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BaseBindingExpression</span><span class="o">&gt;</span> <span class="n">expr</span> <span class="o">=</span> <span class="n">DynamicPtrCast</span><span class="o">&lt;</span><span class="n">BaseBindingExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+<span class="n">BaseBindingExpression</span><span class="o">*</span> <span class="n">expr_</span> <span class="o">=</span> <span class="n">DynamicCast</span><span class="o">&lt;</span><span class="n">BaseBindingExpression</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">.</span><span class="n">GetPtr</span><span class="p">());</span>
+</pre></div>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#headers-and-namespaces" id="id1">Headers and Namespaces</a></li>
+<li><a class="reference internal" href="#reference-counting" id="id2">Reference Counting</a></li>
+<li><a class="reference internal" href="#boxing" id="id3">Boxing</a></li>
+<li><a class="reference internal" href="#nullables" id="id4">Nullables</a></li>
+<li><a class="reference internal" href="#delegates" id="id5">Delegates</a><ul>
+<li><a class="reference internal" href="#declaring-delegates" id="id6">Declaring Delegates</a></li>
+<li><a class="reference internal" href="#non-member-methods" id="id7">Non-member Methods</a></li>
+<li><a class="reference internal" href="#member-methods" id="id8">Member Methods</a></li>
+<li><a class="reference internal" href="#lambdas" id="id9">Lambdas</a></li>
+<li><a class="reference internal" href="#multidelegates" id="id10">MultiDelegates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reflection" id="id11">Reflection</a><ul>
+<li><a class="reference internal" href="#classes" id="id12">Classes</a></li>
+<li><a class="reference internal" href="#enumerations" id="id13">Enumerations</a></li>
+<li><a class="reference internal" href="#factory" id="id14">Factory</a></li>
+<li><a class="reference internal" href="#interfaces" id="id15">Interfaces</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rtti" id="id16">RTTI</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

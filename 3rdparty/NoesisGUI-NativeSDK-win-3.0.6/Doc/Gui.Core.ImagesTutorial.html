@@ -1,0 +1,1247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Images Tutorial - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="Using Images with NoesisGUI" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.ImagesTutorial.html" />
+<meta name="twitter:title" content="Images Tutorial | NoesisGUI" />
+<meta name="twitter:description" content="Using Images with NoesisGUI" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Images Tutorial | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="Using Images with NoesisGUI" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.ImagesTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.ImagesTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="images-tutorial">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Images Tutorial</h1>
+
+<div class="section" id="using-images">
+<h1>Using Images</h1>
+<p><img alt="github" class="align-middle" src="github.png" /> <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Snippets/Image">Tutorial Data</a></p>
+<p>The <a class="reference external" href="Gui.Core._Image.html">Image</a> control is used to insert an image whose location is specified in the <em>Source</em> attribute using an <a class="reference external" href="Gui.Core.URIs.html">URI</a>:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+<p>As the rest of controls, an <em>Image</em> is measured and arranged, so its size depends not only on the original image dimensions. Layout properties determine the space available for the Image, and the <em>Stretch</em> property defines how the image fills that available space:</p>
+<ul class="simple">
+<li><strong>None</strong>: dimensions are preserved.</li>
+<li><strong>Fill</strong>: the image fills the available space, dimensions are modified.</li>
+<li><strong>Uniform</strong>: the image fills as much as possible the available space preserving the aspect ratio.</li>
+<li><strong>UniformToFill</strong>: the image totally fills the available space preserving the aspect ratio and clipping the image if it is too large.</li>
+</ul>
+<p>The following sample shows all the possible strecth modes of an <em>Image</em> control:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+      <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+      <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">TextElement.Foreground=</span><span class="s">&quot;Black&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Original Image&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+     <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;None&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Fill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Uniform&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;UniformToFill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<span class="hll">        <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+</span>      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<span class="hll">        <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+</span>      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<span class="hll">        <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Uniform&quot;</span><span class="nt">/&gt;</span>
+</span>      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<span class="hll">        <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;UniformToFill&quot;</span><span class="nt">/&gt;</span>
+</span>      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg1.jpg" src="ImagesTutorialImg1.jpg" />
+</div>
+<div class="section" id="imagebrush">
+<h1>ImageBrush</h1>
+<p><a class="reference external" href="Gui.Core._ImageBrush.html">ImageBrush</a> uses an image to paint an area of a graphics object. It is normally applied to the <em>Background</em> property of a <em>Panel</em> or <em>Border</em> or to Fill a Shape. The <em>ImageSource</em> property is meant to hold the bitmap content.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid.Background&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Uniform&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;Tile&quot;</span>
+                <span class="na">Viewport=</span><span class="s">&quot;0,0,0.25,0.25&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid.Background&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p><em>ImageBrush</em> derives from <a class="reference external" href="Gui.Core._TileBrush.html">TileBrush</a>. When you paint an area by using a <em>TileBrush</em> you control three elements: <em>content</em>, <em>tiles</em> and the <em>output</em> area.</p>
+<img alt="ImagesTutorialImg6.jpg" src="ImagesTutorialImg6.jpg" />
+<p><em>TileBrush</em> defines some interesting properties that configure how tiles are placed in the output area.</p>
+<div class="section" id="stretch">
+<h2>Stretch</h2>
+<p>This property specifies how the content stretches to fit its tiles. In the following example all stretch modes are applied to Rectangle elements:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+      <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span> <span class="na">Background=</span><span class="s">&quot;White&quot;</span>
+      <span class="na">TextElement.Foreground=</span><span class="s">&quot;Black&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Original Image&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+     <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Height=</span><span class="s">&quot;300&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle.Fill&gt;</span>
+          <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+      <span class="nt">&lt;/Rectangle&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;None&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Fill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Uniform&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;UniformToFill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Uniform&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;120&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon1.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;UniformToFill&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg2.jpg" src="ImagesTutorialImg2.jpg" />
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">As you can see in the previous screenshots when tiles don't exactly fit the output area they are centered. This is the default behavior, although you can use the <em>Viewbox</em> and <em>Viewport</em> properties (explained below) to change it.</p>
+</div>
+</div>
+<div class="section" id="viewbox">
+<h2>Viewbox</h2>
+<p>This property specifies the subimage of the content that defines a tile. The <em>ViewboxUnits</em> property is used to indicate whether the <em>Viewbox</em> value is interpreted as a relative, the default, or absolute value.</p>
+<p>The following example shows the effect of different <em>Stretch</em> modes on a <em>TileBrush</em> that has a <em>Viewbox</em> that is smaller than the output area. Notice that <em>TileBrush</em> contents are never clipped to the <em>Viewbox</em> (parts of the image that are outside the <em>Viewbox</em> are tinted to make it clear).</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+      <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+      <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">TextElement.Foreground=</span><span class="s">&quot;Black&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Original Image&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Viewbox=&amp;quot;0.5,0.25,0.25,0.5&amp;quot;&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span>
+                 <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+       <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Height=</span><span class="s">&quot;300&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+       <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Height=</span><span class="s">&quot;300&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2-viewbox.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+    <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;None&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Fill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Uniform&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;UniformToFill&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Height=</span><span class="s">&quot;150&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2-viewbox.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span>
+</span><span class="hll">             <span class="na">Viewbox=</span><span class="s">&quot;0.5,0.25,0.25,0.5&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Height=</span><span class="s">&quot;150&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2-viewbox.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">Viewbox=</span><span class="s">&quot;0.5,0.25,0.25,0.5&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Height=</span><span class="s">&quot;150&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2-viewbox.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Uniform&quot;</span>
+</span><span class="hll">             <span class="na">Viewbox=</span><span class="s">&quot;0.5,0.25,0.25,0.5&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Height=</span><span class="s">&quot;150&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/melon2-viewbox.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;UniformToFill&quot;</span>
+</span><span class="hll">             <span class="na">Viewbox=</span><span class="s">&quot;0.5,0.25,0.25,0.5&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg3.jpg" src="ImagesTutorialImg3.jpg" />
+</div>
+<div class="section" id="viewport">
+<h2>Viewport</h2>
+<p>This property specifies the position and dimensions of the tile in the output area. By default, a <em>TileBrush</em> has a single tile that fills the whole output area.</p>
+<p>The <em>ViewportUnits</em> property is used to specify whether the <em>Viewport</em> uses absolute or relative coordinates. When relative, the default mode, the coordinates are relative to the size of the output area. The point (0,0) represents the upper-left corner of the output area, and (1,1) represents the lower-right corner of the output area.</p>
+</div>
+<div class="section" id="tilemode">
+<h2>TileMode</h2>
+<p>The <em>TileMode</em> property allows you to specify how the content of a <em>TileBrush</em> is repeated to fill the output area. To create a pattern the property <em>TileMode</em> is set to <em>Tile</em>, <em>FlipX</em>, <em>FlipY</em> or <em>FlipXY</em> and the <em>Viewport</em> of the <em>TileBrush</em> is set so that it is smaller than the area that you are painting; otherwise, only a single tile is produced, regardless which <em>TileMode</em> setting you use.</p>
+<p>The following example shows the different tile modes:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+      <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+      <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">TextElement.Foreground=</span><span class="s">&quot;Black&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Original Image&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span>
+       <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+    <span class="nt">&lt;Grid</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+        <span class="nt">&lt;RowDefinition/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;None&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Tile&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;FlipX&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;FlipY&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;FlipXY&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;4&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span> <span class="na">ViewportUnits=</span><span class="s">&quot;Absolute&quot;</span>
+</span><span class="hll">             <span class="na">Viewport=</span><span class="s">&quot;0,0,25,25&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span> <span class="na">ViewportUnits=</span><span class="s">&quot;Absolute&quot;</span>
+</span><span class="hll">             <span class="na">Viewport=</span><span class="s">&quot;0,0,25,25&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;Tile&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span> <span class="na">ViewportUnits=</span><span class="s">&quot;Absolute&quot;</span>
+</span><span class="hll">             <span class="na">Viewport=</span><span class="s">&quot;0,0,25,25&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipX&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span> <span class="na">ViewportUnits=</span><span class="s">&quot;Absolute&quot;</span>
+</span><span class="hll">             <span class="na">Viewport=</span><span class="s">&quot;0,0,25,25&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipY&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;4&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span> <span class="na">ViewportUnits=</span><span class="s">&quot;Absolute&quot;</span>
+</span><span class="hll">             <span class="na">Viewport=</span><span class="s">&quot;0,0,25,25&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipXY&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">ViewportUnits=</span><span class="s">&quot;RelativeToBoundingBox&quot;</span> <span class="na">Viewport=</span><span class="s">&quot;0,0,0.1,0.2&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">ViewportUnits=</span><span class="s">&quot;RelativeToBoundingBox&quot;</span> <span class="na">Viewport=</span><span class="s">&quot;0,0,0.1,0.2&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;Tile&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">ViewportUnits=</span><span class="s">&quot;RelativeToBoundingBox&quot;</span> <span class="na">Viewport=</span><span class="s">&quot;0,0,0.1,0.2&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipX&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">ViewportUnits=</span><span class="s">&quot;RelativeToBoundingBox&quot;</span> <span class="na">Viewport=</span><span class="s">&quot;0,0,0.1,0.2&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipY&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span>
+              <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;4&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle&gt;</span>
+          <span class="nt">&lt;Rectangle.Fill&gt;</span>
+<span class="hll">            <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/tile.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span>
+</span><span class="hll">             <span class="na">ViewportUnits=</span><span class="s">&quot;RelativeToBoundingBox&quot;</span> <span class="na">Viewport=</span><span class="s">&quot;0,0,0.1,0.2&quot;</span> <span class="na">TileMode=</span><span class="s">&quot;FlipXY&quot;</span><span class="nt">/&gt;</span>
+</span>          <span class="nt">&lt;/Rectangle.Fill&gt;</span>
+        <span class="nt">&lt;/Rectangle&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg4.jpg" src="ImagesTutorialImg4.jpg" />
+</div>
+</div>
+<div class="section" id="resize-quality">
+<h1>Resize quality</h1>
+<p>By default noesisGUI scales images using a high-quality re-sampling algorithm implemented in the GPU. Although most of the time the quality is fine this algorithm tends to blur the results to reduce aliasing. The default algorithm can be changed by using the <em>BitmapScalingMode</em> attached property on any <em>UIElement</em> descendant.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;StackPanel</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+            <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+            <span class="na">UseLayoutRounding=</span><span class="s">&quot;True&quot;</span> <span class="na">Orientation=</span><span class="s">&quot;Horizontal&quot;</span><span class="nt">&gt;</span>
+
+<span class="hll">  <span class="nt">&lt;Grid</span> <span class="na">RenderOptions.BitmapScalingMode=</span><span class="s">&quot;Linear&quot;</span> <span class="na">Width=</span><span class="s">&quot;500&quot;</span><span class="nt">&gt;</span>
+</span>    <span class="nt">&lt;Grid.Background&gt;</span>
+      <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/bg.jpg&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;UniformToFill&quot;</span>
+                  <span class="na">AlignmentX=</span><span class="s">&quot;Center&quot;</span> <span class="na">AlignmentY=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.Background&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Linear&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;White&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+               <span class="na">VerticalAlignment=</span><span class="s">&quot;Top&quot;</span>  <span class="na">Margin=</span><span class="s">&quot;10&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+
+<span class="hll">  <span class="nt">&lt;Grid</span> <span class="na">RenderOptions.BitmapScalingMode=</span><span class="s">&quot;HighQuality&quot;</span> <span class="na">Width=</span><span class="s">&quot;500&quot;</span><span class="nt">&gt;</span>
+</span>    <span class="nt">&lt;Grid.Background&gt;</span>
+      <span class="nt">&lt;ImageBrush</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/bg.jpg&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;UniformToFill&quot;</span>
+                  <span class="na">AlignmentX=</span><span class="s">&quot;Center&quot;</span> <span class="na">AlignmentY=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.Background&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;HighQuality&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;White&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span>
+               <span class="na">VerticalAlignment=</span><span class="s">&quot;Top&quot;</span> <span class="na">Margin=</span><span class="s">&quot;10&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+<span class="nt">&lt;/StackPanel&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg41.jpg" src="ImagesTutorialImg41.jpg" />
+</div>
+<div class="section" id="texture-atlas">
+<h1>Texture Atlas</h1>
+<p>Texture atlases are large textures made up of many separate textures to improve performance. It is a method traditionally used to animate sprites on screen.</p>
+<p>Although you can use the tool you wish, we provide a plugin for <a class="reference external" href="http://www.texturepacker.com/">TexturePacker</a> that directly generates a valid XAML that can be used as an atlas in NoesisGui. The plugin can be found in our <a class="reference external" href="https://github.com/Noesis/noesisgui-contrib">github</a>. The following is an atlas generated with that tool:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- Created using Noesis XAML exporter for TexturePacker (http://www.texturepacker.com) --&gt;</span>
+<span class="nt">&lt;ResourceDictionary</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin01&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;145,58,33,54&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin02&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;180,58,30,54&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin03&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;73,61,27,57&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin04&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;39,2,33,57&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin05&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;112,2,38,54&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin06&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;74,2,36,56&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin07&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;152,2,31,54&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin08&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;185,2,27,54&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin09&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;41,61,30,57&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin10&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;2,2,35,58&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin11&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;102,60,41,55&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;aladin12&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;aladin-atlas.png&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;2,62,37,57&quot;</span> <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span>
+    <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/ResourceDictionary&gt;</span>
+</pre></div>
+<p>The following example shows how to reference that dictionary to use sprites in your XAML files:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">UseLayoutRounding=</span><span class="s">&quot;True&quot;</span> <span class="na">Background=</span><span class="s">&quot;White&quot;</span> <span class="na">TextElement.Foreground=</span><span class="s">&quot;Black&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;ResourceDictionary&gt;</span>
+      <span class="nt">&lt;ResourceDictionary.MergedDictionaries&gt;</span>
+        <span class="nt">&lt;ResourceDictionary</span> <span class="na">Source=</span><span class="s">&quot;Images/Aladin/aladin.xaml&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/ResourceDictionary.MergedDictionaries&gt;</span>
+
+      <span class="nt">&lt;Storyboard</span> <span class="na">x:Key=</span><span class="s">&quot;AladinRun&quot;</span> <span class="na">RepeatBehavior=</span><span class="s">&quot;Forever&quot;</span> <span class="na">Duration=</span><span class="s">&quot;0:0:4.2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;DoubleAnimation</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin&quot;</span> <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;RenderTransform.X&quot;</span>
+          <span class="na">From=</span><span class="s">&quot;-30&quot;</span> <span class="na">To=</span><span class="s">&quot;500&quot;</span> <span class="na">Duration=</span><span class="s">&quot;0:0:4.2&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Storyboard</span> <span class="na">Duration=</span><span class="s">&quot;0:0:0.6&quot;</span> <span class="na">RepeatBehavior=</span><span class="s">&quot;Forever&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_01&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.05&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_02&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.05&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.10&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_03&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.10&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.15&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_04&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.15&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.20&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_05&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.20&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.25&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_06&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.25&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.30&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_07&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.30&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.35&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_08&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.35&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.40&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_09&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.40&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.45&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_10&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.00&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.45&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.50&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_11&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.0&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.50&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.55&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+          <span class="nt">&lt;ObjectAnimationUsingKeyFrames</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;aladin_sprite_12&quot;</span>
+            <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;Visibility&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.0&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.55&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Visible<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+            <span class="nt">&lt;DiscreteObjectKeyFrame</span> <span class="na">KeyTime=</span><span class="s">&quot;0:0:0.60&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;DiscreteObjectKeyFrame.Value&gt;</span>
+                <span class="nt">&lt;Visibility&gt;</span>Hidden<span class="nt">&lt;/Visibility&gt;</span>
+              <span class="nt">&lt;/DiscreteObjectKeyFrame.Value&gt;</span>
+            <span class="nt">&lt;/DiscreteObjectKeyFrame&gt;</span>
+          <span class="nt">&lt;/ObjectAnimationUsingKeyFrames&gt;</span>
+        <span class="nt">&lt;/Storyboard&gt;</span>
+      <span class="nt">&lt;/Storyboard&gt;</span>
+    <span class="nt">&lt;/ResourceDictionary&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;Grid.Triggers&gt;</span>
+    <span class="nt">&lt;EventTrigger</span> <span class="na">RoutedEvent=</span><span class="s">&quot;FrameworkElement.Loaded&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;BeginStoryboard</span> <span class="na">Storyboard=</span><span class="s">&quot;{StaticResource AladinRun}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/EventTrigger&gt;</span>
+  <span class="nt">&lt;/Grid.Triggers&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Atlas Image&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Source=</span><span class="s">&quot;Images/Aladin/aladin-atlas.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;None&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Image brushes for each sprite&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;StackPanel</span> <span class="na">Orientation=</span><span class="s">&quot;Horizontal&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin01}&quot;</span> <span class="na">Width=</span><span class="s">&quot;33&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin02}&quot;</span> <span class="na">Width=</span><span class="s">&quot;30&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin03}&quot;</span> <span class="na">Width=</span><span class="s">&quot;27&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin04}&quot;</span> <span class="na">Width=</span><span class="s">&quot;33&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin05}&quot;</span> <span class="na">Width=</span><span class="s">&quot;38&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin06}&quot;</span> <span class="na">Width=</span><span class="s">&quot;36&quot;</span> <span class="na">Height=</span><span class="s">&quot;56&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin07}&quot;</span> <span class="na">Width=</span><span class="s">&quot;31&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin08}&quot;</span> <span class="na">Width=</span><span class="s">&quot;27&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin09}&quot;</span> <span class="na">Width=</span><span class="s">&quot;30&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin10}&quot;</span> <span class="na">Width=</span><span class="s">&quot;35&quot;</span> <span class="na">Height=</span><span class="s">&quot;58&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin11}&quot;</span> <span class="na">Width=</span><span class="s">&quot;41&quot;</span> <span class="na">Height=</span><span class="s">&quot;55&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin12}&quot;</span> <span class="na">Width=</span><span class="s">&quot;37&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Animated sprites&quot;</span> <span class="na">TextAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,0&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">BorderBrush=</span><span class="s">&quot;Black&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">Width=</span><span class="s">&quot;500&quot;</span> <span class="na">ClipToBounds=</span><span class="s">&quot;True&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Border.Background&gt;</span>
+        <span class="nt">&lt;LinearGradientBrush</span> <span class="na">StartPoint=</span><span class="s">&quot;0,0&quot;</span> <span class="na">EndPoint=</span><span class="s">&quot;0,1&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;0&quot;</span> <span class="na">Color=</span><span class="s">&quot;Cyan&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;0.71&quot;</span> <span class="na">Color=</span><span class="s">&quot;White&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;0.72&quot;</span> <span class="na">Color=</span><span class="s">&quot;Green&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;1&quot;</span> <span class="na">Color=</span><span class="s">&quot;LightGreen&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/LinearGradientBrush&gt;</span>
+      <span class="nt">&lt;/Border.Background&gt;</span>
+      <span class="nt">&lt;Grid</span> <span class="na">x:Name=</span><span class="s">&quot;aladin&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Left&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Bottom&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,50,0,10&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Grid.RenderTransform&gt;</span>
+          <span class="nt">&lt;TranslateTransform/&gt;</span>
+        <span class="nt">&lt;/Grid.RenderTransform&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_01&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin01}&quot;</span> <span class="na">Width=</span><span class="s">&quot;33&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Visible&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_02&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin02}&quot;</span> <span class="na">Width=</span><span class="s">&quot;30&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_03&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin03}&quot;</span> <span class="na">Width=</span><span class="s">&quot;27&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_04&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin04}&quot;</span> <span class="na">Width=</span><span class="s">&quot;33&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_05&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin05}&quot;</span> <span class="na">Width=</span><span class="s">&quot;38&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_06&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin06}&quot;</span> <span class="na">Width=</span><span class="s">&quot;36&quot;</span> <span class="na">Height=</span><span class="s">&quot;56&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_07&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin07}&quot;</span> <span class="na">Width=</span><span class="s">&quot;31&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_08&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin08}&quot;</span> <span class="na">Width=</span><span class="s">&quot;27&quot;</span> <span class="na">Height=</span><span class="s">&quot;54&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_09&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin09}&quot;</span> <span class="na">Width=</span><span class="s">&quot;30&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_10&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin10}&quot;</span> <span class="na">Width=</span><span class="s">&quot;35&quot;</span> <span class="na">Height=</span><span class="s">&quot;58&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_11&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin11}&quot;</span> <span class="na">Width=</span><span class="s">&quot;41&quot;</span> <span class="na">Height=</span><span class="s">&quot;55&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Rectangle</span> <span class="na">x:Name=</span><span class="s">&quot;aladin_sprite_12&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource aladin12}&quot;</span> <span class="na">Width=</span><span class="s">&quot;37&quot;</span> <span class="na">Height=</span><span class="s">&quot;57&quot;</span>
+            <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Hidden&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Grid&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ImagesTutorialImg5.jpg" src="ImagesTutorialImg5.jpg" />
+</div>
+<div class="section" id="slice-scaling">
+<h1>9-Slice Scaling</h1>
+<p>9-slice scaling is a nifty way that you can use to scale symbols without distorting them. This is especially useful when creating signs, speech bubbles, etc. The symbol is divided into 9 sections, and only the middle sections are stretched. The corners transform with the symbol but they aren't distorted.</p>
+<img alt="ImagesTutorialImg7.jpg" src="ImagesTutorialImg7.jpg" />
+<p>This technique, very common for flash designers, can be easily emulated by using a grid.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Background&gt;</span>
+    <span class="nt">&lt;RadialGradientBrush</span> <span class="na">Center=</span><span class="s">&quot;0.6,0.7&quot;</span> <span class="na">GradientOrigin=</span><span class="s">&quot;0.6,0.7&quot;</span> <span class="na">RadiusX=</span><span class="s">&quot;0.6&quot;</span> <span class="na">RadiusY=</span><span class="s">&quot;0.7&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;0&quot;</span> <span class="na">Color=</span><span class="s">&quot;YellowGreen&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;1&quot;</span> <span class="na">Color=</span><span class="s">&quot;OliveDrab&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/RadialGradientBrush&gt;</span>
+  <span class="nt">&lt;/Grid.Background&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignTL&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;0,0,50,60&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignT&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;50,0,200,60&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignTR&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;250,0,50,60&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignML&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;0,60,50,80&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignM&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;50,60,200,80&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignMR&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;250,60,50,80&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignBL&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;0,140,50,60&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignB&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;50,140,200,60&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ImageBrush</span> <span class="na">x:Key=</span><span class="s">&quot;WoodSignBR&quot;</span> <span class="na">ImageSource=</span><span class="s">&quot;Images/9slice.png&quot;</span>
+                <span class="na">ViewboxUnits=</span><span class="s">&quot;Absolute&quot;</span> <span class="na">Viewbox=</span><span class="s">&quot;250,140,50,60&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;StackPanel</span> <span class="na">Orientation=</span><span class="s">&quot;Horizontal&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;Grid</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span> <span class="na">Height=</span><span class="s">&quot;150&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;50&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;50&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;60&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;60&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignTL}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignT}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignTR}&quot;</span><span class="nt">/&gt;</span>
+
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignML}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignM}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignMR}&quot;</span><span class="nt">/&gt;</span>
+
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignBL}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignB}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource WoodSignBR}&quot;</span><span class="nt">/&gt;</span>
+
+      <span class="nt">&lt;TextBlock</span> <span class="na">Grid.ColumnSpan=</span><span class="s">&quot;3&quot;</span> <span class="na">Grid.RowSpan=</span><span class="s">&quot;3&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span>
+          <span class="na">FontFamily=</span><span class="s">&quot;#Another&quot;</span> <span class="na">FontSize=</span><span class="s">&quot;40&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;#402000&quot;</span> <span class="na">Text=</span><span class="s">&quot;Welcome!&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid&gt;</span>
+
+  <span class="nt">&lt;/StackPanel&gt;</span>
+
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="runtime-images">
+<h1>Runtime Images</h1>
+<p>Sometimes you need to generate images that are not available at compile time. For example, when you are downloading an image from internet or when your application supports user generated images. For these cases, the <a class="reference external" href="Gui.Core._TextureSource.html">TextureSource</a> class is provided. A <em>TextureSource</em> is initialized passing a native texture handle. Once initialized it must be set to the corresponding <em>Image</em> or <em>ImageBrush</em>.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p>NoesisGUI expects texture with alpha in <a class="reference external" href="http://blogs.msdn.com/b/shawnhar/archive/2009/11/06/premultiplied-alpha.aspx">premultiplied</a> format. Take this into account when you are passing texture handles.</p>
+<p class="last"><a class="reference external" href="http://www.noesisengine.com/forums/viewtopic.php?f=3&amp;t=194">http://www.noesisengine.com/forums/viewtopic.php?f=3&amp;t=194</a></p>
+</div>
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="kt">void</span> <span class="nf">SetTexture</span><span class="p">(</span><span class="n">ID3D11Texture2D</span><span class="o">*</span> <span class="n">d3dTexture</span><span class="p">,</span> <span class="n">FrameworkElement</span><span class="o">*</span> <span class="n">root</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span> <span class="n">texture</span> <span class="o">=</span> <span class="n">D3D11Factory</span><span class="o">::</span><span class="n">WrapTexture</span><span class="p">(</span><span class="n">d3dTexture</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">TextureFormat</span><span class="o">::</span><span class="n">BGRA8</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="n">Image</span><span class="o">*</span> <span class="n">image</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">FindName</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">);</span>
+    <span class="n">image</span><span class="o">-&gt;</span><span class="n">SetSource</span><span class="p">(</span><span class="n">MakePtr</span><span class="o">&lt;</span><span class="n">TextureSource</span><span class="o">&gt;</span><span class="p">(</span><span class="n">texture</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+<p>NoesisGUI directly understands the class <em>Texture2D</em> provided by Unity.</p>
+<div class="highlight"><span class="filename">C# - Unity</span><pre><span></span><span class="n">Grid</span> <span class="n">grid</span> <span class="p">=</span> <span class="p">(</span><span class="n">Grid</span><span class="p">)</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">NoesisView</span><span class="p">&gt;().</span><span class="n">Content</span><span class="p">;</span>
+
+<span class="n">Texture2D</span> <span class="n">texture</span> <span class="p">=</span> <span class="p">(</span><span class="n">Texture2D</span><span class="p">)</span><span class="n">Resources</span><span class="p">.</span><span class="n">Load</span><span class="p">(</span><span class="s">&quot;Noesis&quot;</span><span class="p">);</span>
+<span class="n">TextureSource</span> <span class="n">source</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TextureSource</span><span class="p">(</span><span class="n">texture</span><span class="p">);</span>
+
+<span class="n">Image</span> <span class="n">image</span> <span class="p">=</span> <span class="p">(</span><span class="n">Image</span><span class="p">)</span><span class="n">grid</span><span class="p">.</span><span class="n">FindName</span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">);</span>
+<span class="n">image</span><span class="p">.</span><span class="n">SetSource</span><span class="p">(</span><span class="n">source</span><span class="p">);</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although in this sample we use a Texture2D, RenderTexture and MovieTexture are also supported. In fact, all classes deriving from Texture are supported.</p>
+</div>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#using-images" id="id2">Using Images</a></li>
+<li><a class="reference internal" href="#imagebrush" id="id3">ImageBrush</a><ul>
+<li><a class="reference internal" href="#stretch" id="id4">Stretch</a></li>
+<li><a class="reference internal" href="#viewbox" id="id5">Viewbox</a></li>
+<li><a class="reference internal" href="#viewport" id="id6">Viewport</a></li>
+<li><a class="reference internal" href="#tilemode" id="id7">TileMode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resize-quality" id="id8">Resize quality</a></li>
+<li><a class="reference internal" href="#texture-atlas" id="id9">Texture Atlas</a></li>
+<li><a class="reference internal" href="#slice-scaling" id="id10">9-Slice Scaling</a></li>
+<li><a class="reference internal" href="#runtime-images" id="id11">Runtime Images</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

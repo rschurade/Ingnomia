@@ -1,0 +1,483 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Resources Overview - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="This overview explains how to use resources as a simple way to reuse commonly defined objects and values" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.Resources.html" />
+<meta name="twitter:title" content="Resources Overview | NoesisGUI" />
+<meta name="twitter:description" content="This overview explains how to use resources as a simple way to reuse commonly defined objects and values" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Resources Overview | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:10" />
+<meta property="og:description" content="This overview explains how to use resources as a simple way to reuse commonly defined objects and values" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.Resources.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.Resources.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="resources-overview">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Resources Overview</h1>
+
+<div class="section" id="introduction">
+<h1>Introduction</h1>
+<p>This overview explains how to use resources as a simple way to reuse commonly defined objects and values. It focuses on how to use resources in XAML. You can also create and access resources by using code, or interchangeably between code and XAML.</p>
+<p>Every <a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a> has a Resources property, which is the property that contains the resources (as a <a class="reference external" href="Gui.Core._ResourceDictionary.html">ResourceDictionary</a>) that an element defines. You can define resources on any element. However, resources are most often defined on the root element of the XAML tree.</p>
+<p>Each resource in a resource dictionary must have a unique key. When you define resources in markup, you assign the unique key through the x:Key directive. Typically, the key is a string; however, you can also set it to other object types by using the appropriate markup extensions. Nonstring keys for resources are usally emploed for styles.</p>
+<p>After you define a resource, you can reference the resource to be used for a property value by using a resource markup extension syntax that specifies the key name, for example:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;Grid.Resources&gt;</span>
+        <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;RedBrush&quot;</span> <span class="na">Color=</span><span class="s">&quot;#80800000&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+    <span class="nt">&lt;Button</span> <span class="na">Background=</span><span class="s">&quot;{StaticResource RedBrush}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Ellipse</span> <span class="na">Fill=</span><span class="s">&quot;{DynamicResource RedBrush}&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>When you define a resource on the root element, all the elements in the logical tree can access it, and you can reuse the same resource for setting the value of any property that accepts the type that the resource represents. In the previous example, the same RedBrush resource sets two different properties: the Background of a Button, and the Fill of a Rectangle.</p>
+</div>
+<div class="section" id="static-and-dynamic-resources">
+<h1>Static and Dynamic Resources</h1>
+<p>A resource can be referenced as either a static resource or a dynamic resource. This is done by using either the StaticResource Markup Extension or the DynamicResource Markup Extension. A markup extension is a feature of XAML whereby you can specify an object reference by having the markup extension process the attribute string and return the object to a XAML loader. For more information about markup extension behavior, see <a class="reference external" href="Gui.Core.MarkupExtensions.html">Markup Extensions</a>.</p>
+<p>When you use a markup extension, you typically provide one or more parameters in string form that are processed by that particular markup extension, rather than being evaluated in the context of the property being set. The StaticResource Markup Extension processes a key by looking up the value for that key in all available resource dictionaries. This happens during loading, which is the point in time when the loading process needs to assign the property value that takes the static resource reference. The DynamicResource Markup Extension instead processes a key by creating an expression, and that expression remains unevaluated until the application is actually run, at which time the expression is evaluated and provides a value.</p>
+<p><strong>Static Resources</strong></p>
+<p>Static resource references work best for the following circumstances:</p>
+<ul class="simple">
+<li>Your application design concentrates most of all of its resources into window or application level resource dictionaries. Static resource references are not reevaluated based on runtime behaviors and therefore there can be some performance benefit to avoiding large numbers of dynamic resource references when they are not necessary per your resource and application design.</li>
+<li>You are setting the value of a property that is not on a DependencyObject or a Freezable.</li>
+<li>You are creating a theme for a custom control, and are defining resources that are used within the themes. For this case, you typically do not want the dynamic resource reference lookup behavior, you instead want the static resource reference behavior so that the lookup is predictable and self-contained to the theme.</li>
+</ul>
+<p>When a StaticResource extension searches for the named resource it follows this lookup behavior:</p>
+<ol class="arabic simple">
+<li>The lookup process checks for the requested key within the resource dictionary defined by the element that sets the property.</li>
+<li>The lookup process then traverses the logical tree upward, to the parent element and its resource dictionary. This continues until the root element is reached.</li>
+<li>Next, application resources are checked. Application resources are those resources within the resource dictionary that is defined by the Application object for your application.</li>
+</ol>
+<p>Static resource references from within a resource dictionary must reference a resource that has already been defined lexically before the resource reference. Forward references cannot be resolved by a static resource reference. For this reason, if you use static resource references, you must design your resource dictionary structure such that resources intended for by-resource use are defined at or near the beginning of each respective resource dictionary.</p>
+<p>Static resource lookup can extend into themes; however, static resource references to keys that are known to only exist in themes or as system resources are not recommended. This is because such references are not reevaluated if the theme is changed by the user in realtime. A dynamic resource reference is more reliable when you request theme resources.</p>
+<p>If a resource was requested by a dynamic resource reference in XAML, and was not found, then a exception is raised at runtime.</p>
+<p><strong>Dynamic Resources</strong></p>
+<p>Dynamic resources work best for the following circumstances:</p>
+<ul class="simple">
+<li>The value of the resource depends on conditions that are not known until runtime. This includes resources that can be user settable. These values are truly dynamic because they ultimately come from the runtime environment of the user. You might also have application-level themes that can change, where window-level resource access must also capture the change.</li>
+<li>You are creating or referencing theme styles for a custom control.</li>
+<li>You intend to adjust the contents of a ResourceDictionary during an application lifetime.</li>
+<li>You have a complicated resource structure that has interdependencies, where a forward reference may be required. Static resource references do not support forward references, but dynamic resource references do support them because the resource does not need to be evaluated until runtime, and forward references are therefore not a relevant concept.</li>
+<li>You are creating a style where setter values might come from other values that are influenced by themes or other user settings.</li>
+<li>You are applying resources to elements that might be reparented in the logical tree during application lifetime. Changing the parent also potentially changes the resource lookup scope, so if you want the resource for a reparented element to be reevaluated based on the new scope, always use a dynamic resource reference.</li>
+</ul>
+<p>Resource lookup behavior for a dynamic resource reference parallels the lookup behavior in your code if you call FindResource.</p>
+<ol class="arabic simple">
+<li>The lookup process checks for the requested key within the resource dictionary defined by the element that sets the property.</li>
+</ol>
+<blockquote>
+<ul class="simple">
+<li>If the element defines a Style property, the Resources dictionary within the Style is checked.</li>
+<li>If the element defines a Template property, the Resources dictionary within the FrameworkTemplate is checked.</li>
+</ul>
+</blockquote>
+<ol class="arabic simple" start="2">
+<li>The lookup process then traverses the logical tree upward, to the parent element and its resource dictionary. This continues until the root element is reached.</li>
+<li>Next, application resources are checked. Application resources are those resources within the resource dictionary that is defined by the Application object for your WPF application.</li>
+<li>Theme resource dictionary is checked, for the currently active theme. If the theme changes at runtime, the value is reevaluated.</li>
+</ol>
+<p>Exception behavior varies:</p>
+<ul class="simple">
+<li>If a resource was requested by a FindResource call, and was not found, an exception is raised.</li>
+<li>If a resource was requested by a TryFindResource call, and was not found, no exception is raised, but the returned value is null. If the property being set does not accept null, then it is still possible that a deeper exception will be raised (this depends on the individual property being set).</li>
+<li>If a resource was requested by a dynamic resource reference in XAML, and was not found, then the behavior depends on the general property system, but the general behavior is as if no property setting operation occurred at the level where the resource exists. For instance, if you attempt to set the background on a an individual button element using a resource that could not be evaluated, then no value set results, but the effective value can still come from other participants in the property system and value precedence. For instance, the background value might still come from a locally defined button style, or from the theme style. For properties that are not defined by theme styles, the effective value after a failed resource evaluation might come from the default value in the property metadata.</li>
+</ul>
+<p>Dynamic resource references have some notable restrictions. At least one of the following must be true:</p>
+<ul class="simple">
+<li>The property being set must be a property on a FrameworkElement. That property must be backed by a DependencyProperty.</li>
+<li>The reference is for a value within a Style Setter.</li>
+<li>The property being set must be a property on a Freezable that is provided as a value of a FrameworkElement property, or a Setter value.</li>
+</ul>
+<p>Because the property being set must be a DependencyProperty or Freezable property, most property changes can propagate to UI because a property change (the changed dynamic resource value) is acknowledged by the property system. Most controls include logic that will force another layout of a control if a DependencyProperty changes and that property might affect layout. However, not all properties that have a DynamicResource Markup Extension as their value are guaranteed to provide the value in such a way that they update in realtime in the UI. That functionality still might vary depending on the property, as well as depending on the type that owns the property, or even the logical structure of your application.</p>
+</div>
+<div class="section" id="styles-and-implicit-keys">
+<h1>Styles and Implicit Keys</h1>
+<p>Earlier, it was stated that all items in a ResourceDictionary must have a key. However, that does not mean that all resources must have an explicit x:Key. Several object types support an implicit key when defined as a resource, where the key value is tied to the value of another property. This is known as an implicit key, whereas an x:Key attribute is an explicit key. You can overwrite any implicit key by specifying an explicit key.</p>
+<p>One very important scenario for resources is when you define a Style. In fact, a Style is almost always defined as an entry in a resource dictionary, because styles are inherently intended for reuse. For more information about styles, see <a class="reference external" href="Gui.Core.Styles.html">Styling and Templating</a>.</p>
+<p>Styles for controls can be both created with and referenced with an implicit key. The theme styles that define the default appearance of a control rely on this implicit key. The implicit key from the standpoint of requesting it is the Type of the control itself. The implicit key from the standpoint of defining the resource is the TargetType of the style. Therefore, if you are creating themes for custom controls, creating styles that interact with existing theme styles, you do not need to specify an x:Key Directive for that Style. And if you want to use the themed styles, you do not need to specify any style at all. For instance, the following style definition works, even though the Style resource does not appear to have a key:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Background&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;Setter.Value&gt;</span>
+                <span class="nt">&lt;LinearGradientBrush&gt;</span>
+                    <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;0.0&quot;</span> <span class="na">Color=</span><span class="s">&quot;Red&quot;</span><span class="nt">/&gt;</span>
+                    <span class="nt">&lt;GradientStop</span> <span class="na">Offset=</span><span class="s">&quot;1.0&quot;</span> <span class="na">Color=</span><span class="s">&quot;Orange&quot;</span><span class="nt">/&gt;</span>
+                <span class="nt">&lt;/LinearGradientBrush&gt;</span>
+            <span class="nt">&lt;/Setter.Value&gt;</span>
+        <span class="nt">&lt;/Setter&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;FontSize&quot;</span> <span class="na">Value=</span><span class="s">&quot;18&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Style&gt;</span>
+<span class="nt">&lt;/Grid.Resources&gt;</span>
+</pre></div>
+<p>That style really does have a key: the implicit key TypeOf&lt;Button&gt;(). In markup, you can specify a TargetType directly as the type name (or you can optionally use {x:Type...} to return a type.</p>
+<p>Through the default theme style mechanisms, that style is applied as the runtime style of a Button on the Grid subtree, even though the Button itself does not attempt to specify its Style property or a specific resource reference to the style. Your style defined in the tree is found earlier in the lookup sequence earlier than the theme dictionary style, using the same key that the theme dictionary style has. You could just specify &lt;Button&gt;Hello&lt;/Button&gt; anywhere in the tree, and the style you defined with TargetType of Button would apply to that button. If you want, you can still explicitly key the style with the same type value as TargetType, for clarity in your markup, but that is optional.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;Style</span> <span class="na">x:Key=</span><span class="s">&quot;{x:Type Button}&quot;</span> <span class="na">TargetType=</span><span class="s">&quot;{x:Type Button}&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid.Resources&gt;</span>
+</pre></div>
+<p>Implicit keys for styles do not apply on a control if OverridesDefaultStyle is true (also note that OverridesDefaultStyle might be set as part of native behavior for the control class, rather than explicitly on an instance of the control). If you set OverridesDefaultStyle to true on a control, you will be suppressing the default control template supplied by the theme styles. Also, in order to support implicit keys for derived class scenarios, the control must override DefaultStyleKey property (all existing controls provided as part of Noesis GUI do this).</p>
+</div>
+<div class="section" id="organizing-xaml-resources">
+<h1>Organizing XAML Resources</h1>
+<p>Resources provide a nice way to factor your XAML within a tree. And if you store them as application-level resources, they can live in a separate XAML file. But if you want to partition a set of resources into arbitrary XAML files no matter where they are stored in the logical tree (perhaps for maintainability or flexibility), you can leverage the MergedDictionaries property of the ResourceDictionary class to achieve this.</p>
+<p>For example, a Window could set its Resources collection as follows to merge together multiple resource dictionaries from separate files:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Window.Resources&gt;</span>
+    <span class="nt">&lt;ResourceDictionary&gt;</span>
+        <span class="nt">&lt;ResourceDictionary.MergedDictionaries&gt;</span>
+            <span class="nt">&lt;ResourceDictionary</span> <span class="na">Source=</span><span class="s">&quot;CommonResources.xaml&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;ResourceDictionary</span> <span class="na">Source=</span><span class="s">&quot;MainWindowResources.xaml&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/ResourceDictionary.MergedDictionaries&gt;</span>
+    <span class="nt">&lt;/ResourceDictionary&gt;</span>
+<span class="nt">&lt;/Window.Resources&gt;</span>
+</pre></div>
+<p>The separate files must use ResourceDictionary as the root element. For example, CommonResources.xaml could contain:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ResourceDictionary</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;RedBrush&quot;</span> <span class="na">Color=</span><span class="s">&quot;#80800000&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/ResourceDictionary&gt;</span>
+</pre></div>
+<p>If the dictionaries being merged have a duplicate key, the last one wins (unlike the case of having duplicate keys in a single dictionary).</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
+<li><a class="reference internal" href="#static-and-dynamic-resources" id="id2">Static and Dynamic Resources</a></li>
+<li><a class="reference internal" href="#styles-and-implicit-keys" id="id3">Styles and Implicit Keys</a></li>
+<li><a class="reference internal" href="#organizing-xaml-resources" id="id4">Organizing XAML Resources</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>
