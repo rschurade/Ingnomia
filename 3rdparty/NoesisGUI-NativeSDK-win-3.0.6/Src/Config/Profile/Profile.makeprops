@@ -1,0 +1,3 @@
+CFLAGS_PROFILE = $(CFLAGS_COMMON) -Ofast -DNDEBUG -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -U_FORTIFY_SOURCE
+CXXFLAGS_PROFILE = $(CXXFLAGS_COMMON) -Ofast -DNDEBUG -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -U_FORTIFY_SOURCE
+LDFLAGS_PROFILE = $(LDFLAGS_COMMON) $(CXXFLAGS_PROFILE) -fuse-ld=gold -Wl,-O3,--gc-sections,--icf=all

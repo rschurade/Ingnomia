@@ -1,0 +1,900 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Introducing Controls - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI includes a standard set of controls that enables you to quickly assemble traditional user interfaces" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.ControlsTutorial.html" />
+<meta name="twitter:title" content="Introducing Controls | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI includes a standard set of controls that enables you to quickly assemble traditional user interfaces" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Introducing Controls | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="NoesisGUI includes a standard set of controls that enables you to quickly assemble traditional user interfaces" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.ControlsTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.ControlsTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="introducing-controls">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Introducing Controls</h1>
+
+<p><img alt="github" class="align-middle" src="github.png" /> <a class="reference external" href="https://github.com/Noesis/Tutorials/tree/master/Snippets/Controls">Tutorial Data</a></p>
+<p>NoesisGUI includes a standard set of <a class="reference external" href="Gui.Core._Control.html">controls</a> that enables you to quickly assemble traditional user interfaces. They can be grouped into four main categories, which mostly coincide with their <a class="reference external" href="Gui.Core._ClassHierarchy.html">inheritance hierarchy</a>:</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p class="last">The images shown in this tutorial are taken using the default Theme embedded in Noesis</p>
+</div>
+<div class="section" id="content-controls">
+<h1>Content Controls</h1>
+<p>Content controls are simply controls that are constrained to contain a single item. Content controls all derive from <a class="reference external" href="Gui.Core._ContentControl.html">ContentControl</a>, which has a <em>Content</em> property that contains the single item. The built-in content controls come in three major varieties: <em>Buttons</em>, <em>Simple Containers</em> and <em>Containers with a header</em>.</p>
+<div class="section" id="buttons">
+<h2>Buttons</h2>
+<img alt="ControlsTutorialImg1.jpg" class="align-right" src="ControlsTutorialImg1.jpg" />
+<p><em>Buttons</em> are probably the most familiar and essential user interface element. A basic button is a content control that can be clicked, but not double-clicked. This behavior is actually captured by an abstract class called <a class="reference external" href="Gui.Core._BaseButton.html">BaseButton</a>, from which a few different control are derived.</p>
+<p>The <em>BaseButton</em> class contains the <em>Click</em> event and contain the logic that defines what it means to be clicked. It also defines a boolean <em>IsPressed</em> property, in case you want to act upon the pressed state.</p>
+<p>The most interesting feature of <em>BaseButton</em>, however, is it <em>ClickMode</em> property. This can be set to a value of a <em>ClickMode</em> enumeration to control exactly when the <em>Click</em> event gets raised. Its values are <em>Release</em> (the default), <em>Press</em> and <em>Hover</em>. Although changing the <em>ClickMode</em> on standard buttons would likely confuse users, this capability is very handy for buttons that have been restyled to look like something completely different. In these cases, it's a common expectation that <em>pressing</em> and object should be the same as <em>clicking</em> it.</p>
+<p><em>Button</em>, <em>RepeatButton</em>, <em>ToggleButton</em>, <em>CheckBox</em> and <em>RadioButton</em> derive from <em>BaseButton</em>.</p>
+<div class="section" id="button">
+<h3>Button</h3>
+<p>The <a class="reference external" href="Gui.Core._Button.html">Button</a> class only adds two simple concepts on top of what <em>BaseButton</em> already provides: being a <em>cancel button</em> or a <em>default button</em>. These two mechanisms are handy shortcuts for dialogs. If <em>Button.IsCancel</em> is set to <em>true</em> on a <em>Button</em> inside a dialog, the <em>Window</em> is automatically closed with a <em>DialogResult</em> of <em>false</em>. If <em>Button.IsDefault</em> is set to <em>true</em>, pressing <em>Enter</em> causes the <em>Button</em> to be clicked unless focus is explicitly taken away from it.</p>
+</div>
+<div class="section" id="repeatbutton">
+<h3>RepeatButton</h3>
+<p>The <a class="reference external" href="Gui.Core._RepeatButton.html">RepeatButton</a> acts just like <em>Button</em> except that it continually raises the <em>Click</em> event as long as the button is being pressed. The behavior of <em>RepeatButton</em> might sound strange at first, but is useful for buttons that increment or decrement a value each time they are pressed. For example, the buttons at the ends of a scrollbar exhibit the repeat-press behavior when clicking them and holding the mouse button down. The default look of a <em>RepeatButton</em> is exactly the same as <em>Button</em>.</p>
+</div>
+<div class="section" id="togglebutton">
+<h3>ToggleButton</h3>
+<p><a class="reference external" href="Gui.Core._ToggleButton.html">ToggleButton</a> is a &quot;sticky&quot; button that holds its state when it is clicked. Clicking it the first time sets its <em>IsChecked</em> property to <em>true</em>, and clicking it again sets <em>IsChecked</em> to <em>false</em>. <em>ToggleButton</em> also has an <em>IsThreeState</em> property that, it set to <em>true</em>, gives <em>IsChecked</em> three possible values: <em>true</em>, <em>false</em>, or <em>null</em>. In addition to the <em>IsChecked</em> property, <em>ToggleButton</em> defines a separate event for each value of <em>IsChecked</em>: <em>Checked</em> for <em>true</em>, <em>Unchecked</em> for <em>false</em>, and <em>Indeterminate</em> for <em>null</em>. The default appearance of <em>ToggleButton</em> is exactly the same as <em>Button</em> and <em>RepeatButton</em>.</p>
+</div>
+<div class="section" id="checkbox">
+<h3>CheckBox</h3>
+<img alt="ControlsTutorialImg2.jpg" class="align-right" src="ControlsTutorialImg2.jpg" />
+<p><a class="reference external" href="Gui.Core._CheckBox.html">CheckBox</a> is a familiar control. It is nothing more than a <em>ToggleButton</em> with a different appearance. <em>CheckBox</em> is a simple class deriving from <em>ToggleButton</em> that does little more than overriding its default style.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;CheckBox</span> <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Content=</span><span class="s">&quot;Enable folder view&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;CheckBox</span> <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Content=</span><span class="s">&quot;Send Stats&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;CheckBox</span> <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Content=</span><span class="s">&quot;Debug Mode&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="radiobutton">
+<h3>RadioButton</h3>
+<img alt="ControlsTutorialImg3.jpg" class="align-right" src="ControlsTutorialImg3.jpg" />
+<p><a class="reference external" href="Gui.Core._RadioButton.html">RadioButton</a> is another control that derives from <em>ToggleButton</em>, but is unique because it has built-in support for mutual exclusion. Whe multiple <em>RadioButtons</em> are grouped together, only can be checked at a time. Checking one <em>RadioButton</em> automatically unchecks all others in the same group.</p>
+<p>By default, any <em>RadioButtons</em> that share the same direct logical parent are automatically grouped together.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment =</span> <span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;RadioButton&gt;</span>Option 1<span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;RadioButton&gt;</span>Option 2<span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;RadioButton&gt;</span>Option 3<span class="nt">&lt;/RadioButton&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>If you need to group <em>RadioButtons</em> in a custom manner, however, you can use its <em>GroupName</em> property, which is a simple string. Any <em>RadioButtons</em> with the same <em>GroupName</em> value get grouped together.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment =</span> <span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;RadioButton</span> <span class="na">GroupName=</span><span class="s">&quot;A&quot;</span><span class="nt">&gt;</span>Option 1<span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;RadioButton</span> <span class="na">GroupName=</span><span class="s">&quot;A&quot;</span><span class="nt">&gt;</span>Option 2<span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;RadioButton</span> <span class="na">GroupName=</span><span class="s">&quot;B&quot;</span><span class="nt">&gt;</span>Option 3<span class="nt">&lt;/RadioButton&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-containers">
+<h2>Simple Containers</h2>
+<p>NoesisGUI includes several built-in content controls that <em>don't</em> have a notion of being clicked like a button, but each has its own unique features to justify its existence.</p>
+<div class="section" id="label">
+<h3>Label</h3>
+<p><a class="reference external" href="Gui.Core._Label.html">Label</a> is a classic control that can be used to hold some text. Being a content control, it can hold arbitrary content in its <em>Content</em> property, but <em>Label</em> is really only useful for text.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">Note</p>
+<p class="last">Access Keys feature though the <em>Target</em> property is yet not implemented in noesisGUI</p>
+</div>
+</div>
+<div class="section" id="tooltip">
+<h3>ToolTip</h3>
+<p>The <a class="reference external" href="Gui.Core._ToolTip.html">ToolTip</a> control holds its content in a floating box that appears when you hover over an associated control and disappears when you move the mouse away. For example:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Button</span> <span class="na">Width=</span><span class="s">&quot;60&quot;</span> <span class="na">Height=</span><span class="s">&quot;40&quot;</span> <span class="na">Content=</span><span class="s">&quot;OK&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Button.ToolTip&gt;</span>
+      Clicking this will submit your request
+    <span class="nt">&lt;/Button.ToolTip&gt;</span>
+  <span class="nt">&lt;/Button&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="containers-with-a-header">
+<h2>Containers with a header</h2>
+<p>All the previous content controls either add very simple default visuals around the content or don't add any visuals at all. The following two controls are a little different because they add a customizable <em>header</em> to the main content. These controls derive from a subclass of <em>ContentControl</em> named <a class="reference external" href="Gui.Core._HeaderedContentControl.html">HeaderedContentControl</a>, which adds a <em>Header</em> property.</p>
+<div class="section" id="groupbox">
+<h3>GroupBox</h3>
+<img alt="ControlsTutorialImg4.jpg" class="align-right" src="ControlsTutorialImg4.jpg" />
+<p><a class="reference external" href="Gui.Core._GroupBox.html">GroupBox</a> is a familiar control for organizing chunks of controls. It is typically used to contain multiple items, but because it is a content control, it can only directly contain a single item. Therefore, you typically need to set <em>GroupBox's</em> content to an intermediate control that can contain multiple children.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;GroupBox</span> <span class="na">Header=</span><span class="s">&quot;Grammar&quot;</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;StackPanel&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Check grammar as you type<span class="nt">&lt;/CheckBox&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Hide grammatical errors<span class="nt">&lt;/CheckBox&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Check grammar with spelling<span class="nt">&lt;/CheckBox&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+  <span class="nt">&lt;/GroupBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="expander">
+<h3>Expander</h3>
+<img alt="ControlsTutorialImg5.jpg" class="align-right" src="ControlsTutorialImg5.jpg" />
+<p><a class="reference external" href="Gui.Core._Expander.html">Expander</a> is very much like <em>GroupBox</em>, but contains a button that enables you to expand and collapse the inner contents (by default, the <em>Expander</em> stars out collapsed). <em>Expander</em> defines an <em>IsExpanded</em> property and <em>Expanded</em>/<em>Collapsed</em> events. It also enables you to control which direction the expansion happens (<em>Up</em>, <em>Down</em>, <em>Left</em>, or <em>Right</em>) with an <em>ExpandDirection</em> property.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Expander</span> <span class="na">Header=</span><span class="s">&quot;Grammar&quot;</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;StackPanel&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Check grammar as you type<span class="nt">&lt;/CheckBox&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Hide grammatical errors<span class="nt">&lt;/CheckBox&gt;</span>
+      <span class="nt">&lt;CheckBox&gt;</span>Check grammar with spelling<span class="nt">&lt;/CheckBox&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+  <span class="nt">&lt;/Expander&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="items-controls">
+<h1>Items Controls</h1>
+<p>Another major category of noesisGUI controls are the <em>items controls</em>, which can contain an unbounded collection of items rather than just a single piece of content. All items controls derive from the abstract <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a> class, a direct subclass of <a class="reference external" href="Gui.Core._Control.html">Control</a>.</p>
+<p><em>ItemsControl</em> stores its content in an <em>Items</em> property. Each item can be an arbitrary object, which by default gets rendered just like it would inside a content control.</p>
+<div class="section" id="selectors">
+<h2>Selectors</h2>
+<p><a class="reference external" href="Gui.Core._Selector.html">Selectors</a> are items controls whose items can be indexed and, most important, selected. The abstract <em>Selector</em> class, which derives from <em>ItemsControl</em>, add a few properties to handle selection. For example, two similar properties for getting or setting the current selection are:</p>
+<ul class="simple">
+<li><strong>SelectedIndex</strong>: a zero-based integer that indicates what item is selected or -1 if nothing is selected. Items are numbered in the order they are added to the collection.</li>
+<li><strong>SelectedItem</strong>: the actual item instance that is currently selected.</li>
+</ul>
+<p><em>Selector</em> also support two attached properties that can be applied to individual items:</p>
+<ul class="simple">
+<li><strong>IsSelected</strong>: a Boolean that can be used to select or unselect an item (or to retrieve its current selection state)</li>
+<li><strong>IsSelectionActive</strong>: a read-only property that tells you if the selection has focus.</li>
+</ul>
+<p><em>Selector</em> also defines the event <em>SelectionChanged</em> that makes it possible to listen for changes to the current selection.</p>
+<p>NoesisGUI includes four <em>Selector</em>-derived controls: <em>ComboBox</em>, <em>ListBox</em>, <em>ListView</em> and <em>TabControl</em>.</p>
+<div class="section" id="combobox">
+<h3>ComboBox</h3>
+<img alt="ControlsTutorialImg6.jpg" class="align-right" src="ControlsTutorialImg6.jpg" />
+<p>The <a class="reference external" href="Gui.Core._ComboBox.html">ComboBox</a> control enables user to select one item from a list. <em>ComboBox</em> is a popular control because it doesn't occupy much space. It displays only the current selection in a <em>selection box</em>, with the rest of the list shown on demand in a <em>drop-down</em>. The drop-down can be opened and closed by clicking the button.</p>
+<p><em>ComboBox</em> supports a mode in which the user can type arbitrary text into the selection box. If the text matches one of the existing items, that item automatically becomes selected. Otherwise, no item gets selected but the custom test gets stored in <em>ComboBox's</em> <em>Text</em> property so you can act on it appropriately. This mode can be controlled with two properties: <em>IsEditable</em> and <em>IsReadOnly</em>, which are both false by default. In addition, a <em>StaysOpenOnEdit</em> property can be set to <em>true</em> to keep the drop-down open if the user clicks on the selection box.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ComboBox</span> <span class="na">Width=</span><span class="s">&quot;80&quot;</span> <span class="na">Height=</span><span class="s">&quot;20&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>200%<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>100%<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>50%<span class="nt">&lt;/Label&gt;</span>
+  <span class="nt">&lt;/ComboBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="listbox">
+<h3>ListBox</h3>
+<img alt="ControlsTutorialImg7.jpg" class="align-right" src="ControlsTutorialImg7.jpg" />
+<p>The familiar <a class="reference external" href="Gui.Core._ListBox.html">ListBox</a> control is similar to <em>ComboBox</em>, except that all items are displayed directly within the control's bounds (or you can scroll to view additional items if the don't all fit).</p>
+<p>Probably the most important feature of <em>ListBox</em> is that it can support multiple simultaneous selections. This is controlable via the <em>SelectionMode</em> property, which accepts three values:</p>
+<ul class="simple">
+<li><strong>Single</strong>: only one item can be selected at a time.</li>
+<li><strong>Multiple</strong>: any number of items can be selected simultaneously. Clicking an unselected item ads it to <em>ListBox's SelectedItems</em> collection, and clicking a selected item removes it from the collection.</li>
+<li><strong>Extended</strong>: any number of items can be selected simultaneously, but the behavior is optimized for the single selection case. To select multiple items in this mode, you must hold down <em>Shift</em> (for contiguous items) or <em>Ctrl</em> (for noncontiguous items) while clicking.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ListBox</span> <span class="na">Width=</span><span class="s">&quot;80&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span> <span class="na">SelectionMode=</span><span class="s">&quot;Extended&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 1<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 2<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 3<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 4<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 5<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 6<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 7<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Label&gt;</span>Item 8<span class="nt">&lt;/Label&gt;</span>
+  <span class="nt">&lt;/ListBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="listview">
+<h3>ListView</h3>
+<img alt="ControlsTutorialImg8.jpg" class="align-right" src="ControlsTutorialImg8.jpg" />
+<p>The <a class="reference external" href="Gui.Controls._ListView.html">ListView</a> control, which derives from <em>ListBox</em>, looks and acts just like a <em>ListBox</em>, except that it uses the <em>Extended</em> <em>SelectionMode</em> by default. But <em>ListView</em> also adds a property called <em>View</em> that enables you to customize the view in a richer way than choosing a custom <em>ItemsPanel</em>.</p>
+<p>The <em>View</em> property is of type <a class="reference external" href="Gui.Controls._BaseView.html">BaseView</a>, an abstract class. NoesisGUI ships with one concrete subclass, and that class is called <a class="reference external" href="Gui.Controls._GridView.html">GridView</a>.</p>
+<p><em>GridView</em> has a <em>Columns</em> content property that holds a collection of <a class="reference external" href="Gui.Controls._GridViewColumn.html">GridViewColumn</a> objects, as well as other properties to control the behavior of the column header.</p>
+<p><em>ListView's</em> items are specified as a simple list as with <em>ListBox</em>, so the key to displaying different data in each column is the <em>DisplayMemberBinding</em> property of <em>GridViewColumn</em>. The idea is that <em>ListView</em> contains a complex object for each row, and the value for every column is a property or subproperty of each object.</p>
+<p>What is nice about <em>GridView</em> is that it automatically support the following features:</p>
+<ul class="simple">
+<li>Columns can be reordered by dragging and dropping them.</li>
+<li>Columns can be resized by dragging the column separator.</li>
+<li>Columns can automatically resize to &quot;just fit&quot; their content by double-clicking their separators.</li>
+</ul>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;DataTemplate</span> <span class="na">x:Key=</span><span class="s">&quot;RefText&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Border</span> <span class="na">Background=</span><span class="s">&quot;#8080FFFF&quot;</span> <span class="na">BorderBrush=</span><span class="s">&quot;Navy&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span>
+              <span class="na">Padding=</span><span class="s">&quot;6,2&quot;</span> <span class="na">CornerRadius=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding Name}&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;Navy&quot;</span> <span class="na">FontWeight=</span><span class="s">&quot;Bold&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;/DataTemplate&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+
+  <span class="nt">&lt;GroupBox</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Padding=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ListView</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;ListView.View&gt;</span>
+        <span class="nt">&lt;GridView&gt;</span>
+          <span class="nt">&lt;GridViewColumn</span> <span class="na">Header=</span><span class="s">&quot;#Ref&quot;</span> <span class="na">CellTemplate=</span><span class="s">&quot;{StaticResource RefText}&quot;</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;GridViewColumn</span> <span class="na">Header=</span><span class="s">&quot;Product&quot;</span> <span class="na">Width=</span><span class="s">&quot;140&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/GridView&gt;</span>
+      <span class="nt">&lt;/ListView.View&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID20041&quot;</span> <span class="na">Text=</span><span class="s">&quot;Alfalfa meal&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID13494&quot;</span> <span class="na">Text=</span><span class="s">&quot;Blood meal&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID83471&quot;</span> <span class="na">Text=</span><span class="s">&quot;Greensand mix&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">IsEnabled=</span><span class="s">&quot;False&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID27856&quot;</span> <span class="na">Text=</span><span class="s">&quot;Calcium lime&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID74865&quot;</span> <span class="na">Text=</span><span class="s">&quot;Chilean nitrate&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID47286&quot;</span> <span class="na">Text=</span><span class="s">&quot;Cotton seed&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID27456&quot;</span> <span class="na">Text=</span><span class="s">&quot;Epsom salt&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span> <span class="na">IsEnabled=</span><span class="s">&quot;False&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID24583&quot;</span> <span class="na">Text=</span><span class="s">&quot;Feather meal&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">x:Name=</span><span class="s">&quot;ID24659&quot;</span> <span class="na">Text=</span><span class="s">&quot;Humates&quot;</span> <span class="na">Margin=</span><span class="s">&quot;5,0&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ListView&gt;</span>
+  <span class="nt">&lt;/GroupBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="tabcontrol">
+<h3>TabControl</h3>
+<img alt="ControlsTutorialImg9.jpg" class="align-right" src="ControlsTutorialImg9.jpg" />
+<p>The final selector, <a class="reference external" href="Gui.Core._TabControl.html">TabControl</a>, is useful for switching between multiple pages of content. Tabs in <em>TabControl</em> are typically placed on the top, but with <em>TabControl's</em> <em>TabStripPlacement</em> property, you can also set their placement to <em>Left</em>, <em>Right</em> or <em>Bottom</em>.</p>
+<p>Unlike the other selectors, the first item is selected by default. However, you can programmatically unselect all tabs by setting <em>SelectedItem</em> to <em>null</em> (or <em>SelectedIndex</em> to -1).</p>
+<p><em>TabControl</em> is pretty easy to use. Simply add items, and each item is placed on a separate tab. For example:</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;TabControl</span> <span class="na">Width=</span><span class="s">&quot;175&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">VerticalAlignMent=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TabItem</span> <span class="na">Header=</span><span class="s">&quot;Tab1&quot;</span><span class="nt">&gt;</span>Content for Tab1<span class="nt">&lt;/TabItem&gt;</span>
+    <span class="nt">&lt;TabItem</span> <span class="na">Header=</span><span class="s">&quot;Tab2&quot;</span><span class="nt">&gt;</span>Content for Tab2<span class="nt">&lt;/TabItem&gt;</span>
+    <span class="nt">&lt;TabItem</span> <span class="na">Header=</span><span class="s">&quot;Tab3&quot;</span><span class="nt">&gt;</span>Content for Tab3<span class="nt">&lt;/TabItem&gt;</span>
+  <span class="nt">&lt;/TabControl&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="menus">
+<h2>Menus</h2>
+<p>NoesisGUI has both of the familiar menu controls built-in: <em>Menu</em> and <em>ContextMenu</em>.</p>
+<div class="section" id="menu">
+<h3>Menu</h3>
+<img alt="ControlsTutorialImg10.jpg" class="align-right" src="ControlsTutorialImg10.jpg" />
+<p><a class="reference external" href="Gui.Core._Menu.html">Menu</a> simply stacks its items horizontally. The only public API that <em>Menu</em> adss to its <em>ItemsControl</em> base class is the <em>IsMainMenu</em> property. When <em>true</em> (which it is by default) the <em>Menu</em> gets focus when the users presses the Alt or F10 key.</p>
+<p>As with any other items control, <em>Menu's</em> items can be anything, but it's expected that you'll use <a class="reference external" href="Gui.Core._MenuItem.html">MenuItem</a> and <a class="reference external" href="Gui.Core._Separator.html">Separator</a> objects.</p>
+<p><a class="reference external" href="Gui.Core._Separator.html">Separator</a> is a simple control that, when placed in a <em>MenuItem</em>, gets rendered as a horizontal line. <em>Separator</em> is also designed for two other items controls discussed later in this tutorial: <em>ToolBar</em> and <em>StatusBar</em>.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;GroupBox</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Padding=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;StackPanel</span> <span class="na">Orientation=</span><span class="s">&quot;Vertical&quot;</span> <span class="na">Background=</span><span class="s">&quot;Gray&quot;</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Menu</span> <span class="na">Margin=</span><span class="s">&quot;-1,0,-1,0&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;File&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;New...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+N&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Open...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+O&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Save&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+S&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Save as...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+Shift+S&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Close&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+W&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Print...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+P&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Exit&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Alt+F4&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/MenuItem&gt;</span>
+        <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Edit&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">x:Name=</span><span class="s">&quot;Undo&quot;</span> <span class="na">Header=</span><span class="s">&quot;Undo&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+Z&quot;</span> <span class="na">IsEnabled=</span><span class="s">&quot;False&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">x:Name=</span><span class="s">&quot;Redo&quot;</span> <span class="na">Header=</span><span class="s">&quot;Redo&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+Y&quot;</span> <span class="na">IsEnabled=</span><span class="s">&quot;False&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Copy&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+C&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Cut&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+X&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Paste&quot;</span> <span class="na">IsEnabled=</span><span class="s">&quot;False&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Find and Replace&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Find...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+F&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Find in files&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;Separator/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Replace...&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;Ctrl+H&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Replace in files&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/MenuItem&gt;</span>
+        <span class="nt">&lt;/MenuItem&gt;</span>
+        <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;View&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">x:Name=</span><span class="s">&quot;ShowToolbar&quot;</span> <span class="na">Header=</span><span class="s">&quot;Show toolbar&quot;</span> <span class="na">IsCheckable=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Fullscreen&quot;</span> <span class="na">IsCheckable=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/MenuItem&gt;</span>
+        <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Help&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">x:Name=</span><span class="s">&quot;Help&quot;</span> <span class="na">Header=</span><span class="s">&quot;Help content&quot;</span> <span class="na">InputGestureText=</span><span class="s">&quot;F1&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Online help&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">x:Name=</span><span class="s">&quot;About&quot;</span> <span class="na">Header=</span><span class="s">&quot;About&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/MenuItem&gt;</span>
+      <span class="nt">&lt;/Menu&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+  <span class="nt">&lt;/GroupBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="context-menu">
+<h3>Context Menu</h3>
+<img alt="ControlsTutorialImg11.jpg" class="align-right" src="ControlsTutorialImg11.jpg" />
+<p><a class="reference external" href="Gui.Core._ContextMenu.html">ContextMenu</a> works like just <em>Menu</em>; it's a simple container designed to hold <em>MenuItems</em> and <em>Separators</em>. You can't embed <em>ContextMenu</em> directly in a element tree, however. You must attach it to a control via an appropriate property, such as the <em>ContextMenu</em> property defined on <a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a>. When a user right-clicks on the control, the context menu is displayed.</p>
+<p><em>ContextMenu</em> defines many properties for customizing the placement of the menu. By default, the menu appears with its upper-left corner directly under the mouse pointer. But you can change its <em>Placement</em> to something other than <em>MousePoint</em> (such as <em>Absolute</em>), and/or set its <em>HorizontalOffset</em> and <em>VerticalOffset</em>, for example, to adjust this behavior.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+    <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+    <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;GroupBox</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Padding=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">Background=</span><span class="s">&quot;Gray&quot;</span> <span class="na">BorderBrush=</span><span class="s">&quot;#333&quot;</span> <span class="na">BorderThickness=</span><span class="s">&quot;1&quot;</span> <span class="na">CornerRadius=</span><span class="s">&quot;2&quot;</span>
+            <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Border.ContextMenu&gt;</span>
+        <span class="nt">&lt;ContextMenu&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Toolbars&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Desktop&quot;</span> <span class="na">IsCheckable=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Language Bar&quot;</span> <span class="na">IsCheckable=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/MenuItem&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Send to...&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Compressed Folder&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Desktop&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Fax&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Mail&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/MenuItem&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Task Manager&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;Separator/&gt;</span>
+          <span class="nt">&lt;MenuItem</span> <span class="na">Header=</span><span class="s">&quot;Properties&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/ContextMenu&gt;</span>
+      <span class="nt">&lt;/Border.ContextMenu&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Right click to open context menu&quot;</span>
+          <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;#333&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+  <span class="nt">&lt;/GroupBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-items-controls">
+<h2>Other Items Controls</h2>
+<p>The remaining items (<em>TreeView</em>, <em>ToolBar</em> and <em>StatusBar</em>) are neither selectors nor menus, but can still contain an unbounded number of arbitrary objects.</p>
+<div class="section" id="treeview">
+<h3>TreeView</h3>
+<p><a class="reference external" href="Gui.Core._TreeView.html">TreeView</a> is a popular control for displaying hierarchical data with nodes that can be expanded and collapsed.</p>
+<img alt="ControlsTutorialImg12.jpg" class="align-right" src="ControlsTutorialImg12.jpg" />
+<p><em>TreeView</em>, like <em>Menu</em>, is a very simple control. It can contains any items, and stacks them vertically. But <em>TreeView</em> is pretty pointless unless you fill it with <a class="reference external" href="Gui.Core._TreeViewItem.html">TreeViewItems</a>.</p>
+<p><em>TreeViewItem</em>, just like <em>MenuItem</em>, is a headered items control. <em>TreeViewItem's</em> <em>Header</em> property contains the current item, and its <em>Items</em> collection contains subitems (which, again, are expected to be <em>TreeViewItems</em>).</p>
+<p><em>TreeViewItem</em> contains handy <em>IsExpanded</em> and <em>IsSelected</em> properties, as well as four events covering all four states from these properties: <em>Expanded</em>, <em>Collapsed</em>, <em>Selected</em>, and <em>Unselected</em>.</p>
+<div class="clearer docutils container">
+<img alt="spacer.png" src="spacer.png" />
+</div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;TreeView</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Desktop&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Computer&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Recycle Bin&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Control Panel&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Programs&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;Security&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;TreeViewItem</span> <span class="na">Header=</span><span class="s">&quot;User Accounts&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/TreeViewItem&gt;</span>
+    <span class="nt">&lt;/TreeViewItem&gt;</span>
+  <span class="nt">&lt;/TreeView&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="toolbar">
+<h3>ToolBar</h3>
+<img alt="ControlsTutorialImg13.jpg" class="align-right" src="ControlsTutorialImg13.jpg" />
+<p>The <a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a> control is typically used to group together many small buttons (or other controls) as an enhancement to a traditional menu system.</p>
+<p><em>ToolBars</em> can be placed anywhere in an element tree, but they are typically placed inside a <a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a> called <a class="reference external" href="Gui.Core._ToolBarTray.html">ToolBarTray</a>. <em>ToolBarTray</em> has an <em>Orientation</em> property that can be set to <em>Vertical</em> to make all of its <em>ToolsBars</em> arrange its item vertically.</p>
+<p>If a <em>ToolBar</em> contains more items that it can fit withing its bounds, the extra items move to an overflow area. This overflow area is a pop-up that can be accessed by clicking the little arrow at the end of the control. By default, the last item is the first to move to the overflow area, but you can control the overflow behavior of individuals items with <em>ToolBar's</em> <em>OverflowMode</em> attached property. With this you can mark an item to overflow <em>AsNeeded</em> (the default), <em>Always</em>, or <em>Never</em>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ToolBar</span> <span class="na">DockPanel.Dock=</span><span class="s">&quot;Top&quot;</span> <span class="na">Height=</span><span class="s">&quot;30&quot;</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Button&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/consulting.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Button&gt;</span>
+    <span class="nt">&lt;Button&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/folder.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Button&gt;</span>
+    <span class="nt">&lt;Separator/&gt;</span>
+    <span class="nt">&lt;CheckBox&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/print.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/CheckBox&gt;</span>
+    <span class="nt">&lt;Separator/&gt;</span>
+    <span class="nt">&lt;RadioButton&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/plus.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;RadioButton&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/refresh.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/RadioButton&gt;</span>
+    <span class="nt">&lt;Separator/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">HorizontalContentAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalContentAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Margin=</span><span class="s">&quot;2,0,7,0&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">Height=</span><span class="s">&quot;16&quot;</span> <span class="na">Source=</span><span class="s">&quot;Images/Icons/freelance.png&quot;</span> <span class="na">Stretch=</span><span class="s">&quot;Fill&quot;</span> <span class="na">Width=</span><span class="s">&quot;16&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Label&gt;</span>
+  <span class="nt">&lt;/ToolBar&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="statusbar">
+<h3>StatusBar</h3>
+<img alt="ControlsTutorialImg14.jpg" class="align-right" src="ControlsTutorialImg14.jpg" />
+<p><a class="reference external" href="Gui.Core._StatusBar.html">StatusBar</a> behaves just like <em>Menu</em>; it just stacks its items horizontally. But it's typically used along the botton of a <a class="reference external" href="App.ApplicationLauncher._Window.html">Window</a> to display status information.</p>
+<p>By default, <em>StatusBar</em> gives <em>Separator</em> a control template that renders it as a vertical line, just like when it is within a <em>ToolBar</em>. Items in a <em>StatusBar</em> (other than <em>Separators</em>) are implicitly wrapped in a <a class="reference external" href="Gui.Core._StatusBarItem.html">StatusBarItem</a>, but you can also do this wrapping explicitly. This enables you to customize their positions with layout-related attached properties.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StatusBar</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">Width=</span><span class="s">&quot;180&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>27 items<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;Separator/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>Zoom<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;ComboBox&gt;</span>
+      <span class="nt">&lt;Label&gt;</span>200%<span class="nt">&lt;/Label&gt;</span>
+      <span class="nt">&lt;Label&gt;</span>100%<span class="nt">&lt;/Label&gt;</span>
+      <span class="nt">&lt;Label&gt;</span>50%<span class="nt">&lt;/Label&gt;</span>
+    <span class="nt">&lt;/ComboBox&gt;</span>
+  <span class="nt">&lt;/StatusBar&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="range-controls">
+<h1>Range Controls</h1>
+<p>Range controls do not render arbitrary content like content controls or items controls. They simply store and display a numeric value that falls within a specified range.</p>
+<p>The core functionality of range controls come from an abstract class called <a class="reference external" href="Gui.Core._RangeBase.html">RangeBase</a>. This class defines properties of type <em>float</em> that store the current value and the endpoints of the range: <em>Value</em>, <em>Minimum</em>, and <em>Maximum</em>. It also defines a simple <em>ValueChanged</em> event.</p>
+<p>This section examines the two major built-in range controls, <em>ProgressBar</em> and <em>Slider</em>.</p>
+<div class="section" id="progressbar">
+<h2>ProgressBar</h2>
+<img alt="ControlsTutorialImg15.jpg" class="align-right" src="ControlsTutorialImg15.jpg" />
+<p>In an ideal world, we would never need to use a <a class="reference external" href="Gui.Core._ProgressBar.html">ProgressBar</a> in our software. But when faced with long-running operations, showing users a <em>ProgressBar</em> helps them realize that progress is indeed being made. Therefore, using a <em>ProgressBar</em> in the right places can dramatically improve usability.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ProgressBar</span> <span class="na">Width=</span><span class="s">&quot;150&quot;</span> <span class="na">Height=</span><span class="s">&quot;18&quot;</span> <span class="na">Value=</span><span class="s">&quot;50&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p><em>ProgressBar</em> has a default <em>Minimum</em> of <em>0</em> and a default <em>Maximum</em> of <em>100</em>. It only adds two public properties to what <em>RangeBase</em> already provides:</p>
+<ul class="simple">
+<li><strong>IsIndeterminate</strong>: When set to <em>true</em>, <em>ProgressBar</em> shows a generic animation (so the values of <em>Minimum</em>, <em>Maximum</em>, and <em>Value</em> don't matter). This is a great feature for when no clue how long something will take.</li>
+<li><strong>Orientation</strong>: <em>Horizontal</em> by default, but can bet set to <em>Vertical</em> to make progress go from bottom-to-top rather than left-to-right.</li>
+</ul>
+</div>
+<div class="section" id="slider">
+<h2>Slider</h2>
+<img alt="ControlsTutorialImg16.jpg" class="align-right" src="ControlsTutorialImg16.jpg" />
+<p><a class="reference external" href="Gui.Core._Slider.html">Slider</a> is a bit more complicated than a <em>ProgressBar</em> because it enables users to change the current value by moving its <em>thumb</em> through any number of optional <em>ticks</em>. For example, you typically create a volume control by using a <em>Slider</em> control.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Slider</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;30&quot;</span> <span class="na">Margin=</span><span class="s">&quot;8,4,8,2&quot;</span> <span class="na">TickPlacement=</span><span class="s">&quot;TopLeft&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p><em>Slider</em> also has a default <em>Minimum</em> of <em>0</em> and a default <em>Maximum</em> of <em>100</em>. It also defines an <em>Orientation</em> property, but it contains several properties for adjusting the placement and frequency of ticks, the placement and precision of <em>ToolsTips</em> that can show the current value as the thumb is moved, and whether the thumb snaps to tick values or moves smoothly to any arbitrary value.</p>
+</div>
+</div>
+<div class="section" id="text-controls">
+<h1>Text Controls</h1>
+<div class="section" id="textbox">
+<h2>TextBox</h2>
+<img alt="ControlsTutorialImg17.jpg" class="align-right" src="ControlsTutorialImg17.jpg" />
+<p>The <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a> control enables users to type one or more lines of text into it. Unless the size of the <em>TextBox</em> is constrained by its surroundings (or given an explicit size), it grows as the text inside of it grows. But when the <em>TextBox's</em> width is contrained, you can make the text wrap to form additional lines by setting its <em>TextWrapping</em> property to <em>Wrap</em> or <em>WrapWithOverflow</em>. <em>Wrap</em> never allows a line to go beyond the control's bounds, forcing wrapping even if it's in the middle of a word. <em>WrapWithOverflow</em> only breaks a line if there's an opportunity, so long words could get cut off.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;TextBox</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;25&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="passwordbox">
+<h2>PasswordBox</h2>
+<img alt="ControlsTutorialImg18.jpg" class="align-right" src="ControlsTutorialImg18.jpg" />
+<p><a class="reference external" href="Gui.Core._PasswordBox.html">PasswordBox</a> is a simpler <em>Textbox</em> designed for the entry of a password. Rather than displaying the text typed in, the <em>PasswordBox</em> control allows you to hide the characters and limit the number of characters to be typed in the editable area.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;PasswordBox</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;25&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p><em>PasswordBox's</em> text is stored in a string property called <em>Password</em>. Rather than having <em>TextChanged</em> and <em>SelectionChanged</em> events, <em>PasswordBox</em> only defines a <em>PasswordChanged</em> event. In addition this event uses the plain <em>RoutedEventHandler</em> delegate, so no information about the old and new password is sent with the event. If you must know the current password, you can simply check the <em>Password</em> property within such an event handler.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#content-controls" id="id25">Content Controls</a><ul>
+<li><a class="reference internal" href="#buttons" id="id26">Buttons</a><ul>
+<li><a class="reference internal" href="#button" id="id27">Button</a></li>
+<li><a class="reference internal" href="#repeatbutton" id="id28">RepeatButton</a></li>
+<li><a class="reference internal" href="#togglebutton" id="id29">ToggleButton</a></li>
+<li><a class="reference internal" href="#checkbox" id="id30">CheckBox</a></li>
+<li><a class="reference internal" href="#radiobutton" id="id31">RadioButton</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-containers" id="id32">Simple Containers</a><ul>
+<li><a class="reference internal" href="#label" id="id33">Label</a></li>
+<li><a class="reference internal" href="#tooltip" id="id34">ToolTip</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#containers-with-a-header" id="id35">Containers with a header</a><ul>
+<li><a class="reference internal" href="#groupbox" id="id36">GroupBox</a></li>
+<li><a class="reference internal" href="#expander" id="id37">Expander</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#items-controls" id="id38">Items Controls</a><ul>
+<li><a class="reference internal" href="#selectors" id="id39">Selectors</a><ul>
+<li><a class="reference internal" href="#combobox" id="id40">ComboBox</a></li>
+<li><a class="reference internal" href="#listbox" id="id41">ListBox</a></li>
+<li><a class="reference internal" href="#listview" id="id42">ListView</a></li>
+<li><a class="reference internal" href="#tabcontrol" id="id43">TabControl</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#menus" id="id44">Menus</a><ul>
+<li><a class="reference internal" href="#menu" id="id45">Menu</a></li>
+<li><a class="reference internal" href="#context-menu" id="id46">Context Menu</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-items-controls" id="id47">Other Items Controls</a><ul>
+<li><a class="reference internal" href="#treeview" id="id48">TreeView</a></li>
+<li><a class="reference internal" href="#toolbar" id="id49">ToolBar</a></li>
+<li><a class="reference internal" href="#statusbar" id="id50">StatusBar</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#range-controls" id="id51">Range Controls</a><ul>
+<li><a class="reference internal" href="#progressbar" id="id52">ProgressBar</a></li>
+<li><a class="reference internal" href="#slider" id="id53">Slider</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#text-controls" id="id54">Text Controls</a><ul>
+<li><a class="reference internal" href="#textbox" id="id55">TextBox</a></li>
+<li><a class="reference internal" href="#passwordbox" id="id56">PasswordBox</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

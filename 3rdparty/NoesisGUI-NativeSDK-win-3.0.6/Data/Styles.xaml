@@ -1,0 +1,145 @@
+<Grid
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+    <Grid.Background>
+        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0" Color="#FF184C79"/>
+            <GradientStop Offset="0.05" Color="#FF1B5688"/>
+            <GradientStop Offset="1" Color="#FF123859"/>
+        </LinearGradientBrush>
+    </Grid.Background>
+
+    <Viewbox>
+        <StackPanel Margin="40,20,40,40">
+            <Border Padding="5">
+                <TextBlock HorizontalAlignment="Center" FontSize="28" Text="Styles"/>
+            </Border>
+            <Border Background="#202830" CornerRadius="2" Padding="10" Margin="0,10,0,0">
+                <TabControl Width="400" Height="240" Padding="0">
+                    <TabItem Header="Noesis">
+                        <Grid Margin="10" Background="#FF282C31">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="10">
+                                <Button Margin="0,5" Content="Button"/>
+                                <CheckBox Margin="0,5" Content="CheckBox"/>
+                                <CheckBox Margin="0,5" Content="CheckBox" IsChecked="{x:Null}" IsThreeState="True"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 1"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 2"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="10">
+                                <Slider x:Name="val1" Margin="0,5" Value="3"/>
+                                <ProgressBar Height="16" Margin="2,5" Maximum="10" Minimum="0" Value="{Binding Value, ElementName=val1}"/>
+                                <TextBox Margin="0,5" Text="TextBox"/>
+                                <ComboBox Margin="0,5" MaxDropDownHeight="90">
+                                    <ComboBoxItem Content="Option 1"/>
+                                    <ComboBoxItem Content="Option 2"/>
+                                    <ComboBoxItem Content="Option 3"/>
+                                    <ComboBoxItem Content="Option 4"/>
+                                    <ComboBoxItem Content="Option 5"/>
+                                    <ComboBoxItem Content="Option 6"/>
+                               </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Nocturnal">
+                        <Grid Margin="10" Background="#FF40474C" TextElement.FontFamily="Fonts/#Exo 2">
+                            <Grid.Resources>
+                                <ResourceDictionary Source="Styles/Nocturnal.xaml"/>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="10">
+                                <Button Margin="0,5" Content="Button"/>
+                                <CheckBox Margin="0,5" Content="CheckBox"/>
+                                <CheckBox Margin="0,5" Content="CheckBox" IsChecked="{x:Null}" IsThreeState="True"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 1"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 2"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="10">
+                                <Slider x:Name="val2" Margin="0,5" Value="3"/>
+                                <ProgressBar Height="16" Margin="2,5" Maximum="10" Minimum="0" Value="{Binding Value, ElementName=val2}"/>
+                                <TextBox Margin="0,5" Text="TextBox"/>
+                                <ComboBox Margin="0,5" MaxDropDownHeight="90">
+                                    <ComboBoxItem Content="Option 1"/>
+                                    <ComboBoxItem Content="Option 2"/>
+                                    <ComboBoxItem Content="Option 3"/>
+                                    <ComboBoxItem Content="Option 4"/>
+                                    <ComboBoxItem Content="Option 5"/>
+                                    <ComboBoxItem Content="Option 6"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Agile">
+                        <Grid Margin="10" Background="WhiteSmoke" TextElement.FontFamily="Fonts/#Robaga Rounded">
+                            <Grid.Resources>
+                                <ResourceDictionary Source="Styles/Agile.xaml"/>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="10">
+                                <Button Margin="0,5" Content="Button"/>
+                                <CheckBox Margin="0,5" Content="CheckBox"/>
+                                <CheckBox Margin="0,5" Content="CheckBox" IsChecked="{x:Null}" IsThreeState="True"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 1"/>
+                                <RadioButton Margin="0,5" Content="RadioButton 2"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="10">
+                                <Slider x:Name="val3" Margin="0,5" Value="3"/>
+                                <ProgressBar Height="16" Margin="2,5" Maximum="10" Minimum="0" Value="{Binding Value, ElementName=val3}"/>
+                                <TextBox Margin="0,5" Text="TextBox"/>
+                                <ComboBox Margin="0,5" MaxDropDownHeight="90">
+                                    <ComboBoxItem Content="Option 1"/>
+                                    <ComboBoxItem Content="Option 2"/>
+                                    <ComboBoxItem Content="Option 3"/>
+                                    <ComboBoxItem Content="Option 4"/>
+                                    <ComboBoxItem Content="Option 5"/>
+                                    <ComboBoxItem Content="Option 6"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Windows">
+                        <Grid Margin="10" Background="WhiteSmoke" TextElement.FontFamily="Fonts/#WeblySleek UI Normal">
+                            <Grid.Resources>
+                                <ResourceDictionary Source="Styles/Windows.xaml"/>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="10">
+                                <Button Margin="0,4" Content="Button"/>
+                                <CheckBox Margin="0,4" Content="CheckBox"/>
+                                <CheckBox Margin="0,4" Content="CheckBox" IsChecked="{x:Null}" IsThreeState="True"/>
+                                <RadioButton Margin="0,4" Content="RadioButton 1"/>
+                                <RadioButton Margin="0,4" Content="RadioButton 2"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="10">
+                                <Slider x:Name="val4" Margin="0,5" Value="3"/>
+                                <ProgressBar Height="16" Margin="2,5" Maximum="10" Minimum="0" Value="{Binding Value, ElementName=val4}"/>
+                                <TextBox Margin="0,5" Foreground="Black" Text="TextBox"/>
+                                <ComboBox Margin="0,5" MaxDropDownHeight="90">
+                                    <ComboBoxItem Content="Option 1"/>
+                                    <ComboBoxItem Content="Option 2"/>
+                                    <ComboBoxItem Content="Option 3"/>
+                                    <ComboBoxItem Content="Option 4"/>
+                                    <ComboBoxItem Content="Option 5"/>
+                                    <ComboBoxItem Content="Option 6"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </StackPanel>
+    </Viewbox>
+</Grid>

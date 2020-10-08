@@ -1,0 +1,736 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Noesis Extensions - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="Discover how to extend Blend editor to use the full capabilities and extra features offered by NoesisGUI" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.ExtensionsTutorial.html" />
+<meta name="twitter:title" content="Noesis Extensions | NoesisGUI" />
+<meta name="twitter:description" content="Discover how to extend Blend editor to use the full capabilities and extra features offered by NoesisGUI" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Noesis Extensions | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:09" />
+<meta property="og:description" content="Discover how to extend Blend editor to use the full capabilities and extra features offered by NoesisGUI" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.ExtensionsTutorial.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.ExtensionsTutorial.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="noesis-extensions">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Noesis Extensions</h1>
+
+<p>NoesisGUI implements a wide subset of Microsoft WPF, but it also adds some convenient features on top of it to help designers create even more stunning UI for their games and applications. Some of these features include <em>Text Stroke</em> and <em>Placeholders</em>, <em>Focus Engagement</em>, <em>Element 3D-Transforms</em> and <em>Path Trimming</em>.</p>
+<p>To be able to design user interfaces in Blend and include these extensions, a <em>NuGet</em> package is provided in the official repository with the name <a class="reference external" href="https://www.nuget.org/packages/Noesis.GUI.Extensions">Noesis.GUI.Extensions</a>. These extensions are available under the <em>NoesisGUIExtensions</em> namespace.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<div class="section" id="text-extensions">
+<h1>Text Extensions</h1>
+<div class="section" id="characterspacing">
+<h2>CharacterSpacing</h2>
+<p>In NoesisGUI we incoporated the CharacterSpacing property defined by UWP text elements. It represents the uniform spacing between characters, in units of 1/1000 of an em.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span>
+  <span class="na">Background=</span><span class="s">&quot;White&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;This text has extra character spacing&quot;</span> <span class="na">FontSize=</span><span class="s">&quot;24&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;Black&quot;</span>
+      <span class="na">noesis:Text.CharacterSpacing=</span><span class="s">&quot;200&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ExtensionsTutorialImg0.png" src="ExtensionsTutorialImg0.png" />
+</div>
+<div class="section" id="stroke">
+<h2>Stroke</h2>
+<p>In NoesisGUI text can be stroked by using the attached properties <em>Text.Stroke</em> and <em>Text.StrokeThickness</em>. The first defines the <a class="reference external" href="Gui.Core._Brush.html">Brush</a> to fill the stroke, and the latter specifies the width in pixels of the stroke. These properties are inherited down the UI tree.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span>
+  <span class="na">Background=</span><span class="s">&quot;White&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;This text is stroked&quot;</span> <span class="na">FontSize=</span><span class="s">&quot;24&quot;</span> <span class="na">Foreground=</span><span class="s">&quot;LightBlue&quot;</span>
+      <span class="na">noesis:Text.Stroke=</span><span class="s">&quot;#B000407F&quot;</span> <span class="na">noesis:Text.StrokeThickness=</span><span class="s">&quot;2.5&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ExtensionsTutorialImg1.png" src="ExtensionsTutorialImg1.png" />
+</div>
+<div class="section" id="placeholder">
+<h2>Placeholder</h2>
+<p>Some controls like <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a>, <a class="reference external" href="Gui.Core._PasswordBox.html">PasswordBox</a> and <a class="reference external" href="Gui.Core._ComboBox.html">ComboBox</a> can show a placeholder text as a hint of their use. Using <em>Text.Placeholder</em> attached property in a control template adds placeholder functionality to the control.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ControlTemplate</span> <span class="na">x:Key=</span><span class="s">&quot;Template.TextBox&quot;</span> <span class="na">TargetType=</span><span class="s">&quot;TextBox&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid</span> <span class="na">Background=</span><span class="s">&quot;{TemplateBinding Background}&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">x:Name=</span><span class="s">&quot;Placeholder&quot;</span>
+      <span class="na">Padding=</span><span class="s">&quot;{TemplateBinding Padding}&quot;</span>
+      <span class="na">Margin=</span><span class="s">&quot;2,0&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Collapsed&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;{Binding (noesis:Text.Placeholder), RelativeSource={RelativeSource TemplatedParent}}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+    <span class="nt">&lt;ScrollViewer</span> <span class="na">x:Name=</span><span class="s">&quot;PART_ContentHost&quot;</span> <span class="na">Focusable=</span><span class="s">&quot;False&quot;</span>
+      <span class="na">Padding=</span><span class="s">&quot;{TemplateBinding Padding}&quot;</span>
+      <span class="na">Foreground=</span><span class="s">&quot;{TemplateBinding Foreground}&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;ControlTemplate.Triggers&gt;</span>
+    <span class="nt">&lt;Trigger</span> <span class="na">Property=</span><span class="s">&quot;Text&quot;</span> <span class="na">Value=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Visibility&quot;</span> <span class="na">Value=</span><span class="s">&quot;Visible&quot;</span> <span class="na">TargetName=</span><span class="s">&quot;Placeholder&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Trigger&gt;</span>
+  <span class="nt">&lt;/ControlTemplate.Triggers&gt;</span>
+<span class="nt">&lt;/ControlTemplate&gt;</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBlock</span> <span class="na">Text=</span><span class="s">&quot;Enter your login credentials:&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextBox</span> <span class="na">noesis:Text.Placeholder=</span><span class="s">&quot;Username&quot;</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span> <span class="na">Margin=</span><span class="s">&quot;0,10,0,5&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;PasswordBox</span> <span class="na">noesis:Text.Placeholder=</span><span class="s">&quot;Password&quot;</span> <span class="na">Width=</span><span class="s">&quot;300&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ExtensionsTutorialImg2.png" src="ExtensionsTutorialImg2.png" />
+</div>
+</div>
+<div class="section" id="element-extensions">
+<h1>Element Extensions</h1>
+<div class="section" id="ppaa">
+<h2>PPAA</h2>
+<p>When using Per-Primitive Antialiasing (<a class="reference external" href="Gui.Core.AntialiasingTutorial.html#per-primitive-antialiasing">PPAA</a>) sometimes it is useful to disable it on a specific element or group of elements. This can be done by setting attached property <em>Element.PPAAMode</em> to <em>Disabled</em>. This way you can avoid the minor overlappings on contiguous elements produced by the extruded geometry that PPAA generates. It can also be used to improve performance on elements where <em>PPAA</em> is not necessary, like aligned rectangles. This property is inherited down the UI tree.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid</span> <span class="na">noesis:Element.PPAAMode=</span><span class="s">&quot;Disabled&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid.ColumnDefinitions&gt;</span>
+      <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;55&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;ColumnDefinition</span> <span class="na">Width=</span><span class="s">&quot;8&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.ColumnDefinitions&gt;</span>
+    <span class="nt">&lt;Grid.RowDefinitions&gt;</span>
+      <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;25&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;*&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;RowDefinition</span> <span class="na">Height=</span><span class="s">&quot;32&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Grid.RowDefinitions&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource TopLeftImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource TopImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;0&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource TopRightImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource CenterLeftImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource CenterImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;1&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource CenterRightImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;0&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource BottomLeftImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;1&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource BottomImage}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Grid.Row=</span><span class="s">&quot;2&quot;</span> <span class="na">Grid.Column=</span><span class="s">&quot;2&quot;</span> <span class="na">Fill=</span><span class="s">&quot;{StaticResource BottomRightImage}&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ExtensionsTutorialImg3.png" src="ExtensionsTutorialImg3.png" />
+<p>In other situations is desirable to modify the extrusion parameters of PPAA to get a better antialiasing. This can be done by setting <em>Element.PPAAIn</em> and <em>Element.PPAAOut</em> properties on the selected elements. These properties are inherited down the UI tree.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;Black&quot;</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span>
+    <span class="na">noesis:Element.PPAAIn=</span><span class="s">&quot;1&quot;</span> <span class="na">noesis:Element.PPAAOut=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Rectangle.RenderTransform&gt;</span>
+      <span class="nt">&lt;RotateTransform</span> <span class="na">Angle=</span><span class="s">&quot;60&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Rectangle.RenderTransform&gt;</span>
+  <span class="nt">&lt;/Rectangle&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="transform3d">
+<h2>Transform3D</h2>
+<p>NoesisGUI provides <a class="reference external" href="Gui.Core.Transform3DTutorial.html">3-D transformations</a> to UI elements trough the attached property <em>Element.Transform3D</em>. Two types of 3-D transform objects are available: <a class="reference external" href="Gui.Core._CompositeTransform3D.html">CompositeTransform3D</a> and <a class="reference external" href="Gui.Core._MatrixTransform3D.html">MatrixTransform3D</a>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackPanel</span> <span class="na">Orientation=</span><span class="s">&quot;Horizontal&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;Black&quot;</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;noesis:Element.Transform3D&gt;</span>
+        <span class="nt">&lt;noesis:CompositeTransform3D</span> <span class="na">RotationY=</span><span class="s">&quot;30&quot;</span> <span class="na">CenterX=</span><span class="s">&quot;50&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/noesis:Element.Transform3D&gt;</span>
+    <span class="nt">&lt;/Rectangle&gt;</span>
+    <span class="nt">&lt;Rectangle</span> <span class="na">Fill=</span><span class="s">&quot;Black&quot;</span> <span class="na">Width=</span><span class="s">&quot;100&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;noesis:Element.Transform3D&gt;</span>
+        <span class="nt">&lt;noesis:MatrixTransform3D</span> <span class="na">Matrix=</span><span class="s">&quot;{Binding Transform}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/noesis:Element.Transform3D&gt;</span>
+    <span class="nt">&lt;/Rectangle&gt;</span>
+  <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<img alt="ExtensionsTutorialImg4.png" src="ExtensionsTutorialImg4.png" />
+</div>
+<div class="section" id="focus-engagement">
+<h2>Focus Engagement</h2>
+<p>To ensure that applications are usable and accessible through <a class="reference external" href="Gui.Core.SDKGuide.html#gamepad">Gamepads</a> it is necessary to handle focus on some controls in a particular way, otherwise focus could get 'trapped' within a control. <a class="reference external" href="https://docs.microsoft.com/en-us/windows/uwp/design/input/gamepad-and-remote-interactions#focus-engagement">Focus engagement</a> tries to resolve this situation.</p>
+<p>The attached property <em>Element.IsFocusEngagementEnabled</em> can be set on a control to enable focus engagement. By default focus engagement is enabled on the following controls: <a class="reference external" href="Gui.Core._Slider.html">Slider</a>, <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a>, <a class="reference external" href="Gui.Core._PasswordBox.html">PasswordBox</a>, and <a class="reference external" href="Gui.Core._ComboBox.html">ComboBox</a>. This means that when one of those controls receives focus, user has to press 'Accept' button to activate it and interact with it, and press 'Cancel' button to exit from focus engagement. Attached property <em>Element.IsFocusEngaged</em> indicates if the control has focus engaged or not, and can be used to show a visual cue in its template to help users identify that state.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ControlTemplate</span> <span class="na">x:Key=</span><span class="s">&quot;TextBoxTemplate&quot;</span> <span class="na">TargetType=</span><span class="s">&quot;TextBox&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">Background=</span><span class="s">&quot;{TemplateBinding Background}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;ScrollViewer</span> <span class="na">x:Name=</span><span class="s">&quot;PART_ContentHost&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Border&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">x:Name=</span><span class="s">&quot;FocusBd&quot;</span> <span class="na">BorderBrush=</span><span class="s">&quot;{StaticResource FocusedBrush}&quot;</span>
+      <span class="na">BorderThickness=</span><span class="s">&quot;2&quot;</span> <span class="na">Visibility=</span><span class="s">&quot;Collapsed&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/Grid&gt;</span>
+  <span class="nt">&lt;ControlTemplate.Triggers&gt;</span>
+    <span class="nt">&lt;Trigger</span> <span class="na">Property=</span><span class="s">&quot;noesis:Element.IsFocusEngaged&quot;</span> <span class="na">Value=</span><span class="s">&quot;True&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;Visibility&quot;</span> <span class="na">Value=</span><span class="s">&quot;Visible&quot;</span> <span class="na">TargetName=</span><span class="s">&quot;FocusBd&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Trigger&gt;</span>
+  <span class="nt">&lt;/ControlTemplate.Triggers&gt;</span>
+<span class="nt">&lt;/ControlTemplate&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="gesture-events">
+<h2>Gesture Events</h2>
+<p>The following <a class="reference external" href="Gui.Core.TouchTutorial.html#gesture-events">Gesture events</a> are taken from UWP:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.uielement.tapped">Tapped</a></li>
+<li><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.uielement.doubletapped">DoubleTapped</a></li>
+<li><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.uielement.righttapped">RightTapped</a></li>
+<li><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.uielement.holding">Holding</a></li>
+</ul>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span>
+  <span class="na">noesis:IsRightTapEnabled=</span><span class="s">&quot;True&quot;</span>
+  <span class="na">noesis:RightTapped=</span><span class="s">&quot;RootGrid_RightTapped&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="path-extensions">
+<h1>Path Extensions</h1>
+<div class="section" id="trimming">
+<h2>Trimming</h2>
+<p>Creating <a class="reference external" href="https://www.noesisengine.com/xamltoy/6acdc882e5c540f15a7857a884e06a42">Vector Animations</a>  usually requires to render only part of a path. This can be achieved sometimes with clipping, but not always. Path trimming is a feature that allows to specify which section of a path will be displayed. NoesisGUI defines attached properties <a class="reference external" href="https://docs.microsoft.com/es-mx/uwp/api/windows.ui.composition.compositiongeometry.trimstart?view=winrt-18362">Path.TrimStart</a>, <a class="reference external" href="https://docs.microsoft.com/es-mx/uwp/api/windows.ui.composition.compositiongeometry.trimend?view=winrt-18362">Path.TrimEnd</a> and <a class="reference external" href="https://docs.microsoft.com/es-mx/uwp/api/windows.ui.composition.compositiongeometry.trimoffset?view=winrt-18362">Path.TrimOffset</a> that can be set on any <a class="reference external" href="Gui.Core._Shape.html">Shape</a> element for that purpose.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span>
+  <span class="na">Background=</span><span class="s">&quot;White&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;Storyboard</span> <span class="na">x:Key=</span><span class="s">&quot;anim&quot;</span> <span class="na">RepeatBehavior=</span><span class="s">&quot;Forever&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;DoubleAnimation</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;circle&quot;</span>
+        <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;(noesis:Path.TrimOffset)&quot;</span>
+        <span class="na">To=</span><span class="s">&quot;1&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;DoubleAnimation</span> <span class="na">Storyboard.TargetName=</span><span class="s">&quot;circle&quot;</span>
+        <span class="na">Storyboard.TargetProperty=</span><span class="s">&quot;(noesis:Path.TrimStart)&quot;</span>
+        <span class="na">To=</span><span class="s">&quot;0.25&quot;</span> <span class="na">Duration=</span><span class="s">&quot;0:0:0.5&quot;</span> <span class="na">AutoReverse=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Storyboard&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+  <span class="nt">&lt;Grid.Triggers&gt;</span>
+    <span class="nt">&lt;EventTrigger</span> <span class="na">RoutedEvent=</span><span class="s">&quot;FrameworkElement.Loaded&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;BeginStoryboard</span> <span class="na">Storyboard=</span><span class="s">&quot;{StaticResource anim}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/EventTrigger&gt;</span>
+  <span class="nt">&lt;/Grid.Triggers&gt;</span>
+  <span class="nt">&lt;Ellipse</span> <span class="na">x:Name=</span><span class="s">&quot;circle&quot;</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span> <span class="na">Height=</span><span class="s">&quot;200&quot;</span>
+    <span class="na">Stroke=</span><span class="s">&quot;Black&quot;</span> <span class="na">StrokeThickness=</span><span class="s">&quot;20&quot;</span> <span class="na">StrokeStartLineCap=</span><span class="s">&quot;Round&quot;</span>
+    <span class="na">noesis:Path.TrimStart=</span><span class="s">&quot;0&quot;</span> <span class="na">noesis:Path.TrimEnd=</span><span class="s">&quot;0.5&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interactivity-extensions">
+<h1>Interactivity Extensions</h1>
+<div class="section" id="styles">
+<h2>Styles</h2>
+<p><a class="reference external" href="App.Interactivity.Behaviors.html">Behaviors</a> architecture allows UI designers to add functionality to the interface using only XAML. NoesisGUI implements almost all behaviors and triggers provided by Blend, but they cannot be specified within <a class="reference external" href="App.Interactivity.Behaviors.html#styles">Styles</a> because default <a class="reference external" href="App.Interactivity._Interaction.html">Interaction</a> <em>Behaviors</em> and <em>Triggers</em> are read-only properties in WPF. To address that limitation we extended this architecture with a couple of attached properties, <a class="reference external" href="App.Interactivity._StyleInteraction.html">StyleInteraction</a> <em>Behaviors</em> and <em>Triggers</em>, that can be set in a style <a class="reference external" href="Gui.Core._Setter.html">Setter</a>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:ei=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactions&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid.Resources&gt;</span>
+      <span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;Button&quot;</span> <span class="na">BasedOn=</span><span class="s">&quot;{StaticResource {x:Type Button}}&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;noesis:StyleInteraction.Triggers&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Setter.Value&gt;</span>
+            <span class="nt">&lt;noesis:StyleTriggerCollection&gt;</span>
+              <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;Click&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;ei:PlaySoundAction</span> <span class="na">Source=</span><span class="s">&quot;buttonClick.wav&quot;</span><span class="nt">/&gt;</span>
+              <span class="nt">&lt;/i:EventTrigger&gt;</span>
+            <span class="nt">&lt;/noesis:StyleTriggerCollection&gt;</span>
+          <span class="nt">&lt;/Setter.Value&gt;</span>
+        <span class="nt">&lt;/Setter&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;noesis:StyleInteraction.Behaviors&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Setter.Value&gt;</span>
+            <span class="nt">&lt;noesis:StyleBehaviorCollection&gt;</span>
+              <span class="nt">&lt;ei:MouseDragElementBehavior/&gt;</span>
+            <span class="nt">&lt;/noesis:StyleBehaviorCollection&gt;</span>
+          <span class="nt">&lt;/Setter.Value&gt;</span>
+        <span class="nt">&lt;/Setter&gt;</span>
+      <span class="nt">&lt;/Style&gt;</span>
+    <span class="nt">&lt;/Grid.Resources&gt;</span>
+    <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Start&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Options&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Exit&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="triggers">
+<h2>Triggers</h2>
+<p>To allow users to perform actions in response to gamepad input NoesisGUI provides <a class="reference external" href="App.Interactivity._GamepadTrigger.html">GamepadTrigger</a> .</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:ei=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactions&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;i:Interaction.Triggers&gt;</span>
+    <span class="nt">&lt;noesis:GamepadTrigger</span> <span class="na">FiredOn=</span><span class="s">&quot;ButtonDown&quot;</span> <span class="na">Button=</span><span class="s">&quot;Cancel&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;i:InvokeCommandAction</span> <span class="na">Command=</span><span class="s">&quot;{Binding ExitCommand}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/noesis:GamepadTrigger&gt;</span>
+  <span class="nt">&lt;i:Interaction.Triggers&gt;</span>
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id8">
+<h2>Behaviors</h2>
+<p>When an application requires to sort a collection of items it can use NoesisGUI custom <a class="reference external" href="App.Interactivity._CollectionSortBehavior.html">CollectionSortBehavior</a>. If it needs to filter a collection of items then it can use the <a class="reference external" href="App.Interactivity._CollectionFilterBehavior.html">CollectionFilterBehavior</a>. Those behaviors can be combined by chaining the output collection of one to the <em>ItemsSource</em> input collection of the other behavior.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;StackPanel</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;i:Interaction.Behaviors&gt;</span>
+    <span class="nt">&lt;noesis:CollectionFilterBehavior</span> <span class="na">x:Name=</span><span class="s">&quot;FilterBehavior&quot;</span>
+      <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Books}&quot;</span>
+      <span class="na">Predicate=</span><span class="s">&quot;{Binding BookFilter}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;noesis:CollectionSortBehavior</span> <span class="na">x:Name=</span><span class="s">&quot;SortBehavior&quot;</span>
+      <span class="na">ItemsSource=</span><span class="s">&quot;{Binding FilteredItems, ElementName=FilterBehavior}&quot;</span>
+      <span class="na">Comparer=</span><span class="s">&quot;{Binding BookComparer}&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/i:Interaction.Behaviors&gt;</span>
+  <span class="nt">&lt;TextBox</span> <span class="na">Text=</span><span class="s">&quot;{Binding SearchText}&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;ListBox</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding SortedItems, ElementName=SortBehavior}&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/StackPanel&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="trigger-actions">
+<h2>Trigger Actions</h2>
+<p>When a panel gets loaded, sometimes it is necessary to set the keyboard focus on a specific control. NoesisGUI includes the <a class="reference external" href="App.Interactivity._SetFocusAction.html">SetFocusAction</a> to set the focus on the targeted element in response to any interactivity trigger.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;i:Interaction.Triggers&gt;</span>
+    <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;Loaded&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;noesis:SetFocusAction</span> <span class="na">TargetName=</span><span class="s">&quot;UserName&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/i:EventTrigger&gt;</span>
+  <span class="nt">&lt;/i:Interaction.Triggers&gt;</span>
+  <span class="nt">&lt;TextBox</span> <span class="na">x:Name=</span><span class="s">&quot;UserName&quot;</span> <span class="na">Text=</span><span class="s">&quot;{Binding UserName}&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>There are situations that need selecting an item in a list when it gets hovered or any other event happens. This can be done using the <a class="reference external" href="App.Interactivity._SelectAction.html">SelectAction</a>, which sets the <em>Selector.IsSelected</em> property to true when the action gets execeuted.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Grid.Resources&gt;</span>
+    <span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;ListBoxItem&quot;</span> <span class="na">BasedOn=</span><span class="s">&quot;{StaticResource {x:Type ListBoxItem}}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;noesis:StyleInteraction.Triggers&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Setter.Value&gt;</span>
+          <span class="nt">&lt;noesis:StyleTriggerCollection&gt;</span>
+            <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;MouseEnter&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;noesis:SelectAction</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/i:EventTrigger&gt;</span>
+          <span class="nt">&lt;/noesis:StyleTriggerCollection&gt;</span>
+        <span class="nt">&lt;/Setter.Value&gt;</span>
+      <span class="nt">&lt;/Setter&gt;</span>
+    <span class="nt">&lt;/Style&gt;</span>
+  <span class="nt">&lt;/Grid.Resources&gt;</span>
+  <span class="nt">&lt;ListBox</span> <span class="na">ItemsSource=</span><span class="s">&quot;{Binding Books}&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>When a <a class="reference external" href="Gui.Core._TextBox.html">TextBox</a> or <a class="reference external" href="Gui.Core._PasswordBox.html">PasswordBox</a> gets focus, the default behavior is to just position the caret where mouse was clicked, but sometimes it is preferable to select the whole text. To avoid creating a custom control for just that, NoesisGUI offers the <a class="reference external" href="App.Interactivity._SelectAllAction.html">SelectAllAction</a>.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;TextBox</span> <span class="na">Text=</span><span class="s">&quot;{Binding UserName}&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;i:Interaction.Triggers&gt;</span>
+      <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;GotKeyboardFocus&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;noesis:SelectAllAction</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/i:EventTrigger&gt;</span>
+    <span class="nt">&lt;/i:Interaction.Triggers&gt;</span>
+  <span class="nt">&lt;/TextBox&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="unity-extensions">
+<h1>Unity Extensions</h1>
+<div class="section" id="xaml-dependencies">
+<h2>Xaml Dependencies</h2>
+<p>In Unity only the assets that are referenced from objects included in the scene are added to the game executable and are then available to load. <a class="reference external" href="Gui.Core.Unity3DTutorial.html#xaml-assets">NoesisXaml</a> asset automatically detects which resources are being used (like resource dictionaries, fonts or images) but there are situations where the application requires other resources to be loaded at runtime (from code for example). For that purpose, <em>Xaml.Dependencies</em> attached property is exposed to explicitly add dependencies.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;UserControl</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;noesis:Xaml.Dependencies&gt;</span>
+    <span class="nt">&lt;noesis:Dependency</span> <span class="na">Source=</span><span class="s">&quot;Language-en.xaml&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;noesis:Dependency</span> <span class="na">Source=</span><span class="s">&quot;Language-fr.xaml&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;noesis:Dependency</span> <span class="na">Source=</span><span class="s">&quot;Language-jp.xaml&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/noesis:Xaml.Dependencies&gt;</span>
+
+<span class="nt">&lt;/UserControl&gt;</span>
+</pre></div>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#text-extensions" id="id11">Text Extensions</a><ul>
+<li><a class="reference internal" href="#characterspacing" id="id12">CharacterSpacing</a></li>
+<li><a class="reference internal" href="#stroke" id="id13">Stroke</a></li>
+<li><a class="reference internal" href="#placeholder" id="id14">Placeholder</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#element-extensions" id="id15">Element Extensions</a><ul>
+<li><a class="reference internal" href="#ppaa" id="id16">PPAA</a></li>
+<li><a class="reference internal" href="#transform3d" id="id17">Transform3D</a></li>
+<li><a class="reference internal" href="#focus-engagement" id="id18">Focus Engagement</a></li>
+<li><a class="reference internal" href="#gesture-events" id="id19">Gesture Events</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#path-extensions" id="id20">Path Extensions</a><ul>
+<li><a class="reference internal" href="#trimming" id="id21">Trimming</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interactivity-extensions" id="id22">Interactivity Extensions</a><ul>
+<li><a class="reference internal" href="#styles" id="id23">Styles</a></li>
+<li><a class="reference internal" href="#triggers" id="id24">Triggers</a></li>
+<li><a class="reference internal" href="#id8" id="id25">Behaviors</a></li>
+<li><a class="reference internal" href="#trigger-actions" id="id26">Trigger Actions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unity-extensions" id="id27">Unity Extensions</a><ul>
+<li><a class="reference internal" href="#xaml-dependencies" id="id28">Xaml Dependencies</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

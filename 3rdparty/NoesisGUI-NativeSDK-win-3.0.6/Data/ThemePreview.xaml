@@ -1,0 +1,416 @@
+<Grid
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions">
+
+  <Grid.Background>
+    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+      <GradientStop Offset="0" Color="#FF184C79"/>
+      <GradientStop Offset="0.05" Color="#FF1B5688"/>
+      <GradientStop Offset="1" Color="#FF123859"/>
+    </LinearGradientBrush>
+  </Grid.Background>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <ContentControl Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray">
+            <ContentControl.Resources>
+                <ResourceDictionary Source="pack://application:,,,/Theme;component/Theme/NoesisTheme.Brushes.LightBlue.xaml"/>
+            </ContentControl.Resources>
+            <Grid Background="{StaticResource Brush.Window.Background}">
+              <Viewbox>
+                <Viewbox Width="100">
+                    <StackPanel Margin="10,20,-10,0" Width="660" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="Default Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Button Content="Enabled"/>
+                                <Button Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="Toggle Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Content="Enabled"/>
+                                <ToggleButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Toggle Switch" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Enabled"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="CheckBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <CheckBox Content="Enabled"/>
+                                <CheckBox Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="RadioButton" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel>
+                                    <RadioButton Content="Enabled"/>
+                                    <RadioButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <RadioButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                    <RadioButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <StackPanel>
+                                <TextBlock Text="TextBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox Text="Enabled"/>
+                                <TextBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <TextBox Text="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="PasswordBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <PasswordBox Password="Enabled"/>
+                                <PasswordBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <PasswordBox Password="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Slider" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Slider Value="0" MinWidth="120"/>
+                                <Slider Value="1" TickPlacement="Both" Margin="0,5,0,0"/>
+                                <Slider Value="2" IsDirectionReversed="True" TickPlacement="BottomRight" Margin="0,5,0,0"/>
+                                <Slider Value="5" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="ListBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ListBox BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1" Height="110">
+                                    <ListBoxItem Content="Unselected"/>
+                                    <ListBoxItem Content="Selected" IsSelected="True"/>
+                                    <ListBoxItem Content="Disabled" IsEnabled="False"/>
+                                </ListBox>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="TreeView" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TreeView BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1">
+                                    <TreeViewItem Header="Expanded" IsExpanded="True">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Collapsed">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Disabled" IsEnabled="False">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Viewbox>
+              </Viewbox>
+            </Grid>
+        </ContentControl>
+        <ContentControl Grid.Column="1" Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Margin="-1,0,0,0">
+            <ContentControl.Resources>
+                <ResourceDictionary Source="pack://application:,,,/Theme;component/Theme/NoesisTheme.Brushes.LightEmerald.xaml"/>
+            </ContentControl.Resources>
+            <Grid Background="{StaticResource Brush.Window.Background}">
+              <Viewbox>
+                <Viewbox Width="100">
+                    <StackPanel Margin="10,20,-10,10" Width="660" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="Default Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Button Content="Enabled"/>
+                                <Button Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="Toggle Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Content="Enabled"/>
+                                <ToggleButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Toggle Switch" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Enabled"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="CheckBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <CheckBox Content="Enabled"/>
+                                <CheckBox Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="RadioButton" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel>
+                                    <RadioButton Content="Enabled"/>
+                                    <RadioButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <RadioButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                    <RadioButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <StackPanel>
+                                <TextBlock Text="TextBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox Text="Enabled"/>
+                                <TextBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <TextBox Text="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="PasswordBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <PasswordBox Password="Enabled"/>
+                                <PasswordBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <PasswordBox Password="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Slider" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Slider Value="0" MinWidth="120"/>
+                                <Slider Value="1" TickPlacement="Both" Margin="0,5,0,0"/>
+                                <Slider Value="2" IsDirectionReversed="True" TickPlacement="BottomRight" Margin="0,5,0,0"/>
+                                <Slider Value="5" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="ListBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ListBox BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1" Height="110">
+                                    <ListBoxItem Content="Unselected"/>
+                                    <ListBoxItem Content="Selected" IsSelected="True"/>
+                                    <ListBoxItem Content="Disabled" IsEnabled="False"/>
+                                </ListBox>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="TreeView" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TreeView BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1">
+                                    <TreeViewItem Header="Expanded" IsExpanded="True">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Collapsed">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Disabled" IsEnabled="False">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Viewbox>
+              </Viewbox>
+            </Grid>
+        </ContentControl>
+        
+        <Border Grid.Column="0" Grid.Row="1" BorderThickness="1" BorderBrush="Gray" Margin="0,-1,0,0">
+            <Border.Resources>
+                <ResourceDictionary Source="pack://application:,,,/Theme;component/Theme/NoesisTheme.Brushes.DarkBlue.xaml"/>
+            </Border.Resources>
+            <Grid Background="{StaticResource Brush.Window.Background}">
+              <Viewbox>
+                <Viewbox Width="100">
+                    <StackPanel Margin="10,20,-10,10" Width="660" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="Default Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Button Content="Enabled"/>
+                                <Button Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="Toggle Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Content="Enabled"/>
+                                <ToggleButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Toggle Switch" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Enabled"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="CheckBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <CheckBox Content="Enabled"/>
+                                <CheckBox Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="RadioButton" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel>
+                                    <RadioButton Content="Enabled"/>
+                                    <RadioButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <RadioButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                    <RadioButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <StackPanel>
+                                <TextBlock Text="TextBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox Text="Enabled"/>
+                                <TextBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <TextBox Text="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="PasswordBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <PasswordBox Password="Enabled"/>
+                                <PasswordBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <PasswordBox Password="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Slider" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Slider Value="0" MinWidth="120"/>
+                                <Slider Value="1" TickPlacement="Both" Margin="0,5,0,0"/>
+                                <Slider Value="2" IsDirectionReversed="True" TickPlacement="BottomRight" Margin="0,5,0,0"/>
+                                <Slider Value="5" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="ListBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ListBox BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1" Height="110">
+                                    <ListBoxItem Content="Unselected"/>
+                                    <ListBoxItem Content="Selected" IsSelected="True"/>
+                                    <ListBoxItem Content="Disabled" IsEnabled="False"/>
+                                </ListBox>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="TreeView" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TreeView BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1">
+                                    <TreeViewItem Header="Expanded" IsExpanded="True">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Collapsed">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Disabled" IsEnabled="False">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Viewbox>
+              </Viewbox>
+            </Grid>
+        </Border>
+        <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Gray" Margin="-1,-1,0,0">
+            <Border.Resources>
+                <ResourceDictionary Source="pack://application:,,,/Theme;component/Theme/NoesisTheme.Brushes.DarkPurple.xaml"/>
+            </Border.Resources>
+            <Grid Background="{StaticResource Brush.Window.Background}">
+              <Viewbox>
+                <Viewbox Width="100">
+                    <StackPanel Margin="10,20,-10,10" Width="660" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="Default Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Button Content="Enabled"/>
+                                <Button Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="Toggle Button" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Content="Enabled"/>
+                                <ToggleButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Toggle Switch" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Enabled"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <ToggleButton Style="{StaticResource Style.ToggleSwitch}" Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="CheckBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <CheckBox Content="Enabled"/>
+                                <CheckBox Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" Margin="0,5,0,0"/>
+                                <CheckBox Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                <CheckBox Content="3-State" IsChecked="{x:Null}" IsThreeState="True" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="RadioButton" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel>
+                                    <RadioButton Content="Enabled"/>
+                                    <RadioButton Content="Checked" IsChecked="True" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <RadioButton Content="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                                    <RadioButton Content="Checked" IsChecked="True" IsEnabled="False" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                            <StackPanel>
+                                <TextBlock Text="TextBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBox Text="Enabled"/>
+                                <TextBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <TextBox Text="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="PasswordBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <PasswordBox Password="Enabled"/>
+                                <PasswordBox noesis:Text.Placeholder="Placeholder" Margin="0,5,0,0"/>
+                                <PasswordBox Password="Disabled" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Slider" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <Slider Value="0" MinWidth="120"/>
+                                <Slider Value="1" TickPlacement="Both" Margin="0,5,0,0"/>
+                                <Slider Value="2" IsDirectionReversed="True" TickPlacement="BottomRight" Margin="0,5,0,0"/>
+                                <Slider Value="5" IsEnabled="False" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Margin="20,0">
+                                <TextBlock Text="ListBox" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <ListBox BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1" Height="110">
+                                    <ListBoxItem Content="Unselected"/>
+                                    <ListBoxItem Content="Selected" IsSelected="True"/>
+                                    <ListBoxItem Content="Disabled" IsEnabled="False"/>
+                                </ListBox>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="TreeView" FontSize="18" TextAlignment="Center" Margin="0,0,0,10"/>
+                                <TreeView BorderBrush="{StaticResource Brush.Border.Normal}" BorderThickness="1">
+                                    <TreeViewItem Header="Expanded" IsExpanded="True">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Collapsed">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Disabled" IsEnabled="False">
+                                        <TreeViewItem Header="Child"/>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Viewbox>
+              </Viewbox>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Grid>

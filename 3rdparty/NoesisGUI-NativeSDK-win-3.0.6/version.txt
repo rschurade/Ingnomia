@@ -1,0 +1,2 @@
+svn://svn.noesisengine.com/Noesis/NoesisSDK/branches/3.0/Native
+3.0.6 (r9627)

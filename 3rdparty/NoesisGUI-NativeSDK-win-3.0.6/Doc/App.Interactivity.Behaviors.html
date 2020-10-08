@@ -1,0 +1,698 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Behaviors Architecture - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI tutorial about Interactivity Behaviors" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/App.Interactivity.Behaviors.html" />
+<meta name="twitter:title" content="Behaviors Architecture | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI tutorial about Interactivity Behaviors" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Behaviors Architecture | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-18 14:45:01" />
+<meta property="og:description" content="NoesisGUI tutorial about Interactivity Behaviors" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/App.Interactivity.Behaviors.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/App.Interactivity.Behaviors.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="behaviors-architecture">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Behaviors Architecture</h1>
+
+<p><em>Behaviors architecture</em> is a new concept, introduced with Microsoft Blend, to encapsulate pieces of functionality into reusable components. These components can be attached to controls to give them an additional behavior.</p>
+<p>The idea behind behaviors is to give the designer more flexibility to design complex user interactions without writing any code. Developers can provide functionality writing triggers, actions and behaviors that are cleanly encapsulated and reusable by both developers and designers. Likewise, designers are empowered to add a new level of interactive functionality to their work without ever having to touch a code file.</p>
+<p>Example of a behaviors are <strong>drag&amp;drop</strong>, <strong>input validation</strong>, <strong>pan and zoom</strong> or <strong>re-position</strong> of elements. The list of possible behaviors is very long.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">The implementation of Behaviors is part of the <a class="reference external" href="Gui.Core.ApplicationTutorial.html">Application Framework</a>.</p>
+</div>
+<div class="section" id="triggers-and-actions">
+<h1>Triggers and Actions</h1>
+<p>To anyone with some WPF background, triggers and actions should sound familiar. Behaviors architecture introduces a similar model, and allows you to write your own triggers and actions - opening a whole new world of possibilities for what kinds of functionality you can create and reuse in your own applications.</p>
+<p>An <a class="reference external" href="App.Interactivity._TriggerAction.html">Action</a> is an object that can be invoked to perform an operation. If you think that sounds pretty vague, you're right. The scope of an action is not constrained: if you can write the code to do something, you could write an action to do the same thing. That said, actions are best written to <em>perform operations</em> that are largely <em>atomic</em> in nature. That is, actions work best when they don't rely on external state that needs to be persisted between invocations of the action, and that don't have any dependencies on other actions existing or running in a particular order relative to their invocation.</p>
+<p>For example: <strong>change</strong> a property, <strong>call</strong> a method, <strong>open</strong> a window, <strong>navigate</strong> to a page or set <strong>focus</strong>.</p>
+<p>Actions aren't particularly useful on their own: they provide functionality to do something, but no way to activate that functionality. In order to invoke an action, we need a <a class="reference external" href="App.Interactivity._TriggerBase.html">Trigger</a>. Triggers are objects that contain one or more actions and invoke those actions in response to some stimulus. One very common trigger is one that fires in response to an event (an <a class="reference external" href="App.Interactivity._EventTrigger.html">EventTrigger</a>). Other examples might include a trigger that fires on a timer, or a trigger that fires when some data changes.</p>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p class="last">One important thing to note is that triggers and actions are generally meant to be used together arbitrarily. In other words, you should avoid writing an action that makes assumptions about the type of trigger that invokes it, or a trigger that makes assumptions about the actions that belong to it. If you find yourself needing a tight coupling between a trigger and action, you should instead consider a behavior.</p>
+</div>
+<div class="section" id="how-does-it-work">
+<h2>How does it work?</h2>
+<p>To add triggers and actions to an element you need some kind of extension point: an attached property called <em>Interaction.Triggers</em>.</p>
+<p>This attached property holds the list of triggers for that element and passes a reference to the element into the trigger. The trigger can then register itself to events or property changes to react and invoke the actions it contains.</p>
+<p>The idea is simple, but very clever. We don't need any new infrastructure, we just reuse the existing one.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:ei=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactions&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextBox</span> <span class="na">Text=</span><span class="s">&quot;{Binding Name}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;i:Interaction.Triggers&gt;</span>
+        <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;Loaded&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;noesis:SetFocusAction/&gt;</span>
+        <span class="nt">&lt;/i:EventTrigger&gt;</span>
+      <span class="nt">&lt;/i:Interaction.Trigger&gt;</span>
+    <span class="nt">&lt;/TextBox&gt;</span>
+<span class="nt">&lt;/Border&gt;</span>
+</pre></div>
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="k">class</span> <span class="nc">SetFocusAction</span> <span class="k">final</span><span class="o">:</span> <span class="k">public</span> <span class="n">NoesisApp</span><span class="o">::</span><span class="n">TargetedTriggerActionT</span><span class="o">&lt;</span><span class="n">Noesis</span><span class="o">::</span><span class="n">UIElement</span><span class="o">&gt;</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Invoke</span><span class="p">(</span><span class="n">Noesis</span><span class="o">::</span><span class="n">BaseComponent</span><span class="o">*</span> <span class="n">parameter</span><span class="p">)</span> <span class="k">override</span>
+    <span class="p">{</span>
+        <span class="n">UIElement</span><span class="o">*</span> <span class="n">element</span> <span class="o">=</span> <span class="n">GetTarget</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">element</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">element</span><span class="o">-&gt;</span><span class="n">Focus</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">//...</span>
+<span class="p">};</span>
+</pre></div>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">SetFocusAction</span><span class="p">:</span> <span class="k">public</span> <span class="n">NoesisApp</span><span class="p">.</span><span class="n">TargetedTriggerActionT</span><span class="p">&lt;</span><span class="n">Noesis</span><span class="p">.</span><span class="n">UIElement</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Invoke</span><span class="p">(</span><span class="kt">object</span> <span class="n">parameter</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">UIElement</span> <span class="n">element</span> <span class="p">=</span> <span class="n">Target</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">element</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">element</span><span class="p">.</span><span class="n">Focus</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<div class="admonition admonition-note">
+<p class="first admonition-title">NOTE</p>
+<p>Microsoft Blend behaviors architecture classes are mapped to the following namespaces:</p>
+<ul class="simple">
+<li><strong>http://schemas.microsoft.com/expression/2010/interactivity</strong></li>
+<li><strong>http://schemas.microsoft.com/expression/2010/interactions</strong></li>
+</ul>
+<p>These namespaces are usually associated with <strong>i:</strong> and <strong>ei:</strong> prefixes respectively.
+They are automatically added to your xaml file when you drag an action or behavior to any control in Blend.</p>
+<p>For those using the NuGet <a class="reference external" href="https://github.com/microsoft/XamlBehaviorsWpf">Microsoft.Xaml.Behaviors.Wpf</a> the namespace is:</p>
+<ul class="simple">
+<li><strong>http://schemas.microsoft.com/xaml/behaviors</strong></li>
+</ul>
+<p>In this case the associated prefix normally is <strong>behaviors:</strong> or just <strong>b:</strong>, and all Microsoft behaviors, triggers and actions are mapped to that namespace.</p>
+<p class="last">Extensions developed by Noesis are defined in <strong>NoesisGUIExtensions</strong> namespace, and you will find them with the <strong>noesis:</strong> prefix.</p>
+</div>
+</div>
+<div class="section" id="supported-triggers">
+<h2>Supported Triggers</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Prefix</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>i:</td>
+<td><a class="reference external" href="App.Interactivity._EventTrigger.html">EventTrigger</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._TimerTrigger.html">TimerTrigger</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._KeyTrigger.html">KeyTrigger</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._PropertyChangedTrigger.html">PropertyChangedTrigger</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._DataTrigger.html">DataTrigger</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._StoryboardCompletedTrigger.html">StoryboardCompletedTrigger</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._GamepadTrigger.html">GamepadTrigger</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="supported-actions">
+<h2>Supported Actions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Prefix</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>i:</td>
+<td><a class="reference external" href="App.Interactivity._InvokeCommandAction.html">InvokeCommandAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._ChangePropertyAction.html">ChangePropertyAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._GoToStateAction.html">GoToStateAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._RemoveElementAction.html">RemoveElementAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._ControlStoryboardAction.html">ControlStoryboardAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._LaunchUriOrFileAction.html">LaunchUriOrFileAction</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._PlaySoundAction.html">PlaySoundAction</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._SetFocusAction.html">SetFocusAction</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._SelectAction.html">SelectAction</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._SelectAllAction.html">SelectAllAction</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="behaviors">
+<h1>Behaviors</h1>
+<p>Whereas the concepts of triggers and actions have been previously established in WPF, the concept of a <a class="reference external" href="App.Interactivity._Behavior.html">Behavior</a> is a new one. At a glance, a behavior looks similar to an action: a self-contained unit of functionality. The main difference is that actions expect to be invoked, and when invoked, they will perform some operation. A behavior does not have the concept of invocation; instead, it acts more as an <strong>add-on</strong> to an object: optional functionality that can be attached to an object if desired. It may do certain things in response to stimulus from the environment, but there is no guarantee that the user can control what this stimulus is: it is up to the behavior author to determine what can and cannot be customized.</p>
+<p>As an example, consider a behavior that allows the user to drag the object the behavior is attached to around with the mouse. The behavior needs to listen to the <em>mouse down</em>, <em>mouse move</em>, and <em>mouse up</em> events on the attached object. In response to the <em>mouse down</em>, behavior will record the mouse position, hook up the mouse move and mouse up handlers and capture the mouse input. On <em>mouse move</em>, it will update the position of the object as well as the mouse position. On <em>mouse up</em>, it will release mouse capture and unhook mouse move and mouse up handlers.</p>
+<p>One approach might be to try and use <em>EventTriggers</em> for each of these events, and write a <em>StartDragAction</em>, <em>MoveDragAction</em> and <em>StopDragAction</em> to invoke in each case. However, it soon becomes apparent that this scenario is not well-addressed by actions because it needs to store state between invocations (previous mouse position and the state of the drag), and the operation isn't atomic. Instead, we can write a behavior that wraps the exact functionality outlined above into a reusable component.</p>
+<div class="section" id="id1">
+<h2>How does it work?</h2>
+<p>To add behaviors to an element we will also use an attached property, called <em>Interaction.Behaviors</em>.</p>
+<p>This attached property holds the list of behaviors for that element and passes a reference to the element into the behavior. The behavior then can register itself to events and property changes to extend the functionality of the element.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:ei=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactions&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Border</span> <span class="na">Background=</span><span class="s">&quot;Silver&quot;</span> <span class="na">Margin=</span><span class="s">&quot;100&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Rectangle</span> <span class="na">Width=</span><span class="s">&quot;200&quot;</span> <span class="na">Height=</span><span class="s">&quot;100&quot;</span> <span class="na">Fill=</span><span class="s">&quot;Red&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;i:Interaction.Behaviors&gt;</span>
+          <span class="nt">&lt;ei:MouseDragElementBehavior</span> <span class="na">ConstrainToParentBounds=</span><span class="s">&quot;True&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/i:Interaction.Behaviors&gt;</span>
+      <span class="nt">&lt;/Rectangle&gt;</span>
+    <span class="nt">&lt;/Border&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<div class="highlight"><span class="filename">C++</span><pre><span></span><span class="k">class</span> <span class="nc">MouseDragElementBehavior</span><span class="o">:</span> <span class="k">public</span> <span class="n">NoesisApp</span><span class="o">::</span><span class="n">BehaviorT</span><span class="o">&lt;</span><span class="n">Noesis</span><span class="o">::</span><span class="n">FrameworkElement</span><span class="o">&gt;</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">float</span> <span class="n">GetX</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">GetValue</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">XProperty</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">SetX</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="n">SetValue</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">XProperty</span><span class="p">);</span> <span class="p">}</span>
+
+    <span class="kt">float</span> <span class="n">GetY</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">GetValue</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">YProperty</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">SetY</span><span class="p">(</span><span class="kt">float</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="n">SetValue</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">YProperty</span><span class="p">);</span> <span class="p">}</span>
+
+    <span class="kt">bool</span> <span class="n">GetConstrainToParentBounds</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">GetValue</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ConstrainToParentBoundsProperty</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">SetConstrainToParentBounds</span><span class="p">(</span><span class="kt">bool</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span> <span class="n">SetValue</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ConstrainToParentBoundsProperty</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">OnAttached</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">FrameworkElement</span><span class="o">*</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+
+        <span class="n">_transform</span> <span class="o">=</span> <span class="o">*</span><span class="k">new</span> <span class="n">Noesis</span><span class="o">::</span><span class="n">TranslateTransform</span><span class="p">();</span>
+        <span class="n">obj</span><span class="o">-&gt;</span><span class="n">SetRenderTransform</span><span class="p">(</span><span class="n">_transform</span><span class="p">);</span>
+        <span class="n">obj</span><span class="o">-&gt;</span><span class="n">MouseLeftButtonDown</span><span class="p">()</span> <span class="o">+=</span> <span class="n">MakeDelegate</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MouseDragElementBehavior</span><span class="o">::</span><span class="n">OnMouseLeftButtonDown</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">OnDetaching</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">FrameworkElement</span><span class="o">*</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">GetAssociatedObject</span><span class="p">();</span>
+
+        <span class="n">_transform</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">obj</span><span class="o">-&gt;</span><span class="n">SetRenderTransform</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">obj</span><span class="o">-&gt;</span><span class="n">MouseLeftButtonDown</span><span class="p">()</span> <span class="o">-=</span> <span class="n">MakeDelegate</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">MouseDragElementBehavior</span><span class="o">::</span><span class="n">OnMouseLeftButtonDown</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// ...</span>
+<span class="p">};</span>
+</pre></div>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">MouseDragElementBehavior</span><span class="p">:</span> <span class="n">NoesisApp</span><span class="p">.</span><span class="n">Behavior</span><span class="p">&lt;</span><span class="n">Noesis</span><span class="p">.</span><span class="n">FrameworkElement</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">X</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">GetValue</span><span class="p">(</span><span class="n">XProperty</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">SetValue</span><span class="p">(</span><span class="n">XProperty</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">Y</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">GetValue</span><span class="p">(</span><span class="n">YProperty</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">SetValue</span><span class="p">(</span><span class="n">YProperty</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">bool</span> <span class="n">ConstrainToParentBounds</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="kt">bool</span><span class="p">)</span><span class="n">GetValue</span><span class="p">(</span><span class="n">ConstrainToParentBoundsProperty</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">SetValue</span><span class="p">(</span><span class="n">ConstrainToParentBoundsProperty</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnAttached</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">FrameworkElement</span> <span class="n">associatedObject</span> <span class="p">=</span> <span class="n">AssociatedObject</span><span class="p">;</span>
+
+        <span class="n">_transform</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TranslateTransform</span><span class="p">();</span>
+        <span class="n">associatedObject</span><span class="p">.</span><span class="n">RenderTransform</span> <span class="p">=</span> <span class="n">_transform</span><span class="p">;</span>
+        <span class="n">associatedObject</span><span class="p">.</span><span class="n">MouseLeftButtonDown</span> <span class="p">+=</span> <span class="n">OnMouseLeftButtonDown</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnDetaching</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">FrameworkElement</span> <span class="n">associatedObject</span> <span class="p">=</span> <span class="n">AssociatedObject</span><span class="p">;</span>
+
+        <span class="n">_transform</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+        <span class="n">associatedObject</span><span class="p">.</span><span class="n">RenderTransform</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+        <span class="n">associatedObject</span><span class="p">.</span><span class="n">MouseLeftButtonDown</span> <span class="p">-=</span> <span class="n">OnMouseLeftButtonDown</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="supported-behaviors">
+<h2>Supported Behaviors</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Prefix</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._ConditionBehavior.html">ConditionBehavior</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._MouseDragElementBehavior.html">MouseDragElementBehavior</a></td>
+</tr>
+<tr><td>ei:</td>
+<td><a class="reference external" href="App.Interactivity._TranslateZoomRotateBehavior.html">TranslateZoomRotateBehavior</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._CollectionFilterBehavior.html">CollectionFilterBehavior</a></td>
+</tr>
+<tr><td>noesis:</td>
+<td><a class="reference external" href="App.Interactivity._CollectionSortBehavior.html">CollectionSortBehavior</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="styles">
+<h1>Styles</h1>
+<p>Sometimes it is useful to define actions and behaviors for a type of control. Instead of adding the corresponding interactivity attached property for each instance of that control we would prefer to define that once in a <a class="reference external" href="Gui.Core._Style.html">Style</a> so it applies automatically to all of them.</p>
+<p>The problem we will find is that <em>Interaction.Behaviors</em> and <em>Interaction.Triggers</em> are private attached properties that cannot be directly set from XAML.</p>
+<p>To workaround this problem we created a new pair of attached properties that will allow you to define a collection of actions and behaviors in a style. They are called <em>StyleInteraction.Triggers</em> and <em>StyleInteraction.Behaviors</em>, and are defined inside the namespace <em>NoesisGUIExtensions</em>. They can be used like this:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;Grid</span>
+  <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>
+  <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>
+  <span class="na">xmlns:i=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactivity&quot;</span>
+  <span class="na">xmlns:ei=</span><span class="s">&quot;http://schemas.microsoft.com/expression/2010/interactions&quot;</span>
+  <span class="na">xmlns:noesis=</span><span class="s">&quot;clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Grid.Resources&gt;</span>
+      <span class="nt">&lt;Style</span> <span class="na">TargetType=</span><span class="s">&quot;{x:Type Button}&quot;</span> <span class="na">BasedOn=</span><span class="s">&quot;{StaticResource {x:Type Button}}&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;noesis:StyleInteraction.Triggers&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Setter.Value&gt;</span>
+            <span class="nt">&lt;noesis:StyleTriggerCollection&gt;</span>
+              <span class="nt">&lt;i:EventTrigger</span> <span class="na">EventName=</span><span class="s">&quot;Click&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;ei:PlaySoundAction</span> <span class="na">Source=</span><span class="s">&quot;buttonClick.wav&quot;</span><span class="nt">/&gt;</span>
+              <span class="nt">&lt;/i:EventTrigger&gt;</span>
+            <span class="nt">&lt;/noesis:StyleTriggerCollection&gt;</span>
+          <span class="nt">&lt;/Setter.Value&gt;</span>
+        <span class="nt">&lt;/Setter&gt;</span>
+        <span class="nt">&lt;Setter</span> <span class="na">Property=</span><span class="s">&quot;noesis:StyleInteraction.Behaviors&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;Setter.Value&gt;</span>
+            <span class="nt">&lt;noesis:StyleBehaviorCollection&gt;</span>
+              <span class="nt">&lt;ei:MouseDragElementBehavior/&gt;</span>
+            <span class="nt">&lt;/noesis:StyleBehaviorCollection&gt;</span>
+          <span class="nt">&lt;/Setter.Value&gt;</span>
+        <span class="nt">&lt;/Setter&gt;</span>
+      <span class="nt">&lt;/Style&gt;</span>
+    <span class="nt">&lt;/Grid.Resources&gt;</span>
+    <span class="nt">&lt;StackPanel</span> <span class="na">HorizontalAlignment=</span><span class="s">&quot;Center&quot;</span> <span class="na">VerticalAlignment=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Start&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Options&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">Content=</span><span class="s">&quot;Exit&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/StackPanel&gt;</span>
+<span class="nt">&lt;/Grid&gt;</span>
+</pre></div>
+<p>Once the style is applied to the control the attached property will get <em>Interaction.Triggers</em> or <em>Interaction.Behaviors</em> collections from the control and clone the style actions or behaviors there, having the same result as if you have specified them directly in the control.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#triggers-and-actions" id="id2">Triggers and Actions</a><ul>
+<li><a class="reference internal" href="#how-does-it-work" id="id3">How does it work?</a></li>
+<li><a class="reference internal" href="#supported-triggers" id="id4">Supported Triggers</a></li>
+<li><a class="reference internal" href="#supported-actions" id="id5">Supported Actions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#behaviors" id="id6">Behaviors</a><ul>
+<li><a class="reference internal" href="#id1" id="id7">How does it work?</a></li>
+<li><a class="reference internal" href="#supported-behaviors" id="id8">Supported Behaviors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#styles" id="id9">Styles</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

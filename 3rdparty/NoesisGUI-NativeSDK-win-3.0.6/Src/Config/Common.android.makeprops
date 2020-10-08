@@ -1,0 +1,3 @@
+CFLAGS_COMMON = -g -pipe -Wall -Werror -Wfatal-errors -Wtype-limits -fvisibility=hidden -fmerge-all-constants
+CXXFLAGS_COMMON = $(CFLAGS_COMMON) -std=c++11 -fno-exceptions -fno-rtti -fvisibility-inlines-hidden -fno-threadsafe-statics
+LDFLAGS_COMMON = -Wextra -static-libstdc++

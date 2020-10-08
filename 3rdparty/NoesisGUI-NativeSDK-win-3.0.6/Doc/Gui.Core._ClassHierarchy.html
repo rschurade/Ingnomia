@@ -1,0 +1,1563 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Class Hierarchy - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="NoesisGUI framework class library reference" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core._ClassHierarchy.html" />
+<meta name="twitter:title" content="Class Hierarchy | NoesisGUI" />
+<meta name="twitter:description" content="NoesisGUI framework class library reference" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Class Hierarchy | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-09-25 14:13:17" />
+<meta property="og:description" content="NoesisGUI framework class library reference" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core._ClassHierarchy.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core._ClassHierarchy.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="class-hierarchy">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Class Hierarchy</h1>
+
+<p>This section of the documentation contains details of the <em>API</em> that <em>NoesisGUI</em> provides. Supported classes are described with their <em>Methods</em>, <em>Properties</em> and <em>Events</em> in a language-independent way  that matches the implementation for each available language like C++ or C#.</p>
+<p>The <em>API</em> is grouped into two namespaces, <em>Noesis</em> with the core functionality of the framework and <a class="reference external" href="Gui.Core.ApplicationTutorial.html">NoesisApp</a> used by all our examples and tutorials. Most clients will only use the <em>Noesis</em> namespace and will take <em>NoesisApp</em> source code as a reference sample.</p>
+<div class="section" id="noesis-namespace">
+<h1>Noesis Namespace</h1>
+<table border="1" class="colwidths-given docutils" style="width: 100%">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Class</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><a class="reference external" href="Gui.Core._AdornerDecorator.html">AdornerDecorator</a></td>
+<td>Provides an adorner layer for elements beneath it in the visual tree.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._AlternationConverter.html">AlternationConverter</a></td>
+<td>Converts an integer to/from an object by applying the integer as an index to a list of objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Animatable.html">Animatable</a></td>
+<td>Abstract class that provides animation support.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._AnimationClock.html">AnimationClock</a></td>
+<td>Maintains the run-time state of an <a class="reference external" href="Gui.Animation._AnimationTimeline.html">AnimationTimeline</a> and processes its output values.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._AnimationTimeline.html">AnimationTimeline</a></td>
+<td>Defines a segment of time over which output values are produced. These values are used to animate a target property.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ApplicationCommands.html">ApplicationCommands</a></td>
+<td>Provides a standard set of application related commands.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ArcSegment.html">ArcSegment</a></td>
+<td>Represents an elliptical arc between two points.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BackEase.html">BackEase</a></td>
+<td>Represents an easing function that retracts the motion of an animation slightly before it begins to animate in the path indicated.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BaseAnimation.html">BaseAnimation</a></td>
+<td>Base class for Animation classes. It stores the easing function that can be applied.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseBinding.html">BaseBinding</a></td>
+<td>Defines the common features for <a class="reference external" href="Gui.Core._Binding.html">Binding</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseBindingExpression.html">BaseBindingExpression</a></td>
+<td>Represents the base class for all <a class="reference external" href="Gui.Core._Binding.html">Binding</a> Expressions.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseButton.html">BaseButton</a></td>
+<td>Represents the base class for all button controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseCommand.html">BaseCommand</a></td>
+<td>Base class for commands.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseDefinition.html">BaseDefinition</a></td>
+<td>Defines the functionality required to support a shared-size group that is used by the ColumnDefinitionCollection and RowDefinitionCollection classes.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseDictionary.html">BaseDictionary</a></td>
+<td>Base class for dictionaries.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._BaseGridViewRowPresenter.html">BaseGridViewRowPresenter</a></td>
+<td>Represents the base class for classes that define the layout for a row of data where different data items are displayed in different columns.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BaseKeyFrame.html">BaseKeyFrame</a></td>
+<td>Base class for KeyFrame classes</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseMenu.html">BaseMenu</a></td>
+<td>Represents a control that defines choices for users to select.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseMultiValueConverter.html">BaseMultiValueConverter</a></td>
+<td>Base class for value converters used in MultiBindings.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseSetter.html">BaseSetter</a></td>
+<td>Represents the base class for value setters.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseTextBox.html">BaseTextBox</a></td>
+<td>An abstract base class that provides functionality for text editing controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseTrigger.html">BaseTrigger</a></td>
+<td>Represents the base class for specifying a conditional value within a <a class="reference external" href="Gui.Core._Style.html">Style</a> object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BaseValueConverter.html">BaseValueConverter</a></td>
+<td>Base class for value converters used in Bindings.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._BaseView.html">BaseView</a></td>
+<td>Represents the base class for views that define the appearance of data in a <a class="reference external" href="Gui.Controls._ListView.html">ListView</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BeginStoryboard.html">BeginStoryboard</a></td>
+<td>A trigger action that begins a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a> and distributes its animations to their targeted objects and properties.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BezierSegment.html">BezierSegment</a></td>
+<td>Represents a cubic Bezier curve drawn between two points.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Binding.html">Binding</a></td>
+<td>Provides high-level access to the definition of a binding, which connects the properties of binding target objects and any data source.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BindingExpression.html">BindingExpression</a></td>
+<td>Contains information about a single instance of a <a class="reference external" href="Gui.Core._Binding.html">Binding</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BindingOperations.html">BindingOperations</a></td>
+<td>Provides static methods to manipulate bindings.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BitmapImage.html">BitmapImage</a></td>
+<td>Provides a <a class="reference external" href="Gui.Core._BitmapSource.html">BitmapSource</a> created from an image file located at the specifed <em>URI</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BitmapSource.html">BitmapSource</a></td>
+<td>Represents a single, constant set of pixels at a certain size and resolution.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BlurEffect.html">BlurEffect</a></td>
+<td>A bitmap effect that blurs the target texture.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Bold.html">Bold</a></td>
+<td>An inline-level flow content element which causes content to render with a <em>bold</em> font weight.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BooleanAnimationUsingKeyFrames.html">BooleanAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Boolean</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BooleanKeyFrame.html">BooleanKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._BooleanAnimationUsingKeyFrames.html">BooleanAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BooleanToVisibilityConverter.html">BooleanToVisibilityConverter</a></td>
+<td>Represents the converter that converts <em>Boolean</em> values to and from <em>Visibility</em> enumeration values.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Border.html">Border</a></td>
+<td>Draws a border, background, or both around another element.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._BounceEase.html">BounceEase</a></td>
+<td>Represents an easing function that creates an animated bouncing effect.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Brush.html">Brush</a></td>
+<td>Defines objects used to paint graphical objects. Classes that derive from <a class="reference external" href="Gui.Core._Brush.html">Brush</a> describe how the area is painted.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Brushes.html">Brushes</a></td>
+<td>Declares a set of predefined <a class="reference external" href="Gui.Core._SolidColorBrush.html">SolidColorBrush</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._BulletDecorator.html">BulletDecorator</a></td>
+<td>Represents a layout control that aligns a bullet and another visual object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Button.html">Button</a></td>
+<td>Represents a push button which reacts to the <em>Click</em> event.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Canvas.html">Canvas</a></td>
+<td>Defines an area within which you can explicitly position child elements by using coordinates that are relative to the <a class="reference external" href="Gui.Core._Canvas.html">Canvas</a> area.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CheckBox.html">CheckBox</a></td>
+<td>Represents a control that a user can select and clear.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._CircleEase.html">CircleEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using a circular function.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Clock.html">Clock</a></td>
+<td>Maintains run-time timing state for a <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ClockGroup.html">ClockGroup</a></td>
+<td>An assemblage of <a class="reference external" href="Gui.Animation._Clock.html">Clock</a> types with behavior based off of a <a class="reference external" href="Gui.Animation._TimelineGroup.html">TimelineGroup</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Collection.html">Collection</a></td>
+<td>Represents a generic collection of objects that can be individually accessed by index.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CollectionView.html">CollectionView</a></td>
+<td>Represents a view for grouping, sorting, filtering, and navigating a data collection.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CollectionViewSource.html">CollectionViewSource</a></td>
+<td>Proxy of <a class="reference external" href="Gui.Core._CollectionView.html">CollectionView</a> to be used from XAML files.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ColorAnimation.html">ColorAnimation</a></td>
+<td>Animates the value of a <em>Color</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ColorAnimationUsingKeyFrames.html">ColorAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Color</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ColorKeyFrame.html">ColorKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._ColorAnimationUsingKeyFrames.html">ColorAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Colors.html">Colors</a></td>
+<td>Implements a set of predefined colors.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ColumnDefinition.html">ColumnDefinition</a></td>
+<td>Defines column-specific properties that apply to <a class="reference external" href="Gui.Core._Grid.html">Grid</a> elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CombinedGeometry.html">CombinedGeometry</a></td>
+<td>Represents a 2D geometric shape defined by the combination of two <a class="reference external" href="Gui.Core._Geometry.html">Geometry</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ComboBox.html">ComboBox</a></td>
+<td>Represents a selection control with a drop-down list that can be shown or hidden by clicking the arrow on the control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ComboBoxItem.html">ComboBoxItem</a></td>
+<td>Implements a selectable item inside a <a class="reference external" href="Gui.Core._ComboBox.html">ComboBox</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CommandBinding.html">CommandBinding</a></td>
+<td>Binds a <a class="reference external" href="Gui.Core._RoutedCommand.html">RoutedCommand</a> to the event handlers that implement the command.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CommandManager.html">CommandManager</a></td>
+<td>Provides command related events and is responsible for managing routed commands execution.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ComponentCommands.html">ComponentCommands</a></td>
+<td>Provides a standard set of component related commands.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CompositeTransform.html">CompositeTransform</a></td>
+<td>This class lets you apply multiple different transforms to an object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._CompositeTransform3D.html">CompositeTransform3D</a></td>
+<td>Represents 3-D scale, rotation, and translate transforms to be applied to an element.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Condition.html">Condition</a></td>
+<td>Represents a condition for the <a class="reference external" href="Gui.Core._MultiTrigger.html">MultiTrigger</a> and the <a class="reference external" href="Gui.Core._MultiDataTrigger.html">MultiDataTrigger</a>, which apply changes to property values based on a set of conditions.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ContentControl.html">ContentControl</a></td>
+<td>Represents a control with a single piece of content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ContentPresenter.html">ContentPresenter</a></td>
+<td>Displays the content of <a class="reference external" href="Gui.Core._ContentControl.html">ContentControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ContextMenu.html">ContextMenu</a></td>
+<td>Represents a pop-up menu that enables a control to expose functionality that is specific to the context of the control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ContextMenuService.html">ContextMenuService</a></td>
+<td>Provides the system implementation for displaying a <a class="reference external" href="Gui.Core._ContextMenu.html">ContextMenu</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Control.html">Control</a></td>
+<td>Represents the base class for all user interactive elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ControlTemplate.html">ControlTemplate</a></td>
+<td>Specifies the visual structure and behavioral aspects of a <a class="reference external" href="Gui.Core._Control.html">Control</a> that can be shared across multiple instances of the control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ControllableStoryboardAction.html">ControllableStoryboardAction</a></td>
+<td>Manipulates a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a> that has been applied by a <a class="reference external" href="Gui.Animation._BeginStoryboard.html">BeginStoryboard</a> action.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._CubicEase.html">CubicEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using the formula f(t) = t<sup>3</sup>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DashStyle.html">DashStyle</a></td>
+<td>Represents the sequence of dashes and gaps that will be applied by a <a class="reference external" href="Gui.Core._Pen.html">Pen</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DataObject.html">DataObject</a></td>
+<td>Defines a format-independent mechanism for transferring data.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DataTemplate.html">DataTemplate</a></td>
+<td>Describes the visual structure of a data object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DataTemplateSelector.html">DataTemplateSelector</a></td>
+<td>Provides a way to choose a <a class="reference external" href="Gui.Core._DataTemplate.html">DataTemplate</a> based on the data object and the data-bound element.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DataTrigger.html">DataTrigger</a></td>
+<td>Represents a trigger that applies property values or performs actions when the bound data meets a specified condition.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Decorator.html">Decorator</a></td>
+<td>Provides a base class for elements that apply effects onto or around a single child element, such as <a class="reference external" href="Gui.Core._Border.html">Border</a> or <a class="reference external" href="Gui.Core._Viewbox.html">Viewbox</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._DependencyObject.html">DependencyObject</a></td>
+<td>Represents an object that participates in the dependency property system.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._DependencyProperty.html">DependencyProperty</a></td>
+<td>Represents a dependency property that is registered in the property system. Dependency properties provide support for value expressions, property invalidation and dependent-value coercion, default values, inheritance, data binding, animation, property change notification, and styling.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteBooleanKeyFrame.html">DiscreteBooleanKeyFrame</a></td>
+<td>Animates from the <em>Boolean</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteColorKeyFrame.html">DiscreteColorKeyFrame</a></td>
+<td>Animates from the <em>Color</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteDoubleKeyFrame.html">DiscreteDoubleKeyFrame</a></td>
+<td>Animates from the <em>Single</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteInt16KeyFrame.html">DiscreteInt16KeyFrame</a></td>
+<td>Animates from the <em>Int16</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteInt32KeyFrame.html">DiscreteInt32KeyFrame</a></td>
+<td>Animates from the <em>Int32</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteMatrixKeyFrame.html">DiscreteMatrixKeyFrame</a></td>
+<td>Animates from the <em>Matrix</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteObjectKeyFrame.html">DiscreteObjectKeyFrame</a></td>
+<td>Animates from the <em>Object</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscretePointKeyFrame.html">DiscretePointKeyFrame</a></td>
+<td>Animates from the <em>Point</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteRectKeyFrame.html">DiscreteRectKeyFrame</a></td>
+<td>Animates from the <em>Rect</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteSizeKeyFrame.html">DiscreteSizeKeyFrame</a></td>
+<td>Animates from the <em>Size</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteStringKeyFrame.html">DiscreteStringKeyFrame</a></td>
+<td>Animates from the <em>String</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DiscreteThicknessKeyFrame.html">DiscreteThicknessKeyFrame</a></td>
+<td>Animates from the <em>Thickness</em> value of the previous key frame to its own <em>Value</em> using discrete interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._DispatcherObject.html">DispatcherObject</a></td>
+<td>Represents an object with thread affinity.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DockPanel.html">DockPanel</a></td>
+<td>Defines an area where you can arrange child elements either horizontally or vertically, relative to each other.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DoubleAnimation.html">DoubleAnimation</a></td>
+<td>Animates the value of a <em>Float</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DoubleAnimationUsingKeyFrames.html">DoubleAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Double</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._DoubleKeyFrame.html">DoubleKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._DoubleAnimationUsingKeyFrames.html">DoubleAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DragDrop.html">DragDrop</a></td>
+<td>Provides helper methods and fields for initiating drag-and-drop operations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DrawingContext.html">DrawingContext</a></td>
+<td>Describes visual content using draw, push, and pop commands during <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> <em>OnRender</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DropShadowEffect.html">DropShadowEffect</a></td>
+<td>A bitmap effect that paints a drop shadow around the target texture.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Duration.html">Duration</a></td>
+<td>Represents the duration of time that a <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a> is active.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._DynamicResourceExtension.html">DynamicResourceExtension</a></td>
+<td>Implements a markup extension that supports dynamic resource references made from XAML.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingColorKeyFrame.html">EasingColorKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._ColorAnimationUsingKeyFrames.html">ColorAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingDoubleKeyFrame.html">EasingDoubleKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._DoubleAnimationUsingKeyFrames.html">DoubleAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingFunctionBase.html">EasingFunctionBase</a></td>
+<td>Provides the base class for all the easing functions. You can create your own custom easing functions by inheriting from this class.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingInt16KeyFrame.html">EasingInt16KeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._Int16AnimationUsingKeyFrames.html">Int16AnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingInt32KeyFrame.html">EasingInt32KeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._Int32AnimationUsingKeyFrames.html">Int32AnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingPointKeyFrame.html">EasingPointKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._PointAnimationUsingKeyFrames.html">PointAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingRectKeyFrame.html">EasingRectKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._RectAnimationUsingKeyFrames.html">RectAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingSizeKeyFrame.html">EasingSizeKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._SizeAnimationUsingKeyFrames.html">SizeAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._EasingThicknessKeyFrame.html">EasingThicknessKeyFrame</a></td>
+<td>A class that enables you to associate easing functions with a <a class="reference external" href="Gui.Animation._ThicknessAnimationUsingKeyFrames.html">ThicknessAnimationUsingKeyFrames</a> key frame animation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Effect.html">Effect</a></td>
+<td>Provides a custom bitmap effect.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ElasticEase.html">ElasticEase</a></td>
+<td>Represents an easing function that creates an animation that resembles a spring oscillating back and forth until it comes to rest.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Ellipse.html">Ellipse</a></td>
+<td>Draws an ellipse.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._EllipseGeometry.html">EllipseGeometry</a></td>
+<td>Represents the geometry of a circle or ellipse.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._EventTrigger.html">EventTrigger</a></td>
+<td>Represents a trigger that applies a set of actions in response to an event.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Expander.html">Expander</a></td>
+<td>Represents a control that displays a header with a collapsible window to display content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ExponentialEase.html">ExponentialEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using an exponential formula.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._Expression.html">Expression</a></td>
+<td>Base implementation for all expressions.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FontFamily.html">FontFamily</a></td>
+<td>Represents a family of related fonts.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FormattedText.html">FormattedText</a></td>
+<td>Provides low-level control for drawing text.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a></td>
+<td>Provides GUI framework-level features for user interface elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FrameworkPropertyMetadata.html">FrameworkPropertyMetadata</a></td>
+<td>Reports or applies metadata for a dependency property, specifically adding framework-specific property system characteristics.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FrameworkTemplate.html">FrameworkTemplate</a></td>
+<td>Enables the instantiation of a tree of elements for a template.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._Freezable.html">Freezable</a></td>
+<td>Defines an object that has a modifiable state and a read-only (frozen) state.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._FreezableCollection.html">FreezableCollection</a></td>
+<td>Represents a collection of <a class="reference external" href="Gui.DependencySystem._DependencyObject.html">DependencyObject</a>, <a class="reference external" href="Gui.DependencySystem._Freezable.html">Freezable</a>, or <a class="reference external" href="Gui.Core._Animatable.html">Animatable</a> objects. <a class="reference external" href="Gui.Core._FreezableCollection.html">FreezableCollection</a> is itself an <a class="reference external" href="Gui.Core._Animatable.html">Animatable</a> type.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Geometry.html">Geometry</a></td>
+<td>Classes that derive from this abstract base class define geometric shapes. <a class="reference external" href="Gui.Core._Geometry.html">Geometry</a> objects can be used for clipping, hit-testing, and rendering 2D graphic data.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GeometryGroup.html">GeometryGroup</a></td>
+<td>Represents a composite geometry, composed of other <a class="reference external" href="Gui.Core._Geometry.html">Geometry</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GradientBrush.html">GradientBrush</a></td>
+<td>Defines an abstract class that describes a gradient, composed of gradient stops. Classes that inherit from <a class="reference external" href="Gui.Core._GradientBrush.html">GradientBrush</a> describe different ways of interpreting gradient stops.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GradientStop.html">GradientStop</a></td>
+<td>Describes the location and color of a transition point in a gradient.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GradientStopCollection.html">GradientStopCollection</a></td>
+<td>Represents a collection of <a class="reference external" href="Gui.Core._GradientStop.html">GradientStop</a> objects that can be individually accessed by index.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Grid.html">Grid</a></td>
+<td>Defines a flexible grid area that consists of columns and rows.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GridLength.html">GridLength</a></td>
+<td>Represents the length of elements that explicitly support <em>Star</em> unit types. Elements such as <a class="reference external" href="Gui.Core._ColumnDefinition.html">ColumnDefinition</a> and <a class="reference external" href="Gui.Core._RowDefinition.html">RowDefinition</a> use this type to describe width and height in order to support variable distribution of available space.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._GridView.html">GridView</a></td>
+<td>Represents a view mode that displays data items in columns for a <a class="reference external" href="Gui.Controls._ListView.html">ListView</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._GridViewColumn.html">GridViewColumn</a></td>
+<td>Represents a column that displays data.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._GridViewColumnHeader.html">GridViewColumnHeader</a></td>
+<td>Represents a column header for a <a class="reference external" href="Gui.Controls._GridViewColumn.html">GridViewColumn</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._GridViewHeaderRowPresenter.html">GridViewHeaderRowPresenter</a></td>
+<td>Represents an object that is used to define the layout of a row of column headers.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._GridViewRowPresenter.html">GridViewRowPresenter</a></td>
+<td>Represents an object that specifies the layout of a row of data.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._GroupBox.html">GroupBox</a></td>
+<td>Represents a control that displays a frame around a group of controls with an optional caption.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._HeaderedContentControl.html">HeaderedContentControl</a></td>
+<td>Provides the base implementation for all controls that contain single content and have a header.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._HeaderedItemsControl.html">HeaderedItemsControl</a></td>
+<td>Represents a control that contains multiple items and has a header.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._HierarchicalDataTemplate.html">HierarchicalDataTemplate</a></td>
+<td>Represents a <a class="reference external" href="Gui.Core._DataTemplate.html">DataTemplate</a> that supports <a class="reference external" href="Gui.Core._HeaderedItemsControl.html">HeaderedItemsControl</a>, such as <a class="reference external" href="Gui.Core._TreeViewItem.html">TreeViewItem</a> or <a class="reference external" href="Gui.Core._MenuItem.html">MenuItem</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Hyperlink.html">Hyperlink</a></td>
+<td>An inline-level flow content element that hosts hyperlinks within flow content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Image.html">Image</a></td>
+<td>Represents a control that displays an image.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ImageBrush.html">ImageBrush</a></td>
+<td>Paints an area with an image.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ImageSource.html">ImageSource</a></td>
+<td>Represents an image object that has width and height.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Inline.html">Inline</a></td>
+<td>An abstract class that provides a base for all inline flow content elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._InlineUIContainer.html">InlineUIContainer</a></td>
+<td>An inline-level flow content element which enables <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> elements (i.e. a <a class="reference external" href="Gui.Core._Button.html">Button</a>) to be embedded in flow content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._InputBinding.html">InputBinding</a></td>
+<td>Represents a binding between an <a class="reference external" href="Gui.Core._InputGesture.html">InputGesture</a> and a command.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._InputGesture.html">InputGesture</a></td>
+<td>Abstract class that describes input device gestures.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int16Animation.html">Int16Animation</a></td>
+<td>Animates the value of a <em>Int16</em> property between two 'target values' using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int16AnimationUsingKeyFrames.html">Int16AnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Int16</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int16KeyFrame.html">Int16KeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._Int16AnimationUsingKeyFrames.html">Int16AnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int32Animation.html">Int32Animation</a></td>
+<td>Animates the value of a <em>Int32</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int32AnimationUsingKeyFrames.html">Int32AnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Int32</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Int32KeyFrame.html">Int32KeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._Int32AnimationUsingKeyFrames.html">Int32AnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Italic.html">Italic</a></td>
+<td>An inline-level flow content element that causes content to render with an italic font style.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ItemCollection.html">ItemCollection</a></td>
+<td>Holds the list of items that constitute the content of an <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ItemContainerGenerator.html">ItemContainerGenerator</a></td>
+<td>Generates the user interface on behalf of its host, such as an <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a></td>
+<td>Represents a control that can be used to present a collection of items.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ItemsPanelTemplate.html">ItemsPanelTemplate</a></td>
+<td>Specifies the panel that the <a class="reference external" href="Gui.Core._ItemsPresenter.html">ItemsPresenter</a> creates for the layout of the items of an <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ItemsPresenter.html">ItemsPresenter</a></td>
+<td>Used within the template of an ItemControl to specify the place in the control's visual tree where the ItemsPanel defined by the <a class="reference external" href="Gui.Core._ItemsControl.html">ItemsControl</a> is to be added.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._KeyBinding.html">KeyBinding</a></td>
+<td>Binds a <a class="reference external" href="Gui.Core._KeyGesture.html">KeyGesture</a> to a Command.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._KeyGesture.html">KeyGesture</a></td>
+<td>Defines a keyboard combination that can be used to invoke a command.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._KeySpline.html">KeySpline</a></td>
+<td>This class is used by a spline key frame to define animation progress.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._KeyTime.html">KeyTime</a></td>
+<td>Specifies the precise timing when a particular key frame should take place</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Keyboard.html">Keyboard</a></td>
+<td>Represents the keyboard device.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._KeyboardNavigation.html">KeyboardNavigation</a></td>
+<td>Provides logical and directional navigation between focusable objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Label.html">Label</a></td>
+<td>Represents the text label for a control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Line.html">Line</a></td>
+<td>Draws a line.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._LineBreak.html">LineBreak</a></td>
+<td>An inline flow content element that causes a line break to occur in flow content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._LineGeometry.html">LineGeometry</a></td>
+<td>Represents the geometry of a line.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._LineSegment.html">LineSegment</a></td>
+<td>Creates a line between two points in a <a class="reference external" href="Gui.Core._PathFigure.html">PathFigure</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearColorKeyFrame.html">LinearColorKeyFrame</a></td>
+<td>Animates from the <em>Color</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearDoubleKeyFrame.html">LinearDoubleKeyFrame</a></td>
+<td>Animates from the <em>Float</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._LinearGradientBrush.html">LinearGradientBrush</a></td>
+<td>Paints an area with a linear gradient.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearInt16KeyFrame.html">LinearInt16KeyFrame</a></td>
+<td>Animates from the <em>Int16</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearInt32KeyFrame.html">LinearInt32KeyFrame</a></td>
+<td>Animates from the <em>Int32</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearPointKeyFrame.html">LinearPointKeyFrame</a></td>
+<td>Animates from the <em>Point</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearRectKeyFrame.html">LinearRectKeyFrame</a></td>
+<td>Animates from the <em>Rect</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearSizeKeyFrame.html">LinearSizeKeyFrame</a></td>
+<td>Animates from the <em>Size</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._LinearThicknessKeyFrame.html">LinearThicknessKeyFrame</a></td>
+<td>Animates from the <em>Thickness</em> value of the previous key frame to its own <em>Value</em> using linear interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ListBox.html">ListBox</a></td>
+<td>Contains a list of selectable items.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ListBoxItem.html">ListBoxItem</a></td>
+<td>Represents a selectable item in a <a class="reference external" href="Gui.Core._ListBox.html">ListBox</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._ListView.html">ListView</a></td>
+<td>Represents a control that displays a list of data items.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Controls._ListViewItem.html">ListViewItem</a></td>
+<td>Represents an item in a <a class="reference external" href="Gui.Controls._ListView.html">ListView</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._LogicalTreeHelper.html">LogicalTreeHelper</a></td>
+<td>Contains static methods useful for performing common tasks with nodes in a logical tree.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MarkupExtension.html">MarkupExtension</a></td>
+<td>Provides a base class for XAML markup extension implementations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._MatrixAnimationUsingKeyFrames.html">MatrixAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Matrix</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._MatrixKeyFrame.html">MatrixKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._MatrixAnimationUsingKeyFrames.html">MatrixAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MatrixTransform.html">MatrixTransform</a></td>
+<td>Creates an arbitrary affine matrix transformation that is used to manipulate objects or coordinate systems in a 2D plane.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MatrixTransform3D.html">MatrixTransform3D</a></td>
+<td>Applies a 3D transformation matrix to an object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Menu.html">Menu</a></td>
+<td>Represents a Windows menu control that enables you to hierarchically organize elements associated with commands and event handlers.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MenuItem.html">MenuItem</a></td>
+<td>Represents a selectable item inside a <a class="reference external" href="Gui.Core._Menu.html">Menu</a> or <a class="reference external" href="Gui.Core._ContextMenu.html">ContextMenu</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MeshGeometry.html">MeshGeometry</a></td>
+<td>Defines a geometric shape described using a mesh of vertices and indices.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Mouse.html">Mouse</a></td>
+<td>Represents the mouse device.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MultiBinding.html">MultiBinding</a></td>
+<td>Describes a collection of <a class="reference external" href="Gui.Core._Binding.html">Binding</a> objects attached to a single binding target property.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MultiBindingExpression.html">MultiBindingExpression</a></td>
+<td>Contains instance information about a single instance of a <a class="reference external" href="Gui.Core._MultiBinding.html">MultiBinding</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MultiDataTrigger.html">MultiDataTrigger</a></td>
+<td>Represents a trigger that applies property values or performs actions when the bound data meets a set of conditions.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._MultiTrigger.html">MultiTrigger</a></td>
+<td>Represents a trigger that applies property values or performs actions when a set of conditions are satisfied.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._NameScope.html">NameScope</a></td>
+<td>Store relationships between the XAML defined names of objects and their instances.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._NullExtension.html">NullExtension</a></td>
+<td>Implements a XAML markup extension in order to return a null object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ObjectAnimationUsingKeyFrames.html">ObjectAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>BaseComponent</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ObjectKeyFrame.html">ObjectKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._ObjectAnimationUsingKeyFrames.html">ObjectAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ObservableCollection.html">ObservableCollection</a></td>
+<td>Represents a dynamic data collection that provides notifications when items get added or removed.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Page.html">Page</a></td>
+<td>Encapsulates a page of content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Panel.html">Panel</a></td>
+<td>Provides a base class for all <a class="reference external" href="Gui.Core._Panel.html">Panel</a> elements. Use <a class="reference external" href="Gui.Core._Panel.html">Panel</a> elements to position and arrange child objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ParallelTimeline.html">ParallelTimeline</a></td>
+<td>Defines a segment of time that may contain child <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PasswordBox.html">PasswordBox</a></td>
+<td>Represents a control designed for entering and handling passwords.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Path.html">Path</a></td>
+<td>Draws a series of connected lines and curves.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PathFigure.html">PathFigure</a></td>
+<td>Represents a subsection of a geometry, a single connected series of two-dimensional segments.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PathGeometry.html">PathGeometry</a></td>
+<td>Represents a complex shape that may be composed of arcs, curves, ellipses, lines and rectangles.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PathSegment.html">PathSegment</a></td>
+<td>Represents a complex shape that may be composed of arcs, curves, ellipses, lines and rectangles.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._PauseStoryboard.html">PauseStoryboard</a></td>
+<td>A trigger action that pauses a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Pen.html">Pen</a></td>
+<td>Describes how a shape is outlined.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._PointAnimation.html">PointAnimation</a></td>
+<td>Animates the value of a <em>Point</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._PointAnimationUsingKeyFrames.html">PointAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Point</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._PointKeyFrame.html">PointKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._PointAnimationUsingKeyFrames.html">PointAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PolyBezierSegment.html">PolyBezierSegment</a></td>
+<td>Represents one or more cubic Bezier curves.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PolyLineSegment.html">PolyLineSegment</a></td>
+<td>Represents a set of line segments defined by a PointCollection with each Point specifying the end point of a line segment.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PolyQuadraticBezierSegment.html">PolyQuadraticBezierSegment</a></td>
+<td>Represents one or more quadratic Bezier curves.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Popup.html">Popup</a></td>
+<td>Represents a pop-up window that has content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._PowerEase.html">PowerEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using the formula f(t) = t<sup>p</sup> where p is equal to the <em>Power</em> property.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ProgressBar.html">ProgressBar</a></td>
+<td>Indicates the progress of an operation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.DependencySystem._PropertyMetadata.html">PropertyMetadata</a></td>
+<td>Defines certain behavior aspects of a dependency property as it is applied to a specific type, including conditions it was registered with.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._PropertyPath.html">PropertyPath</a></td>
+<td>Implements a data structure for describing a property as a path below another property, or below an owning type. Property paths are used in data binding to objects, and in storyboards and timelines for animations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._QuadraticBezierSegment.html">QuadraticBezierSegment</a></td>
+<td>Represents a quadratic Bezier curve drawn between two points.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._QuadraticEase.html">QuadraticEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using the formula f(t) = t<sup>2</sup>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._QuarticEase.html">QuarticEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using the formula f(t) = t<sup>4</sup>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._QuinticEase.html">QuinticEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using the formula f(t) = t<sup>5</sup>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RadialGradientBrush.html">RadialGradientBrush</a></td>
+<td>Paints an area with a radial gradient.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RadioButton.html">RadioButton</a></td>
+<td>Represents a button that can be selected, but not cleared, by a user.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RangeBase.html">RangeBase</a></td>
+<td>Represents an element that has a value within a specific range.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._RectAnimation.html">RectAnimation</a></td>
+<td>Animates the value of a <em>Rect</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._RectAnimationUsingKeyFrames.html">RectAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Rect</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._RectKeyFrame.html">RectKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._RectAnimationUsingKeyFrames.html">RectAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Rectangle.html">Rectangle</a></td>
+<td>Draws a rectangle.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RectangleGeometry.html">RectangleGeometry</a></td>
+<td>Describes a two-dimensional rectangle geometry.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RelativeSource.html">RelativeSource</a></td>
+<td>Implements a markup extension that describes the location of the binding source relative to the position of the binding target.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RenderOptions.html">RenderOptions</a></td>
+<td>Provides options for controlling the rendering behavior of objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._RepeatBehavior.html">RepeatBehavior</a></td>
+<td>Describes how a <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a> repeats its simple duration. Examples:</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RepeatButton.html">RepeatButton</a></td>
+<td>Represents a control that raises its <em>Click</em> event repeatedly from the time it is pressed until it is released.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ResourceDictionary.html">ResourceDictionary</a></td>
+<td>Provides a hash table implementation that contains resources used by the UI.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ResumeStoryboard.html">ResumeStoryboard</a></td>
+<td>A trigger action that resumes a paused <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RotateTransform.html">RotateTransform</a></td>
+<td>Rotates an object clockwise about a specified point in 2D coordinate system.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RoutedCommand.html">RoutedCommand</a></td>
+<td>A command that is routed through the element tree.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RoutedEvent.html">RoutedEvent</a></td>
+<td>An event instance that propagates through a tree of related elements. There are three types of routing: bubbling, tunneling and direct. With bubbling, the event instance moves from the source of the event up to the top of the tree. With tunneling, the event instance starts at the top of the tree and moves down to the source of the event. With direct routing, the event instance behaves like a standard event.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RoutedUICommand.html">RoutedUICommand</a></td>
+<td>A command that is routed through the element tree and contains a text property.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._RowDefinition.html">RowDefinition</a></td>
+<td>Defines row-specific properties that apply to <a class="reference external" href="Gui.Core._Grid.html">Grid</a> elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Run.html">Run</a></td>
+<td>An inline-level flow content element intended to contain a run of formatted or unformatted text.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ScaleTransform.html">ScaleTransform</a></td>
+<td>Scales an object in the 2D coordinate system.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ScrollBar.html">ScrollBar</a></td>
+<td>Represents a control that provides a scroll bar that has a sliding <a class="reference external" href="Gui.Core._Thumb.html">Thumb</a> whose position corresponds to a value.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ScrollContentPresenter.html">ScrollContentPresenter</a></td>
+<td>Displays the content of a <a class="reference external" href="Gui.Core._ScrollViewer.html">ScrollViewer</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ScrollViewer.html">ScrollViewer</a></td>
+<td>Represents a scrollable area that can contain other visible elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Selector.html">Selector</a></td>
+<td>Represents a control that allows a user to select items from among its child elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Separator.html">Separator</a></td>
+<td><a class="reference external" href="Gui.Core._Control.html">Control</a> that is used to separate items in items controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Setter.html">Setter</a></td>
+<td>Represents a setter that applies a property value.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Shape.html">Shape</a></td>
+<td>Provides a base class for shape elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SineEase.html">SineEase</a></td>
+<td>Represents an easing function that creates an animation that accelerates and/or decelerates using a sine formula</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SizeAnimation.html">SizeAnimation</a></td>
+<td>Animates the value of a <em>Size</em> property between two target values using linear interpolation over a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SizeAnimationUsingKeyFrames.html">SizeAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Size</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SizeKeyFrame.html">SizeKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._SizeAnimationUsingKeyFrames.html">SizeAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._SkewTransform.html">SkewTransform</a></td>
+<td>Represents a 2D skew. It is useful for creating the illusion of 3-dimensional depth in a 2D object.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Slider.html">Slider</a></td>
+<td>Represents a control that lets the user select from a range of values by moving a <a class="reference external" href="Gui.Core._Thumb.html">Thumb</a> control along a <a class="reference external" href="Gui.Core._Track.html">Track</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._SolidColorBrush.html">SolidColorBrush</a></td>
+<td>Paints an area with a solid color.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Span.html">Span</a></td>
+<td>Groups other <a class="reference external" href="Gui.Core._Inline.html">Inline</a> content elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineColorKeyFrame.html">SplineColorKeyFrame</a></td>
+<td>Animates from the <em>Color</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineDoubleKeyFrame.html">SplineDoubleKeyFrame</a></td>
+<td>Animates from the <em>Float</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineInt16KeyFrame.html">SplineInt16KeyFrame</a></td>
+<td>Animates from the <em>Int16</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineInt32KeyFrame.html">SplineInt32KeyFrame</a></td>
+<td>Animates from the <em>Int32</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplinePointKeyFrame.html">SplinePointKeyFrame</a></td>
+<td>Animates from the <em>Point</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineRectKeyFrame.html">SplineRectKeyFrame</a></td>
+<td>Animates from the <em>Rect</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineSizeKeyFrame.html">SplineSizeKeyFrame</a></td>
+<td>Animates from the <em>Size</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._SplineThicknessKeyFrame.html">SplineThicknessKeyFrame</a></td>
+<td>Animates from the <em>Thickness</em> value of the previous key frame to its own <em>Value</em> using splined interpolation.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StackPanel.html">StackPanel</a></td>
+<td>Arranges child elements into a single horizontal or vertical line.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StaticExtension.html">StaticExtension</a></td>
+<td>Implements a markup extension that returns static field and property references.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StaticResourceExtension.html">StaticResourceExtension</a></td>
+<td>Implements a markup extension that supports static resource references made from XAML.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StatusBar.html">StatusBar</a></td>
+<td>Represents a control that displays items and information in a horizontal bar (typically at the bottom) in an application window.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StatusBarItem.html">StatusBarItem</a></td>
+<td>Represents an item of a <a class="reference external" href="Gui.Core._StatusBar.html">StatusBar</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._StopStoryboard.html">StopStoryboard</a></td>
+<td>A trigger action that stops a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a></td>
+<td>A container timeline that provides object and property targeting information for its child animations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StreamGeometry.html">StreamGeometry</a></td>
+<td>Defines a geometric shape, described using a <a class="reference external" href="Gui.Core._StreamGeometryContext.html">StreamGeometryContext</a> or a SVG command string as described in the <a class="reference external" href="http://www.w3.org/TR/SVG11/paths.html">W3C</a> specs.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._StreamGeometryContext.html">StreamGeometryContext</a></td>
+<td>Describes a geometry using drawing commands. This class is used with the <a class="reference external" href="Gui.Core._StreamGeometry.html">StreamGeometry</a> class to create a lightweight geometry that does not support data binding, animation, or modification.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._StringAnimationUsingKeyFrames.html">StringAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>String</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._StringKeyFrame.html">StringKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._StringAnimationUsingKeyFrames.html">StringAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Style.html">Style</a></td>
+<td>Enables the sharing of properties, resources, and event handlers between instances of a type.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TabControl.html">TabControl</a></td>
+<td>Represents a control that contains multiple items that share the same space on the screen.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TabItem.html">TabItem</a></td>
+<td>Represents a selectable item inside a <a class="reference external" href="Gui.Core._TabControl.html">TabControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TabPanel.html">TabPanel</a></td>
+<td>Handles the layout of the <a class="reference external" href="Gui.Core._TabItem.html">TabItem</a> objects on a <a class="reference external" href="Gui.Core._TabControl.html">TabControl</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TemplateBindingExpression.html">TemplateBindingExpression</a></td>
+<td>Describes a run-time instance of a <a class="reference external" href="Gui.Core._TemplateBindingExtension.html">TemplateBindingExtension</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TemplateBindingExtension.html">TemplateBindingExtension</a></td>
+<td>Implements a markup extension that supports the binding between the value of a property in a template and the value of some other exposed property on the templated control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TextBlock.html">TextBlock</a></td>
+<td>Provides a lightweight control for displaying small amounts of text content.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TextBox.html">TextBox</a></td>
+<td>Represents a control that can be used to display or edit unformatted text.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TextElement.html">TextElement</a></td>
+<td>Defines text attached properties.</td>
+</tr>
+<tr><td><a class="reference external" href="Render.RenderDevice._Texture.html">Texture</a></td>
+<td>Base class for 2D textures.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TextureSource.html">TextureSource</a></td>
+<td>Defines an <a class="reference external" href="Gui.Core._ImageSource.html">ImageSource</a> constructed from a <a class="reference external" href="Render.RenderDevice._Texture.html">Texture</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ThicknessAnimation.html">ThicknessAnimation</a></td>
+<td>Animates the value of a <em>Thickness</em> property between two target values using linear interpolationover a specified <em>Duration</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ThicknessAnimationUsingKeyFrames.html">ThicknessAnimationUsingKeyFrames</a></td>
+<td>Animates the value of a <em>Thickness</em> property along a set of <em>KeyFrames</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._ThicknessKeyFrame.html">ThicknessKeyFrame</a></td>
+<td>Defines an animation segment with its own target value and interpolation method for a <a class="reference external" href="Gui.Animation._BooleanAnimationUsingKeyFrames.html">BooleanAnimationUsingKeyFrames</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Thumb.html">Thumb</a></td>
+<td>Represents a control that can be dragged by the user.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TickBar.html">TickBar</a></td>
+<td>Represents a control that draws a set of tick marks for a <a class="reference external" href="Gui.Core._Slider.html">Slider</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TileBrush.html">TileBrush</a></td>
+<td>Describes a way to paint a region by using one or more tiles.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._TimeSpan.html">TimeSpan</a></td>
+<td>Represents a time interval.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a></td>
+<td>Defines a segment of time.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._TimelineGroup.html">TimelineGroup</a></td>
+<td>Abstract class that, when implemented represents a <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a> that may contain a collection of child <a class="reference external" href="Gui.Animation._Timeline.html">Timeline</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToggleButton.html">ToggleButton</a></td>
+<td>Base class for button controls that can switch states.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a></td>
+<td>Provides a container for a group of commands or controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolBarOverflowPanel.html">ToolBarOverflowPanel</a></td>
+<td>Used to arrange overflow <a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a> items.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolBarPanel.html">ToolBarPanel</a></td>
+<td>Arranges <a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a> items inside a <a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolBarTray.html">ToolBarTray</a></td>
+<td>Represents the container that handles the layout of a <a class="reference external" href="Gui.Core._ToolBar.html">ToolBar</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolTip.html">ToolTip</a></td>
+<td>Represents a control that creates a pop-up window that displays information for an element in the interface.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ToolTipService.html">ToolTipService</a></td>
+<td>Represents a service that provides properties and events to control the display and behavior of tooltips.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Track.html">Track</a></td>
+<td>Represents a control primitive that handles the positioning and sizing of a <a class="reference external" href="Gui.Core._Thumb.html">Thumb</a> control and two <a class="reference external" href="Gui.Core._RepeatButton.html">RepeatButton</a> controls that are used to set a Value.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Transform.html">Transform</a></td>
+<td>Defines functionality that enables transformations in a 2D plane.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Transform3D.html">Transform3D</a></td>
+<td>Provides a base class for all three-dimensional transformations, including translation, rotation, and scale transformations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TransformGroup.html">TransformGroup</a></td>
+<td>Represents a composite <a class="reference external" href="Gui.Core._Transform.html">Transform</a> composed of other <a class="reference external" href="Gui.Core._Transform.html">Transform</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TranslateTransform.html">TranslateTransform</a></td>
+<td>Translates an object in the 2D coordinate system.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TreeView.html">TreeView</a></td>
+<td>Represents a control that displays hierarchical data in a tree structure that has items that can expand and collapse.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TreeViewItem.html">TreeViewItem</a></td>
+<td>Implements a selectable item in a <a class="reference external" href="Gui.Core._TreeView.html">TreeView</a> control.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Trigger.html">Trigger</a></td>
+<td>Represents a trigger that applies property values or performs actions conditionally.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TriggerAction.html">TriggerAction</a></td>
+<td>Describes an action to perform for a trigger.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._TypeExtension.html">TypeExtension</a></td>
+<td>Implements a markup extension that returns a <em>Type</em> based on a string input.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._UIElement.html">UIElement</a></td>
+<td>Provides a starting point for element layout characteristics, and also exposes virtual methods that derived classes can override, which can influence the layout rendering behavior of the element and its child elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._UIElementCollection.html">UIElementCollection</a></td>
+<td>Represents an ordered collection of <a class="reference external" href="Gui.Core._UIElement.html">UIElement</a> child elements.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._UIPropertyMetadata.html">UIPropertyMetadata</a></td>
+<td>Provides property metadata for non-framework properties that do have rendering/user interface impact at the core level.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Underline.html">Underline</a></td>
+<td>An inline-level flow content element which causes content to render with an underlined text decoration.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._UniformGrid.html">UniformGrid</a></td>
+<td>Provides a way to arrange content in a grid where all the cells in the grid have the same size.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Uri.html">Uri</a></td>
+<td>A URI is a compact representation of a resource available to your application.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._UserControl.html">UserControl</a></td>
+<td>Provides a simple way to create a composition of controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._ValueTargetProvider.html">ValueTargetProvider</a></td>
+<td>Provides useful information during <a class="reference external" href="Gui.Core._MarkupExtension.html">MarkupExtension</a> <em>ProvideValue</em> calls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Viewbox.html">Viewbox</a></td>
+<td>Defines a content decorator that can stretch and scale a single child to fill the available space.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VirtualizationCacheLength.html">VirtualizationCacheLength</a></td>
+<td>Represents the measurements for the <em>VirtualizingPanel.CacheLength</em> attached property.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VirtualizingPanel.html">VirtualizingPanel</a></td>
+<td>Base class that provides access to information that is useful for implementing virtualization.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VirtualizingStackPanel.html">VirtualizingStackPanel</a></td>
+<td>Arranges and virtualizes content on a single line that is oriented either horizontally or vertically.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._Visual.html">Visual</a></td>
+<td>Provides rendering support, which includes hit testing, coordinate transformation, and bounding box calculations.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VisualBrush.html">VisualBrush</a></td>
+<td>Paints an area with a <a class="reference external" href="Gui.Core._Visual.html">Visual</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VisualCollection.html">VisualCollection</a></td>
+<td>Represents an ordered collection of <a class="reference external" href="Gui.Core._Visual.html">Visual</a> objects.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._VisualState.html">VisualState</a></td>
+<td>Represents the visual appearance of the control when it is in a specific state.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._VisualStateGroup.html">VisualStateGroup</a></td>
+<td>Contains mutually exclusive <a class="reference external" href="Gui.Animation._VisualState.html">VisualState</a> objects and <a class="reference external" href="Gui.Animation._VisualTransition.html">VisualTransition</a> objects that are used to go from one state to another.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._VisualStateManager.html">VisualStateManager</a></td>
+<td>Manages states and the logic for transitioning between states for controls.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Animation._VisualTransition.html">VisualTransition</a></td>
+<td>Represents the visual behavior that occurs when the control transitions from one state to another.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._VisualTreeHelper.html">VisualTreeHelper</a></td>
+<td>Provides utility methods that perform common tasks involving nodes in a visual tree.</td>
+</tr>
+<tr><td><a class="reference external" href="Gui.Core._WrapPanel.html">WrapPanel</a></td>
+<td>Positions child elements in sequential position from left to right, breaking content to the next line at the edge of the containing box.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="noesisapp-namespace">
+<h1>NoesisApp Namespace</h1>
+<table border="1" class="colwidths-given docutils" style="width: 100%">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Class</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><a class="reference external" href="App.ApplicationLauncher._Application.html">Application</a></td>
+<td>Encapsulates a NoesisGUI application.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._AttachableCollection.html">AttachableCollection</a></td>
+<td>Represents a collection of IAttachedObject with a shared <em>AssociatedObject</em> and provides change notifications to its contents when that <em>AssociatedObject</em> changes.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._AttachableObject.html">AttachableObject</a></td>
+<td>Represents the base class for specifying attachable objects.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._Behavior.html">Behavior</a></td>
+<td>Represents the base class for specifying <em>Behaviors</em> for a <a class="reference external" href="Gui.DependencySystem._DependencyObject.html">DependencyObject</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._BehaviorCollection.html">BehaviorCollection</a></td>
+<td>Represents a collection of behaviors with a shared <em>AssociatedObject</em> and provides change notifications to its contents when that <em>AssociatedObject</em> changes.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._BehaviorT.html">BehaviorT</a></td>
+<td>Templatized base class for <em>Behaviors</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._ChangePropertyAction.html">ChangePropertyAction</a></td>
+<td>An action that will change a property to a specified value when invoked.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._CollectionFilterBehavior.html">CollectionFilterBehavior</a></td>
+<td>A behavior that filters a collection depending on the supplied Predicate object.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._CollectionSortBehavior.html">CollectionSortBehavior</a></td>
+<td>A behavior that sorts a collection depending on the supplied Comparer object.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._ComparisonCondition.html">ComparisonCondition</a></td>
+<td>Represents one ternary condition: <em>left operand</em>, <em>operator</em>, <em>right operand</em>. Used as condition in the list of conditions on a <a class="reference external" href="App.Interactivity._ConditionalExpression.html">ConditionalExpression</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._ConditionBehavior.html">ConditionBehavior</a></td>
+<td>A behavior that attaches to a trigger and controls the conditions to fire the actions.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._ConditionalExpression.html">ConditionalExpression</a></td>
+<td>Represents a conditional expression that is set on a <em>ConditionBehavior.Condition</em> property. Contains a list of conditions that gets evaluated in order.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._ControlStoryboardAction.html">ControlStoryboardAction</a></td>
+<td>An action that will change the state of a targeted storyboard when invoked.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._DataTrigger.html">DataTrigger</a></td>
+<td>Represents a trigger that performs actions when the bound data meets a specified condition.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._EventTrigger.html">EventTrigger</a></td>
+<td>A trigger that listens for a specified event on its source and fires when that event is raised.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._EventTriggerBase.html">EventTriggerBase</a></td>
+<td>Represents a trigger that can listen to an object other than its AssociatedObject.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._EventTriggerBaseT.html">EventTriggerBaseT</a></td>
+<td>Templatized base class for EventTriggers.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._FilterPredicate.html">FilterPredicate</a></td>
+<td>Base class for Filter predicate object used by <a class="reference external" href="App.Interactivity._CollectionFilterBehavior.html">CollectionFilterBehavior</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._GamepadTrigger.html">GamepadTrigger</a></td>
+<td>A <a class="reference external" href="Gui.Core._Trigger.html">Trigger</a> that is triggered by a specified gamepad button.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._GoToStateAction.html">GoToStateAction</a></td>
+<td>An action that will transition a <a class="reference external" href="Gui.Core._FrameworkElement.html">FrameworkElement</a> to a specified <a class="reference external" href="Gui.Animation._VisualState.html">VisualState</a> when invoked.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._Interaction.html">Interaction</a></td>
+<td>Manages a collection of behaviors and triggers that expand the object functionality from XAML.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._InvokeCommandAction.html">InvokeCommandAction</a></td>
+<td>Executes the specified <em>ICommand</em> when invoked.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._KeyTrigger.html">KeyTrigger</a></td>
+<td>A <a class="reference external" href="Gui.Core._Trigger.html">Trigger</a> that is triggered by a keyboard event. If <em>Key</em> and <em>Modifiers</em> are detected, it fires.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._LaunchUriOrFileAction.html">LaunchUriOrFileAction</a></td>
+<td>An action that will launch a process to open a file or uri.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._MouseDragElementBehavior.html">MouseDragElementBehavior</a></td>
+<td>Moves the attached element in response to mouse drag gestures on the element.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._PlaySoundAction.html">PlaySoundAction</a></td>
+<td>An action that will play a sound to completion.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._PropertyChangedTrigger.html">PropertyChangedTrigger</a></td>
+<td>Represents a trigger that performs actions when the bound data changes.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._RemoveElementAction.html">RemoveElementAction</a></td>
+<td>An action that will remove the targeted element from the tree when invoked.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._SelectAction.html">SelectAction</a></td>
+<td>An action that will set <em>Selector.IsSelected</em> property to true on the asssociated object.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._SelectAllAction.html">SelectAllAction</a></td>
+<td>An action that will select all the text on a text control.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._SetFocusAction.html">SetFocusAction</a></td>
+<td>An action that will try to focus the associated element.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._SortComparer.html">SortComparer</a></td>
+<td>Base class for Comparer object used by <a class="reference external" href="App.Interactivity._CollectionSortBehavior.html">CollectionSortBehavior</a>. It compares 2 items.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StoryboardAction.html">StoryboardAction</a></td>
+<td>An abstract action class that provides the ability to target a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StoryboardCompletedTrigger.html">StoryboardCompletedTrigger</a></td>
+<td>A trigger that listens for the completion of a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StoryboardTrigger.html">StoryboardTrigger</a></td>
+<td>An abstract trigger class that provides the ability to target a <a class="reference external" href="Gui.Animation._Storyboard.html">Storyboard</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StringFilterPredicate.html">StringFilterPredicate</a></td>
+<td>Predicate that matches a filter string against item text representation.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StringSortComparer.html">StringSortComparer</a></td>
+<td>Compares the text representation of two items for sorting.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._StyleInteraction.html">StyleInteraction</a></td>
+<td>Allows setting a collection of <em>Interactivity</em> behaviors and triggers in a <a class="reference external" href="Gui.Core._Style.html">Style</a>, so they are applied to all instances of the styled control.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TargetedTriggerAction.html">TargetedTriggerAction</a></td>
+<td>Represents an action that can be targeted to affect an object other than its <em>AssociatedObject</em>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TargetedTriggerActionT.html">TargetedTriggerActionT</a></td>
+<td>Templatized base class for <a class="reference external" href="App.Interactivity._TargetedTriggerAction.html">TargetedTriggerAction</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TimerTrigger.html">TimerTrigger</a></td>
+<td>A trigger that is triggered by a specified event and fires after a delay.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TranslateZoomRotateBehavior.html">TranslateZoomRotateBehavior</a></td>
+<td>Moves the attached element in response to mouse drag and touch gestures on the element.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerAction.html">TriggerAction</a></td>
+<td>Represents an attachable object that encapsulates a unit of functionality.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerActionCollection.html">TriggerActionCollection</a></td>
+<td>Represents a collection of actions with a shared <em>AssociatedObject</em> and provides change notifications to its contents when that <em>AssociatedObject</em> changes.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerActionT.html">TriggerActionT</a></td>
+<td>Templatized base class for <a class="reference external" href="App.Interactivity._TriggerAction.html">TriggerAction</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerBase.html">TriggerBase</a></td>
+<td>Represents an object that can invoke <em>Actions</em> conditionally.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerBaseT.html">TriggerBaseT</a></td>
+<td>Templatized base class for <a class="reference external" href="App.Interactivity._TriggerBase.html">TriggerBase</a>.</td>
+</tr>
+<tr><td><a class="reference external" href="App.Interactivity._TriggerCollection.html">TriggerCollection</a></td>
+<td>Represents a collection of triggers with a shared <em>AssociatedObject</em> and provides change notifications to its contents when that <em>AssociatedObject</em> changes.</td>
+</tr>
+<tr><td><a class="reference external" href="App.ApplicationLauncher._Window.html">Window</a></td>
+<td>Provides the ability to create, configure, show, and manage the lifetime of windows.</td>
+</tr>
+</tbody>
+</table>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#noesis-namespace" id="id51">Noesis Namespace</a></li>
+<li><a class="reference internal" href="#noesisapp-namespace" id="id52">NoesisApp Namespace</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

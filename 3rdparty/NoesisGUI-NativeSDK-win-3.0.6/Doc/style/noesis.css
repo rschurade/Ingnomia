@@ -1,0 +1,86 @@
+@import url(main.css?version=6);
+@import url(pygments.css);
+@import url(docutils.css);
+
+.SOZO-header .user-management {
+  display: none;
+}
+
+#doc-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 68px;
+  background: #124C7A;
+  background-image: -webkit-linear-gradient(180deg,#124C7A,#1968a9);
+  background-image: -o-linear-gradient(180deg,#124C7A,#1968a9);
+  background-image: linear-gradient(180deg,#124C7A,#1968a9);
+  border-bottom: 4px solid #2FA6E2;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+  
+#doc-header  img {
+  max-height: 32px;
+}
+
+#doc-header .slogan {
+  color: #fff;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-left: 1.6em;
+}
+
+@media (min-width: 48em) {
+  #doc-header {
+    height: 80px;
+  }
+  
+  #doc-header img {
+    max-height: 48px;
+  }
+  
+  #doc-header .slogan {
+    font-size: 1.2em;
+    margin-left: 2em;
+  }
+  
+  #doc-footer {
+    height: 64px;
+  }
+}
+
+#doc-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  background: #161616;
+  color: #9D9D9D;
+  position: relative;
+}
+
+.developers .main-content {
+  padding: 0;
+}
+
+#header, #footer, .secondary-nav {
+  display: none;
+}
+
+#noesis_doc_wrap :target:before {
+    content: "";
+    display: block;
+    height: 5.4em;
+    margin: -6em 0 0;
+}
+
+.documentation-article > .wrapper {
+    padding-top: 4em;
+}
+
+#noesis_doc_wrap div.contents {
+    top: 6em;
+    margin-bottom: 1.3em;
+}

@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<title>Differences between NoesisGUI and WPF/UWP - Documentation | NoesisGUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta content="If you are familiar with WPF, Xamarin or UWP and this is your first contact with NoesisGUI, this guide is for you" name="description" />
+
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@noesisengine" />
+<meta name="twitter:url" content="https://www.noesisengine.com/docs/Gui.Core.WPFComparison.html" />
+<meta name="twitter:title" content="Differences between NoesisGUI and WPF/UWP | NoesisGUI" />
+<meta name="twitter:description" content="If you are familiar with WPF, Xamarin or UWP and this is your first contact with NoesisGUI, this guide is for you" />
+<meta name="twitter:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+
+<!-- Facebook Cards -->
+<meta property="og:title" content="Differences between NoesisGUI and WPF/UWP | NoesisGUI" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.noesisengine.com/images/logos/logo-flat.png" />
+<meta property="og:image:alt" content="NoesisGUI logo" />
+<meta property="article:published_time" content="2020-07-13 13:54:02" />
+<meta property="og:description" content="If you are familiar with WPF, Xamarin or UWP and this is your first contact with NoesisGUI, this guide is for you" />
+<meta property="og:url" content="https://www.noesisengine.com/docs/Gui.Core.WPFComparison.html" />
+<meta property="og:site_name" content="NoesisGUI" />
+
+<link rel="canonical" href="https://www.noesisengine.com/docs/Gui.Core.WPFComparison.html" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!--script src="https://use.typekit.net/taq4txx.js"></script-->
+<!--script>try{Typekit.load({ async: true });}catch(e){}</script-->
+
+<link rel="stylesheet" href="style/noesis.css?version=6" type="text/css" media="all"/>
+
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25866290-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script src="/js/vendor/modernizr.js"></script>
+
+
+</head>
+<body>
+<div class="document" id="differences-between-noesisgui-and-wpf-uwp">
+
+
+    <!-- NOESIS WEB ------- BEGIN ------- -->
+
+    <div class="developers documentation">
+
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="/js/vendor/selectivizr.js"></script>
+        <script type="text/javascript" src="/js/vendor/respond.js"></script>
+        <div class="old-browser-warning">
+            You are using a very old browser.<br>
+            To get the best possible experience using our website we recommend that you upgrade to a newer version or other web browser. <br>
+            A list of the most popular web browsers <a href="http://browsehappy.com/">can be found here</a>
+        </div>
+        <![endif]-->
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="svg-icon-social-vimeo" width="30" height="30" viewBox="-26 20 30 30">
+                <path d="M-23,30.2c2.1-1.7,5.1-4.8,7.5-4.8c2.3,0,2.9,2.2,3.2,4.7c0.3,2.5,1.2,7.8,2.5,7.8 c1.2,0,4.1-4.7,3.9-6.6c-0.2-1.8-2.2-1.6-3.3-1c1-3.7,3.4-5.8,6.5-5.8c3.1,0,3.8,2.3,3.8,4.9c0,3.9-8.2,16-13.1,16 c-3.1,0-3.8-4.4-4.4-6.6c-0.6-2.2-1.8-7.9-3.3-8.3c-0.6-0.1-2.1,1.1-2.1,1.1L-23,30.2z"/>
+            </symbol>
+            <symbol id="svg-icon-social-google" width="30" height="30" viewBox="-25 24 30 30">
+                <path d="M-6.3 45.9c0 1-.3 2-.8 2.8-1.7 2.9-5.2 3.9-8.3 3.9-2.5 0-5.5-.6-6.9-2.9-.4-.6-.6-1.4-.6-2.1 0-1.9 1.1-3.4 2.7-4.3 1.9-1.2 4.4-1.5 6.6-1.6-.6-.8-1-1.4-1-2.4 0-.5.1-.9.3-1.4-.4 0-.7.1-1.1.1-3.2 0-5.8-2.3-5.8-5.6 0-1.8.9-3.6 2.2-4.8 1.8-1.5 4.3-2.1 6.6-2.1h6.9l-2.3 1.4H-10c1.5 1.3 2.5 2.7 2.5 4.8 0 4.2-3.9 4.7-3.9 6.8 0 2 5.1 2.7 5.1 7.4zm-2.3 1.4c0-2.2-2.2-3.6-3.8-4.7h-.8c-2.7 0-6.6.9-6.6 4.2 0 3.2 3.5 4.3 6.1 4.3 2.4 0 5.1-1 5.1-3.8zm-2.8-11.5c.7-.7.9-1.6.9-2.6 0-2.4-1.4-6.5-4.4-6.5-.9 0-1.9.5-2.4 1.2-.6.7-.8 1.7-.8 2.6 0 2.5 1.4 6.3 4.3 6.3.8 0 1.8-.4 2.4-1zm14.4.9v1.8H-.5v3.6h-1.7v-3.6h-3.5v-1.8h3.5v-3.6h1.7v3.6H3z">
+            </symbol>
+            <symbol id="svg-icon-social-twitter" width="30" height="30" viewBox="-25 20 30 30">
+                <path d="M.4 29.7v.7c0 7-5.3 15.1-15.1 15.1-3 0-5.8-.9-8.1-2.4.4 0 .8.1 1.3.1 2.5 0 4.8-.8 6.6-2.3-2.3 0-4.3-1.6-5-3.7.3 0 .7.1 1 .1.5 0 1-.1 1.4-.2-2.4-.5-4.2-2.6-4.2-5.2v-.1c.7.4 1.5.6 2.4.7-1.4-1-2.4-2.6-2.4-4.4 0-1 .3-1.9.7-2.7 2.6 3.2 6.5 5.3 10.9 5.5-.1-.4-.1-.8-.1-1.2 0-2.9 2.4-5.3 5.3-5.3 1.5 0 2.9.6 3.9 1.7 1.2-.2 2.3-.7 3.4-1.3C2 26 1.2 27.1.1 27.7c1.1-.1 2.1-.4 3.1-.8C2.4 28 1.4 29 .4 29.7z">
+            </symbol>
+            <symbol id="svg-icon-social-facebook" width="30" height="30" viewBox="-31 24 30 30">
+                <path d="M-8.7 29.8h-2.6c-2 0-2.4 1-2.4 2.4v3.1h4.8l-.6 4.9h-4.2v12.5h-5V40.1h-4.2v-4.9h4.2v-3.6c0-4.2 2.5-6.4 6.2-6.4 1.8 0 3.3.1 3.7.2v4.4z">
+            </symbol>
+            <symbol id="svg-icon-social-youtube" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M.9 52c-.3 1.3-1.4 2.2-2.6 2.4-3 .3-6.1.3-9.1.3s-6.1 0-9.1-.3c-1.3-.1-2.3-1.1-2.6-2.4-.5-1.9-.5-3.9-.5-5.8s0-3.9.4-5.7c.3-1.3 1.4-2.2 2.6-2.4 3-.3 6.1-.3 9.1-.3s6.1 0 9.1.3c1.3.1 2.3 1.1 2.6 2.4.4 1.8.4 3.8.4 5.7.1 1.9.1 3.9-.3 5.8zm-17-9.8v-1.5h-5.1v1.5h1.7v9.3h1.6v-9.3h1.8zm2.7-16.9l-2 6.5v4.4H-17v-4.4c-.1-.8-.5-2-1-3.5-.4-1-.7-2.1-1.1-3.1h1.7l1.2 4.3 1.1-4.3h1.7zm1.8 26.2v-8.1h-1.5v6.2c-.3.5-.6.7-.9.7-.2 0-.3-.1-.3-.3v-6.6h-1.5v6.4c0 .6 0 1 .1 1.2.1.4.5.6 1 .6s1.1-.3 1.7-1v.9h1.4zM-9 33.6c0 .9-.1 1.5-.5 1.9-.4.6-1 .8-1.7.8s-1.3-.3-1.7-.8c-.3-.4-.5-1.1-.5-1.9v-2.9c0-.9.1-1.5.5-1.9.4-.6 1-.8 1.7-.8.8 0 1.3.3 1.7.8.3.4.5 1 .5 1.9v2.9zm-1.5-3.1c0-.8-.2-1.1-.7-1.1-.5 0-.7.4-.7 1.1v3.4c0 .8.2 1.1.7 1.1.5 0 .7-.4.7-1.1v-3.4zM-6 45.8c0-.8 0-1.3-.1-1.6-.2-.6-.6-.9-1.2-.9-.5 0-1 .3-1.5.9v-3.6h-1.5v10.9h1.5v-.8c.5.6 1 .9 1.5.9.6 0 1-.3 1.2-.9.1-.3.1-.9.1-1.6v-3.3zm-1.5 3.4c0 .7-.2 1.1-.6 1.1-.2 0-.5-.1-.7-.4V45c.2-.2.5-.4.7-.4.4 0 .6.4.6 1.1v3.5zm4-12.9H-5v-.9c-.6.7-1.1 1-1.7 1-.5 0-.8-.2-1-.6-.1-.2-.1-.6-.1-1.2v-6.5h1.5v6.6c0 .2.1.4.3.4.3 0 .6-.2.9-.7v-6.2h1.5v8.1zm3 12.4H-2v1c-.1.4-.3.6-.7.6-.5 0-.8-.4-.8-1.1v-1.4h2.9V46c0-.9-.1-1.5-.4-1.9-.4-.6-1-.8-1.7-.8-.8 0-1.3.3-1.8.8-.3.4-.5 1-.5 1.9v2.8c0 .9.2 1.5.5 1.9.4.6 1 .8 1.8.8s1.4-.3 1.8-.9c.2-.3.3-.6.3-.9v-1zM-2 46.5h-1.5v-.8c0-.7.2-1.1.7-1.1s.8.4.8 1.1v.8z">
+            </symbol>
+            <symbol id="svg-icon-social-linkedin" width="30" height="30" viewBox="-26 25 30 30">
+                <path d="M-22.6 51.3h5v-15h-5v15zm17.8-15.5c-2.2 0-3.5.8-4.8 2.6v-2.1h-5v15h5v-8.1c0-1.7.9-3.4 2.8-3.4 2 0 3.2 1.7 3.2 3.4v8.2h5v-8.5c0-6-4-7.1-6.2-7.1zM-20.1 29c-1.6 0-2.9 1.2-2.9 2.6 0 1.5 1.3 2.6 2.9 2.6 1.6 0 2.9-1.2 2.9-2.6.1-1.4-1.2-2.6-2.9-2.6z">
+            </symbol>
+            <symbol id="svg-scroll-down" width="48" height="48" viewBox="0 0 48 48">
+                <path d="M24 1C11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23S36.7 1 24 1zm0 31.5L11.9 21.6l1.3-1.5L24 29.8l10.7-9.7 1.3 1.5-12 10.9z">
+            </symbol>
+        </svg>
+
+        <header id="header" class="SOZO-header js-hide-nav">
+
+            <div class="wrapper">
+
+                <a href="/" class="logo animate-me" title="Noesis">
+                    <img src="/images/logos/noesis-gui-logo.svg" alt="NoesisGUI">
+                </a>
+
+                <div class="user-management">
+                    <iframe src="/includes/user.php" scrolling="no"></iframe>
+                </div>
+
+                <a title="Menu" href="/" class="mobile-menu" rel="nofollow">
+                    <i class="burger-icon"></i>
+                </a>
+
+                <nav class="primary-nav site-nav" role="navigation">
+                    <ul>
+                        <li><a href="/" title="NoesisGUI Main Features"><span>features</span></a></li>
+                        <li><a href="/licensing.php" title="NoesisGUI Licensing"><span>licensing</span></a></li>
+                        <li class="has-children"><a data-id="child-nav" href="/forums" title="NoesisGUI Developer Resources" class="js-mobile-2nd-nav active"><span>developer</span></a>
+                            <nav class="child-nav" id="child-nav">
+                                <ul>
+                                    <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                                    <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                                    <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                                    <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                                    <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                                    <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                                    <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="NoesisGUI Roadmap">roadmap</a></li>
+                                </ul>
+                            </nav>
+                        </li>
+                        <li><a href="/contact.php" title="Contact Information"><span>Contact</span></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </header>
+
+        <header id="doc-header">
+            <img src="noesis-gui-logo.svg" alt="NoesisGUI">
+        </header>
+
+        <div class="main-content" role="main">
+
+            <nav id="noesis-secondary-nav" class="secondary-nav site-nav js-hide-nav">
+                <div class="wrapper">
+                    <ul>
+                        <li><a href="/forums" title="NoesisGUI Forums">forums</a></li>
+                        <li><a href="/developers/samples.php" title="NoesisGUI Samples">samples</a></li>
+                        <li><a href="/xamltoy" title="NoesisGUI XamlToy">xamltoy</a></li>
+                        <li><a href="/developers/downloads.php" title="NoesisGUI Downloads">downloads</a></li>
+                        <li><a href="/docs/Gui.Core.Index.html" title="NoesisGUI Documentation" class="active">documentation</a></li>
+                        <li><a href="/bugs/my_view_page.php" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker">bugtracker</a></li>
+                        <li><a href="/bugs/roadmap_page.php" target="_blank" rel="nofollow" title="roadmap">roadmap</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div class="documentation-article">
+
+                <div class="wrapper">
+
+                    <div id="noesis_web_contenidosMain" class="noesis_web_contenidosMain sozo-content">
+                        <div id="noesis_doc_wrap">
+
+                            <div class="noesis_doc_header_menu">
+                                <a href="Gui.Core.Index.html" class="noesis_doc_header_link">
+                                    <img src="blue-home-icon.png?version=1.0" alt="Documentation Index" title="Documentation Index">
+                                </a>
+                            </div>
+
+                            <div class="noesis_doc_content">
+
+        <!-- NOESIS WEB ------- END ------- -->
+
+
+<h1 class="title">Differences between NoesisGUI and WPF/UWP</h1>
+
+<p>This guide is intended for users coming from XAML architectures like WPF, Silverlight, Xamarin or UWP. Being familiar with those architectures is definitely of great help to start being proficient with NoesisGUI. In the following sections we will analyze what is different in Noesis with respect to other XAML flavors and where you should put the focus if you are migrating projects to Noesis. If you are not familiar with XAML then you can probably skip this tutorial and continue reading the rest of <a class="reference external" href="Gui.Core.Index.html#tutorials">tutorials</a>.</p>
+<div class="section" id="noesis-is-based-on-wpf">
+<h1>Noesis is based on WPF</h1>
+<p>NoesisGUI was designed with WPF in mind. When we started this project we were in love with the architecture of WPF but we wanted it to be faster, optimized for realtime and multiplatform. NoesisGUI was programmed from scratch to be lightweight and without external dependencies. NoesisGUI is so deeply based on WPF that we always recommend the great <a class="reference external" href="https://www.amazon.com/WPF-4-5-Unleashed-Adam-Nathan/dp/0672336979">WPF Unleashed</a> book as the reference manual.</p>
+<p>If you are planning to convert a project to NoesisGUI the first thing we recommend is porting your Visual Studio solution to WPF. This will make things easier than directly jumping from other XAMLs platforms like UWP or Xamarin.</p>
+<p>There are two conceptually different APIs in NoesisGUI, the <em>Framework</em> API and the <em>Integration</em> API.</p>
+<div class="section" id="framework-api">
+<h2>Framework API</h2>
+<p>This is the API exposing high-level objects like <a class="reference external" href="Gui.Core.ControlsTutorial.html">Controls</a> and <a class="reference external" href="Gui.Core.LayoutPanelTutorial.html">Panels</a>. It also exposes the corresponding serialization document, the XAML format, a key piece in all the architecture. The <em>Framework</em> API tries to be as similar to WPF as possible. Each version we release gets closer and closer to WPF. In fact any kind of deviation from WPF is considered a bug and you are recommended to file a bug if you encounter such things in Noesis.</p>
+<p>If you are using the C# API, the interface is almost the same as in WPF. Being WPF based on C#, our C++ API is a bit different and was adjusted to feel more native. We needed to add key concepts like <em>Reflection</em>, <em>Delegates</em> and <em>Nullables</em>. These details are thoroughly described in the <a class="reference external" href="Gui.Core.CppArchitectureGuide.html">C++ Architecture Guide</a>.</p>
+<p>Our <a class="reference external" href="Gui.Core._ClassHierarchy.html">Class Hierarchy</a> index is language agnostic and exposes all the classes contained in the <em>Integration</em> API. If you want to know if something is implemented in Noesis or not , that's the place you should have a look first.</p>
+</div>
+<div class="section" id="integration-api">
+<h2>Integration API</h2>
+<p>Noesis Core library is a low-level operating system agnostic component that needs to be provided with information about how to render, how to load resources, how to open URIs and so on. These tasks correspond to the <em>Integration</em> API, exposed in the <em>IntegrationAPI.h</em> header under the <em>Noesis.GUI</em> namespace. If you are doing an integration of Noesis into your own engine, then you need to understand this API. It is described in great detail in the <a class="reference external" href="Gui.Core.SDKGuide.html">Integration Tutorial</a>. If you are using Noesis in engines like Unity or Unreal then the integration is already done and you don't need to take care about.</p>
+<p>We also offer an <a class="reference external" href="Gui.Core.ApplicationTutorial.html">Application Framework</a> that interacts with the integration API to offer an application model close to WPF with concepts like <a class="reference external" href="App.ApplicationLauncher._Application.html">Application</a> (App.xaml) and <a class="reference external" href="App.ApplicationLauncher._Window.html">Window</a> (Window.xaml). This framework is used by all our examples in the C++ and C# SDK.</p>
+<p>The connection between the <em>Integration</em> API and the <em>Framework</em> API is performed by a <em>View</em>. A <em>View</em> encapsulates the interaction and rendering of a Visual Tree into a GPU surface. Views are threaded apartments and you can think about them as isolated WPF APIs. They are described with more detail in the <a class="reference external" href="Gui.Core.RenderingTutorial.html">Rendering Architecture</a> document.</p>
+</div>
+</div>
+<div class="section" id="noesis-is-not-restricted-to-wpf">
+<h1>Noesis is not restricted to WPF</h1>
+<p>Although based on WPF, NoesisGUI also implements concepts from other XAML flavors in form of <a class="reference external" href="Gui.Core.ExtensionsTutorial.html">Noesis Extensions</a>. These extensions are implemented as part of the Core Library and also exposed as a <a class="reference external" href="https://www.nuget.org/packages/Noesis.GUI.Extensions">NuGet</a> package to be used in your Blend projects. These Blend extensions are, in many cases, empty implementations just to avoid compile errors in your WPF projects. For example, with NoesisGUI you can render <a class="reference external" href="Gui.Core.TextTutorial.html#color-properties">text with stroke</a>, the corresponding extension in WPF won't render that effect. The source code of these extensions is also available on <a class="reference external" href="https://github.com/Noesis/Managed/tree/master/Src/Noesis/Extensions">GitHub</a>. There you will find extensions like the 3D transformations of <em>Silverlight</em> and the gamepad support of <em>UWP</em>. This set of extensions will keep growing with each new version of NoesisGUI.</p>
+</div>
+<div class="section" id="code-behind-differences">
+<h1>Code-Behind differences</h1>
+<p>In WPF, Visual Studio automatically generates parts of the Code-Behind and stores them in hidden <em>.g.cs</em> files. This is not automatically done, at least not for now, in NoesisGUI. You must manually connect events and find elements by name in the Code-Behind as described in the <a class="reference external" href="Gui.Core.EventsTutorial.html">Events</a> tutorial.</p>
+<p>We recommend using preprocessor macros to handle these differences:</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">MainWindow</span> <span class="p">:</span> <span class="n">Window</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">MainWindow</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">InitializeComponent</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="cp">#if NOESIS</span>
+    <span class="n">TextBox</span> <span class="n">Address</span><span class="p">;</span>
+    <span class="n">TextBlock</span> <span class="n">EntryTitle</span><span class="p">;</span>
+    <span class="n">TextBlock</span> <span class="n">EntryDesc</span><span class="p">;</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">InitializeComponent</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">GUI</span><span class="p">.</span><span class="n">LoadComponent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;MainWindow.xaml&quot;</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="n">Address</span> <span class="p">=</span> <span class="p">(</span><span class="n">TextBox</span><span class="p">)</span><span class="n">FindName</span><span class="p">(</span><span class="s">&quot;Address&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">EntryTitle</span> <span class="p">=</span> <span class="p">(</span><span class="n">TextBlock</span><span class="p">)</span><span class="n">FindName</span><span class="p">(</span><span class="s">&quot;EntryTitle&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">EntryDesc</span> <span class="p">=</span> <span class="p">(</span><span class="n">TextBlock</span><span class="p">)</span><span class="n">FindName</span><span class="p">(</span><span class="s">&quot;EntryDesc&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">#endif</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="namespaces-differences">
+<h1>Namespaces differences</h1>
+<p>All framework classes are defined inside the <strong>Noesis</strong> namespace in NoesisGUI. This is different in WPF, where classes are spread between multiple namespaces.</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="cp">#if NOESIS</span>
+    <span class="k">using</span> <span class="nn">Noesis</span><span class="p">;</span>
+<span class="cp">#else</span>
+    <span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+    <span class="k">using</span> <span class="nn">System.Windows</span><span class="p">;</span>
+    <span class="k">using</span> <span class="nn">System.Windows.Controls</span><span class="p">;</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<div class="section" id="rendering-differences">
+<h1>Rendering differences</h1>
+<p>NoesisGUI is optimized for rendering dynamic interfaces and WPF is optimized for static high-quality interfaces. While WPF uses complex algorithms to render vectors at a perfect antialiasing quality, NoesisGUI renders the interface as a videogame engine. Almost all of our interfaces are rendered entirely per frame without using Bitmap caching. A modern and GPU aware UI middleware must be prepared to paint every pixel on every frame. You can find more details about this in the article we published on Gamasutra: <a class="reference external" href="https://www.gamasutra.com/view/news/315057/Sponsored_Defining_the_next_generation_of_user_interfaces.php">Defining the next generation of user interfaces</a>.</p>
+</div>
+<div class="section" id="performance-tradeoffs">
+<h1>Performance tradeoffs</h1>
+<p>Being NoesisGUI a multi-platform library, a few tradeoffs must be taken to render efficiently across all the range of supported devices: from low-end mobiles to high-performance game consoles.</p>
+<div class="section" id="floats">
+<h2>Floats</h2>
+<p>WPF uses <em>doubles</em> for almost all its fixed-point properties while NoesisGUI uses <em>float</em> for the same properties. For example, the <em>ActualWidth</em> property of <em>FrameworkElement</em> is a double in WPF but a <em>float</em> in NoesisGUI. If you are using the C# SDK and sharing the project between WPF and Noesis we recommend using an alias to encapsulate this difference.</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="cp">#if NOESIS</span>
+    <span class="k">using</span> <span class="nn">Float</span> <span class="p">=</span> <span class="n">System</span><span class="p">.</span><span class="n">Single</span><span class="p">;</span>
+<span class="cp">#else</span>
+    <span class="k">using</span> <span class="nn">Float</span> <span class="p">=</span> <span class="n">System</span><span class="p">.</span><span class="n">Double</span><span class="p">;</span>
+<span class="cp">#endif</span>
+
+<span class="k">private</span> <span class="k">void</span> <span class="nf">Slider_ValueChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">RoutedPropertyChangedEventArgs</span><span class="p">&lt;</span><span class="n">Float</span><span class="p">&gt;</span> <span class="n">e</span><span class="p">);</span>
+<span class="k">private</span> <span class="k">void</span> <span class="nf">UpdateColor</span><span class="p">(</span><span class="n">Float</span> <span class="n">r</span><span class="p">,</span> <span class="n">Float</span> <span class="n">g</span><span class="p">,</span> <span class="n">Float</span> <span class="n">b</span><span class="p">,</span> <span class="n">Float</span> <span class="n">a</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions</h2>
+<p>Being NoesisGUI a C++ core library optimized for performance, code is compiled with <em>Exceptions</em> and <em>RTTI</em> disabled. This means that in comparison with WPF, Noesis won't raise exceptions to notify about errors. In almost all cases, errors in Noesis are non-fatal and the execution of the program can continue after sending information about it to the user callback that is set up at initialization time.</p>
+<p>In contrast, the C# layer built on top of the C++ uses exception to notify about critical errors that happens in the communication between those two layers.</p>
+</div>
+</div>
+<div class="section" id="application-dictionary">
+<h1>Application Dictionary</h1>
+<p>The Application Dictionary is the <a class="reference external" href="Gui.Core._ResourceDictionary.html">ResourceDictionary</a> you find inside <em>App.xaml</em> in a WPF application.</p>
+<div class="highlight"><span class="filename">XAML</span><pre><span></span><span class="nt">&lt;Application</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Application.Resources&gt;</span>
+    <span class="nt">&lt;ResourceDictionary&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Background0&quot;</span> <span class="na">Color=</span><span class="s">&quot;#FF2F3F4F&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Background1&quot;</span> <span class="na">Color=</span><span class="s">&quot;SlateGray&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Foreground0&quot;</span> <span class="na">Color=</span><span class="s">&quot;White&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Foreground1&quot;</span> <span class="na">Color=</span><span class="s">&quot;SkyBlue&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Foreground2&quot;</span> <span class="na">Color=</span><span class="s">&quot;Black&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;SolidColorBrush</span> <span class="na">x:Key=</span><span class="s">&quot;Border&quot;</span> <span class="na">Color=</span><span class="s">&quot;LightSlateGray&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ResourceDictionary&gt;</span>
+  <span class="nt">&lt;/Application.Resources&gt;</span>
+<span class="nt">&lt;/Application&gt;</span>
+</pre></div>
+<p>An Application-Scope Resource Dictionary shared between all your XAMLs is one of the recommendations to optimize loading times and memory usage. The <em>Integration</em> API exposes <em>Noesis::GUI::SetApplicationResources</em> for this purpose. More information about how to set up a global style can be found in the  <a class="reference external" href="Gui.Core.StylingTutorial.html#global-style">Styling Tutorial</a>.</p>
+</div>
+<div class="section" id="themes">
+<h1>Themes</h1>
+<p>By default, WPF uses the theme provided by the operating system. In Noesis we don't use the operating system for this. A minimalistic theme supporting all core controls is provided by default embedded in the core library. This explains why, by default, the render generated by Blend and by Noesis is different. In case you want our default theme in Blend you need to override it when the application is initialized. For example:</p>
+<div class="highlight"><span class="filename">C#</span><pre><span></span><span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> <span class="nc">App</span> <span class="p">:</span> <span class="n">Application</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">App</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// NoesisTheme added to Application.Resources to have same look as Noesis</span>
+        <span class="n">ResourceDictionary</span> <span class="n">theme</span> <span class="p">=</span> <span class="p">(</span><span class="n">ResourceDictionary</span><span class="p">)</span><span class="n">LoadComponent</span><span class="p">(</span><span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="s">&quot;NoesisTheme.xaml&quot;</span><span class="p">,</span> <span class="n">UriKind</span><span class="p">.</span><span class="n">Relative</span><span class="p">));</span>
+        <span class="n">Resources</span><span class="p">.</span><span class="n">MergedDictionaries</span><span class="p">.</span><span class="n">Insert</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">theme</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p><em>NoesisTheme.xaml</em> is part of the Extensions package available in <a class="reference external" href="https://www.nuget.org/packages/Noesis.GUI.Extensions">NuGet</a>.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#noesis-is-based-on-wpf" id="id1">Noesis is based on WPF</a><ul>
+<li><a class="reference internal" href="#framework-api" id="id2">Framework API</a></li>
+<li><a class="reference internal" href="#integration-api" id="id3">Integration API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#noesis-is-not-restricted-to-wpf" id="id4">Noesis is not restricted to WPF</a></li>
+<li><a class="reference internal" href="#code-behind-differences" id="id5">Code-Behind differences</a></li>
+<li><a class="reference internal" href="#namespaces-differences" id="id6">Namespaces differences</a></li>
+<li><a class="reference internal" href="#rendering-differences" id="id7">Rendering differences</a></li>
+<li><a class="reference internal" href="#performance-tradeoffs" id="id8">Performance tradeoffs</a><ul>
+<li><a class="reference internal" href="#floats" id="id9">Floats</a></li>
+<li><a class="reference internal" href="#exceptions" id="id10">Exceptions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#application-dictionary" id="id11">Application Dictionary</a></li>
+<li><a class="reference internal" href="#themes" id="id12">Themes</a></li>
+</ul>
+</div>
+</div>
+
+
+        <!-- NOESIS WEB ------- BEGIN ------- -->
+
+                            </div> <!-- eo noesis_doc_content -->
+                        </div> <!-- eo doc_wrap -->
+                    </div> <!-- eo noesis_web_contenidosMain -->
+
+                </div> <!-- eo wrapper -->
+
+            </div>  <!-- eo documentation-article -->
+
+        </div> <!-- eo main-content -->
+
+        <footer id="footer" class="SOZO-footer">
+            <div class="wrapper">
+                <ul class="footer social-icon-list">
+                    <li>
+                        <a href="https://twitter.com/noesisengine" title="Noesis Twitter" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-twitter">
+                                    <use xlink:href="#svg-icon-social-twitter"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/company/noesis-technologies-sl" title="Noesis Linkedin" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-linkedin">
+                                    <use xlink:href="#svg-icon-social-linkedin"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://vimeo.com/noesisengine" title="Noesis Vimeo" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-vimeo">
+                                    <use xlink:href="#svg-icon-social-vimeo"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/user/NoesisTechnologies" title="Noesis Youtube" target="_blank">
+                            <i class="svg-icon">
+                                <svg class="icon-social-youtube">
+                                    <use xlink:href="#svg-icon-social-youtube"></use>
+                                </svg>
+                            </i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-extended">
+
+                    <div class="cols">
+
+                        <nav class="unit">
+                            <h3 class="title">home</h3>
+                            <ul>
+                                <li><a href="/#goto-home-main-features" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                                <li><a href="/#goto-home-apis" class="goto" title="NoesisGUI APIs and Integrations">Integrations</a></li>
+                                <li><a href="/#goto-home-platforms" class="goto" title="NoesisGUI Supported Platforms">Platforms</a></li>
+                                <li><a href="/#goto-home-clients" class="goto" title="NoesisGUI Happy Clients">Clients</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Licensing</h3>
+                            <ul>
+                                <li><a href="/licensing.php#goto-licensing-prices" class="goto" title="NoesisGUI Prices">Prices</a></li>
+                                <li><a href="/licensing.php#goto-licensing-faqs" class="goto" title="NoesisGUI Licensing FAqs">FAQs</a></li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Developers</h3>
+                            <ul>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/forums/index.php" class="goto" title="NoesisGUI Forums" style="display:inline;margin-right:1em;">Forums</a>
+                                        <a href="/bugs/my_view_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Bug Tracker"style="display:inline;">Bugtracker</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/developers/samples.php" class="goto" title="NoesisGUI Samples and Tutorials"style="display:inline;margin-right:1em;">Samples</a>
+                                        <a href="/xamltoy" class="goto" title="NoesisGUI XamlToy" style="display:inline;">XamlToy</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="display:block;padding: 0.4em 0;">
+                                        <a href="/bugs/roadmap_page.php" class="goto" target="_blank" rel="nofollow" title="NoesisGUI Roadmap"style="display:inline;margin-right:1em;">Roadmap</a>
+                                        <a href="/docs/Gui.Core.Changelog.html" class="goto" title="NoesisGUI Version Changelog"style="display:inline;">Changelog</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="/docs/Gui.Core.Index.html" class="goto" title="NoesisGUI Documentation">Documentation</a>
+                                </li>
+                                <li>
+                                    <a href="/developers/downloads.php" class="goto" title="NoesisGUI Downloads">Downloads</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <nav class="unit">
+                            <h3 class="title">Contact</h3>
+                            <ul>
+                                <li><a href="/contact.php#goto-contact-about" class="goto" title="About Noesis">About</a></li>
+                                <li><a href="/contact.php#goto-contact-details" class="goto" title="Contact Noesis">Contact details</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <nav class="legal">
+                        <figure class="SOZO-media logo">
+                            <img src="/images/logos/noesis-logo-stacked.png">
+                        </figure>
+                        <p>&copy; 2017 Noesis Technologies</p>
+                        <a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a>
+                        <a href="/legal/cookies.php" title="Cookie Policy" rel="nofollow">Cookies</a>
+                        <a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a>
+                    </nav>
+
+                </div>
+
+                <div class="footer-reduced">
+                    <ul>
+                        <li><a href="/" class="goto" title="NoesisGUI Main Features">Features</a></li>
+                        <li><a href="/licensing.php" class="goto" title="NoesisGUI Prices">Licensing</a></li>
+                        <li><a href="/forums" class="goto" title="NoesisGUI Forums">Developer</a></li>
+                        <li><a href="/contact.php" class="goto" title="NoesisGUI Prices">Contact</a></li>
+                    </ul>
+                    <ul class="copyright-legal">
+                        <li>&copy; 2017 Noesis Technologies</li>
+                        <li><a href="/legal/privacy.php" title="Privacy Policy" rel="nofollow">Privacy</a></li>
+                        <li><a href="/legal/terms-of-use.php" title="Terms and Conditions" rel="nofollow">Terms &amp; Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <footer id="doc-footer">
+            <span>&copy; 2017 Noesis Technologies</span>
+        </footer>
+
+    </div> <!-- eo developers documentation -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!-- Use if you want latest version of 1x -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+
+    <!-- If using 1.11.3 make sure you update the fallback file below to 1.11.3 -->
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.js"><\/script>')</script>
+
+    <script src="/js/plugins.1481882071.js"></script><script src="/js/main.1485346364.js"></script>
+
+    <!-- NOESIS WEB ------- END ------- -->
+
+
+</div>
+</body>
+</html>

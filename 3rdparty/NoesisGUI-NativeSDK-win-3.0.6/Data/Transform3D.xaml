@@ -1,0 +1,362 @@
+<Grid
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+  mc:Ignorable="d"
+  d:DesignWidth="1280" d:DesignHeight="720">
+    <Grid.Background>
+        <ImageBrush ImageSource="Images/BgTile.png" Viewport="0,0,6,6" ViewportUnits="Absolute" TileMode="Tile"/>
+    </Grid.Background>
+    <Grid.Resources>
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+            <Grid x:Name="root" Opacity="1">
+                <noesis:Element.Transform3D>
+                    <noesis:CompositeTransform3D/>
+                </noesis:Element.Transform3D>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualStateGroup.Transitions>
+                            <VisualTransition From="Normal" GeneratedDuration="0:0:0.5" To="MouseOver">
+                                <Storyboard>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleX)" Storyboard.TargetName="contentPad">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CircleEase EasingMode="EaseInOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="line">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="100">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CubicEase EasingMode="EaseInOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="bd">
+                                        <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#CCFF1F5E">
+                                            <EasingColorKeyFrame.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut"/>
+                                            </EasingColorKeyFrame.EasingFunction>
+                                        </EasingColorKeyFrame>
+                                    </ColorAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="bd">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="24">
+                                            <EasingColorKeyFrame.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut"/>
+                                            </EasingColorKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="tagHost">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="380">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(Brush.Opacity)" Storyboard.TargetName="tagHost">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="root">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.26" Value="1"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="1"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.38" Value="1"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="0"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.46" Value="1"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.TranslateZ)" Storyboard.TargetName="bdPanel">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="10">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CubicEase EasingMode="EaseInOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Offset)" Storyboard.TargetName="core">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.7">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CubicEase EasingMode="EaseInOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </VisualTransition>
+                            <VisualTransition From="MouseOver" GeneratedDuration="0" To="Normal"/>
+                            <VisualTransition GeneratedDuration="0" To="Pressed"/>
+                            <VisualTransition From="Pressed" GeneratedDuration="0:0:0.4">
+                                <VisualTransition.GeneratedEasingFunction>
+                                    <CubicEase EasingMode="EaseInOut"/>
+                                </VisualTransition.GeneratedEasingFunction>
+                            </VisualTransition>
+                        </VisualStateGroup.Transitions>
+                        <VisualState x:Name="Normal">
+                            <Storyboard>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleX)" Storyboard.TargetName="contentPad">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <CircleEase EasingMode="EaseInOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="line">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="bd">
+                                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#04FF1F5E">
+                                        <EasingColorKeyFrame.EasingFunction>
+                                            <SineEase EasingMode="EaseInOut"/>
+                                        </EasingColorKeyFrame.EasingFunction>
+                                    </EasingColorKeyFrame>
+                                </ColorAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="360">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(Brush.Opacity)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <SineEase EasingMode="EaseInOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="root">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.04" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.TranslateZ)" Storyboard.TargetName="bdPanel">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="MouseOver">
+                            <Storyboard>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleX)" Storyboard.TargetName="contentPad">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="line">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="100"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="bd">
+                                    <EasingColorKeyFrame KeyTime="0" Value="#CCFF1F5E"/>
+                                </ColorAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="bd">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="24"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="380"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(Brush.Opacity)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="root">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.TranslateZ)" Storyboard.TargetName="bdPanel">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="10"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Offset)" Storyboard.TargetName="core">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.7"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="line">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="bd">
+                                    <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#CCFF1F5E"/>
+                                </ColorAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(ScaleTransform.ScaleX)" Storyboard.TargetName="contentPad">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.TranslateZ)" Storyboard.TargetName="contentHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="contentHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.ShadowDepth)" Storyboard.TargetName="contentHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(Brush.Opacity)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="tagHost">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="380"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="bd">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="24"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="root">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.04" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.TranslateZ)" Storyboard.TargetName="bdPanel">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="5"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Offset)" Storyboard.TargetName="core">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.7"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled"/>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Ellipse x:Name="core" Width="80" Height="80" Margin="2,-50" HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Offset="0" Color="#DDFF1F5E"/>
+                            <GradientStop Offset="0.2" Color="#DDFF1F5E"/>
+                            <GradientStop Offset="0.2" Color="#66FF1F5E"/>
+                            <GradientStop Offset="0.2" Color="#11FF1F5E"/>
+                            <GradientStop Offset="1" Color="#00FF1F5E"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <noesis:Element.Transform3D>
+                        <noesis:CompositeTransform3D TranslateZ="10"/>
+                    </noesis:Element.Transform3D>
+                </Ellipse>
+                <Rectangle x:Name="line" Width="0" Height="2" Fill="#CCFF1F5E" HorizontalAlignment="Left" Margin="50,0,0,0" IsHitTestVisible="False">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform/>
+                    </Rectangle.RenderTransform>
+                    <noesis:Element.Transform3D>
+                        <noesis:CompositeTransform3D TranslateZ="10"/>
+                    </noesis:Element.Transform3D>
+                </Rectangle>
+                <Grid x:Name="bdPanel" RenderTransformOrigin="0.5,0.5" Margin="150,0,0,0">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <noesis:Element.Transform3D>
+                        <noesis:CompositeTransform3D/>
+                    </noesis:Element.Transform3D>
+                    <Border x:Name="bd" Background="#04FF1F5E" BorderBrush="#CCFF1F5E" BorderThickness="2" CornerRadius="20">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="0" Color="#FFFF3971"/>
+                        </Border.Effect>
+                    </Border>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{TemplateBinding Padding}">
+                        <Decorator x:Name="contentPad" Width="{TemplateBinding MinWidth}">
+                            <Decorator.LayoutTransform>
+                                <ScaleTransform ScaleX="0"/>
+                            </Decorator.LayoutTransform>
+                        </Decorator>
+                        <TextBlock x:Name="contentHost" Text="{TemplateBinding Content}">
+                            <TextBlock.Effect>
+                                <DropShadowEffect BlurRadius="5" ShadowDepth="5"/>
+                            </TextBlock.Effect>
+                            <noesis:Element.Transform3D>
+                                <noesis:CompositeTransform3D TranslateZ="5"/>
+                            </noesis:Element.Transform3D>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+                <TextBlock x:Name="tagHost" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
+                    <TextBlock.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="360"/>
+                        </TransformGroup>
+                    </TextBlock.RenderTransform>
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="#FF82D8DD" Opacity="0"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </Grid>
+        </ControlTemplate>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Fonts/#Oxanium"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#04FF1F5E"/>
+            <Setter Property="Template" Value="{StaticResource ButtonTemplate}"/>
+            <Setter Property="Width" Value="360"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Margin" Value="0,10"/>
+            <Setter Property="RenderTransformOrigin" Value="0,0.5"/>
+        </Style>
+        <Storyboard x:Key="Anim" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.RotationX)" Storyboard.TargetName="optionsPanel">
+                <EasingDoubleKeyFrame KeyTime="0:0:8" Value="-5">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:16" Value="-20">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(noesis:Element.Transform3D).(noesis:CompositeTransform3D.RotationY)" Storyboard.TargetName="optionsPanel">
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="35">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:8" Value="30">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:12" Value="35">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:16" Value="30">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Grid.Resources>
+    <Grid.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Anim}"/>
+        </EventTrigger>
+    </Grid.Triggers>
+    <Viewbox>
+        <Grid x:Name="optionsPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+            <noesis:Element.Transform3D>
+                <noesis:CompositeTransform3D CenterX="180" CenterY="150" TranslateX="-50" RotationX="-20" RotationY="30"/>
+            </noesis:Element.Transform3D>
+            <Border Width="64" HorizontalAlignment="Left" Margin="10,0" BorderBrush="#CCFF1F5E" BorderThickness="2" CornerRadius="16">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#FFFF1F5E"/>
+                </Border.Effect>
+            </Border>
+            <StackPanel>
+                <Button Content="WARP DRIVE" Tag="Yes, commander!" MinWidth="80"/>
+                <Button Content="TELEPORT" Tag="Beam me up!" MinWidth="95"/>
+                <Button Content="FUSION CORE" Tag="Engineering!" MinWidth="70"/>
+                <Button Content="LASER TARGET" Tag="Point, shoot!" MinWidth="62"/>
+                <Button Content="SHIELDS" Tag="Status report!" MinWidth="100"/>
+            </StackPanel>
+        </Grid>
+    </Viewbox>
+</Grid>
