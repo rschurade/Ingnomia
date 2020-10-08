@@ -11,9 +11,9 @@
 	<system:String x:Key="MainPage_LoadGame">Charger</system:String>
 	<system:String x:Key="MainPage_Settings">Options</system:String>
 	<system:String x:Key="MainPage_Exit">Quitter</system:String>
-	<system:String x:Key="MainPage_Hint_MMContinue">Reprendre la dernière partie sauvegardée.</system:String>
-	<system:String x:Key="MainPage_Hint_MMNewGame">Démarrer une nouvelle partie avec la même configuration.</system:String>
-	<system:String x:Key="MainPage_Hint_MMSetupGame">Démarrer une nouvelle partie en choisissant la configuration.</system:String>
+	<system:String x:Key="MainPage_Hint_MMContinue">Reprendre la derniÃ¨re partie sauvegardÃ©e.</system:String>
+	<system:String x:Key="MainPage_Hint_MMNewGame">DÃ©marrer une nouvelle partie avec la mÃªme configuration.</system:String>
+	<system:String x:Key="MainPage_Hint_MMSetupGame">DÃ©marrer une nouvelle partie en choisissant la configuration.</system:String>
 	<system:String x:Key="MainPage_Hint_MMLoadGame">Charger une sauvegarde.</system:String>
 	<system:String x:Key="MainPage_Hint_MMSettings">Configurer les options.</system:String>
 	<system:String x:Key="MainPage_Hint_MMExit">Quitter le jeu.</system:String>
