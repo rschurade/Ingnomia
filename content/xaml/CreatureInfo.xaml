@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -61,7 +64,7 @@
 									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
-								<TextBlock FontSize="20" HorizontalAlignment="Center" Text="Equipment" Grid.Row="0" />
+								<TextBlock FontSize="20" HorizontalAlignment="Center" Text="{StaticResource CreatureInfo_Equipment}" Grid.Row="0" />
 
 								<!-- Uniform doll  -->
 								<Canvas Width="180" Height="280" Grid.Row="1">
@@ -130,7 +133,7 @@
 										</StackPanel>
 									</Button>
 								</Canvas>
-								<TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Text="Inventory" Grid.Row="2" />
+								<TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Text="{StaticResource CreatureInfo_Inventory}" Grid.Row="2" />
 								<Grid Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 									<Grid.RowDefinitions>
 										<RowDefinition Height="Auto" />
@@ -159,21 +162,21 @@
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="STR" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Str}" />
 											<TextBlock  FontSize="20" Text="{Binding Str}" />
 										</StackPanel>
 									</Button>
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="Dex" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Dex}" />
 											<TextBlock  FontSize="20" Text="{Binding Dex}" />
 										</StackPanel>
 									</Button>
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="CON" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Con}" />
 											<TextBlock  FontSize="20" Text="{Binding Con}" />
 										</StackPanel>
 									</Button>
@@ -183,21 +186,21 @@
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="INT" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Int}" />
 											<TextBlock  FontSize="20" Text="{Binding Int}" />
 										</StackPanel>
 									</Button>
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="WIS" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Wis}" />
 											<TextBlock  FontSize="20" Text="{Binding Wis}" />
 										</StackPanel>
 									</Button>
 									<Button Style="{StaticResource SquareButton}"
 										MinWidth="60">
 										<StackPanel>
-											<TextBlock  FontSize="10" Text="CHA" />
+											<TextBlock  FontSize="10" Text="{StaticResource CreatureInfo_Cha}" />
 											<TextBlock  FontSize="20" Text="{Binding Cha}" />
 										</StackPanel>
 									</Button>
@@ -205,28 +208,28 @@
 								<Grid>
 									<ProgressBar x:Name="progressBar1" MinHeight="40" Value="{Binding Hunger, Mode=OneWay}" Maximum="100" Margin="4" Foreground="Red" />
 									<Grid>
-										<TextBlock  FontSize="20" Text="Hunger" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
+										<TextBlock  FontSize="20" Text="{StaticResource CreatureInfo_Hunger}" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
 										<TextBlock  FontSize="20" Text="{Binding Hunger}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
 									</Grid>
 								</Grid>
 								<Grid>
 									<ProgressBar x:Name="progressBar2" MinHeight="40" Value="{Binding Thirst, Mode=OneWay}" Maximum="100" Margin="4" />
 									<Grid>
-										<TextBlock  FontSize="20" Text="Thirst" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
+										<TextBlock  FontSize="20" Text="{StaticResource CreatureInfo_Thirst}" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
 										<TextBlock  FontSize="20" Text="{Binding Thirst}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
 									</Grid>
 								</Grid>
 								<Grid>
 									<ProgressBar x:Name="progressBar3" MinHeight="40" Value="{Binding Sleep, Mode=OneWay}" Maximum="100" Margin="4" Foreground="Green" />
 									<Grid>
-										<TextBlock  FontSize="20" Text="Sleep" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
+										<TextBlock  FontSize="20" Text="{StaticResource CreatureInfo_Sleep}" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
 										<TextBlock  FontSize="20" Text="{Binding Sleep}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
 									</Grid>
 								</Grid>
 								<Grid>
 									<ProgressBar x:Name="progressBar4" MinHeight="40" Value="{Binding Happiness, Mode=OneWay}" Maximum="100" Margin="4" Foreground="Purple" />
 									<Grid>
-										<TextBlock  FontSize="20" Text="Happiness" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
+										<TextBlock  FontSize="20" Text="{StaticResource CreatureInfo_Happiness}" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" />
 										<TextBlock  FontSize="20" Text="{Binding Happiness}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
 									</Grid>
 								</Grid>
