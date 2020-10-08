@@ -50,4 +50,19 @@
 	<system:String x:Key="Agriculture_PickFruit">Pick fruit</system:String>
 	<system:String x:Key="Agriculture_FellTrees">Fell trees</system:String>
 	<system:String x:Key="Agriculture_SelectTreeType">Select tree type</system:String>
+
+	<!--{StaticResource CreatureInfo_}-->
+	<system:String x:Key="CreatureInfo_">CreatureInfo_</system:String>
+	<system:String x:Key="CreatureInfo_Happiness">Happiness</system:String>
+	<system:String x:Key="CreatureInfo_Sleep">Sleep</system:String>
+	<system:String x:Key="CreatureInfo_Thirst">Thirst</system:String>
+	<system:String x:Key="CreatureInfo_Hunger">Hunger</system:String>
+	<system:String x:Key="CreatureInfo_Cha">CHA</system:String>
+	<system:String x:Key="CreatureInfo_Wis">WIS</system:String>
+	<system:String x:Key="CreatureInfo_Int">INT</system:String>
+	<system:String x:Key="CreatureInfo_Con">CON</system:String>
+	<system:String x:Key="CreatureInfo_Dex">Dex</system:String>
+	<system:String x:Key="CreatureInfo_Str">STR</system:String>
+	<system:String x:Key="CreatureInfo_Inventory">Inventory</system:String>
+	<system:String x:Key="CreatureInfo_Equipment">Equipment</system:String>
 </ResourceDictionary>
