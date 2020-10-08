@@ -160,10 +160,16 @@
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding WorkablePosition}" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required items:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredItems}" />
-					</StackPanel>
+					  <ScrollViewer x:Name="RequiredItemScroll" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+						<ItemsControl  ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource RequiredItemTemplate}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
 
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+						</ItemsControl>
+					  </ScrollViewer>
+					</StackPanel>
 				</StackPanel>
 			</Grid>
 		</Grid>

@@ -156,8 +156,7 @@ TileInfoModel::TileInfoModel()
 	_miniSPContents   = *new ObservableCollection<TabItem>();
 	_possibleTennants = *new ObservableCollection<CreatureTabItem>();
 
-	// embedded observable
-	_jobTabRequiredItems = *new ObservableCollection<Noesis::String>();
+	_jobTabRequiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
 }
 
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
@@ -360,7 +359,9 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	_jobTabRequiredItems->Clear();
 	for ( auto ri : tileInfo.requiredItems )
 	{
-		_jobTabRequiredItems->Add( Noesis::String(ri.toStdString()) );
+		auto item = MakePtr<NRequiredItem>( ri.text, ri.count );
+		
+		_jobTabRequiredItems->Add( item );
 	}
 
 	
@@ -436,11 +437,10 @@ Noesis::ObservableCollection<CreatureTabItem>* TileInfoModel::getPossibleTennant
 	return _possibleTennants;
 }
 
-Noesis::ObservableCollection<Noesis::String>* TileInfoModel::getRequiredItems() const
+Noesis::ObservableCollection<NRequiredItem>* TileInfoModel::GetJobRequiredItems() const
 {
 	return _jobTabRequiredItems;
 }
-
 
 const NoesisApp::DelegateCommand* TileInfoModel::GetCmdTab() const
 {
@@ -713,7 +713,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "JobPriority", &TileInfoModel::GetJobPriority );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
 	NsProp( "RequiredToolAvailable", &TileInfoModel::GetRequiredToolAvailable );
-	NsProp( "RequiredItems", &TileInfoModel::GetRequiredItems );
+	NsProp( "RequiredItems", &TileInfoModel::GetJobRequiredItems );
 	NsProp( "WorkablePosition", &TileInfoModel::GetWorkablePosition );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );

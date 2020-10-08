@@ -206,16 +206,18 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 			for (auto rim : job->requiredItems() )
 			{
-				// SID vs UID vs ID?
-				// Item item = Global::inv().combinedID(rim.SID);
-				QString line = rim.itemSID + ": " + (rim.available ? "Handy" : "Lacking");
-				m_tileInfo.requiredItems.append(line);
+				// seems unnecessary...
+				GuiItemInfo git;
+				git.text = rim.itemSID;
+				git.count = rim.count;
+				git.material = rim.materialSID;
+
+				m_tileInfo.requiredItems.append(git);
 			}
 
 			// gnome available
-
-			// work positions
-			// could also call 'isReachable' but that does a lot of stuff
+			//?
+			
 			m_tileInfo.workPositions = QVariant( job->possibleWorkPositions().size() > 0 ).toString();
 		}
 
