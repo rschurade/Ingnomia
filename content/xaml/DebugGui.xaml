@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,7 +31,7 @@
 						CommandParameter="First">
 						<StackPanel>
 							<Image Source="buttons/skills.png" Stretch="None" />
-							<TextBlock>Misc</TextBlock>
+							<TextBlock Text="{StaticResource DebugPage_Misc}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
@@ -36,7 +39,7 @@
 						CommandParameter="Second">
 						<StackPanel>
 							<Image Source="buttons/schedule.png" Stretch="None" />
-							<TextBlock>Stuff</TextBlock>
+							<TextBlock Text="{StaticResource DebugPage_Stuff}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
@@ -44,7 +47,7 @@
 						CommandParameter="Third">
 						<StackPanel>
 							<Image Source="buttons/professions.png" Stretch="None" />
-							<TextBlock>More</TextBlock>
+							<TextBlock Text="{StaticResource DebugPage_More}"></TextBlock>
 						</StackPanel>
 					</Button>
 				</StackPanel>
@@ -61,11 +64,11 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Text="Debug first page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource DebugPage_DebugFirstPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 						<StackPanel Grid.Row="1" Grid.Column="0">
-							<Button Content="Spawn Gnome" Command="{Binding SpawnCmd}"	CommandParameter="Gnome" />
-							<Button Content="Spawn Trader" Command="{Binding SpawnCmd}"	CommandParameter="Trader" />
-							<Button Content="Spawn Goblin" Command="{Binding SpawnCmd}"	CommandParameter="Goblin" />
+							<Button Content="{StaticResource DebugPage_SpawnGnome}" Command="{Binding SpawnCmd}"	CommandParameter="Gnome" />
+							<Button Content="{StaticResource DebugPage_SpawnTrader}" Command="{Binding SpawnCmd}"	CommandParameter="Trader" />
+							<Button Content="{StaticResource DebugPage_SpawnGoblin}" Command="{Binding SpawnCmd}"	CommandParameter="Goblin" />
 						</StackPanel>
 					</Grid>
 
@@ -79,7 +82,7 @@
 							<ColumnDefinition Width="1*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Text="Debug second page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource DebugPage_DebugSecondPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 					</Grid>
 
 					<Grid x:Name="LayoutProfEdit" Visibility="{Binding ShowThird}">
@@ -93,7 +96,7 @@
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="Debug third page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource DebugPage_DebugThirdPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 					</Grid>
 				</Grid>
 			</Border>

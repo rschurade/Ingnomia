@@ -65,4 +65,16 @@
 	<system:String x:Key="CreatureInfo_Str">CreatureInfo_Str</system:String>
 	<system:String x:Key="CreatureInfo_Inventory">CreatureInfo_Inventory</system:String>
 	<system:String x:Key="CreatureInfo_Equipment">CreatureInfo_Equipment</system:String>
+
+	<!--{StaticResource DebugPage_}-->
+	<system:String x:Key="DebugPage_">DebugPage_</system:String>
+	<system:String x:Key="DebugPage_Misc">DebugPage_Misc</system:String>
+	<system:String x:Key="DebugPage_Stuff">DebugPage_Stuff</system:String>
+	<system:String x:Key="DebugPage_More">DebugPage_More</system:String>
+	<system:String x:Key="DebugPage_DebugFirstPage">DebugPage_DebugFirstPage</system:String>
+	<system:String x:Key="DebugPage_SpawnGnome">DebugPage_SpawnGnome</system:String>
+	<system:String x:Key="DebugPage_SpawnTrader">DebugPage_SpawnTrader</system:String>
+	<system:String x:Key="DebugPage_SpawnGoblin">DebugPage_SpawnGoblin</system:String>
+	<system:String x:Key="DebugPage_DebugSecondPage">DebugPage_DebugSecondPage</system:String>
+	<system:String x:Key="DebugPage_DebugThirdPage">DebugPage_DebugThirdPage</system:String>
 </ResourceDictionary>
