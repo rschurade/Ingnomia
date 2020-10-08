@@ -247,7 +247,7 @@
 								<TextBlock HorizontalAlignment="Center">Agriculture</TextBlock>
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB4" Style="{StaticResource SquareButton}" Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+						<Button x:Name="LCB4" Style="{StaticResource SquareButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Designation">
 							<StackPanel>
 								<Image Source="buttons/designation.png" Stretch="None" />
