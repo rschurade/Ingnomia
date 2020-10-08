@@ -4,6 +4,8 @@
 	xmlns:system="clr-namespace:System;assembly=mscorlib">
 
 	<!-- String resource that can be localized -->
+	<!--{StaticResource MainPage_}-->
+	<system:String x:Key="MainPage_">MainPage_</system:String>
 	<system:String x:Key="MainPage_Ingnomia">MainPage_Ingnomia</system:String>
 	<system:String x:Key="MainPage_Continue">MainPage_Continue</system:String>
 	<system:String x:Key="MainPage_NewGame">MainPage_NewGame</system:String>
@@ -17,4 +19,35 @@
 	<system:String x:Key="MainPage_Hint_MMLoadGame">MainPage_Hint_MMLoadGame</system:String>
 	<system:String x:Key="MainPage_Hint_MMSettings">MainPage_Hint_MMSettings</system:String>
 	<system:String x:Key="MainPage_Hint_MMExit">MainPage_Hint_MMExit</system:String>
+
+	<!--{StaticResource Agriculture_}-->
+	<system:String x:Key="Agriculture_">Agriculture_</system:String>
+	<system:String x:Key="Agriculture_TilledPlots">Agriculture_TilledPlots</system:String>
+	<system:String x:Key="Agriculture_PlantsPlanted">Agriculture_PlantsPlanted</system:String>
+	<system:String x:Key="Agriculture_CropsReady">Agriculture_CropsReady</system:String>
+	<system:String x:Key="Agriculture_Suspend">Agriculture_Suspend</system:String>
+	<system:String x:Key="Agriculture_Harvest">Agriculture_Harvest</system:String>
+	<system:String x:Key="Agriculture_SelectCrop">Agriculture_SelectCrop</system:String>
+	<system:String x:Key="Agriculture_NumberOfSeeds">Agriculture_NumberOfSeeds</system:String>
+	<system:String x:Key="Agriculture_NumberOfItems">Agriculture_NumberOfItems</system:String>
+	<system:String x:Key="Agriculture_NumberOfPlants">Agriculture_NumberOfPlants</system:String>
+	<system:String x:Key="Agriculture_Manage">Agriculture_Manage</system:String>
+	<system:String x:Key="Agriculture_Animals">Agriculture_Animals</system:String>
+	<system:String x:Key="Agriculture_Male">Agriculture_Male</system:String>
+	<system:String x:Key="Agriculture_Female">Agriculture_Female</system:String>
+	<system:String x:Key="Agriculture_TameWildAnimals">Agriculture_TameWildAnimals</system:String>
+	<system:String x:Key="Agriculture_HarvestAnimals">Agriculture_HarvestAnimals</system:String>
+	<system:String x:Key="Agriculture_HarvestHay">Agriculture_HarvestHay</system:String>
+	<system:String x:Key="Agriculture_StoredFood">Agriculture_StoredFood</system:String>
+	<system:String x:Key="Agriculture_Settings">Agriculture_Settings</system:String>
+	<system:String x:Key="Agriculture_Back">Agriculture_Back</system:String>
+	<system:String x:Key="Agriculture_SelectFoodForTroughs">Agriculture_SelectFoodForTroughs</system:String>
+	<system:String x:Key="Agriculture_ManageAnimals">Agriculture_ManageAnimals</system:String>
+	<system:String x:Key="Agriculture_SelectAnimalType">Agriculture_SelectAnimalType</system:String>
+	<system:String x:Key="Agriculture_NumberOfAnimals">Agriculture_NumberOfAnimals</system:String>
+	<system:String x:Key="Agriculture_Trees">Agriculture_Trees</system:String>
+	<system:String x:Key="Agriculture_PlantTrees">Agriculture_PlantTrees</system:String>
+	<system:String x:Key="Agriculture_PickFruit">Agriculture_PickFruit</system:String>
+	<system:String x:Key="Agriculture_FellTrees">Agriculture_FellTrees</system:String>
+	<system:String x:Key="Agriculture_SelectTreeType">Agriculture_SelectTreeType</system:String>
 </ResourceDictionary>
