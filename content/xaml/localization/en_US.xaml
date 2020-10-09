@@ -174,4 +174,19 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">This also influences domesticated animals.</system:String>
 	<system:String x:Key="NewGamePage_Back">NewGamePage_Back</system:String>
 	<system:String x:Key="NewGamePage_Embark">Embark</system:String>
+
+	<!--{StaticResource PopulationWindow_}-->
+	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
+	<system:String x:Key="PopulationWindow_Skills">Skills</system:String>
+	<system:String x:Key="PopulationWindow_Schedule">Schedule</system:String>
+	<system:String x:Key="PopulationWindow_EditProf">Edit Prof</system:String>
+	<system:String x:Key="PopulationWindow_Name">Name</system:String>
+	<system:String x:Key="PopulationWindow_Professions">Professions</system:String>
+	<system:String x:Key="PopulationWindow_None">None</system:String>
+	<system:String x:Key="PopulationWindow_Eat">Eat</system:String>
+	<system:String x:Key="PopulationWindow_Sleep">Sleep</system:String>
+	<system:String x:Key="PopulationWindow_Train">Train</system:String>
+	<system:String x:Key="PopulationWindow_EditProfessions">Edit Professions</system:String>
+	<system:String x:Key="PopulationWindow_New">new</system:String>
+	<system:String x:Key="PopulationWindow_Delete">delete</system:String>
 </ResourceDictionary>
