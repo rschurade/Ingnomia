@@ -77,4 +77,26 @@
 	<system:String x:Key="DebugPage_SpawnGoblin">Spawn Goblin</system:String>
 	<system:String x:Key="DebugPage_DebugSecondPage">Debug second page</system:String>
 	<system:String x:Key="DebugPage_DebugThirdPage">Debug third page</system:String>
+
+	<!--{StaticResource GameGui_}-->
+	<system:String x:Key="GameGui_">GameGui_</system:String>
+	<system:String x:Key="GameGui_Ingnomia">Ingnomia</system:String>
+	<system:String x:Key="GameGui_KingdomName">Kingdom name</system:String>
+	<system:String x:Key="GameGui_Something1">something</system:String>
+	<system:String x:Key="GameGui_Something2">something</system:String>
+	<system:String x:Key="GameGui_D">D</system:String>
+	<system:String x:Key="GameGui_Yes">Yes</system:String>
+	<system:String x:Key="GameGui_Ok">OK</system:String>
+	<system:String x:Key="GameGui_No">No</system:String>
+	<system:String x:Key="GameGui_Build">Build</system:String>
+	<system:String x:Key="GameGui_Mine">Mine</system:String>
+	<system:String x:Key="GameGui_Agriculture">Agriculture</system:String>
+	<system:String x:Key="GameGui_Designations">Designations</system:String>
+	<system:String x:Key="GameGui_Job">Job</system:String>
+	<system:String x:Key="GameGui_Magic">Magic</system:String>
+	<system:String x:Key="GameGui_Kingdom">Kingdom</system:String>
+	<system:String x:Key="GameGui_Stockpiles">Stockpiles</system:String>
+	<system:String x:Key="GameGui_Military">Military</system:String>
+	<system:String x:Key="GameGui_Population">Population</system:String>
+	<system:String x:Key="GameGui_Missions">Missions</system:String>
 </ResourceDictionary>
