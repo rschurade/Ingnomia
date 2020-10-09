@@ -13,6 +13,9 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
 				<ResourceDictionary Source="styles/mainmenu/pageswap.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -45,15 +48,15 @@
 			<ColumnDefinition Width="1*" />
 		</Grid.ColumnDefinitions>
 
-		<TextBlock Grid.Row="0" Grid.Column="1" FontSize="100" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Ingnomia" />
+		<TextBlock Grid.Row="0" Grid.Column="1" FontSize="100" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource InGamePage_Ingnomia}" />
 
 		<Viewbox Grid.Row="1" Grid.Column="1" StretchDirection="DownOnly">
 			<StackPanel>
-				<Button x:Name="IMResume"  Style="{StaticResource MenuButtonStyle}" Content="Resume" Command="{Binding Resume}" />
-				<Button x:Name="IMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="Load Game" Command="{Binding LoadGame}" />
-				<Button x:Name="IMSaveGame"  Style="{StaticResource MenuButtonStyle}" Content="Save Game" Command="{Binding SaveGame}" />
-				<Button x:Name="IMSettings"    Style="{StaticResource MenuButtonStyle}" Content="Settings" Command="{Binding Settings}" />
-				<Button x:Name="IMQuit"      Style="{StaticResource MenuButtonStyle}" Content="Quit game" Command="{Binding BackToMain}" />
+				<Button x:Name="IMResume"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource InGamePage_Resume}" Command="{Binding Resume}" />
+				<Button x:Name="IMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource InGamePage_LoadGame}" Command="{Binding LoadGame}" />
+				<Button x:Name="IMSaveGame"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource InGamePage_SaveGame}" Command="{Binding SaveGame}" />
+				<Button x:Name="IMSettings"    Style="{StaticResource MenuButtonStyle}" Content="{StaticResource InGamePage_Settings}" Command="{Binding Settings}" />
+				<Button x:Name="IMQuit"      Style="{StaticResource MenuButtonStyle}" Content="{StaticResource InGamePage_QuitGame}" Command="{Binding BackToMain}" />
 			</StackPanel>
 		</Viewbox>
 	</Grid>
