@@ -237,4 +237,9 @@
 	<system:String x:Key="TileInfo_WorkedBy">Worked by:</system:String>
 	<system:String x:Key="TileInfo_JobPriority">Job Priority:</system:String>
 	<system:String x:Key="TileInfo_RequiredTool">Required tool:</system:String>
+
+	<!--{StaticResource WaitPage_}-->
+	<system:String x:Key="WaitPage_">WaitPage_</system:String>
+	<system:String x:Key="WaitPage_CreatingGame">Creating Game</system:String>
+	<system:String x:Key="WaitPage_PleaseWait">Please Wait</system:String>
 </ResourceDictionary>
