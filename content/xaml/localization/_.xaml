@@ -133,4 +133,45 @@
 	<system:String x:Key="Neighbors_NeighborsPage">Neighbors_NeighborsPage</system:String>
 	<system:String x:Key="Neighbors_MissionsPage">Neighbors_MissionsPage</system:String>
 	<system:String x:Key="Neighbors_NeighborsThirdPage">Neighbors_NeighborsThirdPage</system:String>
+
+	<!--{StaticResource NewGamePage_}-->
+	<system:String x:Key="NewGamePage_">NewGamePage_</system:String>
+	<system:String x:Key="NewGamePage_SetUpNewGame">NewGamePage_SetUpNewGame</system:String>
+	<system:String x:Key="NewGamePage_World">NewGamePage_World</system:String>
+	<system:String x:Key="NewGamePage_KingdomName">NewGamePage_KingdomName</system:String>
+	<system:String x:Key="NewGamePage_Seed">NewGamePage_Seed</system:String>
+	<system:String x:Key="NewGamePage_Random">NewGamePage_Random</system:String>
+	<system:String x:Key="NewGamePage_WorldSize">NewGamePage_WorldSize</system:String>
+	<system:String x:Key="NewGamePage_LargerSizePerformance">NewGamePage_LargerSizePerformance</system:String>
+	<system:String x:Key="NewGamePage_ZLevels">NewGamePage_ZLevels</system:String>
+	<system:String x:Key="NewGamePage_Ground">NewGamePage_Ground</system:String>
+	<system:String x:Key="NewGamePage_Flatness">NewGamePage_Flatness</system:String>
+	<system:String x:Key="NewGamePage_OceanSize">NewGamePage_OceanSize</system:String>
+	<system:String x:Key="NewGamePage_Rivers">NewGamePage_Rivers</system:String>
+	<system:String x:Key="NewGamePage_RiverSize">NewGamePage_RiverSize</system:String>
+	<system:String x:Key="NewGamePage_StartArea">NewGamePage_StartArea</system:String>
+	<system:String x:Key="NewGamePage_StartingItems">NewGamePage_StartingItems</system:String>
+	<system:String x:Key="NewGamePage_Presets">NewGamePage_Presets</system:String>
+	<system:String x:Key="NewGamePage_NewPreset">NewGamePage_NewPreset</system:String>
+	<system:String x:Key="NewGamePage_DeletePreset">NewGamePage_DeletePreset</system:String>
+	<system:String x:Key="NewGamePage_Gnomes">NewGamePage_Gnomes</system:String>
+	<system:String x:Key="NewGamePage_Items">NewGamePage_Items</system:String>
+	<system:String x:Key="NewGamePage_Animals">NewGamePage_Animals</system:String>
+	<system:String x:Key="NewGamePage_Add">NewGamePage_Add</system:String>
+	<system:String x:Key="NewGamePage_Enemies">NewGamePage_Enemies</system:String>
+	<system:String x:Key="NewGamePage_PeacefulMode">NewGamePage_PeacefulMode</system:String>
+	<system:String x:Key="NewGamePage_NoEnemyKingdoms">NewGamePage_NoEnemyKingdoms</system:String>
+	<system:String x:Key="NewGamePage_PeacefulAnimalsMayStillAttack">NewGamePage_PeacefulAnimalsMayStillAttack</system:String>
+	<system:String x:Key="NewGamePage_Flora">NewGamePage_Flora</system:String>
+	<system:String x:Key="NewGamePage_TreeDensity">NewGamePage_TreeDensity</system:String>
+	<system:String x:Key="NewGamePage_PlantDensity">NewGamePage_PlantDensity</system:String>
+	<system:String x:Key="NewGamePage_Fauna">NewGamePage_Fauna</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsPage">NewGamePage_NumberMaxWildAnimalsPage</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimals">NewGamePage_NumberWildAnimals</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsAtStart">NewGamePage_NumberWildAtStart</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimalsPage">NewGamePage_NumberMaxAnimalsPage</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimals">NewGamePage_NumberMaxAnimals</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">NewGamePage_NumberMaxAnimalsIncludesDomesticated</system:String>
+	<system:String x:Key="NewGamePage_Back">NewGamePage_Back</system:String>
+	<system:String x:Key="NewGamePage_Embark">NewGamePage_Embark</system:String>
 </ResourceDictionary>
