@@ -242,4 +242,36 @@
 	<system:String x:Key="WaitPage_">WaitPage_</system:String>
 	<system:String x:Key="WaitPage_CreatingGame">Creating Game</system:String>
 	<system:String x:Key="WaitPage_PleaseWait">Please Wait</system:String>
+
+	<!--{StaticResource WorkshopGui_}-->
+	<system:String x:Key="WorkshopGui_">WorkshopGui_</system:String>
+	<system:String x:Key="WorkshopGui_AllowAcceptGeneratedJobs">Accept generated jobs</system:String>
+	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">Accept generated jobs.</system:String>
+	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">Will auto generate craft jobs for items in constructions and other workshops.</system:String>
+	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">Auto craft missing components</system:String>
+	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Auto craft missing components.</system:String>
+	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">Generates crafting jobs in workshops for missing components.</system:String>
+	<system:String x:Key="WorkshopGui_AvailableProducts">Available products</system:String>
+	<system:String x:Key="WorkshopGui_ProductionLine">Production line</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcessAnimals">Butcher excess animals</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcess">Butcher excess.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Butcher any tame animal not on a pasture.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherCorpse">Butcher corpses</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Butcher corpses.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Corpses must be in stockpiles to be considered.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectToStockpile">Connect to stockpile</system:String>
+	<system:String x:Key="WorkshopGui_ConnectStockpile">Connect stockpile.</system:String>
+	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Connect to a stockpile of maximum size 3x3.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectAdjacentStockpile">That stockpile must be adjacent to the input tile .</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAnimals">Butcher Animals</system:String>
+	<system:String x:Key="WorkshopGui_SuspendWorkshop">Suspend</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopSuspendWork">Suspend workshop.</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopStopWork">Workshop will stop working.</system:String>
+	<system:String x:Key="WorkshopGui_Trade">Trade</system:String>
+	<system:String x:Key="WorkshopGui_Max">max</system:String>
+	<system:String x:Key="WorkshopGui_TraderInventory">Trader inventory:</system:String>
+	<system:String x:Key="WorkshopGui_TraderValue">Trader value:</system:String>
+	<system:String x:Key="WorkshopGui_PlayerInventory">Player inventory:</system:String>
+	<system:String x:Key="WorkshopGui_PlayerValue">Player value:</system:String>
+	<system:String x:Key="WorkshopGui_TradeAction">Trade</system:String>
 </ResourceDictionary>

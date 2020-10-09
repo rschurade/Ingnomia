@@ -241,4 +241,36 @@
 	<system:String x:Key="WaitPage_">WaitPage_</system:String>
 	<system:String x:Key="WaitPage_CreatingGame">WaitPage_CreatingGame</system:String>
 	<system:String x:Key="WaitPage_PleaseWait">WaitPage_PleaseWait</system:String>
+
+	<!--{StaticResource WorkshopGui_}-->
+	<system:String x:Key="WorkshopGui_">WorkshopGui_</system:String>
+	<system:String x:Key="WorkshopGui_AllowAcceptGeneratedJobs">WorkshopGui_AllowAcceptGeneratedJobs</system:String>
+	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">WorkshopGui_AcceptGeneratedJobs</system:String>
+	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">WorkshopGui_AutoGenerateCraftJobs</system:String>
+	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">WorkshopGui_AutoCraftMissingComponents</system:String>
+	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">WorkshopGui_AllowAutoCraftMissingComponents</system:String>
+	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">WorkshopGui_GeneratesCraftingJobsForMissingComponents</system:String>
+	<system:String x:Key="WorkshopGui_AvailableProducts">WorkshopGui_AvailableProducts</system:String>
+	<system:String x:Key="WorkshopGui_ProductionLine">WorkshopGui_ProductionLine</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcessAnimals">WorkshopGui_ButcherExcessAnimals</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcess">WorkshopGui_ButcherExcess</system:String>
+	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">WorkshopGui_ButcherTameNotOnPasture</system:String>
+	<system:String x:Key="WorkshopGui_ButcherCorpse">WorkshopGui_ButcherCorpse</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">WorkshopGui_ButcherAllowCorpse</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">WorkshopGui_ButcherOnlyStockpileCorpse</system:String>
+	<system:String x:Key="WorkshopGui_ConnectToStockpile">WorkshopGui_ConnectToStockpile</system:String>
+	<system:String x:Key="WorkshopGui_ConnectStockpile">WorkshopGui_ConnectStockpile</system:String>
+	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">WorkshopGui_Connect3x3Stockpile</system:String>
+	<system:String x:Key="WorkshopGui_ConnectAdjacentStockpile">WorkshopGui_ConnectAdjacentStockpile</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAnimals">WorkshopGui_ButcherAnimals</system:String>
+	<system:String x:Key="WorkshopGui_SuspendWorkshop">WorkshopGui_SuspendWorkshop</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopSuspendWork">WorkshopGui_WorkshopSuspendWork</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopStopWork">WorkshopGui_WorkshopStopWork</system:String>
+	<system:String x:Key="WorkshopGui_Trade">WorkshopGui_Trade</system:String>
+	<system:String x:Key="WorkshopGui_Max">WorkshopGui_Max</system:String>
+	<system:String x:Key="WorkshopGui_TraderInventory">WorkshopGui_TraderInventory</system:String>
+	<system:String x:Key="WorkshopGui_TraderValue">WorkshopGui_TraderValue</system:String>
+	<system:String x:Key="WorkshopGui_PlayerInventory">WorkshopGui_PlayerInventory</system:String>
+	<system:String x:Key="WorkshopGui_PlayerValue">WorkshopGui_PlayerValue</system:String>
+	<system:String x:Key="WorkshopGui_TradeAction">WorkshopGui_TradeAction</system:String>
 </ResourceDictionary>
