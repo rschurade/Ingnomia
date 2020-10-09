@@ -192,6 +192,7 @@
 
 	<!--{StaticResource SettingsPage_}-->
 	<system:String x:Key="SettingsPage_">SettingsPage_</system:String>
+	<system:String x:Key="SettingsPage_Settings">Settings</system:String>
 	<system:String x:Key="SettingsPage_Game">Game</system:String>
 	<system:String x:Key="SettingsPage_Video">Video</system:String>
 	<system:String x:Key="SettingsPage_VideoContent">Video Settings</system:String>
