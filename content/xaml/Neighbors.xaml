@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,7 +31,7 @@
 						CommandParameter="First">
 							<StackPanel>
 								<Image Source="buttons/skills.png" Stretch="None" />
-								<TextBlock>Neighbors</TextBlock>
+								<TextBlock Text="{StaticResource Neighbors_Neighbors}"></TextBlock>
 							</StackPanel>
 						</Button>
 						<Button Style="{StaticResource SquareButton}"
@@ -36,7 +39,7 @@
 						CommandParameter="Second">
 							<StackPanel>
 								<Image Source="buttons/schedule.png" Stretch="None" />
-								<TextBlock>Missions</TextBlock>
+								<TextBlock Text="{StaticResource Neighbors_Missions}"></TextBlock>
 							</StackPanel>
 						</Button>
 						<!--
@@ -45,7 +48,7 @@
 						CommandParameter="Third">
 						<StackPanel>
 							<Image Source="buttons/professions.png" Stretch="None" />
-							<TextBlock>More</TextBlock>
+							<TextBlock Text="{StaticResource Neighbors_More}"></TextBlock>
 						</StackPanel>
 					</Button>
 					-->
@@ -63,7 +66,7 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="1*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Neighbors" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+							<TextBlock Text="{StaticResource Neighbors_NeighborsPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 
 							<ScrollViewer x:Name="SVNeighbors" HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="1" Grid.Column="0">
 								<ItemsControl ItemsSource="{Binding NeighborList}" ItemTemplate="{StaticResource NeighborKingdomTemplate}">
@@ -96,7 +99,7 @@
 								<ColumnDefinition Width="1*" />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Missions" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+							<TextBlock Text="{StaticResource Neighbors_MissionsPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 						</Grid>
 
 						<Grid x:Name="LayoutProfEdit" Visibility="{Binding ShowThird}">
@@ -110,7 +113,7 @@
 								<ColumnDefinition Width="1*" />
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Text="Neighbors third page" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+							<TextBlock Text="{StaticResource Neighbors_NeighborsThirdPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 						</Grid>
 					</Grid>
 				</Border>
