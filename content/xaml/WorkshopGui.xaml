@@ -68,7 +68,6 @@
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
-
 					<CheckBox x:Name="CBConnectSPN" Content="{StaticResource WorkshopGui_ConnectToStockpile}" IsChecked="{Binding LinkStockpile, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
@@ -141,7 +140,6 @@
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
-
 					<CheckBox x:Name="CBButchExcess" Content="{StaticResource WorkshopGui_ButcherExcessAnimals}" IsChecked="{Binding ButcherExcess, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
@@ -158,7 +156,6 @@
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
-
 					<CheckBox x:Name="CBConnectSPB" Content="{StaticResource WorkshopGui_ConnectToStockpile}" IsChecked="{Binding LinkStockpile, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
