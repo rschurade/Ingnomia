@@ -55,7 +55,7 @@ class Job
 private:
 	unsigned int m_id = 0;
 	QString m_type;
-	QString m_requiredSKill;
+	QString m_requiredSkill;
 	QString m_description;
 	quint8 m_rotation  = 0;
 	bool m_noJobSprite = false;
@@ -194,6 +194,7 @@ public:
 
 	RequiredTool requiredTool() const;
 	void setRequiredTool( QString toolID, quint8 level );
+	void setRequiredToolAvailable( bool avail );
 
 	void setConversionMaterial( QString material );
 	QString conversionMaterial() const;

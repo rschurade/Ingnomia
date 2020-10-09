@@ -220,6 +220,9 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	Job& job = m_jobList[jobID];
 	auto rt  = job.requiredTool();
 
+	// need to figure out how to check rt 'inuse' & 'reachable'
+	job.setRequiredToolAvailable(true);
+	
 	if ( rt.type.isEmpty() )
 	{
 		return true;
@@ -228,8 +231,6 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	QMap<QString, int> mc = Global::inv().materialCountsForItem( rt.type, false );
 	QStringList keys      = mc.keys();
 
-	// need to figure out how to check rt 'inuse' & 'reachable'
-	rt.available = true;
 	for ( auto key : keys )
 	{
 		if ( mc[key] > 0 )
@@ -245,7 +246,8 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 			}
 		}
 	}
-	rt.available = false;
+	
+	job.setRequiredToolAvailable(false);
 	return false;
 }
 

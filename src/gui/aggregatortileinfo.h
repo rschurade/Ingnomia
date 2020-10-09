@@ -60,6 +60,7 @@ struct GuiTileInfo
 	QString jobName;
 	QString jobWorker;
 	QString jobPriority;
+	QString requiredSkill;
 	QString requiredTool;
 	QString requiredToolAvailable;
 	QList<GuiItemInfo> requiredItems;

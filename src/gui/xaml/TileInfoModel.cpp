@@ -368,6 +368,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	m_jobName      = tileInfo.jobName.toStdString().c_str();
 	m_jobWorker    = tileInfo.jobWorker.toStdString().c_str();
 	m_jobPriority  = tileInfo.jobPriority.toStdString().c_str();
+	m_requiredSkill = tileInfo.requiredSkill.toStdString().c_str();
 	m_requiredTool = tileInfo.requiredTool.toStdString().c_str();
 	m_requiredToolAvailable = tileInfo.requiredToolAvailable.toStdString().c_str();
 	m_workablePosition = tileInfo.workPositions.toStdString().c_str();
@@ -375,6 +376,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
 	OnPropertyChanged( "JobPriority" );
+	OnPropertyChanged( "RequiredSkill" );
 	OnPropertyChanged( "RequiredTool" );
 	OnPropertyChanged( "RequiredToolAvailable" );
 	OnPropertyChanged( "RequiredItems" );
@@ -711,6 +713,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "JobName", &TileInfoModel::GetJobName );
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
 	NsProp( "JobPriority", &TileInfoModel::GetJobPriority );
+	NsProp( "RequiredSkill", &TileInfoModel::GetRequiredSkill );
 	NsProp( "RequiredTool", &TileInfoModel::GetRequiredTool );
 	NsProp( "RequiredToolAvailable", &TileInfoModel::GetRequiredToolAvailable );
 	NsProp( "RequiredItems", &TileInfoModel::GetJobRequiredItems );

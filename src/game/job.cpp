@@ -33,7 +33,7 @@ Job::Job( QVariantMap in )
 {
 	m_id            = in.value( "ID" ).toUInt();
 	m_type          = in.value( "Type" ).toString();
-	m_requiredSKill = in.value( "RequiredSkill" ).toString();
+	m_requiredSkill = in.value( "RequiredSkill" ).toString();
 	m_description   = in.value( "Description" ).toString();
 	m_rotation      = in.value( "Rotation" ).value<quint8>();
 	m_noJobSprite   = in.value( "NoJobSprite" ).toBool();
@@ -93,7 +93,7 @@ QVariant Job::serialize() const
 	QVariantMap out;
 	out.insert( "ID", m_id );
 	out.insert( "Type", m_type );
-	out.insert( "RequiredSkill", m_requiredSKill );
+	out.insert( "RequiredSkill", m_requiredSkill );
 	out.insert( "Description", m_description );
 	out.insert( "Rotation", m_rotation );
 	out.insert( "NoJobSprite", m_noJobSprite );
@@ -153,7 +153,7 @@ Job::Job( const Job& other )
 {
 	m_id            = other.m_id;
 	m_type          = other.m_type;
-	m_requiredSKill = other.m_requiredSKill;
+	m_requiredSkill = other.m_requiredSkill;
 	m_description   = other.m_description;
 	m_rotation      = other.m_rotation;
 	m_noJobSprite   = other.m_noJobSprite;
@@ -214,11 +214,11 @@ void Job::setType( QString type )
 
 QString Job::requiredSkill() const
 {
-	return m_requiredSKill;
+	return m_requiredSkill;
 }
 void Job::setRequiredSkill( QString skill )
 {
-	m_requiredSKill = skill;
+	m_requiredSkill = skill;
 }
 
 void Job::setDescription( QString desc )
@@ -449,10 +449,16 @@ void Job::setRequiredTool( QString toolID, quint8 level )
 	m_requiredTool.type  = toolID;
 	m_requiredTool.level = level;
 
-	if ( toolID.isEmpty()) {
+	if ( toolID.isEmpty() ) {
 	  m_requiredTool.available = true;
 	}
 }
+
+void Job::setRequiredToolAvailable( bool avail )
+{
+	m_requiredTool.available = avail;
+}
+
 
 void Job::setConversionMaterial( QString material )
 {

@@ -148,6 +148,10 @@
 					  	<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobPriority}" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
+						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required skill:" />
+						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredSkill}" />
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
 						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required tool:" />
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredTool}" />
 					</StackPanel>
@@ -156,19 +160,26 @@
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredToolAvailable}" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Workable position:" />
+						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Accessible:" />
 						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding WorkablePosition}" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-					  <ScrollViewer x:Name="RequiredItemScroll" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-						<ItemsControl  ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource RequiredItemTemplate}">
+					  <Grid>
+						<Grid.RowDefinitions>
+						  <RowDefinition Height="Auto"/>
+						  <RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required Items:" Grid.Row="0" />
+						<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+						  <ItemsControl ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource ItemTemplate16}">
 							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-
-								</ItemsPanelTemplate>
+							  <ItemsPanelTemplate>
+								<StackPanel/>
+							  </ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
-						</ItemsControl>
-					  </ScrollViewer>
+						  </ItemsControl>
+						</ScrollViewer>
+					  </Grid>
 					</StackPanel>
 				</StackPanel>
 			</Grid>

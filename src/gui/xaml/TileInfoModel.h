@@ -194,6 +194,10 @@ private:
 	{
 		return m_jobPriority.Str();
 	}
+	const char* GetRequiredSkill() const
+	{
+		return m_requiredSkill.Str();
+	}
 	const char* GetRequiredTool() const
 	{
 		return m_requiredTool.Str();
@@ -240,6 +244,7 @@ private:
 	Noesis::String m_jobName;
 	Noesis::String m_jobWorker;
 	Noesis::String m_jobPriority;
+	Noesis::String m_requiredSkill;
 	Noesis::String m_requiredTool;
 	Noesis::String m_requiredToolAvailable;
 	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> _jobTabRequiredItems;

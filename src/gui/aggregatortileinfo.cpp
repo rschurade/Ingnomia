@@ -202,11 +202,11 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 
 			m_tileInfo.jobPriority = QString::number( job->priority() );
+			m_tileInfo.requiredSkill = job->requiredSkill();
 			m_tileInfo.requiredToolAvailable = rt.available ? "Yes" : "No";
 
 			for (auto rim : job->requiredItems() )
 			{
-				// seems unnecessary...
 				GuiItemInfo git;
 				git.text = rim.itemSID;
 				git.count = rim.count;
@@ -214,9 +214,10 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 				m_tileInfo.requiredItems.append(git);
 			}
-
+			
 			// gnome available
-			//?
+			// use the CanWork?
+			// use the gnomemanager to query whether a gnome exists with that skill enabled?
 			
 			m_tileInfo.workPositions = QVariant( job->possibleWorkPositions().size() > 0 ).toString();
 		}
