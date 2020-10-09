@@ -219,4 +219,21 @@
 	<system:String x:Key="StockpileGui_Stock">StockpileGui_Stock</system:String>
 	<system:String x:Key="StockpileGui_Limits">StockpileGui_Limits</system:String>
 	<system:String x:Key="StockpileGui_LimitsImplementedLater">StockpileGui_LimitsImplementedLater</system:String>
+
+	<!--{StaticResource TileInfo_}-->
+	<system:String x:Key="TileInfo_">TileInfo_</system:String>
+	<system:String x:Key="TileInfo_Stockpile">TileInfo_Stockpile</system:String>
+	<system:String x:Key="TileInfo_Manage">TileInfo_Manage</system:String>
+	<system:String x:Key="TileInfo_AssignTo">TileInfo_AssignTo</system:String>
+	<system:String x:Key="TileInfo_Value">TileInfo_Value</system:String>
+	<system:String x:Key="TileInfo_Enclosed">TileInfo_Enclosed</system:String>
+	<system:String x:Key="TileInfo_HasRoof">TileInfo_HasRoof</system:String>
+	<system:String x:Key="TileInfo_Beds">TileInfo_Beds</system:String>
+	<system:String x:Key="TileInfo_SoundAlarm">TileInfo_SoundAlarm</system:String>
+	<system:String x:Key="TileInfo_AlarmSoundAlarm">TileInfo_AlarmSoundAlarm</system:String>
+	<system:String x:Key="TileInfo_AlarmRetreatHere">TileInfo_AlarmRetreatHere</system:String>
+	<system:String x:Key="TileInfo_Job">TileInfo_Job</system:String>
+	<system:String x:Key="TileInfo_WorkedBy">TileInfo_WorkedBy</system:String>
+	<system:String x:Key="TileInfo_JobPriority">TileInfo_JobPriority</system:String>
+	<system:String x:Key="TileInfo_RequiredTool">TileInfo_RequiredTool</system:String>
 </ResourceDictionary>
