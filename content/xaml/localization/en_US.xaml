@@ -200,4 +200,24 @@
 	<system:String x:Key="SettingsPage_Controls">Controls</system:String>
 	<system:String x:Key="SettingsPage_Back">Back</system:String>
 	<system:String x:Key="SettingsPage_Accept">Accept</system:String>
+
+	<!--{StaticResource StockpileGui_}-->
+	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
+	<system:String x:Key="StockpileGui_Stockpile">Stockpile</system:String>
+	<system:String x:Key="StockpileGui_Suspend">Suspend</system:String>
+	<system:String x:Key="StockpileGui_StockpileSuspend">Suspend stockpile.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePushable">Stockpile will stop accepting items.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullable">Items can still be taken out of the stockpile.</system:String>
+	<system:String x:Key="StockpileGui_PullFromHere">Pull from here</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHere">Pull from here.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHigher">Stockpiles with higher priority may pull items from here.</system:String>
+	<system:String x:Key="StockpileGui_PullFromOther">Pull from other</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromOther">Pull from other.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromLower">Stockpile may pull from other stockpiles with lower priority.</system:String>
+	<system:String x:Key="StockpileGui_CopySetup">Copy setup</system:String>
+	<system:String x:Key="StockpileGui_PasteSetup">Paste setup</system:String>
+	<system:String x:Key="StockpileGui_Filters">Filters</system:String>
+	<system:String x:Key="StockpileGui_Stock">Stock</system:String>
+	<system:String x:Key="StockpileGui_Limits">Limits</system:String>
+	<system:String x:Key="StockpileGui_LimitsImplementedLater">Will be implemented later.</system:String>
 </ResourceDictionary>

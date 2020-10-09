@@ -14,6 +14,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,40 +31,40 @@
 			<Border x:Name="TabBorder1" Style="{StaticResource Panel}" MinWidth="100" MinHeight="700" Margin="2" />
 			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2">
 				<StackPanel>
-					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Stockpile" />
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource StockpileGui_Stockpile}" />
 					<TextBox x:Name="SPName" Text="{Binding Name}" Margin="10,5,10,5" />
 					<ComboBox x:Name="PrioritySelector" Margin="10,5,10,5"
 								ItemsSource="{Binding Priorities}"
 								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"
 								ItemTemplate="{StaticResource ItemTemplate}" />
-					<CheckBox x:Name="CBSuspend" Content="Suspend" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+					<CheckBox x:Name="CBSuspend" Content="{StaticResource StockpileGui_Suspend}" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
-								<TextBlock Text="Suspend stockpile." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-								<TextBlock Text="Stockpile will stop accepting items." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-								<TextBlock Text="Items can still be taken out of the stockpile." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpileSuspend}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePushable}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePullable}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
-					<CheckBox x:Name="CBAllowPull" Content="Pull from here" IsChecked="{Binding PullFromHere, Mode=TwoWay}" Margin="10,5,10,5">
+					<CheckBox x:Name="CBAllowPull" Content="{StaticResource StockpileGui_PullFromHere}" IsChecked="{Binding PullFromHere, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
-								<TextBlock Text="Pull from here." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-								<TextBlock Text="Stockpiles with higher priority may pull items from here." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePullFromHere}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePullFromHigher}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
-					<CheckBox x:Name="CBPullFrom" Content="Pull from other" IsChecked="{Binding PullFromOther, Mode=TwoWay}" Margin="10,5,10,5">
+					<CheckBox x:Name="CBPullFrom" Content="{StaticResource StockpileGui_PullFromOther}" IsChecked="{Binding PullFromOther, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
-								<TextBlock Text="Pull from other." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-								<TextBlock Text="Stockpile may pull from other stockpiles with lower priority." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePullFromOther}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource StockpileGui_StockpilePullFromLower}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 							</StackPanel>
 						</CheckBox.ToolTip>
 					</CheckBox>
 					<StackPanel Orientation="Horizontal">
-						<Button Content="Copy setup" Margin="10,4,4,4" />
-						<Button Content="Paste setup" Margin="4" />
+						<Button Content="{StaticResource StockpileGui_CopySetup}" Margin="10,4,4,4" />
+						<Button Content="{StaticResource StockpileGui_PasteSetup}" Margin="4" />
 					</StackPanel>
 				</StackPanel>
 			</Border>
@@ -72,7 +75,7 @@
 						<RowDefinition Height="1*" />
 					</Grid.RowDefinitions>
 
-					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Filters" Grid.Row="0" />
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource StockpileGui_Filters}" Grid.Row="0" />
 
 					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
 						<!--
@@ -100,7 +103,7 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="1*" />
 					</Grid.RowDefinitions>
-					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Stock" Grid.Row="0" />
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource StockpileGui_Stock}" Grid.Row="0" />
 					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
 						<ItemsControl ItemsSource="{Binding StockedItems}" ItemTemplate="{StaticResource ItemTemplate20}">
 							<ItemsControl.ItemsPanel>
@@ -119,8 +122,8 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="1*" />
 					</Grid.RowDefinitions>
-					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Limits" Grid.Row="0" />
-					<TextBlock FontSize="16"  HorizontalAlignment="Left" Text="Will be implemented later." Grid.Row="1" />
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource StockpileGui_Limits}" Grid.Row="0" />
+					<TextBlock FontSize="16"  HorizontalAlignment="Left" Text="{StaticResource StockpileGui_LimitsImplementedLater}" Grid.Row="1" />
 					<!--
 					<CheckBox x:Name="CBLimitMode" Content="Seperate limit for each material" IsChecked="{Binding LimitCondensed, Mode=TwoWay}" Margin="10,5,10,5" Grid.Row="1" />
 					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="2">
