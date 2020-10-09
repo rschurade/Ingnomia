@@ -124,4 +124,13 @@
 	<system:String x:Key="MilitaryGui_MilitarySquads">Military - Squads</system:String>
 	<system:String x:Key="MilitaryGui_MilitaryRoles">Military - Roles</system:String>
 	<system:String x:Key="MilitaryGui_MilitaryPriorities">Military - Priorities</system:String>
+
+	<!--{StaticResource Neighbors_}-->
+	<system:String x:Key="Neighbors_">Neighbors_</system:String>
+	<system:String x:Key="Neighbors_Neighbors">Neighbors</system:String>
+	<system:String x:Key="Neighbors_Missions">Missions</system:String>
+	<system:String x:Key="Neighbors_More">More</system:String>
+	<system:String x:Key="Neighbors_NeighborsPage">Neighbors</system:String>
+	<system:String x:Key="Neighbors_MissionsPage">Missions</system:String>
+	<system:String x:Key="Neighbors_NeighborsThirdPage">Neighbors third page</system:String>
 </ResourceDictionary>
