@@ -44,7 +44,7 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Row="0" Grid.Column="1">
-			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Settings" />
+			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource SettingsPage_Settings}" />
 		</Viewbox>
 		<Viewbox Grid.Row="1" Grid.Column="1">
 			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
