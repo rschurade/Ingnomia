@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -41,7 +44,7 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Row="0" Grid.Column="1">
-			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Load Game" />
+			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource LoadGamePage_LoadGame}" />
 		</Viewbox>
 
 		<Grid Grid.Row="1" Grid.Column="1">
@@ -65,9 +68,9 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
-						<TextBlock FontSize="20" Text="Here will be info about the selected game." TextWrapping="Wrap" Margin="5" />
+						<TextBlock FontSize="20" Text="{StaticResource LoadGamePage_HereSelectedGameInfo}" TextWrapping="Wrap" Margin="5" />
 					</ScrollViewer>
-					<Button x:Name="BuLoadGame" FontSize="20" Content="Load" Margin="5" Grid.Row="1" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.ContinueGame }" CommandParameter="{Binding SelectedGame.Path}" />
+					<Button x:Name="BuLoadGame" FontSize="20" Content="{StaticResource LoadGamePage_Load}" Margin="5" Grid.Row="1" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.ContinueGame }" CommandParameter="{Binding SelectedGame.Path}" />
 				</Grid>
 
 				<ListBox x:Name="LBLoadGames" Grid.Row="1"
@@ -77,7 +80,7 @@
 			</Grid>
 		</Grid>
 
-		<Button Grid.Row="2" Grid.Column="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="Back" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
+		<Button Grid.Row="2" Grid.Column="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource LoadGamePage_Back}" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
 		<TextBlock x:Name="SettingsDescription" />
 	</Grid>
 </UserControl>
