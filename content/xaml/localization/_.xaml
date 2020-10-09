@@ -200,4 +200,23 @@
 	<system:String x:Key="SettingsPage_Controls">SettingsPage_Controls</system:String>
 	<system:String x:Key="SettingsPage_Back">SettingsPage_Back</system:String>
 	<system:String x:Key="SettingsPage_Accept">SettingsPage_Accept</system:String>
+
+	<!--{StaticResource StockpileGui_}-->
+	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
+	<system:String x:Key="StockpileGui_Stockpile">StockpileGui_Stockpile</system:String>
+	<system:String x:Key="StockpileGui_Suspend">StockpileGui_Suspend</system:String>
+	<system:String x:Key="StockpileGui_StockpileSuspend">StockpileGui_StockpileSuspend</system:String>
+	<system:String x:Key="StockpileGui_StockpilePushable">StockpileGui_StockpilePushable</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullable">StockpileGui_StockpilePullable</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHere">StockpileGui_StockpilePullFromHere</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHigher">StockpileGui_StockpilePullFromHigher</system:String>
+	<system:String x:Key="StockpileGui_PullFromOther">StockpileGui_PullFromOther</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromOther">StockpileGui_StockpilePullFromOther</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromLower">StockpileGui_StockpilePullFromLower</system:String>
+	<system:String x:Key="StockpileGui_CopySetup">StockpileGui_CopySetup</system:String>
+	<system:String x:Key="StockpileGui_PasteSetup">StockpileGui_PasteSetup</system:String>
+	<system:String x:Key="StockpileGui_Filters">StockpileGui_Filters</system:String>
+	<system:String x:Key="StockpileGui_Stock">StockpileGui_Stock</system:String>
+	<system:String x:Key="StockpileGui_Limits">StockpileGui_Limits</system:String>
+	<system:String x:Key="StockpileGui_LimitsImplementedLater">StockpileGui_LimitsImplementedLater</system:String>
 </ResourceDictionary>
