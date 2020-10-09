@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,7 +31,7 @@
 						CommandParameter="First">
 						<StackPanel>
 							<Image Source="buttons/squads.png" Stretch="None" />
-							<TextBlock>Squads</TextBlock>
+							<TextBlock Text="{StaticResource MilitaryGui_Squads}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
@@ -36,7 +39,7 @@
 						CommandParameter="Second">
 						<StackPanel>
 							<Image Source="buttons/roles.png" Stretch="None" />
-							<TextBlock>Roles</TextBlock>
+							<TextBlock Text="{StaticResource MilitaryGui_Roles}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<!--
@@ -45,7 +48,7 @@
 						CommandParameter="Third">
 						<StackPanel>
 							<Image Source="buttons/professions.png" Stretch="None" />
-							<TextBlock>More</TextBlock>
+							<TextBlock Text="{StaticResource MilitaryGui_More}"></TextBlock>
 						</StackPanel>
 					</Button>
 					-->
@@ -59,7 +62,7 @@
 							<RowDefinition Height="1*" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<TextBlock Text="Military - Squads" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource MilitaryGui_MilitarySquads}" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 
 						<StackPanel Orientation="Horizontal" Grid.Row="1">
 							<ScrollViewer x:Name="SVSquads" CanContentScroll="True" MinWidth="1290" MaxWidth="1290"
@@ -87,7 +90,7 @@
 							<ColumnDefinition Width="1*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Text="Military - Roles" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource MilitaryGui_MilitaryRoles}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 
 						<StackPanel Orientation="Horizontal" Grid.Row="1">
 							<ScrollViewer x:Name="SVRoles" CanContentScroll="True" MinWidth="1290" MaxWidth="1290"
@@ -116,7 +119,7 @@
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="Military - Priorities" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource MilitaryGui_MilitaryPriorities}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 					</Grid>
 				</Grid>
 			</Border>
