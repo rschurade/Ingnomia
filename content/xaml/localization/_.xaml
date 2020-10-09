@@ -99,4 +99,13 @@
 	<system:String x:Key="GameGui_Military">GameGui_Military</system:String>
 	<system:String x:Key="GameGui_Population">GameGui_Population</system:String>
 	<system:String x:Key="GameGui_Missions">GameGui_Missions</system:String>
+
+	<!--{StaticResource InGamePage_}-->
+	<system:String x:Key="InGamePage_">InGamePage_</system:String>
+	<system:String x:Key="InGamePage_Ingnomia">InGamePage_Ingnomia</system:String>
+	<system:String x:Key="InGamePage_Resume">InGamePage_Resume</system:String>
+	<system:String x:Key="InGamePage_LoadGame">InGamePage_LoadGame</system:String>
+	<system:String x:Key="InGamePage_SaveGame">InGamePage_SaveGame</system:String>
+	<system:String x:Key="InGamePage_Settings">InGamePage_Settings</system:String>
+	<system:String x:Key="InGamePage_QuitGame">InGamePage_QuitGame</system:String>
 </ResourceDictionary>
