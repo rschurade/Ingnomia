@@ -174,4 +174,19 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">NewGamePage_NumberMaxAnimalsIncludesDomesticated</system:String>
 	<system:String x:Key="NewGamePage_Back">NewGamePage_Back</system:String>
 	<system:String x:Key="NewGamePage_Embark">NewGamePage_Embark</system:String>
+
+	<!--{StaticResource PopulationWindow_}-->
+	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
+	<system:String x:Key="PopulationWindow_Skills">PopulationWindow_Skills</system:String>
+	<system:String x:Key="PopulationWindow_Schedule">PopulationWindow_Schedule</system:String>
+	<system:String x:Key="PopulationWindow_EditProf">PopulationWindow_EditProf</system:String>
+	<system:String x:Key="PopulationWindow_Name">PopulationWindow_Name</system:String>
+	<system:String x:Key="PopulationWindow_Professions">PopulationWindow_Professions</system:String>
+	<system:String x:Key="PopulationWindow_None">PopulationWindow_None</system:String>
+	<system:String x:Key="PopulationWindow_Eat">PopulationWindow_Eat</system:String>
+	<system:String x:Key="PopulationWindow_Sleep">PopulationWindow_Sleep</system:String>
+	<system:String x:Key="PopulationWindow_Train">PopulationWindow_Train</system:String>
+	<system:String x:Key="PopulationWindow_EditProfessions">PopulationWindow_EditProfessions</system:String>
+	<system:String x:Key="PopulationWindow_New">PopulationWindow_New</system:String>
+	<system:String x:Key="PopulationWindow_Delete">PopulationWindow_Delete</system:String>
 </ResourceDictionary>

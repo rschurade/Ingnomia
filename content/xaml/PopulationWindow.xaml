@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,7 +31,7 @@
 						CommandParameter="Skills">
 						<StackPanel>
 							<Image Source="buttons/skills.png" Stretch="None" />
-							<TextBlock HorizontalAlignment="Center">Skills</TextBlock>
+							<TextBlock HorizontalAlignment="Center" Text="{StaticResource PopulationWindow_Skills}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
@@ -36,7 +39,7 @@
 						CommandParameter="Schedule">
 						<StackPanel>
 							<Image Source="buttons/schedule.png" Stretch="None" />
-							<TextBlock HorizontalAlignment="Center">Schedule</TextBlock>
+							<TextBlock HorizontalAlignment="Center" Text="{StaticResource PopulationWindow_Schedule}"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
@@ -44,7 +47,7 @@
 						CommandParameter="ProfEdit">
 						<StackPanel>
 							<Image Source="buttons/professions.png" Stretch="None" />
-							<TextBlock HorizontalAlignment="Center">Edit Prof</TextBlock>
+							<TextBlock HorizontalAlignment="Center" Text="{StaticResource PopulationWindow_EditProf}"></TextBlock>
 						</StackPanel>
 					</Button>
 				</StackPanel>
@@ -62,8 +65,8 @@
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
 						<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom">
-							<Button Content="Name" MinWidth="185" Margin="2" Command="{Binding CmdSort}" CommandParameter="Name" />
-							<Button Content="Professions" MinWidth="180" Margin="2" Command="{Binding CmdSort}" CommandParameter="Prof" />
+							<Button Content="{StaticResource PopulationWindow_Name}" MinWidth="185" Margin="2" Command="{Binding CmdSort}" CommandParameter="Name" />
+							<Button Content="{StaticResource PopulationWindow_Professions}" MinWidth="180" Margin="2" Command="{Binding CmdSort}" CommandParameter="Prof" />
 						</StackPanel>
 
 						<ScrollViewer x:Name="SVSkillHeaders" HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="0" Grid.Column="1">
@@ -145,10 +148,10 @@
 
 						<Grid Grid.Row="1" Grid.Column="2">
 							<StackPanel>
-								<Button Content="None"  MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityNoneBrush}" CommandParameter="None" />
-								<Button Content="Eat"   MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityEatBrush}" CommandParameter="Eat" />
-								<Button Content="Sleep" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivitySleepBrush}" CommandParameter="Sleep" />
-								<Button Content="Train" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityTrainBrush}" CommandParameter="Train" />
+								<Button Content="{StaticResource PopulationWindow_None}"  MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityNoneBrush}" CommandParameter="None" />
+								<Button Content="{StaticResource PopulationWindow_Eat}"   MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityEatBrush}" CommandParameter="Eat" />
+								<Button Content="{StaticResource PopulationWindow_Sleep}" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivitySleepBrush}" CommandParameter="Sleep" />
+								<Button Content="{StaticResource PopulationWindow_Train}" MinWidth="185" Margin="2" Command="{Binding CmdSetActivityType}" Background="{StaticResource ActivityTrainBrush}" CommandParameter="Train" />
 							</StackPanel>
 						</Grid>
 					</Grid>
@@ -164,7 +167,7 @@
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="Edit Professions" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="{StaticResource PopulationWindow_EditProfessions}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 
 						<Grid Grid.Row="1" Grid.Column="0">
 							<Grid.RowDefinitions>
@@ -179,9 +182,9 @@
 								SelectedItem="{Binding Profession, Mode=TwoWay}"
 								ItemTemplate="{StaticResource PopProfessionTemplate}" />
 							<TextBox x:Name="ProfName" Grid.Row="1" MinWidth="180" Text="{Binding ProfName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="3" />
-							<Button Content="new" MinWidth="180"   Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="2"
+							<Button Content="{StaticResource PopulationWindow_New}" MinWidth="180"   Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="2"
 								Command="{Binding CmdProfNew }" />
-							<Button Content="delete" MinWidth="180" Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="3"
+							<Button Content="{StaticResource PopulationWindow_Delete}" MinWidth="180" Margin="2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="3"
 								Command="{Binding CmdProfDelete }" />
 						</Grid>
 						<ScrollViewer x:Name="ProfEditSkills" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1" Grid.Column="1" Margin="5">
