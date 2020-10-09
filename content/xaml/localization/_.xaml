@@ -115,4 +115,13 @@
 	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">LoadGamePage_HereSelectedGameInfo</system:String>
 	<system:String x:Key="LoadGamePage_Load">LoadGamePage_Load</system:String>
 	<system:String x:Key="LoadGamePage_Back">LoadGamePage_Back</system:String>
+
+	<!--{StaticResource MilitaryGui_}-->
+	<system:String x:Key="MilitaryGui_">MilitaryGui_</system:String>
+	<system:String x:Key="MilitaryGui_Squads">MilitaryGui_Squads</system:String>
+	<system:String x:Key="MilitaryGui_Roles">MilitaryGui_Roles</system:String>
+	<system:String x:Key="MilitaryGui_More">MilitaryGui_More</system:String>
+	<system:String x:Key="MilitaryGui_MilitarySquads">MilitaryGui_MilitarySquads</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryRoles">MilitaryGui_MilitaryRoles</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryPriorities">MilitaryGui_MilitaryPriorities</system:String>
 </ResourceDictionary>

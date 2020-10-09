@@ -115,4 +115,13 @@
 	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">Here will be info about the selected game.</system:String>
 	<system:String x:Key="LoadGamePage_Load">Load</system:String>
 	<system:String x:Key="LoadGamePage_Back">Back</system:String>
+
+	<!--{StaticResource MilitaryGui_}-->
+	<system:String x:Key="MilitaryGui_">MilitaryGui_</system:String>
+	<system:String x:Key="MilitaryGui_Squads">Squads</system:String>
+	<system:String x:Key="MilitaryGui_Roles">Roles</system:String>
+	<system:String x:Key="MilitaryGui_More">More</system:String>
+	<system:String x:Key="MilitaryGui_MilitarySquads">Military - Squads</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryRoles">Military - Roles</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryPriorities">Military - Priorities</system:String>
 </ResourceDictionary>
