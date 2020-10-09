@@ -16,6 +16,9 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
 				<ResourceDictionary Source="styles/mainmenu/pageswap.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -48,11 +51,11 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Row="0" Grid.Column="1">
-			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Set up new game" />
+			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource NewGamePage_SetUpNewGame}" />
 		</Viewbox>
 		<Viewbox Grid.Row="1" Grid.Column="1">
 			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
-				<TabItem Header="World">
+				<TabItem Header="{StaticResource NewGamePage_World}">
 					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
 						<StackPanel>
 							<Grid>
@@ -61,9 +64,9 @@
 									<ColumnDefinition Width="3*" />
 									<ColumnDefinition Width="1*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Grid.Column="0" Text="Kingdom name:" Margin="0,0,0,5" />
+								<TextBlock Grid.Column="0" Text="{StaticResource NewGamePage_KingdomName}" Margin="0,0,0,5" />
 								<TextBox Grid.Column="1" x:Name="KingdomName" Text="{Binding KingdomName}" />
-								<Button Grid.Column="2" x:Name="RandomName"  Content="Random" Command="{Binding RandomKingdomName}" />
+								<Button Grid.Column="2" x:Name="RandomName"  Content="{StaticResource NewGamePage_Random}" Command="{Binding RandomKingdomName}" />
 							</Grid>
 							<Grid>
 								<Grid.ColumnDefinitions>
@@ -71,9 +74,9 @@
 									<ColumnDefinition Width="3*" />
 									<ColumnDefinition Width="1*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Grid.Column="0" Text="Seed:" Margin="0,0,0,5" />
+								<TextBlock Grid.Column="0" Text="{StaticResource NewGamePage_Seed}" Margin="0,0,0,5" />
 								<TextBox Grid.Column="1" x:Name="Seed" Text="{Binding Seed}" />
-								<Button Grid.Column="2" x:Name="RandomSeed"  Content="Random" Command="{Binding RandomSeed}" />
+								<Button Grid.Column="2" x:Name="RandomSeed"  Content="{StaticResource NewGamePage_Random}" Command="{Binding RandomSeed}" />
 							</Grid>
 
 							<Grid HorizontalAlignment="Stretch" Margin="5">
@@ -82,10 +85,10 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="World size:">
+								<TextBlock Text="{StaticResource NewGamePage_WorldSize}">
 									<TextBlock.ToolTip>
 										<StackPanel Width="300" Background="#FF365264">
-											<TextBlock Text="Larger size will impact performance." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+											<TextBlock Text="{StaticResource NewGamePage_LargerSizePerformance}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 										</StackPanel>
 									</TextBlock.ToolTip>
 								</TextBlock>
@@ -100,7 +103,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Z-Levels:" />
+								<TextBlock Text="{StaticResource NewGamePage_ZLevels}" />
 								<Slider Grid.Column="1" x:Name="sliderZLevels" Minimum="0" Maximum="200" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding ZLevels}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxZLevels"  MaxLength="3" Text="{Binding ElementName=sliderZLevels,Path=Value}" />
 							</Grid>
@@ -111,7 +114,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Ground:" />
+								<TextBlock Text="{StaticResource NewGamePage_Ground}" />
 								<Slider Grid.Column="1" x:Name="sliderGround" Minimum="0" Maximum="170" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding Ground}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxGround"  MaxLength="3" Text="{Binding ElementName=sliderGround,Path=Value}" />
 							</Grid>
@@ -122,7 +125,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Flatness:" />
+								<TextBlock Text="{StaticResource NewGamePage_Flatness}" />
 								<Slider Grid.Column="1" x:Name="sliderFlatness" Minimum="0" Maximum="20" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding Flatness}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxFlatness"  MaxLength="3" Text="{Binding ElementName=sliderFlatness,Path=Value}" />
 							</Grid>
@@ -133,7 +136,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Ocean size:" />
+								<TextBlock Text="{StaticResource NewGamePage_OceanSize}" />
 								<Slider Grid.Column="1" x:Name="sliderOceanSize" Minimum="0" Maximum="15" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding OceanSize}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxOceanSize"  MaxLength="3" Text="{Binding ElementName=sliderOceanSize,Path=Value}" />
 							</Grid>
@@ -144,7 +147,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Rivers:" />
+								<TextBlock Text="{StaticResource NewGamePage_Rivers}" />
 								<Slider Grid.Column="1" x:Name="sliderRivers" Minimum="0" Maximum="10" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding Rivers}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxRivers"  MaxLength="3" Text="{Binding ElementName=sliderRivers,Path=Value}" />
 							</Grid>
@@ -155,7 +158,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="River size:" />
+								<TextBlock Text="{StaticResource NewGamePage_RiverSize}" />
 								<Slider Grid.Column="1" x:Name="sliderRiverSize" Minimum="0" Maximum="20" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding RiverSize}" />
 								<TextBox Grid.Column="2" Width="30" x:Name="TextBoxRiverSize"  MaxLength="3" Text="{Binding ElementName=sliderRiverSize,Path=Value}" />
 							</Grid>
@@ -166,7 +169,7 @@
 									<ColumnDefinition Width="8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<TextBlock Text="Start area:">
+								<TextBlock Text="{StaticResource NewGamePage_StartArea}">
 									<TextBlock.ToolTip>
 										<StackPanel Width="300" Background="#FF365264">
 											<TextBlock Text="Size of vegetation free area" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
@@ -180,7 +183,7 @@
 						</StackPanel>
 					</ScrollViewer>
 				</TabItem>
-				<TabItem Header="Starting items">
+				<TabItem Header="{StaticResource NewGamePage_StartingItems}">
 					<Grid>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="2*" />
@@ -194,13 +197,13 @@
 								<ColumnDefinition Width="1*" />
 								<ColumnDefinition Width="1*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Grid.Column="0" Text="Presets:" Margin="2" />
+							<TextBlock Grid.Column="0" Text="{StaticResource NewGamePage_Presets}" Margin="2" />
 							<ComboBox x:Name="PresetSelector" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0"
 								ItemsSource="{Binding Presets}"
 								SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
 								ItemTemplate="{StaticResource ItemTemplate}" />
-							<Button Grid.Column="2" x:Name="NewPreset"  Content="New Preset" Command="{Binding NewPreset}" Margin="1" />
-							<Button Grid.Column="3" x:Name="DeletePreset"  Content="Delete Preset" Command="{Binding DeletePreset}" Margin="1" />
+							<Button Grid.Column="2" x:Name="NewPreset"  Content="{StaticResource NewGamePage_NewPreset}" Command="{Binding NewPreset}" Margin="1" />
+							<Button Grid.Column="3" x:Name="DeletePreset"  Content="{StaticResource NewGamePage_DeletePreset}" Command="{Binding DeletePreset}" Margin="1" />
 						</Grid>
 
 						<Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="5">
@@ -209,13 +212,13 @@
 								<ColumnDefinition Width="8*" />
 								<ColumnDefinition Width="1*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Grid.Column="0" Text="Gnomes:" Margin="2" />
+							<TextBlock Grid.Column="0" Text="{StaticResource NewGamePage_Gnomes}" Margin="2" />
 							<Slider Grid.Column="1" x:Name="sliderGnomes" Minimum="1" Maximum="100" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding NumGnomes}" />
 							<TextBox Grid.Column="2" x:Name="NumGnomes" Width="30" MaxLength="3" Text="{Binding ElementName=sliderGnomes,Path=Value}" />
 						</Grid>
 
 						<TabControl Grid.Row="2" Width="580" Height= "300">
-							<TabItem Header="Items">
+							<TabItem Header="{StaticResource NewGamePage_Items}">
 								<Grid VerticalAlignment="Top">
 									<Grid.RowDefinitions>
 										<RowDefinition Height="2*" />
@@ -243,7 +246,7 @@
 											ItemsSource="{Binding Materials2}"
 											SelectedItem="{Binding SelectedMaterial2, Mode=TwoWay}"
 											ItemTemplate="{StaticResource ItemTemplate}" />
-										<Button Grid.Column="4" x:Name="AddItem"  Content="Add" Command="{Binding AddItem}" Margin="2" />
+										<Button Grid.Column="4" x:Name="AddItem"  Content="{StaticResource NewGamePage_Add}" Command="{Binding AddItem}" Margin="2" />
 									</Grid>
 
 									<Grid Grid.Row="1">
@@ -253,7 +256,7 @@
 									</Grid>
 								</Grid>
 							</TabItem>
-							<TabItem Header="Animals">
+							<TabItem Header="{StaticResource NewGamePage_Animals}">
 								<Grid>
 									<Grid.RowDefinitions>
 										<RowDefinition Height="2*" />
@@ -277,7 +280,7 @@
 											SelectedItem="{Binding SelectedGender, Mode=TwoWay}"
 											ItemTemplate="{StaticResource ItemTemplate}" />
 
-										<Button Grid.Column="4" x:Name="AddAnimal"  Content="Add" Command="{Binding AddAnimal}" Margin="2" />
+										<Button Grid.Column="4" x:Name="AddAnimal"  Content="{StaticResource NewGamePage_Add}" Command="{Binding AddAnimal}" Margin="2" />
 									</Grid>
 
 									<Grid Grid.Row="1" VerticalAlignment="Top">
@@ -290,19 +293,19 @@
 						</TabControl>
 					</Grid>
 				</TabItem>
-				<TabItem Header="Enemies">
+				<TabItem Header="{StaticResource NewGamePage_Enemies}">
 					<StackPanel>
-						<CheckBox Content="Peaceful mode." IsChecked="{Binding Peaceful}">
+						<CheckBox Content="{StaticResource NewGamePage_PeacefulMode}" IsChecked="{Binding Peaceful}">
 							<CheckBox.ToolTip>
 								<StackPanel Width="300" Background="#FF365264">
-									<TextBlock Text="No enemy kingdoms." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-									<TextBlock Text="Aggressive animals still may attack." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+									<TextBlock Text="{StaticResource NewGamePage_NoEnemyKingdoms}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+									<TextBlock Text="{StaticResource NewGamePage_PeacefulAnimalsMayStillAttack}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 								</StackPanel>
 							</CheckBox.ToolTip>
 						</CheckBox>
 					</StackPanel>
 				</TabItem>
-				<TabItem Header="Flora">
+				<TabItem Header="{StaticResource NewGamePage_Flora}">
 					<Grid>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="2*" />
@@ -315,7 +318,7 @@
 								<ColumnDefinition Width="8*" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Tree Densitiy:" />
+							<TextBlock Text="{StaticResource NewGamePage_TreeDensity}" />
 							<Slider Grid.Column="1" x:Name="sliderTreeDensity" Minimum="0" Maximum="100" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding TreeDensity}" />
 							<TextBox Grid.Column="2" Width="35" x:Name="TextBoxTreeDens"  MaxLength="3" Text="{Binding ElementName=sliderTreeDensity,Path=Value}" />
 						</Grid>
@@ -325,7 +328,7 @@
 								<ColumnDefinition Width="8*" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Plant Densitiy:" />
+							<TextBlock Text="{StaticResource NewGamePage_PlantDensity}" />
 							<Slider Grid.Column="1" x:Name="sliderPlantDensity" Minimum="0" Maximum="100" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding PlantDensity}" />
 							<TextBox Grid.Column="2" Width="35" x:Name="TextBoxPlantDens"  MaxLength="3" Text="{Binding ElementName=sliderPlantDensity,Path=Value}" />
 						</Grid>
@@ -347,7 +350,7 @@
 						</Grid>
 					</Grid>
 				</TabItem>
-				<TabItem Header="Fauna">
+				<TabItem Header="{StaticResource NewGamePage_Fauna}">
 					<Grid>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="2*" />
@@ -360,11 +363,11 @@
 								<ColumnDefinition Width="8*" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Wild Animals:">
+							<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimalsPage}">
 								<TextBlock.ToolTip>
 									<StackPanel Width="300" Background="#FF365264">
-										<TextBlock Text="Maximum number of wild animals" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-										<TextBlock Text="at start." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+										<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimals}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+										<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimalsAtStart}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 									</StackPanel>
 								</TextBlock.ToolTip>
 							</TextBlock>
@@ -377,11 +380,11 @@
 								<ColumnDefinition Width="8*" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Text="Max animals per type:">
+							<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimalsPage}">
 								<TextBlock.ToolTip>
 									<StackPanel Width="300" Background="#FF365264">
-										<TextBlock Text="Maximum number animals per type." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
-										<TextBlock Text="This also influences domesticated animals." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+										<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimals}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+										<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimalsIncludesDomesticated}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 									</StackPanel>
 								</TextBlock.ToolTip>
 							</TextBlock>
@@ -403,8 +406,8 @@
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="Back" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="Embark" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.NewGame }" />
+			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource NewGamePage_Back}" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
+			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource NewGamePage_Embark}" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.NewGame }" />
 		</Grid>
 		<TextBlock x:Name="SettingsDescription" />
 	</Grid>
