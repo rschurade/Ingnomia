@@ -108,4 +108,11 @@
 	<system:String x:Key="InGamePage_SaveGame">Save Game</system:String>
 	<system:String x:Key="InGamePage_Settings">Settings</system:String>
 	<system:String x:Key="InGamePage_QuitGame">Quit game</system:String>
+
+	<!--{StaticResource LoadGamePage_}-->
+	<system:String x:Key="LoadGamePage_">LoadGamePage_</system:String>
+	<system:String x:Key="LoadGamePage_LoadGame">Load Game</system:String>
+	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">Here will be info about the selected game.</system:String>
+	<system:String x:Key="LoadGamePage_Load">Load</system:String>
+	<system:String x:Key="LoadGamePage_Back">Back</system:String>
 </ResourceDictionary>

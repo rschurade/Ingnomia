@@ -108,4 +108,11 @@
 	<system:String x:Key="InGamePage_SaveGame">InGamePage_SaveGame</system:String>
 	<system:String x:Key="InGamePage_Settings">InGamePage_Settings</system:String>
 	<system:String x:Key="InGamePage_QuitGame">InGamePage_QuitGame</system:String>
+
+	<!--{StaticResource LoadGamePage_}-->
+	<system:String x:Key="LoadGamePage_">LoadGamePage_</system:String>
+	<system:String x:Key="LoadGamePage_LoadGame">LoadGamePage_LoadGame</system:String>
+	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">LoadGamePage_HereSelectedGameInfo</system:String>
+	<system:String x:Key="LoadGamePage_Load">LoadGamePage_Load</system:String>
+	<system:String x:Key="LoadGamePage_Back">LoadGamePage_Back</system:String>
 </ResourceDictionary>
