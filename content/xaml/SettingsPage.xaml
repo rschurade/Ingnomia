@@ -15,12 +15,14 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
 
 	<Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
-
 		<Grid.RenderTransform>
 			<TransformGroup>
 				<ScaleTransform ScaleX="1" ScaleY="1" />
@@ -46,14 +48,14 @@
 		</Viewbox>
 		<Viewbox Grid.Row="1" Grid.Column="1">
 			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
-				<TabItem Header="Game" />
-				<TabItem Header="Video">
-					<Label Content="Video Settings" />
+				<TabItem Header="{StaticResource SettingsPage_Game}" />
+				<TabItem Header="{StaticResource SettingsPage_Video}">
+					<Label Content="{StaticResource SettingsPage_VideoContent}" />
 				</TabItem>
-				<TabItem Header="Audio">
-					<Label Content="There is no audio yet." />
+				<TabItem Header="{StaticResource SettingsPage_Audio}">
+					<Label Content="{StaticResource SettingsPage_AudioContent}" />
 				</TabItem>
-				<TabItem Header="Controls" />
+				<TabItem Header="{StaticResource SettingsPage_Controls}" />
 			</TabControl>
 		</Viewbox>
 
@@ -63,9 +65,9 @@
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="Back"
+			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="Accept" />
+			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Accept}" />
 		</Grid>
 		<TextBlock x:Name="SettingsDescription" />
 	</Grid>
