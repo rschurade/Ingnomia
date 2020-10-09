@@ -15,6 +15,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -72,9 +75,9 @@
 				<Grid Visibility="{Binding ShowMiniStockPile}">
 					<StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Stockpile:" />
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Stockpile}" />
 							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding MiniStockpileName}" />
-							<Button Content="Manage" Margin="2" Command="{Binding CmdManage }" />
+							<Button Content="{StaticResource TileInfo_Manage}" Margin="2" Command="{Binding CmdManage }" />
 						</StackPanel>
 						<ScrollViewer VerticalScrollBarVisibility="Auto">
 							<ItemsControl ItemsSource="{Binding MiniStockpileContents}" ItemTemplate="{StaticResource ItemTemplate20}">
@@ -97,92 +100,62 @@
 							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding DesignationName}" />
 
 							<StackPanel Orientation="Horizontal" Visibility="{Binding VisRoomAssign}" Margin="2,20,2,20">
-								<TextBlock FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Assign to:" MinWidth="150" />
+								<TextBlock FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{StaticResource TileInfo_AssignTo}" MinWidth="150" />
 								<ComboBox x:Name="PrioritySelectorN" MinWidth="200" Margin="2"
 								ItemsSource="{Binding PossibleTennants}"
 								SelectedItem="{Binding Tennant, Mode=TwoWay}"
 								ItemTemplate="{StaticResource ItemTemplate}" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Visibility="{Binding VisRoomValue}">
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Value}" MinWidth="150" />
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding RoomValue}" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Enclosed}" MinWidth="150" />
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Enclosed}" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{StaticResource TileInfo_HasRoof}" MinWidth="150" />
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Roofed}" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Visibility="{Binding VisBeds}">
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Beds}" MinWidth="150" />
+								<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Beds}" />
+							</StackPanel>
+							<CheckBox Content="{StaticResource TileInfo_SoundAlarm}" IsChecked="{Binding Alarm, Mode=TwoWay}" Margin="2,20,2,2" FontSize="18" Visibility="{Binding VisAlarm}">
+								<CheckBox.ToolTip>
+									<StackPanel Width="500" Background="#FF365264">
+										<TextBlock Text="{StaticResource TileInfo_AlarmSoundAlarm}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue"
+										Padding="0,2" TextAlignment="Center" />
+										<TextBlock Text="{StaticResource TileInfo_AlarmRetreatHere}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue"
+										Padding="0,2" TextAlignment="Center" />
+									</StackPanel>
+								</CheckBox.ToolTip>
+							</CheckBox>
 						</StackPanel>
-						<StackPanel Orientation="Horizontal" Visibility="{Binding VisRoomValue}">
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Value:" MinWidth="150"/>
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding RoomValue}"/>
+					</StackPanel>
+				</Grid>
+				<Grid Visibility="{Binding ShowJob}">
+					<StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Job}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobName}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Enclosed:" MinWidth="150"/>
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Enclosed}" />
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_WorkedBy}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobWorker}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Has Roof:" MinWidth="150"/>
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Roofed}" />
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_JobPriority}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobPriority}" />
 						</StackPanel>
-						<StackPanel Orientation="Horizontal" Visibility="{Binding VisBeds}">
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="Beds:" MinWidth="150"/>
-							<TextBlock FontSize="18" HorizontalAlignment="Left" Text="{Binding Beds}" />
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredTool}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredTool}" />
 						</StackPanel>
-						<CheckBox Content="Sound the Alarm!" IsChecked="{Binding Alarm, Mode=TwoWay}" Margin="2,20,2,2" FontSize="18" Visibility="{Binding VisAlarm}">
-							<CheckBox.ToolTip>
-								<StackPanel Width="500" Background="#FF365264">
-									<TextBlock Text="Sound the Alarm!" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" 
-										Padding="0,2" TextAlignment="Center"/>
-									<TextBlock Text="Civilian gnomes will retreat here." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" 
-										Padding="0,2" TextAlignment="Center"/>
-								</StackPanel>
-							</CheckBox.ToolTip>
-						</CheckBox>
 					</StackPanel>
-				</StackPanel>
+				</Grid>
 			</Grid>
-			<Grid Visibility="{Binding ShowJob}" >
-				<StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Job:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobName}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Worked by:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobWorker}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-					        <TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Job priority:" />
-					  	<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobPriority}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required skill:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredSkill}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required tool:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredTool}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required tool available:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredToolAvailable}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Accessible:" />
-						<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding WorkablePosition}" />
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-					  <Grid>
-						<Grid.RowDefinitions>
-						  <RowDefinition Height="Auto"/>
-						  <RowDefinition Height="1*"/>
-						</Grid.RowDefinitions>
-						<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="Required Items:" Grid.Row="0" />
-						<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
-						  <ItemsControl ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource ItemTemplate16}">
-							<ItemsControl.ItemsPanel>
-							  <ItemsPanelTemplate>
-								<StackPanel/>
-							  </ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-						  </ItemsControl>
-						</ScrollViewer>
-					  </Grid>
-					</StackPanel>
-				</StackPanel>
-			</Grid>
-		</Grid>
 		</Border>
 		<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top" Grid.Column="2"
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }"
