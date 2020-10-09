@@ -220,4 +220,21 @@
 	<system:String x:Key="StockpileGui_Stock">Stock</system:String>
 	<system:String x:Key="StockpileGui_Limits">Limits</system:String>
 	<system:String x:Key="StockpileGui_LimitsImplementedLater">Will be implemented later.</system:String>
+
+	<!--{StaticResource TileInfo_}-->
+	<system:String x:Key="TileInfo_">TileInfo_</system:String>
+	<system:String x:Key="TileInfo_Stockpile">Stockpile:</system:String>
+	<system:String x:Key="TileInfo_Manage">Manage</system:String>
+	<system:String x:Key="TileInfo_AssignTo">Assign to:</system:String>
+	<system:String x:Key="TileInfo_Value">Value:</system:String>
+	<system:String x:Key="TileInfo_Enclosed">Enclosed:</system:String>
+	<system:String x:Key="TileInfo_HasRoof">Has Roof:</system:String>
+	<system:String x:Key="TileInfo_Beds">Beds:</system:String>
+	<system:String x:Key="TileInfo_SoundAlarm">Sound the Alarm!</system:String>
+	<system:String x:Key="TileInfo_AlarmSoundAlarm">Sound the Alarm!</system:String>
+	<system:String x:Key="TileInfo_AlarmRetreatHere">Civilian gnomes will retreat here.</system:String>
+	<system:String x:Key="TileInfo_Job">Job:</system:String>
+	<system:String x:Key="TileInfo_WorkedBy">Worked by:</system:String>
+	<system:String x:Key="TileInfo_JobPriority">Job priority:</system:String>
+	<system:String x:Key="TileInfo_RequiredTool">Required tool:</system:String>
 </ResourceDictionary>
