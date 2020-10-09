@@ -211,7 +211,7 @@ private:
 	{
 		return m_workablePosition.Str();
 	}
-	
+
 	const char* GetDesignationName() const
 	{
 		return m_designationName.Str();

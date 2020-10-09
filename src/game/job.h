@@ -61,19 +61,19 @@ private:
 	bool m_noJobSprite = false;
 	quint8 m_priority  = 0;
 
-	bool m_canceled         = false;
-	bool m_aborted          = false;
-        // is used in various places to reset job status
+	bool m_canceled = false;
+	bool m_aborted  = false;
+	// is used in various places to reset job status
 	bool m_componentMissing = false;
 	bool m_mayTrap          = false;
-	bool m_destroyOnAbort	= false;
+	bool m_destroyOnAbort   = false;
 
 	bool m_jobIsWorked      = false;
 	unsigned int m_workedBy = 0;
 
 	RequiredTool m_requiredTool;
 	QList<RequiredItem> m_requiredItems;
-  
+
 	Position m_position;
 	Position m_posItemInput;
 	Position m_posItemOutput;

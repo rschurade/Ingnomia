@@ -64,13 +64,13 @@ Job::Job( QVariantMap in )
 		m_requiredItems.append( ri );
 	}
 
-	m_position             = in.value( "Position" );
-	m_posItemInput         = in.value( "PositionItemInput" );
-	m_posItemOutput        = in.value( "PositionItemOutput" );
-	m_toolPosition         = in.value( "ToolPosition" );
-	m_workPosition         = in.value( "WorkPosition" );
+	m_position              = in.value( "Position" );
+	m_posItemInput          = in.value( "PositionItemInput" );
+	m_posItemOutput         = in.value( "PositionItemOutput" );
+	m_toolPosition          = in.value( "ToolPosition" );
+	m_workPosition          = in.value( "WorkPosition" );
 	m_possibleWorkPositions = Util::variantList2Position( in.value( "PossibleWorkPositions" ).toList() );
-	m_origWorkPosOffsets   = Util::variantList2Position( in.value( "OriginalWorkPositions" ).toList() );
+	m_origWorkPosOffsets    = Util::variantList2Position( in.value( "OriginalWorkPositions" ).toList() );
 
 	m_amount             = in.value( "Amount" ).toInt();
 	m_item               = in.value( "Item" ).toString();
@@ -171,13 +171,13 @@ Job::Job( const Job& other )
 	m_requiredTool  = other.m_requiredTool;
 	m_requiredItems = other.m_requiredItems;
 
-	m_position             = other.m_position;
-	m_posItemInput         = other.m_posItemInput;
-	m_posItemOutput        = other.m_posItemOutput;
-	m_toolPosition         = other.m_toolPosition;
-	m_workPosition         = other.m_workPosition;
+	m_position              = other.m_position;
+	m_posItemInput          = other.m_posItemInput;
+	m_posItemOutput         = other.m_posItemOutput;
+	m_toolPosition          = other.m_toolPosition;
+	m_workPosition          = other.m_workPosition;
 	m_possibleWorkPositions = other.m_possibleWorkPositions;
-	m_origWorkPosOffsets   = other.m_origWorkPosOffsets;
+	m_origWorkPosOffsets    = other.m_origWorkPosOffsets;
 
 	m_amount             = other.m_amount;
 	m_item               = other.m_item;
@@ -449,8 +449,9 @@ void Job::setRequiredTool( QString toolID, quint8 level )
 	m_requiredTool.type  = toolID;
 	m_requiredTool.level = level;
 
-	if ( toolID.isEmpty() ) {
-	  m_requiredTool.available = true;
+	if ( toolID.isEmpty() )
+	{
+		m_requiredTool.available = true;
 	}
 }
 
@@ -458,7 +459,6 @@ void Job::setRequiredToolAvailable( bool avail )
 {
 	m_requiredTool.available = avail;
 }
-
 
 void Job::setConversionMaterial( QString material )
 {
@@ -559,7 +559,7 @@ void Job::setDestroyOnAbort( bool value )
 {
 	m_destroyOnAbort = value;
 }
-	
+
 bool Job::destroyOnAbort() const
 {
 	return m_destroyOnAbort;

@@ -141,7 +141,7 @@ void JobManager::onTick()
 
 		if ( workPositionWalkable( job.id() ) && requiredToolExists( job.id() ) )
 		{
-		        if ( requiredItemsAvail( jobID ) )
+			if ( requiredItemsAvail( jobID ) )
 			{
 				m_jobsPerType[job.type()].insert( job.priority(), job.id() );
 			}
@@ -167,26 +167,26 @@ void JobManager::onTick()
 // which prevents us from breaking the loop ASAP.
 // Not sure if another approach would work better and still allow GUI to access
 // information without querying the game state
-bool JobManager::requiredItemsAvail( unsigned int jobID)
+bool JobManager::requiredItemsAvail( unsigned int jobID )
 {
-	Job& job = m_jobList[jobID];
+	Job& job       = m_jobList[jobID];
 	bool found_all = true;
 	for ( auto rim : job.requiredItems() )
 	{
-	        bool found = false;
+		bool found = false;
 		for ( auto pos : job.possibleWorkPositions() )
 		{
 			if ( Global::inv().checkReachableItems( pos, true, rim.count, rim.itemSID, rim.materialSID ) )
 			{
-				found = true;
+				found         = true;
 				rim.available = true;
 				break;
 			}
 		}
 		if ( !found )
 		{
-		  found_all = false;
-		  rim.available = false;
+			found_all     = false;
+			rim.available = false;
 		}
 	}
 	return found_all;
@@ -221,8 +221,8 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	auto rt  = job.requiredTool();
 
 	// need to figure out how to check rt 'inuse' & 'reachable'
-	job.setRequiredToolAvailable(true);
-	
+	job.setRequiredToolAvailable( true );
+
 	if ( rt.type.isEmpty() )
 	{
 		return true;
@@ -246,8 +246,8 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 			}
 		}
 	}
-	
-	job.setRequiredToolAvailable(false);
+
+	job.setRequiredToolAvailable( false );
 	return false;
 }
 

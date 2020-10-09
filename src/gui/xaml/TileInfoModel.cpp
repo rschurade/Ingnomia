@@ -360,18 +360,17 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	for ( auto ri : tileInfo.requiredItems )
 	{
 		auto item = MakePtr<NRequiredItem>( ri.text, ri.count );
-		
+
 		_jobTabRequiredItems->Add( item );
 	}
 
-	
-	m_jobName      = tileInfo.jobName.toStdString().c_str();
-	m_jobWorker    = tileInfo.jobWorker.toStdString().c_str();
-	m_jobPriority  = tileInfo.jobPriority.toStdString().c_str();
-	m_requiredSkill = tileInfo.requiredSkill.toStdString().c_str();
-	m_requiredTool = tileInfo.requiredTool.toStdString().c_str();
+	m_jobName               = tileInfo.jobName.toStdString().c_str();
+	m_jobWorker             = tileInfo.jobWorker.toStdString().c_str();
+	m_jobPriority           = tileInfo.jobPriority.toStdString().c_str();
+	m_requiredSkill         = tileInfo.requiredSkill.toStdString().c_str();
+	m_requiredTool          = tileInfo.requiredTool.toStdString().c_str();
 	m_requiredToolAvailable = tileInfo.requiredToolAvailable.toStdString().c_str();
-	m_workablePosition = tileInfo.workPositions.toStdString().c_str();
+	m_workablePosition      = tileInfo.workPositions.toStdString().c_str();
 
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
@@ -685,7 +684,6 @@ void TileInfoModel::SetAlarm( bool value )
 		m_proxy->setAlarm( m_designationID, value );
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
