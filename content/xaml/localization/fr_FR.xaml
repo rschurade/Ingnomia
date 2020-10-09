@@ -13,9 +13,9 @@
 	<system:String x:Key="MainPage_LoadGame">Charger</system:String>
 	<system:String x:Key="MainPage_Settings">Paramètres</system:String>
 	<system:String x:Key="MainPage_Exit">Quitter</system:String>
-	<system:String x:Key="MainPage_Hint_MMContinue">Reprendre la derni�re partie sauvegard�e.</system:String>
+	<system:String x:Key="MainPage_Hint_MMContinue">Reprendre la dernière partie sauvegardée.</system:String>
 	<system:String x:Key="MainPage_Hint_MMNewGame">Démarrer une nouvelle partie avec la configuration précédente.</system:String>
-	<system:String x:Key="MainPage_Hint_MMSetupGame">D�marrer une nouvelle partie en choisissant la configuration.</system:String>
+	<system:String x:Key="MainPage_Hint_MMSetupGame">Démarrer une nouvelle partie en choisissant la configuration.</system:String>
 	<system:String x:Key="MainPage_Hint_MMLoadGame">Charger une sauvegarde.</system:String>
 	<system:String x:Key="MainPage_Hint_MMSettings">Paramétrer les options.</system:String>
 	<system:String x:Key="MainPage_Hint_MMExit">Quitter le jeu.</system:String>
@@ -24,37 +24,37 @@
 	<system:String x:Key="Agriculture_">Agriculture_</system:String>
 	<system:String x:Key="Agriculture_TilledPlots">Labours</system:String>
 	<system:String x:Key="Agriculture_PlantsPlanted">Plants</system:String>
-	<system:String x:Key="Agriculture_CropsReady">R�coltes</system:String>
-	<system:String x:Key="Agriculture_Suspend">Jach�re</system:String>
-	<system:String x:Key="Agriculture_Harvest">R�colte</system:String>
+	<system:String x:Key="Agriculture_CropsReady">Récoltes</system:String>
+	<system:String x:Key="Agriculture_Suspend">Jachère</system:String>
+	<system:String x:Key="Agriculture_Harvest">Récolte</system:String>
 	<system:String x:Key="Agriculture_SelectCrop">Semis</system:String>
 	<system:String x:Key="Agriculture_NumberOfSeeds">Graines</system:String>
-	<system:String x:Key="Agriculture_NumberOfItems">R�coltes</system:String>
+	<system:String x:Key="Agriculture_NumberOfItems">Récoltes</system:String>
 	<system:String x:Key="Agriculture_NumberOfPlants">Plants</system:String>
 	<system:String x:Key="Agriculture_Manage">Nourriture</system:String>
-	<system:String x:Key="Agriculture_Animals">B�tes</system:String>
-	<system:String x:Key="Agriculture_Male">M�les</system:String>
+	<system:String x:Key="Agriculture_Animals">Bêtes</system:String>
+	<system:String x:Key="Agriculture_Male">Mâles</system:String>
 	<system:String x:Key="Agriculture_Female">Femelles</system:String>
 	<system:String x:Key="Agriculture_TameWildAnimals">Domestiquer les animaux sauvages</system:String>
 	<system:String x:Key="Agriculture_HarvestAnimals">Entretenir</system:String>
-	<system:String x:Key="Agriculture_HarvestHay">D�sherber</system:String>
+	<system:String x:Key="Agriculture_HarvestHay">Désherber</system:String>
 	<system:String x:Key="Agriculture_StoredFood">Nourriture</system:String>
-	<system:String x:Key="Agriculture_Settings">Param�tres</system:String>
+	<system:String x:Key="Agriculture_Settings">Paramètres</system:String>
 	<system:String x:Key="Agriculture_Back">Retour</system:String>
 	<system:String x:Key="Agriculture_SelectFoodForTroughs">Nourriture</system:String>
-	<system:String x:Key="Agriculture_ManageAnimals">G�rer</system:String>
+	<system:String x:Key="Agriculture_ManageAnimals">Gérer</system:String>
 	<system:String x:Key="Agriculture_SelectAnimalType">Type d'animaux</system:String>
-	<system:String x:Key="Agriculture_NumberOfAnimals">Quantit�</system:String>
+	<system:String x:Key="Agriculture_NumberOfAnimals">Quantité</system:String>
 	<system:String x:Key="Agriculture_Trees">Arbres</system:String>
 	<system:String x:Key="Agriculture_PlantTrees">Replanter</system:String>
-	<system:String x:Key="Agriculture_PickFruit">R�colter</system:String>
+	<system:String x:Key="Agriculture_PickFruit">Récolter</system:String>
 	<system:String x:Key="Agriculture_FellTrees">Abattre</system:String>
 	<system:String x:Key="Agriculture_SelectTreeType">Plantation</system:String>
 
 	<!--{StaticResource CreatureInfo_}-->
 	<system:String x:Key="CreatureInfo_">CreatureInfo_</system:String>
 	<system:String x:Key="CreatureInfo_Happiness">Joie</system:String>
-	<system:String x:Key="CreatureInfo_Sleep">�nergie</system:String>
+	<system:String x:Key="CreatureInfo_Sleep">Énergie</system:String>
 	<system:String x:Key="CreatureInfo_Thirst">Eau</system:String>
 	<system:String x:Key="CreatureInfo_Hunger">Nourriture</system:String>
 	<system:String x:Key="CreatureInfo_Cha">Char</system:String>
@@ -64,18 +64,18 @@
 	<system:String x:Key="CreatureInfo_Dex">Dex</system:String>
 	<system:String x:Key="CreatureInfo_Str">For</system:String>
 	<system:String x:Key="CreatureInfo_Inventory">Inventaire</system:String>
-	<system:String x:Key="CreatureInfo_Equipment">�quippement</system:String>
+	<system:String x:Key="CreatureInfo_Equipment">Équippement</system:String>
 
 	<!--{StaticResource DebugPage_}-->
 	<system:String x:Key="DebugPage_">DebugPage_</system:String>
 	<system:String x:Key="DebugPage_Misc">Invocations</system:String>
-	<system:String x:Key="DebugPage_Stuff">�quipements</system:String>
+	<system:String x:Key="DebugPage_Stuff">Équipements</system:String>
 	<system:String x:Key="DebugPage_More">Autres</system:String>
 	<system:String x:Key="DebugPage_DebugFirstPage">Invocations</system:String>
 	<system:String x:Key="DebugPage_SpawnGnome">Gnome</system:String>
 	<system:String x:Key="DebugPage_SpawnTrader">Marchand</system:String>
 	<system:String x:Key="DebugPage_SpawnGoblin">Goblin</system:String>
-	<system:String x:Key="DebugPage_DebugSecondPage">�quipements</system:String>
+	<system:String x:Key="DebugPage_DebugSecondPage">Équipements</system:String>
 	<system:String x:Key="DebugPage_DebugThirdPage">Autres</system:String>
 
 	<!--{StaticResource GameGui_}-->
@@ -92,13 +92,13 @@
 	<system:String x:Key="GameGui_Mine">Mine</system:String>
 	<system:String x:Key="GameGui_Agriculture">Agriculture</system:String>
 	<system:String x:Key="GameGui_Designations">Zones</system:String>
-	<system:String x:Key="GameGui_Job">T�ches</system:String>
+	<system:String x:Key="GameGui_Job">Tâches</system:String>
 	<system:String x:Key="GameGui_Magic">Magie</system:String>
 	<system:String x:Key="GameGui_Kingdom">Royaumes</system:String>
-	<system:String x:Key="GameGui_Stockpiles">R�serves</system:String>
+	<system:String x:Key="GameGui_Stockpiles">Réserves</system:String>
 	<system:String x:Key="GameGui_Military">Militaires</system:String>
-	<system:String x:Key="GameGui_Population">D�mographie</system:String>
-	<system:String x:Key="GameGui_Missions">Qu�tes</system:String>
+	<system:String x:Key="GameGui_Population">Démographie</system:String>
+	<system:String x:Key="GameGui_Missions">Quêtes</system:String>
 
 	<!--{StaticResource InGamePage_}-->
 	<system:String x:Key="InGamePage_">InGamePage_</system:String>
@@ -111,47 +111,47 @@
 
 	<!--{StaticResource LoadGamePage_}-->
 	<system:String x:Key="LoadGamePage_">LoadGamePage_</system:String>
-	<system:String x:Key="LoadGamePage_LoadGame">Choisir la partie � charger</system:String>
-	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">Informations sur la partie choisie � venir.</system:String>
+	<system:String x:Key="LoadGamePage_LoadGame">Choisir la partie à charger</system:String>
+	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">Informations sur la partie choisie à venir.</system:String>
 	<system:String x:Key="LoadGamePage_Load">Charger</system:String>
 	<system:String x:Key="LoadGamePage_Back">Annuler</system:String>
 
 	<!--{StaticResource MilitaryGui_}-->
 	<system:String x:Key="MilitaryGui_">MilitaryGui_</system:String>
 	<system:String x:Key="MilitaryGui_Squads">Affectations</system:String>
-	<system:String x:Key="MilitaryGui_Roles">�quipes</system:String>
+	<system:String x:Key="MilitaryGui_Roles">Équipes</system:String>
 	<system:String x:Key="MilitaryGui_More">Autre</system:String>
 	<system:String x:Key="MilitaryGui_MilitarySquads">Affectations</system:String>
-	<system:String x:Key="MilitaryGui_MilitaryRoles">�quipes</system:String>
-	<system:String x:Key="MilitaryGui_MilitaryPriorities">Priorit�s</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryRoles">Équipes</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryPriorities">Priorités</system:String>
 
 	<!--{StaticResource Neighbors_}-->
 	<system:String x:Key="Neighbors_">Neighbors_</system:String>
 	<system:String x:Key="Neighbors_Neighbors">Ambassades</system:String>
-	<system:String x:Key="Neighbors_Missions">Requ�tes</system:String>
+	<system:String x:Key="Neighbors_Missions">Requêtes</system:String>
 	<system:String x:Key="Neighbors_More">Autre</system:String>
 	<system:String x:Key="Neighbors_NeighborsPage">Ambassades</system:String>
-	<system:String x:Key="Neighbors_MissionsPage">Requ�tes</system:String>
+	<system:String x:Key="Neighbors_MissionsPage">Requêtes</system:String>
 	<system:String x:Key="Neighbors_NeighborsThirdPage">Autre</system:String>
 
 	<!--{StaticResource NewGamePage_}-->
 	<system:String x:Key="NewGamePage_">NewGamePage_</system:String>
-	<system:String x:Key="NewGamePage_SetUpNewGame">Param�tres de la partie</system:String>
+	<system:String x:Key="NewGamePage_SetUpNewGame">Paramètres de la partie</system:String>
 	<system:String x:Key="NewGamePage_World">Carte</system:String>
 	<system:String x:Key="NewGamePage_KingdomName">Nom du royaume :</system:String>
 	<system:String x:Key="NewGamePage_Seed">Graine :</system:String>
 	<system:String x:Key="NewGamePage_Random">Au hasard</system:String>
 	<system:String x:Key="NewGamePage_WorldSize">Taille de la carte :</system:String>
-	<system:String x:Key="NewGamePage_LargerSizePerformance">Une grande taille r�duit les performances.</system:String>
+	<system:String x:Key="NewGamePage_LargerSizePerformance">Une grande taille réduit les performances.</system:String>
 	<system:String x:Key="NewGamePage_ZLevels">Profondeurs :</system:String>
 	<system:String x:Key="NewGamePage_Ground">Sol :</system:String>
-	<system:String x:Key="NewGamePage_Flatness">D�nivel� :</system:String>
-	<system:String x:Key="NewGamePage_OceanSize">Taille de l'oc�an :</system:String>
-	<system:String x:Key="NewGamePage_Rivers">Rivi�res :</system:String>
+	<system:String x:Key="NewGamePage_Flatness">Dénivelé :</system:String>
+	<system:String x:Key="NewGamePage_OceanSize">Taille de l'océan :</system:String>
+	<system:String x:Key="NewGamePage_Rivers">Rivières :</system:String>
 	<system:String x:Key="NewGamePage_RiverSize">Largeur :</system:String>
-	<system:String x:Key="NewGamePage_StartArea">Zone de d�part :</system:String>
+	<system:String x:Key="NewGamePage_StartArea">Zone de départ :</system:String>
 	<system:String x:Key="NewGamePage_StartingItems">Starting items</system:String>
-	<system:String x:Key="NewGamePage_Presets">Pr�configurations :</system:String>
+	<system:String x:Key="NewGamePage_Presets">Préconfigurations :</system:String>
 	<system:String x:Key="NewGamePage_NewPreset">Nouvelle</system:String>
 	<system:String x:Key="NewGamePage_DeletePreset">Effacer</system:String>
 	<system:String x:Key="NewGamePage_Gnomes">Gnomes :</system:String>
@@ -168,16 +168,16 @@
 	<system:String x:Key="NewGamePage_Fauna">Faune</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsPage">Animaux sauvages :</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxWildAnimals">Nombre d'animaux sauvages maximum</system:String>
-	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsAtStart">en d�but de partie.</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsAtStart">en début de partie.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsPage">Par race :</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimals">Nombre d'animaux maximum par types.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">Inclue les animaux domestiques.</system:String>
 	<system:String x:Key="NewGamePage_Back">Annuler</system:String>
-	<system:String x:Key="NewGamePage_Embark">D�marrer</system:String>
+	<system:String x:Key="NewGamePage_Embark">Démarrer</system:String>
 
 	<!--{StaticResource PopulationWindow_}-->
 	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
-	<system:String x:Key="PopulationWindow_Skills">Comp�tences</system:String>
+	<system:String x:Key="PopulationWindow_Skills">Compétences</system:String>
 	<system:String x:Key="PopulationWindow_Schedule">Planning</system:String>
 	<system:String x:Key="PopulationWindow_EditProf">Assignations</system:String>
 	<system:String x:Key="PopulationWindow_Name">Gnome</system:String>
@@ -192,13 +192,13 @@
 
 	<!--{StaticResource SettingsPage_}-->
 	<system:String x:Key="SettingsPage_">SettingsPage_</system:String>
-	<system:String x:Key="SettingsPage_Settings">Param�tres</system:String>
+	<system:String x:Key="SettingsPage_Settings">Paramètres</system:String>
 	<system:String x:Key="SettingsPage_Game">Jeu</system:String>
-	<system:String x:Key="SettingsPage_Video">Vid�o</system:String>
-	<system:String x:Key="SettingsPage_VideoContent">Param�tres vid�o</system:String>
+	<system:String x:Key="SettingsPage_Video">Vidéo</system:String>
+	<system:String x:Key="SettingsPage_VideoContent">Paramètres vidéo</system:String>
 	<system:String x:Key="SettingsPage_Audio">Audio</system:String>
 	<system:String x:Key="SettingsPage_AudioContent">Pas de son pour le moment.</system:String>
-	<system:String x:Key="SettingsPage_Controls">Contr�les</system:String>
+	<system:String x:Key="SettingsPage_Controls">Contrôles</system:String>
 	<system:String x:Key="SettingsPage_Back">Annuler</system:String>
 	<system:String x:Key="SettingsPage_Accept">Valider</system:String>
 
