@@ -4,6 +4,8 @@
 
 The following steps describe how to compile the code and get the game running on Windows and Linux.
 
+Note! Building on Mac is currently not possible. Certain features in the renderer require OpenGL4.3.
+
 ### Dependencies ###
 
 * Microsoft Visual Studio 2019, the community edition is free
