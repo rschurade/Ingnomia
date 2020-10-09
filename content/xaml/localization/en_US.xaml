@@ -189,4 +189,15 @@
 	<system:String x:Key="PopulationWindow_EditProfessions">Edit Professions</system:String>
 	<system:String x:Key="PopulationWindow_New">new</system:String>
 	<system:String x:Key="PopulationWindow_Delete">delete</system:String>
+
+	<!--{StaticResource SettingsPage_}-->
+	<system:String x:Key="SettingsPage_">SettingsPage_</system:String>
+	<system:String x:Key="SettingsPage_Game">Game</system:String>
+	<system:String x:Key="SettingsPage_Video">Video</system:String>
+	<system:String x:Key="SettingsPage_VideoContent">Video Settings</system:String>
+	<system:String x:Key="SettingsPage_Audio">Audio</system:String>
+	<system:String x:Key="SettingsPage_AudioContent">There is no audio yet.</system:String>
+	<system:String x:Key="SettingsPage_Controls">Controls</system:String>
+	<system:String x:Key="SettingsPage_Back">Back</system:String>
+	<system:String x:Key="SettingsPage_Accept">Accept</system:String>
 </ResourceDictionary>
