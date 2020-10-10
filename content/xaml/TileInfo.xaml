@@ -150,8 +150,38 @@
 							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding JobPriority}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredSkill}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredSkill}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
 							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredTool}" />
 							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredTool}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredToolAvailable}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding RequiredToolAvailable}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredToolAccessible}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding WorkablePosition}" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="1*" />
+								</Grid.RowDefinitions>
+								<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_RequiredItems}" Grid.Row="0" />
+								<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+									<ItemsControl ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource ItemTemplate16}">
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel />
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+									</ItemsControl>
+								</ScrollViewer>
+							</Grid>
 						</StackPanel>
 					</StackPanel>
 				</Grid>

@@ -236,8 +236,12 @@
 	<system:String x:Key="TileInfo_AlarmRetreatHere">Civilian gnomes will retreat here.</system:String>
 	<system:String x:Key="TileInfo_Job">Job:</system:String>
 	<system:String x:Key="TileInfo_WorkedBy">Worked by:</system:String>
-	<system:String x:Key="TileInfo_JobPriority">Job Priority:</system:String>
-	<system:String x:Key="TileInfo_RequiredTool">Required tool:</system:String>-->
+	<system:String x:Key="TileInfo_JobPriority">Job priority:</system:String>
+	<system:String x:Key="TileInfo_RequiredSkill">Required skill:</system:String>
+	<system:String x:Key="TileInfo_RequiredTool">Required tool:</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAvailable">Required tool available:</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAccessible">Accessible:</system:String>
+	<system:String x:Key="TileInfo_RequiredItems">Required Items:</system:String>-->
 
 	<!--{StaticResource WaitPage_}
 	<system:String x:Key="WaitPage_">WaitPage_</system:String>
