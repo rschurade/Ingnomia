@@ -17,7 +17,7 @@
 	<system:String x:Key="MainPage_Hint_MMNewGame">Démarrer une nouvelle partie avec la configuration précédente.</system:String>
 	<system:String x:Key="MainPage_Hint_MMSetupGame">Démarrer une nouvelle partie en choisissant la configuration.</system:String>
 	<system:String x:Key="MainPage_Hint_MMLoadGame">Charger une sauvegarde.</system:String>
-	<system:String x:Key="MainPage_Hint_MMSettings">Paramétrer les options.</system:String>
+	<system:String x:Key="MainPage_Hint_MMSettings">Afficher les options.</system:String>
 	<system:String x:Key="MainPage_Hint_MMExit">Quitter le jeu.</system:String>
 
 	<!--{StaticResource Agriculture_}-->
@@ -202,81 +202,81 @@
 	<system:String x:Key="SettingsPage_Back">Annuler</system:String>
 	<system:String x:Key="SettingsPage_Accept">Valider</system:String>
 
-	<!--{StaticResource StockpileGui_}
+	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
-	<system:String x:Key="StockpileGui_Stockpile">Stockpile</system:String>
-	<system:String x:Key="StockpileGui_Suspend">Suspend</system:String>
-	<system:String x:Key="StockpileGui_StockpileSuspend">Suspend stockpile.</system:String>
-	<system:String x:Key="StockpileGui_StockpilePushable">Stockpile will stop accepting items.</system:String>
-	<system:String x:Key="StockpileGui_StockpilePullable">Items can still be taken out of the stockpile.</system:String>
-	<system:String x:Key="StockpileGui_PullFromHere">Pull from here</system:String>
-	<system:String x:Key="StockpileGui_StockpilePullFromHere">Pull from here.</system:String>
-	<system:String x:Key="StockpileGui_StockpilePullFromHigher">Stockpiles with higher priority may pull items from here.</system:String>
-	<system:String x:Key="StockpileGui_PullFromOther">Pull from other</system:String>
-	<system:String x:Key="StockpileGui_StockpilePullFromOther">Pull from other.</system:String>
-	<system:String x:Key="StockpileGui_StockpilePullFromLower">Stockpile may pull from other stockpiles with lower priority.</system:String>
-	<system:String x:Key="StockpileGui_CopySetup">Copy setup</system:String>
-	<system:String x:Key="StockpileGui_PasteSetup">Paste setup</system:String>
-	<system:String x:Key="StockpileGui_Filters">Filters</system:String>
+	<system:String x:Key="StockpileGui_Stockpile">Réserve</system:String>
+	<system:String x:Key="StockpileGui_Suspend">Arrêter</system:String>
+	<system:String x:Key="StockpileGui_StockpileSuspend">Arrêter le stockage.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePushable">Cette réserve arrêtera le stockage d'objets.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullable">Les objets pourront néanmoins être sortis.</system:String>
+	<system:String x:Key="StockpileGui_PullFromHere">Envoyer</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHere">Envoyer vers d'autres endroits.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHigher">Les réserves avec une priorité plus élevée se serviront dans celle-ci.</system:String>
+	<system:String x:Key="StockpileGui_PullFromOther">Recevoir</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromOther">Prendre d'autres endroits.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromLower">Cette réserve peut se remplir à partir de réserves à priorité plus faible.</system:String>
+	<system:String x:Key="StockpileGui_CopySetup">Copier</system:String>
+	<system:String x:Key="StockpileGui_PasteSetup">Coller</system:String>
+	<system:String x:Key="StockpileGui_Filters">Accepter</system:String>
 	<system:String x:Key="StockpileGui_Stock">Stock</system:String>
-	<system:String x:Key="StockpileGui_Limits">Limits</system:String>
-	<system:String x:Key="StockpileGui_LimitsImplementedLater">Will be implemented later.</system:String>-->
+	<system:String x:Key="StockpileGui_Limits">Limites</system:String>
+	<system:String x:Key="StockpileGui_LimitsImplementedLater">Implémentation à venir.</system:String>
 
-	<!--{StaticResource TileInfo_}
+	<!--{StaticResource TileInfo_}-->
 	<system:String x:Key="TileInfo_">TileInfo_</system:String>
-	<system:String x:Key="TileInfo_Stockpile">Stockpile:</system:String>
-	<system:String x:Key="TileInfo_Manage">Manage</system:String>
-	<system:String x:Key="TileInfo_AssignTo">Assign to:</system:String>
-	<system:String x:Key="TileInfo_Value">Value:</system:String>
-	<system:String x:Key="TileInfo_Enclosed">Enclosed:</system:String>
-	<system:String x:Key="TileInfo_HasRoof">Has Roof:</system:String>
-	<system:String x:Key="TileInfo_Beds">Beds:</system:String>
-	<system:String x:Key="TileInfo_SoundAlarm">Sound the Alarm!</system:String>
-	<system:String x:Key="TileInfo_AlarmSoundAlarm">Sound the Alarm!</system:String>
-	<system:String x:Key="TileInfo_AlarmRetreatHere">Civilian gnomes will retreat here.</system:String>
-	<system:String x:Key="TileInfo_Job">Job:</system:String>
-	<system:String x:Key="TileInfo_WorkedBy">Worked by:</system:String>
-	<system:String x:Key="TileInfo_JobPriority">Job priority:</system:String>
-	<system:String x:Key="TileInfo_RequiredSkill">Required skill:</system:String>
-	<system:String x:Key="TileInfo_RequiredTool">Required tool:</system:String>
-	<system:String x:Key="TileInfo_RequiredToolAvailable">Required tool available:</system:String>
-	<system:String x:Key="TileInfo_RequiredToolAccessible">Accessible:</system:String>
-	<system:String x:Key="TileInfo_RequiredItems">Required Items:</system:String>-->
+	<system:String x:Key="TileInfo_Stockpile">Réserve :</system:String>
+	<system:String x:Key="TileInfo_Manage">Gérer</system:String>
+	<system:String x:Key="TileInfo_AssignTo">Assignation :</system:String>
+	<system:String x:Key="TileInfo_Value">Valueur :</system:String>
+	<system:String x:Key="TileInfo_Enclosed">Clos :</system:String>
+	<system:String x:Key="TileInfo_HasRoof">Toiture :</system:String>
+	<system:String x:Key="TileInfo_Beds">Lits :</system:String>
+	<system:String x:Key="TileInfo_SoundAlarm">Alarme !</system:String>
+	<system:String x:Key="TileInfo_AlarmSoundAlarm">Sonner l'alarme.</system:String>
+	<system:String x:Key="TileInfo_AlarmRetreatHere">Point de rassemblement des gnomes civils.</system:String>
+	<system:String x:Key="TileInfo_Job">Tâche :</system:String>
+	<system:String x:Key="TileInfo_WorkedBy">Travailleur :</system:String>
+	<system:String x:Key="TileInfo_JobPriority">Priorité :</system:String>
+	<system:String x:Key="TileInfo_RequiredSkill">Compétence requise :</system:String>
+	<system:String x:Key="TileInfo_RequiredTool">Outils nécessaires :</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAvailable">Outils disponibles :</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAccessible">Accessible :</system:String>
+	<system:String x:Key="TileInfo_RequiredItems">Objets requis :</system:String>
 
-	<!--{StaticResource WaitPage_}
+	<!--{StaticResource WaitPage_}-->
 	<system:String x:Key="WaitPage_">WaitPage_</system:String>
-	<system:String x:Key="WaitPage_CreatingGame">Creating Game</system:String>
-	<system:String x:Key="WaitPage_PleaseWait">Please Wait</system:String>-->
+	<system:String x:Key="WaitPage_CreatingGame">Préparation du jeu</system:String>
+	<system:String x:Key="WaitPage_PleaseWait">Veuillez patienter...</system:String>
 
-	<!--{StaticResource WorkshopGui_}
+	<!--{StaticResource WorkshopGui_}-->
 	<system:String x:Key="WorkshopGui_">WorkshopGui_</system:String>
-	<system:String x:Key="WorkshopGui_AllowAcceptGeneratedJobs">Accept generated jobs</system:String>
-	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">Accept generated jobs.</system:String>
-	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">Will auto generate craft jobs for items in constructions and other workshops.</system:String>
-	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">Auto craft missing components</system:String>
-	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Auto craft missing components.</system:String>
-	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">Generates crafting jobs in workshops for missing components.</system:String>
-	<system:String x:Key="WorkshopGui_AvailableProducts">Available products</system:String>
-	<system:String x:Key="WorkshopGui_ProductionLine">Production line</system:String>
-	<system:String x:Key="WorkshopGui_ButcherExcessAnimals">Butcher excess animals</system:String>
-	<system:String x:Key="WorkshopGui_ButcherExcess">Butcher excess.</system:String>
-	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Butcher any tame animal not on a pasture.</system:String>
-	<system:String x:Key="WorkshopGui_ButcherCorpse">Butcher corpses</system:String>
-	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Butcher corpses.</system:String>
-	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Corpses must be in stockpiles to be considered.</system:String>
-	<system:String x:Key="WorkshopGui_ConnectToStockpile">Connect to stockpile</system:String>
-	<system:String x:Key="WorkshopGui_ConnectStockpile">Connect stockpile.</system:String>
-	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Connect to a stockpile of maximum size 3x3.</system:String>
-	<system:String x:Key="WorkshopGui_ConnectAdjacentStockpile">That stockpile must be adjacent to the input tile .</system:String>
-	<system:String x:Key="WorkshopGui_ButcherAnimals">Butcher Animals</system:String>
-	<system:String x:Key="WorkshopGui_SuspendWorkshop">Suspend</system:String>
-	<system:String x:Key="WorkshopGui_WorkshopSuspendWork">Suspend workshop.</system:String>
-	<system:String x:Key="WorkshopGui_WorkshopStopWork">Workshop will stop working.</system:String>
-	<system:String x:Key="WorkshopGui_Trade">Trade</system:String>
+	<system:String x:Key="WorkshopGui_AllowAcceptGeneratedJobs">Accepte les tâches générées</system:String>
+	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">Autorise les tâches générées.</system:String>
+	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">Génèrera automatiquement les prérequis pour les ateliers le nécessitant.</system:String>
+	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">Auto-craft des objets manquants</system:String>
+	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Préparation automatique des bjets manquants.</system:String>
+	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">Génèrera automatiquement les prérequis dans les ateliers autorisés.</system:String>
+	<system:String x:Key="WorkshopGui_AvailableProducts">Recettes</system:String>
+	<system:String x:Key="WorkshopGui_ProductionLine">Production</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcessAnimals">Abattre les animaux en surnombre</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcess">Abattre le surnombre du troupeau.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Abattra tout animal domestique hors pâturage.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherCorpse">Préparer les carcasses</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Préparation de carcasses.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Doivent être dans une réserve pour être prise en compte.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectToStockpile">Lier à une réserve</system:String>
+	<system:String x:Key="WorkshopGui_ConnectStockpile">Liaison vers une réserve.</system:String>
+	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Liaison vers une zone de 3x3 réserves max.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectAdjacentStockpile">La zone prise en compte entoure la réserve liée.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAnimals">Abattre les animaux</system:String>
+	<system:String x:Key="WorkshopGui_SuspendWorkshop">Arrêter</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopSuspendWork">Arrêter l'atelier.</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopStopWork">L'atelier va être mis à l'arrêt.</system:String>
+	<system:String x:Key="WorkshopGui_Trade">Marchander</system:String>
 	<system:String x:Key="WorkshopGui_Max">max</system:String>
-	<system:String x:Key="WorkshopGui_TraderInventory">Trader inventory:</system:String>
-	<system:String x:Key="WorkshopGui_TraderValue">Trader value:</system:String>
-	<system:String x:Key="WorkshopGui_PlayerInventory">Player inventory:</system:String>
-	<system:String x:Key="WorkshopGui_PlayerValue">Player value:</system:String>
-	<system:String x:Key="WorkshopGui_TradeAction">Trade</system:String>-->
+	<system:String x:Key="WorkshopGui_TraderInventory">Vendeur :</system:String>
+	<system:String x:Key="WorkshopGui_TraderValue">Demande :</system:String>
+	<system:String x:Key="WorkshopGui_PlayerInventory">Joueur :</system:String>
+	<system:String x:Key="WorkshopGui_PlayerValue">Offre :</system:String>
+	<system:String x:Key="WorkshopGui_TradeAction">Valider</system:String>
 </ResourceDictionary>
