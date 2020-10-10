@@ -236,7 +236,11 @@
 	<system:String x:Key="TileInfo_Job">TileInfo_Job</system:String>
 	<system:String x:Key="TileInfo_WorkedBy">TileInfo_WorkedBy</system:String>
 	<system:String x:Key="TileInfo_JobPriority">TileInfo_JobPriority</system:String>
+	<system:String x:Key="TileInfo_RequiredSkill">TileInfo_RequiredSkill</system:String>
 	<system:String x:Key="TileInfo_RequiredTool">TileInfo_RequiredTool</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAvailable">TileInfo_RequiredToolAvailable</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAccessible">TileInfo_RequiredToolAccessible</system:String>
+	<system:String x:Key="TileInfo_RequiredItems">TileInfo_RequiredItems</system:String>
 
 	<!--{StaticResource WaitPage_}-->
 	<system:String x:Key="WaitPage_">WaitPage_</system:String>
