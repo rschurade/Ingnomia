@@ -33,6 +33,8 @@ struct GuiItemInfo
 {
 	QString text;
 	unsigned int id;
+	QString material;
+	unsigned int count;
 };
 
 struct GuiTileInfo
@@ -58,7 +60,11 @@ struct GuiTileInfo
 	QString jobName;
 	QString jobWorker;
 	QString jobPriority;
+	QString requiredSkill;
 	QString requiredTool;
+	QString requiredToolAvailable;
+	QList<GuiItemInfo> requiredItems;
+	QString workPositions;
 
 	QList<GuiTICreatureInfo> creatures;
 	QList<GuiItemInfo> items;

@@ -141,13 +141,12 @@ void JobManager::onTick()
 
 		if ( workPositionWalkable( job.id() ) && requiredToolExists( job.id() ) )
 		{
-			if ( requiredItemsExist( jobID ) )
+			if ( requiredItemsAvail( jobID ) )
 			{
 				m_jobsPerType[job.type()].insert( job.priority(), job.id() );
 			}
 			else
 			{
-				job.setComponentMissing( true );
 				skippedJobs.enqueue( jobID );
 			}
 		}
@@ -164,10 +163,14 @@ void JobManager::onTick()
 	m_returnedJobQueue += skippedJobs;
 }
 
-bool JobManager::requiredItemsExist( unsigned int jobID )
+// In order to cache the missing required items we iterate over all every time
+// which prevents us from breaking the loop ASAP.
+// Not sure if another approach would work better and still allow GUI to access
+// information without querying the game state
+bool JobManager::requiredItemsAvail( unsigned int jobID )
 {
-	Job& job = m_jobList[jobID];
-
+	Job& job       = m_jobList[jobID];
+	bool found_all = true;
 	for ( auto rim : job.requiredItems() )
 	{
 		bool found = false;
@@ -175,16 +178,18 @@ bool JobManager::requiredItemsExist( unsigned int jobID )
 		{
 			if ( Global::inv().checkReachableItems( pos, true, rim.count, rim.itemSID, rim.materialSID ) )
 			{
-				found = true;
+				found         = true;
+				rim.available = true;
 				break;
 			}
 		}
 		if ( !found )
 		{
-			return false;
+			found_all     = false;
+			rim.available = false;
 		}
 	}
-	return true;
+	return found_all;
 }
 
 bool JobManager::workPositionWalkable( unsigned int jobID )
@@ -215,6 +220,9 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	Job& job = m_jobList[jobID];
 	auto rt  = job.requiredTool();
 
+	// need to figure out how to check rt 'inuse' & 'reachable'
+	job.setRequiredToolAvailable( true );
+
 	if ( rt.type.isEmpty() )
 	{
 		return true;
@@ -238,6 +246,8 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 			}
 		}
 	}
+
+	job.setRequiredToolAvailable( false );
 	return false;
 }
 
@@ -564,7 +574,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							Job& j = m_jobList[pq.get()];
 							if ( !j.isWorked() && !j.isCanceled() )
 							{
-								if ( requiredItemsExist( j.id() ) && requiredToolExists( j.id() ) )
+								if ( requiredItemsAvail( j.id() ) && requiredToolExists( j.id() ) )
 								{
 									if ( isReachable( j.id(), regionID ) && !isEnclosedBySameType( j.id() ) )
 									{
@@ -595,7 +605,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								Job& j = m_jobList[jobs[i]];
 								if ( !j.isWorked() && !j.isCanceled() )
 								{
-									if ( requiredItemsExist( j.id() ) && requiredToolExists( j.id() ) )
+									if ( requiredItemsAvail( j.id() ) && requiredToolExists( j.id() ) )
 									{
 										if ( isReachable( j.id(), 0 ) )
 										{
@@ -622,7 +632,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							Job& j = m_jobList[pq.get()];
 							if ( !j.isWorked() && !j.isCanceled() )
 							{
-								if ( requiredItemsExist( j.id() ) && requiredToolExists( j.id() ) )
+								if ( requiredItemsAvail( j.id() ) && requiredToolExists( j.id() ) )
 								{
 									if ( isReachable( j.id(), regionID ) )
 									{
@@ -765,7 +775,6 @@ void JobManager::finishJob( unsigned int jobID )
 	{
 		Job& job = m_jobList[jobID];
 
-		int rotation = job.rotation();
 		//qDebug() << "finishJob " << job.id() << job.type();
 		QString type = job.type();
 
@@ -787,7 +796,7 @@ void JobManager::finishJob( unsigned int jobID )
 			{
 				unsigned int j = m_jobPositions.value( p.toInt() );
 
-				if ( isReachable( j, 0 ) && !m_jobList[j].componenentMissing() )
+				if ( isReachable( j, 0 ) && !m_jobList[j].componentMissing() )
 				{
 					m_jobsPerType[m_jobList[j].type()].insert( m_jobList[j].priority(), j );
 				}

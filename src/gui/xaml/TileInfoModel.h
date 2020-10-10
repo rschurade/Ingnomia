@@ -20,6 +20,7 @@
 
 #include "../../base/position.h"
 #include "../aggregatortileinfo.h"
+#include "GameModel.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
@@ -193,10 +194,24 @@ private:
 	{
 		return m_jobPriority.Str();
 	}
+	const char* GetRequiredSkill() const
+	{
+		return m_requiredSkill.Str();
+	}
 	const char* GetRequiredTool() const
 	{
 		return m_requiredTool.Str();
 	}
+	const char* GetRequiredToolAvailable() const
+	{
+		return m_requiredToolAvailable.Str();
+	}
+	Noesis::ObservableCollection<NRequiredItem>* GetJobRequiredItems() const;
+	const char* GetWorkablePosition() const
+	{
+		return m_workablePosition.Str();
+	}
+
 	const char* GetDesignationName() const
 	{
 		return m_designationName.Str();
@@ -225,10 +240,15 @@ private:
 	unsigned int m_tileID = 0;
 	Noesis::String m_tileIDString;
 
+	// job related fields
 	Noesis::String m_jobName;
 	Noesis::String m_jobWorker;
 	Noesis::String m_jobPriority;
+	Noesis::String m_requiredSkill;
 	Noesis::String m_requiredTool;
+	Noesis::String m_requiredToolAvailable;
+	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> _jobTabRequiredItems;
+	Noesis::String m_workablePosition;
 
 	unsigned int m_designationID = 0;
 	Noesis::String m_designationName;

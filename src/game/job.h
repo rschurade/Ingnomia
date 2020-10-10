@@ -34,12 +34,19 @@ struct RequiredItem
 	QString materialSID;
 	QStringList materialRestriction;
 	bool requireSame = false;
+
+	// only reset when 'requiredItemsExist()' is called
+	// only used for GUI info display
+	bool available = false;
 };
 
 struct RequiredTool
 {
 	QString type;
 	quint8 level = 0;
+
+	// only used for GUI info display
+	bool available = false;
 };
 
 class Job
@@ -48,17 +55,18 @@ class Job
 private:
 	unsigned int m_id = 0;
 	QString m_type;
-	QString m_requiredSKill;
+	QString m_requiredSkill;
 	QString m_description;
 	quint8 m_rotation  = 0;
 	bool m_noJobSprite = false;
 	quint8 m_priority  = 0;
 
-	bool m_canceled         = false;
-	bool m_aborted          = false;
+	bool m_canceled = false;
+	bool m_aborted  = false;
+	// is used in various places to reset job status
 	bool m_componentMissing = false;
 	bool m_mayTrap          = false;
-	bool m_destroyOnAbort	= false;
+	bool m_destroyOnAbort   = false;
 
 	bool m_jobIsWorked      = false;
 	unsigned int m_workedBy = 0;
@@ -71,7 +79,7 @@ private:
 	Position m_posItemOutput;
 	Position m_toolPosition;
 	Position m_workPosition;
-	QList<Position> m_posibleWorkPositions;
+	QList<Position> m_possibleWorkPositions;
 	QList<Position> m_origWorkPosOffsets;
 
 	int m_amount = 1;
@@ -162,7 +170,7 @@ public:
 	void setMaterial( QString material );
 
 	void setComponentMissing( bool v );
-	bool componenentMissing() const;
+	bool componentMissing() const;
 
 	QList<RequiredItem> requiredItems() const;
 	void addRequiredItem( int count, QString item, QString material, QStringList materialRestriction, bool requireSame = false );
@@ -186,6 +194,7 @@ public:
 
 	RequiredTool requiredTool() const;
 	void setRequiredTool( QString toolID, quint8 level );
+	void setRequiredToolAvailable( bool avail );
 
 	void setConversionMaterial( QString material );
 	QString conversionMaterial() const;

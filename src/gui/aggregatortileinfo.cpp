@@ -68,11 +68,11 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 	if ( m_currentTileID == tileID )
 	{
 		Position pos( tileID );
-		m_tileInfo.tileID     = tileID;
-		m_tileInfo.numGnomes  = Global::gm().gnomesAtPosition( pos ).size();
-		m_tileInfo.numAnimals = Global::cm().animalsAtPosition( pos ).size();
+		m_tileInfo.tileID      = tileID;
+		m_tileInfo.numGnomes   = Global::gm().gnomesAtPosition( pos ).size();
+		m_tileInfo.numAnimals  = Global::cm().animalsAtPosition( pos ).size();
 		m_tileInfo.numMonsters = Global::cm().monstersAtPosition( pos ).size();
-		m_tileInfo.numItems   = Global::inv().countItemsAtPos( pos );
+		m_tileInfo.numItems    = Global::inv().countItemsAtPos( pos );
 
 		World& world = Global::w();
 		Tile& tile   = world.getTile( pos );
@@ -152,7 +152,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Gnome: " + gnome->name();
-					gct.id = gnome->id();
+					gct.id   = gnome->id();
 					m_tileInfo.creatures.append( gct );
 				}
 			}
@@ -162,7 +162,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Animal: " + S::s( "$CreatureName_" + animal->name() );
-					gct.id = animal->id();
+					gct.id   = animal->id();
 					m_tileInfo.creatures.append( gct );
 				}
 			}
@@ -172,16 +172,20 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Monster: " + S::s( "$CreatureName_" + monster->name() );
-					gct.id = monster->id();
+					gct.id   = monster->id();
 					m_tileInfo.creatures.append( gct );
 				}
 			}
 		}
-		auto job                = Global::jm().getJobAtPos( pos );
-		m_tileInfo.jobName      = "";
-		m_tileInfo.jobWorker    = "";
-		m_tileInfo.jobPriority  = "";
-		m_tileInfo.requiredTool = "";
+		// wrap job into a sub-object?
+		auto job                         = Global::jm().getJobAtPos( pos );
+		m_tileInfo.jobName               = "";
+		m_tileInfo.jobWorker             = "";
+		m_tileInfo.jobPriority           = "";
+		m_tileInfo.requiredTool          = "";
+		m_tileInfo.requiredToolAvailable = ""; // currently just 'exists'
+		m_tileInfo.requiredItems.clear();      // exists & is reachable
+		m_tileInfo.workPositions = "";
 		if ( job )
 		{
 			m_tileInfo.jobName = job->type();
@@ -197,7 +201,25 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				m_tileInfo.requiredTool = rt.type + " level " + QString::number( rt.level );
 			}
 
-			m_tileInfo.jobPriority = QString::number( job->priority() );
+			m_tileInfo.jobPriority           = QString::number( job->priority() );
+			m_tileInfo.requiredSkill         = job->requiredSkill();
+			m_tileInfo.requiredToolAvailable = rt.available ? "Yes" : "No";
+
+			for ( auto rim : job->requiredItems() )
+			{
+				GuiItemInfo git;
+				git.text     = rim.itemSID;
+				git.count    = rim.count;
+				git.material = rim.materialSID;
+
+				m_tileInfo.requiredItems.append( git );
+			}
+
+			// gnome available
+			// use the CanWork?
+			// use the gnomemanager to query whether a gnome exists with that skill enabled?
+
+			m_tileInfo.workPositions = QVariant( job->possibleWorkPositions().size() > 0 ).toString();
 		}
 
 		m_tileInfo.designationID   = 0;
@@ -258,36 +280,36 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			case TileFlag::TF_ROOM:
 			{
 				auto ro = Global::rm().getRoomAtPos( pos );
-				if( ro )
+				if ( ro )
 				{
 					m_tileInfo.designationID   = ro->id();
 					m_tileInfo.designationName = ro->name();
-					m_tileInfo.roomType = ro->type();
-					m_tileInfo.tennant = ro->owner();
+					m_tileInfo.roomType        = ro->type();
+					m_tileInfo.tennant         = ro->owner();
 					ro->checkEnclosed();
 					m_tileInfo.isEnclosed = ro->enclosed();
 					ro->checkRoofed();
-					m_tileInfo.hasRoof = ro->roofed();
+					m_tileInfo.hasRoof      = ro->roofed();
 					m_tileInfo.hasAlarmBell = ro->hasAlarmBell();
-					m_tileInfo.alarm = GameState::alarm;
+					m_tileInfo.alarm        = GameState::alarm;
 
-					QList<unsigned int>beds = ro->beds();
-					int countFree = beds.size();
-					for( auto b : beds )
+					QList<unsigned int> beds = ro->beds();
+					int countFree            = beds.size();
+					for ( auto b : beds )
 					{
-						if( Global::inv().isInJob( b ) )
+						if ( Global::inv().isInJob( b ) )
 						{
 							--countFree;
 						}
 					}
 					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( beds.size() );
 
-					for( auto gnome : Global::gm().gnomes() )
+					for ( auto gnome : Global::gm().gnomes() )
 					{
-						GuiTICreatureInfo gci{ gnome->name(), gnome->id() };
-						if( gnome->ownedRoom() )
+						GuiTICreatureInfo gci { gnome->name(), gnome->id() };
+						if ( gnome->ownedRoom() )
 						{
-							if( gnome->ownedRoom() == ro->id() )
+							if ( gnome->ownedRoom() == ro->id() )
 							{
 								m_tileInfo.tennant = gnome->id();
 							}
@@ -295,7 +317,6 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 						}
 						m_tileInfo.possibleTennants.append( gci );
 					}
-
 				}
 				break;
 			}
@@ -327,7 +348,7 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 		for ( auto entry : active )
 		{
 			int count = sp->count( entry.first, entry.second );
-			if( count > 0 )
+			if ( count > 0 )
 			{
 				//QIcon icon( Util::smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
 				ItemsSummary is;
@@ -345,20 +366,20 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int gnomeID )
 {
 	auto room = Global::rm().getRoom( designationID );
-	if( room )
+	if ( room )
 	{
 		qDebug() << "room" << designationID << "set owner" << gnomeID;
 		auto oldOwner = room->owner();
 
 		room->setOwner( gnomeID );
 		auto gnome = Global::gm().gnome( gnomeID );
-		if( gnome )
+		if ( gnome )
 		{
 			gnome->setOwnedRoom( designationID );
 		}
 
 		auto oldGnome = Global::gm().gnome( oldOwner );
-		if( oldGnome )
+		if ( oldGnome )
 		{
 			oldGnome->setOwnedRoom( 0 );
 		}
@@ -367,11 +388,11 @@ void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int 
 
 void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 {
-	switch( GameState::alarm )
+	switch ( GameState::alarm )
 	{
 		case 0:
 			// create alarm job
-			if( Global::rm().createAlarmJob( designationID ) )
+			if ( Global::rm().createAlarmJob( designationID ) )
 			{
 				GameState::alarm = 1;
 			}
@@ -381,7 +402,7 @@ void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 			Global::rm().cancelAlarmJob( designationID );
 		case 2:
 			GameState::alarmRoomID = 0;
-			GameState::alarm = 0;
+			GameState::alarm       = 0;
 			break;
 	}
 }

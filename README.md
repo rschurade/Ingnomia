@@ -9,6 +9,7 @@ Note! Building on Mac is currently not possible. Certain features in the rendere
 ### Dependencies ###
 
 * Microsoft Visual Studio 2019, the community edition is free
+* OpenGL 4.3 - Mac is not a supported compilation platform since it has deprecated OpenGL
 * Qt 5.14.1
 * Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
 * [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
