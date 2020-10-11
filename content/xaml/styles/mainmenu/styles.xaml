@@ -1,46 +1,46 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:local="clr-namespace:IngnomiaGUI"
-    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions">
-		
-		
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+	xmlns:local="clr-namespace:IngnomiaGUI"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions">
+
+
 	<ResourceDictionary.MergedDictionaries>
-        <!--NoesisTheme is only for providing remotely similar experience to ingame when using Blend or alike-->
-        <ResourceDictionary Source="../../Theme/NoesisTheme.DarkBlue.xaml" />
-        <ResourceDictionary Source="../colors.xaml" />
+		<!--NoesisTheme is only for providing remotely similar experience to ingame when using Blend or alike-->
+		<ResourceDictionary Source="../../Theme/NoesisTheme.DarkBlue.xaml" />
+		<ResourceDictionary Source="../colors.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
-        <Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
-    </Style>
+	<Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+		<Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
+		<Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
+	</Style>
 
-    <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-        <Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
-        <Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
-    </Style>
+	<Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+		<Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
+		<Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
+	</Style>
 
-    <Style TargetType="Border">
-        <Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
-        <Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
-    </Style>
+	<Style TargetType="Border">
+		<Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
+		<Setter Property="Control.Background" Value="{StaticResource NormalBgBrush}"/>
+	</Style>
 
-    <Style TargetType="TextBlock" >
-        <Setter Property="Foreground" Value="{StaticResource NormalFgBrush}"/>
-    </Style>
+	<Style TargetType="TextBlock" >
+		<Setter Property="Foreground" Value="{StaticResource NormalFgBrush}"/>
+	</Style>
 
-    <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+	<Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="FontSize" Value="26"/>
 		<Setter Property="MinWidth" Value="300"/>
 		<Setter Property="MinHeight" Value="30"/>
 		<Setter Property="Margin" Value="5"/>
 		<Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-    </Style>
+		<Setter Property="HorizontalAlignment" Value="Center" />
+	</Style>
 
-    <Style x:Key="ButtonStyle1" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+	<Style x:Key="ButtonStyle1" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
 		<Setter Property="FontSize" Value="20"/>
 		<Setter Property="MinWidth" Value="30"/>
 		<Setter Property="MinHeight" Value="30"/>
@@ -48,7 +48,7 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
-	
+
 	<ControlTemplate x:Key="MenuToolTipTemplate" TargetType="{x:Type ContentControl}">
 		<ControlTemplate.Resources>
 			<Storyboard x:Key="OnEnabled">
@@ -78,8 +78,8 @@
 			</Trigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
-	
-	
+
+
 	<Style x:Key="HintStyle" TargetType="{x:Type ContentControl}">
 		<Setter Property="OverridesDefaultStyle" Value="True"/>
 		<Setter Property="FontSize" Value="24"/>
@@ -96,23 +96,23 @@
 			</Trigger>
 		</Style.Triggers>
 	</Style>
-    <Style x:Key="MainMenuTabControlStyle" TargetType="{x:Type TabControl}" BasedOn="{StaticResource {x:Type TabControl}}">
+	<Style x:Key="MainMenuTabControlStyle" TargetType="{x:Type TabControl}" BasedOn="{StaticResource {x:Type TabControl}}">
 		<Setter Property="Width" Value="600"/>
 		<Setter Property="Height" Value="400"/>
 	</Style>
-	
+
 	<DataTemplate x:Key="ItemTemplate20">
 		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2"/>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="ItemTemplate16">
 		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="16" Margin="1"/>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="ItemTemplate">
-        <TextBlock Text="{Binding Name}"/>
-    </DataTemplate>
-	
+		<TextBlock Text="{Binding Name}"/>
+	</DataTemplate>
+
 	<DataTemplate x:Key="StartItemTemplate">
 		<Grid x:Name="StartItemRow" RenderTransformOrigin="0.5,0.5" Margin="2">
 			<Grid.ColumnDefinitions>
@@ -127,10 +127,10 @@
 			<TextBlock Text="{Binding Material1}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Grid.Column="2"/>
 			<TextBlock Text="{Binding Material2}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Grid.Column="3"/>
 			<Button  x:Name="RemoveSI"  Content="Remove" Command="{Binding ElementName=ICStartingItems, Path=DataContext.RemoveItem}" CommandParameter="{Binding ElementName=ItemName, Path=Tag}" Grid.Column="4" />
-			
+
 		</Grid>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="StartAnimalTemplate">
 		<Grid x:Name="StartAnimalRow" RenderTransformOrigin="0.5,0.5" Margin="2">
 			<Grid.ColumnDefinitions>
@@ -143,16 +143,16 @@
 			<TextBlock x:Name="AnimalName" Text="{Binding Name}" Tag="{Binding Tag}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Column="1"/>
 			<TextBlock Text="{Binding Gender}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Grid.Column="2"/>
 			<Button  x:Name="RemoveSA"  Content="Remove" Command="{Binding ElementName=ICStartingAnimals, Path=DataContext.RemoveAnimal}" CommandParameter="{Binding ElementName=AnimalName, Path=Tag}" Grid.Column="4" />
-			
+
 		</Grid>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="ListCheckBoxTemplate">
 		<StackPanel Margin="3">
 			<CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
 		</StackPanel>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="AnimalCheckBoxTemplate">
 		<StackPanel Margin="3" Orientation="Horizontal">
 			<CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" MinWidth="250"/>
@@ -160,35 +160,35 @@
 		</StackPanel>
 	</DataTemplate>
 
-    <DataTemplate x:Key="SavedKingdomTemplate">
-        <Grid RenderTransformOrigin="0.5,0.5" Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
+	<DataTemplate x:Key="SavedKingdomTemplate">
+		<Grid RenderTransformOrigin="0.5,0.5" Margin="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"/>
-            <!--<Button  x:Name="RemoveSI"  Content="Remove" Command="{Binding ElementName=ICStartingItems, Path=DataContext.RemoveItem}" CommandParameter="{Binding ElementName=ItemName, Path=Tag}" Grid.Column="4" /> -->
-            <TextBlock Text="{Binding Version}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="0"/>
-            <TextBlock Text="{Binding Date}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="1"/>
-        </Grid>
-    </DataTemplate>
+			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"/>
+			<!--<Button  x:Name="RemoveSI"  Content="Remove" Command="{Binding ElementName=ICStartingItems, Path=DataContext.RemoveItem}" CommandParameter="{Binding ElementName=ItemName, Path=Tag}" Grid.Column="4" /> -->
+			<TextBlock Text="{Binding Version}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="0"/>
+			<TextBlock Text="{Binding Date}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="1"/>
+		</Grid>
+	</DataTemplate>
 
-    <Style TargetType="Button" x:Key="SquareButton" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Margin" Value="3"/>
+	<Style TargetType="Button" x:Key="SquareButton" BasedOn="{StaticResource {x:Type Button}}">
+		<Setter Property="Margin" Value="3"/>
 		<Setter Property="Padding" Value="3"/>
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="FontSize" Value="16"/>
-        <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"/>
-        <Setter Property="VerticalAlignment" Value="Top"/>
-    </Style>
+		<Setter Property="MinWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
+		<Setter Property="VerticalAlignment" Value="Top"/>
+	</Style>
 
-    <Style TargetType="Button" x:Key="BuildButton" BasedOn="{StaticResource {x:Type Button}}">
+	<Style TargetType="Button" x:Key="BuildButton" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="MinWidth" Value="100"/>
 		<Setter Property="Margin" Value="3"/>
 		<Setter Property="Padding" Value="3"/>
@@ -197,73 +197,73 @@
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 	</Style>
 
-    <Style TargetType="Border" x:Key="Panel" BasedOn="{StaticResource {x:Type Border}}">
+	<Style TargetType="Border" x:Key="Panel" BasedOn="{StaticResource {x:Type Border}}">
 		<Setter Property="BorderBrush" Value="Black" />
-		<Setter Property="BorderThickness" Value="1"/> 
+		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="0" />
 		<Setter Property="Margin" Value="4"/>
 		<Setter Property="Padding" Value="2"/>
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
-    </Style>
-	
+		<Setter Property="Background" Value="{StaticResource PanelBackground}"/>
+	</Style>
+
 	<Style TargetType="Border" x:Key="PanelCreatureInfo" BasedOn="{StaticResource {x:Type Border}}">
 		<Setter Property="BorderBrush" Value="Black" />
-		<Setter Property="BorderThickness" Value="1"/> 
+		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="0" />
 		<Setter Property="Margin" Value="4"/>
 		<Setter Property="Padding" Value="2"/>
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Background" Value="{StaticResource PanelBackgroundGrey}"/>
-    </Style>
-	
+		<Setter Property="Background" Value="{StaticResource PanelBackgroundGrey}"/>
+	</Style>
 
-    <Style TargetType="Border" x:Key="JobPanel" BasedOn="{StaticResource {x:Type Border}}">
+
+	<Style TargetType="Border" x:Key="JobPanel" BasedOn="{StaticResource {x:Type Border}}">
 		<Setter Property="BorderBrush" Value="Black" />
-		<Setter Property="BorderThickness" Value="1"/> 
+		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="0" />
 		<Setter Property="Margin" Value="4"/>
 		<Setter Property="Padding" Value="2"/>
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="Background" Value="{StaticResource ButtonNormalBrush}"/>
-    </Style>
-	
+		<Setter Property="Background" Value="{StaticResource ButtonNormalBrush}"/>
+	</Style>
+
 	<DataTemplate x:Key="CommandButtonTemplate">
-		<Button Content="{Binding Name}" Style="{StaticResource BuildButton}" 
-			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CmdButtonCommand }" 
+		<Button Content="{Binding Name}" Style="{StaticResource BuildButton}"
+			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CmdButtonCommand }"
 			CommandParameter="{Binding ID}"/>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="BuildButtonsItemTemplate">
 		<Button Style="{StaticResource SquareButton}" FontSize="16"
-			MinWidth="100"
-            Margin="8"
-			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CmdCategory }" 
+			MinHeight="100"
+			Margin="8"
+			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CmdCategory }"
 			CommandParameter="{Binding ID}">
 			<StackPanel>
 				<Image Source="{Binding Image}" Stretch="None" />
 				<TextBlock Text="{Binding Name}"/>
 			</StackPanel>
-			
+
 		</Button>
 	</DataTemplate>
 
-    <Style x:Key="TabButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+	<Style x:Key="TabButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ToggleButton">
-					<Border BorderBrush="{TemplateBinding BorderBrush}" 
+					<Border BorderBrush="{TemplateBinding BorderBrush}"
 							Background="{TemplateBinding Background}">
-						<ContentPresenter HorizontalAlignment="Center"                  
+						<ContentPresenter HorizontalAlignment="Center"
 										  VerticalAlignment="Center"/>
 					</Border>
 				</ControlTemplate>
 			</Setter.Value>
-		</Setter> 
+		</Setter>
 		<Style.Triggers>
 			<Trigger Property="IsChecked" Value="True">
 				<Setter Property="Background" Value="{StaticResource TileInfoTabSelectedBrush}" />
@@ -271,102 +271,102 @@
 		</Style.Triggers>
 	</Style>
 
-    <Style x:Key="VirtualList" TargetType="{x:Type ItemsControl}" BasedOn="{StaticResource {x:Type ItemsControl}}">
-        <Setter Property="OverridesDefaultStyle" Value="False"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border
-                        BorderThickness="{TemplateBinding Border.BorderThickness}"
-                        Padding="{TemplateBinding Control.Padding}"
-                        BorderBrush="{TemplateBinding Border.BorderBrush}"
-                        Background="{TemplateBinding Panel.Background}">
-                        <ScrollViewer x:Name="PART_Scroll"
-                            Padding="{TemplateBinding Control.Padding}"
-                            Focusable="False">
-                            <ItemsPresenter />
-                        </ScrollViewer>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel ScrollViewer.CanContentScroll="True" />
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
-        <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
-        <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel"/>
-    </Style>
-	
+	<Style x:Key="VirtualList" TargetType="{x:Type ItemsControl}" BasedOn="{StaticResource {x:Type ItemsControl}}">
+		<Setter Property="OverridesDefaultStyle" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Border
+						BorderThickness="{TemplateBinding Border.BorderThickness}"
+						Padding="{TemplateBinding Control.Padding}"
+						BorderBrush="{TemplateBinding Border.BorderBrush}"
+						Background="{TemplateBinding Panel.Background}">
+						<ScrollViewer x:Name="PART_Scroll"
+							Padding="{TemplateBinding Control.Padding}"
+							Focusable="False">
+							<ItemsPresenter />
+						</ScrollViewer>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<VirtualizingStackPanel ScrollViewer.CanContentScroll="True" />
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+		<Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+		<Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
+		<Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel"/>
+	</Style>
+
 	<DataTemplate x:Key="TITabButtonsTemplate">
 		<ToggleButton x:Name="TITBT_Button" Content="{Binding Name}" FontSize="12"
 			IsChecked="{Binding Checked}"
-			MinWidth="60" MinHeight="60" 
-			MaxWidth="60" MaxHeight="60" 
+			MinWidth="60" MinHeight="60"
+			MaxWidth="60" MaxHeight="60"
 			Margin="2"
 			Style="{StaticResource TabButton}"
-			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTab }" 
+			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTab }"
 			CommandParameter="{Binding ID}"/>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="TITabTerrainTemplate">
 		<StackPanel Orientation="Horizontal">
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" />
-			<Button x:Name="TITTT_Button1" Visibility="{Binding Action1Visible}" Content="{Binding Action1Text}" Margin="2" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTerrain }" CommandParameter="{Binding Action1Text}"/>  
-			<Button x:Name="TITTT_Button2" Visibility="{Binding Action2Visible}" Content="{Binding Action2Text}" Margin="2" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTerrain }"  CommandParameter="{Binding Action2Text}" /> 
+			<Button x:Name="TITTT_Button1" Visibility="{Binding Action1Visible}" Content="{Binding Action1Text}" Margin="2"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTerrain }" CommandParameter="{Binding Action1Text}"/>
+			<Button x:Name="TITTT_Button2" Visibility="{Binding Action2Visible}" Content="{Binding Action2Text}" Margin="2"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTerrain }"  CommandParameter="{Binding Action2Text}" />
 		</StackPanel>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="TITabCreaturesTemplate">
 		<Grid>
 			<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" Grid.Column="0" />
 			<Button Style="{StaticResource SquareButton}" FontSize="16" Content="Inspect" Grid.Column="1" HorizontalAlignment="Right"
 				MinWidth="100"
 				MaxHeight= "28"
 				Margin="2"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.OpenCreatureDetailsCmd }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.OpenCreatureDetailsCmd }"
 				CommandParameter="{Binding ID}">
 		</Button>
-		</Grid>	
+		</Grid>
 	</DataTemplate>
-	
-    <DataTemplate x:Key="AvailableMaterialTemplate">
-        <!--TODO Isn't working nicely with the currently selected item of a ComboBox yet-->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" />
-            <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="8,0,0,0">
-                (<Run Text="{Binding Amount}"/>)
-            </TextBlock>
-        </Grid>
-    </DataTemplate>
-	
+
+	<DataTemplate x:Key="AvailableMaterialTemplate">
+		<!--TODO Isn't working nicely with the currently selected item of a ComboBox yet-->
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" />
+			<TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="8,0,0,0">
+				(<Run Text="{Binding Amount}"/>)
+			</TextBlock>
+		</Grid>
+	</DataTemplate>
+
 	<DataTemplate x:Key="RequiredItemTemplate">
-        <Grid Margin="0,0,0,4">
+		<Grid Margin="0,0,0,4">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Amount}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12"  Grid.Column="0"/>
-			
-			<ComboBox x:Name="MaterialSelector" Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0" HorizontalAlignment="Stretch" 
-                                ItemsSource="{Binding Materials}"
-                                SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
-                                ItemTemplate="{StaticResource AvailableMaterialTemplate}" />
+			<TextBlock Text="{Binding Amount}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12"  Grid.Column="0"/>
+
+			<ComboBox x:Name="MaterialSelector" Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0" HorizontalAlignment="Stretch"
+								ItemsSource="{Binding Materials}"
+								SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
+								ItemTemplate="{StaticResource AvailableMaterialTemplate}" />
 		</Grid>
 	</DataTemplate>
 	<DataTemplate x:Key="BuildItemTemplate">
@@ -375,14 +375,14 @@
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Command="{Binding Build}" Style="{StaticResource SquareButton}" MinWidth="128" >
+			<Button Grid.Column="0" Command="{Binding Build}" Style="{StaticResource SquareButton}" MinHeight="128" >
 				<StackPanel>
 					<Image Source="{Binding Image}" Stretch="None"/>
 				</StackPanel>
 			</Button>
 
-            <StackPanel Grid.Column="1"  Margin="8,0" KeyboardNavigation.TabNavigation="Local" Width="250">
-                <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Grid.Row="0" Grid.Column="0" Margin="0,0,0,4"/>
+			<StackPanel Grid.Column="1"  Margin="8,0" KeyboardNavigation.TabNavigation="Local" Width="250">
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Grid.Row="0" Grid.Column="0" Margin="0,0,0,4"/>
 				<ItemsControl  ItemsSource="{Binding RequiredItems}" ItemTemplate="{StaticResource RequiredItemTemplate}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -397,7 +397,7 @@
 				</StackPanel>
 			</StackPanel>
 		</Grid>
-		
+
 	</DataTemplate>
 
 	<DataTemplate x:Key="FilterMaterialTemplate">
@@ -412,7 +412,7 @@
 					<TextBlock Text="{Binding Name}" FontSize="16"/>
 				</StackPanel>
 			</Expander.Header>
-            <ItemsControl x:Name="ICMaterials" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterMaterialTemplate}">
+			<ItemsControl x:Name="ICMaterials" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterMaterialTemplate}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel/>
@@ -430,7 +430,7 @@
 					<TextBlock Text="{Binding Name}" FontSize="16"/>
 				</StackPanel>
 			</Expander.Header>
-            <ItemsControl x:Name="ICItems" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterItemTemplate}">
+			<ItemsControl x:Name="ICItems" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterItemTemplate}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel/>
@@ -448,7 +448,7 @@
 					<TextBlock Text="{Binding Name}" FontSize="16"/>
 				</StackPanel>
 			</Expander.Header>
-            <ItemsControl x:Name="ICGroups" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterGroupTemplate}">
+			<ItemsControl x:Name="ICGroups" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource FilterGroupTemplate}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel/>
@@ -458,38 +458,38 @@
 		</Expander>
 	</DataTemplate>
 
-    <DataTemplate x:Key="FilterUnrollStop">
-        <TextBlock Text="{Binding Name, StringFormat='Any \{0\}'}" HorizontalAlignment="Left" FontSize="20" Margin="2" />
-    </DataTemplate>
-    <DataTemplate x:Key="FilterUnrollRecurse">
-        <ItemsControl ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource FilterUnrollTemplate}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </DataTemplate>
-    
-    <DataTemplate x:Key="FilterUnrollTemplate">
-        <ContentControl Content="{Binding}">
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Checked}" Value="True">
-                            <Setter Property="ContentTemplate" Value="{DynamicResource FilterUnrollStop}"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Checked}" Value="{x:Null}">
-                            <Setter Property="ContentTemplate" Value="{DynamicResource FilterUnrollRecurse}"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Checked}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
-    </DataTemplate>
+	<DataTemplate x:Key="FilterUnrollStop">
+		<TextBlock Text="{Binding Name, StringFormat='Any \{0\}'}" HorizontalAlignment="Left" FontSize="20" Margin="2" />
+	</DataTemplate>
+	<DataTemplate x:Key="FilterUnrollRecurse">
+		<ItemsControl ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource FilterUnrollTemplate}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+		</ItemsControl>
+	</DataTemplate>
+
+	<DataTemplate x:Key="FilterUnrollTemplate">
+		<ContentControl Content="{Binding}">
+			<ContentControl.Style>
+				<Style TargetType="ContentControl">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Checked}" Value="True">
+							<Setter Property="ContentTemplate" Value="{DynamicResource FilterUnrollStop}"></Setter>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Checked}" Value="{x:Null}">
+							<Setter Property="ContentTemplate" Value="{DynamicResource FilterUnrollRecurse}"></Setter>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Checked}" Value="False">
+							<Setter Property="Visibility" Value="Collapsed"></Setter>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ContentControl.Style>
+		</ContentControl>
+	</DataTemplate>
 
 
 
@@ -516,11 +516,11 @@
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 				</ItemsControl>
-                <Button Content="Craft" HorizontalAlignment="Right" Padding="2" Command="{Binding Craft}"/>
+				<Button Content="Craft" HorizontalAlignment="Right" Padding="2" Command="{Binding Craft}"/>
 			</StackPanel>
 		</Expander>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="WSJobTemplate">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -559,8 +559,8 @@
 	</DataTemplate>
 
 	<DataTemplate x:Key="PlantEntryTemplate">
-		<Button x:Name="PET_Button" Style="{StaticResource SquareButton}" Width="50" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }" 
+		<Button x:Name="PET_Button" Style="{StaticResource SquareButton}" Height="50"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }"
 				CommandParameter="{Binding ID}" Grid.Column="0" Margin="3">
 			<StackPanel>
 				<Image Source="{Binding Image}" />
@@ -572,7 +572,7 @@
 			</Button.ToolTip>
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="PlantRowTemplate">
 		<ItemsControl  ItemsSource="{Binding Plants}" ItemTemplate="{StaticResource PlantEntryTemplate}">
 			<ItemsControl.ItemsPanel>
@@ -582,21 +582,21 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
-	
-	
+
+
 	<DataTemplate x:Key="FoodEntryTemplate">
 		<ToggleButton Style="{StaticResource ButtonStyle1}" IsChecked="{Binding Checked}" >
 			<StackPanel>
 				<Image Source="{Binding Image}" />
 			</StackPanel>
-            <ToggleButton.ToolTip>
+			<ToggleButton.ToolTip>
 				<StackPanel Background="#FF365264">
 					<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 				</StackPanel>
 			</ToggleButton.ToolTip>
 		</ToggleButton>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="FoodRowTemplate">
 		<ItemsControl  ItemsSource="{Binding Foods}" ItemTemplate="{StaticResource FoodEntryTemplate}">
 			<ItemsControl.ItemsPanel>
@@ -606,11 +606,11 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
-	
+
 
 	<DataTemplate x:Key="AnimalEntryTemplate">
-		<Button x:Name="AET_Button" Style="{StaticResource SquareButton}" Width="50" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }" 
+		<Button x:Name="AET_Button" Style="{StaticResource SquareButton}" Height="50"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }"
 				CommandParameter="{Binding ID}" Grid.Column="0" Margin="3">
 			<StackPanel>
 				<Image Source="{Binding Image}" />
@@ -622,7 +622,7 @@
 			</Button.ToolTip>
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="AnimalRowTemplate">
 		<ItemsControl  ItemsSource="{Binding Animals}" ItemTemplate="{StaticResource AnimalEntryTemplate}">
 			<ItemsControl.ItemsPanel>
@@ -632,10 +632,10 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="TreeEntryTemplate">
-		<Button x:Name="TET_Button" Style="{StaticResource SquareButton}" Width="50" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }" 
+		<Button x:Name="TET_Button" Style="{StaticResource SquareButton}" Height="50"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Agriculture}}, Path=DataContext.SelectProduct }"
 				CommandParameter="{Binding ID}" Grid.Column="0" Margin="3">
 			<StackPanel>
 				<Image Source="{Binding Image}" />
@@ -647,7 +647,7 @@
 			</Button.ToolTip>
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="TreeRowTemplate">
 		<ItemsControl  ItemsSource="{Binding Trees}" ItemTemplate="{StaticResource TreeEntryTemplate}">
 			<ItemsControl.ItemsPanel>
@@ -657,7 +657,7 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="PastureAnimalTemplate">
 		<StackPanel Orientation="Horizontal">
 			<CheckBox Content="" IsChecked="{Binding ToButcher}">
@@ -671,10 +671,10 @@
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" />
 		</StackPanel>
 	</DataTemplate>
-	
-	
 
-	
+
+
+
 	<Style x:Key="GnomeSkillButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="FontSize" Value="12"/>
@@ -684,18 +684,18 @@
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
 
-		
+
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ToggleButton">
-					<Border BorderBrush="{TemplateBinding BorderBrush}" 
+					<Border BorderBrush="{TemplateBinding BorderBrush}"
 							Background="{TemplateBinding Background}">
-						<ContentPresenter HorizontalAlignment="Center"                  
+						<ContentPresenter HorizontalAlignment="Center"
 										  VerticalAlignment="Center"/>
 					</Border>
 				</ControlTemplate>
 			</Setter.Value>
-		</Setter> 
+		</Setter>
 		<Style.Triggers>
 			<Trigger Property="IsChecked" Value="False">
 				<Setter Property="Background" Value="{StaticResource SkillGroupMetalBrush}" />
@@ -705,7 +705,7 @@
 			</Trigger>
 		</Style.Triggers>
 	</Style>
-	
+
 	<Style x:Key="GnomeSkillAllButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="FontSize" Value="12"/>
@@ -715,56 +715,56 @@
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
 	</Style>
-	
-	
-	
+
+
+
 	<DataTemplate x:Key="PopGnomeSkillHeaderTemplate">
 		<StackPanel>
 			<TextBlock Text="{Binding Name}" Background="{StaticResource SkillGroupMetalBrush}" HorizontalAlignment="Left" MinWidth="180" MaxWidth="180" FontSize="20" Margin="2" >
 				<TextBlock.LayoutTransform>
 					<RotateTransform Angle="270" />
-				</TextBlock.LayoutTransform>  
+				</TextBlock.LayoutTransform>
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseLeftButtonDown">
-						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSort }" 
+						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSort }"
 											   CommandParameter="{Binding SkillID}"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</TextBlock>
 			<Button Style="{StaticResource GnomeSkillAllButtonStyle}" Content="A"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllGnomes }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllGnomes }"
 				CommandParameter="{Binding SkillID}"/>
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseRightButtonDown">
-						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllGnomes }" 
+						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllGnomes }"
 											   CommandParameter="{Binding SkillID}"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
-            <!--
+			<!--
 				<Button.ToolTip>
 					<StackPanel Background="#FF365264">
 						<TextBlock Text="Left click to enable all skills in this column." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 						<TextBlock Text="Right click to disable all skills in this column." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 					</StackPanel>
 				</Button.ToolTip>
-            -->
+			-->
 		</StackPanel>
 	</DataTemplate>
-	
-	
-	
+
+
+
 	<DataTemplate x:Key="GnomeSkillButtonTemplate">
 		<ToggleButton x:Name="GSBT_Button" Content="{Binding Level}"
 			IsChecked="{Binding Checked}"
 			Style="{StaticResource GnomeSkillButtonStyle}"/>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="PopProfessionTemplate">
 		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" MaxHeight="18" FontSize="12" />
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="PopGnomeNameTemplate">
-        <StackPanel Orientation="Horizontal" Height="35">
+		<StackPanel Orientation="Horizontal" Height="35">
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" MinWidth="180" MaxWidth="180" FontSize="20" Margin="2">
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseLeftButtonDown">
@@ -773,17 +773,17 @@
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</TextBlock>
-			
+
 			<ComboBox x:Name="ProfessionSelector" Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0" MaxHeight="28" HorizontalAlignment="Stretch"  MinWidth="180" MaxWidth="180"
-                                ItemsSource="{Binding Professions}"
-                                SelectedItem="{Binding Profession, Mode=TwoWay}"
-                                ItemTemplate="{StaticResource PopProfessionTemplate}" />
+								ItemsSource="{Binding Professions}"
+								SelectedItem="{Binding Profession, Mode=TwoWay}"
+								ItemTemplate="{StaticResource PopProfessionTemplate}" />
 			<Button Style="{StaticResource GnomeSkillAllButtonStyle}" Content="A"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllSkills }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllSkills }"
 				CommandParameter="{Binding GnomeID}">
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseRightButtonDown">
-						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllSkills }" 
+						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllSkills }"
 											   CommandParameter="{Binding GnomeID}"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
@@ -796,10 +796,10 @@
 			</Button>
 		</StackPanel>
 	</DataTemplate>
-	
-	
+
+
 	<DataTemplate x:Key="PopGnomeSkillRowTemplate">
-        <ItemsControl  ItemsSource="{Binding Skills}" ItemTemplate="{StaticResource GnomeSkillButtonTemplate}" Height="35">
+		<ItemsControl  ItemsSource="{Binding Skills}" ItemTemplate="{StaticResource GnomeSkillButtonTemplate}" Height="35">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -807,7 +807,7 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 	</DataTemplate>
-	
+
 	<Style x:Key="GnomeScheduleButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="FontSize" Value="12"/>
@@ -817,16 +817,16 @@
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
 	</Style>
-	
+
 	<DataTemplate x:Key="GnomeScheduleButtonTemplate">
-		<Button x:Name="Sched_Button" 
+		<Button x:Name="Sched_Button"
 			Content="{Binding Activity}"
 			Style="{StaticResource GnomeScheduleButtonStyle}"
 			Command="{Binding CmdSetHour}" />
 	</DataTemplate>
-		
+
 	<DataTemplate x:Key="PopGnomeSchedRowTemplate">
-        <ItemsControl  ItemsSource="{Binding Schedule}" ItemTemplate="{StaticResource GnomeScheduleButtonTemplate}" Height="35">
+		<ItemsControl  ItemsSource="{Binding Schedule}" ItemTemplate="{StaticResource GnomeScheduleButtonTemplate}" Height="35">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -837,20 +837,20 @@
 
 
 	<DataTemplate x:Key="PopScheduleNameTemplate">
-        <StackPanel Orientation="Horizontal" Height="35">
+		<StackPanel Orientation="Horizontal" Height="35">
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" MinWidth="180" MaxWidth="180" FontSize="20" Margin="2"/>
-		
-			<Button Style="{StaticResource GnomeSkillAllButtonStyle}" Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.ScheduleActivity }" 
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllHours }" 
+
+			<Button Style="{StaticResource GnomeSkillAllButtonStyle}" Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.ScheduleActivity }"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllHours }"
 				CommandParameter="{Binding GnomeID}">
-                <!--
+				<!--
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseRightButtonDown">
-						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllHours }" 
+						<i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdRemoveAllHours }"
 											   CommandParameter="{Binding GnomeID}"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
-                -->
+				-->
 			</Button>
 		</StackPanel>
 	</DataTemplate>
@@ -865,13 +865,13 @@
 			</Grid.ColumnDefinitions>
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" Grid.Column="0" />
 			<Button Content="up" MinWidth="50" MaxWidth="50" Margin="2" Grid.Column="1" HorizontalAlignment="Right"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillUp }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillUp }"
 				CommandParameter="{Binding SkillID}"/>
 			<Button Content="down" MinWidth="50"  MaxWidth="50" Margin="2" Grid.Column="2" HorizontalAlignment="Right"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillDown }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillDown }"
 				CommandParameter="{Binding SkillID}"/>
-            <Button Content="&gt;" MinWidth="50" MaxWidth="50" Margin="2"  Grid.Column="3" HorizontalAlignment="Right"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillRemove }" 
+			<Button Content="&gt;" MinWidth="50" MaxWidth="50" Margin="2"  Grid.Column="3" HorizontalAlignment="Right"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillRemove }"
 				CommandParameter="{Binding SkillID}"/>
 		</Grid>
 	</DataTemplate>
@@ -883,7 +883,7 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 			<Button Content="&lt;" MinWidth="50" MaxWidth="50" Margin="2" Grid.Column="0"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillAdd }" 
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdSkillAdd }"
 				CommandParameter="{Binding SkillID}"/>
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" Grid.Column="1" />
 		</Grid>
@@ -895,8 +895,8 @@
 			<TextBlock Text="{Binding Count}" FontSize="20" Margin="0,0,5,0"/>
 			<TextBlock Text="{Binding Name}" FontSize="20"/>
 		</StackPanel>
-    </DataTemplate>
-	
+	</DataTemplate>
+
 	<DataTemplate x:Key="NeighborKingdomTemplate">
 		<Border Background="{StaticResource PanelBackgroundGrey}" Margin="4" MinWidth="600" CornerRadius="8">
 			<StackPanel>
@@ -908,7 +908,7 @@
 				<TextBlock Text="{Binding Attitude}" FontSize="20"/>
 				<StackPanel Orientation="Horizontal">
 					<Button Content="Send Ambassador" Visibility="{Binding ShowDiploButton}" FontSize="20" Margin="2"
-						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NeighborsGui}}, Path=DataContext.CmdDiploMission }"	
+						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NeighborsGui}}, Path=DataContext.CmdDiploMission }"
 						CommandParameter="{Binding ID}" BorderBrush="Black" BorderThickness="2,2,2,2" />
 					<Button Content="Spy" Command="{Binding SpyCmd}"	CommandParameter="{Binding ID}" Visibility="{Binding ShowSpyButton}" FontSize="20" Margin="2"
 						BorderBrush="Black" BorderThickness="2,2,2,2"/>
@@ -919,8 +919,8 @@
 				</StackPanel>
 			</StackPanel>
 		</Border>
-    </DataTemplate>
-	
+	</DataTemplate>
+
 	<DataTemplate x:Key="MissionTemplate">
 		<Border Background="{StaticResource PanelBackgroundGrey}" Margin="4" MinWidth="600" CornerRadius="8">
 			<StackPanel>
@@ -930,21 +930,21 @@
 				<!--
 				<StackPanel Orientation="Horizontal">
 					<Button Content="Abort"
-						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NeighborsGui}}, Path=DataContext.CmdAbortMission }"	
+						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NeighborsGui}}, Path=DataContext.CmdAbortMission }"
 						CommandParameter="{Binding ID}"  />
 				</StackPanel>
 				-->
 			</StackPanel>
 		</Border>
-    </DataTemplate>
-	
+	</DataTemplate>
+
 	<DataTemplate x:Key="SquadPriorityTemplate">
 		<StackPanel Orientation="Horizontal">
 			<Button Content="^" MaxWidth="50" FontSize="20" HorizontalAlignment="Left" Margin="2"
 				Command="{Binding MoveUpCmd }"	CommandParameter="{Binding ID}"/>
 			<Button Content="v" MaxWidth="50" FontSize="20" HorizontalAlignment="Left" Margin="2"
 				Command="{Binding MoveDownCmd }"	CommandParameter="{Binding ID}"/>
-		
+
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" MinWidth="180" />
 			<CheckBox Content="" IsChecked="{Binding Ignore, Mode=TwoWay}" Margin="2">
 				<CheckBox.ToolTip>
@@ -976,32 +976,32 @@
 			</CheckBox>
 		</StackPanel>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="SquadGnomeTemplate">
 		<StackPanel Orientation="Horizontal">
 			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" HorizontalAlignment="Right" Visibility="{Binding ShowLeftArrow}" Margin="1"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveGnomeLeftCmd }"	
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveGnomeLeftCmd }"
 				CommandParameter="{Binding ID}">
 				<Image Source="../../buttons/arrow_left.png" />
 			</Button>
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" MinWidth="100" MaxWidth="100" FontSize="16" Margin="2" />
-			<ComboBox Margin="1" HorizontalAlignment="Stretch" MinWidth="100" MaxWidth="100" 
+			<ComboBox Margin="1" HorizontalAlignment="Stretch" MinWidth="100" MaxWidth="100"
 				ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RoleList }"
 				SelectedItem="{Binding Role, Mode=TwoWay}"
 				ItemTemplate="{StaticResource ItemTemplate16}" />
 			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" HorizontalAlignment="Right" Visibility="{Binding ShowX}" Margin="1"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveGnomeFromSquadCmd }"	
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveGnomeFromSquadCmd }"
 				CommandParameter="{Binding ID}">
 				<Image Source="../../buttons/cross.png" />
 			</Button>
 			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" HorizontalAlignment="Right" Visibility="{Binding ShowRightArrow}" Margin="1"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveGnomeRightCmd }"	
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveGnomeRightCmd }"
 				CommandParameter="{Binding ID}">
 				<Image Source="../../buttons/arrow_right.png" />
 			</Button>
 		</StackPanel>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="SquadTemplate">
 		<Grid MaxHeight="650">
 			<Grid.ColumnDefinitions>
@@ -1019,18 +1019,18 @@
 					<Button Content="Configure" MaxHeight="50" FontSize="18" Margin="2" VerticalAlignment="Top" Command="{Binding ConfigureSquadCmd }" Grid.Row="0"/>
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Top"  Grid.Row="1" Margin="2">
 						<Button MaxWidth="50" MaxHeight="50" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowLeftArrow}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveSquadLeftCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveSquadLeftCmd }"
 							CommandParameter="{Binding ID}">
 							<Image Source="../../buttons/arrow_left.png" />
 						</Button>
 						<TextBox x:Name="TBSquadName" Text="{Binding Name}" MinWidth="180" FontSize="18" MinHeight="50" MaxHeight="50" Margin="2"/>
 						<Button  MaxWidth="50" MaxHeight="50" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowX}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveSquadCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveSquadCmd }"
 							CommandParameter="{Binding ID}">
 							<Image Source="../../buttons/cross.png" />
 						</Button>
 						<Button MaxWidth="50" MaxHeight="50" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowRightArrow}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveSquadRightCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveSquadRightCmd }"
 							CommandParameter="{Binding ID}">
 							<Image Source="../../buttons/arrow_right.png" />
 						</Button>
@@ -1047,24 +1047,24 @@
 			</Border>
 		</Grid>
 	</DataTemplate>
-	
-	
+
+
 	<DataTemplate x:Key="UniformItemTemplate">
 		<StackPanel Orientation="Horizontal">
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" MinWidth="150"/>
-			<ComboBox Margin="8,0,0,0" HorizontalAlignment="Stretch" MinWidth="150" 
+			<ComboBox Margin="8,0,0,0" HorizontalAlignment="Stretch" MinWidth="150"
 				ItemsSource="{Binding AvailableTypes}"
 				SelectedItem="{Binding SelectedType, Mode=TwoWay}"
 				ItemTemplate="{StaticResource ItemTemplate16}" />
-			<ComboBox Margin="8,0,0,0" HorizontalAlignment="Stretch" MinWidth="150" 
+			<ComboBox Margin="8,0,0,0" HorizontalAlignment="Stretch" MinWidth="150"
 				ItemsSource="{Binding AvailableMaterials}"
 				SelectedItem="{Binding SelectedMaterial, Mode=TwoWay}"
 				ItemTemplate="{StaticResource ItemTemplate16}" />
 		</StackPanel>
 	</DataTemplate>
-	
-	
-	
+
+
+
 	<DataTemplate x:Key="MilRoleTemplate">
 		<Grid MaxHeight="650">
 			<Grid.ColumnDefinitions>
@@ -1083,26 +1083,26 @@
 					<Button Content="Uniform" MaxHeight="50" FontSize="18" Margin="2" VerticalAlignment="Top" Command="{Binding ConfigureUniformCmd }" Grid.Row="0"/>
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Top"  Grid.Row="1" Margin="2">
 						<Button Content="&lt;-" MaxWidth="50" MaxHeight="50" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowLeftArrow}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveRoleLeftCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveRoleLeftCmd }"
 							CommandParameter="{Binding ID}"/>
 						<TextBox x:Name="TBRoleName" Text="{Binding Name}" MinWidth="180" FontSize="18" MinHeight="50" MaxHeight="50" Margin="2"/>
 						<Button Content="X" MaxWidth="50" MaxHeight="50" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowX}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveRoleCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.RemoveRoleCmd }"
 							CommandParameter="{Binding ID}"/>
-							
+
 						<Button Content="-&gt;" MaxWidth="50" MaxHeight="50" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="2" Visibility="{Binding ShowRightArrow}"
-							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveRoleRightCmd }"	
+							Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MilitaryGui}}, Path=DataContext.MoveRoleRightCmd }"
 							CommandParameter="{Binding ID}"/>
-						
+
 					</StackPanel>
 					<CheckBox Content="Civilian!" IsChecked="{Binding Civilian, Mode=TwoWay}" Margin="2,20,2,2" FontSize="18" Grid.Row="2">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
-								<TextBlock Text="If enabled this role counts as civilian." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+								<TextBlock Text="If enabled this role counts as civilian." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue"
 									Padding="0,2" TextAlignment="Center"/>
-								<TextBlock Text="The gnome will retreat to an appropriate" FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+								<TextBlock Text="The gnome will retreat to an appropriate" FontSize="18" Foreground="#FF365264" Background="LightSkyBlue"
 									Padding="0,2" TextAlignment="Center"/>
-								<TextBlock Text="area in case of an alarm." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue" 
+								<TextBlock Text="area in case of an alarm." FontSize="18" Foreground="#FF365264" Background="LightSkyBlue"
 									Padding="0,2" TextAlignment="Center"/>
 							</StackPanel>
 						</CheckBox.ToolTip>
