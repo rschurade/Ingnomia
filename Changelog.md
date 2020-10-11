@@ -6,9 +6,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - message window not disappearing after clicking an answer button if game is unpaused, 
   game not possible to unpause now when message window is open
+
 ### Added
+- moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
+- added french translation PR#90 Daynvheur
 
 ### Changed
+- more info for jobs  PR #91 by rivenwyrm
+- updated to Noesis 3.0.6
+
 
 ### Removed
 
