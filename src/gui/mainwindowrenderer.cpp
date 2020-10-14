@@ -482,7 +482,7 @@ void MainWindowRenderer::paintWorld()
 	DebugScope s( "paint world" );
 	QElapsedTimer timer;
 	//timer.start();
-
+	glViewport( 0, 0, m_width, m_height );
 	{
 		DebugScope s( "clear" );
 		glEnable( GL_BLEND );
