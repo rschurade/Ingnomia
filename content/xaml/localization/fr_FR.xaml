@@ -173,7 +173,7 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimals">Nombre d'animaux maximum par types.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">Inclue les animaux domestiques.</system:String>
 	<system:String x:Key="NewGamePage_Back">Annuler</system:String>
-	<system:String x:Key="NewGamePage_Embark">Si vous appuyez sur ce bouton, votre joyeuse bande de gnomes s'embarquera dans une longue aventure où ils formeront des amitiés, combattront des monstres et amasseront de grands et précieux trésors.</system:String>
+	<system:String x:Key="NewGamePage_Embark">En route !</system:String>
 
 	<!--{StaticResource PopulationWindow_}-->
 	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
