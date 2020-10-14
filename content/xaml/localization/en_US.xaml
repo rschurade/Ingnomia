@@ -173,7 +173,7 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimals">Maximum number animals per type.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">This also influences domesticated animals.</system:String>
 	<system:String x:Key="NewGamePage_Back">NewGamePage_Back</system:String>
-	<system:String x:Key="NewGamePage_Embark">Embark</system:String>
+	<system:String x:Key="NewGamePage_Embark">By clicking this button, you agree to live a wonderfull adventure, with awesome gnomes, forcefull monsters, brave friendships and virile action. No treasure mentionned at all.</system:String>
 
 	<!--{StaticResource PopulationWindow_}-->
 	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
