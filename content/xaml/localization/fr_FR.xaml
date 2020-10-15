@@ -38,10 +38,10 @@
 	<system:String x:Key="Agriculture_TameWildAnimals">Domestiquer les animaux sauvages</system:String>
 	<system:String x:Key="Agriculture_HarvestAnimals">Entretenir</system:String>
 	<system:String x:Key="Agriculture_HarvestHay">Désherber</system:String>
-	<system:String x:Key="Agriculture_StoredFood">Nourriture</system:String>
+	<system:String x:Key="Agriculture_StoredFood">Fourrages</system:String>
 	<system:String x:Key="Agriculture_Settings">Paramètres</system:String>
 	<system:String x:Key="Agriculture_Back">Retour</system:String>
-	<system:String x:Key="Agriculture_SelectFoodForTroughs">Nourriture</system:String>
+	<system:String x:Key="Agriculture_SelectFoodForTroughs">Fourrages</system:String>
 	<system:String x:Key="Agriculture_ManageAnimals">Gérer</system:String>
 	<system:String x:Key="Agriculture_SelectAnimalType">Type d'animaux</system:String>
 	<system:String x:Key="Agriculture_NumberOfAnimals">Quantité</system:String>
@@ -64,14 +64,14 @@
 	<system:String x:Key="CreatureInfo_Dex">Dex</system:String>
 	<system:String x:Key="CreatureInfo_Str">For</system:String>
 	<system:String x:Key="CreatureInfo_Inventory">Inventaire</system:String>
-	<system:String x:Key="CreatureInfo_Equipment">Équippement</system:String>
+	<system:String x:Key="CreatureInfo_Equipment">Équipement</system:String>
 
 	<!--{StaticResource DebugPage_}-->
 	<system:String x:Key="DebugPage_">DebugPage_</system:String>
 	<system:String x:Key="DebugPage_Misc">Invocations</system:String>
 	<system:String x:Key="DebugPage_Stuff">Équipements</system:String>
 	<system:String x:Key="DebugPage_More">Autres</system:String>
-	<system:String x:Key="DebugPage_DebugFirstPage">Invocations</system:String>
+	<system:String x:Key="DebugPage_DebugFirstPage">Invoquer</system:String>
 	<system:String x:Key="DebugPage_SpawnGnome">Gnome</system:String>
 	<system:String x:Key="DebugPage_SpawnTrader">Marchand</system:String>
 	<system:String x:Key="DebugPage_SpawnGoblin">Goblin</system:String>
@@ -96,7 +96,7 @@
 	<system:String x:Key="GameGui_Magic">Magie</system:String>
 	<system:String x:Key="GameGui_Kingdom">Royaumes</system:String>
 	<system:String x:Key="GameGui_Stockpiles">Réserves</system:String>
-	<system:String x:Key="GameGui_Military">Militaires</system:String>
+	<system:String x:Key="GameGui_Military">Armée</system:String>
 	<system:String x:Key="GameGui_Population">Démographie</system:String>
 	<system:String x:Key="GameGui_Missions">Quêtes</system:String>
 
@@ -106,7 +106,7 @@
 	<system:String x:Key="InGamePage_Resume">Reprendre</system:String>
 	<system:String x:Key="InGamePage_LoadGame">Charger</system:String>
 	<system:String x:Key="InGamePage_SaveGame">Sauvegarder</system:String>
-	<system:String x:Key="InGamePage_Settings">Options</system:String>
+	<system:String x:Key="InGamePage_Settings">Paramètres</system:String>
 	<system:String x:Key="InGamePage_QuitGame">Quitter</system:String>
 
 	<!--{StaticResource LoadGamePage_}-->
@@ -150,7 +150,7 @@
 	<system:String x:Key="NewGamePage_Rivers">Rivières :</system:String>
 	<system:String x:Key="NewGamePage_RiverSize">Largeur :</system:String>
 	<system:String x:Key="NewGamePage_StartArea">Zone de départ :</system:String>
-	<system:String x:Key="NewGamePage_StartingItems">Starting items</system:String>
+	<system:String x:Key="NewGamePage_StartingItems">Objets préparés</system:String>
 	<system:String x:Key="NewGamePage_Presets">Préconfigurations :</system:String>
 	<system:String x:Key="NewGamePage_NewPreset">Nouvelle</system:String>
 	<system:String x:Key="NewGamePage_DeletePreset">Effacer</system:String>
@@ -173,7 +173,7 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimals">Nombre d'animaux maximum par types.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">Inclue les animaux domestiques.</system:String>
 	<system:String x:Key="NewGamePage_Back">Annuler</system:String>
-	<system:String x:Key="NewGamePage_Embark">Démarrer</system:String>
+	<system:String x:Key="NewGamePage_Embark">En route !</system:String>
 
 	<!--{StaticResource PopulationWindow_}-->
 	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
@@ -227,7 +227,7 @@
 	<system:String x:Key="TileInfo_Stockpile">Réserve :</system:String>
 	<system:String x:Key="TileInfo_Manage">Gérer</system:String>
 	<system:String x:Key="TileInfo_AssignTo">Assignation :</system:String>
-	<system:String x:Key="TileInfo_Value">Valueur :</system:String>
+	<system:String x:Key="TileInfo_Value">Valeur :</system:String>
 	<system:String x:Key="TileInfo_Enclosed">Clos :</system:String>
 	<system:String x:Key="TileInfo_HasRoof">Toiture :</system:String>
 	<system:String x:Key="TileInfo_Beds">Lits :</system:String>
@@ -254,7 +254,7 @@
 	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">Autorise les tâches générées.</system:String>
 	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">Génèrera automatiquement les prérequis pour les ateliers le nécessitant.</system:String>
 	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">Auto-craft des objets manquants</system:String>
-	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Préparation automatique des bjets manquants.</system:String>
+	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Préparation automatique des objets manquants.</system:String>
 	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">Génèrera automatiquement les prérequis dans les ateliers autorisés.</system:String>
 	<system:String x:Key="WorkshopGui_AvailableProducts">Recettes</system:String>
 	<system:String x:Key="WorkshopGui_ProductionLine">Production</system:String>
@@ -263,7 +263,7 @@
 	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Abattra tout animal domestique hors pâturage.</system:String>
 	<system:String x:Key="WorkshopGui_ButcherCorpse">Préparer les carcasses</system:String>
 	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Préparation de carcasses.</system:String>
-	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Doivent être dans une réserve pour être prise en compte.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Elles doivent être dans une réserve pour être prise en compte.</system:String>
 	<system:String x:Key="WorkshopGui_ConnectToStockpile">Lier à une réserve</system:String>
 	<system:String x:Key="WorkshopGui_ConnectStockpile">Liaison vers une réserve.</system:String>
 	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Liaison vers une zone de 3x3 réserves max.</system:String>

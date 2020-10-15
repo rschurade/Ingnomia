@@ -155,9 +155,9 @@
 	<system:String x:Key="NewGamePage_NewPreset">New Preset</system:String>
 	<system:String x:Key="NewGamePage_DeletePreset">Delete Preset</system:String>
 	<system:String x:Key="NewGamePage_Gnomes">Gnomes:</system:String>
-	<system:String x:Key="NewGamePage_Items">NewGamePage_Items</system:String>
+	<system:String x:Key="NewGamePage_Items">Items</system:String>
 	<system:String x:Key="NewGamePage_Animals">Animals</system:String>
-	<system:String x:Key="NewGamePage_Add">NewGamePage_Add</system:String>
+	<system:String x:Key="NewGamePage_Add">Add</system:String>
 	<system:String x:Key="NewGamePage_Enemies">Enemies</system:String>
 	<system:String x:Key="NewGamePage_PeacefulMode">Peaceful mode.</system:String>
 	<system:String x:Key="NewGamePage_NoEnemyKingdoms">No enemy kingdoms.</system:String>
@@ -172,7 +172,7 @@
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsPage">Max animals per type:</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimals">Maximum number animals per type.</system:String>
 	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">This also influences domesticated animals.</system:String>
-	<system:String x:Key="NewGamePage_Back">NewGamePage_Back</system:String>
+	<system:String x:Key="NewGamePage_Back">Back</system:String>
 	<system:String x:Key="NewGamePage_Embark">Embark</system:String>
 
 	<!--{StaticResource PopulationWindow_}-->
