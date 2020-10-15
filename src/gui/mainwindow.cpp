@@ -145,12 +145,18 @@ void MainWindow::toggleFullScreen()
 
 void MainWindow::keyPressEvent( QKeyEvent* event )
 {
-	auto noesisKey = Global::keyConvert( (Qt::Key)event->key() );
+	int qtKey = event->key();
+	auto noesisKey = Global::keyConvert( (Qt::Key)qtKey );
 	//qDebug() << "keyPressEvent" << event->key() << " " << event->text() << noesisKey;
 
-	bool ret = m_view->KeyDown( noesisKey );
+	bool ret = false;
+	
+	if( qtKey != 32 )
+	{
+		ret = m_view->KeyDown( noesisKey );
+	}
 
-	if ( event->key() > 32 && event->key() < 256 )
+	if ( event->key() > 31 && event->key() < 256 )
 	{
 		if ( event->text().size() == 1 )
 		{
@@ -158,7 +164,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 			ret |= m_view->Char( c.unicode() );
 		}
 	}
-
+	
 	if ( ret )
 	{
 		noesisTick();
@@ -202,6 +208,9 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				break;
 			case Qt::Key_Escape:
 				emit signalKeyPress( event->key() );
+				break;
+			case Qt::Key_Space:
+				GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
 				break;
 		}
 	}
