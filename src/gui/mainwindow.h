@@ -103,4 +103,6 @@ signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );
 	void signalSelectTile( unsigned int );
+
+	void signalKeyPress( int key );
 };

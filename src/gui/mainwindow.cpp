@@ -97,6 +97,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalWindowSize, &EventConnector::getInstance(), &EventConnector::onWindowSize );
 	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
+	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
 	instance = this;
 }
 
@@ -198,6 +199,9 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				break;
 			case Qt::Key_Period:
 				m_renderer->rotate( -1 );
+				break;
+			case Qt::Key_Escape:
+				emit signalKeyPress( event->key() );
 				break;
 		}
 	}

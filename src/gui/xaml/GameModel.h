@@ -236,6 +236,8 @@ public:
 
 	void setShownInfo( ShownInfo info );
 
+	void OnCmdBack( BaseComponent* param );
+
 private:
 	void setGameSpeed( GameSpeed value );
 
@@ -292,7 +294,6 @@ private:
 	void OnCmdButtonCommand( BaseComponent* param );
 	void OnCmdCategory( BaseComponent* param );
 
-	void OnCmdBack( BaseComponent* param );
 	void OnCmdSimple( BaseComponent* param );
 
 	void setCategory( const char* cat );
@@ -302,13 +303,10 @@ private:
 
 	const NoesisApp::DelegateCommand* GetCmdButtonCommand() const;
 	const NoesisApp::DelegateCommand* GetCmdCategory() const;
-	const NoesisApp::DelegateCommand* GetCmdBack() const;
 	const NoesisApp::DelegateCommand* GetSimpleCommand() const;
 
 	const NoesisApp::DelegateCommand* GetCmdLeftCommandButton() const;
 	const NoesisApp::DelegateCommand* GetCmdRightCommandButton() const;
-
-	NoesisApp::DelegateCommand _cmdBack;
 
 	NoesisApp::DelegateCommand _cmdButtonCommand;
 	NoesisApp::DelegateCommand _cmdCategory;

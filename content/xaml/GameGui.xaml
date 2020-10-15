@@ -12,12 +12,6 @@
 		<local:GameModel />
 	</UserControl.DataContext>
 
-	<i:Interaction.Triggers>
-		<ei:KeyTrigger FiredOn="KeyDown" Key="Escape" ActiveOnFocus="False">
-			<i:InvokeCommandAction Command="{Binding CmdBack}" />
-		</ei:KeyTrigger>
-	</i:Interaction.Triggers>
-
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

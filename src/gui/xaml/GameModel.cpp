@@ -346,7 +346,6 @@ GameModel::GameModel()
 
 	_cmdLeftCommandButton.SetExecuteFunc( MakeDelegate( this, &GameModel::CmdLeftCommandButton ) );
 	_cmdRightCommandButton.SetExecuteFunc( MakeDelegate( this, &GameModel::CmdRightCommandButton ) );
-	_cmdBack.SetExecuteFunc( MakeDelegate( this, &GameModel::OnCmdBack ) );
 	_cmdSimple.SetExecuteFunc( MakeDelegate( this, &GameModel::OnCmdSimple ) );
 
 	m_closeWindowCmd.SetExecuteFunc( MakeDelegate( this, &GameModel::onCloseWindowCmd ) );
@@ -1079,11 +1078,6 @@ const NoesisApp::DelegateCommand* GameModel::GetCmdCategory() const
 	return &_cmdCategory;
 }
 
-const NoesisApp::DelegateCommand* GameModel::GetCmdBack() const
-{
-	return &_cmdBack;
-}
-
 const NoesisApp::DelegateCommand* GameModel::GetSimpleCommand() const
 {
 	return &_cmdSimple;
@@ -1122,7 +1116,7 @@ void GameModel::OnCmdBack( BaseComponent* param )
 		return;
 	}
 
-	EventConnector::getInstance().onKeyEsc();
+	m_proxy->propagateEscape();
 }
 
 void GameModel::CmdRightCommandButton( BaseComponent* param )
@@ -1412,7 +1406,6 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "CmdButtonCommand", &GameModel::GetCmdButtonCommand );
 	NsProp( "CmdCategory", &GameModel::GetCmdCategory );
 
-	NsProp( "CmdBack", &GameModel::GetCmdBack );
 	NsProp( "CmdSimple", &GameModel::GetSimpleCommand );
 
 	NsProp( "CmdLeftCommandButton", &GameModel::GetCmdLeftCommandButton );

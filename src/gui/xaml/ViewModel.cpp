@@ -58,8 +58,6 @@ ViewModel::ViewModel()
 	_backToMain.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnBackToMain ) );
 	_resume.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnResume ) );
 	_fadeInCompleted.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnFadeInCompleted ) );
-	_pause.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnPause ) );
-	_guiZoom.SetExecuteFunc( MakeDelegate( this, &ViewModel::OnGuiZoom ) );
 
 	_state        = State::Main;
 	_showMainMenu = true;
@@ -416,11 +414,6 @@ void ViewModel::OnPause( BaseComponent* params )
 	GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
 }
 
-const NoesisApp::DelegateCommand* ViewModel::GetPause() const
-{
-	return &_pause;
-}
-
 void ViewModel::OnGuiZoom( BaseComponent* params )
 {
 
@@ -442,11 +435,6 @@ void ViewModel::OnGuiZoom( BaseComponent* params )
 	setWindowSize( _realWidth, _realHeight );
 }
 
-const NoesisApp::DelegateCommand* ViewModel::GetGuiZoom() const
-{
-	return &_guiZoom;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -463,7 +451,6 @@ NS_IMPLEMENT_REFLECTION( IngnomiaGUI::ViewModel, "IngnomiaGUI.ViewModel" )
 	NsProp( "Exit", &ViewModel::GetExit );
 	NsProp( "Back", &ViewModel::GetBack );
 	NsProp( "BackToMain", &ViewModel::GetBackToMain );
-	NsProp( "CmdPause", &ViewModel::GetPause );
 	NsProp( "Resume", &ViewModel::GetResume );
 	NsProp( "FadeInCompleted", &ViewModel::GetFadeInCompleted );
 	NsProp( "State", &ViewModel::GetState, &ViewModel::SetState );
@@ -472,7 +459,6 @@ NS_IMPLEMENT_REFLECTION( IngnomiaGUI::ViewModel, "IngnomiaGUI.ViewModel" )
 	NsProp( "ShowGameGUI", &ViewModel::GetShowGameGUI );
 	NsProp( "WindowWidth", &ViewModel::GetWindowWidth );
 	NsProp( "WindowHeight", &ViewModel::GetWindowHeight );
-	NsProp( "CmdGuiZoom", &ViewModel::GetGuiZoom );
 
 	NsProp( "NewGameModel", &ViewModel::getNewGameModel );
 

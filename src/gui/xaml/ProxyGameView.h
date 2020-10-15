@@ -42,6 +42,8 @@ public:
 
 	void sendEventAnswer( unsigned int eventID, bool answer );
 
+	void propagateEscape();
+
 private:
 	IngnomiaGUI::GameModel* m_parent = nullptr;
 
@@ -62,6 +64,9 @@ private slots:
 
 	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
+	void onKeyEscape();
+	
+
 signals:
 	void signalCloseStockpileWindow();
 	void signalCloseWorkshopWindow();
@@ -72,4 +77,5 @@ signals:
 	void signalRequestCreatureUpdate( unsigned int id );
 	void signalEventAnswer( unsigned int eventID, bool answer );
 	void signalRequestMilitaryUpdate();
+	void signalPropagateEscape();
 };

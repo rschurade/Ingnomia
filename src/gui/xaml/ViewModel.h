@@ -77,8 +77,6 @@ private:
 	const NoesisApp::DelegateCommand* GetBackToMain() const;
 	const NoesisApp::DelegateCommand* GetResume() const;
 	const NoesisApp::DelegateCommand* GetFadeInCompleted() const;
-	const NoesisApp::DelegateCommand* GetPause() const;
-	const NoesisApp::DelegateCommand* GetGuiZoom() const;
 
 	const char* GetPlatform() const;
 	const char* GetShowMainMenu() const;
@@ -120,9 +118,7 @@ private:
 	NoesisApp::DelegateCommand _backToMain;
 	NoesisApp::DelegateCommand _resume;
 	NoesisApp::DelegateCommand _fadeInCompleted;
-	NoesisApp::DelegateCommand _pause;
-	NoesisApp::DelegateCommand _guiZoom;
-
+	
 	State _state;
 	NewGameModel _newGameModel;
 

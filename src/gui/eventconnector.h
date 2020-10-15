@@ -115,7 +115,8 @@ public slots:
 
 	void onUpdatePause();
 	void onUpdateGameSpeed();
-	void onKeyEsc();
+	void onKeyPress( int key );
+	void onPropagateEscape();
 
 	void onBuild();
 
@@ -130,5 +131,6 @@ signals:
 	void signalUpdatePause();
 	void signalUpdateGameSpeed();
 	void signalKeyEsc();
+	void signalPropagateKeyEsc();
 	void signalBuild();
 };

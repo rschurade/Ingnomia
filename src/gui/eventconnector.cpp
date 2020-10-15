@@ -74,9 +74,19 @@ void EventConnector::onUpdateGameSpeed()
 	emit signalUpdateGameSpeed();
 }
 
-void EventConnector::onKeyEsc()
+void EventConnector::onKeyPress( int key )
 {
-	emit signalKeyEsc();
+	switch ( key )
+	{
+		case Qt::Key_Escape:
+			emit signalKeyEsc();
+			break;
+	}
+}
+
+void EventConnector::onPropagateEscape()
+{
+	emit signalPropagateKeyEsc();
 }
 
 void EventConnector::onBuild()

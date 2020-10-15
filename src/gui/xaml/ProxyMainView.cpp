@@ -24,7 +24,7 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 	QObject( parent )
 {
 	connect( &EventConnector::getInstance(), &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
-	connect( &EventConnector::getInstance(), &EventConnector::signalKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
+	connect( &EventConnector::getInstance(), &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
 }
 
 ProxyMainView::~ProxyMainView()

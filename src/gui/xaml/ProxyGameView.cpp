@@ -31,6 +31,9 @@
 ProxyGameView::ProxyGameView( QObject* parent ) :
 	QObject( parent )
 {
+	connect( &EventConnector::getInstance(), &EventConnector::signalKeyEsc, this, &ProxyGameView::onKeyEscape, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalPropagateEscape, &EventConnector::getInstance(), &EventConnector::onPropagateEscape );
+
 	connect( &EventConnector::getInstance(), &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
 	connect( &EventConnector::getInstance(), &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
 
@@ -191,4 +194,17 @@ void ProxyGameView::sendEventAnswer( unsigned int eventID, bool answer )
 void ProxyGameView::requestMilitaryUpdate()
 {
 	emit signalRequestMilitaryUpdate();
+}
+
+void ProxyGameView::onKeyEscape()
+{
+	if( m_parent )
+	{
+		m_parent->OnCmdBack( nullptr );
+	}
+}
+	
+void ProxyGameView::propagateEscape()
+{
+	emit signalPropagateEscape();
 }
