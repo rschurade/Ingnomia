@@ -99,6 +99,8 @@ private:
 public slots:
 	void redraw();
 	void noesisTick();
+	void onFullScreen( bool value );
+
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );

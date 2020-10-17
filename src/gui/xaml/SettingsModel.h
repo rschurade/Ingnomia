@@ -16,8 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef __MENU3D_SETTINGSMODEL_H__
-#define __MENU3D_SETTINGSMODEL_H__
+#ifndef __SETTINGSMODEL_H__
+#define __SETTINGSMODEL_H__
+
+#include "../aggregatorsettings.h"
 
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
@@ -30,6 +32,8 @@
 
 #include <QString>
 
+class SettingsProxy;
+
 namespace Noesis
 {
 template <class T>
@@ -39,13 +43,46 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+struct LanguageEntry : public Noesis::BaseComponent
+{
+public:
+	LanguageEntry( QString name );
+
+	Noesis::String m_name;
+
+    const char* getName() const;
+	
+	NS_DECLARE_REFLECTION( LanguageEntry, BaseComponent )
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class SettingsModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	SettingsModel();
 
+    void updateSettings( const GuiSettings& settings );
+
 private:
+    SettingsProxy* m_proxy = nullptr;
+
+    Noesis::ObservableCollection<LanguageEntry>* getLanguages() const;
+	void setLanguage( LanguageEntry* item );
+	LanguageEntry* getLanguage() const;
+
+    int getScale() const;
+	void setScale( int value );
+
+    bool getFullScreen() const;
+	void setFullScreen( bool value );
+
+
+    Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
+    LanguageEntry* m_selectedLanguage = nullptr;;
+
+    int m_scale = 10;
+    bool m_fullScreen = false;
+
 	NS_DECLARE_REFLECTION( SettingsModel, NotifyPropertyChangedBase )
 };
 

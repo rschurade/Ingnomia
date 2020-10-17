@@ -17,26 +17,38 @@
 */
 #pragma once
 
-#include "ViewModel.h"
+//#include "../aggregatorsettings.h"
+#include "settingsmodel.h"
+#include "../aggregatorsettings.h"
 
 #include <QObject>
 
-class ProxyMainView : public QObject
+class SettingsProxy : public QObject
 {
 	Q_OBJECT
 
 public:
-	ProxyMainView( QObject* parent = nullptr );
-	~ProxyMainView();
+	SettingsProxy( QObject* parent = nullptr );
+	void setParent( IngnomiaGUI::SettingsModel* parent );
 
-	void setParent( IngnomiaGUI::ViewModel* parent );
+	void requestSettings();
+
+    void setLanguage( QString language );
+    void setUIScale( float scale );
+    void setFullScreen( bool value );
 
 private:
-	IngnomiaGUI::ViewModel* m_parent = nullptr;
+	IngnomiaGUI::SettingsModel* m_parent = nullptr;
+
+
 
 private slots:
-	void onWindowSize( int w, int h );
-	void onKeyEsc();
+	void onSettings( const GuiSettings& settings );
 
-    void onUIScale( float value );
+signals:
+	void signalRequestSettings();
+
+    void signalSetLanguage( QString language );
+    void signalSetUIScale( float scale );
+    void signalSetFullScreen( bool value );
 };

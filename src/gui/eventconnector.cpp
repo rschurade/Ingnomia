@@ -38,6 +38,7 @@ EventConnector::EventConnector( QObject* parent ) :
 	m_debugAggregator        = new AggregatorDebug( this );
 	m_neighborsAggregator    = new AggregatorNeighbors( this );
 	m_militaryAggregator     = new AggregatorMilitary( this );
+	m_settingsAggregator	 = new AggregatorSettings( this );
 }
 
 EventConnector::~EventConnector()

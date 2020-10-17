@@ -18,7 +18,6 @@
 #include "ViewModel.h"
 
 #include "../../base/config.h"
-#include "../../base/db.h"
 #include "../../game/gamemanager.h"
 #include "../../game/newgamesettings.h"
 #include "../eventconnector.h"
@@ -63,6 +62,7 @@ ViewModel::ViewModel()
 	_showMainMenu = true;
 	_showGameGUI  = false;
 	_ingame       = false;
+	m_scale		  = qMax( 1.0f, Config::getInstance().get( "uiscale" ).toFloat() );
 	setWindowSize( 1920, 1080 );
 }
 
@@ -70,8 +70,8 @@ void ViewModel::setWindowSize( int w, int h )
 {
 	_realWidth          = w;
 	_realHeight         = h;
-	_windowWidth        = _realWidth / Config::getInstance().get( "GUIScale" ).toFloat();
-	_windowHeight       = _realHeight / Config::getInstance().get( "GUIScale" ).toFloat();
+	_windowWidth        = _realWidth / m_scale;
+	_windowHeight       = _realHeight / m_scale;
 	_windowWidthString  = QString::number( _windowWidth ).toStdString().c_str();
 	_windowHeightString = QString::number( _windowHeight ).toStdString().c_str();
 	OnPropertyChanged( "WindowWidth" );
@@ -414,23 +414,9 @@ void ViewModel::OnPause( BaseComponent* params )
 	GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
 }
 
-void ViewModel::OnGuiZoom( BaseComponent* params )
+void ViewModel::setUIScale( float value )
 {
-
-	QString param( params->ToString().Str() );
-	float scale = Config::getInstance().get( "GUIScale" ).toFloat();
-	if ( param == "In" )
-	{
-		scale += 0.1f;
-		scale = qMin( 3.f, scale );
-	}
-	else
-	{
-		scale -= 0.1f;
-		scale = qMax( 0.5f, scale );
-	}
-	Config::getInstance().set( "GUIScale", scale );
-
+	m_scale = value;
 	// Trigger layout update
 	setWindowSize( _realWidth, _realHeight );
 }

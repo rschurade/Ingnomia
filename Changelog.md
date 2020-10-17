@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
 - added french translation PR#90 Daynvheur
+- settings dialog
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm

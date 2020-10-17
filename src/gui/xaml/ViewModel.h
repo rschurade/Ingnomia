@@ -64,6 +64,8 @@ public:
 
 	void OnBack( BaseComponent* param );
 
+	void setUIScale( float value );
+
 private:
 	const NoesisApp::DelegateCommand* GetStart() const;
 	const NoesisApp::DelegateCommand* GetSettings() const;
@@ -98,8 +100,7 @@ private:
 	void OnResume( BaseComponent* param );
 	void OnFadeInCompleted( BaseComponent* params );
 	void OnPause( BaseComponent* params );
-	void OnGuiZoom( BaseComponent* params );
-
+	
 	State GetState() const;
 	void SetState( State value );
 
@@ -129,6 +130,7 @@ private:
 	int _windowHeight;
 	int _realWidth;
 	int _realHeight;
+	float m_scale = 1.0;
 	Noesis::String _windowWidthString;
 	Noesis::String _windowHeightString;
 

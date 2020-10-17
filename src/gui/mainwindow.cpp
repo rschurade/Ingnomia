@@ -26,6 +26,7 @@
 #include "../game/gamemanager.h"
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
+#include "../gui/aggregatorsettings.h"
 #include "license.h"
 #include "mainwindowrenderer.h"
 #include "xaml/GameGui.xaml.h"
@@ -98,6 +99,10 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
+
+
+	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
+
 	instance = this;
 }
 
@@ -132,6 +137,7 @@ void MainWindow::toggleFullScreen()
 		qDebug() << "go to fullscreen";
 		w->showFullScreen();
 		m_isFullScreen = true;
+		Config::getInstance().set( "fullscreen", true );
 	}
 	else
 	{
@@ -139,6 +145,26 @@ void MainWindow::toggleFullScreen()
 		qDebug() << "back from fullscreen";
 		w->showNormal();
 		m_isFullScreen = false;
+		Config::getInstance().set( "fullscreen", false );
+	}
+	m_renderer->onRenderParamsChanged();
+}
+
+void MainWindow::onFullScreen( bool value )
+{
+	QOpenGLWindow* w = this;
+	m_isFullScreen = value;
+	Config::getInstance().set( "fullscreen", value );
+	if ( value )
+	{
+		qDebug() << "go to fullscreen";
+		w->showFullScreen();
+	}
+	else
+	{
+		// Reset from fullscreen:
+		qDebug() << "back from fullscreen";
+		w->showNormal();
 	}
 	m_renderer->onRenderParamsChanged();
 }
@@ -193,7 +219,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				m_renderer->onRenderParamsChanged();
 				break;
 			case Qt::Key_F:
-				toggleFullScreen();
+				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
 				Selection::getInstance().rotate();

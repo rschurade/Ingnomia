@@ -18,6 +18,8 @@
 #include "ProxyMainView.h"
 
 #include "../eventconnector.h"
+#include "../aggregatorsettings.h"
+
 #include "ViewModel.h"
 
 ProxyMainView::ProxyMainView( QObject* parent ) :
@@ -25,6 +27,10 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 {
 	connect( &EventConnector::getInstance(), &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
 	connect( &EventConnector::getInstance(), &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
+
+	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
+
+
 }
 
 ProxyMainView::~ProxyMainView()
@@ -49,5 +55,13 @@ void ProxyMainView::onKeyEsc()
 	if ( m_parent )
 	{
 		m_parent->OnBack( nullptr );
+	}
+}
+
+void ProxyMainView::onUIScale( float value )
+{
+	if ( m_parent )
+	{
+		m_parent->setUIScale( value );
 	}
 }

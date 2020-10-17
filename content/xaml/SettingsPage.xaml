@@ -48,12 +48,52 @@
 		</Viewbox>
 		<Viewbox Grid.Row="1" Grid.Column="1">
 			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
-				<TabItem Header="{StaticResource SettingsPage_Game}" />
-				<TabItem Header="{StaticResource SettingsPage_Video}">
-					<Label Content="{StaticResource SettingsPage_VideoContent}" />
-				</TabItem>
-				<TabItem Header="{StaticResource SettingsPage_Audio}">
-					<Label Content="{StaticResource SettingsPage_AudioContent}" />
+				<TabItem Header="{StaticResource SettingsPage_Game}">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*" />
+							<RowDefinition Height="3*" />
+							<RowDefinition Height="1*" />
+							
+						</Grid.RowDefinitions>
+						
+						<StackPanel Grid.Row="1">
+							<Grid Margin="0,20,0,0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<TextBlock  Grid.Column="1" FontSize="10" Text="UI Scale" VerticalAlignment="Center"/>
+								<Slider     Grid.Column="2" Minimum="10" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
+											Value="{Binding UIScale}" />
+							</Grid>
+							<Grid Margin="0,20,0,0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="Full Screen"/>
+								<CheckBox   Grid.Column="2" VerticalAlignment="Center" Content="" IsChecked="{Binding FullScreen}"/>
+							</Grid>
+							<Grid Margin="0,20,0,0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="1*" />
+								</Grid.ColumnDefinitions>
+								<TextBlock  Grid.Column="1" VerticalAlignment="Center" FontSize="10" Text="Language"/>
+								<ComboBox   Grid.Column="2" VerticalAlignment="Center" Margin="2"
+										ItemsSource="{Binding Languages}"
+										SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+							</Grid>
+						</StackPanel>
+					</Grid>
 				</TabItem>
 				<TabItem Header="{StaticResource SettingsPage_Controls}" />
 			</TabControl>

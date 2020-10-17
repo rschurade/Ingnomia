@@ -17,26 +17,41 @@
 */
 #pragma once
 
-#include "ViewModel.h"
-
 #include <QObject>
 
-class ProxyMainView : public QObject
+
+struct GuiSettings
+{
+    bool fullscreen = false;
+    float scale = 1.0;
+    QList<QString> languages;
+    QString language;
+};
+
+Q_DECLARE_METATYPE( GuiSettings )
+
+class AggregatorSettings : public QObject
 {
 	Q_OBJECT
 
 public:
-	ProxyMainView( QObject* parent = nullptr );
-	~ProxyMainView();
-
-	void setParent( IngnomiaGUI::ViewModel* parent );
+	AggregatorSettings( QObject* parent = nullptr );
+	~AggregatorSettings();
 
 private:
-	IngnomiaGUI::ViewModel* m_parent = nullptr;
+	GuiSettings m_settings;
 
-private slots:
-	void onWindowSize( int w, int h );
-	void onKeyEsc();
+public slots:
+	void onRequestSettings();
 
-    void onUIScale( float value );
+    void onSetLanguage( QString language );
+    void onSetUIScale( float scale );
+    void onSetFullScreen( bool value );
+
+signals:
+	void signalUpdateSettings( const GuiSettings& info );
+
+    void signalFullScreen( bool value );
+    void signalUIScale( float value );
+    void signalSetLanguage( QString language );
 };
