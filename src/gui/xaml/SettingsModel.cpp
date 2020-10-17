@@ -91,7 +91,7 @@ void SettingsModel::setLanguage( LanguageEntry* item )
     if( item && m_selectedLanguage != item )
 	{
         m_selectedLanguage = item;
-        m_proxy->setLanguage( item->ToString().Str() );
+        m_proxy->setLanguage( item->getName() );
 	}
 }
 
