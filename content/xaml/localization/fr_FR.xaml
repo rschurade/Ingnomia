@@ -201,6 +201,9 @@
 	<system:String x:Key="SettingsPage_Controls">Contrôles</system:String>
 	<system:String x:Key="SettingsPage_Back">Annuler</system:String>
 	<system:String x:Key="SettingsPage_Accept">Valider</system:String>
+	<system:String x:Key="SettingsPage_UiScale">Échelle de l'interface</system:String>
+	<system:String x:Key="SettingsPage_FullScreen">Plein écran</system:String>
+	<system:String x:Key="SettingsPage_Language">Langue</system:String>
 
 	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
