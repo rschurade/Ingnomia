@@ -18,7 +18,7 @@
 #pragma once
 
 //#include "../aggregatorsettings.h"
-#include "settingsmodel.h"
+#include "Settingsmodel.h"
 #include "../aggregatorsettings.h"
 
 #include <QObject>
