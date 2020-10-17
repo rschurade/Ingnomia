@@ -263,7 +263,7 @@
 	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Abattra tout animal domestique hors pâturage.</system:String>
 	<system:String x:Key="WorkshopGui_ButcherCorpse">Préparer les carcasses</system:String>
 	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Préparation de carcasses.</system:String>
-	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Elles doivent être dans une réserve pour être prise en compte.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Elles doivent être dans une réserve pour être prises en compte.</system:String>
 	<system:String x:Key="WorkshopGui_ConnectToStockpile">Lier à une réserve</system:String>
 	<system:String x:Key="WorkshopGui_ConnectStockpile">Liaison vers une réserve.</system:String>
 	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Liaison vers une zone de 3x3 réserves max.</system:String>
