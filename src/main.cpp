@@ -204,8 +204,8 @@ int main( int argc, char* argv[] )
 		qInstallMessageHandler( logOutput );
 	}
 
-	int width  = qMax( 1000, Config::getInstance().get( "WindowWidth" ).toInt() );
-	int height = qMax( 600, Config::getInstance().get( "WindowHeight" ).toInt() );
+	int width  = qMax( 1200, Config::getInstance().get( "WindowWidth" ).toInt() );
+	int height = qMax( 675, Config::getInstance().get( "WindowHeight" ).toInt() );
 
 	auto defaultFormat = QSurfaceFormat::defaultFormat();
 	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
@@ -222,12 +222,18 @@ int main( int argc, char* argv[] )
 
 	//MainWindow w;
 	MainWindow w;
-	w.resize( width, height );
-	w.setPosition( Config::getInstance().get( "WindowPosX" ).toInt(), Config::getInstance().get( "WindowPosY" ).toInt() );
+	
 #ifdef _WIN32
 	w.setIcon( QFileIconProvider().icon( QFileInfo( QCoreApplication::applicationFilePath() ) ) );
 #endif // _WIN32
+
+	w.resize( width, height );
+	w.setPosition( Config::getInstance().get( "WindowPosX" ).toInt(), Config::getInstance().get( "WindowPosY" ).toInt() );
 	w.show();
+	if( Config::getInstance().get( "fullscreen" ).toBool() )
+	{
+		w.onFullScreen( true );
+	}
 	return a.exec();
 }
 
