@@ -65,15 +65,14 @@
 		</Grid.Background>
 
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="1*" />
-			<RowDefinition Height="9*" />
-			<RowDefinition Height="1*" />
-			<RowDefinition Height="1*" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="5*" />
-			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<local:MainPage     x:Name="MainPage"     Grid.Row="1" Grid.Column="1" />
 		<local:SettingsPage x:Name="SettingsPage" Grid.Row="1" Grid.Column="1" Visibility="Hidden" />

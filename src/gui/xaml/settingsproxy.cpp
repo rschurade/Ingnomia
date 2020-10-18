@@ -26,6 +26,7 @@ SettingsProxy::SettingsProxy( QObject* parent ) :
 {
 	connect( this, &SettingsProxy::signalRequestSettings, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onRequestSettings, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetUIScale, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetUIScale, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetKeyboardSpeed, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetKeyboardSpeed, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetFullScreen, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetFullScreen, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetLanguage, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
     
@@ -63,4 +64,9 @@ void SettingsProxy::setUIScale( float scale )
 void SettingsProxy::setFullScreen( bool value )
 {
     emit signalSetFullScreen( value );
+}
+
+void SettingsProxy::setKeyboardSpeed( int value )
+{
+    emit signalSetKeyboardSpeed( value );
 }

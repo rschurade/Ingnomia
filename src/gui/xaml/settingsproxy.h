@@ -36,7 +36,7 @@ public:
     void setLanguage( QString language );
     void setUIScale( float scale );
     void setFullScreen( bool value );
-
+    void setKeyboardSpeed( int value );
 private:
 	IngnomiaGUI::SettingsModel* m_parent = nullptr;
 
@@ -51,4 +51,5 @@ signals:
     void signalSetLanguage( QString language );
     void signalSetUIScale( float scale );
     void signalSetFullScreen( bool value );
+    void signalSetKeyboardSpeed( int value );
 };

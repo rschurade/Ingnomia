@@ -223,42 +223,42 @@
 				</Grid.ColumnDefinitions>
 				<Border x:Name="LeftButtonBorder" Grid.Column="0" Style="{StaticResource Panel}">
 					<StackPanel Orientation="Horizontal">
-						<Button x:Name="LCB2" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB2" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Build">
 							<StackPanel>
 								<Image Source="buttons/build-all.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Build}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB1" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB1" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Mine">
 							<StackPanel>
 								<Image Source="buttons/mine.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Mine}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB3" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB3" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Agri">
 							<StackPanel>
 								<Image Source="buttons/agriculture.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Agriculture}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB4" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB4" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Designation">
 							<StackPanel>
 								<Image Source="buttons/designation.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Designations}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB5" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB5" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Job">
 							<StackPanel>
 								<Image Source="buttons/jobs.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Job}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="LCB6" Style="{StaticResource SquareButton}"
+						<Button x:Name="LCB6" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Magic">
 							<StackPanel>
 								<Image Source="buttons/magic.png" Stretch="None" />
@@ -269,34 +269,34 @@
 				</Border>
 				<Border x:Name="RightButtonBorder" Grid.Column="2" Style="{StaticResource Panel}">
 					<StackPanel Orientation="Horizontal">
-						<Button x:Name="RCB2" Style="{StaticResource SquareButton}"
+						<Button x:Name="RCB2" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Kingdom">
 							<StackPanel>
 								<Image Source="buttons/kingdom.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Kingdom}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="RCB1" Style="{StaticResource SquareButton}">
+						<Button x:Name="RCB1" Style="{StaticResource CommandButton}">
 							<StackPanel>
 								<Image Source="buttons/stockpile.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Stockpiles}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="RCB3" Style="{StaticResource SquareButton}"
+						<Button x:Name="RCB3" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Military">
 							<StackPanel>
 								<Image Source="buttons/military.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Military}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="RCB4" Style="{StaticResource SquareButton}"
+						<Button x:Name="RCB4" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Population">
 							<StackPanel>
 								<Image Source="buttons/population.png" Stretch="None" />
 								<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Population}" />
 							</StackPanel>
 						</Button>
-						<Button x:Name="RCB5" Style="{StaticResource SquareButton}"
+						<Button x:Name="RCB5" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Missions">
 							<StackPanel>
 								<Image Source="buttons/mission.png" Stretch="None" />

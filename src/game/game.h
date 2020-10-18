@@ -39,7 +39,7 @@ public:
 	void save();
 
 private:
-	QTimer* m_timer = 0;
+	QTimer* m_timer = nullptr;
 
 	int m_speed            = 0;
 	int m_millisecondsSlow = 50;
