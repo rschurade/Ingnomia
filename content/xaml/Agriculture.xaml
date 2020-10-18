@@ -31,7 +31,7 @@
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
-					<Button Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Open" Grid.Column="0" Margin="3">
+					<Button Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Open" Grid.Column="0" Margin="3">
 						<StackPanel>
 							<Image Source="{Binding Image}" />
 						</StackPanel>
@@ -72,7 +72,7 @@
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
-					<Button x:Name="PCS" Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
+					<Button x:Name="PCS" Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
 						<StackPanel>
 							<Image Source="{Binding Image}" />
 						</StackPanel>
@@ -106,7 +106,7 @@
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
 					<StackPanel Grid.Column="0">
-						<Button x:Name="ACS" Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Open" Margin="3">
+						<Button x:Name="ACS" Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Open" Margin="3">
 							<StackPanel>
 								<Image Source="{Binding Image}" />
 							</StackPanel>
@@ -206,7 +206,7 @@
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
-					<Button x:Name="PCSA" Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
+					<Button x:Name="PCSA" Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
 						<StackPanel>
 							<Image Source="{Binding Image}" />
 						</StackPanel>
@@ -231,7 +231,7 @@
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
-					<Button Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Open" Grid.Column="0" Margin="3">
+					<Button Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Open" Grid.Column="0" Margin="3">
 						<StackPanel>
 							<Image Source="{Binding Image}" />
 						</StackPanel>
@@ -266,7 +266,7 @@
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="5*" />
 					</Grid.ColumnDefinitions>
-					<Button x:Name="PCST" Style="{StaticResource SquareButton}" Height="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
+					<Button x:Name="PCST" Style="{StaticResource SquareButton}" Height="80" Width="80" Command="{Binding ProductSelection}" CommandParameter="Close" Grid.Column="0" Margin="3">
 						<StackPanel>
 							<Image Source="{Binding Image}" />
 						</StackPanel>
