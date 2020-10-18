@@ -104,10 +104,6 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
 	instance = this;
-
-	m_keyboardTimer = new QTimer( this );
-	connect( m_keyboardTimer, &QTimer::timeout, this, &MainWindow::keyboardMove );
-	m_keyboardTimer->start( 5 );
 }
 
 MainWindow::~MainWindow()
@@ -643,6 +639,7 @@ bool MainWindow::noesisUpdate()
 
 void MainWindow::noesisTick()
 {
+	keyboardMove();
 
 	if ( noesisUpdate() && !m_pendingUpdate )
 	{
@@ -653,7 +650,7 @@ void MainWindow::noesisTick()
 	else
 	{
 		// check again later
-		m_timer->start( 50 );
+		m_timer->start( 20 );
 	}
 }
 

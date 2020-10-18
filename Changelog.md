@@ -8,11 +8,14 @@ All notable changes to this project will be documented in this file.
   game not possible to unpause now when message window is open
 - GUI quickly changing size and back after resizing the window
 - key space for pause
+- text clipping in some menu panels
+- dig stairs and ramps cursor
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
 - added french translation PR#90 Daynvheur
 - settings dialog
+- WASD movement
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm

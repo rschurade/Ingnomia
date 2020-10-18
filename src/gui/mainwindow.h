@@ -120,7 +120,6 @@ private:
 
 	bool m_pendingUpdate = false;
 
-	QTimer* m_keyboardTimer = nullptr;
 	KeyboardMove m_keyboardMove = KeyboardMove::None;
 
 public slots:

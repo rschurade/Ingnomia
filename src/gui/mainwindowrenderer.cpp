@@ -660,6 +660,12 @@ void MainWindowRenderer::paintTiles()
 
 void MainWindowRenderer::paintSelection()
 {
+	// TODO this is a workaround until some transparency solution is implemented
+	auto action = Selection::getInstance().action();
+	if( action == "DigStairsDown" || action == "DigRampDown" )
+	{
+		glDisable( GL_DEPTH_TEST );
+	}
 	DebugScope s( "paint selection" );
 	m_selectionShader->bind();
 	setCommonUniforms( m_selectionShader );
@@ -682,6 +688,10 @@ void MainWindowRenderer::paintSelection()
 	}
 
 	m_selectionShader->release();
+	if( action == "DigStairsDown" || action == "DigRampDown" )
+	{
+		glEnable( GL_DEPTH_TEST );
+	}
 }
 
 void MainWindowRenderer::paintThoughtBubbles()
