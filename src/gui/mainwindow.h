@@ -26,6 +26,30 @@
 #include <QOpenGLWindow>
 #include <QTimer>
 
+enum class KeyboardMove : unsigned char {
+	None = 0,
+	Up = 0x01,
+	Down = 0x02,
+	Left = 0x04,
+	Right = 0x08
+};
+
+inline KeyboardMove operator | ( KeyboardMove a, KeyboardMove b )
+{
+    return static_cast<KeyboardMove>( static_cast<unsigned char>(a) | static_cast<unsigned char>(b) );
+}
+
+inline KeyboardMove operator & ( KeyboardMove a, KeyboardMove b )
+{
+    return static_cast<KeyboardMove>( static_cast<unsigned char>( a ) & static_cast<unsigned char>( b ) );
+}
+
+inline KeyboardMove& operator |= ( KeyboardMove& a, KeyboardMove b )
+{
+    return a= a | b;
+}
+
+
 struct Position;
 class QOpenGLTexture;
 class MainWindowRenderer;
@@ -96,10 +120,14 @@ private:
 
 	bool m_pendingUpdate = false;
 
+	QTimer* m_keyboardTimer = nullptr;
+	KeyboardMove m_keyboardMove = KeyboardMove::None;
+
 public slots:
 	void redraw();
 	void noesisTick();
 	void onFullScreen( bool value );
+	void keyboardMove();
 
 signals:
 	void signalWindowSize( int w, int h );

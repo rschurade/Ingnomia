@@ -76,12 +76,16 @@ private:
     bool getFullScreen() const;
 	void setFullScreen( bool value );
 
+    int getKeyboardSpeed() const;
+	void setKeyboardSpeed( int value );
+
 
     Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
     LanguageEntry* m_selectedLanguage = nullptr;;
 
     int m_scale = 10;
     bool m_fullScreen = false;
+    int m_keyboardSpeed = 20;
 
 	NS_DECLARE_REFLECTION( SettingsModel, NotifyPropertyChangedBase )
 };

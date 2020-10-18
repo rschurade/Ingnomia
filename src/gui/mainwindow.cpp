@@ -104,6 +104,10 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
 	instance = this;
+
+	m_keyboardTimer = new QTimer( this );
+	connect( m_keyboardTimer, &QTimer::timeout, this, &MainWindow::keyboardMove );
+	m_keyboardTimer->start( 5 );
 }
 
 MainWindow::~MainWindow()
@@ -204,7 +208,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				break;
 			case Qt::Key_K:
 				break;
-			case Qt::Key_D:
+			case Qt::Key_O:
 				if ( event->modifiers() & Qt::ControlModifier )
 				{
 					Global::debugMode = !Global::debugMode;
@@ -236,6 +240,18 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 			case Qt::Key_Space:
 				GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
 				break;
+			case Qt::Key_W:
+				m_keyboardMove |= KeyboardMove::Up;
+				break;
+			case Qt::Key_S:
+				m_keyboardMove |= KeyboardMove::Down;
+				break;
+			case Qt::Key_A:
+				m_keyboardMove |= KeyboardMove::Left;
+				break;
+			case Qt::Key_D:
+				m_keyboardMove |= KeyboardMove::Right;
+				break;
 		}
 	}
 }
@@ -248,6 +264,22 @@ void MainWindow::keyReleaseEvent( QKeyEvent* event )
 	{
 		noesisTick();
 	}
+
+	switch ( event->key() )
+	{
+		case Qt::Key_W:
+			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Up ) );
+			break;
+		case Qt::Key_S:
+			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Down ) );
+			break;
+		case Qt::Key_A:
+			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Left ) );
+			break;
+		case Qt::Key_D:
+			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Right ) );
+			break;
+	}
 }
 
 bool MainWindow::isOverGui( int x, int y )
@@ -258,6 +290,32 @@ bool MainWindow::isOverGui( int x, int y )
 
 	return hit.visualHit;
 }
+
+void MainWindow::keyboardMove()
+{
+	if( m_keyboardMove == KeyboardMove::None ) return;
+
+	int x = 0;
+	int y = 0;
+	if( (bool)( m_keyboardMove & KeyboardMove::Up ) ) y -= 1;
+	if( (bool)( m_keyboardMove & KeyboardMove::Down ) ) y += 1;
+	if( (bool)( m_keyboardMove & KeyboardMove::Left ) ) x -= 1;
+	if( (bool)( m_keyboardMove & KeyboardMove::Right ) ) x += 1;
+
+	float keyboardMoveSpeed = Config::getInstance().get( "keyboardMoveSpeed" ).toFloat();
+
+	float scale = Config::getInstance().get( "scale" ).toFloat();
+
+	int moveX = -( x * keyboardMoveSpeed ) / scale;
+	int moveY = -( y * keyboardMoveSpeed ) / scale;
+
+	if( m_renderer )
+	{
+		m_renderer->move( moveX, moveY );
+	}
+}
+
+
 
 void MainWindow::mouseMoveEvent( QMouseEvent* event )
 {
