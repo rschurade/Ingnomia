@@ -34,7 +34,7 @@
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="2*" />
-			<RowDefinition Height="9*" />
+			<RowDefinition Height="10*" />
 			<RowDefinition Height="1*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -46,69 +46,82 @@
 		<Viewbox Grid.Row="0" Grid.Column="1">
 			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource SettingsPage_Settings}" />
 		</Viewbox>
-		<Viewbox Grid.Row="1" Grid.Column="1">
-			<TabControl Style="{StaticResource MainMenuTabControlStyle}">
-				<TabItem Header="{StaticResource SettingsPage_Game}">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="1*" />
-							<RowDefinition Height="3*" />
-							<RowDefinition Height="1*" />
+		<Viewbox Grid.Row="1" Grid.Column="1" MinWidth="800" MaxWidth="800" MinHeight="600" MaxHeight="600" >
+			<Grid >
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+			
+				<TabControl Style="{StaticResource MainMenuTabControlStyle}" Grid.Row="0">
+					<TabItem Header="{StaticResource SettingsPage_Game}">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="1*" />
+								<RowDefinition Height="3*" />
+								<RowDefinition Height="1*" />
+								
+							</Grid.RowDefinitions>
 							
-						</Grid.RowDefinitions>
-						
-						<StackPanel Grid.Row="1">
-							<Grid Margin="0,20,0,0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-								</Grid.ColumnDefinitions>
-								<TextBlock  Grid.Column="1" FontSize="10" Text="UI Scale" VerticalAlignment="Center"/>
-								<Slider     Grid.Column="2" Minimum="10" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
-											Value="{Binding UIScale}" />
-							</Grid>
-							<Grid Margin="0,20,0,0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-								</Grid.ColumnDefinitions>
-								<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="Full Screen"/>
-								<CheckBox   Grid.Column="2" VerticalAlignment="Center" Content="" IsChecked="{Binding FullScreen}"/>
-							</Grid>
-							<Grid Margin="0,20,0,0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-									<ColumnDefinition Width="1*" />
-								</Grid.ColumnDefinitions>
-								<TextBlock  Grid.Column="1" VerticalAlignment="Center" FontSize="10" Text="Language"/>
-								<ComboBox   Grid.Column="2" VerticalAlignment="Center" Margin="2"
-										ItemsSource="{Binding Languages}"
-										SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
-								ItemTemplate="{StaticResource ItemTemplate}" />
-							</Grid>
-						</StackPanel>
-					</Grid>
-				</TabItem>
-				<TabItem Header="{StaticResource SettingsPage_Controls}" />
-			</TabControl>
+							<StackPanel Grid.Row="1">
+								<Grid Margin="0,20,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock  Grid.Column="1" FontSize="10" Text="UI Scale" VerticalAlignment="Center"/>
+									<Slider     Grid.Column="2" Minimum="10" Maximum="20" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
+												Value="{Binding UIScale}" />
+								</Grid>
+								<Grid Margin="0,20,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="Full Screen"/>
+									<CheckBox   Grid.Column="2" VerticalAlignment="Center" Content="" IsChecked="{Binding FullScreen}"/>
+								</Grid>
+								<Grid Margin="0,20,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock  Grid.Column="1" VerticalAlignment="Center" FontSize="10" Text="Language"/>
+									<ComboBox   Grid.Column="2" VerticalAlignment="Center" Margin="2"
+											ItemsSource="{Binding Languages}"
+											SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+									ItemTemplate="{StaticResource ItemTemplate}" />
+								</Grid>
+							</StackPanel>
+						</Grid>
+					</TabItem>
+					<TabItem Header="{StaticResource SettingsPage_Controls}" />
+				</TabControl>
+				
+				<Button Grid.Row="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
+						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
+				
+				<!--
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="3*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
+						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
+					<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Accept}" />
+				</Grid>
+				-->
+			</Grid>
 		</Viewbox>
 
-		<Grid Grid.Row="2" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="1*" />
-			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
-				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-			<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Accept}" />
-		</Grid>
-		<TextBlock x:Name="SettingsDescription" />
+		
 	</Grid>
 </UserControl>
