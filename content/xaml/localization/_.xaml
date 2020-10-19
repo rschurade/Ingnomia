@@ -201,6 +201,10 @@
 	<system:String x:Key="SettingsPage_Controls">SettingsPage_Controls</system:String>
 	<system:String x:Key="SettingsPage_Back">SettingsPage_Back</system:String>
 	<system:String x:Key="SettingsPage_Accept">SettingsPage_Accept</system:String>
+	<system:String x:Key="SettingsPage_UiScale">SettingsPage_UiScale</system:String>
+	<system:String x:Key="SettingsPage_FullScreen">SettingsPage_FullScreen</system:String>
+	<system:String x:Key="SettingsPage_Language">SettingsPage_Language</system:String>
+	<system:String x:Key="SettingsPage_KeyboardSpeed">SettingsPage_KeyboardSpeed</system:String>
 
 	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
