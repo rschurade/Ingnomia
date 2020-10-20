@@ -26,6 +26,7 @@
 #include "../game/gamemanager.h"
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
+#include "../gui/aggregatordebug.h"
 #include "../gui/aggregatorsettings.h"
 #include "license.h"
 #include "mainwindowrenderer.h"
@@ -100,6 +101,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
 
+	connect( EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
@@ -697,6 +699,11 @@ void MainWindow::resizeGL( int w, int h )
 	emit signalWindowSize( this->width(), this->height() );
 
 	update();
+}
+
+void MainWindow::onSetWindowSize( int width, int height )
+{
+	this->resize( width, height );
 }
 
 void MainWindow::redraw()

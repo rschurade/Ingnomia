@@ -45,6 +45,19 @@ const char* LanguageEntry::getName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+ScaleEntry::ScaleEntry( QString name, float scale ) :
+	m_name( name.toStdString().c_str() ),
+    m_scale( scale )
+{
+}
+
+const char* ScaleEntry::getName() const
+{
+	return m_name.Str();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 SettingsModel::SettingsModel()
 {
     m_proxy = new SettingsProxy;
@@ -52,6 +65,8 @@ SettingsModel::SettingsModel()
      
     m_languages = *new ObservableCollection<LanguageEntry>();
     m_proxy->requestSettings();
+
+    m_scales = *new ObservableCollection<ScaleEntry>();
 }
 
 void SettingsModel::updateSettings( const GuiSettings& settings )
@@ -71,13 +86,26 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
         setLanguage( m_languages->Get( 0 ) );
 	}
 
+    m_scale = settings.scale;
+    m_scales->Add( MakePtr<ScaleEntry>( "50%", 0.5f ) );
+    m_scales->Add( MakePtr<ScaleEntry>( "75%", 0.75f ) );
+    m_scales->Add( MakePtr<ScaleEntry>( "100%", 1.f ) );
+    m_scales->Add( MakePtr<ScaleEntry>( "150%", 1.5f ) );
+    m_scales->Add( MakePtr<ScaleEntry>( "200%", 2.0f ) );
+
+    if( m_scale < 0.75 ) setScale( m_scales->Get( 0 ) );
+	else if( m_scale < 1.0 ) setScale( m_scales->Get( 1 ) );
+    else if( m_scale < 1.5 ) setScale( m_scales->Get( 2 ) );
+    else if( m_scale < 2.0 ) setScale( m_scales->Get( 3 ) );
+    else setScale( m_scales->Get( 4 ) );
+
     m_fullScreen = settings.fullscreen;
-    m_scale = settings.scale * 10;
     m_keyboardSpeed = settings.keyboardSpeed;
 
     OnPropertyChanged( "Languages" );
     OnPropertyChanged( "SelectedLanguage" );
     OnPropertyChanged( "UIScale" );
+    OnPropertyChanged( "UIScales" );
     OnPropertyChanged( "KeyboardSpeed" );
     OnPropertyChanged( "FullScreen" );
 }
@@ -102,20 +130,27 @@ LanguageEntry* SettingsModel::getLanguage() const
     return m_selectedLanguage;
 }
 
-    
-int SettingsModel::getScale() const
+Noesis::ObservableCollection<ScaleEntry>* SettingsModel::getScales() const
 {
-    return m_scale;
+    return m_scales;
 }
-
-void SettingsModel::setScale( int value )
+	
+void SettingsModel::setScale( ScaleEntry* item )
 {
-    if( value != m_scale )
+    if( item && m_selectedScale != item )
 	{
-        m_scale = value;
-        m_proxy->setUIScale( (float)value / 10. );
+        m_selectedScale = item;
+        m_proxy->setUIScale( item->m_scale );
 	}
 }
+
+ScaleEntry* SettingsModel::getScale() const
+{
+    return m_selectedScale;
+}
+
+    
+
 
 
 bool SettingsModel::getFullScreen() const
@@ -154,6 +189,7 @@ NS_IMPLEMENT_REFLECTION( SettingsModel, "IngnomiaGUI.SettingsModel" )
 {
     NsProp( "Languages", &SettingsModel::getLanguages );
     NsProp( "SelectedLanguage", &SettingsModel::getLanguage, &SettingsModel::setLanguage );
+    NsProp( "UIScales", &SettingsModel::getScales );
     NsProp( "UIScale", &SettingsModel::getScale, &SettingsModel::setScale );
     NsProp( "KeyboardSpeed", &SettingsModel::getKeyboardSpeed, &SettingsModel::setKeyboardSpeed );
     NsProp( "FullScreen", &SettingsModel::getFullScreen, &SettingsModel::setFullScreen );
@@ -162,4 +198,9 @@ NS_IMPLEMENT_REFLECTION( SettingsModel, "IngnomiaGUI.SettingsModel" )
 NS_IMPLEMENT_REFLECTION( LanguageEntry )
 {
 	NsProp( "Name", &LanguageEntry::getName );
+}
+
+NS_IMPLEMENT_REFLECTION( ScaleEntry )
+{
+	NsProp( "Name", &ScaleEntry::getName );
 }

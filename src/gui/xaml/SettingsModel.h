@@ -55,6 +55,19 @@ public:
 	NS_DECLARE_REFLECTION( LanguageEntry, BaseComponent )
 };
 
+struct ScaleEntry : public Noesis::BaseComponent
+{
+public:
+	ScaleEntry( QString name, float scale );
+
+	Noesis::String m_name;
+    float m_scale;
+
+    const char* getName() const;
+	
+	NS_DECLARE_REFLECTION( ScaleEntry, BaseComponent )
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class SettingsModel final : public NoesisApp::NotifyPropertyChangedBase
 {
@@ -70,8 +83,9 @@ private:
 	void setLanguage( LanguageEntry* item );
 	LanguageEntry* getLanguage() const;
 
-    int getScale() const;
-	void setScale( int value );
+    Noesis::ObservableCollection<ScaleEntry>* getScales() const;
+	void setScale( ScaleEntry* item );
+	ScaleEntry* getScale() const;
 
     bool getFullScreen() const;
 	void setFullScreen( bool value );
@@ -83,7 +97,10 @@ private:
     Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
     LanguageEntry* m_selectedLanguage = nullptr;;
 
-    int m_scale = 10;
+    Noesis::Ptr<Noesis::ObservableCollection<ScaleEntry>> m_scales;
+    ScaleEntry* m_selectedScale = nullptr;;
+
+    float m_scale = 1.0f;
     bool m_fullScreen = false;
     int m_keyboardSpeed = 20;
 

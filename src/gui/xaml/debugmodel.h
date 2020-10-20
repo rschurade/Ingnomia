@@ -49,6 +49,20 @@ enum class DebugPage
 	Second,
 	Third
 };
+
+struct WSEntry : public Noesis::BaseComponent
+{
+public:
+	WSEntry( int width, int height );
+
+	Noesis::String m_name;
+	int m_width;
+	int m_height;
+
+    const char* getName() const;
+	
+	NS_DECLARE_REFLECTION( WSEntry, BaseComponent )
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class DebugModel final : public NoesisApp::NotifyPropertyChangedBase
 {
@@ -78,6 +92,14 @@ private:
 		return &m_spawnCmd;
 	}
 	NoesisApp::DelegateCommand m_spawnCmd;
+
+	Noesis::ObservableCollection<WSEntry>* getWindowSizes() const;
+	void setWindowSize( WSEntry* item );
+	WSEntry* getWindowSize() const;
+
+	Noesis::Ptr<Noesis::ObservableCollection<WSEntry>> m_windowSizes;
+    WSEntry* m_selectedWindowSize = nullptr;;
+
 
 
 	NS_DECLARE_REFLECTION( DebugModel, NotifyPropertyChangedBase )

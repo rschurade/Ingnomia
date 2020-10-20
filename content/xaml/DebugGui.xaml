@@ -66,9 +66,13 @@
 						</Grid.ColumnDefinitions>
 						<TextBlock Text="{StaticResource DebugPage_DebugFirstPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
 						<StackPanel Grid.Row="1" Grid.Column="0">
-							<Button Content="{StaticResource DebugPage_SpawnGnome}" Command="{Binding SpawnCmd}"	CommandParameter="Gnome" />
-							<Button Content="{StaticResource DebugPage_SpawnTrader}" Command="{Binding SpawnCmd}"	CommandParameter="Trader" />
-							<Button Content="{StaticResource DebugPage_SpawnGoblin}" Command="{Binding SpawnCmd}"	CommandParameter="Goblin" />
+							<Button Content="{StaticResource DebugPage_SpawnGnome}" Command="{Binding SpawnCmd}"	CommandParameter="Gnome" Margin="2" />
+							<Button Content="{StaticResource DebugPage_SpawnTrader}" Command="{Binding SpawnCmd}"	CommandParameter="Trader" Margin="2" />
+							<Button Content="{StaticResource DebugPage_SpawnGoblin}" Command="{Binding SpawnCmd}"	CommandParameter="Goblin" Margin="2" />
+							<ComboBox VerticalAlignment="Center" Margin="2"
+								ItemsSource="{Binding WindowSizes}"
+								SelectedItem="{Binding SelectedWindowSize, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
 						</StackPanel>
 					</Grid>
 

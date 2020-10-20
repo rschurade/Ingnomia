@@ -128,6 +128,8 @@ public slots:
 	void onFullScreen( bool value );
 	void keyboardMove();
 
+	void onSetWindowSize( int width, int height );
+
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );

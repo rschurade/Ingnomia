@@ -32,6 +32,8 @@ public:
 
 	void spawnCreature( QString type );
 
+    void setWindowSize( int width, int height );
+
 private:
 	IngnomiaGUI::DebugModel* m_parent = nullptr;
 
@@ -41,4 +43,5 @@ private slots:
 
 signals:
 	void signalSpawnCreature( QString type );
+    void signalSetWindowSize( int width, int height );
 };

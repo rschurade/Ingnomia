@@ -47,3 +47,9 @@ void AggregatorDebug::onSpawnCreature( QString type )
 		emit signalTriggerEvent( EventType::INVASION, args );
 	}
 }
+
+
+void AggregatorDebug::onSetWindowSize( int width, int height )
+{
+	emit signalSetWindowSize( width, height );
+}

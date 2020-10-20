@@ -35,7 +35,9 @@ private:
 	
 public slots:
 	void onSpawnCreature( QString type );
+    void onSetWindowSize( int width, int height );
 
 signals:
 	void signalTriggerEvent( EventType type, QVariantMap args );
+    void signalSetWindowSize( int width, int height );
 };

@@ -30,6 +30,21 @@
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+WSEntry::WSEntry( int width, int height ) :
+	m_width( width ),
+	m_height( height )
+{
+	m_name = ( QString::number( width ) + "x" + QString::number( height ) ).toStdString().c_str();
+}
+
+const char* WSEntry::getName() const
+{
+	return m_name.Str();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 DebugModel::DebugModel()
 {
@@ -38,6 +53,10 @@ DebugModel::DebugModel()
 
 	m_pageCmd.SetExecuteFunc( MakeDelegate( this, &DebugModel::onPageCmd ) );
 	m_spawnCmd.SetExecuteFunc( MakeDelegate( this, &DebugModel::onSpawnCmd ) );
+
+	m_windowSizes = *new ObservableCollection<WSEntry>();
+	m_windowSizes->Add( MakePtr<WSEntry>( 1920, 1080 ) );
+	m_windowSizes->Add( MakePtr<WSEntry>( 1360, 768 ) );
 }
 
 const char* DebugModel::GetShowFirst() const
@@ -92,6 +111,25 @@ void DebugModel::onSpawnCmd( BaseComponent* param )
 	m_proxy->spawnCreature( param->ToString().Str() );
 }
 
+Noesis::ObservableCollection<WSEntry>* DebugModel::getWindowSizes() const
+{
+    return m_windowSizes;
+}
+
+void DebugModel::setWindowSize( WSEntry* item )
+{
+    if( item && m_selectedWindowSize != item )
+	{
+        m_selectedWindowSize = item;
+        m_proxy->setWindowSize( item->m_width, item->m_height );
+	}
+}
+
+WSEntry* DebugModel::getWindowSize() const
+{
+    return m_selectedWindowSize;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -103,4 +141,13 @@ NS_IMPLEMENT_REFLECTION( DebugModel, "IngnomiaGUI.DebugModel" )
 	NsProp( "ShowThird", &DebugModel::GetShowThird );
 
 	NsProp( "SpawnCmd", &DebugModel::GetSpawnCmd );
+
+	NsProp( "WindowSizes", &DebugModel::getWindowSizes );
+	NsProp( "SelectedWindowSize", &DebugModel::getWindowSize, &DebugModel::setWindowSize );
+
+}
+
+NS_IMPLEMENT_REFLECTION( WSEntry )
+{
+	NsProp( "Name", &WSEntry::getName );
 }

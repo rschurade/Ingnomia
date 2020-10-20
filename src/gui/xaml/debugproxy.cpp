@@ -25,6 +25,7 @@ DebugProxy::DebugProxy( QObject* parent ) :
 	QObject( parent )
 {
 	connect( this, &DebugProxy::signalSpawnCreature, EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::onSpawnCreature, Qt::QueuedConnection );
+    connect( this, &DebugProxy::signalSetWindowSize, EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::onSetWindowSize, Qt::QueuedConnection );
 }
 
 void DebugProxy::setParent( IngnomiaGUI::DebugModel* parent )
@@ -35,4 +36,9 @@ void DebugProxy::setParent( IngnomiaGUI::DebugModel* parent )
 void DebugProxy::spawnCreature( QString type )
 {
 	emit signalSpawnCreature( type );
+}
+
+void DebugProxy::setWindowSize( int width, int height )
+{
+    emit signalSetWindowSize( width, height );
 }
