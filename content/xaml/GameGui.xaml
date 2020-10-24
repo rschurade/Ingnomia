@@ -227,54 +227,54 @@
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Build">
 							<StackPanel>
 								<Image Source="buttons/build-all.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Build}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="LCB1" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Mine">
 							<StackPanel>
 								<Image Source="buttons/mine.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Mine}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="LCB3" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Agri">
 							<StackPanel>
 								<Image Source="buttons/agriculture.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Agriculture}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="LCB4" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Designation">
 							<StackPanel>
 								<Image Source="buttons/designation.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Designations}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="LCB5" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Job">
 							<StackPanel>
 								<Image Source="buttons/jobs.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Job}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="LCB6" Style="{StaticResource CommandButton}"
 									Command="{Binding CmdLeftCommandButton}" CommandParameter="Magic">
 							<StackPanel>
 								<Image Source="buttons/magic.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Magic}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 					</StackPanel>
@@ -285,44 +285,44 @@
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Kingdom">
 							<StackPanel>
 								<Image Source="buttons/kingdom.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Kingdom}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="RCB1" Style="{StaticResource CommandButton}">
 							<StackPanel>
 								<Image Source="buttons/stockpile.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Stockpiles}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="RCB3" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Military">
 							<StackPanel>
 								<Image Source="buttons/military.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Military}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="RCB4" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Population">
 							<StackPanel>
 								<Image Source="buttons/population.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Population}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 						<Button x:Name="RCB5" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Missions">
 							<StackPanel>
 								<Image Source="buttons/mission.png" Stretch="None" />
-								<ViewBox MaxHeight="20">
+								<Viewbox MaxHeight="20">
 									<TextBlock HorizontalAlignment="Center" Text="{StaticResource GameGui_Missions}" />
-								</ViewBox>
+								</Viewbox>
 							</StackPanel>
 						</Button>
 					</StackPanel>
