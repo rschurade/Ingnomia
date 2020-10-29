@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - more info for jobs  PR #91 by rivenwyrm
 - updated to Noesis 3.0.6
 - removed key triggers from xamls
+- use only one save game for auto save
 
 
 ### Removed

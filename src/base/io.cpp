@@ -195,35 +195,48 @@ QString IO::save( bool autosave )
 	}
 	int slot = 0;
 
-	QDirIterator directories( folder, QDir::Dirs | QDir::NoDotAndDotDot );
-	QStringList dirs;
-	while ( directories.hasNext() )
-	{
-		directories.next();
-		dirs.push_back( directories.filePath() );
-	}
-	for ( auto sdir : dirs )
-	{
-		if ( sdir.endsWith( "/" ) )
-		{
-			sdir.remove( sdir.size() - 1, 1 );
-		}
-		QString slotDir = sdir.split( "/" ).last();
-
-		bool ok;
-		int num = slotDir.toInt( &ok );
-		if ( ok )
-		{
-			slot = qMax( slot, num );
-		}
-	}
-	++slot;
-	folder += QString::number( slot );
-	/*
 	if( autosave )
 	{
-		folder += "_autosave";
-	}*/
+		folder += "autosave";
+
+		/*
+		if ( QDir( folder ).exists() )
+		{
+			QDir dir( folder );
+			dir.removeRecursively();
+			QDir().mkdir( folder );
+		}
+		*/
+	}
+	else
+	{
+	
+		QDirIterator directories( folder, QDir::Dirs | QDir::NoDotAndDotDot );
+		QStringList dirs;
+		while ( directories.hasNext() )
+		{
+			directories.next();
+			dirs.push_back( directories.filePath() );
+		}
+
+		for ( auto sdir : dirs )
+		{
+			if ( sdir.endsWith( "/" ) )
+			{
+				sdir.remove( sdir.size() - 1, 1 );
+			}
+			QString slotDir = sdir.split( "/" ).last();
+
+			bool ok;
+			int num = slotDir.toInt( &ok );
+			if ( ok )
+			{
+				slot = qMax( slot, num );
+			}
+		}
+		++slot;
+		folder += QString::number( slot );
+	}
 
 	folder += "/";
 	if ( Global::debugMode )
