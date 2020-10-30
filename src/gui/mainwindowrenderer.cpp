@@ -760,6 +760,17 @@ void MainWindowRenderer::rotate( int direction )
 	direction  = qBound( -1, direction, 1 );
 	m_rotation = ( 4 + m_rotation + direction ) % 4;
 	Config::getInstance().set( "rotation", m_rotation );
+
+	if( direction == 1 )
+	{
+		updatePositionAfterCWRotation( m_moveX, m_moveY );
+	}
+	else
+	{
+		updatePositionAfterCWRotation( m_moveX, m_moveY );
+		updatePositionAfterCWRotation( m_moveX, m_moveY );
+		updatePositionAfterCWRotation( m_moveX, m_moveY );
+	}
 	onRenderParamsChanged();
 }
 
@@ -1210,4 +1221,13 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool useViewLev
 		cursorPos.z = viewLevel;
 	}
 	return cursorPos;
+}
+
+void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
+{
+	constexpr int tileHeight = 8; //tiles are assumed to be 8 pixels high (and twice as wide)
+	int tmp = x;
+	x = -2 * ( Global::dimX * tileHeight + y );
+	//y = -Global::dimY * tileHeight + tmp/2;
+	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
 }

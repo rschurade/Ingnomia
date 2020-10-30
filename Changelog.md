@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - key space for pause
 - text clipping in some menu panels
 - dig stairs and ramps cursor
+- rotating the world keeps view on current location
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
