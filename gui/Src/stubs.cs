@@ -220,4 +220,8 @@ namespace IngnomiaGUI
     public class NeighborsModel
     {
     }
+
+    public class InventoryModel
+    {
+    }
 }
