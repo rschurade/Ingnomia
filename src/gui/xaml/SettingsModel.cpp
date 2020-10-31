@@ -101,6 +101,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
 
     m_fullScreen = settings.fullscreen;
     m_keyboardSpeed = settings.keyboardSpeed;
+    m_lightMin = settings.lightMin;
 
     OnPropertyChanged( "Languages" );
     OnPropertyChanged( "SelectedLanguage" );
@@ -108,6 +109,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
     OnPropertyChanged( "UIScales" );
     OnPropertyChanged( "KeyboardSpeed" );
     OnPropertyChanged( "FullScreen" );
+    OnPropertyChanged( "LightMin" );
 }
 
     
@@ -148,7 +150,6 @@ ScaleEntry* SettingsModel::getScale() const
 {
     return m_selectedScale;
 }
-
     
 
 
@@ -182,6 +183,20 @@ void SettingsModel::setKeyboardSpeed( int value )
 	}
 }
 
+int SettingsModel::getLightMin() const
+{
+    return m_lightMin;
+}
+
+void SettingsModel::setLightMin( int value )
+{
+    if( value != m_lightMin )
+	{
+        m_lightMin = value;
+        m_proxy->setLightMin( value );
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -193,6 +208,7 @@ NS_IMPLEMENT_REFLECTION( SettingsModel, "IngnomiaGUI.SettingsModel" )
     NsProp( "UIScale", &SettingsModel::getScale, &SettingsModel::setScale );
     NsProp( "KeyboardSpeed", &SettingsModel::getKeyboardSpeed, &SettingsModel::setKeyboardSpeed );
     NsProp( "FullScreen", &SettingsModel::getFullScreen, &SettingsModel::setFullScreen );
+    NsProp( "LightMin", &SettingsModel::getLightMin, &SettingsModel::setLightMin );
 }
 
 NS_IMPLEMENT_REFLECTION( LanguageEntry )

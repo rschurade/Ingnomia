@@ -41,6 +41,8 @@ void AggregatorSettings::onRequestSettings()
 
     m_settings.language = Config::getInstance().get( "language" ).toString();
 
+    m_settings.lightMin = Config::getInstance().get( "lightMin" ).toFloat() * 100; 
+
     emit signalUpdateSettings( m_settings );
 }
 
@@ -65,4 +67,9 @@ void AggregatorSettings::onSetFullScreen( bool value )
 void AggregatorSettings::onSetKeyboardSpeed( int value )
 {
     Config::getInstance().set( "keyboardMoveSpeed", value );
+}
+
+void AggregatorSettings::onSetLightMin( int value )
+{
+    Config::getInstance().set( "lightMin", (float)value / 100. );
 }

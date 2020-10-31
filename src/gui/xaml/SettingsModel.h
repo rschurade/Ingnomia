@@ -93,6 +93,9 @@ private:
     int getKeyboardSpeed() const;
 	void setKeyboardSpeed( int value );
 
+    int getLightMin() const;
+	void setLightMin( int value );
+
 
     Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
     LanguageEntry* m_selectedLanguage = nullptr;;
@@ -103,6 +106,7 @@ private:
     float m_scale = 1.0f;
     bool m_fullScreen = false;
     int m_keyboardSpeed = 20;
+    int m_lightMin = 30;
 
 	NS_DECLARE_REFLECTION( SettingsModel, NotifyPropertyChangedBase )
 };

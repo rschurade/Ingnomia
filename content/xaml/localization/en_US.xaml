@@ -205,6 +205,7 @@
 	<system:String x:Key="SettingsPage_FullScreen">Full Screen</system:String>
 	<system:String x:Key="SettingsPage_Language">Language</system:String>
 	<system:String x:Key="SettingsPage_KeyboardSpeed">Keyboard speed</system:String>
+	<system:String x:Key="SettingsPage_LightMin">minimum light level</system:String>
 	
 
 	<!--{StaticResource StockpileGui_}-->
@@ -284,4 +285,7 @@
 	<system:String x:Key="WorkshopGui_PlayerInventory">Player inventory:</system:String>
 	<system:String x:Key="WorkshopGui_PlayerValue">Player value:</system:String>
 	<system:String x:Key="WorkshopGui_TradeAction">Trade</system:String>
+	
+	
+	<system:String x:Key="TestItemName_RawWood">-raw wood-</system:String>
 </ResourceDictionary>

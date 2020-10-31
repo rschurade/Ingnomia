@@ -99,7 +99,7 @@ void AggregatorInventory::onRequestItems( QString category, QString group )
             int total = Global::inv().itemCount( item, mat );
             int inSP = Global::inv().itemCountInStockpile( item, mat );
 
-            if( total > 0 )
+            //if( total > 0 )
 			{
 			    m_items.append( { iName, mName, inSP, total } );
             }

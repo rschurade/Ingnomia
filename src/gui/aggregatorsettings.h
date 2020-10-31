@@ -27,6 +27,7 @@ struct GuiSettings
     QList<QString> languages;
     QString language;
     int keyboardSpeed = 20;
+    int lightMin = 30;
 };
 
 Q_DECLARE_METATYPE( GuiSettings )
@@ -49,6 +50,7 @@ public slots:
     void onSetUIScale( float scale );
     void onSetKeyboardSpeed( int value );
     void onSetFullScreen( bool value );
+    void onSetLightMin( int value );
 
 signals:
 	void signalUpdateSettings( const GuiSettings& info );

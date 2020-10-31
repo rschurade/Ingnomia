@@ -37,6 +37,7 @@ public:
     void setUIScale( float scale );
     void setFullScreen( bool value );
     void setKeyboardSpeed( int value );
+    void setLightMin( int value );
 private:
 	IngnomiaGUI::SettingsModel* m_parent = nullptr;
 
@@ -52,4 +53,5 @@ signals:
     void signalSetUIScale( float scale );
     void signalSetFullScreen( bool value );
     void signalSetKeyboardSpeed( int value );
+    void signalSetLightMin( int value );
 };

@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - settings dialog
 - WASD movement
 - item summary
+- setting for minimum ambient light level
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm
