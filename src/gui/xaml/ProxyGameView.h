@@ -39,6 +39,7 @@ public:
 	void requestMissionsUpdate();
 	void requestCreatureUpdate( unsigned int id );
 	void requestMilitaryUpdate();
+	void requestInventoryUpdate();
 
 	void sendEventAnswer( unsigned int eventID, bool answer );
 
@@ -77,5 +78,6 @@ signals:
 	void signalRequestCreatureUpdate( unsigned int id );
 	void signalEventAnswer( unsigned int eventID, bool answer );
 	void signalRequestMilitaryUpdate();
+	void signalRequestInventoryUpdate();
 	void signalPropagateEscape();
 };

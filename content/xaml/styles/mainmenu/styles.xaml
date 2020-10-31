@@ -264,6 +264,39 @@
 
 		</Button>
 	</DataTemplate>
+	
+	<DataTemplate x:Key="InvCategoryButtonTemplate">
+		<Button 
+			FontSize="16"
+			Width="100"
+			Height="50"
+			Margin="2"
+			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:InventoryGui}}, Path=DataContext.CmdCategory }"
+			CommandParameter="{Binding ID}"
+			Content="{Binding Name}">
+		</Button>
+	</DataTemplate>
+	
+	<DataTemplate x:Key="InvGroupButtonTemplate">
+		<Button 
+			FontSize="16"
+			Height="50"
+			Width="120"
+			Margin="8"
+			Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:InventoryGui}}, Path=DataContext.CmdGroup }"
+			CommandParameter="{Binding ID}"
+			Content="{Binding Name}">
+		</Button>
+	</DataTemplate>
+	
+	<DataTemplate x:Key="InvItemTemplate">
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="{Binding Item}"     FontSize="16" Margin="2" Width="200" TextAlignment="Center"/>
+			<TextBlock Text="{Binding Material}" FontSize="16" Margin="2" Width="200" TextAlignment="Center"/>
+			<TextBlock Text="{Binding InStock}"  FontSize="16" Margin="2" Width="150" TextAlignment="Center"/>
+			<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="150" TextAlignment="Center"/>
+		</StackPanel>
+	</DataTemplate>
 
 	<Style x:Key="TabButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>

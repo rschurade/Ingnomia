@@ -122,6 +122,7 @@
 		<local:DebugGui x:Name="DebugGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowDebug }" />
 		<local:NeighborsGui x:Name="NeighborsGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowNeighbors }" />
 		<local:MilitaryGui x:Name="MilitaryGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowMilitary }" />
+		<local:InventoryGui x:Name="InventoryGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowInventory }" />
 
 		<Grid x:Name="LayoutMessage" MaxHeight="400" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding ShowMessage}">
 			<Grid.ColumnDefinitions>
@@ -290,7 +291,8 @@
 								</Viewbox>
 							</StackPanel>
 						</Button>
-						<Button x:Name="RCB1" Style="{StaticResource CommandButton}">
+						<Button x:Name="RCB1" Style="{StaticResource CommandButton}"
+							Command="{Binding CmdRightCommandButton}" CommandParameter="Inventory">
 							<StackPanel>
 								<Image Source="buttons/stockpile.png" Stretch="None" />
 								<Viewbox MaxHeight="20">

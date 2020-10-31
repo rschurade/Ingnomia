@@ -200,7 +200,8 @@ enum class ShownInfo
 	CreatureInfo,
 	Debug,
 	Neighbors,
-	Military
+	Military,
+	Inventory
 };
 
 
@@ -283,6 +284,9 @@ private:
 
 	const char* getShowMilitary() const;
 	void setShowMilitary( bool value );
+
+	const char* getShowInventory() const;
+	void setShowInventory( bool value );
 
 
 	const char* getShowCreatureInfo() const;

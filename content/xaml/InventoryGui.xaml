@@ -1,0 +1,75 @@
+<UserControl
+	x:Class="IngnomiaGUI.InventoryGui"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:IngnomiaGUI"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+	x:Name="InventoryControl">
+	<UserControl.DataContext>
+		<local:InventoryModel />
+	</UserControl.DataContext>
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
+				<ResourceDictionary Source="localization/_.xaml" />
+				<ResourceDictionary Source="localization/en_US.xaml" />
+				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<Grid MinHeight="700" MaxHeight="700">
+		<StackPanel Orientation="Horizontal">
+			<Border Style="{StaticResource Panel}" MinWidth="100" Margin="2">
+				<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+					<ItemsControl ItemsSource="{Binding CategoryButtons}" ItemTemplate="{StaticResource InvCategoryButtonTemplate}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+					</ItemsControl>
+				</ScrollViewer>
+			</Border>
+
+			<Border Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*" />
+						<RowDefinition Height="10*" />
+					</Grid.RowDefinitions>
+					<ScrollViewer HorizontalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="0">
+						<ItemsControl ItemsSource="{Binding GroupButtons}" ItemTemplate="{StaticResource InvGroupButtonTemplate}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal" />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+						</ItemsControl>
+					</ScrollViewer>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
+						<ItemsControl ItemsSource="{Binding Items}" ItemTemplate="{StaticResource InvItemTemplate}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+						</ItemsControl>
+						
+					</ScrollViewer>
+				</Grid>
+			</Border>
+			
+			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top"
+				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }"
+				CommandParameter="InventoryWindow">
+				<Image Source="buttons/cross.png" />
+			</Button>
+			
+		</StackPanel>
+	</Grid>
+</UserControl>

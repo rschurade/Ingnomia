@@ -55,6 +55,9 @@
 #include "xaml/creatureinfomodel.h"
 #include "xaml/debug.xaml.h"
 #include "xaml/debugmodel.h"
+#include "xaml/inventory.xaml.h"
+#include "xaml/inventorymodel.h"
+
 #include "xaml/military.xaml.h"
 #include "xaml/militarymodel.h"
 #include "xaml/neighbors.xaml.h"
@@ -779,6 +782,8 @@ void MainWindow::registerComponents()
 	Noesis::RegisterComponent<IngnomiaGUI::NeighborsModel>();
 	Noesis::RegisterComponent<IngnomiaGUI::MilitaryGui>();
 	Noesis::RegisterComponent<IngnomiaGUI::MilitaryModel>();
+	Noesis::RegisterComponent<IngnomiaGUI::InventoryGui>();
+	Noesis::RegisterComponent<IngnomiaGUI::InventoryModel>();
 
 	Noesis::RegisterComponent<Noesis::EnumConverter<IngnomiaGUI::State>>();
 

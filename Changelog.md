@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - added french translation PR#90 Daynvheur
 - settings dialog
 - WASD movement
+- item summary
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm

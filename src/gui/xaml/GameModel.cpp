@@ -751,6 +751,31 @@ void GameModel::setShowMilitary( bool value )
 	}
 }
 
+const char* GameModel::getShowInventory() const
+{
+	if ( m_shownInfo == ShownInfo::Inventory )
+	{
+		return "Visible";
+	}
+	return "Hidden";
+}
+
+void GameModel::setShowInventory( bool value )
+{
+	if( value )
+	{
+		if( m_shownInfo != ShownInfo::Inventory )
+		{
+			setShownInfo( ShownInfo::Inventory );
+		}
+	}
+	else
+	{
+		setShownInfo( ShownInfo::None );
+	}
+}
+
+
 
 void GameModel::setGameSpeed( GameSpeed value )
 {
@@ -1136,6 +1161,11 @@ void GameModel::CmdRightCommandButton( BaseComponent* param )
 		setShowMilitary( true );
 		m_proxy->requestMilitaryUpdate();
 	}
+	else if ( cmd == "Inventory" )
+	{
+		setShowInventory( true );
+		m_proxy->requestInventoryUpdate();
+	}
 	else if ( cmd == "Missions" )
 	{
 		setShowNeighbors( true );
@@ -1296,6 +1326,7 @@ void GameModel::setShownInfo( ShownInfo info )
 	OnPropertyChanged( "ShowDebug" );
 	OnPropertyChanged( "ShowNeighbors" );
 	OnPropertyChanged( "ShowMilitary" );
+	OnPropertyChanged( "ShowInventory" );
 	
 	OnPropertyChanged( "ShowMessage" );
 }
@@ -1426,6 +1457,7 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "ShowCreatureInfo", &GameModel::getShowCreatureInfo );
 	NsProp( "ShowNeighbors", &GameModel::getShowNeighbors );
 	NsProp( "ShowMilitary", &GameModel::getShowMilitary );
+	NsProp( "ShowInventory", &GameModel::getShowInventory );
 	
 	NsProp( "ShowMessage", &GameModel::getShowMessage );
 	NsProp( "ShowMessageButtonOk", &GameModel::getShowMessageButtonOk );

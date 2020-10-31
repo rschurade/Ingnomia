@@ -20,6 +20,7 @@
 #include "aggregatoragri.h"
 #include "aggregatorcreatureinfo.h"
 #include "aggregatordebug.h"
+#include "aggregatorinventory.h"
 #include "aggregatorpopulation.h"
 #include "aggregatorrenderer.h"
 #include "aggregatorstockpile.h"
@@ -98,6 +99,10 @@ public:
 	{
 		return m_settingsAggregator;
 	}
+	AggregatorInventory* aggregatorInventory()
+	{
+		return m_inventoryAggregator;
+	}
 
 private:
 	AggregatorTileInfo* m_tiAggregator = nullptr;
@@ -111,6 +116,7 @@ private:
 	AggregatorNeighbors* m_neighborsAggregator = nullptr;
 	AggregatorMilitary* m_militaryAggregator = nullptr;
 	AggregatorSettings* m_settingsAggregator = nullptr;
+	AggregatorInventory* m_inventoryAggregator = nullptr;
 
 public slots:
 	void onExit();
