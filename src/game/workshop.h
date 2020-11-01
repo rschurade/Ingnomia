@@ -261,6 +261,8 @@ public:
 
 	void cancelJob( unsigned int jobDefID );
 
+	bool hasCraftJob( const QString& itemSID, const QString& materialSID );
+
 private:
 	//only access through workshop manager
 	bool finishJob( unsigned int jobID );

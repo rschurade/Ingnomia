@@ -104,6 +104,8 @@ unsigned int Global::dirtUID = 0;
 QMap<QString, CreaturePart> Global::creaturePartLookUp;
 QMap<CreaturePart, QString> Global::creaturePartToString;
 
+QSet<QString> Global::craftable;
+
 void Global::reset()
 {
 	qDebug() << "*** Global reset";
@@ -265,6 +267,13 @@ void Global::reset()
 	creaturePartToString.insert( CP_ARMOR_HAND, "HandArmor" );
 	creaturePartToString.insert( CP_ARMOR_FOOT, "FootArmor" );
 	creaturePartToString.insert( CP_ARMOR_LEG, "LegArmor" );
+
+	craftable.clear();
+	auto rows = DB::selectRows( "Crafts" );
+	for( auto row : rows )
+	{
+		craftable.insert( row.value( "ItemID" ).toString() );
+	}
 }
 
 Logger& Global::logger()

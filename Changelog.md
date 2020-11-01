@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - updated to Noesis 3.0.6
 - removed key triggers from xamls
 - use only one save game for auto save
+- improved auto craft behavior
 
 
 ### Removed

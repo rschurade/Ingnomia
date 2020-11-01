@@ -59,7 +59,7 @@ public:
 
 	//void setJobQueueJson( unsigned int workshopID, QVariantMap vals );
 
-	void autoGenCraftJob( QString itemSID, QString materialSID, int amount );
+	bool autoGenCraftJob( QString itemSID, QString materialSID, int amount );
 
 	int count()
 	{
@@ -74,6 +74,8 @@ public:
 	}
 
 	QList<Workshop*> getTrainingGrounds();
+
+	bool craftJobExists( const QString& itemSID, const QString& materialSID );
 
 private:
 	QList<Workshop*> m_workshops;

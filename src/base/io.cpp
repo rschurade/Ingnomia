@@ -405,7 +405,7 @@ void IO::sanitize()
 				item.setInJob( 0 );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
 			}
-			if ( item.isPickedUp() )
+			if ( item.isPickedUp() && !item.isConstructedOrEquipped() )
 			{
 				const bool worn    = 0 != wornItems.count( item.id() );
 				const bool carried = 0 != carriedItems.count( item.id() );

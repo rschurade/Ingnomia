@@ -687,6 +687,38 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 	return true;
 }
 
+bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
+{
+	if( materialSID == "any" )
+	{
+		for( auto cj : m_jobList )
+		{
+			if( cj.itemSID == itemSID )
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		for( auto cj : m_jobList )
+		{
+			if( cj.itemSID == itemSID )
+			{
+				if( cj.requiredItems.size() )
+				{
+					auto reqItem = cj.requiredItems.first();
+					if( reqItem.materialSID == materialSID )
+					{
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 {
 	Job* job = new Job();
@@ -709,6 +741,7 @@ Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 		job->addRequiredItem( ri.amount, ri.itemSID, ri.materialSID, {}, ri.requireSame );
 	}
 	cj.jobID = job->id();
+
 	return job;
 }
 
@@ -968,6 +1001,10 @@ bool Workshop::checkItemsAvailable( Job* job )
 			items = inv.getClosestItems( m_properties.posIn, true, itemID, materialID, count );
 			if ( items.size() < count )
 			{
+				if( Global::craftable.contains( itemID ) )
+				{
+					Global::wsm().autoGenCraftJob( itemID, materialID, count - items.size() );
+				}
 				return false;
 			}
 		}

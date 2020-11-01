@@ -873,9 +873,10 @@ bool World::constructWorkshop( QVariantMap& con, Position pos, int rotation, QVa
 
 			for ( auto item : items )
 			{
-				if ( Global::inv().itemSID( item.toUInt() ) == baseItem )
+				unsigned int itemUID = item.toUInt();
+				if ( Global::inv().itemSID( itemUID ) == baseItem )
 				{
-					materialIDs.push_back( Global::inv().materialSID( item.toUInt() ) );
+					materialIDs.push_back( Global::inv().materialSID( itemUID ) );
 					break;
 				}
 			}

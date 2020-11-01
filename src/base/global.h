@@ -112,6 +112,8 @@ public:
 
 	static Noesis::Key keyConvert( Qt::Key key );
 
+	static QSet<QString> craftable;
+
 private:
 	static Logger m_logger;
 

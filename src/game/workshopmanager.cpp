@@ -213,20 +213,39 @@ void WorkshopManager::deleteWorkshop( unsigned int workshopID )
 	m_toDelete.push_back( workshopID );
 }
 
-void WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int amount )
+bool WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int amount )
 {
 	//QMutexLocker lock( &m_mutex );
+	if( !craftJobExists( itemSID, materialSID ) )
+	{
+		for ( auto&& w : m_workshops )
+		{
+			if ( w->isAcceptingGenerated() )
+			{
+				if ( w->autoCraft( itemSID, materialSID, amount ) )
+				{
+					emit signalJobListChanged( w->id() );
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool WorkshopManager::craftJobExists( const QString& itemSID, const QString& materialSID )
+{
 	for ( auto&& w : m_workshops )
 	{
 		if ( w->isAcceptingGenerated() )
 		{
-			if ( w->autoCraft( itemSID, materialSID, amount ) )
+			if ( w->hasCraftJob( itemSID, materialSID ) )
 			{
-				emit signalJobListChanged( w->id() );
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 void WorkshopManager::setPriority( unsigned int workshopID, int prio )

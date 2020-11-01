@@ -187,6 +187,13 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 		{
 			found_all     = false;
 			rim.available = false;
+
+			//is item craftable?
+			if( Global::craftable.contains( rim.itemSID ) )
+			{
+				// create craft job
+				Global::wsm().autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
+			}
 		}
 	}
 	return found_all;
