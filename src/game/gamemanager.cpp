@@ -186,6 +186,8 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 
 		m_showMainMenu = false;
 
+		emit signalInitView();
+
 		emit startGame();
 		callback( true );
 	}

@@ -778,6 +778,8 @@ void MainWindowRenderer::move( int x, int y )
 {
 	m_moveX += x / m_scale;
 	m_moveY += y / m_scale;
+	Config::getInstance().set( "moveX", m_moveX );
+	Config::getInstance().set( "moveY", m_moveY );
 	onRenderParamsChanged();
 }
 
@@ -785,6 +787,13 @@ void MainWindowRenderer::scale( float factor )
 {
 	m_scale *= factor;
 	m_scale = qBound( 0.25f, m_scale, 15.f );
+	Config::getInstance().set( "scale", m_scale );
+	onRenderParamsChanged();
+}
+
+void MainWindowRenderer::setScale( float scale )
+{
+	m_scale = qBound( 0.25f, scale, 15.f );
 	onRenderParamsChanged();
 }
 

@@ -108,6 +108,8 @@ MainWindow::MainWindow( QWidget* parent ) :
 
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
+	connect( &GameManager::getInstance(), &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
+
 	instance = this;
 }
 
@@ -362,6 +364,19 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 		Selection::getInstance().setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
 	}
+}
+
+void MainWindow::onInitViewAfterLoad()
+{
+	Config& config = Config::getInstance();
+
+	m_renderer->setScale( 1.0 );
+	m_moveX = config.get( "moveX" ).toInt();
+	m_moveY = config.get( "moveY" ).toInt();
+	m_renderer->move( m_moveX, m_moveY );
+	
+	float scale = config.get( "scale" ).toFloat();
+	m_renderer->setScale( scale );
 }
 
 void MainWindow::mousePressEvent( QMouseEvent* event )

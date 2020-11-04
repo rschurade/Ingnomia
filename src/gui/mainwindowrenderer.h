@@ -147,6 +147,7 @@ public slots:
 	void rotate( int direction );
 	void move( int x, int y );
 	void scale( float factor );
+	void setScale( float scale );
 	void setViewLevel( int level );
 	void cleanup();
 	void cleanupWorld();

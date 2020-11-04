@@ -98,6 +98,8 @@ signals:
 	void signalUpdateGameSpeed();
 	void signalUpdatePaused();
 
+	void signalInitView();
+
 public slots:
 	void onGeneratorMessage( QString message );
 };

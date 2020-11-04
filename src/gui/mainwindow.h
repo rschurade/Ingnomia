@@ -130,6 +130,8 @@ public slots:
 
 	void onSetWindowSize( int width, int height );
 
+	void onInitViewAfterLoad();
+
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );
