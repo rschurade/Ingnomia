@@ -863,6 +863,20 @@
 		<Setter Property="MaxWidth" Value="32"/>
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding Activity}" Value="N">
+				<Setter Property="Background" Value="{StaticResource ActivityNoneBrush}"/>
+			</DataTrigger>
+			<DataTrigger Binding="{Binding Activity}" Value="E">
+				<Setter Property="Background" Value="{StaticResource ActivityEatBrush}"/>
+			</DataTrigger>
+			<DataTrigger Binding="{Binding Activity}" Value="S">
+				<Setter Property="Background" Value="{StaticResource ActivitySleepBrush}"/>
+			</DataTrigger>
+			<DataTrigger Binding="{Binding Activity}" Value="T">
+				<Setter Property="Background" Value="{StaticResource ActivityTrainBrush}"/>
+			</DataTrigger>
+		</Style.Triggers>
 	</Style>
 
 	<DataTemplate x:Key="GnomeScheduleButtonTemplate">
