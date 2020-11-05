@@ -804,3 +804,4 @@ void MainWindow::registerComponents()
 
 	Noesis::RegisterComponent<IngnomiaGUI::GameGui>();
 }
+
