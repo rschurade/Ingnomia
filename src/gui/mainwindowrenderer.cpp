@@ -781,9 +781,6 @@ void MainWindowRenderer::move( int x, int y )
 	Config::getInstance().set( "moveX", m_moveX );
 	Config::getInstance().set( "moveY", m_moveY );
 
-	qDebug() << Global::dimX << m_moveX << m_moveY << m_scale;
-
-
 	onRenderParamsChanged();
 }
 
