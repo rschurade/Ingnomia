@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - dig stairs and ramps cursor
 - rotating the world keeps view on current location
 - set view to correct position after load
+- added bounds to world movement so it can't be moved out of view accidentally'
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur

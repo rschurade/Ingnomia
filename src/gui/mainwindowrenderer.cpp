@@ -419,10 +419,6 @@ void MainWindowRenderer::initWorld()
 	QElapsedTimer timer;
 	timer.start();
 
-	int dim  = Global::dimX;
-	int dim2 = dim * dim;
-	int dimZ = Global::dimZ;
-
 	glGenBuffers( 1, &m_tileBo );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileBo );
 	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * Global::w().world().size(), nullptr, GL_DYNAMIC_DRAW );
@@ -778,8 +774,16 @@ void MainWindowRenderer::move( int x, int y )
 {
 	m_moveX += x / m_scale;
 	m_moveY += y / m_scale;
+
+	m_moveX = qBound( -Global::dimX * 16.f, m_moveX, Global::dimX * 16.f );
+	m_moveY = qBound( -Global::dimX * 16.f, m_moveY, 0.f );
+
 	Config::getInstance().set( "moveX", m_moveX );
 	Config::getInstance().set( "moveY", m_moveY );
+
+	qDebug() << Global::dimX << m_moveX << m_moveY << m_scale;
+
+
 	onRenderParamsChanged();
 }
 

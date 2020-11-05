@@ -126,8 +126,6 @@ private:
 
 	float m_daylight = 1.0;
 
-	int m_worldSize = 0;
-
 	int m_countRenders = 0;
 
 	bool m_pause     = false;
