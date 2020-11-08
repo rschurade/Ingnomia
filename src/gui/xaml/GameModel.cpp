@@ -363,21 +363,29 @@ GameModel::GameModel()
 	_buildButtons   = *new ObservableCollection<BuildButton>();
 	_buildItems     = *new ObservableCollection<BuildItem>();
 
-	_year  = "*Year*";
-	_day   = "*Day*";
-	_time  = "*Time*";
-	_level = "*Level*";
+	m_year  = "*Year*";
+	m_day   = "*Day*";
+	m_time  = "*Time*";
+	m_level = "*Level*";
+
+	m_kingdomName = "*Kingdom Name*";
 
 	setShowTileInfo( 0 );
+}
+
+void GameModel::updateKingdomInfo( QString name, QString info1, QString info2, QString info3 )
+{
+	m_kingdomName = name.toStdString().c_str();
+	OnPropertyChanged( "KingdomName" );
 }
 
 void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )
 {
 	{
 		const auto tmp = ( "Year " + QString::number( year ) ).toStdString();
-		if ( tmp.compare( _year.Str() ) != 0 )
+		if ( tmp.compare( m_year.Str() ) != 0 )
 		{
-			_year = tmp.c_str();
+			m_year = tmp.c_str();
 			OnPropertyChanged( "Year" );
 		}
 	}
@@ -401,23 +409,23 @@ void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, i
 				break;
 		}
 		const auto tmp = ( dayString + season ).toStdString();
-		if ( tmp.compare( _year.Str() ) != 0 )
+		if ( tmp.compare( m_year.Str() ) != 0 )
 		{
-			_day = tmp.c_str();
+			m_day = tmp.c_str();
 			OnPropertyChanged( "Day" );
 		}
 	}
 
 	{
-		_time = ( QString( "%1" ).arg( hour, 2, 10, QChar( '0' ) ) + ":" + QString( "%1" ).arg( minute, 2, 10, QChar( '0' ) ) ).toStdString().c_str();
+		m_time = ( QString( "%1" ).arg( hour, 2, 10, QChar( '0' ) ) + ":" + QString( "%1" ).arg( minute, 2, 10, QChar( '0' ) ) ).toStdString().c_str();
 		OnPropertyChanged( "Time" );
 	}
 
 	{
 		const auto tmp = sunStatus.toStdString();
-		if ( tmp.compare( _sun.Str() ) != 0 )
+		if ( tmp.compare( m_sun.Str() ) != 0 )
 		{
-			_sun = tmp.c_str();
+			m_sun = tmp.c_str();
 			OnPropertyChanged( "Sun" );
 		}
 	}
@@ -438,9 +446,9 @@ void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, i
 		path += ".png";
 
 		const auto tmp = path.toStdString();
-		if ( tmp.compare( _timeImagePath.Str() ) != 0 )
+		if ( tmp.compare( m_timeImagePath.Str() ) != 0 )
 		{
-			_timeImagePath = tmp.c_str();
+			m_timeImagePath = tmp.c_str();
 			OnPropertyChanged( "TimeImagePath" );
 		}
 	}
@@ -449,7 +457,7 @@ void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, i
 
 void GameModel::setViewLevel( int level )
 {
-	_level = ( "Level: " + QString::number( level ) ).toStdString().c_str();
+	m_level = ( "Level: " + QString::number( level ) ).toStdString().c_str();
 	OnPropertyChanged( "Level" );
 }
 
@@ -497,32 +505,52 @@ void GameModel::onShowAgriculture( unsigned id )
 
 const char* GameModel::getYear() const
 {
-	return _year.Str();
+	return m_year.Str();
 }
 
 const char* GameModel::getDay() const
 {
-	return _day.Str();
+	return m_day.Str();
 }
 
 const char* GameModel::getTime() const
 {
-	return _time.Str();
+	return m_time.Str();
 }
 
 const char* GameModel::getLevel() const
 {
-	return _level.Str();
+	return m_level.Str();
 }
 
 const char* GameModel::getSun() const
 {
-	return _sun.Str();
+	return m_sun.Str();
+}
+	
+const char* GameModel::getKingdomName() const
+{
+	return m_kingdomName.Str();
+}
+
+const char* GameModel::getKingdomInfo1() const
+{
+	return m_kingdomInfo1.Str();
+}
+
+const char* GameModel::getKingdomInfo2() const
+{
+	return m_kingdomInfo2.Str();
+}
+
+const char* GameModel::getKingdomInfo3() const
+{
+	return m_kingdomInfo3.Str();
 }
 
 const char* GameModel::getTimeImagePath() const
 {
-	return _timeImagePath.Str();
+	return m_timeImagePath.Str();
 }
 
 const char* GameModel::showCommandButtons() const
@@ -1433,6 +1461,11 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "Level", &GameModel::getLevel );
 	NsProp( "Sun", &GameModel::getSun );
 	NsProp( "TimeImagePath", &GameModel::getTimeImagePath );
+
+	NsProp( "KingdomName", &GameModel::getKingdomName );
+	NsProp( "KingdomInfo1", &GameModel::getKingdomInfo1 );
+	NsProp( "KingdomInfo2", &GameModel::getKingdomInfo2 );
+	NsProp( "KingdomInfo3", &GameModel::getKingdomInfo3 );
 
 	NsProp( "CmdButtonCommand", &GameModel::GetCmdButtonCommand );
 	NsProp( "CmdCategory", &GameModel::GetCmdCategory );

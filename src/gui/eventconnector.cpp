@@ -61,6 +61,12 @@ void EventConnector::onTimeAndDate( int minute, int hour, int day, QString seaso
 	emit signalTimeAndDate( minute, hour, day, season, year, sunStatus );
 }
 
+void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, QString info3 )
+{
+	emit signalKingdomInfo( name, info1, info2, info3 );
+}
+
+
 void EventConnector::onViewLevel( int level )
 {
 	emit signalViewLevel( level );

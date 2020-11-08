@@ -65,6 +65,7 @@ public slots:
 signals:
 	void sendOverlayMessage( int id, QString text );
 	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void signalPause( bool pause );
 	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	void signalStartAutoSave();

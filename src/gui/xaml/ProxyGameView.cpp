@@ -36,6 +36,7 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( this, &ProxyGameView::signalPropagateEscape, &EventConnector::getInstance(), &EventConnector::onPropagateEscape );
 
 	connect( &EventConnector::getInstance(), &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
+	connect( &EventConnector::getInstance(), &EventConnector::signalKingdomInfo, this, &ProxyGameView::onKingdomInfo, Qt::QueuedConnection );
 	connect( &EventConnector::getInstance(), &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
 
 	connect( &EventConnector::getInstance(), &EventConnector::signalUpdatePause, this, &ProxyGameView::onUpdatePause, Qt::QueuedConnection );
@@ -78,6 +79,14 @@ void ProxyGameView::onTimeAndDate( int minute, int hour, int day, QString season
 	if ( m_parent )
 	{
 		m_parent->setTimeAndDate( minute, hour, day, season, year, sunStatus );
+	}
+}
+
+void ProxyGameView::onKingdomInfo( QString name, QString info1, QString info2, QString info3 )
+{
+	if( m_parent )
+	{
+		m_parent->updateKingdomInfo( name, info1, info2, info3 );
 	}
 }
 

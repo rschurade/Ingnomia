@@ -52,10 +52,10 @@
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<TextBlock Grid.Row="0"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{StaticResource GameGui_KingdomName}" />
-						<TextBlock Grid.Row="1"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="" />
-						<TextBlock Grid.Row="2"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{StaticResource GameGui_Something1}" />
-						<TextBlock Grid.Row="3"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{StaticResource GameGui_Something2}" />
+						<TextBlock Grid.Row="0"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding KingdomName}" />
+						<TextBlock Grid.Row="1"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding KingdomInfo1}" />
+						<TextBlock Grid.Row="2"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding KingdomInfo2}" />
+						<TextBlock Grid.Row="3"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding KingdomInfo3}" />
 						<TextBlock Grid.Row="4"  FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Level}" />
 					</Grid>
 				</Border>

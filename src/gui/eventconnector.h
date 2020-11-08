@@ -123,6 +123,7 @@ public slots:
 	void onWindowSize( int w, int h );
 
 	void onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
 	void onUpdatePause();
@@ -139,6 +140,7 @@ signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
 	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void signalViewLevel( int level );
 	void signalUpdatePause();
 	void signalUpdateGameSpeed();

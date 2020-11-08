@@ -50,6 +50,7 @@ private:
 
 private slots:
 	void onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
 	void onUpdatePause();

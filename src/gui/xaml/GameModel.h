@@ -223,6 +223,7 @@ public:
 	GameModel();
 
 	void setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	void updateKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void setViewLevel( int level );
 	void updatePause();
 	void updateGameSpeed();
@@ -257,6 +258,11 @@ private:
 	const char* getSun() const;
 	const char* getTimeImagePath() const;
 
+	const char* getKingdomName() const;
+	const char* getKingdomInfo1() const;
+	const char* getKingdomInfo2() const;
+	const char* getKingdomInfo3() const;
+	
 	const char* showCommandButtons() const;
 
 	const char* showCategoryButtons() const;
@@ -320,12 +326,17 @@ private:
 	NoesisApp::DelegateCommand _cmdRightCommandButton;
 
 private:
-	Noesis::String _year;
-	Noesis::String _day;
-	Noesis::String _time;
-	Noesis::String _level;
-	Noesis::String _sun;
-	Noesis::String _timeImagePath;
+	Noesis::String m_year;
+	Noesis::String m_day;
+	Noesis::String m_time;
+	Noesis::String m_level;
+	Noesis::String m_sun;
+	Noesis::String m_timeImagePath;
+
+	Noesis::String m_kingdomName;
+	Noesis::String m_kingdomInfo1;
+	Noesis::String m_kingdomInfo2;
+	Noesis::String m_kingdomInfo3;
 
 	ProxyGameView* m_proxy = nullptr;
 

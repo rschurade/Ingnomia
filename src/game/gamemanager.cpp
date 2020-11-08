@@ -174,6 +174,7 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 		connect( m_game, &Game::signalUpdateTileInfo, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
 
 		connect( m_game, &Game::signalTimeAndDate, &EventConnector::getInstance(), &EventConnector::onTimeAndDate );
+		connect( m_game, &Game::signalKingdomInfo, &EventConnector::getInstance(), &EventConnector::onKingdomInfo );
 		m_game->sendTime();
 		EventConnector::getInstance().onViewLevel( Config::getInstance().get( "viewLevel" ).toInt() );
 
