@@ -11,6 +11,9 @@
 		<ResourceDictionary Source="../../Theme/NoesisTheme.DarkBlue.xaml" />
 		<ResourceDictionary Source="../colors.xaml" />
 	</ResourceDictionary.MergedDictionaries>
+	
+	<local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+	<local:ColorToBrushConverterDark x:Key="ColorToBrushConverterDark"/>
 
 	<Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
@@ -731,26 +734,25 @@
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
 
-
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ToggleButton">
-					<Border BorderBrush="{TemplateBinding BorderBrush}"
-							Background="{TemplateBinding Background}">
-						<ContentPresenter HorizontalAlignment="Center"
-										  VerticalAlignment="Center"/>
+					<Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+						<ContentPresenter HorizontalAlignment="Center"  VerticalAlignment="Center"/>
 					</Border>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+		
 		<Style.Triggers>
 			<Trigger Property="IsChecked" Value="False">
-				<Setter Property="Background" Value="{StaticResource SkillGroupMetalBrush}" />
+				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverterDark}}" />
 			</Trigger>
 			<Trigger Property="IsChecked" Value="True">
-				<Setter Property="Background" Value="{StaticResource SkillGroupStoneBrush}" />
+				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverter}}" />
 			</Trigger>
 		</Style.Triggers>
+
 	</Style>
 
 	<Style x:Key="GnomeSkillAllButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
@@ -767,7 +769,7 @@
 
 	<DataTemplate x:Key="PopGnomeSkillHeaderTemplate">
 		<StackPanel>
-			<TextBlock Text="{Binding Name}" Background="{StaticResource SkillGroupMetalBrush}" HorizontalAlignment="Left" MinWidth="180" MaxWidth="180" FontSize="20" Margin="2" >
+			<TextBlock Text="{Binding Name}" Background="{Binding Color, Converter={StaticResource ColorToBrushConverter}}" HorizontalAlignment="Left" MinWidth="180" MaxWidth="180" FontSize="20" Margin="2" >
 				<TextBlock.LayoutTransform>
 					<RotateTransform Angle="270" />
 				</TextBlock.LayoutTransform>
@@ -794,6 +796,9 @@
 						<TextBlock Text="Right click to disable all skills in this column." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 					</StackPanel>
 				</Button.ToolTip>
+				
+				Background="{Binding SkillID, Converter={StaticResource SkillToColorConverter}}"
+				
 			-->
 		</StackPanel>
 	</DataTemplate>
@@ -803,8 +808,9 @@
 	<DataTemplate x:Key="GnomeSkillButtonTemplate">
 		<ToggleButton x:Name="GSBT_Button" Content="{Binding Level}"
 			IsChecked="{Binding Checked}"
-			Style="{StaticResource GnomeSkillButtonStyle}"/>
-	</DataTemplate>
+			Style="{StaticResource GnomeSkillButtonStyle}"
+			/>
+		</DataTemplate>
 
 	<DataTemplate x:Key="PopProfessionTemplate">
 		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" MaxHeight="18" FontSize="12" />

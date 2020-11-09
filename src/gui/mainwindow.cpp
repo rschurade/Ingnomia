@@ -66,6 +66,8 @@
 #include "xaml/workshopgui.xaml.h"
 #include "xaml/workshopmodel.h"
 
+#include "xaml/converters.h"
+
 #include <NsApp/Launcher.h>
 #include <NsApp/LocalFontProvider.h>
 #include <NsApp/LocalTextureProvider.h>
@@ -801,6 +803,8 @@ void MainWindow::registerComponents()
 	Noesis::RegisterComponent<IngnomiaGUI::InventoryModel>();
 
 	Noesis::RegisterComponent<Noesis::EnumConverter<IngnomiaGUI::State>>();
+	Noesis::RegisterComponent<IngnomiaGUI::ColorToBrushConverter>();
+	Noesis::RegisterComponent<IngnomiaGUI::ColorToBrushConverterDark>();
 
 	Noesis::RegisterComponent<IngnomiaGUI::GameGui>();
 }

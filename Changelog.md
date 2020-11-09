@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - WASD movement
 - item summary
 - setting for minimum ambient light level
+- colors for skill buttons in population overview
 - colors for population schedule buttons
 
 ### Changed

@@ -30,6 +30,7 @@ struct GuiSkillInfo
 	float xpValue;
 	bool active;
 	QString group;
+	QString color;
 };
 Q_DECLARE_METATYPE( GuiSkillInfo )
 

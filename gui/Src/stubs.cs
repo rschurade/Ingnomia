@@ -224,4 +224,11 @@ namespace IngnomiaGUI
     public class InventoryModel
     {
     }
+
+    public class ColorToBrushConverter
+    {
+    }
+    public class ColorToBrushConverterDark
+    {
+    }
 }

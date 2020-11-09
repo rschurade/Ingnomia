@@ -58,7 +58,7 @@ GnomeSkill::GnomeSkill( const GuiSkillInfo& skill, unsigned int gnomeID, Populat
 	m_name      = skill.name.toStdString().c_str();
 	m_level	= QString::number( skill.level ).toStdString().c_str();
 	m_checked   = skill.active;
-	m_color = ( "SkillGroup" + skill.group + "Brush" ).toStdString().c_str();
+	m_color = skill.color.toStdString().c_str();
 	m_skillID = skill.sid.toStdString().c_str();
 }
 

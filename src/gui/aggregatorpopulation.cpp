@@ -40,6 +40,7 @@ AggregatorPopulation::AggregatorPopulation( QObject* parent )
 			gsi.sid = skillID;
 			gsi.name = S::s( "$SkillName_" + skillID );
 			gsi.group = group.value( "ID" ).toString();
+			gsi.color = group.value( "Color" ).toString();
 			
 			m_skillIds.push_back( gsi );
 		}
