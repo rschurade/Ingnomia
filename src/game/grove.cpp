@@ -441,7 +441,7 @@ Job* Grove::getFellJob()
 				job->setType( "FellTree" );
 				job->setRequiredSkill( Util::requiredSkill( "FellTree" ) );
 				job->setPos( gf->pos );
-
+				job->setRequiredTool( "FellingAxe", 1 );
 				job->setNoJobSprite( true );
 				gf->hasJob = true;
 				return job;

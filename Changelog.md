@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - set view to correct position after load
 - added bounds to world movement so it can't be moved out of view accidentally
 - fix keyboard movement for fast speed
+- felling trees in groves requires a felling axe
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
