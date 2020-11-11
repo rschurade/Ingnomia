@@ -100,6 +100,7 @@ private:
 	QString m_selectedAction = "";
 
 	QTimer* m_timer = nullptr;
+	QTimer* m_keyboardTimer = nullptr;
 
 	Noesis::IView* m_view          = nullptr;
 	MainWindowRenderer* m_renderer = nullptr;

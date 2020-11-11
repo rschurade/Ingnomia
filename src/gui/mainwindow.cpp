@@ -112,6 +112,10 @@ MainWindow::MainWindow( QWidget* parent ) :
 
 	connect( &GameManager::getInstance(), &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 
+	m_keyboardTimer = new QTimer( this );
+	connect( m_keyboardTimer, &QTimer::timeout, this, &MainWindow::keyboardMove );
+	m_keyboardTimer->start( 20 );
+
 	instance = this;
 }
 
@@ -319,8 +323,6 @@ void MainWindow::keyboardMove()
 		m_renderer->move( moveX, moveY );
 	}
 }
-
-
 
 void MainWindow::mouseMoveEvent( QMouseEvent* event )
 {
@@ -661,8 +663,6 @@ bool MainWindow::noesisUpdate()
 
 void MainWindow::noesisTick()
 {
-	keyboardMove();
-
 	if ( noesisUpdate() && !m_pendingUpdate )
 	{
 		// Trigger rendering

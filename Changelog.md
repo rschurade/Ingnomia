@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - rotating the world keeps view on current location
 - set view to correct position after load
 - added bounds to world movement so it can't be moved out of view accidentally
+- fix keyboard movement for fast speed
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
