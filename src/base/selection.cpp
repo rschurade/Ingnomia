@@ -111,6 +111,8 @@ void Selection::clear()
 	m_isFloor              = false;
 	m_isMulti              = false;
 	m_tileCheckList.clear();
+	m_item = "";
+	m_materials.clear();
 	m_canRotate = false;
 }
 

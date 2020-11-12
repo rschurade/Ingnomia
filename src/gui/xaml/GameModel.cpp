@@ -224,9 +224,6 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		mats.append( mat->sid() );
 	}
 
-	Selection::getInstance().setMaterials( mats );
-	Selection::getInstance().setItemID( m_sid );
-
 	switch ( m_type )
 	{
 		case BuildItemType::Workshop:
@@ -253,6 +250,10 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		}
 		break;
 	}
+
+	Selection::getInstance().setMaterials( mats );
+	Selection::getInstance().setItemID( m_sid );
+
 	EventConnector::getInstance().onBuild();
 }
 
