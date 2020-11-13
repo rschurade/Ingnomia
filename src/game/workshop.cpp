@@ -804,10 +804,11 @@ Job* Workshop::createButcherJob()
 	if ( m_properties.butcherCorpses )
 	{
 		QString itemID = "";
-
-		if ( Global::inv().itemCountInStockpile( "Corpse", "any" ) > 0 )
+		qDebug() << "huhu1";
+		if ( Global::inv().itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
 		{
-			itemID = "Corpse";
+			qDebug() << "huhu2";
+			itemID = "AnimalCorpse";
 		}
 		else if ( Global::inv().itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
 		{

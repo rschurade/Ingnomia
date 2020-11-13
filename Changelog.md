@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - jobs created with no required tool
 - groves not keeping suspend flag
 - killed animals leave corpses again
+- butchering animal corpses
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
