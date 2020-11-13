@@ -374,8 +374,16 @@ void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationI
 			}
 			break;
 			case AgriType::Grove:
-
+			{
+				auto grove = Global::fm().getGrove( designationID );
+				if ( grove )
+				{
+					grove->setName( name );
+					grove->setSuspended( suspended );
+					Global::fm().setGrovePriority( designationID, priority );
+				}
 				break;
+			}
 		}
 	}
 }

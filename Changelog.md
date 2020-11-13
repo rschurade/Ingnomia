@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - fix keyboard movement for fast speed
 - felling trees in groves requires a felling axe
 - jobs created with no required tool
+- groves not keeping suspend flag
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
@@ -26,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - setting for minimum ambient light level
 - colors for skill buttons in population overview
 - colors for population schedule buttons
+- blacksmith recipe for metal needle
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm
