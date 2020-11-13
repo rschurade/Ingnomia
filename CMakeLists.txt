@@ -8,11 +8,12 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
+
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL Network)
 
-# Roots of libraries that don't use the standard directories
-set(NOESIS_ROOT "" CACHE PATH "Root to the NoesisGui sdk")
-set(STEAM_SDK_ROOT "" CACHE PATH "Root to the steam sdk")
+find_package(Steam REQUIRED)
+find_package(Noesis REQUIRED)
 
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
@@ -22,11 +23,6 @@ set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
 cmake_policy(SET CMP0076 NEW)
 
 include(GNUInstallDirs)
-
-if (UNIX)
-	include(FindPkgConfig)
-endif()
-
 
 # The program itself
 add_executable(${PROJECT_NAME})
@@ -41,17 +37,6 @@ set_target_properties(${PROJECT_NAME}
 )
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
-
-# Headers
-target_include_directories(${PROJECT_NAME}
-	PRIVATE
-		${NOESIS_ROOT}/Include
-		${NOESIS_ROOT}/Src/Packages/App/ApplicationLauncher/Include
-		${NOESIS_ROOT}/Src/Packages/App/Launcher/Include
-		${NOESIS_ROOT}/Src/Packages/App/Providers/Include
-		${NOESIS_ROOT}/Src/Packages/Render/GLRenderDevice/Include
-		${STEAM_SDK_ROOT}/public/steam
-)
 
 add_subdirectory(content) # Deployable content
 # Copy content to target directory
@@ -80,31 +65,6 @@ target_sources(${PROJECT_NAME}
 add_subdirectory(src) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
-if(UNIX)
-	find_library(STEAM steam_api
-		HINTS
-			${STEAM_SDK_ROOT}/redistributable_bin/linux64
-	)
-else()
-	find_library(STEAM steam_api64
-		HINTS
-			${STEAM_SDK_ROOT}/redistributable_bin/win64
-	)
-endif()
-
-find_library(NOESIS Noesis
-	HINTS
-		${NOESIS_ROOT}/Bin/linux_x86_64
-		${NOESIS_ROOT}/Lib/windows_x86_64
-)
-
-# TODO add a target to compile the library from the Makefile in the sdk
-find_library(NOESIS_APP NoesisApp
-	HINTS
-		${NOESIS_ROOT}/Bin/linux_x86_64
-		${NOESIS_ROOT}/Lib/windows_x86_64
-)
-
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
@@ -113,9 +73,8 @@ target_link_libraries(${PROJECT_NAME}
 		Qt5::Sql
 		Qt5::OpenGL
 		Qt5::Network
-		${STEAM}
-		${NOESIS}
-		${NOESIS_APP}
+		Steam
+		NoesisApp
 		fastnoise
 		exprtk
 )
@@ -137,13 +96,6 @@ endif()
 
 get_target_property(SOURCE_LIST ${PROJECT_NAME} SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCE_LIST})
-
-# Default flags
-target_compile_definitions(${PROJECT_NAME}
-	PRIVATE
-		NS_DEBUG
-		NS_PROFILE
-)
 
 if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
 	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
@@ -172,10 +124,6 @@ install(
 
 if(UNIX)
 	install(FILES ${NOESIS}
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
-	)
-
-	install(FILES ${NOESIS_APP}
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
@@ -236,8 +184,6 @@ if(WIN32)
 	set(RUNTIME_DLLS
 		${STEAM_SDK_ROOT}/redistributable_bin/win64/steam_api64.dll
 		${NOESIS_ROOT}/Bin/windows_x86_64/Noesis.dll
-		${NOESIS_ROOT}/Bin/windows_x86_64/NoesisApp.dll
-		${NOESIS_ROOT}/Bin/windows_x86_64/NoesisApp.pdb
 	)
 
 	add_custom_command(TARGET ${PROJECT_NAME}
@@ -250,7 +196,7 @@ if(WIN32)
 
 	install(
 		FILES
-		${RUNTIME_DLLS}
+			${RUNTIME_DLLS}
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 

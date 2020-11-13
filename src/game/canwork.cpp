@@ -42,7 +42,7 @@
 
 //#include "../gui/strings.h"
 
-#include "../../3rdparty/exprtk/exprtk.hpp"
+#include <exprtk.hpp>
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 

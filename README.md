@@ -12,8 +12,7 @@ Note! Building on Mac is currently not possible. Certain features in the rendere
 * OpenGL 4.3 - Mac is not a supported compilation platform since it has deprecated OpenGL
 * Qt 5.14.1
 * Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
-* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.4 \
-  Download the native SDK for your OS and build the NoesisApp in *Debug* configuration.
+* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.6
   For using Noesis in a development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 * CMake 3.16 or newer
