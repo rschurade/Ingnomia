@@ -76,14 +76,14 @@ jobs:
       if: (!startsWith(matrix.os, 'windows'))
       shell: bash
       working-directory: ${{github.workspace}}/noesis_sdk/Build
-      run: make -f NoesisGUI-linux-x86_64.mk CONFIG=Debug NoesisApp
+      run: make -f NoesisGUI-linux-x86_64.mk CONFIG=Profile NoesisApp
 
     - name: Build Noesis App (Windows)
       if: (startsWith(matrix.os, 'windows'))
       shell: pwsh
       working-directory: ${{github.workspace}}/noesis_sdk/Build
       run: |
-        MSBuild.exe NoesisGUI-win-x86_64.sln -target:NoesisApp:Rebuild -p:Configuration=Debug -m
+        MSBuild.exe NoesisGUI-win-x86_64.sln -target:NoesisApp:Rebuild -p:Configuration=Profile -m
 
     - name: Create Build Environment
       run: cmake -E make_directory build
