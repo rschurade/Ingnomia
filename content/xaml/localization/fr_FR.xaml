@@ -204,7 +204,8 @@
 	<system:String x:Key="SettingsPage_UiScale">Échelle de l'interface</system:String>
 	<system:String x:Key="SettingsPage_FullScreen">Plein écran</system:String>
 	<system:String x:Key="SettingsPage_Language">Langue</system:String>
-	<system:String x:Key="SettingsPage_KeyboardSpeed">Keyboard speed</system:String>
+	<system:String x:Key="SettingsPage_KeyboardSpeed">Défilement au clavier</system:String>
+	<system:String x:Key="SettingsPage_LightMin">Luminosité minimale</system:String>
 
 	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
