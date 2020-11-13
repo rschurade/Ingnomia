@@ -4446,6 +4446,7 @@ INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTim
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('ArtificialLeg',1,NULL,'ArtificialLeg',30.0,NULL,'Metal','Engineering');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('ArtificialFoot',1,NULL,'ArtificialFoot',30.0,NULL,'Metal','Engineering');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Needle',1,NULL,'Needle',30.0,NULL,'Bone|FishBone','Bonecarving');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('MetalNeedle',1,NULL,'Needle',30.0,NULL,'Metal','Blacksmithing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneStatuette',1,NULL,'Statuette',30.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('SkullHelmet',1,NULL,'SkullHelmet',30.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneShirt',1,NULL,'BoneShirt',30.0,NULL,'Bone','Bonecarving');
@@ -4770,6 +4771,7 @@ INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","A
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('ArtificialFoot',NULL,NULL,1,'ArmorPlate',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('ArtificialFoot',NULL,NULL,1,'Gear',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('Needle',NULL,NULL,1,'Bone',NULL);
+INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('MetalNeedle',NULL,NULL,1,'Bar',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BoneStatuette',NULL,NULL,1,'Bone',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('SkullHelmet',NULL,NULL,1,'Skull',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BoneShirt',NULL,NULL,4,'Bone',NULL);
@@ -5023,6 +5025,7 @@ INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('Arti
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('ArtificialFoot','tech','TechEngineer',1.0);
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('Automaton','tech','TechEngineer',1.0);
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('Needle','tech','TechCloth',1.0);
+INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('MetalNeedle','tech','TechMetal',1.0);
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('BoneStatuette','tech','TechWood',1.0);
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('SkullHelmet','tech','TechWood',1.0);
 INSERT INTO "Crafts_Prereqs" ("ID","Category","TechGroup","Value") VALUES ('BoneShirt','tech','TechWood',1.0);
@@ -5206,6 +5209,7 @@ INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('ArtificialLeg',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('ArtificialFoot',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Automaton',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Needle',1.0);
+INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('MetalNeedle',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('BoneStatuette',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('SkullHelmet',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('BoneShirt',1.0);
@@ -5387,7 +5391,7 @@ INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('ArtificialHand','
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('ArtificialLeg','TechEngineer',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('ArtificialFoot','TechEngineer',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Automaton','TechEngineer',1.0);
-INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Needle','TechCloth',1.0);
+INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('MetalNeedle','TechMetal',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('BoneStatuette','TechWood',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('SkullHelmet','TechWood',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('BoneShirt','TechWood',1.0);
@@ -11978,6 +11982,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Mold','mold');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_MushroomOmelette','mushroom omelette');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Necklace','necklace');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Needle','needle');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_MetalNeedle','needle');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Padding','padding');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Pauldron','pauldron');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_PetRock','pet rock');
@@ -15985,7 +15990,7 @@ INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","No
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Forge','Bar|BronzeBar|SteelBar|RoseGoldBar|Anvil|SliverBar',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Metal');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Furnace','RawCoal',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Wood');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Kiln','Brick|ClayStatuette',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Stone');
-INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Blacksmith','PickaxeHeadMetal|FellingAxeHead|FellingAxe|CuttingWheel|File|BallPeenHammer|AlarmBell|AlarmBellBell|BigTorch|Brazier',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Metal');
+INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Blacksmith','PickaxeHeadMetal|FellingAxeHead|FellingAxe|CuttingWheel|File|BallPeenHammer|MetalNeedle|AlarmBell|AlarmBellBell|BigTorch|Brazier',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Metal');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Metalworker','MetalStatue|MetalStatuette|Coin',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Metal');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Gemcutter','Gem|PickaxeHeadFlintStone',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Craft');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Loom','Bolt',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Craft');
