@@ -15,7 +15,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
-				<ResourceDictionary Source="localization/_.xaml" />
+				<!--<ResourceDictionary Source="localization/_.xaml" />-->
 				<ResourceDictionary Source="localization/en_US.xaml" />
 				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
@@ -52,7 +52,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-			
+
 				<TabControl Style="{StaticResource MainMenuTabControlStyle}" Grid.Row="0">
 					<TabItem Header="{StaticResource SettingsPage_Game}">
 						<Grid>
@@ -60,9 +60,9 @@
 								<RowDefinition Height="1*" />
 								<RowDefinition Height="6*" />
 								<RowDefinition Height="1*" />
-								
+
 							</Grid.RowDefinitions>
-							
+
 							<StackPanel Grid.Row="1">
 								<Grid Margin="0,20,0,0">
 									<Grid.ColumnDefinitions>
@@ -77,7 +77,7 @@
 											SelectedItem="{Binding UIScale, Mode=TwoWay}"
 											ItemTemplate="{StaticResource ItemTemplate}" />
 									<!--
-									<Slider     Grid.Column="2" Minimum="5" Maximum="20" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
+									<Slider     Grid.Column="2" Minimum="5" Maximum="20" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding UIScale}" />
 									-->
 								</Grid>
@@ -112,7 +112,7 @@
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_KeyboardSpeed}" VerticalAlignment="Center"/>
-									<Slider     Grid.Column="2" Minimum="10" Maximum="200" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
+									<Slider     Grid.Column="2" Minimum="10" Maximum="200" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding KeyboardSpeed}" />
 								</Grid>
 								<Grid Margin="0,20,0,0">
@@ -123,7 +123,7 @@
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_LightMin}" VerticalAlignment="Center"/>
-									<Slider     Grid.Column="2" Minimum="0" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1" 
+									<Slider     Grid.Column="2" Minimum="0" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding LightMin}" />
 								</Grid>
 							</StackPanel>
@@ -133,10 +133,10 @@
 						<TextBlock  Grid.Column="1" FontSize="10" Text="This page is a placeholder. Keybindings are not implemented yet." VerticalAlignment="Center"/>
 					</TabItem>
 				</TabControl>
-				
+
 				<Button Grid.Row="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
 						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-				
+
 				<!--
 				<Grid Grid.Row="1">
 					<Grid.ColumnDefinitions>
@@ -152,6 +152,6 @@
 			</Grid>
 		</Viewbox>
 
-		
+
 	</Grid>
 </UserControl>
