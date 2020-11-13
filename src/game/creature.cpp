@@ -844,11 +844,15 @@ Position Creature::currentTarget() const
 	//return Position( m_variables.value( "CurrentTargetPos" ) );
 }
 
-bool Creature::kill()
+bool Creature::kill( bool nocorpse )
 {
 	if ( !m_toDestroy && !m_isDead )
 	{
 		//kill succeeds
+		if( nocorpse )
+		{
+			m_toDestroy = true;
+		}
 		m_isDead = true;
 		return true;
 	}

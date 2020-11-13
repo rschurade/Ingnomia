@@ -902,7 +902,7 @@ BT_RESULT Animal::actionKillPrey( bool halt )
 	Animal* prey = Global::cm().animal( m_currentPrey );
 	if ( prey )
 	{
-		if ( prey->kill() )
+		if ( prey->kill( true ) )
 		{
 			m_corpseToEat = Global::inv().createItem( prey->getPos(), "AnimalCorpse", { prey->species() } );
 			m_currentPrey = 0;

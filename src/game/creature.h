@@ -217,7 +217,7 @@ public:
 	void setCurrentTarget( Position pos );
 	Position currentTarget() const;
 
-	bool kill();
+	bool kill( bool nocorpse );
 	virtual bool attack( DamageType dt, AnatomyHeight da, int skill, int strength, Position sourcePos, unsigned int attackerID ) = 0;
 
 	QString thoughtBubble() const;

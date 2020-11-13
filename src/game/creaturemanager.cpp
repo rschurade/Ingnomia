@@ -87,7 +87,11 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 				toDestroy.append( creature->id() );
 				break;
 			case CreatureTickResult::DEAD:
-				//Global::inv().createItem( a->getPos(), "AnimalCorpse", { a->species() } );
+				if( creature->type() == CreatureType::ANIMAL )
+				{
+					auto a = dynamic_cast<Animal*>( creature );
+					Global::inv().createItem( a->getPos(), "AnimalCorpse", { a->species() } );
+				}
 				toDestroy.append( creature->id() );
 				break;
 		}

@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - felling trees in groves requires a felling axe
 - jobs created with no required tool
 - groves not keeping suspend flag
+- killed animals leave corpses again
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
