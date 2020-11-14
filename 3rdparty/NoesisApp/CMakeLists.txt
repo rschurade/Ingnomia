@@ -124,10 +124,12 @@ if(UNIX)
 	# NoesisApp requires several additional libraries on Linux
 	find_package(Threads REQUIRED)
 	find_package(OpenGL REQUIRED)
+	find_package(X11 REQUIRED)
 	target_link_libraries(${PROJECT_NAME}
-		PUBLIC
+		PRIVATE
 			OpenGL::GL
 			Threads::Threads
+			${X11_LIBRARIES}
 			${CMAKE_DL_LIBS}
 	)
 endif()
