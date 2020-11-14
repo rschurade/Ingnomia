@@ -119,3 +119,12 @@ source_group(TREE "${CMAKE_CURRENT_BINARY_DIR}" PREFIX "Generated" FILES ${NOESI
 source_group(TREE "${NOESIS_ROOT}/Src/Packages" PREFIX "NoesisApp" FILES ${NOESIS_APP_SRC})
 source_group(TREE "${NOESIS_ROOT}/Src/Packages" PREFIX "Resources" FILES ${NOESIS_APP_BIN2H})
 source_group(TREE "${NOESIS_ROOT}/Include" PREFIX "Core" FILES ${NOESIS_CORE_INCLUDES})
+
+if(UNIX)
+	# NoesisApp requires pthread on Linux
+	find_package(Threads REQUIRED)
+	target_link_libraries(${PROJECT_NAME}
+		PUBLIC
+			${CMAKE_THREAD_LIBS_INIT}
+	)
+endif()
