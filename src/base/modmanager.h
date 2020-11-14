@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <QTimer>
 
-#include <steam_api.h>
+#include <steam/steam_api.h>
 #include <vector>
 
 class ModManager : public QObject

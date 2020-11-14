@@ -2,7 +2,7 @@ set(STEAM_SDK_ROOT "" CACHE PATH "Root to the steam sdk")
 
 find_path(STEAM_INCLUDE_DIR
 	NAMES
-		steam_api.h
+		steam/steam_api.h
 	HINTS
 		${STEAM_SDK_ROOT}/public
 	REQUIRED

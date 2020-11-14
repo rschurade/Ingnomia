@@ -122,69 +122,22 @@ install(
 	DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(UNIX)
-	install(FILES ${NOESIS}
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
-	)
+get_target_property(STEAM_DLL Steam LOCATION)
+get_target_property(NOESIS_DLL Noesis LOCATION)
+list(APPEND RUNTIME_DLLS ${STEAM_DLL})
+list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
 
-	install(FILES ${STEAM}
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
-	)
-endif()
+install(
+	FILES
+		${RUNTIME_DLLS}
+	DESTINATION
+		${CMAKE_INSTALL_BINDIR}
+)
 
 # Deployment helpers for Windows
 if(WIN32)
-	if(Qt5_FOUND AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
-		get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
-
-		execute_process(
-			COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX
-			RESULT_VARIABLE return_code
-			OUTPUT_VARIABLE qt5_install_prefix
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-		)
-
-		set(imported_location "${qt5_install_prefix}/bin/windeployqt.exe")
-
-		if(EXISTS ${imported_location})
-			add_executable(Qt5::windeployqt IMPORTED)
-
-			set_target_properties(Qt5::windeployqt PROPERTIES
-				IMPORTED_LOCATION ${imported_location}
-			)
-		endif()
-	endif()
-
-	function(deployQt foo)
-		if(TARGET Qt5::windeployqt)
-			# execute windeployqt in a tmp directory after build
-			add_custom_command(TARGET ${foo}
-				POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>"
-				COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-				# for deployment
-				COMMAND Qt5::windeployqt --pdb --no-translations --no-webkit2 --no-system-d3d-compiler --no-opengl-sw --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>" "$<TARGET_FILE_DIR:${foo}>/$<TARGET_FILE_NAME:${foo}>"
-				COMMAND
-					${CMAKE_COMMAND} -E copy_directory
-					"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
-					$<TARGET_FILE_DIR:${PROJECT_NAME}>
-			)
-
-			# copy deployment directory during installation
-			install(
-				DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}/windeployqt_$<CONFIG>/"
-				DESTINATION ${CMAKE_INSTALL_BINDIR}
-			)
-		endif()
-	endfunction()
-
-	deployQt(${PROJECT_NAME})
-
-	set(RUNTIME_DLLS
-		${STEAM_SDK_ROOT}/redistributable_bin/win64/steam_api64.dll
-		${NOESIS_ROOT}/Bin/windows_x86_64/Noesis.dll
-	)
+	include(windeployqt)
+	windeployqt(${PROJECT_NAME})
 
 	add_custom_command(TARGET ${PROJECT_NAME}
 		POST_BUILD
@@ -192,12 +145,6 @@ if(WIN32)
 			${CMAKE_COMMAND} -E copy_if_different
 			${RUNTIME_DLLS}
 			$<TARGET_FILE_DIR:${PROJECT_NAME}>
-	)
-
-	install(
-		FILES
-			${RUNTIME_DLLS}
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
 	INCLUDE_EXTERNAL_MSPROJECT("Blend" ${CMAKE_CURRENT_SOURCE_DIR}/gui/gui.csproj)
