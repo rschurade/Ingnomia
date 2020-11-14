@@ -34,7 +34,6 @@ class DB
 {
 public:
 	static void init();
-	static void resetLiveTables();
 
 	static QVariant execQuery( QString query );
 	static QVariantList execQuery2( QString query );

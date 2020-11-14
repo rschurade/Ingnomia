@@ -302,21 +302,6 @@ DROP TABLE IF EXISTS "FormationPerks";
 CREATE TABLE IF NOT EXISTS "FormationPerks" (
 	"ID"	STRING
 );
-DROP TABLE IF EXISTS "Furniture";
-CREATE TABLE IF NOT EXISTS "Furniture" (
-	"ID"	VARCHAR(30),
-	"Buildable"	BOOLEAN,
-	"Item"	STRING
-);
-DROP TABLE IF EXISTS "Gamestart";
-CREATE TABLE IF NOT EXISTS "Gamestart" (
-	"Amount"	DOUBLE,
-	"Color"	VARCHAR(30),
-	"ItemID"	VARCHAR(30),
-	"MaterialID"	VARCHAR(30),
-	"Offset"	VARCHAR(11),
-	"Type"	VARCHAR(30)
-);
 DROP TABLE IF EXISTS "HairColors";
 CREATE TABLE IF NOT EXISTS "HairColors" (
 	"ID"	STRING,
@@ -577,10 +562,6 @@ CREATE TABLE IF NOT EXISTS "Plants_States" (
 	"ID2"	VARCHAR(30),
 	"Layout"	VARCHAR(30),
 	"SpriteID"	VARCHAR(30)
-);
-DROP TABLE IF EXISTS "PositionPerks";
-CREATE TABLE IF NOT EXISTS "PositionPerks" (
-	"ID"	STRING
 );
 DROP TABLE IF EXISTS "Quality";
 CREATE TABLE IF NOT EXISTS "Quality" (
@@ -5638,124 +5619,6 @@ INSERT INTO "FormationPerks" ("ID") VALUES ('EyesOpen');
 INSERT INTO "FormationPerks" ("ID") VALUES ('ShieldWall');
 INSERT INTO "FormationPerks" ("ID") VALUES ('MeleeOffense');
 INSERT INTO "FormationPerks" ("ID") VALUES ('FiringSquad');
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Chair',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Table',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Bed',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('FancyBed',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Cabinet',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Dresser',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Statue',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Painting',1,NULL);
-INSERT INTO "Furniture" ("ID","Buildable","Item") VALUES ('Bookshelf',1,NULL);
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bed',NULL,'-6 1 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'Torch','Birch','-6 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (8.0,NULL,'Table','Birch','-6 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Chair','Pine','-6 -2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (4.0,NULL,'Workbench','Pine','-6 -4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Sawblade','LapisLazuli','-5 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'CuttingWheel','Steel','-5 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'File','Steel','-5 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Chisel','Granite','-5 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Knife',NULL,'-5 0 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Knife',NULL,'-5 -1 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Pickaxe',NULL,'-5 -2 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Block','Bauxite','5 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Block','Brick','5 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (100.0,NULL,'RawWood','Pine','5 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawWood','AppleWood','5 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawWood','OrangeWood','5 -2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (50.0,NULL,'Bread','Wheat','-3 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (50.0,NULL,'Beer','Wheat','-3 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (32.0,NULL,'Wine','Apple','-3 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (32.0,NULL,'Wine','Strawberry','-3 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Strawberry','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Carrot','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Onion','Onion','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Potato','Potato','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Cabbage','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Asparagus','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Cauliflower','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Cucumber','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Broccoli','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Garlic','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Parsnip','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Radish','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Turnip','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Lettuce','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Melon','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Sugarbeet','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Pumpkin','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Peas','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Tea','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Tobacco','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Corn','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Leek','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Pineapple','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Beans','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Blackberry','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Artichoke','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Bottlegourd','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Tomato','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Wheat','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Cotton','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (9.0,NULL,'Seed','Capsicum','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (200.0,NULL,'RawSoil','Clay','1 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (200.0,NULL,'RawStone','Granite','1 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (200.0,NULL,'RawStone','Marble','1 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (200.0,NULL,'RawStone','Serpentine','1 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,'230 50 50 255','Crate','Birch','0 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Apple','Apple','-2 6 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Orange','Orange','-2 5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Strawberry','Strawberry','-2 4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Door','Pine','0 6 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Door','Granite','0 7 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (8.0,NULL,'Barrel','Pine','5 7 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Sack','Cotton','5 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Bucket','Birch','5 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Bag','Wool','-5 0-2','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Mold','LapisLazuli','-4 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Hearth','Serpentine','-4 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Bellows','Pine','-4 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Furnace','Bauxite','-4 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Anvil','Steel','-4 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Loom','AppleWood','-4 4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawGem','Diamond','4 -6 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Copper','4 -5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Malachite','4 -4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Tin','4 -3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Bronze','4 -2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Iron','4 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Steel','4 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Lead','4 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Silver','4 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Gold','4 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','RoseGold','4 4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'RawOre','Platin','4 5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (100.0,NULL,'RawCoal','Coal','2 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Copper','3 -5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Malachite','3 -4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Tin','3 -3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Bronze','3 -2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Iron','3 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Steel','3 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Lead','3 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Silver','3 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Gold','3 3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','RoseGold','3 4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (10.0,NULL,'Bar','Platin','3 5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'LeatherStrap','OgreLeather','2 -5 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'Skull','OgreBone','2 -4 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'Bone','OgreBone','2 -3 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'Bolt','Cotton','2 -2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (20.0,NULL,'String','Cotton','2 -1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'BedFrame','Pine','2 0 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Mattress','Cotton','2 1 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'FancyBedFrame','Pine','2 2 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'FancyBed',NULL,'2 4 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'FellingAxe',NULL,'2 5 0','CombinedItem');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'BallPeenHammer','Steel','2 6 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,'Needle','Steel','2 7 0','Item');
-INSERT INTO "Gamestart" ("Amount","Color","ItemID","MaterialID","Offset","Type") VALUES (1.0,NULL,NULL,NULL,'0 0 0','Gnome');
 INSERT INTO "HairColors" ("ID","Color") VALUES ('Green','0 255 0 255');
 INSERT INTO "HairColors" ("ID","Color") VALUES ('Red','255 0 0 255');
 INSERT INTO "HairColors" ("ID","Color") VALUES ('Blue','0 0 255 255');
@@ -7331,12 +7194,6 @@ INSERT INTO "Plants_States" ("ID","Fell","GrowTime","GrowTimeDeviation","Harvest
 INSERT INTO "Plants_States" ("ID","Fell","GrowTime","GrowTimeDeviation","Harvest","ID2","Layout","SpriteID") VALUES ('Flower6',0,0.0,0.0,1,'GrownHasFruits',NULL,'Flower6');
 INSERT INTO "Plants_States" ("ID","Fell","GrowTime","GrowTimeDeviation","Harvest","ID2","Layout","SpriteID") VALUES ('Flower7',0,0.0,0.0,1,'GrownHasFruits',NULL,'Flower7');
 INSERT INTO "Plants_States" ("ID","Fell","GrowTime","GrowTimeDeviation","Harvest","ID2","Layout","SpriteID") VALUES ('Flower8',0,0.0,0.0,1,'GrownHasFruits',NULL,'Flower8');
-INSERT INTO "PositionPerks" ("ID") VALUES ('Highlander');
-INSERT INTO "PositionPerks" ("ID") VALUES ('Frenzy');
-INSERT INTO "PositionPerks" ("ID") VALUES ('WayOfGnome');
-INSERT INTO "PositionPerks" ("ID") VALUES ('Scout');
-INSERT INTO "PositionPerks" ("ID") VALUES ('Guard');
-INSERT INTO "PositionPerks" ("ID") VALUES ('Marksman');
 INSERT INTO "Quality" ("ID","Rank","Modifier") VALUES ('Acceptable',1,0.8);
 INSERT INTO "Quality" ("ID","Rank","Modifier") VALUES ('Average',2,1.0);
 INSERT INTO "Quality" ("ID","Rank","Modifier") VALUES ('Good',3,1.2);

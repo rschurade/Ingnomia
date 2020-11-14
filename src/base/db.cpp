@@ -54,8 +54,6 @@ void DB::init()
 			qDebug() << destQuery.lastError();
 		}
 	}
-
-	resetLiveTables();
 }
 
 QSqlDatabase& DB::getDB()
@@ -77,22 +75,6 @@ QSqlDatabase& DB::getDB()
 		m_connections[thread] = db;
 	}
 	return m_connections[thread];
-}
-
-void DB::resetLiveTables()
-{
-	return;
-	// drop live tables
-	execQuery( "DROP TABLE IF EXISTS \"v_Items\"" );
-
-	//create live tables
-	QString qs = "CREATE TABLE v_Items (UID BIGINT, position VARCHAR, spriteID BIGINT, itemUID INTEGER, materialUID INTEGER, itemSID VARCHAR, materialSID VARCHAR, category VARCHAR, \"group\" VARCHAR, pickedUp BOOLEAN, isConstructed BOOLEAN, inStockpile BIGINT, inJob BIGINT, isContainer BOOLEAN, inContainer BIGINT, madeBy BIGINT, quality INTEGER, \"value\" INTEGER, eatValue INTEGER, drinkValue INTEGER, color VARCHAR, hasComponents BOOLEAN, componentOf BIGINT, isTool BOOLEAN, lightIntensity INTEGER, stackSize INTEGER )";
-	execQuery( qs );
-
-	//prepare queries
-	m_itemCreateQuery = QSqlQuery();
-
-	m_itemCreateQuery.prepare( "INSERT INTO v_Items ( UID, position, spriteID, itemUID, materialUID, itemSID, materialSID, category, \"group\", pickedUp, isConstructed, inStockpile, inJob, isContainer, inContainer, madeBy , quality, \"value\", eatValue, drinkValue, color, hasComponents, componentOf, isTool, lightIntensity, stackSize ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
 }
 
 int DB::getAccessCounter()

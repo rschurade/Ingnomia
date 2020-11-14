@@ -109,7 +109,6 @@ QSet<QString> Global::craftable;
 void Global::reset()
 {
 	qDebug() << "*** Global reset";
-	DB::resetLiveTables();
 
 	DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
 	Util::ticksPerMinute = DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
