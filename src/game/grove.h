@@ -72,7 +72,7 @@ public:
 	Grove();
 	Grove( QList<QPair<Position, bool>> tiles );
 	Grove( QVariantMap vals );
-	~Grove();
+	virtual ~Grove();
 
 	QVariant serialize();
 

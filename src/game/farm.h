@@ -77,7 +77,7 @@ public:
 	Farm();
 	Farm( QList<QPair<Position, bool>> tiles );
 	Farm( QVariantMap vals );
-	~Farm();
+	virtual ~Farm();
 
 	QVariant serialize();
 

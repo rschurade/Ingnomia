@@ -129,7 +129,7 @@ class Creature : public Object
 public:
 	Creature( const Position& pos, QString name, Gender gender, QString species );
 	Creature( QVariantMap in );
-	~Creature();
+	virtual ~Creature();
 
 	bool operator<( const Creature& other ) const
 	{

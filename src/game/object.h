@@ -28,7 +28,7 @@ public:
 	Object();
 	Object( const Position& position );
 	Object( QVariantMap in );
-	~Object();
+	virtual ~Object();
 
 	bool operator<( const Object& o ) const
 	{

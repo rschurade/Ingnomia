@@ -47,7 +47,7 @@ public:
 	Item( Position& pos, QString itemSID, QString materialSID );
 	Item( QVariantMap in );
 	Item( const Item& other );
-	~Item();
+	virtual ~Item();
 
 	virtual QVariant serialize() const;
 

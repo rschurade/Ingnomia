@@ -35,7 +35,7 @@ class Gnome : public CanWork
 public:
 	Gnome( Position& pos, QString name, Gender gender );
 	Gnome( QVariantMap& in );
-	~Gnome();
+	virtual ~Gnome();
 
 	virtual void init();
 

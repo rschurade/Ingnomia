@@ -29,7 +29,7 @@ class WorldObject
 public:
 	WorldObject();
 	WorldObject( QVariantMap vals );
-	~WorldObject();
+	virtual ~WorldObject();
 
 	void serialize( QVariantMap& out );
 

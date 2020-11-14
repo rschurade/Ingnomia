@@ -26,7 +26,7 @@ class Monster : public Creature
 public:
 	Monster( QString species, int level, Position& pos, Gender gender );
 	Monster( QVariantMap in );
-	~Monster();
+	virtual ~Monster();
 
 	virtual void init();
 
