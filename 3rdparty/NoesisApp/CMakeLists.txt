@@ -127,6 +127,7 @@ if(UNIX)
 	target_link_libraries(${PROJECT_NAME}
 		PUBLIC
 			OpenGL::GL
-			${CMAKE_THREAD_LIBS_INIT}
+			Threads::Threads
+			${CMAKE_DL_LIBS}
 	)
 endif()
