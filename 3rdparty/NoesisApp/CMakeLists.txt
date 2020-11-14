@@ -121,10 +121,12 @@ source_group(TREE "${NOESIS_ROOT}/Src/Packages" PREFIX "Resources" FILES ${NOESI
 source_group(TREE "${NOESIS_ROOT}/Include" PREFIX "Core" FILES ${NOESIS_CORE_INCLUDES})
 
 if(UNIX)
-	# NoesisApp requires pthread on Linux
+	# NoesisApp requires several additional libraries on Linux
 	find_package(Threads REQUIRED)
+	find_package(OpenGL REQUIRED)
 	target_link_libraries(${PROJECT_NAME}
 		PUBLIC
+			OpenGL::GL
 			${CMAKE_THREAD_LIBS_INIT}
 	)
 endif()
