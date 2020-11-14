@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - colors for skill buttons in population overview
 - colors for population schedule buttons
 - blacksmith recipe for metal needle
+- honey wine
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm
@@ -37,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - removed key triggers from xamls
 - use only one save game for auto save
 - improved auto craft behavior
+- honey can be stored in barrels
 
 
 ### Removed

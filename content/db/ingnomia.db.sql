@@ -4300,6 +4300,7 @@ INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTim
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Bread',1,NULL,'Bread',20.0,NULL,'Grain','Cooking');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Beer',1,NULL,'Beer',20.0,NULL,'Grain','Brewing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Wine',1,NULL,'Wine',20.0,NULL,'Berries','Brewing');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('HoneyWine',1,NULL,'Wine',20.0,NULL,'Honey','Brewing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('FruitWine',1,NULL,'Wine',20.0,NULL,'Fruit','Brewing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('DyedTable',1,'$Dye','Table',20.0,NULL,'Wood','Dying');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('DyedPlank',1,'$Dye','Plank',20.0,NULL,'Wood','Dying');
@@ -4531,6 +4532,7 @@ INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","A
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('Beer',NULL,NULL,1,'Grain',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('Wine',NULL,NULL,1,'Berries',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('FruitWine',NULL,NULL,1,'Fruit',NULL);
+INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('HoneyWine',NULL,NULL,1,'Honey',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('DyedTable',NULL,'Wood',1,'Table',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('DyedTable',NULL,NULL,1,'Dye',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('DyedPlank',NULL,NULL,1,'Plank',NULL);
@@ -5072,6 +5074,7 @@ INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Bread',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Beer',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Wine',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('FruitWine',1.0);
+INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('HoneyWine',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('Bar',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('BronzeBar',1.0);
 INSERT INTO "Crafts_SkillGain" ("ID","Value") VALUES ('SteelBar',1.0);
@@ -5254,6 +5257,7 @@ INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Bread','TechFood'
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Beer','TechFood',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Wine','TechFood',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('FruitWine','TechFood',1.0);
+INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('HoneyWine','TechFood',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('Bar','TechMetal',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('BronzeBar','TechMetal',1.0);
 INSERT INTO "Crafts_TechGain" ("ID","TechID","Value") VALUES ('SteelBar','TechMetal',1.0);
@@ -6006,7 +6010,7 @@ INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQual
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('Flour','FlourSack','Food','Other',1,0,58,0,0,0,0,0,0,'Grain',NULL,'Sack','Wheelbarrow',0,0);
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('BoneBedFrame','BoneBedFrame','Furniture','Parts',1,1,7,0,0,0,0,0,0,'Bone',NULL,NULL,NULL,0,0);
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('Hay','Hay','Grown','Plant',20,0,1,0,0,0,0,0,0,'Grass','Grass',NULL,'Wheelbarrow',0,0);
-INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('Honey','Honey','Food','Other',1,0,1,0,0,0,0,0,0,NULL,'Bee',NULL,NULL,0,0);
+INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('Honey','Honey','Food','Other',1,0,1,0,0,0,0,0,0,NULL,'Bee',"Barrel",NULL,0,0);
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('HammerHead','HammerHead','Weapons','WeaponsComponents',1,1,140,0,0,0,0,0,0,'Metal|Stone',NULL,'Crate',NULL,0,NULL);
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('WarhammerHead','WarhammerHead','Weapons','WeaponsComponents',1,1,140,0,0,0,0,0,0,'Metal|Stone',NULL,'Crate',NULL,0,NULL);
 INSERT INTO "Items" ("ID","SpriteID","Category","ItemGroup","StackSize","HasQuality","Value","EatValue","DrinkValue","IsContainer","IsTool","LightIntensity","HasComponents","AllowedMaterialTypes","AllowedMaterials","AllowedContainers","CarryContainer","AttackValue","BurnValue") VALUES ('Hammer','Hammer','Weapons','WeaponsMetal',1,1,150,0,0,0,0,0,0,NULL,NULL,'Crate',NULL,10,NULL);
@@ -11947,6 +11951,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_FellingAxeHead','fel
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_File','file');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Furnace','furnace');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_FruitWine','fruit wine');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_HoneyWine','honey wine');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Gauntlet','gauntlet');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Gear','gear');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Gearbox','gearbox');
@@ -15994,7 +15999,7 @@ INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","No
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Stonecutter','Block',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Stone');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Stonemason','StoneChair|StoneTable|StoneSawblade|KnifeBlade|PickaxeHeadStone|Chisel',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Stone');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Kitchen','FlourKitchen|Bread|Sausage|Sandwich|Cheese|CheeseOmelette|SausageOmelette|MushroomOmelette',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Food');
-INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Distillery','Beer|Wine|FruitWine',NULL,'0 -1 0','1 0 0','3 3',NULL,NULL,'Food');
+INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Distillery','Beer|Wine|FruitWine|HoneyWine',NULL,'0 -1 0','1 0 0','3 3',NULL,NULL,'Food');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Dyer','RedDye|GreenDye|BlueDye|PurpleDye|YellowDye|CyanDye|DyedTable|DyedPlank|DyedBolt|DyeHair','Dyer','0 1 0','0 -1 0','3 3','true',NULL,'Craft');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Forge','Bar|BronzeBar|SteelBar|RoseGoldBar|Anvil|SliverBar',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Metal');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Furnace','RawCoal',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Wood');
