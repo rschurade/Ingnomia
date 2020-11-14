@@ -1175,7 +1175,6 @@ INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Badger'
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Badger',1.0,'Bone',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Sheep',4.0,'Meat',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Sheep',2.0,'Bone',NULL);
-INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Badger',2.0,'Meat',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Lizzard',2.0,'Meat',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('Squirrel',2.0,'Meat',NULL);
 INSERT INTO "Animals_OnButcher" ("ID","Amount","ItemID","Type") VALUES ('BlackBear',6.0,'Meat',NULL);
@@ -6317,6 +6316,7 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Fox','
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Wolf','255 255 255 255',0.1,'Animal',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Deer','255 255 255 255',0.1,'Animal',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Badger','255 255 255 255',0.1,'Animal',1.0);
+INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('BlackBear','255 255 255 255',0.1,'Animal',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Goat','255 255 255 255',0.1,'Animal',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Squirrel','255 255 255 255',0.1,'Animal',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('GreyFish','255 255 255 255',0.1,'Animal',1.0);
@@ -6339,6 +6339,7 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('WolfBo
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('DeerBone','255 255 255 255',0.1,'Bone',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('GoatBone','255 255 255 255',0.1,'Bone',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('BadgerBone','255 255 255 255',0.1,'Bone',1.0);
+INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('BlackBearBone','255 255 255 255',0.1,'Bone',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('SquirrelBone','255 255 255 255',0.1,'Bone',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('GreyFishBone','255 255 255 255',0.1,'Bone',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('GreenFishBone','255 255 255 255',0.1,'Bone',1.0);
@@ -12170,6 +12171,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Fox','fox');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Wolf','wolf');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Deer','deer');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Badger','badger');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_BlackBear','black bear');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Goat','goat');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Squirrel','squirrel');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_GreenFish','green');
@@ -12191,7 +12193,8 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_FoxBone','fox bon
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_WolfBone','wolf bone');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_DeerBone','deer bone');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_GoatBone','goat bone');
-INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_badgerBone','badger bone');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_BadgerBone','badger bone');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_BlackBearBone','black bear bone');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_SquirrelBone','squirrel bone');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_GreenFishBone','green bone');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_GreyFishBone','grey bone');
