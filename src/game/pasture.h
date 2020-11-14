@@ -74,7 +74,7 @@ public:
 	Pasture( QList<QPair<Position, bool>> tiles );
 	Pasture( QVariantMap vals );
 	//Pasture( const Pasture& other );
-	virtual ~Pasture();
+	~Pasture();
 
 	QVariant serialize();
 

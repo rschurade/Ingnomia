@@ -26,7 +26,7 @@ class Automaton : public Gnome
 public:
 	Automaton( Position pos, unsigned int automatonItem );
 	Automaton( QVariantMap& in );
-	virtual ~Automaton();
+	~Automaton();
 
 	virtual void init();
 

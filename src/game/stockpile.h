@@ -69,7 +69,7 @@ public:
 	Stockpile();
 	Stockpile( QList<QPair<Position, bool>> tiles );
 	Stockpile( QVariantMap vals );
-	virtual ~Stockpile();
+	~Stockpile();
 
 	QVariant serialize();
 	void pasteSettings( QVariantMap vals );

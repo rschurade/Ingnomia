@@ -117,7 +117,7 @@ class Workshop : public WorldObject
 public:
 	Workshop();
 	Workshop( QVariantMap values );
-	virtual ~Workshop();
+	~Workshop();
 
 	QVariant serialize();
 

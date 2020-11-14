@@ -30,7 +30,7 @@ public:
 	Animal( QString species, Position& pos, Gender gender, bool adult );
 	Animal( QVariantMap in );
 	Animal();
-	virtual ~Animal();
+	~Animal();
 
 	virtual void init();
 
