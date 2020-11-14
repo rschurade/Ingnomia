@@ -91,6 +91,11 @@ jobs:
       run: |
         cmake --install . --prefix ../install --config ${{env.BUILD_TYPE}}
 
+    - name: Find msbuild
+      if: (startsWith(matrix.os, 'windows'))
+      uses: microsoft/setup-msbuild@v1.0.1
+      id: msbuild
+
     - name: Build Blend project
       if: (startsWith(matrix.os, 'windows'))
       working-directory: ${{github.workspace}}/gui
