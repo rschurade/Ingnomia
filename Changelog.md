@@ -41,6 +41,7 @@ All notable changes to this project will be documented in this file.
 - use only one save game for auto save
 - improved auto craft behavior
 - honey can be stored in barrels
+- greatly reduced bone drops from butchering
 
 
 ### Removed
