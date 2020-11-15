@@ -159,8 +159,7 @@ void JobManager::onTick()
 
 		if ( timer.elapsed() > 3 )
 		{
-			m_returnedJobQueue += skippedJobs;
-			return;
+			break;
 		}
 	}
 	m_returnedJobQueue += skippedJobs;
@@ -195,7 +194,7 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 			if( Global::craftable.contains( rim.itemSID ) )
 			{
 				// create craft job
-				bool success = Global::wsm().autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
+				Global::wsm().autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
 			}
 		}
 	}
