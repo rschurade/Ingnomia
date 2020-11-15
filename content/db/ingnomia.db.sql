@@ -6060,7 +6060,7 @@ INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('Fish',NULL,200,NULL,'0 0 0','Fish');
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('Mine',NULL,50,NULL,'0 0 0','MineWall');
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('DigHole',NULL,20,NULL,'0 0 0','DigHole');
-INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('ExplorativeMine',NULL,10,NULL,'0 0 0','ExplorativeMineWall');
+INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('ExplorativeMine',NULL,50,NULL,'0 0 0','ExplorativeMineWall');
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('RemoveRamp',NULL,50,NULL,'0 0 0','RemoveRamp');
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('RemoveFloor',NULL,50,NULL,'0 0 0','MineFloor');
 INSERT INTO "Jobs_Tasks" ("ID","ConstructionID","Duration","Material","Offset","Task") VALUES ('Deconstruct',NULL,50,NULL,'0 0 0','Deconstruct');
