@@ -52,7 +52,7 @@ If you prefer, you may also try to reproduce bugs reported by other users. The m
 
 ### Code contributions ###
 
-If you know any of C++ or WPF, you can help right away! Feel free to check for open bugs, and hop over to our [Discord](https://discord.gg/DCSmxVD) channel to get you sorted in.
+If you know any of C++ or XAML you can help right away! Feel free to check for open bugs, and hop over to our [Discord](https://discord.gg/DCSmxVD) channel to get you sorted in.
 
 Please provide your contributions in the form of a pull request, rebased onto the current head of development.
 
