@@ -153,7 +153,7 @@ void main()
 				{
 					vec4 roughFloor = getTexel( uUndiscoveredTex + 12, 0, 0 );
 					float interpol = 1.0 - ( float( vVegetationLevel ) / 100. );
-					tmpTexel = mix( tmpTexel, roughFloor, interpol );
+					tmpTexel.rgb = mix( tmpTexel.rgb, roughFloor.rgb, interpol );
 				}
 
 				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
