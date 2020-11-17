@@ -66,13 +66,13 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-tilesheet
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip'
 
     - name: Unpack Tilesheets
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
-        pathTarget: ${{github.workspace}}/content
+        pathTarget: content
 
     - name: Fix permissions
       if: (!startsWith(matrix.os, 'windows'))
