@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - butchering animal corpses
 - explorative mining speed now the same as mining
 - jobs with missing materials not returned to job queue correctly
+- visual corruptions on AMD GPUs
+- some alpha blending issues
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur

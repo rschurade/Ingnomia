@@ -211,7 +211,7 @@ void MainWindowRenderer::cleanup()
 void MainWindowRenderer::cleanupWorld()
 {
 	m_parent->makeCurrent();
-	glDeleteTextures( 8, m_textures );
+	glDeleteTextures( 32, m_textures );
 	memset( m_textures, 0, sizeof( m_textures ) );
 	glDeleteBuffers( 1, &m_tileBo );
 	m_tileBo = 0;
@@ -363,7 +363,7 @@ bool MainWindowRenderer::initShaders()
 	return true;
 }
 
-void MainWindowRenderer::createArrayTexture( int unit, int depth, const QVector<uint8_t>& data )
+void MainWindowRenderer::createArrayTexture( int unit, int depth )
 {
 	//GLint max_layers;
 	//glGetIntegerv ( GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers );
@@ -371,23 +371,32 @@ void MainWindowRenderer::createArrayTexture( int unit, int depth, const QVector<
 	glActiveTexture( GL_TEXTURE0 + unit );
 	glGenTextures( 1, &m_textures[unit] );
 	glBindTexture( GL_TEXTURE_2D_ARRAY, m_textures[unit] );
-	glTexImage3D( GL_TEXTURE_2D_ARRAY,
-				  0,                // mipmap level
-				  GL_RGBA8,         // gpu texel format
-				  32,               // width
-				  64,               // height
-				  depth,            // depth
-				  0,                // border
-				  GL_RGBA,          // cpu pixel format
-				  GL_UNSIGNED_BYTE, // cpu pixel coord type
-				  &data[0] );       // pixel data
-
-	//glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
+	glTexStorage3D(
+		GL_TEXTURE_2D_ARRAY,
+		1,             // No mipmaps
+		GL_RGBA8,      // Internal format
+		32, 64,        // width,height
+		depth          // Number of layers
+	);
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	//glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 4 );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 0 );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+}
+
+void MainWindowRenderer::uploadArrayTexture( int unit, int depth, const uint8_t* data )
+{
+	glActiveTexture( GL_TEXTURE0 + unit );
+	glTexSubImage3D(
+		GL_TEXTURE_2D_ARRAY,
+		0,                // Mipmap number
+		0, 0, 0,          // xoffset, yoffset, zoffset
+		32, 64, depth,    // width, height, depth
+		GL_RGBA,          // format
+		GL_UNSIGNED_BYTE, // type
+		data
+	);
 }
 
 void MainWindowRenderer::initTextures()
@@ -404,10 +413,16 @@ void MainWindowRenderer::initTextures()
 
 	int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
 
+	for ( int i = 0; i < 32; ++i )
+	{
+		createArrayTexture( i, maxArrayTextures );
+	}
+
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
-		createArrayTexture( i, maxArrayTextures, sf.pixelData( i ) );
+		uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
 	}
+
 
 	//qDebug() << "stored " << maxArrayTextures << " pixmaps in array texture";
 
@@ -838,15 +853,13 @@ void MainWindowRenderer::updateTextures()
 	{
 		DebugScope s( "update textures" );
 
-		glDeleteTextures( m_texesUsed, &m_textures[0] );
-
 		m_texesUsed = sf.texesUsed();
 
 		int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
-			createArrayTexture( i, maxArrayTextures, sf.pixelData( i ) );
+			uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
 		}
 	}
 }

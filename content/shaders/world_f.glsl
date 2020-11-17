@@ -70,15 +70,31 @@ const vec3 perceivedBrightness = vec3(0.299, 0.587, 0.114);
 
 vec4 getTexel( uint spriteID, uint rot, uint animFrame )
 {
-	uint tex = ( spriteID + animFrame ) / 512;
-	uint localID = ( ( spriteID + animFrame ) - ( tex * 512 ) ) * 4 + rot;
+	uint absoluteId = ( spriteID + animFrame ) * 4;
+	uint tex = absoluteId / 2048;
+	uint localBaseId = absoluteId % 2048;
+	uint localID = localBaseId + rot;
 	
-	return texture( uTexture[tex], vec3( vTexCoords, localID  ) );
+	ivec3 samplePos = ivec3( vTexCoords.x * 32, vTexCoords.y * 64, localID);
+
+	// Need to unroll each access to texelFetch with a different element from uTexture into a distinct instruction
+	// Otherwise we are triggering a bug on AMD GPUs, where threads start sampling from the wrong texture
+	#define B(X) case X: return texelFetch( uTexture[X], samplePos, 0);
+	#define C(X) B(X) B(X+1) B(X+2) B(X+3)
+	#define D(X) C(X) C(X+4) C(X+8) C(X+12)
+	switch(tex)
+	{
+		D(0)
+		D(16)
+	}
+	#undef D
+	#undef C
+	#undef B
 }
 
 void main()
 {
-	vec4 texel = vec4(0.0);
+	vec4 texel = vec4( 0,  0,  0, 0 );
 	
 	uint rot = 0;
 	uint spriteID = 0;
@@ -112,7 +128,10 @@ void main()
 		{
 			if( !uWallsLowered )
 			{
-				texel = texture( uTexture[0], vec3( vTexCoords, uUndiscoveredTex ) );
+				vec4 tmpTexel = getTexel( uUndiscoveredTex, 0, 0 );
+
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
 		}
 		else
@@ -128,14 +147,17 @@ void main()
 					animFrame = ( uTickNumber / 10 ) % 4;
 				}
 				
-				texel = getTexel( spriteID, rot, animFrame );
+				vec4 tmpTexel = getTexel( spriteID, rot, animFrame );
 				
 				if( ( vFlags & TF_GRASS ) != 0 )
 				{
-					vec4 roughFloor = texture( uTexture[0], vec3( vTexCoords, uUndiscoveredTex + 12 )  );
+					vec4 roughFloor = getTexel( uUndiscoveredTex + 12, 0, 0 );
 					float interpol = 1.0 - ( float( vVegetationLevel ) / 100. );
-					texel = mix( texel, roughFloor, interpol );
+					tmpTexel = mix( tmpTexel, roughFloor, interpol );
 				}
+
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
 			
 			spriteID = jobFloorSpriteID;
@@ -159,7 +181,9 @@ void main()
 					tmpTexel.g *= 0.7;
 					tmpTexel.b *= 0.3;
 				}
-				texel += tmpTexel;
+
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
 
 			if( uOverlay && 0 != ( vFlags & ( TF_STOCKPILE | TF_FARM | TF_GROVE | TF_PASTURE | TF_WORKSHOP | TF_ROOM | TF_NOPASS ) ) )
@@ -205,6 +229,7 @@ void main()
 				if( texel.a != 0 )
 				{
 					float brightness = dot(texel.rgb, perceivedBrightness.xyz);
+					// Preserve perceived brightness of original pixel during tinting, but drop saturation partially
 					texel.rgb = mix( roomColor, mix( texel.rgb, vec3(1,1,1) * brightness, 0.7), 0.7);
 				}
 				
@@ -224,7 +249,7 @@ void main()
 
 			const float fl = float( startLevel - 2 ) * flSize;
 
-			vec4 tmpTexel = vec4( 0 );
+			vec4 tmpTexel = vec4( 0, 0, 0, 0 );
 
 			if( ( vFluidFlags & WATER_FLOOR ) != 0 )
 			{
@@ -248,15 +273,9 @@ void main()
 				tmpTexel.a *= 0.5;
 			}
 
-			if( texel.a != 0 ) 
-			{
-				texel.rgb = mix( texel.rgb, tmpTexel.rgb, waterAlpha * tmpTexel.a );
-				texel.a = max(texel.a , tmpTexel.a);
-			}
-			else
-			{
-				texel = tmpTexel;
-			}
+
+			texel.rgb = mix( texel.rgb, tmpTexel.rgb, waterAlpha * tmpTexel.a );
+			texel.a = max(texel.a , tmpTexel.a);
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
@@ -272,7 +291,10 @@ void main()
 		{
 			if( !uWallsLowered )
 			{
-				texel = texture( uTexture[0], vec3( vTexCoords, uUndiscoveredTex ) );
+				vec4 tmpTexel = getTexel( uUndiscoveredTex, 0, 0 );
+
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
 		}
 		else
@@ -297,12 +319,9 @@ void main()
 				}
 				vec4 tmpTexel = getTexel( spriteID, rot, animFrame );
 				
-				if( tmpTexel.a != 0 ) 
-				{
-					texel = tmpTexel;
-				}
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
-			
 			
 			spriteID = itemSpriteID;
 			animFrame = 0;
@@ -313,13 +332,10 @@ void main()
 				
 				vec4 tmpTexel = getTexel( spriteID, rot, animFrame );
 				
-				if( tmpTexel.a != 0 ) 
-				{
-					texel = tmpTexel;
-				}
+				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+				texel.a = max(texel.a , tmpTexel.a);
 			}
 		}
-	
 	
 		spriteID = jobWallSpriteID;
 		animFrame = 0;
@@ -342,15 +358,9 @@ void main()
 				tmpTexel.g *= 0.7;
 				tmpTexel.b *= 0.3;
 			}
-			if( texel.a != 0 ) 
-			{
-				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
-				texel.a = max(texel.a , tmpTexel.a);
-			}
-			else
-			{
-				texel = tmpTexel;
-			}
+
+			texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+			texel.a = max(texel.a , tmpTexel.a);
 		}
 
 	
@@ -363,12 +373,9 @@ void main()
 			
 			vec4 tmpTexel = getTexel( spriteID, rot, animFrame );
 			
-			if( tmpTexel.a != 0 ) 
-			{
-				texel = tmpTexel;
-			}
+			texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
+			texel.a = max(texel.a , tmpTexel.a);
 		}
-		
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
@@ -383,7 +390,7 @@ void main()
 
 			const float fl = float( startLevel ) * flSize;
 
-			vec4 tmpTexel = vec4( 0 );
+			vec4 tmpTexel = vec4( 0, 0, 0, 0 );
 			
 			if( ( vFluidFlags & WATER_TOP ) != 0 )
 			{
@@ -401,15 +408,8 @@ void main()
 				}
 			}
 			
-			if( texel.a != 0 ) 
-			{
-				texel.rgb = mix( texel.rgb, tmpTexel.rgb, waterAlpha * tmpTexel.a );
-				texel.a = max(texel.a , tmpTexel.a);
-			}
-			else
-			{
-				texel = tmpTexel;
-			}
+			texel.rgb = mix( texel.rgb, tmpTexel.rgb, waterAlpha * tmpTexel.a );
+			texel.a = max(texel.a , tmpTexel.a);
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
@@ -418,14 +418,14 @@ void main()
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 
-	if( texel.a == 0 ) 
+	if( texel.a <= 0 )
 	{
 		discard;
 	}
 	else if(uPaintFrontToBack)
 	{
 		// Flush to 1 in case of front-to-back rendering
-		texel.a == 1;
+		texel.a = 1;
 	}
 	
 	

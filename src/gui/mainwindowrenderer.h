@@ -86,7 +86,8 @@ private:
 	void updateSelection();
 	void updatePositionAfterCWRotation( float& x, float& y );
 
-	void createArrayTexture( int unit, int depth, const QVector<uint8_t>& data );
+	void createArrayTexture( int unit, int depth );
+	void uploadArrayTexture( int unit, int depth, const uint8_t* data );
 	int m_texesUsed         = 0;
 	bool m_texesInitialized = false;
 
