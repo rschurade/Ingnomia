@@ -117,12 +117,6 @@ install(
 	DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(
-	FILES $<TARGET_PDB_FILE:${PROJECT_NAME}>
-	DESTINATION ${CMAKE_INSTALL_BINDIR}
-	OPTIONAL
-)
-
 get_target_property(STEAM_DLL Steam LOCATION)
 get_target_property(NOESIS_DLL Noesis LOCATION)
 list(APPEND RUNTIME_DLLS ${STEAM_DLL})
@@ -134,6 +128,14 @@ install(
 	DESTINATION
 		${CMAKE_INSTALL_BINDIR}
 )
+
+if(WIN32)
+	install(
+		FILES $<TARGET_PDB_FILE:${PROJECT_NAME}>
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+		OPTIONAL
+	)
+endif()
 
 # Deployment helpers for Windows
 if(WIN32)
