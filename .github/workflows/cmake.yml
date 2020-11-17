@@ -54,7 +54,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-noesis
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.6.zip'
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.7.zip'
 
     - name: Unpack Noesis
       uses: DuckSoft/extract-7z-action@v1.0
