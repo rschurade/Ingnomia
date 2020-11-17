@@ -15,10 +15,26 @@ uniform sampler2DArray uTexture[32];
 
 vec4 getTexel( uint spriteID, uint rot, uint animFrame )
 {
-	uint tex = ( spriteID + animFrame ) / 512;
-	uint localID = ( ( spriteID + animFrame ) - ( tex * 512 ) ) * 4 + rot;
+	uint absoluteId = ( spriteID + animFrame ) * 4;
+	uint tex = absoluteId / 2048;
+	uint localBaseId = absoluteId % 2048;
+	uint localID = localBaseId + rot;
 	
-	return texture( uTexture[tex], vec3( vTexCoords, localID  ) );
+	ivec3 samplePos = ivec3( vTexCoords.x * 32, vTexCoords.y * 64, localID);
+
+	// Need to unroll each access to texelFetch with a different element from uTexture into a distinct instruction
+	// Otherwise we are triggering a bug on AMD GPUs, where threads start sampling from the wrong texture
+	#define B(X) case X: return texelFetch( uTexture[X], samplePos, 0);
+	#define C(X) B(X) B(X+1) B(X+2) B(X+3)
+	#define D(X) C(X) C(X+4) C(X+8) C(X+12)
+	switch(tex)
+	{
+		D(0)
+		D(16)
+	}
+	#undef D
+	#undef C
+	#undef B
 }
 
 void main()
