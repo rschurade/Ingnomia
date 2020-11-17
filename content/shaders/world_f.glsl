@@ -128,7 +128,7 @@ void main()
 		{
 			if( !uWallsLowered )
 			{
-				vec4 tmpTexel = getTexel( uUndiscoveredTex / 4 + 1, 0, 0 );
+				vec4 tmpTexel = getTexel( uUndiscoveredTex / 4 + 2, 0, 0 );
 
 				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
 				texel.a = max(texel.a , tmpTexel.a);
