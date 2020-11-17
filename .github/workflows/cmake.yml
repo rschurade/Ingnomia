@@ -72,7 +72,7 @@ jobs:
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
-        pathTarget: content
+        pathTarget: ${{github.workspace}}/content
 
     - name: Fix permissions
       if: (!startsWith(matrix.os, 'windows'))
