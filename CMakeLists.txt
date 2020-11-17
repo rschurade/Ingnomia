@@ -60,6 +60,7 @@ target_sources(${PROJECT_NAME}
 	PRIVATE
 		Changelog.md
 		README.md
+		LICENSE
 )
 
 add_subdirectory(src) # Sources list
@@ -125,6 +126,8 @@ list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
 install(
 	FILES
 		${RUNTIME_DLLS}
+		Changelog.md
+		LICENSE
 	DESTINATION
 		${CMAKE_INSTALL_BINDIR}
 )
