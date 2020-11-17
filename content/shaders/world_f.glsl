@@ -128,7 +128,7 @@ void main()
 		{
 			if( !uWallsLowered )
 			{
-				vec4 tmpTexel = getTexel( uUndiscoveredTex, 0, 0 );
+				vec4 tmpTexel = getTexel( uUndiscoveredTex / 4 + 1, 0, 0 );
 
 				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
 				texel.a = max(texel.a , tmpTexel.a);
@@ -151,9 +151,10 @@ void main()
 				
 				if( ( vFlags & TF_GRASS ) != 0 )
 				{
-					vec4 roughFloor = getTexel( uUndiscoveredTex + 12, 0, 0 );
+					vec4 roughFloor = getTexel( uUndiscoveredTex / 4 + 3, 0, 0 );
 					float interpol = 1.0 - ( float( vVegetationLevel ) / 100. );
-					tmpTexel.rgb = mix( tmpTexel.rgb, roughFloor.rgb, interpol );
+					tmpTexel.rgb = mix( tmpTexel.rgb, roughFloor.rgb, interpol * roughFloor.a );
+					texel.a = max(tmpTexel.a , roughFloor.a);
 				}
 
 				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
@@ -291,7 +292,7 @@ void main()
 		{
 			if( !uWallsLowered )
 			{
-				vec4 tmpTexel = getTexel( uUndiscoveredTex, 0, 0 );
+				vec4 tmpTexel = getTexel( uUndiscoveredTex / 4, 0, 0 );
 
 				texel.rgb = mix( texel.rgb, tmpTexel.rgb, tmpTexel.a );
 				texel.a = max(texel.a , tmpTexel.a);
