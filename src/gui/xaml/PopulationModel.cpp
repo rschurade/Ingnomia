@@ -104,6 +104,7 @@ GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCol
 	m_id        = gnome.id;
 	m_idString  = QString::number( gnome.id ).toStdString().c_str();
 	m_name      = gnome.name.toStdString().c_str();
+	m_professionName = gnome.profession;
 
 	m_skills = *new ObservableCollection<GnomeSkill>();
 
@@ -117,6 +118,20 @@ GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCol
 	for( int i = 0; i < m_professions->Count(); ++i )
 	{
 		if( m_professions->Get( i )->GetName() == gnome.profession )
+		{
+			SetProfession( m_professions->Get( i ) );
+			break;
+		}
+	}
+}
+
+void GnomeRow::updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions )
+{
+	m_professions = professions;
+
+	for( int i = 0; i < m_professions->Count(); ++i )
+	{
+		if( m_professions->Get( i )->GetName() == m_professionName )
 		{
 			SetProfession( m_professions->Get( i ) );
 			break;
@@ -270,6 +285,12 @@ void PopulationModel::updateProfessionList( const QStringList& professions )
 	{
 		SetProfession( m_professions->Get( 0 ) );
 	}
+
+	for( int i = 0; i < m_gnomes->Count(); ++i )
+	{
+		m_gnomes->Get( i )->updateProfessionList( m_professions );
+	}
+
 	OnPropertyChanged( "Professions" );
 }
 

@@ -102,10 +102,13 @@ public:
 
 	unsigned int gnomeID() { return m_id; }
 
+	void updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions );
+
 private:
 	Noesis::String m_name;
 	unsigned int m_id;
 	Noesis::String m_idString;
+	QString m_professionName;
 
 	Noesis::ObservableCollection<GnomeSkill>* GetSkills() const
 	{

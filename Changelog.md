@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - visual corruptions on AMD GPUs
 - some alpha blending issues
 - uiscale reverting to 100%
+- crash when adding or deleting a custom profession
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
