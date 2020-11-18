@@ -128,7 +128,7 @@ GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCol
 void GnomeRow::updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions )
 {
 	m_professions = professions;
-
+	m_selectedProfession = nullptr;
 	for( int i = 0; i < m_professions->Count(); ++i )
 	{
 		if( m_professions->Get( i )->GetName() == m_professionName )
@@ -136,6 +136,10 @@ void GnomeRow::updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<Pr
 			SetProfession( m_professions->Get( i ) );
 			break;
 		}
+	}
+	if ( m_selectedProfession == nullptr )
+	{
+		SetProfession( m_professions->Get( 0 ) );
 	}
 }
 
