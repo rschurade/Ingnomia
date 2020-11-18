@@ -33,7 +33,7 @@ AggregatorSettings::~AggregatorSettings()
 void AggregatorSettings::onRequestSettings()
 {
     m_settings.fullscreen = Config::getInstance().get( "fullscreen" ).toBool();
-    m_settings.scale = qMax( 1.0f, Config::getInstance().get( "uiscale" ).toFloat() );
+    m_settings.scale = qMax( 0.5f, Config::getInstance().get( "uiscale" ).toFloat() );
     m_settings.keyboardSpeed = qMax( 20, Config::getInstance().get( "keyboardMoveSpeed" ).toInt() );
     m_settings.languages.clear();
     m_settings.languages.append( "en_US" );

@@ -74,9 +74,9 @@ bool Config::init()
 	{
 		m_settings.insert( "AutoSaveInterval", 3 );
 	}
-	if ( !m_settings.contains( "GUIScale" ) )
+	if ( !m_settings.contains( "uiscale" ) )
 	{
-		m_settings.insert( "GUIScale", 1.0 );
+		m_settings.insert( "uiscale", 1.0 );
 	}
 	m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
 
@@ -99,4 +99,6 @@ QVariant Config::get( QString key )
 void Config::set( QString key, QVariant value )
 {
 	m_settings[key] = value;
+
+	IO::saveConfig();
 }

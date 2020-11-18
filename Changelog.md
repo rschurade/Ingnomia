@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - jobs with missing materials not returned to job queue correctly
 - visual corruptions on AMD GPUs
 - some alpha blending issues
+- uiscale reverting to 100%
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
