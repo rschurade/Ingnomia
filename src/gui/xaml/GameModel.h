@@ -152,6 +152,7 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> m_requiredItems;
 
 	const char* GetShowReplaceButton() const;
+	const char* GetShowFillHoleButton() const;
 
 	void onCmdBuild( BaseComponent* param );
 

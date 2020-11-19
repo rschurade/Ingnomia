@@ -441,6 +441,8 @@
 					</ItemsControl.ItemsPanel>
 				</ItemsControl>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Button Content="Fill Hole" HorizontalAlignment="Right" Margin="2" Padding="2" Visibility="{Binding ShowFillHoleButton}"
+						Command="{Binding Build}" CommandParameter="FillHole"/>
 					<Button Content="Replace" HorizontalAlignment="Right" Margin="2" Padding="2" Visibility="{Binding ShowReplaceButton}"
 						Command="{Binding Build}" CommandParameter="Replace"/>
 					<Button Content="Build" HorizontalAlignment="Right" Margin="2" Padding="2" Command="{Binding Build}" CommandParameter="Build"/>

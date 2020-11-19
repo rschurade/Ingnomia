@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - colors for population schedule buttons
 - blacksmith recipe for metal needle
 - honey wine
+- fill hole command
 
 ### Changed
 - more info for jobs  PR #91 by rivenwyrm

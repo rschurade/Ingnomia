@@ -209,6 +209,18 @@ const char* BuildItem::GetShowReplaceButton() const
 	return "Hidden";
 }
 
+const char* BuildItem::GetShowFillHoleButton() const
+{
+	if( m_type == BuildItemType::Terrain )
+	{
+		if( m_sid.endsWith( "Wall" ) || m_sid.startsWith( "FancyWall" ) )
+		{
+			return "Visible";
+		}
+	}
+	return "Hidden";
+}
+
 const ImageSource* BuildItem::getBitmapSource() const
 {
 	return m_bitmapSource;
@@ -234,9 +246,18 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		case BuildItemType::Terrain:
 		{
 			QString type = DB::select( "Type", "Constructions", m_sid ).toString();
+			
 			if( param )
 			{
-				Selection::getInstance().setAction( param->ToString().Str() + type );
+				QString qParam = param->ToString().Str();
+				if( qParam == "FillHole" )
+				{
+					Selection::getInstance().setAction( qParam );
+				}
+				else
+				{
+					Selection::getInstance().setAction( qParam + type );
+				}
 			}
 			else
 			{
@@ -1523,6 +1544,7 @@ NS_IMPLEMENT_REFLECTION( BuildItem )
 	NsProp( "RequiredItems", &BuildItem::requiredItems );
 	NsProp( "Build", &BuildItem::GetCmdBuild );
 	NsProp( "ShowReplaceButton", &BuildItem::GetShowReplaceButton );
+	NsProp( "ShowFillHoleButton", &BuildItem::GetShowFillHoleButton );
 	NsProp( "Image", &BuildItem::getBitmapSource );
 }
 

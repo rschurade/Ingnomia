@@ -44,7 +44,7 @@ bool World::constructWorkshop( QString constructionSID, Position pos, int rotati
 {
 	if ( itemUIDs.empty() )
 	{
-		qDebug() << "World::constructWorkshop() - source item list is empty!";
+		//qDebug() << "World::constructWorkshop() - source item list is empty!";
 		return false;
 	}
 	//qDebug() << "world::constructWorkshop() " << constructionSID << pos.toString() << rotation;
@@ -58,11 +58,11 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 {
 	if ( itemIDs.empty() )
 	{
-		qDebug() << "World::construct() - source item list is empty!";
+		//qDebug() << "World::construct() - source item list is empty!";
 		return false;
 	}
 
-	qDebug() << "world::construct() " << constructionSID << pos.toString() << rotation;
+	//qDebug() << "world::construct() " << constructionSID << pos.toString() << rotation;
 	QVariantMap con = DB::selectRow( "Constructions", constructionSID );
 	QString type    = con.value( "Type" ).toString();
 	
@@ -81,7 +81,7 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 		}
 		else
 		{
-			qDebug() << "Souce item no longer exists!" << vItem;
+			//qDebug() << "Source item no longer exists!" << vItem;
 			return false;
 		}
 	}
@@ -977,7 +977,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 
 	if ( Global::inv().itemSID( itemID ) != itemSID )
 	{
-		qDebug() << "create item from components before installing";
+		//qDebug() << "create item from components before installing";
 		auto vItems = Util::uintList2Variant( items );
 		itemID      = Global::inv().createItem( pos, itemSID, vItems );
 		constr.insert( "Items", vItems );
