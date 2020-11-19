@@ -49,7 +49,6 @@ enum CONSTRUCTION_ID
 	CID_STAIRS,
 	CID_RAMP,
 	CID_RAMPCORNER,
-	CID_SCAFFOLD,
 	CID_ITEM,
 	CID_WORKSHOP
 };
@@ -108,7 +107,6 @@ private:
 	bool constructStairs( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructRamp( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructRampCorner( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
-	bool constructScaffold( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructWorkshop( QVariantMap& con, Position pos, int rotation, QVariantList items, Position extractTo );
 	bool constructPipe( QString type, Position pos, unsigned int itemUID );
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );

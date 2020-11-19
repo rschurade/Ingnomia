@@ -55,7 +55,6 @@ World::World()
 	m_constructionSID2ENUM.insert( "Stairs", CID_STAIRS );
 	m_constructionSID2ENUM.insert( "Ramp", CID_RAMP );
 	m_constructionSID2ENUM.insert( "RampCorner", CID_RAMPCORNER );
-	m_constructionSID2ENUM.insert( "Scaffold", CID_SCAFFOLD );
 	m_constructionSID2ENUM.insert( "Item", CID_ITEM );
 	m_constructionSID2ENUM.insert( "Workshop", CID_WORKSHOP );
 
