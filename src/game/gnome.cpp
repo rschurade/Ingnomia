@@ -29,6 +29,8 @@
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/world.h"
+#include "../game/workshop.h"
+#include "../game/workshopmanager.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
@@ -714,6 +716,11 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 		{
 			Global::logger().log( LogType::COMBAT, m_name + "died. Bummer!", m_id );
 			m_isDead = true;
+			Workshop* assignedWorkshop  = Global::wsm().workshop( m_assignedWorkshop );
+			if ( assignedWorkshop )
+			{
+				assignedWorkshop->assignGnome( 0 );
+			}
 			// TODO check for other statuses
 		}
 	}
