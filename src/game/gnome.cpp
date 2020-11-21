@@ -716,11 +716,6 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 		{
 			Global::logger().log( LogType::COMBAT, m_name + "died. Bummer!", m_id );
 			m_isDead = true;
-			Workshop* assignedWorkshop  = Global::wsm().workshop( m_assignedWorkshop );
-			if ( assignedWorkshop )
-			{
-				assignedWorkshop->assignGnome( 0 );
-			}
 			// TODO check for other statuses
 		}
 	}
@@ -728,6 +723,12 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	if ( m_isDead )
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
+		Workshop* assignedWorkshop = Global::wsm().workshop( m_assignedWorkshop );
+		if ( assignedWorkshop )
+		{
+			assignedWorkshop->assignGnome( 0 );
+			assignWorkshop( 0 );
+		}
 		cleanUpJob( false );
 		updateSprite();
 		m_expires    = GameState::tick + Util::ticksPerDay * 2;
