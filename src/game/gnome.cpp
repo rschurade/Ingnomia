@@ -723,11 +723,12 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	if ( m_isDead )
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
-		Workshop* assignedWorkshop = Global::wsm().workshop( m_assignedWorkshop );
-		if ( assignedWorkshop )
+		for ( Workshop* w: Global::wsm().workshops() )
 		{
-			assignedWorkshop->assignGnome( 0 );
-			assignWorkshop( 0 );
+			if ( w->assignedGnome() == id() )
+			{
+				w->assignGnome( 0 );
+			}
 		}
 		cleanUpJob( false );
 		updateSprite();
