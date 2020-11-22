@@ -846,14 +846,14 @@ Position Creature::currentTarget() const
 
 bool Creature::kill( bool nocorpse )
 {
-	if ( !m_toDestroy && !m_isDead )
+	if ( !toDestroy() && !isDead() )
 	{
 		//kill succeeds
 		if( nocorpse )
 		{
-			m_toDestroy = true;
+			destroy();
 		}
-		m_isDead = true;
+		die();
 		return true;
 	}
 	// already dead or something else destroyed it
@@ -1059,6 +1059,13 @@ void Creature::updateAttackValues()
 	m_leftHandAttackValue  = m_leftHandAttackSkill;
 	m_rightHandAttackSkill = getSkillLevel( "Unarmed" );
 	m_rightHandAttackValue = m_rightHandAttackSkill;
+}
+
+void Creature::die()
+{
+	m_isDead = true;
+	dropInventory();
+	dropEquipment();
 }
 
 void Creature::dropInventory()

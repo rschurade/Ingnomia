@@ -238,7 +238,7 @@ void Gnome::updateSprite()
 	m_spriteDef     = createSpriteDef( "Gnome", false );
 	m_spriteDefBack = createSpriteDef( "GnomeBack", true );
 
-	Global::sf().setCreatureSprite( m_id, m_spriteDef, m_spriteDefBack, m_isDead );
+	Global::sf().setCreatureSprite( m_id, m_spriteDef, m_spriteDefBack, isDead() );
 
 	m_renderParamsChanged = true;
 }
@@ -713,17 +713,15 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 		if ( status & AS_DEAD )
 		{
 			Global::logger().log( LogType::COMBAT, m_name + "died. Bummer!", m_id );
-			m_isDead = true;
+			die();
 			// TODO check for other statuses
 		}
 	}
 
-	if ( m_isDead )
+	if ( isDead() )
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
 		cleanUpJob( false );
-		dropInventory();
-		dropEquipment();
 		updateSprite();
 		m_expires    = GameState::tick + Util::ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
@@ -924,7 +922,7 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 				{
 					m_thoughtBubble = "";
 					cleanUpJob( false );
-					m_isDead = true;
+					die();
 					updateSprite();
 					if ( need == "Hunger" )
 					{
