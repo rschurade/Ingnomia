@@ -721,7 +721,6 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	if ( isDead() )
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
-		cleanUpJob( false );
 		m_expires    = GameState::tick + Util::ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
@@ -865,6 +864,12 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	return CreatureTickResult::OK;
 }
 
+void Gnome::die()
+{
+	Creature::die();
+	cleanUpJob( false );
+}
+
 bool Gnome::checkFloor()
 {
 	FloorType ft = Global::w().floorType( m_position );
@@ -920,7 +925,6 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 				if ( newVal < -100 )
 				{
 					m_thoughtBubble = "";
-					cleanUpJob( false );
 					die();
 					if ( need == "Hunger" )
 					{
