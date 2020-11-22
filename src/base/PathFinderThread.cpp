@@ -26,9 +26,9 @@
 
 #define DEADLYFLUIDLEVEL 6
 
-PathFinderThread::PathFinderThread( Position start, Position goal, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
+PathFinderThread::PathFinderThread( Position start, const std::vector<Position> &goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
 	m_start( start ),
-	m_goal( goal ),
+	m_goals( goals ),
 	m_ignoreNoPass( ignoreNoPass ),
 	m_callback( callback )
 {
@@ -40,10 +40,10 @@ PathFinderThread::~PathFinderThread()
 
 void PathFinderThread::run()
 {
-	m_callback( findPath() );
+	findPath();
 }
 
-bool PathFinderThread::evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier )
+bool PathFinderThread::evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
 	const Tile& tile = Global::w().getTile( next );
 
@@ -61,7 +61,7 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 				// then update costs and priority
 				oldPath.cost     = new_cost;
 				oldPath.previous = current;
-				double priority  = new_cost + heuristic( next, m_goal );
+				double priority  = new_cost + heuristic( next, goal );
 				frontier.put( next, priority );
 			}
 			return true;
@@ -70,7 +70,7 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 	return false;
 }
 
-bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier )
+bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
 	const Tile& rampTopTile = Global::w().getTile( rampPos );
 
@@ -95,7 +95,7 @@ bool PathFinderThread::evalRampPos( const Position& current, const Position& ram
 				// then update costs and priority
 				oldPath.cost     = new_cost;
 				oldPath.previous = current;
-				double priority  = new_cost + heuristic( next, m_goal );
+				double priority  = new_cost + heuristic( next, goal );
 				frontier.put( next, priority );
 			}
 
@@ -105,117 +105,144 @@ bool PathFinderThread::evalRampPos( const Position& current, const Position& ram
 	return false;
 }
 
-PathFinderThread::Path PathFinderThread::findPath()
+void PathFinderThread::findPath()
 {
 	//qDebug() << "find path " << m_start.toString() << " " << m_goal.toString();
 	std::unordered_map<Position, PathElement> pathField;
 	PriorityQueue<Position, double> frontier;
 
 	// Take a pessimistic guess for how many positions we need to visit
-	const size_t expectedPositions = m_start.distSquare( m_goal, 3 ) / 8;
+	int expectedPositions = 0;
+	for(const auto& goal : m_goals)
+	{
+		expectedPositions = std::max( m_start.distSquare( goal, 3 ) / 8, expectedPositions );
+	}
 	pathField.reserve( expectedPositions );
 
 	frontier.put( m_start, 0 );
-
 	pathField.insert( { m_start, PathElement { 0.0, m_start } } );
-	bool found = false;
-	while ( !frontier.empty() )
-	{
-		//qDebug() << frontier.size();
-		auto current = frontier.get();
 
-		if ( current == m_goal )
+	for ( const auto& goal : m_goals )
+	{
+		// Re-weight frontier acording to current goal
+		{
+			auto oldFrontier = std::move( frontier );
+			while ( !oldFrontier.empty() )
+			{
+				const auto& pos   = oldFrontier.top();
+				const auto& field = pathField[pos.second];
+				frontier.put( pos.second, field.cost + heuristic(pos.second, goal));
+				oldFrontier.pop();
+			}
+		}
+		bool found = false;
+		// Chance we already passed the current goal while searching for a previous one
+		if ( pathField.count(goal) > 0 )
 		{
 			found = true;
-			break;
 		}
-
-		bool north = false;
-		bool east  = false;
-		bool south = false;
-		bool west  = false;
-
-		auto next = current.northOf();
-		north     = evalPos( current, next, pathField, frontier );
-		evalRampPos( current, next, pathField, frontier );
-
-		next = current.eastOf();
-		east = evalPos( current, next, pathField, frontier );
-		evalRampPos( current, next, pathField, frontier );
-
-		next  = current.southOf();
-		south = evalPos( current, next, pathField, frontier );
-		evalRampPos( current, next, pathField, frontier );
-
-		next = current.westOf();
-		west = evalPos( current, next, pathField, frontier );
-		evalRampPos( current, next, pathField, frontier );
-
-		if ( north && east )
+		while ( !frontier.empty() && !found )
 		{
-			next = current.neOf();
-			evalPos( current, next, pathField, frontier );
-		}
-		if ( east && south )
-		{
-			next = current.seOf();
-			evalPos( current, next, pathField, frontier );
-		}
-		if ( south && west )
-		{
-			next = current.swOf();
-			evalPos( current, next, pathField, frontier );
-		}
-		if ( west && north )
-		{
-			next = current.nwOf();
-			evalPos( current, next, pathField, frontier );
+			const auto current = frontier.top().second;
+
+			// Either shortcut or fully process
+			if ( current == goal )
+			{
+				found = true;
+				break;
+			}
+			else
+			{
+				frontier.pop();
+			}
+
+			bool north = false;
+			bool east  = false;
+			bool south = false;
+			bool west  = false;
+
+			auto next = current.northOf();
+			north     = evalPos( current, next, pathField, frontier, goal );
+			evalRampPos( current, next, pathField, frontier, goal );
+
+			next = current.eastOf();
+			east = evalPos( current, next, pathField, frontier, goal );
+			evalRampPos( current, next, pathField, frontier, goal );
+
+			next  = current.southOf();
+			south = evalPos( current, next, pathField, frontier, goal );
+			evalRampPos( current, next, pathField, frontier, goal );
+
+			next = current.westOf();
+			west = evalPos( current, next, pathField, frontier, goal );
+			evalRampPos( current, next, pathField, frontier, goal );
+
+			if ( north && east )
+			{
+				next = current.neOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+			if ( east && south )
+			{
+				next = current.seOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+			if ( south && west )
+			{
+				next = current.swOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+			if ( west && north )
+			{
+				next = current.nwOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+
+			Tile& curTile = Global::w().getTile( current );
+
+			if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
+			{
+				next = current.aboveOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+			if ( (bool)( curTile.floorType & ( FT_STAIRTOP | FT_SCAFFOLD ) ) )
+			{
+				next = current.belowOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
+			if ( (bool)( curTile.wallType & ( WT_RAMP ) ) )
+			{
+				auto above = current.aboveOf();
+				next       = above.northOf();
+				evalPos( current, next, pathField, frontier, goal );
+				next = above.eastOf();
+				evalPos( current, next, pathField, frontier, goal );
+				next = above.southOf();
+				evalPos( current, next, pathField, frontier, goal );
+				next = above.westOf();
+				evalPos( current, next, pathField, frontier, goal );
+			}
 		}
 
-		Tile& curTile = Global::w().getTile( current );
-
-		if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
+		Path path;
+		if ( found )
 		{
-			next = current.aboveOf();
-			evalPos( current, next, pathField, frontier );
+			Position next = goal;
+			while ( next != m_start )
+			{
+				path.push_back( next );
+				next = pathField[next].previous;
+			}
 		}
-		if ( (bool)( curTile.floorType & ( FT_STAIRTOP | FT_SCAFFOLD ) ) )
+		else
 		{
-			next = current.belowOf();
-			evalPos( current, next, pathField, frontier );
-		}
-		if ( (bool)( curTile.wallType & ( WT_RAMP ) ) )
-		{
-			auto above = current.aboveOf();
-			next       = above.northOf();
-			evalPos( current, next, pathField, frontier );
-			next = above.eastOf();
-			evalPos( current, next, pathField, frontier );
-			next = above.southOf();
-			evalPos( current, next, pathField, frontier );
-			next = above.westOf();
-			evalPos( current, next, pathField, frontier );
-		}
-	}
-
-	Path path;
-	if ( found )
-	{
-		Position next = m_goal;
-		while ( next != m_start )
-		{
-			path.push_back( next );
-			next = pathField[next].previous;
-		}
-	}
-	else
-	{
-		/*
+			/*
 		qDebug() << "##################################################################################################";
 		qDebug() << "no path found";
 		qDebug() << "start: " << m_start.toString() << " goal: " << m_goal.toString();
 		qDebug() << "##################################################################################################";
 		*/
+		}
+		m_callback( m_start, goal, std::move(path) );
 	}
-	return path;
 }

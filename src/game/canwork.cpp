@@ -118,7 +118,8 @@ void CanWork::serialize( QVariantMap& out )
 		out.insert( "WorkPosition", m_workPosition.toString() );
 		out.insert( "CurrentTask", m_currentTask );
 
-		auto vp = m_workPositionQueue.getElements();
+		// Copy original queue for iteration
+		auto vp = m_workPositionQueue;
 		QVariantList sql;
 		while ( !vp.empty() )
 		{
