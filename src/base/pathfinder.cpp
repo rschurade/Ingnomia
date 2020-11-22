@@ -32,13 +32,13 @@ PathFinder::PathFinder()
 PathFinder::~PathFinder()
 {
 	m_threadPool->waitForDone();
-	m_results.clear();
+	m_jobs.clear();
 }
 
 void PathFinder::init()
 {
 	m_threadPool = new QThreadPool( this );
-	m_results.clear();
+	m_jobs.clear();
 
 	int maxThreads = Config::getInstance().get( "maxThreads" ).toInt();
 	m_threadPool->setMaxThreadCount( maxThreads );
@@ -53,21 +53,15 @@ void PathFinder::cancelRequest( unsigned int id )
 PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position goal, bool ignoreNoPass, std::vector<Position>& path )
 {
 	QMutexLocker lock( &m_mutex );
-	if ( m_currentRequestsFrom.contains( id ) )
+	auto it = m_jobs.find( id );
+	if ( it != m_jobs.end() )
 	{
-		if ( m_results.contains( id ) )
+		if ( it->state != PathFinderResult::Running )
 		{
-			path = std::move( m_results[id] );
-			m_results.remove( id );
-			m_currentRequestsFrom.remove( id );
-			if ( path.empty() )
-			{
-				return PathFinderResult::NoConnection;
-			}
-			else
-			{
-				return PathFinderResult::FoundPath;
-			}
+			path = std::move( it->path );
+			const auto result = it->state;
+			m_jobs.erase( it );
+			return result;
 		}
 		path.clear();
 		return PathFinderResult::Running;
@@ -101,21 +95,120 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 		}
 
 		// If no trivial solution exists, fork to worker
-		m_currentRequestsFrom.insert( id );
-		PathFinderThread* pft = new PathFinderThread( start, { goal }, ignoreNoPass, [this, id]( Position start, Position goal, PathFinderThread::Path path ) -> void {
-			onThreadFinished( id, std::move( path ) );
-		} );
-		m_threadPool->start( pft );
+		auto it = m_jobs.insert(
+			id,
+			{
+				start,
+				goal,
+				ignoreNoPass
+			}
+		);
 
-		return PathFinderResult::Running;
+		return it->state;
 	}
 }
 
-void PathFinder::onThreadFinished( unsigned int consumerId, std::vector<Position> path )
+void PathFinder::findPaths()
+{
+	using namespace std::placeholders;
+	{
+		QMutexLocker lock( &m_mutex );
+
+		// Copy job list for the purpose of reduction
+		auto jobs = m_jobs;
+
+		// Remove jobs which already have a solution
+		for ( auto it = jobs.begin(); it != jobs.end(); )
+		{
+			if (it->state != PathFinderResult::Running)
+			{
+				it = jobs.erase( it );
+			}
+			else
+			{
+				++it;
+			}
+		}
+
+		for ( auto it = jobs.begin(); it != jobs.end(); ++it)
+		{
+			// Common case is for many creatures to have the same goal, so invert path finding direction by default
+			const Position start = it->goal;
+			std::unordered_set<Position> goals = { it->start };
+			const bool ignoreNoPass = it->ignoreNoPass;
+			// Fold all other requests which share either of goal or start into this one
+			for (auto it2 = it + 1; it2 != jobs.end();)
+			{
+				if (it2->ignoreNoPass == ignoreNoPass)
+				{
+					if (it2->goal == start)
+					{
+						goals.emplace( it2->start );
+						it2 = jobs.erase( it2 );
+					}
+					else if (it2->start == start)
+					{
+						goals.emplace( it2->goal );
+						it2 = jobs.erase( it2 );
+					}
+					else
+					{
+						++it2;
+					}
+				}
+				else
+				{
+					++it2;
+				}
+			}
+			PathFinderThread* pft = new PathFinderThread(
+				start,
+				std::move(goals),
+				ignoreNoPass,
+				std::bind( &PathFinder::onResult, this, _1, _2, _3, _4 ) );
+			m_threadPool->start( pft );
+		}
+	}
+
+	m_threadPool->waitForDone();
+}
+
+
+void PathFinder::onResult( Position start, Position goal, bool ignoreNoPass, std::vector<Position> path )
 {
 	QMutexLocker lock( &m_mutex );
-	m_results.insert( consumerId, std::move( path ) );
+	for ( auto& job : m_jobs )
+	{
+		const bool forwardPath = ( job.goal == goal && job.start == start );
+		const bool reversePath = ( job.goal == start && job.start == goal );
+		if ( ( forwardPath || reversePath ) && job.ignoreNoPass == ignoreNoPass )
+		{
+			if ( path.empty() )
+			{
+				job.state = PathFinderResult::NoConnection;
+			}
+			else
+			{
+				job.state = PathFinderResult::FoundPath;
+				if ( forwardPath )
+				{
+					job.path = std::move( path );
+				}
+				else
+				{
+					// Copy in reverse order, minus element [0] (our current position), and prepend our real goal instead
+					job.path.reserve( path.size() );
+					job.path.emplace_back( start );
+					for ( auto it = path.crbegin(); it != path.crend() - 1; ++it )
+					{
+						job.path.emplace_back( *it );
+					}
+				}
+			}
+		}
+	}
 }
+
 
 std::vector<Position> PathFinder::getNaivePath( Position& start, Position& goal )
 {

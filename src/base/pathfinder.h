@@ -24,6 +24,7 @@
 #include <QSet>
 #include <QThreadPool>
 #include <QVector>
+#include <optional>
 
 class PathFinderThread;
 
@@ -55,12 +56,21 @@ private:
 
 	QThreadPool* m_threadPool;
 
-	QMap<unsigned int, std::vector<Position>> m_results;
-	QSet<unsigned int> m_currentRequestsFrom;
+	struct PathFinderJob
+	{
+		Position start;
+		Position goal;
+		bool ignoreNoPass      = false;
+		PathFinderResult state = PathFinderResult::Running;
+		std::vector<Position> path;
+	};
+
+	QMap<unsigned int, PathFinderJob> m_jobs;
 
 	QMutex m_mutex;
 
 	std::vector<Position> getNaivePath( Position& start, Position& goal );
+
 
 public:
 	~PathFinder();
@@ -82,5 +92,7 @@ public:
 
 	static bool checkConnectedRegions( const Position start, const Position goal );
 
-	void onThreadFinished( unsigned int consumerId, std::vector<Position> path );
+	void onResult( Position start, Position goal, bool ignoreNoPass, std::vector<Position> path );
+	// Dispatch workers for all outstanding pathfinding requests
+	void findPaths();
 };

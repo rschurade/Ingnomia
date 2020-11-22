@@ -25,14 +25,15 @@
 
 #include <functional>
 #include <vector>
+#include <unordered_set>
 
 class PathFinderThread : public QRunnable
 {
 public:
 	using Path               = std::vector<Position>;
-	using CompletionCallback = std::function<void(Position, Position, Path )>;
+	using CompletionCallback = std::function<void(Position, Position, bool ignoreNoPass, Path )>;
 	PathFinderThread()       = delete;
-	PathFinderThread( Position start, const std::vector<Position> &goals, bool ignoreNoPass, CompletionCallback callback );
+	PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, CompletionCallback callback );
 	~PathFinderThread();
 
 	virtual void run() override;
@@ -41,7 +42,7 @@ private:
 	void findPath();
 
 	const Position m_start;
-	const std::vector<Position> m_goals;
+	const std::unordered_set<Position> m_goals;
 	const bool m_ignoreNoPass = false;
 
 	CompletionCallback m_callback;

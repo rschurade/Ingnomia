@@ -38,4 +38,9 @@ public:
 		base_type::pop();
 		return best_item;
 	}
+
+	inline const std::vector<value_t>& raw() const
+	{
+		return base_type::c;
+	}
 };

@@ -189,6 +189,8 @@ void Game::loop()
 
 		Global::w().processWater();
 
+		PathFinder::getInstance().findPaths();
+
 		++GameState::tick;
 	}
 
