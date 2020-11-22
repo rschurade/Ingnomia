@@ -26,7 +26,7 @@
 
 #define DEADLYFLUIDLEVEL 6
 
-PathFinderThread::PathFinderThread( Position start, const std::vector<Position> &goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
+PathFinderThread::PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
 	m_start( start ),
 	m_goals( goals ),
 	m_ignoreNoPass( ignoreNoPass ),
@@ -124,23 +124,26 @@ void PathFinderThread::findPath()
 
 	for ( const auto& goal : m_goals )
 	{
-		// Re-weight frontier acording to current goal
-		{
-			auto oldFrontier = std::move( frontier );
-			while ( !oldFrontier.empty() )
-			{
-				const auto& pos   = oldFrontier.top();
-				const auto& field = pathField[pos.second];
-				frontier.put( pos.second, field.cost + heuristic(pos.second, goal));
-				oldFrontier.pop();
-			}
-		}
 		bool found = false;
 		// Chance we already passed the current goal while searching for a previous one
 		if ( pathField.count(goal) > 0 )
 		{
 			found = true;
 		}
+		else
+		{
+			// Re-weight frontier acording to current goal
+			{
+				auto oldFrontier = std::move( frontier );
+				// Don't care about order
+				for ( const auto& pos : oldFrontier.raw() )
+				{
+					const auto& field = pathField[pos.second];
+					frontier.put( pos.second, field.cost + heuristic( pos.second, goal ) );
+				}
+			}
+		}
+
 		while ( !frontier.empty() && !found )
 		{
 			const auto current = frontier.top().second;
@@ -243,6 +246,6 @@ void PathFinderThread::findPath()
 		qDebug() << "##################################################################################################";
 		*/
 		}
-		m_callback( m_start, goal, std::move(path) );
+		m_callback( m_start, goal, m_ignoreNoPass, std::move(path) );
 	}
 }
