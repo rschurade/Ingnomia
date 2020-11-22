@@ -229,7 +229,7 @@ void Automaton::updateSprite()
 		}
 	}
 
-	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, m_isDead )->uID;
+	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, isDead() )->uID;
 
 	m_renderParamsChanged = true;
 }

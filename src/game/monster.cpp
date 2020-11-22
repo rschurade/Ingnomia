@@ -139,7 +139,7 @@ void Monster::updateSprite()
 		defBack.append( pm );
 	}
 
-	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, m_isDead )->uID;
+	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, isDead() )->uID;
 }
 
 void Monster::updateMoveSpeed()
@@ -195,7 +195,7 @@ CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool
 		if ( status & AS_DEAD )
 		{
 			Global::logger().log( LogType::COMBAT, "The " + m_name + " died. Bummer!", m_id );
-			m_isDead = true;
+			die();
 			// TODO check for other statuses
 		}
 	}
@@ -205,7 +205,7 @@ CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::TODESTROY;
 	}
-	if ( m_isDead )
+	if ( isDead() )
 	{
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
