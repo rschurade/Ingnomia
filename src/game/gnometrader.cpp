@@ -152,7 +152,6 @@ CreatureTickResult GnomeTrader::onTick( quint64 tickNumber, bool seasonChanged, 
 
 	if ( isDead() )
 	{
-		die();
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
 	}

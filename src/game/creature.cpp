@@ -1066,6 +1066,7 @@ void Creature::die()
 	m_isDead = true;
 	dropInventory();
 	dropEquipment();
+	updateSprite();
 }
 
 void Creature::dropInventory()
