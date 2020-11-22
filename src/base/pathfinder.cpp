@@ -102,7 +102,7 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 
 		// If no trivial solution exists, fork to worker
 		m_currentRequestsFrom.insert( id );
-		PathFinderThread* pft = new PathFinderThread( start, goal, ignoreNoPass, [this, id]( PathFinderThread::Path path ) -> void {
+		PathFinderThread* pft = new PathFinderThread( start, { goal }, ignoreNoPass, [this, id]( Position start, Position goal, PathFinderThread::Path path ) -> void {
 			onThreadFinished( id, std::move( path ) );
 		} );
 		m_threadPool->start( pft );

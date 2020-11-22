@@ -30,18 +30,18 @@ class PathFinderThread : public QRunnable
 {
 public:
 	using Path               = std::vector<Position>;
-	using CompletionCallback = std::function<void( Path )>;
+	using CompletionCallback = std::function<void(Position, Position, Path )>;
 	PathFinderThread()       = delete;
-	PathFinderThread( Position start, Position goal, bool ignoreNoPass, CompletionCallback callback );
+	PathFinderThread( Position start, const std::vector<Position> &goals, bool ignoreNoPass, CompletionCallback callback );
 	~PathFinderThread();
 
 	virtual void run() override;
 
 private:
-	Path findPath();
+	void findPath();
 
 	const Position m_start;
-	const Position m_goal;
+	const std::vector<Position> m_goals;
 	const bool m_ignoreNoPass = false;
 
 	CompletionCallback m_callback;
@@ -62,6 +62,6 @@ private:
 		Position previous;
 	};
 
-	bool evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
-	bool evalRampPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
+	bool evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const;
+	bool evalRampPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const;
 };
