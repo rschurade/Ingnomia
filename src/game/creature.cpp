@@ -1061,6 +1061,26 @@ void Creature::updateAttackValues()
 	m_rightHandAttackValue = m_rightHandAttackSkill;
 }
 
+void Creature::dropInventory()
+{
+	Inventory &inv = Global::inv();
+	for ( const unsigned int it : inventoryItems() )
+	{
+		inv.putDownItem( it, m_position );
+	}
+	m_inventoryItems.clear();
+}
+
+void Creature::dropEquipment()
+{
+	Inventory& inv = Global::inv();
+	for ( const unsigned int it : m_equipment.wornItems() )
+	{
+		inv.putDownItem( it, m_position );
+	}
+	m_equipment.clearAllItems();
+}
+
 void Creature::addClaimedItem( unsigned int item, unsigned int job )
 {
 	Global::inv().setInJob( item, job );
