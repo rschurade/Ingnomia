@@ -722,7 +722,6 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
 		cleanUpJob( false );
-		updateSprite();
 		m_expires    = GameState::tick + Util::ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
@@ -923,7 +922,6 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 					m_thoughtBubble = "";
 					cleanUpJob( false );
 					die();
-					updateSprite();
 					if ( need == "Hunger" )
 					{
 						log( "Starved to death." );
