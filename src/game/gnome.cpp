@@ -29,6 +29,8 @@
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/world.h"
+#include "../game/workshop.h"
+#include "../game/workshopmanager.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
@@ -868,6 +870,13 @@ void Gnome::die()
 {
 	Creature::die();
 	cleanUpJob( false );
+	for ( Workshop* w : Global::wsm().workshops() )
+	{
+		if ( w->assignedGnome() == id() )
+		{
+			w->assignGnome( 0 );
+		}
+	}
 }
 
 bool Gnome::checkFloor()
