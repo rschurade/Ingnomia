@@ -986,6 +986,7 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 		{
 			Global::w().setItemSprite( newPos, 0 );
 		}
+		gravity( newPos );
 		return id;
 	}
 	return 0;
