@@ -722,6 +722,8 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	{
 		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
 		cleanUpJob( false );
+		dropInventory();
+		dropEquipment();
 		updateSprite();
 		m_expires    = GameState::tick + Util::ticksPerDay * 2;
 		m_lastOnTick = tickNumber;

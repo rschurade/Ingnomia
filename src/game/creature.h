@@ -415,6 +415,9 @@ protected:
 	QList<unsigned int> m_carriedItems;
 	QList<unsigned int> m_inventoryItems;
 
+	void dropInventory();
+	void dropEquipment();
+
 	void addClaimedItem( unsigned int item, unsigned int job );
 	void removeClaimedItem( unsigned int item );
 	void unclaimAll();
