@@ -415,7 +415,7 @@ protected:
 	QList<unsigned int> m_carriedItems;
 	QList<unsigned int> m_inventoryItems;
 
-	void die();
+	virtual void die();
 
 	void dropInventory();
 	void dropEquipment();
