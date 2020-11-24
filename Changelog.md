@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.8.1]
 
 ### Fixed
 - message window not disappearing after clicking an answer button if game is unpaused, 
