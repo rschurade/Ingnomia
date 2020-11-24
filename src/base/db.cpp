@@ -62,6 +62,7 @@ QSqlDatabase& DB::getDB()
 	if ( !m_connections.contains( thread ) )
 	{
 		auto db = QSqlDatabase::addDatabase( "QSQLITE", QString::number( reinterpret_cast<long long>( thread ) ) );
+		db.setConnectOptions( "QSQLITE_OPEN_URI;QSQLITE_ENABLE_SHARED_CACHE" );
 		db.setDatabaseName( "file:game?mode=memory&cache=shared" );
 		if ( !db.open() )
 		{
