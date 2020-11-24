@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - building scaffolds
 - dead gnomes give up workshop assignments
 - dead creatures drop their inventory
+- fix crash on startup on some systems
 
 ### Added
 - moved text in xamls to resource files as preparation for translations PR#90 Daynvheur
