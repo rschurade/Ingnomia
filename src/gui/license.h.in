@@ -1,4 +1,7 @@
 #pragma once
+// DO NOT ADD YOUR LICENSE MANUALLY IN THIS FILE
+// READ THE DOCUMENTATION ON HOW TO CONFIGURE CMAKE
+
 // Noesis license information
 // A trial license for development purposes can be acquired free of charge at https://www.noesisengine.com/trial/
 static const char licenseName[] = "@NOESIS_LICENSE_NAME@";

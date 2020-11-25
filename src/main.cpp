@@ -20,10 +20,6 @@
 #include "gui/mainwindow.h"
 #include "gui/strings.h"
 
-#ifdef _WIN32
-#include "winver.h"
-#endif
-
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -39,6 +35,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#include "version.h"
 
 QTextStream* out = 0;
 bool logToFile   = true;
@@ -103,47 +100,19 @@ void noOutput( QtMsgType type, const QMessageLogContext& context, const QString&
 
 int main( int argc, char* argv[] )
 {
-#ifdef _WIN32
-	DWORD verHandle = 0;
-	UINT size       = 0;
-	LPBYTE lpBuffer = NULL;
-	LPCWSTR fileName( L"Ingnomia.exe" );
-	DWORD verSize       = GetFileVersionInfoSizeW( fileName, &verHandle );
-	QString fileVersion = "0.0.0.0";
-	if ( verSize != NULL )
-	{
-		LPSTR verData = new char[verSize];
 
-		if ( GetFileVersionInfoW( fileName, verHandle, verSize, verData ) )
-		{
-			if ( VerQueryValueW( verData, L"\\", (VOID FAR * FAR*)&lpBuffer, &size ) )
-			{
-				if ( size )
-				{
-					VS_FIXEDFILEINFO* verInfo = (VS_FIXEDFILEINFO*)lpBuffer;
-					if ( verInfo->dwSignature == 0xfeef04bd )
-					{
-						fileVersion = QString::number( ( verInfo->dwFileVersionMS >> 16 ) & 0xffff ) + "." +
-									  QString::number( ( verInfo->dwFileVersionMS >> 0 ) & 0xffff ) + "." +
-									  QString::number( ( verInfo->dwFileVersionLS >> 16 ) & 0xffff ) + "." +
-									  QString::number( ( verInfo->dwFileVersionLS >> 0 ) & 0xffff );
-					}
-				}
-			}
-		}
-		delete[] verData;
-	}
-#else
-	QString fileVersion = "0.0.0.0";
-#endif
+	qInstallMessageHandler( &logOutput );
+	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION << __DATE__;
+#ifdef GIT_REPO
+	qInfo() << "Built from" << GIT_REPO << GIT_BRANCH;
+#endif // GIT_REPO
 
-	QCoreApplication::addLibraryPath( "." );
-
-	QCoreApplication::setOrganizationDomain( "ingnomia.de" );
-	QCoreApplication::setOrganizationName( "Roest" );
-	QCoreApplication::setApplicationName( "Ingnomia" );
-	QCoreApplication::setApplicationVersion( fileVersion );
 	QApplication a( argc, argv );
+	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );
+	QCoreApplication::setOrganizationDomain( PROJECT_HOMEPAGE_URL );
+	QCoreApplication::setOrganizationName( "Roest" );
+	QCoreApplication::setApplicationName( PROJECT_NAME );
+	QCoreApplication::setApplicationVersion( PROJECT_VERSION );
 
 	if ( !Config::getInstance().init() )
 	{
@@ -159,7 +128,7 @@ int main( int argc, char* argv[] )
 		exit( 0 );
 	}
 
-	Config::getInstance().set( "CurrentVersion", fileVersion );
+	Config::getInstance().set( "CurrentVersion", PROJECT_VERSION );
 
 	QStringList args = a.arguments();
 
@@ -196,12 +165,6 @@ int main( int argc, char* argv[] )
 		QFile file( fileName );
 		file.open( QIODevice::WriteOnly );
 		file.close();
-	}
-
-	if ( Config::getInstance().get( "enableLog" ).toBool() )
-	{
-		out = new QTextStream( stdout );
-		qInstallMessageHandler( logOutput );
 	}
 
 	int width  = qMax( 1200, Config::getInstance().get( "WindowWidth" ).toInt() );

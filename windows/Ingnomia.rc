@@ -2,6 +2,8 @@
 //
 #include "resource.h"
 
+#include "../src/version.h"
+
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -51,7 +53,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "Ingnomia.ico"
+IDI_ICON1               ICON                    "../Ingnomia.ico"
 
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -69,8 +71,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,8,1,0
- PRODUCTVERSION 0,8,1,0
+ FILEVERSION PROJECT_VERSION_COMMA
+ PRODUCTVERSION PROJECT_VERSION_COMMA
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -87,12 +89,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "TODO: <Company name>"
             VALUE "FileDescription", "Ingnomia"
-            VALUE "FileVersion", "0.8.1.0"
-            VALUE "InternalName", "Gnomes.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2019"
-            VALUE "OriginalFilename", "Gnomes.exe"
-            VALUE "ProductName", "Ingnomia"
-            VALUE "ProductVersion", "0.8.1.0"
+            VALUE "FileVersion", PROJECT_VERSION
+            VALUE "InternalName", PROJECT_NAME
+            VALUE "LegalCopyright", "Copyright (C) 2020"
+            VALUE "OriginalFilename", PROJECT_NAME ".exe"
+            VALUE "ProductName", PROJECT_NAME
+            VALUE "ProductVersion", PROJECT_VERSION
         END
     END
     BLOCK "VarFileInfo"
