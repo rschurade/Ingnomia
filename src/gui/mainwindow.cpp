@@ -247,7 +247,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				emit signalKeyPress( event->key() );
 				break;
 			case Qt::Key_Space:
-				GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
+				GameManager::getInstance().trySetPaused( !GameManager::getInstance().paused() );
 				break;
 			case Qt::Key_W:
 				m_keyboardMove |= KeyboardMove::Up;

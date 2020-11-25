@@ -194,3 +194,4 @@ enum class GameSpeed
 	Normal,
 	Fast
 };
+Q_DECLARE_METATYPE( GameSpeed )

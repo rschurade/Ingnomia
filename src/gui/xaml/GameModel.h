@@ -226,8 +226,8 @@ public:
 	void setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
 	void updateKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void setViewLevel( int level );
-	void updatePause();
-	void updateGameSpeed();
+	void updatePause( bool value );
+	void updateGameSpeed( GameSpeed speed );
 
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 

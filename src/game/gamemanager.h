@@ -60,25 +60,12 @@ public:
 	}
 	void setShowMainMenu( bool value );
 
-	GameSpeed gameSpeed()
-	{
-		return m_gameSpeed;
-	}
-	void setGameSpeed( GameSpeed speed )
-	{
-		m_gameSpeed = speed;
-	}
+	GameSpeed gameSpeed();
+	void setGameSpeed( GameSpeed speed );
 
-	bool paused()
-	{
-		return m_paused;
-	}
-	void setPaused( bool value )
-	{
-		m_paused = value;
-		emit signalUpdatePaused();
-		emit signalUpdateGameSpeed();
-	}
+	bool paused();
+	void trySetPaused( bool value );
+	void setPaused( bool value );
 
 private:
 	bool m_showMainMenu = true;
@@ -95,8 +82,8 @@ private:
 signals:
 	void startGame();
 	void stopGame();
-	void signalUpdateGameSpeed();
-	void signalUpdatePaused();
+	void signalUpdateGameSpeed( GameSpeed speed );
+	void signalUpdatePaused( bool value );
 
 	void signalInitView();
 

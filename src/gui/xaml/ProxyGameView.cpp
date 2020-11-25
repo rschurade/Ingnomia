@@ -24,6 +24,9 @@
 #include "../aggregatormilitary.h"
 #include "../aggregatorinventory.h"
 #include "../eventconnector.h"
+
+#include "../../game/gamemanager.h"
+
 #include "ViewModel.h"
 
 #include <QDebug>
@@ -63,6 +66,9 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 
 	connect( &Global::em(), &EventManager::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalEventAnswer, &Global::em(), &EventManager::onAnswer, Qt::QueuedConnection );
+
+	connect( this, &ProxyGameView::signalSetPaused, &GameManager::getInstance(), &GameManager::setPaused, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetGameSpeed, &GameManager::getInstance(), &GameManager::setGameSpeed, Qt::QueuedConnection );
 }
 
 ProxyGameView::~ProxyGameView()
@@ -98,19 +104,19 @@ void ProxyGameView::onViewLevel( int level )
 	}
 }
 
-void ProxyGameView::onUpdatePause()
+void ProxyGameView::onUpdatePause( bool value )
 {
 	if ( m_parent )
 	{
-		m_parent->updatePause();
+		m_parent->updatePause( value );
 	}
 }
 
-void ProxyGameView::onUpdateGameSpeed()
+void ProxyGameView::onUpdateGameSpeed( GameSpeed speed )
 {
 	if ( m_parent )
 	{
-		m_parent->updateGameSpeed();
+		m_parent->updateGameSpeed( speed );
 	}
 }
 
@@ -224,4 +230,14 @@ void ProxyGameView::onKeyEscape()
 void ProxyGameView::propagateEscape()
 {
 	emit signalPropagateEscape();
+}
+
+void ProxyGameView::setGameSpeed( GameSpeed speed )
+{
+	emit signalSetGameSpeed( speed );
+}
+	
+void ProxyGameView::setPaused( bool paused )
+{
+	emit signalSetPaused( paused );
 }

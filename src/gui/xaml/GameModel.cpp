@@ -483,15 +483,14 @@ void GameModel::setViewLevel( int level )
 	OnPropertyChanged( "Level" );
 }
 
-void GameModel::updatePause()
+void GameModel::updatePause( bool paused )
 {
-	OnPropertyChanged( "Paused" );
+	setPaused( paused );
 }
 
-void GameModel::updateGameSpeed()
+void GameModel::updateGameSpeed( GameSpeed speed )
 {
-	OnPropertyChanged( "NormalSpeed" );
-	OnPropertyChanged( "FastSpeed" );
+	setGameSpeed( speed );
 }
 
 void GameModel::onBuild()
@@ -831,15 +830,15 @@ void GameModel::setGameSpeed( GameSpeed value )
 {
 	if( m_showMessageWindow )
 	{
-		GameManager::getInstance().setPaused( true );
+		m_proxy->setPaused( true );
 	}
 	else
 	{
 		if ( GameManager::getInstance().gameSpeed() != value )
 		{
-			GameManager::getInstance().setGameSpeed( value );
+			m_proxy->setGameSpeed( value );
 		}
-		GameManager::getInstance().setPaused( false );
+		m_proxy->setPaused( false );
 	}
 	OnPropertyChanged( "Paused" );
 	OnPropertyChanged( "NormalSpeed" );
@@ -853,13 +852,15 @@ bool GameModel::getPaused() const
 
 void GameModel::setPaused( bool value )
 {
-	if( value )
+	if( m_showMessageWindow && !value )
 	{
-		GameManager::getInstance().setPaused( value );
-		OnPropertyChanged( "Paused" );
-		OnPropertyChanged( "NormalSpeed" );
-		OnPropertyChanged( "FastSpeed" );
+		return;
 	}
+
+	m_proxy->setPaused( value );
+	OnPropertyChanged( "Paused" );
+	OnPropertyChanged( "NormalSpeed" );
+	OnPropertyChanged( "FastSpeed" );
 }
 
 bool GameModel::getNormalSpeed() const
@@ -1421,9 +1422,11 @@ const char* GameModel::getMessageText() const
 
 void GameModel::onMessageButtonCmd( BaseComponent* param )
 {
+	qDebug() << "GameModel::onMessageButtonCmd";
 	if( param )
 	{
 		QString qParam = param->ToString().Str();
+		qDebug() << qParam;
 		if( qParam != "ok" )
 		{
 			m_proxy->sendEventAnswer( m_messageID, qParam == "yes" );
@@ -1432,6 +1435,7 @@ void GameModel::onMessageButtonCmd( BaseComponent* param )
 		if( !m_messageQueue.isEmpty() )
 		{
 			auto gme = m_messageQueue.takeFirst();
+			qDebug() << gme.id << gme.title << gme.msg << gme.pause << gme.yesno;
 			eventMessage( gme.id, gme.title, gme.msg, gme.pause, gme.yesno );
 		}
 	}

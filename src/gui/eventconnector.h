@@ -126,8 +126,8 @@ public slots:
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
-	void onUpdatePause();
-	void onUpdateGameSpeed();
+	void onUpdatePause( bool paused );
+	void onUpdateGameSpeed( GameSpeed speed );
 	void onKeyPress( int key );
 	void onPropagateEscape();
 
@@ -142,8 +142,8 @@ signals:
 	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
 	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void signalViewLevel( int level );
-	void signalUpdatePause();
-	void signalUpdateGameSpeed();
+	void signalUpdatePause( bool paused );
+	void signalUpdateGameSpeed( GameSpeed speed );
 	void signalKeyEsc();
 	void signalPropagateKeyEsc();
 	void signalBuild();

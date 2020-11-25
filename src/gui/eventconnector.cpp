@@ -72,14 +72,14 @@ void EventConnector::onViewLevel( int level )
 	emit signalViewLevel( level );
 }
 
-void EventConnector::onUpdatePause()
+void EventConnector::onUpdatePause( bool paused )
 {
-	emit signalUpdatePause();
+	emit signalUpdatePause( paused );
 }
 
-void EventConnector::onUpdateGameSpeed()
+void EventConnector::onUpdateGameSpeed( GameSpeed speed )
 {
-	emit signalUpdateGameSpeed();
+	emit signalUpdateGameSpeed( speed );
 }
 
 void EventConnector::onKeyPress( int key )

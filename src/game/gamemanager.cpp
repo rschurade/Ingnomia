@@ -45,6 +45,8 @@
 GameManager::GameManager( QObject* parent ) :
 	QObject( parent )
 {
+	qRegisterMetaType<GameSpeed>();
+
 	m_gameThread.start();
 	GameState::init();
 
@@ -258,4 +260,36 @@ void GameManager::saveGame()
 	IO::save();
 
 	m_paused = paused;
+}
+
+GameSpeed GameManager::gameSpeed()
+{
+	return m_gameSpeed;
+}
+void GameManager::setGameSpeed( GameSpeed speed )
+{
+	qDebug() << (int)speed;
+	if( m_gameSpeed != speed )
+	{
+		m_gameSpeed = speed;
+		emit signalUpdateGameSpeed( m_gameSpeed );
+	}
+}
+
+bool GameManager::paused()
+{
+	return m_paused;
+}
+void GameManager::trySetPaused( bool value )
+{
+	emit signalUpdatePaused( value );
+}
+
+void GameManager::setPaused( bool value )
+{
+	if( m_paused != value )
+	{
+		m_paused = value;
+		emit signalUpdatePaused( value );
+	}
 }

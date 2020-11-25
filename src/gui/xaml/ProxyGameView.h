@@ -45,6 +45,10 @@ public:
 
 	void propagateEscape();
 
+	void setGameSpeed( GameSpeed speed );
+	void setPaused( bool paused );
+
+
 private:
 	IngnomiaGUI::GameModel* m_parent = nullptr;
 
@@ -53,8 +57,8 @@ private slots:
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
-	void onUpdatePause();
-	void onUpdateGameSpeed();
+	void onUpdatePause( bool value );
+	void onUpdateGameSpeed( GameSpeed speed );
 
 	void onShowTileInfo( unsigned int tileID );
 
@@ -81,4 +85,6 @@ signals:
 	void signalRequestMilitaryUpdate();
 	void signalRequestInventoryUpdate();
 	void signalPropagateEscape();
+	void signalSetGameSpeed( GameSpeed speed );
+	void signalSetPaused( bool paused );
 };
