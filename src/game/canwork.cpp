@@ -542,6 +542,7 @@ bool CanWork::dropEquippedItem()
 		}
 
 		inv.putDownItem( equippedItem, m_position );
+		inv.gravity( m_position );
 		inv.setInJob( equippedItem, 0 );
 		inv.setConstructedOrEquipped( equippedItem, false );
 		m_equipment.rightHandHeld.itemID = 0;
