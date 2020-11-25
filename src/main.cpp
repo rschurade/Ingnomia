@@ -38,7 +38,7 @@
 #include "version.h"
 
 QTextStream* out = 0;
-bool verbose     = true;
+bool verbose     = false;
 
 void clearLog()
 {
@@ -82,26 +82,29 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 		return;
 
 	QString filedate  = QDateTime::currentDateTime().toString( "yyyy.MM.dd hh:mm:ss:zzz" );
-	QString debugdate = QDateTime::currentDateTime().toString( "hh:mm:ss:zzz" );
+#ifdef _WIN32
+	if ( IsDebuggerPresent() )
+#else
+	if (verbose)
+#endif // _WIN32
+	{
+		QString debugdate = QDateTime::currentDateTime().toString( "hh:mm:ss:zzz" );
 
-	switch ( type )
-	{
-		case QtDebugMsg:
-			debugdate += " [D]";
-			break;
-		case QtWarningMsg:
-			debugdate += " [W]";
-			break;
-		case QtCriticalMsg:
-			debugdate += " [C]";
-			break;
-		case QtFatalMsg:
-			debugdate += " [F]";
-			break;
-	}
-	if ( verbose )
-	{
-		//std::cout << OutputDebugStringA( debugdate.toStdString() ) << " " << message.toStdString() << endl;
+		switch ( type )
+		{
+			case QtDebugMsg:
+				debugdate += " [D]";
+				break;
+			case QtWarningMsg:
+				debugdate += " [W]";
+				break;
+			case QtCriticalMsg:
+				debugdate += " [C]";
+				break;
+			case QtFatalMsg:
+				debugdate += " [F]";
+				break;
+		}
 		QString text    = debugdate + " " + message + "\n";
 		std::string str = text.toStdString();
 
@@ -120,17 +123,14 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 	}
 }
 
-void noOutput( QtMsgType type, const QMessageLogContext& context, const QString& message )
-{
-}
-
 int main( int argc, char* argv[] )
 {
 	clearLog();
 	qInstallMessageHandler( &logOutput );
 	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION;
 #ifdef GIT_REPO
-	qInfo() << "Built from" << GIT_REPO << GIT_REF << "(" << GIT_SHA << ")";
+	qInfo() << "Built from" << GIT_REPO << GIT_REF << "(" << GIT_SHA << ")"
+			<< "build" << BUILD_ID;
 #endif // GIT_REPO
 
 	QApplication a( argc, argv );

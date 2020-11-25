@@ -350,6 +350,7 @@ GeneratedFiles
 /spriteconv.json
 /file
 /src/gui/license.h
+/src/version.h
 /content/tilesheet
 /content/db/ingnomia.db
 
