@@ -1746,7 +1746,10 @@ void Inventory::gravity( Position pos )
 		{
 			Position newPos = pos;
 			Global::w().getFloorLevelBelow( newPos, false );
-
+			if( newPos == pos )
+			{
+				return;
+			}
 			auto items = m_positionHash.value( pos.toInt() );
 			for ( auto item : items )
 			{
