@@ -60,7 +60,6 @@ if(WIN32)
 	set(RC_SOURCES
 		${PROJECT_NAME}.ico
 		windows/${PROJECT_NAME}.rc
-		windows/${PROJECT_NAME}.aps
 		windows/${PROJECT_NAME}.manifest
 		windows/resource.h
 	)
