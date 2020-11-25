@@ -207,6 +207,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 	{
 		Job& job     = m_jobList[jobID];
 		Position pos = job.pos();
+
 		job.clearPossibleWorkPositions();
 		// jobs on same tile
 		auto wpl = job.origWorkPosOffsets();
@@ -214,11 +215,12 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 		{
 			Position offset( spos );
 			Position testPos( pos + offset );
-			if ( Global::w().isWalkable( testPos ) )
+			if ( Global::w().isWalkableGnome( testPos ) )
 			{
 				job.addPossibleWorkPosition( testPos );
 			}
 		}
+		
 		return job.possibleWorkPositions().size() > 0;
 	}
 	return false;

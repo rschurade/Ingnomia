@@ -169,7 +169,7 @@ bool World::isWalkable( Position pos )
 bool World::isWalkableGnome( Position pos )
 {
 	Tile& tile = getTile( pos );
-	return tile.flags & TileFlag::TF_WALKABLE && !( tile.flags & TileFlag::TF_NOPASS );
+	return tile.flags & TileFlag::TF_WALKABLE && !( tile.flags & TileFlag::TF_NOPASS ) && ( tile.fluidLevel < 4 ) && !( tile.flags & TileFlag::TF_LAVA );
 }
 
 bool World::isRamp( Position pos )
