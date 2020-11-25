@@ -104,7 +104,7 @@ int main( int argc, char* argv[] )
 	qInstallMessageHandler( &logOutput );
 	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION << __DATE__;
 #ifdef GIT_REPO
-	qInfo() << "Built from" << GIT_REPO << GIT_BRANCH;
+	qInfo() << "Built from" << GIT_REPO << GIT_REF;
 #endif // GIT_REPO
 
 	QApplication a( argc, argv );
