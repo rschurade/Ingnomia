@@ -9,6 +9,7 @@ set(BUILD_ID "0" CACHE INTERNAL "Build ID")
 # Set from CI only
 set(GIT_REPO "" CACHE INTERNAL "")
 set(GIT_REF "" CACHE INTERNAL "")
+set(GIT_SHA "" CACHE INTERNAL "")
 
 project(Ingnomia
 	VERSION ${DEFAULT_VERSION}.${BUILD_ID}

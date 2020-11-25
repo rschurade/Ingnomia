@@ -12,4 +12,5 @@
 #define PROJECT_HOMEPAGE_URL "https://github.com/rschurade/Ingnomia"
 /* #undef GIT_REPO */
 /* #undef GIT_REF */
+/* #undef GIT_SHA */
 /* #undef BUILD_ID */

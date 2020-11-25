@@ -38,8 +38,43 @@
 #include "version.h"
 
 QTextStream* out = 0;
-bool logToFile   = true;
 bool verbose     = true;
+
+void clearLog()
+{
+	QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
+	bool ok          = true;
+	QString fileName = "log.txt";
+	if ( QDir( folder ).exists() )
+	{
+		fileName = folder + fileName;
+	}
+
+	QFile file( fileName );
+	file.open( QIODevice::WriteOnly );
+	file.close();
+}
+
+QPointer<QFile> openLog()
+{
+	QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
+	bool ok          = true;
+	QString fileName = "log.txt";
+	if ( QDir( folder ).exists() )
+	{
+		fileName = folder + fileName;
+	}
+
+	QPointer<QFile> outFile(new QFile( fileName ));
+	if(outFile->open( QIODevice::WriteOnly | QIODevice::Append ))
+	{
+		return outFile;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
 
 void logOutput( QtMsgType type, const QMessageLogContext& context, const QString& message )
 {
@@ -76,20 +111,11 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 		std::cerr << str;
 #endif
 	}
-	if ( logToFile )
+	static QPointer<QFile> outFile = openLog();
+
+	if ( outFile )
 	{
-		QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
-		bool ok          = true;
-		QString fileName = "log.txt";
-		if ( QDir( folder ).exists() )
-		{
-			fileName = folder + fileName;
-		}
-
-		QFile outFile( fileName );
-		outFile.open( QIODevice::WriteOnly | QIODevice::Append );
-		QTextStream ts( &outFile );
-
+		QTextStream ts( outFile );
 		ts << filedate << " " << message << endl;
 	}
 }
@@ -100,11 +126,11 @@ void noOutput( QtMsgType type, const QMessageLogContext& context, const QString&
 
 int main( int argc, char* argv[] )
 {
-
+	clearLog();
 	qInstallMessageHandler( &logOutput );
-	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION << __DATE__;
+	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION;
 #ifdef GIT_REPO
-	qInfo() << "Built from" << GIT_REPO << GIT_REF;
+	qInfo() << "Built from" << GIT_REPO << GIT_REF << "(" << GIT_SHA << ")";
 #endif // GIT_REPO
 
 	QApplication a( argc, argv );
@@ -139,32 +165,12 @@ int main( int argc, char* argv[] )
 			qDebug() << "Command line options:";
 			qDebug() << "-h : displays this message";
 			qDebug() << "-v : toggles verbose mode, warning: this will spam your console with messages";
-			qDebug() << "-l : logs debug messages to text file";
 			qDebug() << "---";
 		}
 		if ( args.at( i ) == "-v" )
 		{
 			verbose = true;
 		}
-		if ( args.at( i ) == "-l" )
-		{
-			logToFile = true;
-		}
-	}
-
-	if ( Config::getInstance().get( "clearLogOnStart" ).toBool() )
-	{
-		QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
-		bool ok          = true;
-		QString fileName = "log.txt";
-		if ( QDir( folder ).exists() )
-		{
-			fileName = folder + fileName;
-		}
-
-		QFile file( fileName );
-		file.open( QIODevice::WriteOnly );
-		file.close();
 	}
 
 	int width  = qMax( 1200, Config::getInstance().get( "WindowWidth" ).toInt() );
