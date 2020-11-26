@@ -1181,9 +1181,9 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 	{
 		if ( sc.uID > 30 )
 		{
-			if ( sc.uID != m_sprites.size() )
+			if ( sc.uID != static_cast<unsigned int>( m_sprites.size() ) )
 			{
-				if ( sc.uID < m_sprites.size() )
+				if ( sc.uID < static_cast<unsigned int>( m_sprites.size() ) )
 				{
 					qWarning() << "## Loosing sprite " << sc.uID << m_sprites.size() << sc.itemSID << sc.materialSIDs;
 					continue;
@@ -1191,7 +1191,7 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 				else
 				{
 					qDebug() << "## Missing sprite before " << sc.uID << m_sprites.size() << sc.itemSID << sc.materialSIDs;
-					while ( sc.uID > m_sprites.size() )
+					while ( sc.uID > static_cast<unsigned int>( m_sprites.size() ) )
 					{
 						// Sprite was probably lost due to a deleted definition, ID won't be reused
 						m_sprites.append( nullptr );

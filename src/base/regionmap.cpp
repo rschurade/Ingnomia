@@ -95,7 +95,7 @@ void RegionMap::initRegions()
 				{
 					////qDebug() << "found new tile without region";
 					// assign new region numer
-					unsigned int id               = m_regions.size();
+					unsigned int id               = static_cast<unsigned int>( m_regions.size() );
 					m_regionMap[index( x, y, z )] = id;
 					m_regions.emplace_back( id );
 
@@ -409,7 +409,7 @@ void RegionMap::updatePositionSetWalkable( const Position& pos )
 			if ( region == 0 )
 			{
 				// if no neighbor with region, start new region
-				unsigned int id           = m_regions.size();
+				unsigned int id           = static_cast<unsigned int>( m_regions.size() );
 				m_regionMap[index( pos )] = id;
 				m_regions.emplace_back( id );
 			}
@@ -523,7 +523,7 @@ bool RegionMap::checkSplit( const Position& pos )
 		}
 		if ( split )
 		{
-			unsigned int id                                           = m_regions.size();
+			unsigned int id                                           = static_cast<unsigned int>( m_regions.size() );
 			m_regionMap[index( Position( pos.x - 1, pos.y, pos.z ) )] = id;
 			m_regions.emplace_back( id );
 			//qDebug() << "flood fill 2 : " << Position( pos.x-1, pos.y, pos.z ).toString();
@@ -565,7 +565,7 @@ bool RegionMap::checkSplit( const Position& pos )
 		}
 		if ( split )
 		{
-			unsigned int id                                           = m_regions.size();
+			unsigned int id                                           = static_cast<unsigned int>( m_regions.size() );
 			m_regionMap[index( Position( pos.x + 1, pos.y, pos.z ) )] = id;
 			Region r( id );
 			m_regions.emplace_back( id );
@@ -599,7 +599,7 @@ bool RegionMap::checkSplit( const Position& pos )
 				//qDebug() << "check split flood";
 				if ( checkSplitFlood( Position( pos.x, pos.y - 1, pos.z ), Position( pos.x, pos.y + 1, pos.z ), region3 ) )
 				{
-					unsigned int id                                           = m_regions.size();
+					unsigned int id                                           = static_cast<unsigned int>( m_regions.size() );
 					m_regionMap[index( Position( pos.x, pos.y - 1, pos.z ) )] = id;
 					m_regions.emplace_back( id );
 					//qDebug() << "flood fill 2 : " << Position( pos.x, pos.y-1, pos.z ).toString();

@@ -2300,7 +2300,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 	if ( !m_currentAttackTarget )
 	{
 		const Creature* bestCandidate = nullptr;
-		unsigned int bestDistance     = std::numeric_limits<unsigned int>::max();
+		int bestDistance     = std::numeric_limits<unsigned int>::max();
 
 		const Squad* squad = Global::mil().getSquadForGnome( m_id );
 		if ( squad )
