@@ -165,7 +165,7 @@ void NewGameSettings::loadEmbarkMap()
 
 	for ( auto id : trees )
 	{
-		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", embarkMap.value( "allowedTrees" ).toMap().value( id ).toBool() };
+		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", embarkMap.value( "allowedTrees" ).toMap().value( id ).toBool(), 0 };
 		m_checkableItems.insert( id, ci );
 	}
 
@@ -175,7 +175,7 @@ void NewGameSettings::loadEmbarkMap()
 	{
 		if ( DB::select( "AllowInWild", "Plants", id ).toBool() )
 		{
-			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", embarkMap.value( "allowedPlants" ).toMap().value( id ).toBool() };
+			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", embarkMap.value( "allowedPlants" ).toMap().value( id ).toBool(), 0 };
 			m_checkableItems.insert( id, ci );
 		}
 	}

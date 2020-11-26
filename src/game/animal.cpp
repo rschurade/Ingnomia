@@ -1024,7 +1024,7 @@ BT_RESULT Animal::actionFindRetreat( bool halt )
 			pos.y = qMax( 2, rand() % ( Global::dimX - 2 ) );
 			break;
 		case 2: //south
-			pos.x = ( 2, rand() % ( Global::dimX - 2 ) );
+			pos.x = qMax( 2, rand() % ( Global::dimX - 2 ) );
 			pos.y = Global::dimX - qMax( 2, rand() % 10 );
 			break;
 		case 3: // west
