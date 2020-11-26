@@ -35,7 +35,7 @@ class BT_Node
 {
 public:
 	BT_Node( QString name, QVariantMap& blackboard );
-	~BT_Node();
+	virtual ~BT_Node();
 
 	virtual QVariantMap serialize() const;
 	virtual void deserialize( QVariantMap in );

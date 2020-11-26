@@ -303,8 +303,9 @@ void Plant::updateState()
 		QString spriteID = sm.value( "SpriteID" ).toString();
 
 		m_matureWood = sm.value( "Fell" ).toBool();
+		m_harvestable = sm.value( "Harvest" ).toBool();
 
-		if ( m_harvestable = sm.value( "Harvest" ).toBool() )
+		if ( m_harvestable )
 		{
 			m_numFruits = DB::select( "NumFruitsPerSeason", "Plants", m_plantID ).toInt();
 		}

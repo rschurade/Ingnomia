@@ -95,6 +95,9 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 			case QtDebugMsg:
 				debugdate += " [D]";
 				break;
+			case QtInfoMsg:
+				debugdate += " [I]";
+				break;
 			case QtWarningMsg:
 				debugdate += " [W]";
 				break;

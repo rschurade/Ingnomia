@@ -67,7 +67,7 @@ void GuiWorkshopProduct::updateComponents()
 
 	for ( auto row : DB::selectRows( "Crafts_Components", sid ) )
 	{
-		GuiWorkshopComponent gwp { row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt(), row.value( "RequireSame" ).toBool() };
+		GuiWorkshopComponent gwp { row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt(), row.value( "RequireSame" ).toBool(), {} };
 		gwp.updateMaterials( row );
 		components.append( gwp );
 	}

@@ -101,7 +101,7 @@ const char* ItemTabItem::GetName() const
 	return _name.Str();
 }
 
-const unsigned int ItemTabItem::GetID() const
+unsigned int ItemTabItem::GetID() const
 {
 	return _id;
 }

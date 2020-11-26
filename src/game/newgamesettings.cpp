@@ -772,7 +772,7 @@ bool NewGameSettings::setNumWildAnimals( int value )
 	return false;
 }
 
-const int NewGameSettings::maxAnimalsPerType( QString type )
+int NewGameSettings::maxAnimalsPerType( QString type )
 {
 	if( m_checkableItems.contains( type ) )
 	{

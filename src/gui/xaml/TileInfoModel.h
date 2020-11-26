@@ -111,7 +111,7 @@ public:
 	ItemTabItem( QString name, unsigned int id );
 
 	const char* GetName() const;
-	const unsigned int GetID() const;
+	unsigned int GetID() const;
 
 private:
 	Noesis::String _name;
