@@ -1,19 +1,19 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
-    Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
+	Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "mainwindow.h"
@@ -130,7 +130,7 @@ MainWindow::~MainWindow()
 		Config::getInstance().set( "WindowPosX", this->position().x() );
 		Config::getInstance().set( "WindowPosY", this->position().y() );
 	}
-	
+
 	IO::saveConfig();
 	instance = nullptr;
 }
@@ -187,7 +187,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 	//qDebug() << "keyPressEvent" << event->key() << " " << event->text() << noesisKey;
 
 	bool ret = false;
-	
+
 	if( qtKey != 32 )
 	{
 		ret = m_view->KeyDown( noesisKey );
@@ -201,7 +201,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 			ret |= m_view->Char( c.unicode() );
 		}
 	}
-	
+
 	if ( ret )
 	{
 		noesisTick();
@@ -378,7 +378,7 @@ void MainWindow::onInitViewAfterLoad()
 	m_moveX = config.get( "moveX" ).toInt();
 	m_moveY = config.get( "moveY" ).toInt();
 	m_renderer->move( m_moveX, m_moveY );
-	
+
 	float scale = config.get( "scale" ).toFloat();
 	m_renderer->setScale( scale );
 }
@@ -624,6 +624,7 @@ void MainWindow::noesisInit()
 	installResourceProviders();
 
 	registerComponents();
+	Noesis::GUI::SetApplicationResources( Noesis::GUI::LoadXaml<Noesis::ResourceDictionary>( ( "localization/" + Config::getInstance().get( "language" ).toString() + ".xaml" ).toStdString().c_str() ) );
 
 	Noesis::Ptr<Noesis::FrameworkElement> xaml = Noesis::GUI::LoadXaml<Noesis::FrameworkElement>( "Main.xaml" );
 

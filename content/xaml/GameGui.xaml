@@ -17,8 +17,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
 				<!--<ResourceDictionary Source="localization/_.xaml" />-->
-				<ResourceDictionary Source="localization/en_US.xaml" />
-				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
+				<!--<ResourceDictionary Source="localization/en_US.xaml" />--><!--Uncomment this line to get debug texts. (Don't forget to comment back before merging.)-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
