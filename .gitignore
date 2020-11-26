@@ -374,3 +374,6 @@ _deps
 
 build/
 /content/db/*.db
+
+# Visual studio code
+.vscode

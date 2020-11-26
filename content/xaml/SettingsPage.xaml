@@ -130,7 +130,7 @@
 						</Grid>
 					</TabItem>
 					<TabItem Header="{StaticResource SettingsPage_Controls}">
-						<TextBlock  Grid.Column="1" FontSize="10" Text="This page is a placeholder. Keybindings are not implemented yet." VerticalAlignment="Center"/>
+						<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_KeybindingsPlaceholder}" VerticalAlignment="Center"/>
 					</TabItem>
 				</TabControl>
 

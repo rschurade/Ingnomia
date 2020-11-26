@@ -206,6 +206,7 @@
 	<system:String x:Key="SettingsPage_Language">Langue</system:String>
 	<system:String x:Key="SettingsPage_KeyboardSpeed">Défilement au clavier</system:String>
 	<system:String x:Key="SettingsPage_LightMin">Luminosité minimale</system:String>
+	<system:String x:Key="SettingsPage_KeybindingsPlaceholder">Cette page est un espace réservé. Les associations de touches ne sont pas encore implémentées.</system:String>
 
 	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
