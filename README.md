@@ -1,36 +1,66 @@
-# README #
+# Ingnomia #
 
-## How do I get set up? ##
+Just looking for the game itself?
 
-The following steps describe how to compile the code and get the game running on Windows and Linux.
+Prebuilt binraries are available in the [release section](https://github.com/rschurade/Ingnomia/releases) or on 
+[Steam](https://store.steampowered.com/app/709240/Ingnomia/).
+
+## What is this? ##
+
+Ingnomia started out as an independent remake of the older [Gnomoria](https://store.steampowered.com/app/224500/Gnomoria/) colony simulator, from which it was permitted to borrow some of the assets.
+While the graphics look similar, all of the engine was rewritten from scratch. Compared to the reference, Ingnomias engine scales significantly better with large colonies.
+
+In terms of features, balancing, user interface design etc. Ingnomia has since given its own spin to many of the core game elements.
+
+While already in a playable state, it's still under heavy development and truly, by all means, "Early Access".
+Not all game components have been implemented yet and some bugs are to be expected.
+
+Ingnomia is a pure hobby project, and true free-to-play. With "free" spelled as in "free beer".
+
+## How do I get set up for development? ##
+
+The following steps describe how to compile the code locally and get the game running on Windows and Linux.
 
 Note! Building on Mac is currently not possible. Certain features in the renderer require OpenGL4.3.
 
 ### Dependencies ###
 
+#### Windows specific ####
 * Microsoft Visual Studio 2019, the community edition is free
+* Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (optional)
+#### All Platforms ####
 * OpenGL 4.3 - Mac is not a supported compilation platform since it has deprecated OpenGL
-* Qt 5.14.1
-* Qt [vs addin](http://download.qt.io/official_releases/vsaddin/2.5.2/) (recommended)
-* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.6
-  For using Noesis in a development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
+* Qt 5.14.1 or newer
+* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.7\
+  For using Noesis in a local development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 * CMake 3.16 or newer
 
 ### Build ###
 
 ```bash
-cp -r "<EXISTING_INGOMIA_INSTALLATION>/content/tilesheet" /content
-mkdir build && cd build
-cmake .. \
+cp -r "<EXISTING_INGOMIA_INSTALLATION>/content/tilesheet" content/
+
+cmake -S . -B "<BUILD_DIR>" \
 -DQt5_DIR="<QTINSTALLDIR>/<ARCH>/lib/cmake/Qt5" \
 -DSTEAM_SDK_ROOT="<STEAMSDKDIR>/sdk" \
 -DNOESIS_ROOT="<NOESISDIR>" \
--DNOESIS_LICENSE_NAME="<TRIAL_LICENSE_NAME>" \
--DNOESIS_LICENSE_KEY="<TRIAL_LICENSE_KEY>"
+-DNOESIS_LICENSE_NAME="<NOESIS_TRIAL_LICENSE_NAME>" \
+-DNOESIS_LICENSE_KEY="<NOESIS_TRIAL_LICENSE_KEY>"
 ```
 
-If no errors have occured, proceed building the project with the chose build system.
+If no errors have occured, proceed by building the project with the chosen build system or open the generated project in an IDE of your choice.
+
+```bash
+cmake --build "<BUILD_DIR>"
+```
+
+### Forks on Github ###
+
+When forking the project on Github, you should add `NOESIS_LICENSE_KEY` and `NOESIS_LICENSE_NAME` as secrets in your repositories configuration under Settings/Secrets. If not provided, CI builds will fail for your fork.
+
+Ingnomia comes with automatic builds via GitHub Actions, triggered on push to repository.
+As long as you have forked Ingnomia as a **public** repository, these are expected to be free-of-charge for your GitHub account.
 
 ## Contribution guidelines ##
 
@@ -55,8 +85,6 @@ If you prefer, you may also try to reproduce bugs reported by other users. The m
 If you know any of C++ or XAML you can help right away! Feel free to check for open bugs, and hop over to our [Discord](https://discord.gg/DCSmxVD) channel to get you sorted in.
 
 Please provide your contributions in the form of a pull request, rebased onto the current head of development.
-
-When forking the project on Github, you should add `NOESIS_LICENSE_KEY` and `NOESIS_LICENSE_NAME` as secrets in your repositories configuration under Settings/Secrets. If not provided, CI builds will fail for your fork.
 
 #### License ####
 
