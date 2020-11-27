@@ -235,7 +235,7 @@ bool Stockpile::onTick( quint64 tick )
 			auto possibleSloits     = freeSlots();
 			const auto activeFilter = m_filter.getActive();
 			QSet<QPair<QString, QString>> effectiveFilter;
-			if ( possibleSloits.contains( QPair { "Any", "Any" } ) )
+			if ( possibleSloits.contains( QPair<QString, QString> { "Any", "Any" } ) )
 			{
 				effectiveFilter = activeFilter;
 			}
@@ -243,7 +243,7 @@ bool Stockpile::onTick( quint64 tick )
 			{
 				for ( const auto& filter : activeFilter )
 				{
-					if ( possibleSloits.contains( filter ) || possibleSloits.contains( QPair { filter.first, "Any" } ) )
+					if ( possibleSloits.contains( filter ) || possibleSloits.contains( QPair<QString, QString> { filter.first, "Any" } ) )
 					{
 						effectiveFilter.insert( filter );
 					}
