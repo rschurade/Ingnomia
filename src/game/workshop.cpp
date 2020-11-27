@@ -520,7 +520,6 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 			{
 				if ( i < m_jobList.size() - 1 )
 				{
-					m_jobList.swapItemsAt( i, i + 1 );
 					m_jobList.move( i, i + 1 );
 					return true;
 				}
