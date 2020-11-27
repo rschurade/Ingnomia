@@ -206,6 +206,7 @@
 	<system:String x:Key="SettingsPage_Language">Language</system:String>
 	<system:String x:Key="SettingsPage_KeyboardSpeed">Keyboard speed</system:String>
 	<system:String x:Key="SettingsPage_LightMin">minimum light level</system:String>
+	<system:String x:Key="SettingsPage_KeybindingsPlaceholder">This page is a placeholder. Keybindings are not implemented yet.</system:String>
 	
 
 	<!--{StaticResource StockpileGui_}-->

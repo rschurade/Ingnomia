@@ -88,13 +88,13 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_WorldSize}">
 										<TextBlock.ToolTip>
-											<StackPanel Width="300" Background="#FF365264">
+											<StackPanel MaxWidth="1000" Background="#FF365264">
 												<TextBlock Text="{StaticResource NewGamePage_LargerSizePerformance}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 											</StackPanel>
 										</TextBlock.ToolTip>
@@ -106,8 +106,8 @@
 								<!--
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_ZLevels}" />
@@ -117,8 +117,8 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_Ground}" />
@@ -128,8 +128,8 @@
 								-->
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_Flatness}" />
@@ -139,8 +139,8 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_OceanSize}" />
@@ -150,8 +150,8 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_Rivers}" />
@@ -161,8 +161,8 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_RiverSize}" />
@@ -172,8 +172,8 @@
 
 								<Grid HorizontalAlignment="Stretch" Margin="5">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="2*" />
-										<ColumnDefinition Width="8*" />
+										<ColumnDefinition Width="2.2*" />
+										<ColumnDefinition Width="7.8*" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{StaticResource NewGamePage_StartArea}">
@@ -215,8 +215,8 @@
 
 							<Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="5">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="2*" />
-									<ColumnDefinition Width="8*" />
+									<ColumnDefinition Width="2.2*" />
+									<ColumnDefinition Width="7.8*" />
 									<ColumnDefinition Width="1*" />
 								</Grid.ColumnDefinitions>
 								<TextBlock Grid.Column="0" Text="{StaticResource NewGamePage_Gnomes}" Margin="2" />
@@ -321,8 +321,8 @@
 							</Grid.RowDefinitions>
 							<Grid  Grid.Row="0" HorizontalAlignment="Stretch" Margin="5">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="2*" />
-									<ColumnDefinition Width="8*" />
+									<ColumnDefinition Width="2.2*" />
+									<ColumnDefinition Width="7.8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
 								<TextBlock Text="{StaticResource NewGamePage_TreeDensity}" />
@@ -331,8 +331,8 @@
 							</Grid>
 							<Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="5">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="2*" />
-									<ColumnDefinition Width="8*" />
+									<ColumnDefinition Width="2.2*" />
+									<ColumnDefinition Width="7.8*" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
 								<TextBlock Text="{StaticResource NewGamePage_PlantDensity}" />
@@ -372,7 +372,7 @@
 								</Grid.ColumnDefinitions>
 								<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimalsPage}">
 									<TextBlock.ToolTip>
-										<StackPanel Width="300" Background="#FF365264">
+										<StackPanel MaxWidth="1000" Background="#FF365264">
 											<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimals}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 											<TextBlock Text="{StaticResource NewGamePage_NumberMaxWildAnimalsAtStart}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 										</StackPanel>
@@ -389,7 +389,7 @@
 								</Grid.ColumnDefinitions>
 								<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimalsPage}">
 									<TextBlock.ToolTip>
-										<StackPanel Width="300" Background="#FF365264">
+										<StackPanel MaxWidth="1000" Background="#FF365264">
 											<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimals}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 											<TextBlock Text="{StaticResource NewGamePage_NumberMaxAnimalsIncludesDomesticated}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
 										</StackPanel>

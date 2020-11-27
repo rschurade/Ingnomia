@@ -206,6 +206,7 @@
 	<system:String x:Key="SettingsPage_Language">SettingsPage_Language</system:String>
 	<system:String x:Key="SettingsPage_KeyboardSpeed">SettingsPage_KeyboardSpeed</system:String>
 	<system:String x:Key="SettingsPage_LightMin">SettingsPage_LightMin</system:String>
+	<system:String x:Key="SettingsPage_KeybindingsPlaceholder">SettingsPage_KeybindingsPlaceholder</system:String>
 
 	<!--{StaticResource StockpileGui_}-->
 	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
