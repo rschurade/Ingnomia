@@ -2300,7 +2300,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 	if ( !m_currentAttackTarget )
 	{
 		const Creature* bestCandidate = nullptr;
-		int bestDistance     = std::numeric_limits<unsigned int>::max();
+		unsigned int bestDistance     = std::numeric_limits<unsigned int>::max();
 
 		const Squad* squad = Global::mil().getSquadForGnome( m_id );
 		if ( squad )
@@ -2314,7 +2314,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 					const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
 					if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
 					{
-						const auto dist = m_position.distSquare( creature->getPos() );
+						const unsigned int dist = m_position.distSquare( creature->getPos() );
 						bestDistance    = dist;
 						bestCandidate   = creature;
 						// Any legal match is a good hit
@@ -2336,7 +2336,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 							const Creature* creature = Global::cm().creature( targetID );
 							if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
 							{
-								const auto dist = m_position.distSquare( creature->getPos() );
+								const unsigned int dist = m_position.distSquare( creature->getPos() );
 								if ( dist < bestDistance )
 								{
 									bestDistance  = dist;
