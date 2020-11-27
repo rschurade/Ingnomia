@@ -327,7 +327,7 @@ void StockpileManager::movePriorityUp( unsigned int stockpileID )
 	int index = m_stockpilesOrdered.indexOf( stockpileID );
 	if ( index > 0 )
 	{
-		m_stockpilesOrdered.swapItemsAt( index - 1, index );
+		m_stockpilesOrdered.move( index, index - 1 );
 		m_stockpiles[m_stockpilesOrdered[index - 1]]->setPriority( index - 1 );
 		m_stockpiles[m_stockpilesOrdered[index]]->setPriority( index );
 	}
@@ -354,7 +354,7 @@ void StockpileManager::movePriorityDown( unsigned int stockpileID )
 	int index = m_stockpilesOrdered.indexOf( stockpileID );
 	if ( index != -1 && index < m_stockpilesOrdered.size() - 1 )
 	{
-		m_stockpilesOrdered.swapItemsAt( index, index + 1 );
+		m_stockpilesOrdered.move( index, index + 1 );
 
 		m_stockpiles[m_stockpilesOrdered[index + 1]]->setPriority( index + 1 );
 		m_stockpiles[m_stockpilesOrdered[index]]->setPriority( index );
