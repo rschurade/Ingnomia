@@ -2,7 +2,7 @@
 
 Just looking for the game itself?
 
-Prebuilt binraries are available in the [release section](https://github.com/rschurade/Ingnomia/releases) or on 
+Prebuilt binaries are available in the [release section](https://github.com/rschurade/Ingnomia/releases) or on 
 [Steam](https://store.steampowered.com/app/709240/Ingnomia/).
 
 ## What is this? ##
