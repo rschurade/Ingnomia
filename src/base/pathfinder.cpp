@@ -100,7 +100,9 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 			{
 				start,
 				goal,
-				ignoreNoPass
+				ignoreNoPass,
+				PathFinderResult::Running,
+				{}
 			}
 		);
 
