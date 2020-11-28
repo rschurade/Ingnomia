@@ -12445,7 +12445,6 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_BoneBedFrame','bone b
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Continue','Continue');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_NewGame','New Game');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Resume','Resume');
-INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Network','Network');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Join','Join');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Mods','Mods');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GUI_Save','Save');

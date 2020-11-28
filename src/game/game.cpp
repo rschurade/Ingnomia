@@ -386,7 +386,6 @@ void Game::processPlants()
 	}
 	for ( auto p : toRemove )
 	{
-		//GameState::addChange2( NetworkCommand::PLANTREMOVE, p.toString() );
 		Global::w().removePlant( p );
 	}
 }

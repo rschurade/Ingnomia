@@ -219,8 +219,6 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 	}
 	addObject( obj, itemSID, materialSID );
 
-	GameState::addChange2( NetworkCommand::ITEMCREATE, QJsonDocument::fromVariant( obj.serialize() ).toJson() );
-
 	return obj.id();
 }
 
@@ -282,8 +280,6 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 			obj.setSpriteID( sprite->uID );
 		}
 		addObject( obj, itemSID, firstMat );
-
-		GameState::addChange2( NetworkCommand::ITEMCREATE, QJsonDocument::fromVariant( obj.serialize() ).toJson() );
 
 		return obj.id();
 	}
@@ -463,8 +459,6 @@ void Inventory::destroyObject( unsigned int id )
 		//DB::destroyItem( id );
 		m_itemsChanged = true;
 	}
-
-	GameState::addChange2( NetworkCommand::ITEMDESTROY, QString::number( id ) );
 }
 
 unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
@@ -845,7 +839,6 @@ void Inventory::moveItemToPos( unsigned int id, const Position& newPos )
 	pickUpItem( id );
 
 	putDownItem( id, newPos );
-	GameState::addChange( NetworkCommand::ITEMMOVE, { QString::number( id ), newPos.toString() } );
 }
 
 unsigned int Inventory::pickUpItem( unsigned int id )
@@ -906,8 +899,6 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 				}
 			}
 		}
-
-		GameState::addChange2( NetworkCommand::ITEMPICKUP, QString::number( id ) );
 
 		unsigned int nextItemID = getFirstObjectAtPosition( pos );
 		auto nextItem           = getItem( nextItemID );
@@ -974,7 +965,6 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 
 		// set new position
 		item->setPos( newPos );
-		GameState::addChange( NetworkCommand::ITEMPUTDOWN, { QString::number( id ), newPos.toString() } );
 
 		unsigned int nextItemID = getFirstObjectAtPosition( newPos );
 		auto nextItem           = getItem( nextItemID );
@@ -1294,7 +1284,6 @@ void Inventory::setInStockpile( unsigned int id, unsigned int stockpile )
 		{
 			addToWealth( item );
 		}
-		GameState::addChange( NetworkCommand::ITEMSETINSTOCKPILE, { QString::number( id ), QString::number( stockpile ) } );
 	}
 }
 
@@ -1316,7 +1305,6 @@ void Inventory::setInJob( unsigned int id, unsigned int job )
 	if ( item )
 	{
 		item->setInJob( job );
-		GameState::addChange( NetworkCommand::ITEMSETINJOB, { QString::number( id ), QString::number( job ) } );
 	}
 }
 
@@ -1338,7 +1326,6 @@ void Inventory::setInContainer( unsigned int id, unsigned int container )
 	if ( item )
 	{
 		item->setInContainer( container );
-		GameState::addChange( NetworkCommand::ITEMSETINCONTAINER, { QString::number( id ), QString::number( container ) } );
 	}
 }
 
@@ -1368,7 +1355,6 @@ void Inventory::setConstructedOrEquipped( unsigned int id, bool status )
 		{
 			addToWealth( item );
 		}
-		GameState::addChange( NetworkCommand::ITEMSETCONSTRUCTED, { QString::number( id ), QString::number( status ) } );
 	}
 }
 
@@ -1456,8 +1442,6 @@ void Inventory::putItemInContainer( unsigned int id, unsigned int containerID )
 		{
 			Global::w().setItemSprite( container->getPos(), 0 );
 		}
-
-		GameState::addChange( NetworkCommand::ITEMPUTINCONTAINER, { QString::number( id ), QString::number( containerID ) } );
 	}
 }
 
@@ -1478,7 +1462,6 @@ void Inventory::removeItemFromContainer( unsigned int id )
 				Global::spm().setInfiNotFull( container->getPos() );
 			}
 		}
-		GameState::addChange2( NetworkCommand::ITEMREMOVEFROMCONTAINER, QString::number( id ) );
 	}
 }
 

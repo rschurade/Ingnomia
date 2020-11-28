@@ -166,8 +166,6 @@ public:
 	unsigned int spriteUID( QString name ) const;
 	unsigned int spriteUID() const;
 
-	void setNetworkMove( Position& newPos, int facing );
-
 	bool renderParamsChanged();
 
 	bool isDead() const

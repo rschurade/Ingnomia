@@ -173,14 +173,12 @@ void World::setFloorSprite( unsigned short x, unsigned short y, unsigned short z
 {
 	getTile( x, y, z ).floorSpriteUID = spriteUID;
 	addToUpdateList( x, y, z );
-	GameState::addChange( NetworkCommand::SETFLOORSPRITE, { QString::number( Position( x, y, z ).toInt() ), QString::number( spriteUID ) } );
 }
 
 void World::setFloorSprite( Position pos, unsigned int spriteUID )
 {
 	getTile( pos ).floorSpriteUID = spriteUID;
 	addToUpdateList( pos );
-	GameState::addChange( NetworkCommand::SETFLOORSPRITE, { QString::number( pos.toInt() ), QString::number( spriteUID ) } );
 }
 
 void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
@@ -189,7 +187,6 @@ void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z,
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -199,7 +196,6 @@ void World::setWallSprite( Position pos, unsigned int spriteUID, unsigned char r
 	unsigned int UID           = pos.toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -214,7 +210,6 @@ void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z,
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
-	//GameState::addChange( NetworkCommand::SETITEMSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -224,7 +219,6 @@ void World::setItemSprite( Position pos, unsigned int spriteUID, unsigned char r
 	unsigned int UID           = pos.toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -281,7 +275,6 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 	}
 
 	addToUpdateList( pos.toInt() );
-	GameState::addChange( NetworkCommand::SETJOBSPRITE, { QString::number( pos.toInt() ), QString::number( spriteUID ), QString::number( rotation ), ( floor ) ? QString::number( 1 ) : QString::number( 0 ), QString::number( jobID ) } );
 }
 
 void World::clearJobSprite( Position pos, bool floor )
@@ -304,7 +297,6 @@ void World::clearJobSprite( Position pos, bool floor )
 		m_jobSprites.remove( pos.toInt() );
 	}
 	clearTileFlag( pos, TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_FLOOR + TileFlag::TF_JOB_BUSY_WALL );
-	GameState::addChange2( NetworkCommand::CLEARJOBSPRITE, pos.toString() );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -324,7 +316,6 @@ void World::setTileFlag( Position pos, TileFlag flag )
 	{
 		m_regionMap.updatePosition( pos );
 	}
-	GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -342,8 +333,6 @@ void World::clearTileFlag( Position pos, TileFlag flag )
 		Global::spm().removeTile( pos );
 		Global::rm().removeTile( pos );
 	}
-
-	GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -1140,10 +1129,8 @@ QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& w
 	discover( pos );
 
 	QString ncd = QString::number( pos.toInt() );
-	GameState::addChange2( NetworkCommand::CLEARWALLSPRITE, ncd );
 	ncd += ";";
 	ncd += Util::tile2String( tile );
-	GameState::addChange2( NetworkCommand::SETTILEFLAGS, ncd );
 
 	return { materialInt, embeddedInt };
 }
@@ -1177,10 +1164,8 @@ QPair<unsigned short, unsigned short> World::removeWall( Position pos, Position&
 	discover( pos );
 
 	QString ncd = QString::number( pos.toInt() );
-	GameState::addChange2( NetworkCommand::CLEARWALLSPRITE, ncd );
 	ncd += ";";
 	ncd += Util::tile2String( tile );
-	GameState::addChange2( NetworkCommand::SETTILEFLAGS, ncd );
 
 	return { materialInt, embeddedInt };
 }
@@ -1666,18 +1651,6 @@ void World::createRampOuterCorners( int x, int y, int z )
 		tile.wallSpriteUID = corner;
 		tile.wallRotation  = 2;
 	}
-}
-
-bool World::setNetworkMove( unsigned int id, Position newPos, int facing )
-{
-	/* TODO
-	if( Global::cm().animals().contains( id ) )
-	{
-		Global::cm().animals()[id].setNetworkMove( newPos, facing );
-		return true;
-	}
-	*/
-	return false;
 }
 
 void World::addToUpdateList( const unsigned int uID )
