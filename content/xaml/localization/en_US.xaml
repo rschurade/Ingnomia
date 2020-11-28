@@ -80,7 +80,6 @@
 
 	<!--{StaticResource GameGui_}-->
 	<system:String x:Key="GameGui_">GameGui_</system:String>
-	<system:String x:Key="GameGui_Ingnomia">Ingnomia</system:String>
 	<system:String x:Key="GameGui_KingdomName">Kingdom name</system:String>
 	<system:String x:Key="GameGui_Something1">something</system:String>
 	<system:String x:Key="GameGui_Something2">something</system:String>
