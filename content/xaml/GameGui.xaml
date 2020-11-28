@@ -29,7 +29,6 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0"  FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource GameGui_Ingnomia}" />
 
 		<Grid x:Name="TopRow" Grid.Row="0">
 			<Grid.ColumnDefinitions>
