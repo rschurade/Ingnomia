@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 ### Changed
-
+- improved cursor for building floor on walls
 
 
 ## [0.8.1]

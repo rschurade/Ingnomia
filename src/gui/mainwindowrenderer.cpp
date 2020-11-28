@@ -1070,7 +1070,7 @@ unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )
 	return 0;
 }
 
-Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool useViewLevel ) const
+Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
 	Position cursorPos;
 	int dim = Global::dimX;
@@ -1206,7 +1206,11 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool useViewLev
 		if ( cursorPos.z > 0 )
 		{
 			Tile& tileBelow = world.getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
-			if ( tile.floorType != FloorType::FT_NOFLOOR || tileBelow.wallType == WallType::WT_SOLIDWALL || useViewLevel )
+			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
+			{
+				zFloorFound = true;
+			}
+			else if ( tile.floorType != FloorType::FT_NOFLOOR || tileBelow.wallType == WallType::WT_SOLIDWALL || useViewLevel )
 			{
 				zFloorFound = true;
 			}

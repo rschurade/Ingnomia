@@ -44,7 +44,7 @@ public:
 	MainWindowRenderer( MainWindow* parent = Q_NULLPTR );
 	~MainWindowRenderer();
 
-	Position calcCursor( int mouseX, int mouseY, bool useViewLevel ) const;
+	Position calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const;
 
 protected:
 	QOpenGLVertexArrayObject m_vao;

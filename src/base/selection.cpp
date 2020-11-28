@@ -263,7 +263,6 @@ void Selection::rightClick( Position& pos )
 		m_firstClicked         = false;
 		m_selectionSize.first  = 0;
 		m_selectionSize.second = 0;
-		m_isFloor              = actionMap.value( "Floor" ).toBool();
 	}
 	else
 	{

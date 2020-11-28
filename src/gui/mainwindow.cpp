@@ -363,7 +363,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 		Selection::getInstance().updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 		Selection::getInstance().setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
@@ -445,7 +445,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 					if ( Selection::getInstance().hasAction() )
 					{
 						if ( Selection::getInstance().leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
@@ -486,7 +486,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( Selection::getInstance().hasAction() )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 					Selection::getInstance().rightClick( m_cursorPos );
 					m_selectedAction = Selection::getInstance().action();
 					redraw();
@@ -564,7 +564,7 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, shift );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
 		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
 		Selection::getInstance().setControlActive( ctrl );
 		redraw();
@@ -584,7 +584,7 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, shift );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
 		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
 		Selection::getInstance().setControlActive( ctrl );
 		redraw();
