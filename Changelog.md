@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - suboptimal paths due to wrong heuristic in pathfinding
 - gnomes trying to work in deep water
 - missing floor texture for undiscovered areas
+- find new path if target has moved
 
 ### Added
 

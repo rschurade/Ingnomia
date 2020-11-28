@@ -402,6 +402,7 @@ protected:
 	BT_RESULT conditionIsInCombat( bool halt );
 	BT_RESULT conditionIsOnMission( bool halt );
 	BT_RESULT conditionTargetAdjacent( bool halt );
+	BT_RESULT conditionTargetPositionValid( bool halt );
 
 	BT_RESULT actionRandomMove( bool halt );
 	BT_RESULT actionGetExitPosition( bool halt );
@@ -422,6 +423,8 @@ protected:
 	void removeClaimedItem( unsigned int item );
 	void unclaimAll();
 	void clearClaimedItems();
+
+	Creature* resolveTarget( unsigned int creatureId );
 };
 
 struct CreatureCompare

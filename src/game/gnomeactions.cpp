@@ -185,14 +185,8 @@ BT_RESULT Gnome::actionMove( bool halt )
 	if ( halt )
 	{
 		//abortJob( "actionMove - halt" );
+		m_currentPath.clear();
 		return BT_RESULT::IDLE;
-	}
-	if ( !m_currentPath.empty() )
-	{
-		if ( m_currentPath[m_currentPath.size() - 1] == m_position )
-		{
-			m_currentPath.pop_back();
-		}
 	}
 	// gnome has a path, move on path and return
 	if ( !m_currentPath.empty() )
@@ -218,15 +212,12 @@ BT_RESULT Gnome::actionMove( bool halt )
 				m_currentPath.clear();
 				return BT_RESULT::SUCCESS;
 			}
-			else
+
+			if ( conditionTargetPositionValid( false ) == BT_RESULT::FAILURE )
 			{
-				if ( !moveOnPath() )
-				{
-					//abortJob( "actionMove - 1" );
-					return BT_RESULT::FAILURE;
-				}
+				// Repath
 				m_currentPath.clear();
-				return BT_RESULT::RUNNING;
+				return BT_RESULT::FAILURE;
 			}
 		}
 
@@ -235,6 +226,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 		if ( !moveOnPath() )
 		{
 			//abortJob( "actionMove - 1" );
+			m_currentPath.clear();
 			return BT_RESULT::FAILURE;
 		}
 
@@ -2294,6 +2286,11 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 		{
 			m_currentAttackTarget = 0;
 			m_thoughtBubble       = "";
+		}
+		else
+		{
+			// Update target position
+			setCurrentTarget( creature->getPos() );
 		}
 	}
 

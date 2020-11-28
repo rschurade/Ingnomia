@@ -869,34 +869,7 @@ BT_RESULT Creature::conditionTargetAdjacent( bool halt )
 	Creature* creature = nullptr;
 	if ( m_currentAttackTarget )
 	{
-		switch ( m_type )
-		{
-			case CreatureType::GNOME:
-				creature = Global::cm().monster( m_currentAttackTarget );
-				if ( !creature )
-				{
-					creature = Global::cm().animal( m_currentAttackTarget );
-				}
-				break;
-			case CreatureType::ANIMAL:
-				creature = Global::cm().monster( m_currentAttackTarget );
-				if ( !creature )
-				{
-					creature = Global::gm().gnome( m_currentAttackTarget );
-				}
-				if ( !creature )
-				{
-					creature = Global::cm().animal( m_currentAttackTarget );
-				}
-				break;
-			case CreatureType::MONSTER:
-				creature = Global::gm().gnome( m_currentAttackTarget );
-				if ( !creature )
-				{
-					creature = Global::cm().animal( m_currentAttackTarget );
-				}
-				break;
-		}
+		creature = resolveTarget( m_currentAttackTarget );
 	}
 
 	if ( creature )
@@ -914,6 +887,23 @@ BT_RESULT Creature::conditionTargetAdjacent( bool halt )
 	}
 	if ( Global::debugMode )
 		qDebug() << m_name << "Target is not adjacent";
+	return BT_RESULT::FAILURE;
+}
+
+BT_RESULT Creature::conditionTargetPositionValid( bool halt )
+{
+	Creature* creature = nullptr;
+	if ( m_currentAttackTarget )
+	{
+		creature = resolveTarget( m_currentAttackTarget );
+	}
+	if (creature)
+	{
+		if ( creature->getPos() == m_currentTargetPosition )
+		{
+			return BT_RESULT::SUCCESS;
+		}
+	}
 	return BT_RESULT::FAILURE;
 }
 
@@ -1109,6 +1099,16 @@ void Creature::unclaimAll()
 void Creature::clearClaimedItems()
 {
 	m_claimedItems.clear();
+}
+
+Creature* Creature::resolveTarget( unsigned int creatureId )
+{
+	Creature* creature = Global::cm().creature( m_currentAttackTarget );
+	if ( !creature )
+	{
+		creature = Global::gm().gnome( m_currentAttackTarget );
+	}
+	return creature;
 }
 
 void Creature::log( QString txt )

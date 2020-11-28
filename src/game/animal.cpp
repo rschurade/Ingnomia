@@ -962,22 +962,17 @@ BT_RESULT Animal::actionMove( bool halt )
 				m_currentPath.clear();
 				return BT_RESULT::SUCCESS;
 			}
-		}
-		/*
-		if( m_variables.value( "Follower" ).toUInt() )
-		{
-			if( m_moveCooldown <= m_moveSpeed )
+
+			if ( conditionTargetPositionValid( false ) == BT_RESULT::FAILURE )
 			{
-				auto animal = Global::cm().animal( m_variables.value( "Follower" ).toUInt() );
-				if( animal )
-				{
-					animal->setFollowPosition( m_position );
-				}
+				m_currentPath.clear();
+				return BT_RESULT::FAILURE;
 			}
 		}
-		*/
+
 		if ( !moveOnPath() )
 		{
+			m_currentPath.clear();
 			return BT_RESULT::FAILURE;
 		}
 		return BT_RESULT::RUNNING;
