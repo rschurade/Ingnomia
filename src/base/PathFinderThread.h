@@ -49,7 +49,10 @@ private:
 
 	static inline double heuristic( const Position& a, const Position& b )
 	{
-		return abs( a.x - b.x ) + abs( a.y - b.y ) + abs( a.z - b.z );
+		// Heuristic needs to represent the lowest, possible cost from a to b
+		// Going even lower increases the search space, but still yields correct path
+		// Going too high will result in fiding sub-optimal paths as the search space is reduced too much
+		return cost(a, b);
 	}
 
 	static inline double cost( const Position& lhs, const Position& rhs )
