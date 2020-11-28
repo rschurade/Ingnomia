@@ -375,16 +375,6 @@ Automaton* GnomeManager::automaton( unsigned int automatonID )
 	return nullptr;
 }
 
-bool GnomeManager::setNetworkMove( unsigned int gnomeID, Position newPos, int facing )
-{
-	if ( m_gnomesByID.contains( gnomeID ) )
-	{
-		m_gnomesByID[gnomeID]->setNetworkMove( newPos, facing );
-		return true;
-	}
-	return false;
-}
-
 QList<Gnome*> GnomeManager::gnomesSorted()
 {
 	QList<Gnome*> out = gnomes();

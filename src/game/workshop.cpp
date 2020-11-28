@@ -541,7 +541,6 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 void Workshop::moveJob( int pos, int newPos )
 {
 	m_jobList.move( pos, newPos );
-	//GameState::addChange( NetworkCommand::WORKSHOPINFO, { QString::number( id() ), QJsonDocument::fromVariant( serializeJobQueue() ).toJson() } );
 }
 
 bool Workshop::setJobParams( unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack )
@@ -570,8 +569,6 @@ void Workshop::setJobSuspended( unsigned int jobDefID, bool suspended )
 			break;
 		}
 	}
-
-	//GameState::addChange( NetworkCommand::WORKSHOPINFO, { QString::number( id() ), QJsonDocument::fromVariant( serializeJobQueue() ).toJson() } );
 }
 
 void Workshop::cancelJob( unsigned int jobDefID )
@@ -599,8 +596,6 @@ void Workshop::cancelJob( unsigned int jobDefID )
 			break;
 		}
 	}
-
-	//GameState::addChange( NetworkCommand::WORKSHOPINFO, { QString::number( id() ), QJsonDocument::fromVariant( serializeJobQueue() ).toJson() } );
 }
 
 bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )

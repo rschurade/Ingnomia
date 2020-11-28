@@ -172,8 +172,6 @@ bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVarian
 		{
 			updateLightsInRange( constrPos );
 		}
-
-		//GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		updateCoords.push_back( constrPos );
 	}
 
@@ -268,8 +266,6 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 				--z;
 			}
 		}
-
-		//GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		updateCoords.push_back( constrPos );
 	}
 
@@ -335,8 +331,6 @@ bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVaria
 			tile.wallRotation = 0;
 			clearTileFlag( constrPos, TileFlag::TF_WALKABLE );
 		}
-
-		GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		updateCoords.push_back( constrPos );
 	}
 
@@ -515,8 +509,6 @@ bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QV
 				}
 			}
 		}
-
-		//GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		updateCoords.push_back( constrPos );
 	}
 
@@ -597,8 +589,6 @@ bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVari
 				positions.append( "F" );
 				positions.append( constrPos.toString() );
 			}
-
-			GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 			updateCoords.push_back( constrPos );
 		}
 	}
@@ -699,8 +689,6 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 				positions.append( "F" );
 				positions.append( constrPos.toString() );
 			}
-
-			GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 			updateCoords.push_back( constrPos );
 		}
 	}
@@ -842,12 +830,10 @@ bool World::constructWorkshop( QVariantMap& con, Position pos, int rotation, QVa
 			tile.wallType     = WallType::WT_CONSTRUCTED;
 		}
 		tile.flags += TileFlag::TF_WORKSHOP;
-		GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 	}
 
 	Workshop* ws = Global::wsm().addWorkshop( con.value( "ID" ).toString(), pos, rotation );
 	ws->setSourceItems( items );
-	GameState::addChange2( NetworkCommand::WORKSHOPADD, QJsonDocument::fromVariant( ws->serialize() ).toJson() );
 	ws->setSprites( spriteComposition );
 
 	return true;
@@ -935,8 +921,6 @@ bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, Q
 			positions.append( "F" );
 			positions.append( constrPos.toString() );
 		}
-
-		//GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		updateCoords.push_back( constrPos );
 	}
 
@@ -1151,8 +1135,6 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 
 			updateWalkable( wsPos );
 			addToUpdateList( wsPos );
-
-			GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 		}
 		for ( auto vItem : sourceItems )
 		{

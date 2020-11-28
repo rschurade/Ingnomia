@@ -89,7 +89,6 @@ public:
 	}
 
 	void forceMoveGnomes( Position from, Position to );
-	bool setNetworkMove( unsigned int id, Position newPos, int facing );
 
 	QList<Gnome*> gnomesAtPosition( Position pos );
 	QList<Gnome*> deadGnomesAtPosition( Position pos );

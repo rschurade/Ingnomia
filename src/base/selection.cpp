@@ -845,25 +845,6 @@ int Selection::rotation()
 	}
 }
 
-void Selection::setNetworkCommand( QVariantMap data )
-{
-	m_rotation        = data.value( "Rot" ).toInt();
-	m_firstClick      = Position( data.value( "Pos" ).toString() );
-	m_action          = data.value( "Action" ).toString();
-	m_item            = data.value( "Item" ).toString();
-	m_materials       = data.value( "Mats" ).toString().split( "_" );
-	QVariantList sels = data.value( "Selection" ).toList();
-	m_selection.clear();
-	QVariantMap actionMap = DB::selectRow( "Actions", m_action );
-
-	for ( auto sel : sels )
-	{
-		m_selection.push_back( QPair<Position, bool>( Position( sel.toString() ), testTileForJobSelection( Position( sel.toString() ) ) ) );
-	}
-	onSecondClick( false, false );
-	m_firstClicked = false;
-}
-
 bool Selection::changed()
 {
 	bool out  = m_changed;

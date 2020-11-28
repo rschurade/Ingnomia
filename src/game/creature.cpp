@@ -711,8 +711,6 @@ void Creature::move( Position oldPos )
 {
 	if ( m_position != oldPos )
 	{
-		//GameState::addChange( NetworkCommand::CREATUREMOVE, { QString::number( m_id ), m_position.toString(), QString::number( m_facing ) } );
-
 		Global::w().removeCreatureFromPosition( oldPos, m_id );
 		Global::w().insertCreatureAtPosition( m_position, m_id );
 
@@ -737,15 +735,6 @@ void Creature::move( Position oldPos )
 
 		m_renderParamsChanged = true;
 	}
-}
-
-void Creature::setNetworkMove( Position& newPos, int facing )
-{
-	Global::w().removeCreatureFromPosition( m_position, m_id );
-	m_position = newPos;
-	Global::w().insertCreatureAtPosition( m_position, m_id );
-	m_facing              = facing;
-	m_renderParamsChanged = true;
 }
 
 bool Creature::renderParamsChanged()

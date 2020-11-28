@@ -1314,7 +1314,6 @@ bool CanWork::fellTree()
 		{
 			// remove plant;
 			Global::w().removePlant( pos );
-			GameState::addChange2( NetworkCommand::PLANTREMOVE, pos.toString() );
 			return true;
 		}
 	}

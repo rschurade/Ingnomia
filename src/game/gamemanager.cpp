@@ -185,7 +185,6 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 		m_game->moveToThread( &m_gameThread );
 
 		Config::getInstance().set( "gameRunning", true );
-		GameState::setAcceptChangeSets( true );
 
 		m_showMainMenu = false;
 
@@ -227,7 +226,6 @@ void GameManager::createNewGame()
 	m_game->moveToThread( &m_gameThread );
 
 	Config::getInstance().set( "gameRunning", true );
-	GameState::setAcceptChangeSets( true );
 
 	m_showMainMenu = false;
 

@@ -143,7 +143,6 @@ public:
 
 	Sprite* createSprite( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
 	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
-	Sprite* createSpriteNetwork( const QString itemSID, const QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
 
 	Sprite* createAnimalSprite( const QString spriteSID, const QMap<int, int>& random = QMap<int, int>() );
 

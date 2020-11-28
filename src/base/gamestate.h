@@ -29,43 +29,6 @@
 
 #include <initializer_list>
 
-enum class NetworkCommand : unsigned int
-{
-	CREATUREMOVE = 1,
-	CREATESPRITE,
-	CREATESPRITERANDOM,
-	SETFLOORSPRITE,
-	SETWALLSPRITE,
-	CLEARWALLSPRITE,
-	CLEARFLOORSPRITE,
-	SETJOBSPRITE,
-	CLEARJOBSPRITE,
-	SETTILEFLAGS,
-
-	ITEMCREATE,
-	ITEMDESTROY,
-	ITEMMOVE,
-	ITEMPICKUP,
-	ITEMPUTDOWN,
-	ITEMSETINSTOCKPILE,
-	ITEMSETINJOB,
-	ITEMSETINCONTAINER,
-	ITEMSETBEINHAULED,
-	ITEMSETCONSTRUCTED,
-	ITEMSETPOS,
-	ITEMPUTINCONTAINER,
-	ITEMREMOVEFROMCONTAINER,
-
-	PLANTREMOVE,
-
-	WORKSHOPADD,
-	WORKSHOPREMOVE,
-	WORKSHOPINFO,
-
-	SELECTION
-
-};
-
 class GameState
 {
 private:
@@ -149,14 +112,6 @@ public:
 
 	static QVariantList addedMaterials;
 	static QVariantMap addedTranslations;
-
-	// TODO network support, obsolete, when we visit networking again this has to be redone
-	static void setAcceptChangeSets( bool value ) {};
-	static void addChange( NetworkCommand cmd, std::initializer_list<QString> args ) {};
-	static void addChange2( NetworkCommand cmd, QString arg ) {};
-	static QString getChangeSet() { return ""; };
-	
-	
 
 private:
 	static unsigned int nextID;

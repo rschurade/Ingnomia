@@ -473,14 +473,9 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 			}
 		}
 		QString ncd = itemSID + ";" + materialSIDs.join( '_' ) + ";";
-		if ( random.isEmpty() )
-		{
-			GameState::addChange2( NetworkCommand::CREATESPRITE, ncd );
-		}
-		else
+		if ( !random.isEmpty() )
 		{
 			ncd += Util::mapJoin( random );
-			GameState::addChange2( NetworkCommand::CREATESPRITERANDOM, ncd );
 		}
 		if ( isClient )
 		{
@@ -571,14 +566,9 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 	}
 
 	QString ncd = itemSID + ";" + materialSIDs.join( '_' ) + ";";
-	if ( random.isEmpty() )
-	{
-		GameState::addChange2( NetworkCommand::CREATESPRITE, ncd );
-	}
-	else
+	if ( !random.isEmpty() )
 	{
 		ncd += Util::mapJoin( random );
-		GameState::addChange2( NetworkCommand::CREATESPRITERANDOM, ncd );
 	}
 
 	return sprite;
@@ -630,11 +620,6 @@ Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<i
 	}
 
 	return sprite;
-}
-
-Sprite* SpriteFactory::createSpriteNetwork( const QString itemSID, const QStringList materialSIDs, const QMap<int, int>& random )
-{
-	return nullptr;
 }
 
 bool SpriteFactory::containsRandom( const QString itemSID, const QStringList materialSIDs )
