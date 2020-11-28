@@ -4,12 +4,18 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+- suboptimal paths due to wrong heuristic in pathfinding
+- gnomes trying to work in deep water
+- missing floor texture for undiscovered areas
 
 ### Added
 
 ### Changed
 - improved cursor for building floor on walls
+- optimized pathfinding if multiple gnomes have same goal
 
+### Removed
+- old networking code
 
 ## [0.8.1]
 
