@@ -445,41 +445,33 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 	}
 	else
 	{
-		bool isClient = Config::getInstance().get( "IsClient" ).toBool();
-		if ( !isClient )
+		sprite = createSpriteMaterial( itemSID, materialSIDs, key );
+
+		if ( !sprite )
 		{
-			sprite = createSpriteMaterial( itemSID, materialSIDs, key );
+			return m_sprites.value( m_spriteIDs.value( "SolidSelectionWall_Purple" ) );
+		}
 
-			if ( !sprite )
-			{
-				return m_sprites.value( m_spriteIDs.value( "SolidSelectionWall_Purple" ) );
-			}
+		sprite->uID = m_sprites.size();
+		m_spriteIDs.insert( key, m_sprites.size() );
+		m_sprites.append( sprite );
 
-			sprite->uID = m_sprites.size();
-			m_spriteIDs.insert( key, m_sprites.size() );
-			m_sprites.append( sprite );
+		addPixmapToPixelData( sprite );
 
-			addPixmapToPixelData( sprite );
+		m_textureAdded = true;
+		SpriteCreation sc { itemSID, materialSIDs, m_randomNumbers, sprite->uID };
+		m_spriteCreations.push_back( sc );
 
-			m_textureAdded = true;
-			SpriteCreation sc { itemSID, materialSIDs, m_randomNumbers, sprite->uID };
-			m_spriteCreations.push_back( sc );
-
-			if ( sprite->anim )
-			{
-				m_sprites.append( nullptr );
-				m_sprites.append( nullptr );
-				m_sprites.append( nullptr );
-			}
+		if ( sprite->anim )
+		{
+			m_sprites.append( nullptr );
+			m_sprites.append( nullptr );
+			m_sprites.append( nullptr );
 		}
 		QString ncd = itemSID + ";" + materialSIDs.join( '_' ) + ";";
 		if ( !random.isEmpty() )
 		{
 			ncd += Util::mapJoin( random );
-		}
-		if ( isClient )
-		{
-			return nullptr;
 		}
 	}
 
@@ -538,8 +530,6 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 		}
 	}
 	Sprite* sprite = nullptr;
-
-	bool isClient = Config::getInstance().get( "IsClient" ).toBool();
 
 	sprite = createSpriteMaterial( itemSID, materialSIDs, key );
 
