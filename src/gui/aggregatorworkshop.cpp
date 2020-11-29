@@ -268,7 +268,7 @@ void AggregatorWorkshop::onCraftJobParams( unsigned int workshopID, unsigned int
 void AggregatorWorkshop::onRequestAllTradeItems( unsigned int workshopID )
 {
 	updateTraderStock( workshopID );
-	
+
 	updatePlayerStock( workshopID );
 }
 
@@ -276,7 +276,7 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 {
 	auto workshop = Global::wsm().workshop( workshopID );
 
-	if( workshop )
+	if ( workshop )
 	{
 		unsigned int traderID = workshop->assignedGnome();
 
@@ -284,13 +284,13 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 
 		m_traderStock.clear();
 
-		if( traderID )
+		if ( traderID )
 		{
 			GnomeTrader* gt = Global::gm().trader( traderID );
-			if( gt )
+			if ( gt )
 			{
 				auto& items = gt->inventory();
-					
+
 				updateTraderStock( items );
 
 				emit signalTraderStock( m_traderStock );
@@ -305,30 +305,30 @@ void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 {
 	m_traderStock.clear();
 
-	for( auto item : source )
+	for ( auto item : source )
 	{
 		GuiTradeItem gti;
-		gti.itemSID = item.itemSID;
-		gti.value = item.value;
-		gti.count = item.amount;
+		gti.itemSID  = item.itemSID;
+		gti.value    = item.value;
+		gti.count    = item.amount;
 		gti.reserved = item.reserved;
-		gti.quality = item.quality;
+		gti.quality  = item.quality;
 
-		if( item.type == "Animal" )
+		if ( item.type == "Animal" )
 		{
 			gti.materialSIDorGender = item.gender;
-			gti.name = 	gti.materialSIDorGender + " " + S::s( "$CreatureName_" + gti.itemSID ) + " (" + QString::number( gti.value ) + ")";
+			gti.name                = gti.materialSIDorGender + " " + S::s( "$CreatureName_" + gti.itemSID ) + " (" + QString::number( gti.value ) + ")";
 		}
 		else
 		{
 			gti.materialSIDorGender = item.materialSID;
-			
+
 			QString qName;
 			QString qID;
-			if( DB::select( "HasQuality", "Items", gti.itemSID ).toBool() )
+			if ( DB::select( "HasQuality", "Items", gti.itemSID ).toBool() )
 			{
-				qID = DBH::qualitySID( 3 );
-				qName= S::s( "$QualityName_" + qID ) + " ";
+				qID   = DBH::qualitySID( 3 );
+				qName = S::s( "$QualityName_" + qID ) + " ";
 			}
 
 			gti.name = qName + S::s( "$MaterialName_" + gti.materialSIDorGender ) + " " + S::s( "$ItemName_" + gti.itemSID ) + " (" + QString::number( gti.value ) + ")";
@@ -336,56 +336,56 @@ void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 		m_traderStock.append( gti );
 	}
 }
-	
+
 void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 {
 	m_playerStock.clear();
 
 	Inventory& inv = Global::inv();
 
-	for( auto category : inv.categories() )
+	for ( auto category : inv.categories() )
 	{
-		for( auto group : inv.groups( category ) )
+		for ( auto group : inv.groups( category ) )
 		{
-			for( auto item : inv.items( category, group ) )
+			for ( auto item : inv.items( category, group ) )
 			{
 				QList<QString> mats = inv.materials( category, group, item );
-				for( auto mat : mats )
+				for ( auto mat : mats )
 				{
 					int count = inv.itemCountInStockpile( item, mat );
-					if( count > 0 )
+					if ( count > 0 )
 					{
 						QList<unsigned int> itemList = inv.tradeInventory( item, mat );
 
 						Counter<unsigned int> counter;
-						QMap<unsigned int, unsigned int>values;
+						QMap<unsigned int, unsigned int> values;
 						QMap<int, QList<unsigned int>> vlItems;
-						for( auto itemUID : itemList )
+						for ( auto itemUID : itemList )
 						{
 							int qual = inv.quality( itemUID );
 							counter.add( qual );
 							vlItems[qual].append( itemUID );
 						}
-						for( auto key : counter.keys() )
+						for ( auto key : counter.keys() )
 						{
 							GuiTradeItem gti;
 
 							QString qName;
 							QString qID;
-							if( DB::select( "HasQuality", "Items", item ).toBool() )
+							if ( DB::select( "HasQuality", "Items", item ).toBool() )
 							{
-								qID = DBH::qualitySID( (int)key );
-								qName= S::s( "$QualityName_" + qID ) + " ";
+								qID   = DBH::qualitySID( (int)key );
+								qName = S::s( "$QualityName_" + qID ) + " ";
 							}
 
-							gti.itemSID = item;
+							gti.itemSID             = item;
 							gti.materialSIDorGender = mat;
-							gti.value = inv.getTradeValue( item, mat, key );
-							gti.quality = key; 
-							gti.count = count;
+							gti.value               = inv.getTradeValue( item, mat, key );
+							gti.quality             = key;
+							gti.count               = count;
 
 							gti.name = qName + S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + item ) + " (" + QString::number( gti.value ) + ")";
-							
+
 							m_playerStock.append( gti );
 						}
 					}
@@ -394,35 +394,34 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 		}
 	}
 	emit signalPlayerStock( m_playerStock );
-
 }
 
 void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	auto workshop = Global::wsm().workshop( workshopID );
 
-	if( workshop )
+	if ( workshop )
 	{
 		unsigned int traderID = workshop->assignedGnome();
-		
+
 		m_traderID = traderID;
 
-		if( traderID )
+		if ( traderID )
 		{
 			GnomeTrader* gt = Global::gm().trader( traderID );
-			if( gt )
+			if ( gt )
 			{
 				auto& items = gt->inventory();
-					
-				for( auto& item : items )
+
+				for ( auto& item : items )
 				{
-					if( item.itemSID == itemSID && ( item.materialSID == materialSID || item.gender == materialSID ) && item.quality == quality )
+					if ( item.itemSID == itemSID && ( item.materialSID == materialSID || item.gender == materialSID ) && item.quality == quality )
 					{
 						item.reserved = qMin( item.amount, item.reserved + count );
 
-						for( auto& gti : m_traderStock )
+						for ( auto& gti : m_traderStock )
 						{
-							if( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
+							if ( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
 							{
 								gti.reserved = item.reserved;
 								emit signalUpdateTraderStockItem( gti );
@@ -437,33 +436,33 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 		}
 	}
 }
-	
+
 void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	auto workshop = Global::wsm().workshop( workshopID );
 
-	if( workshop )
+	if ( workshop )
 	{
 		unsigned int traderID = workshop->assignedGnome();
-		
+
 		m_traderID = traderID;
 
-		if( traderID )
+		if ( traderID )
 		{
 			GnomeTrader* gt = Global::gm().trader( traderID );
-			if( gt )
+			if ( gt )
 			{
 				auto& items = gt->inventory();
-					
-				for( auto& item : items )
+
+				for ( auto& item : items )
 				{
-					if( item.itemSID == itemSID && item.materialSID == materialSID && item.quality == quality )
+					if ( item.itemSID == itemSID && item.materialSID == materialSID && item.quality == quality )
 					{
 						item.reserved = qMax( 0, item.reserved - count );
 
-						for( auto& gti : m_traderStock )
+						for ( auto& gti : m_traderStock )
 						{
-							if( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
+							if ( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
 							{
 								gti.reserved = item.reserved;
 								emit signalUpdateTraderStockItem( gti );
@@ -481,12 +480,12 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 
 void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	for( auto& item : m_playerStock )
+	for ( auto& item : m_playerStock )
 	{
-		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
+		if ( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
 		{
 			item.reserved = qMin( item.count, item.reserved + count );
-		
+
 			emit signalUpdatePlayerStockItem( item );
 			updatePlayerValue();
 			break;
@@ -496,12 +495,12 @@ void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString 
 
 void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	for( auto& item : m_playerStock )
+	for ( auto& item : m_playerStock )
 	{
-		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
+		if ( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
 		{
 			item.reserved = qMax( 0, item.reserved - count );
-		
+
 			emit signalUpdatePlayerStockItem( item );
 			updatePlayerValue();
 			break;
@@ -512,17 +511,17 @@ void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString 
 void AggregatorWorkshop::updateTraderValue()
 {
 	m_traderOfferValue = 0;
-	for( const auto& item : m_traderStock )
+	for ( const auto& item : m_traderStock )
 	{
 		m_traderOfferValue += item.reserved * item.value;
 	}
 	emit signalUpdateTraderValue( m_traderOfferValue );
 }
-	
+
 void AggregatorWorkshop::updatePlayerValue()
 {
 	m_playerOfferValue = 0;
-	for( const auto& item : m_playerStock )
+	for ( const auto& item : m_playerStock )
 	{
 		m_playerOfferValue += item.reserved * item.value;
 	}
@@ -533,31 +532,30 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 {
 	auto workshop = Global::wsm().workshop( workshopID );
 
-	if( workshop )
+	if ( workshop )
 	{
 		unsigned int traderID = workshop->assignedGnome();
 
 		m_traderID = traderID;
 
-		if( traderID )
+		if ( traderID )
 		{
 			GnomeTrader* gt = Global::gm().trader( traderID );
-			if( gt )
+			if ( gt )
 			{
-				if( m_playerOfferValue >= m_traderOfferValue )
+				if ( m_playerOfferValue >= m_traderOfferValue )
 				{
 					QList<unsigned int> allItemsToSell;
-					for( auto& item : m_playerStock )
+					for ( auto& item : m_playerStock )
 					{
 						auto sellItems = Global::inv().tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
 
-						if( sellItems.size() >= item.reserved )
+						if ( sellItems.size() >= item.reserved )
 						{
-							for( int i = 0; i < item.reserved; ++i )
+							for ( int i = 0; i < item.reserved; ++i )
 							{
 								allItemsToSell.append( sellItems[i] );
 							}
-				
 						}
 						else
 						{
@@ -566,13 +564,13 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 						}
 					}
 					int currentValue = 0;
-					for( auto itemID : allItemsToSell )
+					for ( auto itemID : allItemsToSell )
 					{
 						currentValue += Global::inv().value( itemID );
 					}
-					if( currentValue >= m_traderOfferValue )
+					if ( currentValue >= m_traderOfferValue )
 					{
-						for( auto itemID : allItemsToSell )
+						for ( auto itemID : allItemsToSell )
 						{
 							Global::inv().pickUpItem( itemID );
 							Global::inv().destroyObject( itemID );
@@ -580,11 +578,11 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 						updatePlayerStock( workshopID );
 
 						auto& traderItems = gt->inventory();
-						for( auto& item : traderItems )
+						for ( auto& item : traderItems )
 						{
-							if( item.type == "Animal" )
+							if ( item.type == "Animal" )
 							{
-								for( int i = 0; i < item.reserved; ++i )
+								for ( int i = 0; i < item.reserved; ++i )
 								{
 									Gender gender = item.gender == "Male" ? Gender::MALE : Gender::FEMALE;
 
@@ -593,12 +591,12 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							}
 							else
 							{
-								for( int i = 0; i < item.reserved; ++i )
+								for ( int i = 0; i < item.reserved; ++i )
 								{
 									Global::inv().createItem( workshop->outputPos(), item.itemSID, item.materialSID );
 								}
 							}
-							item.amount = qMax( 0, item.amount - item.reserved );
+							item.amount   = qMax( 0, item.amount - item.reserved );
 							item.reserved = 0;
 						}
 

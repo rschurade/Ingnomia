@@ -811,7 +811,7 @@ QString Util::addDyeMaterial( QString sourceMaterial, QString dyeMaterial )
 		Strings::getInstance().insertString( "$MaterialName_" + targetMaterial, S::s( "$MaterialName_" + dyeMaterial ) + " " + S::s( "$MaterialName_" + sourceMaterial ) );
 
 		GameState::addedMaterials.append( sourceRow );
-		
+
 		GameState::addedTranslations.insert( "$MaterialName_" + targetMaterial, S::s( "$MaterialName_" + dyeMaterial ) + " " + S::s( "$MaterialName_" + sourceMaterial ) );
 	}
 	return targetMaterial;
@@ -910,7 +910,7 @@ QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
 QPixmap Util::createItemImage2( const QString& itemID, const QStringList& mats )
 {
 	auto spriteID = DB::select( "SpriteID", "Items", itemID ).toString();
-	
+
 	QString season = GameState::seasonString;
 
 	SpriteFactory& sf = Global::sf();
@@ -922,7 +922,7 @@ QPixmap Util::createItemImage2( const QString& itemID, const QStringList& mats )
 	int x0 = 0;
 	int y0 = 0;
 
-	Sprite* sprite = sf.createSprite( spriteID, mats ) ;
+	Sprite* sprite = sf.createSprite( spriteID, mats );
 	if ( sprite )
 	{
 		//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );

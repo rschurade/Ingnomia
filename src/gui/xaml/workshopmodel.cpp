@@ -314,7 +314,6 @@ void WsCraftJob::onButtonCmd( BaseComponent* param )
 
 #pragma region TradeItems
 
-
 WsTradeItem::WsTradeItem( QString name, QString itemSID, QString materialSID, unsigned char quality, int count ) :
 	m_name( name.toStdString().c_str() ),
 	m_itemSID( itemSID ),
@@ -337,13 +336,12 @@ const char* WsTradeItem::GetCount() const
 
 void WsTradeItem::SetCount( int count )
 {
-	m_count = count;
+	m_count       = count;
 	m_countString = QString::number( count ).toStdString().c_str();
 	OnPropertyChanged( "Count" );
 }
 
 #pragma endregion TradeItems
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 WorkshopModel::WorkshopModel()
@@ -444,8 +442,6 @@ void WorkshopModel::onUpdateCraftList( const GuiWorkshopInfo& info )
 	}
 }
 
-
-
 bool WorkshopModel::GetSuspended() const
 {
 	return m_suspended;
@@ -453,7 +449,7 @@ bool WorkshopModel::GetSuspended() const
 
 void WorkshopModel::SetSuspended( bool value )
 {
-	if( m_suspended != value )
+	if ( m_suspended != value )
 	{
 		m_suspended = value;
 		m_proxy->setBasicOptions( m_workshopID, m_name.Str(), m_prios->IndexOf( m_selectedPrio ), m_suspended, m_acceptGenerated, m_autoCraftMissing, m_connectStockpile );
@@ -566,7 +562,6 @@ void WorkshopModel::SetName( const char* value )
 	OnPropertyChanged( "Name" );
 }
 
-
 #pragma region ButcherSpecific
 
 bool WorkshopModel::GetButcherExcess() const
@@ -605,9 +600,9 @@ void WorkshopModel::updateTraderStock( const QList<GuiTradeItem>& items )
 {
 	m_traderStock->Clear();
 
-	for( const auto& item : items )
+	for ( const auto& item : items )
 	{
-		if( item.count - item.reserved > 0 )
+		if ( item.count - item.reserved > 0 )
 		{
 			m_traderStock->Add( MakePtr<WsTradeItem>( item.name, item.itemSID, item.materialSIDorGender, item.quality, item.count - item.reserved ) );
 		}
@@ -616,22 +611,21 @@ void WorkshopModel::updateTraderStock( const QList<GuiTradeItem>& items )
 
 	m_traderOffer->Clear();
 
-	for( const auto& item : items )
+	for ( const auto& item : items )
 	{
-		if( item.reserved > 0 )
+		if ( item.reserved > 0 )
 		{
 			m_traderOffer->Add( MakePtr<WsTradeItem>( item.name, item.itemSID, item.materialSIDorGender, item.quality, item.reserved ) );
 		}
 	}
 	OnPropertyChanged( "TraderOffer" );
 }
-	
 
 void WorkshopModel::updatePlayerStock( const QList<GuiTradeItem>& items )
 {
 	m_playerStock->Clear();
 
-	for( const auto& item : items )
+	for ( const auto& item : items )
 	{
 		m_playerStock->Add( MakePtr<WsTradeItem>( item.name, item.itemSID, item.materialSIDorGender, item.quality, item.count ) );
 	}
@@ -639,25 +633,24 @@ void WorkshopModel::updatePlayerStock( const QList<GuiTradeItem>& items )
 
 	m_playerOffer->Clear();
 
-	for( const auto& item : items )
+	for ( const auto& item : items )
 	{
-		if( item.reserved > 0 )
+		if ( item.reserved > 0 )
 		{
 			m_playerOffer->Add( MakePtr<WsTradeItem>( item.name, item.itemSID, item.materialSIDorGender, item.quality, item.reserved ) );
 		}
 	}
 	OnPropertyChanged( "PlayerOffer" );
-
 }
 
 void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 {
-	for( int i = 0; i < m_traderStock->Count(); ++i )
+	for ( int i = 0; i < m_traderStock->Count(); ++i )
 	{
 		auto item = m_traderStock->Get( i );
-		if( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
+		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
-			if( gti.count - gti.reserved > 0 )
+			if ( gti.count - gti.reserved > 0 )
 			{
 				item->SetCount( gti.count - gti.reserved );
 				break;
@@ -671,14 +664,14 @@ void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 		}
 	}
 	bool found = false;
-	for( int i = 0; i < m_traderOffer->Count(); ++i )
+	for ( int i = 0; i < m_traderOffer->Count(); ++i )
 	{
 		auto item = m_traderOffer->Get( i );
-		
-		if( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
+
+		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
 			found = true;
-			if( gti.reserved > 0 )
+			if ( gti.reserved > 0 )
 			{
 				item->SetCount( gti.reserved );
 				break;
@@ -691,7 +684,7 @@ void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 			}
 		}
 	}
-	if( !found )
+	if ( !found )
 	{
 		m_traderOffer->Add( MakePtr<WsTradeItem>( gti.name, gti.itemSID, gti.materialSIDorGender, gti.quality, gti.reserved ) );
 		OnPropertyChanged( "TraderOffer" );
@@ -700,12 +693,12 @@ void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 
 void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 {
-	for( int i = 0; i < m_playerStock->Count(); ++i )
+	for ( int i = 0; i < m_playerStock->Count(); ++i )
 	{
 		auto item = m_playerStock->Get( i );
-		if( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
+		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
-			if( gti.count - gti.reserved > 0 )
+			if ( gti.count - gti.reserved > 0 )
 			{
 				item->SetCount( gti.count - gti.reserved );
 				break;
@@ -719,14 +712,14 @@ void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 		}
 	}
 	bool found = false;
-	for( int i = 0; i < m_playerOffer->Count(); ++i )
+	for ( int i = 0; i < m_playerOffer->Count(); ++i )
 	{
 		auto item = m_playerOffer->Get( i );
-		
-		if( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
+
+		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
 			found = true;
-			if( gti.reserved > 0 )
+			if ( gti.reserved > 0 )
 			{
 				item->SetCount( gti.reserved );
 				break;
@@ -739,7 +732,7 @@ void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 			}
 		}
 	}
-	if( !found )
+	if ( !found )
 	{
 		m_playerOffer->Add( MakePtr<WsTradeItem>( gti.name, gti.itemSID, gti.materialSIDorGender, gti.quality, gti.reserved ) );
 		OnPropertyChanged( "PlayerOffer" );
@@ -748,13 +741,13 @@ void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 
 void WorkshopModel::SetSelectedTraderStock( WsTradeItem* item )
 {
-	if( m_selectedTraderStock != item )
+	if ( m_selectedTraderStock != item )
 	{
 		m_selectedTraderStock = item;
 		OnPropertyChanged( "SelectedTraderStock" );
 	}
 }
-	
+
 WsTradeItem* WorkshopModel::GetSelectedTraderStock() const
 {
 	return m_selectedTraderStock;
@@ -762,13 +755,13 @@ WsTradeItem* WorkshopModel::GetSelectedTraderStock() const
 
 void WorkshopModel::SetSelectedTraderOffer( WsTradeItem* item )
 {
-	if( m_selectedTraderOffer != item )
+	if ( m_selectedTraderOffer != item )
 	{
 		m_selectedTraderOffer = item;
 		OnPropertyChanged( "SelectedTraderOffer" );
 	}
 }
-	
+
 WsTradeItem* WorkshopModel::GetSelectedTraderOffer() const
 {
 	return m_selectedTraderOffer;
@@ -776,13 +769,13 @@ WsTradeItem* WorkshopModel::GetSelectedTraderOffer() const
 
 void WorkshopModel::SetSelectedPlayerStock( WsTradeItem* item )
 {
-	if( m_selectedPlayerStock != item )
+	if ( m_selectedPlayerStock != item )
 	{
 		m_selectedPlayerStock = item;
 		OnPropertyChanged( "SelectedPlayerStock" );
 	}
 }
-	
+
 WsTradeItem* WorkshopModel::GetSelectedPlayerStock() const
 {
 	return m_selectedPlayerStock;
@@ -790,13 +783,13 @@ WsTradeItem* WorkshopModel::GetSelectedPlayerStock() const
 
 void WorkshopModel::SetSelectedPlayerOffer( WsTradeItem* item )
 {
-	if( m_selectedPlayerOffer != item )
+	if ( m_selectedPlayerOffer != item )
 	{
 		m_selectedPlayerOffer = item;
 		OnPropertyChanged( "SelectedPlayerOffer" );
 	}
 }
-	
+
 WsTradeItem* WorkshopModel::GetSelectedPlayerOffer() const
 {
 	return m_selectedPlayerOffer;
@@ -805,15 +798,15 @@ WsTradeItem* WorkshopModel::GetSelectedPlayerOffer() const
 void WorkshopModel::onAmountCmd( BaseComponent* param )
 {
 	QString qParam = param->ToString().Str();
-	if( qParam == "1" )
+	if ( qParam == "1" )
 	{
 		m_amountToTransfer = CheckedAmount::Amount1;
 	}
-	else if( qParam == "10" )
+	else if ( qParam == "10" )
 	{
 		m_amountToTransfer = CheckedAmount::Amount10;
 	}
-	else if( qParam == "100" )
+	else if ( qParam == "100" )
 	{
 		m_amountToTransfer = CheckedAmount::Amount100;
 	}
@@ -829,7 +822,7 @@ void WorkshopModel::onAmountCmd( BaseComponent* param )
 
 bool WorkshopModel::GetAmount1Checked() const
 {
-	if( m_amountToTransfer == CheckedAmount::Amount1 )
+	if ( m_amountToTransfer == CheckedAmount::Amount1 )
 	{
 		return true;
 	}
@@ -838,7 +831,7 @@ bool WorkshopModel::GetAmount1Checked() const
 
 bool WorkshopModel::GetAmount10Checked() const
 {
-	if( m_amountToTransfer == CheckedAmount::Amount10 )
+	if ( m_amountToTransfer == CheckedAmount::Amount10 )
 	{
 		return true;
 	}
@@ -847,7 +840,7 @@ bool WorkshopModel::GetAmount10Checked() const
 
 bool WorkshopModel::GetAmount100Checked() const
 {
-	if( m_amountToTransfer == CheckedAmount::Amount100 )
+	if ( m_amountToTransfer == CheckedAmount::Amount100 )
 	{
 		return true;
 	}
@@ -856,7 +849,7 @@ bool WorkshopModel::GetAmount100Checked() const
 
 bool WorkshopModel::GetAmountAllChecked() const
 {
-	if( m_amountToTransfer == CheckedAmount::AmountAll )
+	if ( m_amountToTransfer == CheckedAmount::AmountAll )
 	{
 		return true;
 	}
@@ -866,8 +859,8 @@ bool WorkshopModel::GetAmountAllChecked() const
 void WorkshopModel::onTransferCmd( BaseComponent* param )
 {
 	QString qParam = param->ToString().Str();
-	int amount = 0;
-	switch( m_amountToTransfer )
+	int amount     = 0;
+	switch ( m_amountToTransfer )
 	{
 		case CheckedAmount::Amount1:
 			amount = 1;
@@ -883,30 +876,30 @@ void WorkshopModel::onTransferCmd( BaseComponent* param )
 			break;
 	}
 
-	if( qParam == "TraderLeft" )
+	if ( qParam == "TraderLeft" )
 	{
-		if( m_selectedTraderOffer )
+		if ( m_selectedTraderOffer )
 		{
 			m_proxy->traderOffertoStock( m_workshopID, m_selectedTraderOffer->m_itemSID, m_selectedTraderOffer->m_materialSID, m_selectedTraderOffer->m_quality, amount );
 		}
 	}
-	else if( qParam == "TraderRight" )
+	else if ( qParam == "TraderRight" )
 	{
-		if( m_selectedTraderStock )
+		if ( m_selectedTraderStock )
 		{
 			m_proxy->traderStocktoOffer( m_workshopID, m_selectedTraderStock->m_itemSID, m_selectedTraderStock->m_materialSID, m_selectedTraderStock->m_quality, amount );
 		}
 	}
-	else if( qParam == "PlayerLeft" )
+	else if ( qParam == "PlayerLeft" )
 	{
-		if( m_selectedPlayerOffer )
+		if ( m_selectedPlayerOffer )
 		{
 			m_proxy->playerOffertoStock( m_workshopID, m_selectedPlayerOffer->m_itemSID, m_selectedPlayerOffer->m_materialSID, m_selectedPlayerOffer->m_quality, amount );
 		}
 	}
-	else if( qParam == "PlayerRight" )
+	else if ( qParam == "PlayerRight" )
 	{
-		if( m_selectedPlayerStock )
+		if ( m_selectedPlayerStock )
 		{
 			m_proxy->playerStocktoOffer( m_workshopID, m_selectedPlayerStock->m_itemSID, m_selectedPlayerStock->m_materialSID, m_selectedPlayerStock->m_quality, amount );
 		}
@@ -917,7 +910,7 @@ const char* WorkshopModel::GetTraderValue() const
 {
 	return m_traderValue.Str();
 }
-	
+
 const char* WorkshopModel::GetPlayerValue() const
 {
 	return m_playerValue.Str();
@@ -928,7 +921,7 @@ void WorkshopModel::updateTraderValue( int value )
 	m_traderValue = QString::number( value ).toStdString().c_str();
 	OnPropertyChanged( "TraderValue" );
 }
-	
+
 void WorkshopModel::updatePlayerValue( int value )
 {
 	m_playerValue = QString::number( value ).toStdString().c_str();

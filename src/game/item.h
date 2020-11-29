@@ -117,7 +117,7 @@ private:
 	unsigned short m_materialUID = 0;
 	unsigned short m_itemUID     = 0;
 
-	bool m_isPickedUp    = false;
+	bool m_isPickedUp              = false;
 	bool m_isConstructedOrEquipped = false; // double use of the flag, should be safe because no constructed item can be equipped and vice versa
 
 	unsigned int m_isInStockpile = 0;

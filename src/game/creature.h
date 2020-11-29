@@ -272,10 +272,19 @@ public:
 		return m_claimedItems;
 	}
 
-	bool isAnimal() { return m_type == CreatureType::ANIMAL; }
-	bool isMonster() { return m_type == CreatureType::MONSTER; }
+	bool isAnimal()
+	{
+		return m_type == CreatureType::ANIMAL;
+	}
+	bool isMonster()
+	{
+		return m_type == CreatureType::MONSTER;
+	}
 
-	bool hasTransparency() { return m_hasTransparency; }
+	bool hasTransparency()
+	{
+		return m_hasTransparency;
+	}
 
 protected:
 	virtual void loadBehaviorTree( QString id ) final;
@@ -328,7 +337,7 @@ protected:
 	qint8 m_facingAfterMove = -1;
 
 	unsigned int m_currentAttackTarget = 0;
-	bool m_goneOffMap = false;
+	bool m_goneOffMap                  = false;
 
 	QVariantMap m_btBlackBoard;
 

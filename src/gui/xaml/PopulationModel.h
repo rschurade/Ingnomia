@@ -29,7 +29,6 @@
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
 
-
 #include <QString>
 
 class PopulationProxy;
@@ -100,7 +99,10 @@ public:
 	const char* GetName() const;
 	const char* GetID() const;
 
-	unsigned int gnomeID() { return m_id; }
+	unsigned int gnomeID()
+	{
+		return m_id;
+	}
 
 	void updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions );
 
@@ -122,12 +124,10 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> m_professions;
 	ProfItem* m_selectedProfession = nullptr;
 
-
 	PopulationProxy* m_proxy = nullptr;
 
 	NS_DECLARE_REFLECTION( GnomeRow, NoesisApp::NotifyPropertyChangedBase )
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class GnomeScheduleEntry : public NoesisApp::NotifyPropertyChangedBase
@@ -138,12 +138,12 @@ public:
 	PopulationProxy* m_proxy = nullptr;
 
 	const char* GetActivity() const;
-	
+
 private:
 	ScheduleActivity m_activity;
 	Noesis::String m_activityString;
 	unsigned int m_id = 0;
-	int m_hour = 0;
+	int m_hour        = 0;
 
 	void onSetHourCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetSetHourCmd() const
@@ -152,7 +152,7 @@ private:
 	}
 	NoesisApp::DelegateCommand m_setHourCmd;
 
-NS_DECLARE_REFLECTION( GnomeScheduleEntry, NoesisApp::NotifyPropertyChangedBase )
+	NS_DECLARE_REFLECTION( GnomeScheduleEntry, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,10 @@ public:
 	const char* GetName() const;
 	const char* GetID() const;
 
-	unsigned int gnomeID() { return m_id; }
+	unsigned int gnomeID()
+	{
+		return m_id;
+	}
 
 private:
 	Noesis::String m_name;
@@ -220,7 +223,6 @@ private:
 		return m_profSkills;
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<GnomeSkill>> m_profSkills;
-
 
 	void onAllGnomesCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetAllGnomesCmd() const
@@ -301,7 +303,6 @@ private:
 	}
 	NoesisApp::DelegateCommand m_setHoursForAllCmd;
 
-
 	Noesis::ObservableCollection<ProfItem>* GetProfessions() const;
 	void SetProfession( ProfItem* item );
 	ProfItem* GetProfession() const;
@@ -341,7 +342,6 @@ private:
 	const char* GetProfName() const;
 	void SetProfName( const char* value );
 
-
 	void onNewProfCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetNewProfCmd() const
 	{
@@ -355,7 +355,6 @@ private:
 		return &m_deleteProfCmd;
 	}
 	NoesisApp::DelegateCommand m_deleteProfCmd;
-
 
 	NS_DECLARE_REFLECTION( PopulationModel, NotifyPropertyChangedBase )
 };

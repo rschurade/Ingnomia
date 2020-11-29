@@ -28,9 +28,9 @@
 #include "../game/militarymanager.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
-#include "../game/world.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
+#include "../game/world.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
@@ -97,13 +97,16 @@ Gnome::Gnome( QVariantMap& in ) :
 	{
 		auto list = in.value( "Schedule" ).toList();
 		m_schedule.clear();
-		for( auto vs : list )
+		for ( auto vs : list )
 		{
-			auto ss = vs.toString();
+			auto ss             = vs.toString();
 			ScheduleActivity sa = ScheduleActivity::None;
-			if ( ss == "eat" ) sa = ScheduleActivity::Eat;
-			else if ( ss == "sleep" ) sa = ScheduleActivity::Sleep;
-			else if ( ss == "train" ) sa = ScheduleActivity::Training;
+			if ( ss == "eat" )
+				sa = ScheduleActivity::Eat;
+			else if ( ss == "sleep" )
+				sa = ScheduleActivity::Sleep;
+			else if ( ss == "train" )
+				sa = ScheduleActivity::Training;
 
 			m_schedule.append( sa );
 		}
@@ -160,10 +163,8 @@ void Gnome::serialize( QVariantMap& out )
 
 	out.insert( "Profession", m_profession );
 
-	
-
 	QVariantList vSchedule;
-	for( auto sa : m_schedule )
+	for ( auto sa : m_schedule )
 	{
 		switch ( sa )
 		{

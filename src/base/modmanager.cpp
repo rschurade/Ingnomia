@@ -106,7 +106,6 @@ void ModManager::loadMod( QJsonObject jo )
 
 	bool isTranslation = ( type == "Translation" );
 
-	
 	QJsonDocument jd;
 	IO::loadFile( folder + "/files.json", jd );
 

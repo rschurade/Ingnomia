@@ -65,8 +65,8 @@ QPointer<QFile> openLog()
 		fileName = folder + fileName;
 	}
 
-	QPointer<QFile> outFile(new QFile( fileName ));
-	if(outFile->open( QIODevice::WriteOnly | QIODevice::Append ))
+	QPointer<QFile> outFile( new QFile( fileName ) );
+	if ( outFile->open( QIODevice::WriteOnly | QIODevice::Append ) )
 	{
 		return outFile;
 	}
@@ -81,11 +81,11 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 	if ( message.startsWith( "libpng warning:" ) )
 		return;
 
-	QString filedate  = QDateTime::currentDateTime().toString( "yyyy.MM.dd hh:mm:ss:zzz" );
+	QString filedate = QDateTime::currentDateTime().toString( "yyyy.MM.dd hh:mm:ss:zzz" );
 #ifdef _WIN32
 	if ( IsDebuggerPresent() )
 #else
-	if (verbose)
+	if ( verbose )
 #endif // _WIN32
 	{
 		QString debugdate = QDateTime::currentDateTime().toString( "hh:mm:ss:zzz" );
@@ -194,7 +194,7 @@ int main( int argc, char* argv[] )
 
 	//MainWindow w;
 	MainWindow w;
-	
+
 #ifdef _WIN32
 	w.setIcon( QFileIconProvider().icon( QFileInfo( QCoreApplication::applicationFilePath() ) ) );
 #endif // _WIN32
@@ -202,7 +202,7 @@ int main( int argc, char* argv[] )
 	w.resize( width, height );
 	w.setPosition( Config::getInstance().get( "WindowPosX" ).toInt(), Config::getInstance().get( "WindowPosY" ).toInt() );
 	w.show();
-	if( Config::getInstance().get( "fullscreen" ).toBool() )
+	if ( Config::getInstance().get( "fullscreen" ).toBool() )
 	{
 		w.onFullScreen( true );
 	}
@@ -223,4 +223,3 @@ extern "C"
 	__declspec( dllexport ) DWORD AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif // _WIN32
-

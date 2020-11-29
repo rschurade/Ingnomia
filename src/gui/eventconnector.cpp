@@ -38,7 +38,7 @@ EventConnector::EventConnector( QObject* parent ) :
 	m_debugAggregator        = new AggregatorDebug( this );
 	m_neighborsAggregator    = new AggregatorNeighbors( this );
 	m_militaryAggregator     = new AggregatorMilitary( this );
-	m_settingsAggregator	 = new AggregatorSettings( this );
+	m_settingsAggregator     = new AggregatorSettings( this );
 	m_inventoryAggregator    = new AggregatorInventory( this );
 }
 
@@ -65,7 +65,6 @@ void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, 
 {
 	emit signalKingdomInfo( name, info1, info2, info3 );
 }
-
 
 void EventConnector::onViewLevel( int level )
 {

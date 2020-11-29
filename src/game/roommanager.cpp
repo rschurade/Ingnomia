@@ -79,7 +79,7 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 		}
 		sp.setType( type );
 
-		switch( type )
+		switch ( type )
 		{
 			case RoomType::PersonalRoom:
 				sp.setName( "Personal Room" );

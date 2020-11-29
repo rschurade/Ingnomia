@@ -65,8 +65,8 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 	//qDebug() << "world::construct() " << constructionSID << pos.toString() << rotation;
 	QVariantMap con = DB::selectRow( "Constructions", constructionSID );
 	QString type    = con.value( "Type" ).toString();
-	
-	int typeNum     = m_constructionSID2ENUM.value( type );
+
+	int typeNum = m_constructionSID2ENUM.value( type );
 
 	QStringList materialSIDs;
 	QVariantList materialUIDs;
@@ -1019,7 +1019,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	}
 	//qDebug() << "##" << type << group << itemSID;
 	// TODO remove this workaround
-	if( itemSID == "AlarmBell" )
+	if ( itemSID == "AlarmBell" )
 	{
 		group = "AlarmBell";
 	}
@@ -1166,7 +1166,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		QString type  = constr.value( "Type" ).toString();
 		QString group = constr.value( "Group" ).toString();
 		// TODO remove this workaround
-		if( Global::inv().itemSID( itemID ) == "AlarmBell" )
+		if ( Global::inv().itemSID( itemID ) == "AlarmBell" )
 		{
 			group = "AlarmBell";
 		}

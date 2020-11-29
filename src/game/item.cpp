@@ -22,7 +22,6 @@
 #include "../base/util.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
-
 #include "jobmanager.h"
 
 #include <QDebug>
@@ -63,16 +62,16 @@ Item::Item( QVariantMap in ) :
 	m_position = Position( in.value( "Position" ).toString() );
 	m_spriteID = in.value( "SpriteID" ).toUInt();
 	*/
-	m_itemUID       = DBH::itemUID( in.value( "ItemSID" ).toString() );
-	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString() );
-	m_isInStockpile = in.value( "InStockpile" ).toUInt();
-	m_isInJob       = in.value( "InJob" ).toUInt();
-	m_isInContainer = in.value( "InContainer" ).toUInt();
+	m_itemUID                 = DBH::itemUID( in.value( "ItemSID" ).toString() );
+	m_materialUID             = DBH::materialUID( in.value( "MaterialSID" ).toString() );
+	m_isInStockpile           = in.value( "InStockpile" ).toUInt();
+	m_isInJob                 = in.value( "InJob" ).toUInt();
+	m_isInContainer           = in.value( "InContainer" ).toUInt();
 	m_isConstructedOrEquipped = in.value( "Constructed" ).toBool();
-	m_isPickedUp    = in.value( "IsPickedUp" ).toBool();
-	m_value         = in.value( "Value" ).toUInt();
-	m_madeBy        = in.value( "MadeBy" ).toUInt();
-	m_quality       = in.value( "Quality" ).toUInt();
+	m_isPickedUp              = in.value( "IsPickedUp" ).toBool();
+	m_value                   = in.value( "Value" ).toUInt();
+	m_madeBy                  = in.value( "MadeBy" ).toUInt();
+	m_quality                 = in.value( "Quality" ).toUInt();
 
 	if ( in.value( "Extra" ).toBool() )
 	{
@@ -357,7 +356,7 @@ QList<ItemMaterial> Item::components() const
 
 unsigned short Item::value() const
 {
-	return m_value * DBH::qualityMod(m_quality);
+	return m_value * DBH::qualityMod( m_quality );
 }
 
 unsigned int Item::madeBy() const

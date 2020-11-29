@@ -20,12 +20,12 @@
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../base/regionmap.h"
-#include "../game/world.h"
 #include "../game/creaturefactory.h"
 #include "../game/farmingmanager.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
 #include "../game/newgamesettings.h"
+#include "../game/world.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -48,7 +48,7 @@ void CreatureManager::reset()
 
 	// add monster entries for monsters that aren't typically on the map so they can appear in the squad priority list
 	auto monsters = DB::ids( "Monsters" );
-	for( auto monster : monsters )
+	for ( auto monster : monsters )
 	{
 		m_countPerType.insert( monster, 0 );
 	}
@@ -61,7 +61,6 @@ void CreatureManager::reset()
 			m_countPerType.insert( animal, 0 );
 		}
 	}
-
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
@@ -87,7 +86,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 				toDestroy.append( creature->id() );
 				break;
 			case CreatureTickResult::DEAD:
-				if( creature->type() == CreatureType::ANIMAL )
+				if ( creature->type() == CreatureType::ANIMAL )
 				{
 					auto a = dynamic_cast<Animal*>( creature );
 					Global::inv().createItem( a->getPos(), "AnimalCorpse", { a->species() } );
@@ -119,7 +118,6 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 
 	if ( hourChanged )
 	{
-		
 	}
 }
 
@@ -150,7 +148,7 @@ QList<Animal*> CreatureManager::animalsAtPosition( Position& pos )
 	}
 	return out;
 }
-	
+
 QList<Monster*> CreatureManager::monstersAtPosition( Position& pos )
 {
 	QList<Monster*> out;
@@ -186,14 +184,14 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 			break;
 	}
 
-	if( creature )
+	if ( creature )
 	{
 		m_creatures.append( creature );
 		unsigned int id = m_creatures.last()->id();
 		m_creaturesByID.insert( id, m_creatures.last() );
 
 		int count = m_countPerType.value( type );
-	
+
 		++count;
 		m_countPerType.insert( type, count );
 
@@ -202,7 +200,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 
 		m_dirty = true;
 
-		if( creature->hasTransparency() )
+		if ( creature->hasTransparency() )
 		{
 			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
@@ -224,7 +222,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 			creature = CreatureFactory::getInstance().createMonster( vals );
 			break;
 	}
-	if( creature )
+	if ( creature )
 	{
 		m_creatures.append( creature );
 		unsigned int id = m_creatures.last()->id();
@@ -240,7 +238,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 
 		m_dirty = true;
 
-		if( creature->hasTransparency() )
+		if ( creature->hasTransparency() )
 		{
 			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
@@ -264,20 +262,20 @@ Animal* CreatureManager::animal( unsigned int id )
 	if ( m_creaturesByID.contains( id ) )
 	{
 		auto c = m_creaturesByID[id];
-		if( c->isAnimal() )
+		if ( c->isAnimal() )
 		{
 			return dynamic_cast<Animal*>( c );
 		}
 	}
 	return nullptr;
 }
-	
+
 Monster* CreatureManager::monster( unsigned int id )
 {
 	if ( m_creaturesByID.contains( id ) )
 	{
 		auto c = m_creaturesByID[id];
-		if( c->isMonster() )
+		if ( c->isMonster() )
 		{
 			return dynamic_cast<Monster*>( c );
 		}
@@ -299,11 +297,11 @@ int CreatureManager::count( QString type )
 
 void CreatureManager::removeCreature( unsigned int id )
 {
-	if( m_creaturesByID.contains( id ) )
+	if ( m_creaturesByID.contains( id ) )
 	{
 		auto creature = m_creaturesByID[id];
 
-		switch( creature->type() )
+		switch ( creature->type() )
 		{
 			case CreatureType::ANIMAL:
 			{
@@ -360,7 +358,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 	for ( auto id : m_creaturesPerType[type] )
 	{
 		Creature* creature = m_creaturesByID[id];
-		if( creature->isAnimal() )
+		if ( creature->isAnimal() )
 		{
 			Animal* a = dynamic_cast<Animal*>( creature );
 			if ( a && !a->inJob() && !a->isDead() && !a->toDestroy() )
@@ -401,10 +399,9 @@ QList<QString> CreatureManager::types()
 	return m_countPerType.keys();
 }
 
-	
 QList<Animal*>& CreatureManager::animals()
 {
-	if( m_dirty )
+	if ( m_dirty )
 	{
 		updateLists();
 	}
@@ -414,7 +411,7 @@ QList<Animal*>& CreatureManager::animals()
 
 QList<Monster*>& CreatureManager::monsters()
 {
-	if( m_dirty )
+	if ( m_dirty )
 	{
 		updateLists();
 	}
@@ -427,9 +424,9 @@ void CreatureManager::updateLists()
 	m_animals.clear();
 	m_monsters.clear();
 
-	for( auto c : m_creatures )
+	for ( auto c : m_creatures )
 	{
-		if( c->isAnimal() )
+		if ( c->isAnimal() )
 		{
 			m_animals.append( dynamic_cast<Animal*>( c ) );
 		}
@@ -443,10 +440,10 @@ void CreatureManager::updateLists()
 
 bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
 {
-	if( m_creaturesByID.contains( creatureID ) )
+	if ( m_creaturesByID.contains( creatureID ) )
 	{
 		auto creature = m_creaturesByID[creatureID];
-		if( creature )
+		if ( creature )
 		{
 			return Global::w().regionMap().checkConnectedRegions( pos, creature->getPos() );
 		}

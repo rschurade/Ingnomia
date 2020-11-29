@@ -20,9 +20,9 @@
 #include "../../base/gamestate.h"
 #include "../../base/global.h"
 #include "../../base/util.h"
-#include "agricultureproxy.h"
 #include "../../gfx/spritefactory.h"
 #include "../strings.h"
+#include "agricultureproxy.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -179,34 +179,33 @@ Noesis::ObservableCollection<PlantSelectEntry>* PlantSelectRow::GetPlants() cons
 }
 #pragma endregion Plants
 
-
 #pragma region Pasture
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 PastureAnimalEntry::PastureAnimalEntry( const GuiPastureAnimal& animal, AgricultureProxy* proxy ) :
 	m_proxy( proxy )
 {
-	
+
 	m_sid       = animal.animalID.toStdString().c_str();
 	m_id        = animal.id;
 	m_toButcher = animal.toButcher;
-	m_isYoung = animal.isYoung;
-	m_gender = animal.gender;
+	m_isYoung   = animal.isYoung;
+	m_gender    = animal.gender;
 
 	QString qName;
-	if( m_gender == Gender::MALE )
+	if ( m_gender == Gender::MALE )
 	{
 		qName += "Male ";
 	}
-	else if( m_gender == Gender::FEMALE )
+	else if ( m_gender == Gender::FEMALE )
 	{
 		qName += "Female ";
 	}
 	qName += animal.name;
-	if( m_isYoung )
+	if ( m_isYoung )
 	{
 		qName += " (young)";
 	}
-	m_name      = qName.toStdString().c_str();
+	m_name = qName.toStdString().c_str();
 }
 
 const char* PastureAnimalEntry::GetName() const
@@ -224,7 +223,7 @@ void PastureAnimalEntry::SetButchering( bool value )
 	if ( m_toButcher != value )
 	{
 		m_toButcher = value;
-		if( m_proxy )
+		if ( m_proxy )
 		{
 			m_proxy->setButchering( m_id, value );
 		}
@@ -238,10 +237,10 @@ FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem& food, AgriculturePro
 	m_proxy( proxy )
 {
 	m_name = food.name.toStdString().c_str();
-	
-	m_itemSID  = food.itemSID;
+
+	m_itemSID     = food.itemSID;
 	m_materialSID = food.materialSID;
-	m_checked = food.checked;
+	m_checked     = food.checked;
 
 	auto pm = Util::smallPixmap( Global::sf().createSprite( food.itemSID, { food.materialSID } ), GameState::seasonString, 0 );
 
@@ -261,10 +260,10 @@ bool FoodSelectEntry::getChecked() const
 {
 	return m_checked;
 }
-	
+
 void FoodSelectEntry::setChecked( bool value )
 {
-	if( m_checked != value )
+	if ( m_checked != value )
 	{
 		m_checked = value;
 		m_proxy->setFoodItemChecked( m_itemSID, m_materialSID, m_checked );
@@ -287,7 +286,6 @@ Noesis::ObservableCollection<FoodSelectEntry>* FoodSelectRow::GetFoods() const
 	return m_entries;
 }
 #pragma endregion PastureFood
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,7 +420,7 @@ void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QStri
 	}
 	if ( !isSame )
 	{
-		m_manageWindow = false;
+		m_manageWindow  = false;
 		m_productSelect = false;
 
 		m_pastureAnimals->Clear();
@@ -512,7 +510,6 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	m_hayStatus  = ( QString::number( info.hayCurrent ) + "/" ).toStdString().c_str();
 	m_maxHay     = ( QString::number( info.hayMax ) ).toStdString().c_str();
 
-
 	m_pastureAnimals->Clear();
 
 	for ( const auto& pa : info.animals )
@@ -550,8 +547,8 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	OnPropertyChanged( "Title" );
 
 	m_foodRows->Clear();
-	if( !info.food.isEmpty() )
-	{	
+	if ( !info.food.isEmpty() )
+	{
 		int foodDone = 0;
 		while ( foodDone < info.food.size() )
 		{
@@ -978,8 +975,8 @@ void AgricultureModel::onManageAnimals( BaseComponent* param )
 {
 	m_proxy->requestPastureAnimalInfo();
 
-	m_manageWindow  = true;
-	m_productSelect = false;
+	m_manageWindow      = true;
+	m_productSelect     = false;
 	m_pastureFoodSelect = false;
 	OnPropertyChanged( "ShowManageWindow" );
 	OnPropertyChanged( "ShowPasture" );
@@ -987,8 +984,8 @@ void AgricultureModel::onManageAnimals( BaseComponent* param )
 
 void AgricultureModel::onManageAnimalsBack( BaseComponent* param )
 {
-	m_manageWindow  = false;
-	m_productSelect = false;
+	m_manageWindow      = false;
+	m_productSelect     = false;
 	m_pastureFoodSelect = false;
 	OnPropertyChanged( "ShowManageWindow" );
 	OnPropertyChanged( "ShowPasture" );
@@ -1005,14 +1002,14 @@ const char* AgricultureModel::GetManageWindowVis() const
 
 void AgricultureModel::onShowPastureFood( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qParam = param->ToString().Str();
-		if( qParam == "Back" )
+		if ( qParam == "Back" )
 		{
 			m_pastureFoodSelect = false;
 		}
-		else if( qParam == "Show" )
+		else if ( qParam == "Show" )
 		{
 			m_proxy->requestPastureFoodInfo();
 			m_pastureFoodSelect = true;
@@ -1039,19 +1036,18 @@ const char* AgricultureModel::GetMaxHay() const
 
 void AgricultureModel::SetMaxHay( const char* value )
 {
-	if( value )
+	if ( value )
 	{
 		QString qValue = value;
 		bool ok;
 		int val = qValue.toInt( &ok );
-		if( ok )
+		if ( ok )
 		{
 			qDebug() << "set max hay to: " << value;
 			m_maxHay = value;
 		}
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION

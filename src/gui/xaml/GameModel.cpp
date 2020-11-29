@@ -148,7 +148,7 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 		{
 			auto rows = DB::selectRows( "Constructions_Components", sid );
 
-			if( rows.size() )
+			if ( rows.size() )
 			{
 				for ( auto row : rows )
 				{
@@ -159,7 +159,6 @@ BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
 			{
 				m_requiredItems->Add( MakePtr<NRequiredItem>( sid, 1 ) );
 			}
-
 
 			QStringList mats;
 			for ( int i = 0; i < 25; ++i )
@@ -199,9 +198,9 @@ const NoesisApp::DelegateCommand* BuildItem::GetCmdBuild() const
 
 const char* BuildItem::GetShowReplaceButton() const
 {
-	if( m_type == BuildItemType::Terrain )
+	if ( m_type == BuildItemType::Terrain )
 	{
-		if( m_sid.endsWith( "Wall" ) || m_sid.endsWith( "Floor" ) || m_sid.startsWith( "FancyFloor" ) ||  m_sid.startsWith( "FancyWall" ) )
+		if ( m_sid.endsWith( "Wall" ) || m_sid.endsWith( "Floor" ) || m_sid.startsWith( "FancyFloor" ) || m_sid.startsWith( "FancyWall" ) )
 		{
 			return "Visible";
 		}
@@ -211,9 +210,9 @@ const char* BuildItem::GetShowReplaceButton() const
 
 const char* BuildItem::GetShowFillHoleButton() const
 {
-	if( m_type == BuildItemType::Terrain )
+	if ( m_type == BuildItemType::Terrain )
 	{
-		if( m_sid.endsWith( "Wall" ) || m_sid.startsWith( "FancyWall" ) )
+		if ( m_sid.endsWith( "Wall" ) || m_sid.startsWith( "FancyWall" ) )
 		{
 			return "Visible";
 		}
@@ -246,11 +245,11 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		case BuildItemType::Terrain:
 		{
 			QString type = DB::select( "Type", "Constructions", m_sid ).toString();
-			
-			if( param )
+
+			if ( param )
 			{
 				QString qParam = param->ToString().Str();
-				if( qParam == "FillHole" )
+				if ( qParam == "FillHole" )
 				{
 					Selection::getInstance().setAction( qParam );
 				}
@@ -277,7 +276,6 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 
 	EventConnector::getInstance().onBuild();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NRequiredItem::NRequiredItem( QString sid, int amount )
@@ -376,7 +374,7 @@ GameModel::GameModel()
 	m_messageButtonCmd.SetExecuteFunc( MakeDelegate( this, &GameModel::onMessageButtonCmd ) );
 
 	m_messageHeader = "Message header";
-	m_messageText = "Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text";
+	m_messageText   = "Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text Message text";
 
 	m_proxy = new ProxyGameView;
 	m_proxy->setParent( this );
@@ -474,7 +472,6 @@ void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, i
 			OnPropertyChanged( "TimeImagePath" );
 		}
 	}
-
 }
 
 void GameModel::setViewLevel( int level )
@@ -548,7 +545,7 @@ const char* GameModel::getSun() const
 {
 	return m_sun.Str();
 }
-	
+
 const char* GameModel::getKingdomName() const
 {
 	return m_kingdomName.Str();
@@ -711,12 +708,12 @@ const char* GameModel::getShowPopulation() const
 	}
 	return "Hidden";
 }
-	
+
 void GameModel::setShowPopulation( bool value )
 {
-	if( value )
+	if ( value )
 	{
-		if( m_shownInfo != ShownInfo::Population )
+		if ( m_shownInfo != ShownInfo::Population )
 		{
 			setShownInfo( ShownInfo::Population );
 		}
@@ -727,7 +724,6 @@ void GameModel::setShowPopulation( bool value )
 	}
 }
 
-	
 const char* GameModel::getShowDebug() const
 {
 	if ( m_shownInfo == ShownInfo::Debug )
@@ -739,9 +735,9 @@ const char* GameModel::getShowDebug() const
 
 void GameModel::setShowDebug( bool value )
 {
-	if( value )
+	if ( value )
 	{
-		if( m_shownInfo != ShownInfo::Debug )
+		if ( m_shownInfo != ShownInfo::Debug )
 		{
 			setShownInfo( ShownInfo::Debug );
 		}
@@ -763,9 +759,9 @@ const char* GameModel::getShowNeighbors() const
 
 void GameModel::setShowNeighbors( bool value )
 {
-	if( value )
+	if ( value )
 	{
-		if( m_shownInfo != ShownInfo::Neighbors )
+		if ( m_shownInfo != ShownInfo::Neighbors )
 		{
 			setShownInfo( ShownInfo::Neighbors );
 		}
@@ -787,9 +783,9 @@ const char* GameModel::getShowMilitary() const
 
 void GameModel::setShowMilitary( bool value )
 {
-	if( value )
+	if ( value )
 	{
-		if( m_shownInfo != ShownInfo::Military )
+		if ( m_shownInfo != ShownInfo::Military )
 		{
 			setShownInfo( ShownInfo::Military );
 		}
@@ -811,9 +807,9 @@ const char* GameModel::getShowInventory() const
 
 void GameModel::setShowInventory( bool value )
 {
-	if( value )
+	if ( value )
 	{
-		if( m_shownInfo != ShownInfo::Inventory )
+		if ( m_shownInfo != ShownInfo::Inventory )
 		{
 			setShownInfo( ShownInfo::Inventory );
 		}
@@ -824,11 +820,9 @@ void GameModel::setShowInventory( bool value )
 	}
 }
 
-
-
 void GameModel::setGameSpeed( GameSpeed value )
 {
-	if( m_showMessageWindow )
+	if ( m_showMessageWindow )
 	{
 		m_proxy->setPaused( true );
 	}
@@ -852,7 +846,7 @@ bool GameModel::getPaused() const
 
 void GameModel::setPaused( bool value )
 {
-	if( m_showMessageWindow && !value )
+	if ( m_showMessageWindow && !value )
 	{
 		return;
 	}
@@ -870,7 +864,7 @@ bool GameModel::getNormalSpeed() const
 
 void GameModel::setNormalSpeed( bool value )
 {
-	if( value )
+	if ( value )
 	{
 		setGameSpeed( GameSpeed::Normal );
 	}
@@ -883,7 +877,7 @@ bool GameModel::getFastSpeed() const
 
 void GameModel::setFastSpeed( bool value )
 {
-	if( value )
+	if ( value )
 	{
 		setGameSpeed( GameSpeed::Fast );
 	}
@@ -1198,7 +1192,7 @@ void GameModel::OnCmdBack( BaseComponent* param )
 void GameModel::CmdRightCommandButton( BaseComponent* param )
 {
 	QString cmd( param->ToString().Str() );
-	
+
 	if ( cmd == "Population" )
 	{
 		setShowPopulation( true );
@@ -1329,7 +1323,6 @@ const NoesisApp::DelegateCommand* GameModel::GetCmdRightCommandButton() const
 	return &_cmdRightCommandButton;
 }
 
-
 void GameModel::OnCmdSimple( BaseComponent* param )
 {
 	Selection::getInstance().setAction( param->ToString().Str() );
@@ -1342,7 +1335,7 @@ void GameModel::onCloseWindowCmd( BaseComponent* param )
 
 void GameModel::onOpenGnomeDetailsCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qParam( param->ToString().Str() );
 		m_proxy->requestCreatureUpdate( qParam.toUInt() );
@@ -1363,7 +1356,7 @@ void GameModel::setShownInfo( ShownInfo info )
 {
 	m_shownInfo = info;
 
-	if( m_shownInfo != ShownInfo::CreatureInfo )
+	if ( m_shownInfo != ShownInfo::CreatureInfo )
 	{
 		m_proxy->requestCreatureUpdate( 0 );
 	}
@@ -1378,14 +1371,13 @@ void GameModel::setShownInfo( ShownInfo info )
 	OnPropertyChanged( "ShowNeighbors" );
 	OnPropertyChanged( "ShowMilitary" );
 	OnPropertyChanged( "ShowInventory" );
-	
+
 	OnPropertyChanged( "ShowMessage" );
 }
 
-
 const char* GameModel::getShowMessage() const
 {
-	if( m_showMessageWindow && m_shownInfo == ShownInfo::None )
+	if ( m_showMessageWindow && m_shownInfo == ShownInfo::None )
 	{
 		return "Visible";
 	}
@@ -1394,16 +1386,16 @@ const char* GameModel::getShowMessage() const
 
 const char* GameModel::getShowMessageButtonOk() const
 {
-	if( m_showMessageButtonOk )
+	if ( m_showMessageButtonOk )
 	{
 		return "Visible";
 	}
 	return "Hidden";
 }
-	
+
 const char* GameModel::getShowMessageButtonYesNo() const
 {
-	if( m_showMessageButtonYesNo )
+	if ( m_showMessageButtonYesNo )
 	{
 		return "Visible";
 	}
@@ -1423,16 +1415,16 @@ const char* GameModel::getMessageText() const
 void GameModel::onMessageButtonCmd( BaseComponent* param )
 {
 	qDebug() << "GameModel::onMessageButtonCmd";
-	if( param )
+	if ( param )
 	{
 		QString qParam = param->ToString().Str();
 		qDebug() << qParam;
-		if( qParam != "ok" )
+		if ( qParam != "ok" )
 		{
 			m_proxy->sendEventAnswer( m_messageID, qParam == "yes" );
 		}
 		m_showMessageWindow = false;
-		if( !m_messageQueue.isEmpty() )
+		if ( !m_messageQueue.isEmpty() )
 		{
 			auto gme = m_messageQueue.takeFirst();
 			qDebug() << gme.id << gme.title << gme.msg << gme.pause << gme.yesno;
@@ -1444,25 +1436,25 @@ void GameModel::onMessageButtonCmd( BaseComponent* param )
 
 void GameModel::eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno )
 {
-	if( m_showMessageWindow )
+	if ( m_showMessageWindow )
 	{
 		m_messageQueue.append( { id, title, msg, pause, yesno } );
 	}
 	else
 	{
-		m_messageID = id;
-		m_messageHeader = title.toStdString().c_str();
-		m_messageText = msg.toStdString().c_str();
+		m_messageID         = id;
+		m_messageHeader     = title.toStdString().c_str();
+		m_messageText       = msg.toStdString().c_str();
 		m_showMessageWindow = true;
 
-		m_showMessageButtonOk = !yesno;
+		m_showMessageButtonOk    = !yesno;
 		m_showMessageButtonYesNo = yesno;
 
-		if( pause )
+		if ( pause )
 		{
 			setPaused( true );
 		}
-		
+
 		OnPropertyChanged( "ShowMessageButtonOk" );
 		OnPropertyChanged( "ShowMessageButtonYesNo" );
 		OnPropertyChanged( "MessageText" );
@@ -1517,7 +1509,7 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "ShowNeighbors", &GameModel::getShowNeighbors );
 	NsProp( "ShowMilitary", &GameModel::getShowMilitary );
 	NsProp( "ShowInventory", &GameModel::getShowInventory );
-	
+
 	NsProp( "ShowMessage", &GameModel::getShowMessage );
 	NsProp( "ShowMessageButtonOk", &GameModel::getShowMessageButtonOk );
 	NsProp( "ShowMessageButtonYesNo", &GameModel::getShowMessageButtonYesNo );

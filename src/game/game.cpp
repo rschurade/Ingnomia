@@ -43,9 +43,9 @@
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
+#include "../gui/aggregatorcreatureinfo.h"
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
-#include "../gui/aggregatorcreatureinfo.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -62,22 +62,22 @@ Game::Game()
 	m_millisecondsSlow = DB::select( "Value_", "Time", "MillisecondsSlow" ).toInt();
 	m_millisecondsFast = DB::select( "Value_", "Time", "MillisecondsFast" ).toInt();
 
-	GameState::tick = 1;
-	GameState::hour = 9;
+	GameState::tick   = 1;
+	GameState::hour   = 9;
 	GameState::minute = 0;
 	GameState::day    = 1;
 	GameState::season = 0; // zero based, 0-numSeasons, typically 4 can be modded
 	GameState::year   = 1;
 
-	QString dt = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
-	GameState::currentDayTime = dt;
-	GameState::seasonString = "Spring";
+	QString dt                      = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
+	GameState::currentDayTime       = dt;
+	GameState::seasonString         = "Spring";
 	GameState::currentYearAndSeason = "Year " + QString::number( GameState::year ) + ", " + S::s( "$SeasonName_" + GameState::seasonString );
 
 	calcDaylight();
 	GameState::daylight = true;
 
-	for( auto t : DB::ids( "Tech" ) )
+	for ( auto t : DB::ids( "Tech" ) )
 	{
 		GameState::techs.insert( t, 1 );
 	}
@@ -110,7 +110,6 @@ Game::Game( bool isLoaded )
 
 	Global::xpMod = Config::getInstance().get( "XpMod" ).toDouble();
 }
-
 
 Game::~Game()
 {
@@ -270,8 +269,8 @@ void Game::sendClock()
 		{
 			GameState::day = 1;
 			++GameState::season;
-			GameState::seasonChanged    = true;
-			QString nextSeason = DB::select( "NextSeason", "Seasons", GameState::seasonString ).toString();
+			GameState::seasonChanged = true;
+			QString nextSeason       = DB::select( "NextSeason", "Seasons", GameState::seasonString ).toString();
 			//qDebug() << "Now it's " << nextSeason;
 			GameState::seasonString = nextSeason;
 
@@ -299,23 +298,23 @@ void Game::sendClock()
 	if ( currentTimeInt < GameState::sunrise )
 	{
 		//time between midnight and sunrise
-		sunStatus        = "Sunrise: " + intToTime( GameState::sunrise );
+		sunStatus           = "Sunrise: " + intToTime( GameState::sunrise );
 		GameState::daylight = false;
 	}
 	else if ( currentTimeInt < GameState::sunset )
 	{
 		// day time
-		sunStatus        = "Sunset: " + intToTime( GameState::sunset );
+		sunStatus           = "Sunset: " + intToTime( GameState::sunset );
 		GameState::daylight = true;
 	}
 	else
 	{
 		// time after sunset
-		sunStatus        = "Sunrise: " + intToTime( GameState::nextSunrise );
+		sunStatus           = "Sunrise: " + intToTime( GameState::nextSunrise );
 		GameState::daylight = false;
 	}
-	QString dt = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
-	GameState::currentDayTime = dt;
+	QString dt                      = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
+	GameState::currentDayTime       = dt;
 	GameState::currentYearAndSeason = "Year " + QString::number( GameState::year ) + ", " + S::s( "$SeasonName_" + GameState::seasonString );
 	emit signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, sunStatus );
 }

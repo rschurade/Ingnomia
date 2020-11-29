@@ -66,9 +66,9 @@ void GnomeManager::clear()
 
 bool GnomeManager::contains( unsigned int gnomeID )
 {
-	for( auto gnome : m_gnomes )
+	for ( auto gnome : m_gnomes )
 	{
-		if( gnome->id() == gnomeID )
+		if ( gnome->id() == gnomeID )
 		{
 			return true;
 		}
@@ -449,8 +449,8 @@ QStringList GnomeManager::professionSkills( QString profession )
 QString GnomeManager::addProfession()
 {
 	QString name = "NewProfession";
-	
-	if( !m_profs.contains( name ) )
+
+	if ( !m_profs.contains( name ) )
 	{
 		m_profs.insert( name, QStringList() );
 		saveProfessions();
@@ -458,7 +458,7 @@ QString GnomeManager::addProfession()
 	}
 	int suffixNumber = 1;
 
-	while( m_profs.contains( name + QString::number( suffixNumber ) ) )
+	while ( m_profs.contains( name + QString::number( suffixNumber ) ) )
 	{
 		++suffixNumber;
 	}
@@ -670,7 +670,7 @@ unsigned int GnomeManager::roleID( unsigned int gnomeID )
 	}
 	return 0;
 }
-	
+
 void GnomeManager::setRoleID( unsigned int gnomeID, unsigned int roleID )
 {
 	if ( m_gnomesByID.contains( gnomeID ) )

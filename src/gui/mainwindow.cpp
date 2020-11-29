@@ -25,9 +25,9 @@
 #include "../base/tile.h"
 #include "../game/gamemanager.h"
 #include "../game/world.h"
-#include "../gui/eventconnector.h"
 #include "../gui/aggregatordebug.h"
 #include "../gui/aggregatorsettings.h"
+#include "../gui/eventconnector.h"
 #include "license.h"
 #include "mainwindowrenderer.h"
 #include "xaml/GameGui.xaml.h"
@@ -51,13 +51,13 @@
 #include "xaml/WaitPage.xaml.h"
 #include "xaml/agriculture.xaml.h"
 #include "xaml/agriculturemodel.h"
+#include "xaml/converters.h"
 #include "xaml/creatureinfo.xaml.h"
 #include "xaml/creatureinfomodel.h"
 #include "xaml/debug.xaml.h"
 #include "xaml/debugmodel.h"
 #include "xaml/inventory.xaml.h"
 #include "xaml/inventorymodel.h"
-
 #include "xaml/military.xaml.h"
 #include "xaml/militarymodel.h"
 #include "xaml/neighbors.xaml.h"
@@ -65,8 +65,6 @@
 #include "xaml/stockpilegui.xaml.h"
 #include "xaml/workshopgui.xaml.h"
 #include "xaml/workshopmodel.h"
-
-#include "xaml/converters.h"
 
 #include <NsApp/Launcher.h>
 #include <NsApp/LocalFontProvider.h>
@@ -123,14 +121,14 @@ MainWindow::~MainWindow()
 {
 	qDebug() << "MainWindow destructor";
 
-	if( !m_isFullScreen )
+	if ( !m_isFullScreen )
 	{
 		Config::getInstance().set( "WindowWidth", this->width() );
 		Config::getInstance().set( "WindowHeight", this->height() );
 		Config::getInstance().set( "WindowPosX", this->position().x() );
 		Config::getInstance().set( "WindowPosY", this->position().y() );
 	}
-	
+
 	IO::saveConfig();
 	instance = nullptr;
 }
@@ -148,7 +146,7 @@ void MainWindow::onExit()
 void MainWindow::toggleFullScreen()
 {
 	QOpenGLWindow* w = this;
-	m_isFullScreen = !m_isFullScreen;
+	m_isFullScreen   = !m_isFullScreen;
 	if ( m_isFullScreen )
 	{
 		w->showFullScreen();
@@ -166,7 +164,7 @@ void MainWindow::toggleFullScreen()
 void MainWindow::onFullScreen( bool value )
 {
 	QOpenGLWindow* w = this;
-	m_isFullScreen = value;
+	m_isFullScreen   = value;
 	Config::getInstance().set( "fullscreen", value );
 	if ( value )
 	{
@@ -182,13 +180,13 @@ void MainWindow::onFullScreen( bool value )
 
 void MainWindow::keyPressEvent( QKeyEvent* event )
 {
-	int qtKey = event->key();
+	int qtKey      = event->key();
 	auto noesisKey = Global::keyConvert( (Qt::Key)qtKey );
 	//qDebug() << "keyPressEvent" << event->key() << " " << event->text() << noesisKey;
 
 	bool ret = false;
-	
-	if( qtKey != 32 )
+
+	if ( qtKey != 32 )
 	{
 		ret = m_view->KeyDown( noesisKey );
 	}
@@ -201,7 +199,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 			ret |= m_view->Char( c.unicode() );
 		}
 	}
-	
+
 	if ( ret )
 	{
 		noesisTick();
@@ -302,14 +300,19 @@ bool MainWindow::isOverGui( int x, int y )
 
 void MainWindow::keyboardMove()
 {
-	if( m_keyboardMove == KeyboardMove::None ) return;
+	if ( m_keyboardMove == KeyboardMove::None )
+		return;
 
 	int x = 0;
 	int y = 0;
-	if( (bool)( m_keyboardMove & KeyboardMove::Up ) ) y -= 1;
-	if( (bool)( m_keyboardMove & KeyboardMove::Down ) ) y += 1;
-	if( (bool)( m_keyboardMove & KeyboardMove::Left ) ) x -= 1;
-	if( (bool)( m_keyboardMove & KeyboardMove::Right ) ) x += 1;
+	if ( (bool)( m_keyboardMove & KeyboardMove::Up ) )
+		y -= 1;
+	if ( (bool)( m_keyboardMove & KeyboardMove::Down ) )
+		y += 1;
+	if ( (bool)( m_keyboardMove & KeyboardMove::Left ) )
+		x -= 1;
+	if ( (bool)( m_keyboardMove & KeyboardMove::Right ) )
+		x += 1;
 
 	float keyboardMoveSpeed = Config::getInstance().get( "keyboardMoveSpeed" ).toFloat();
 
@@ -318,7 +321,7 @@ void MainWindow::keyboardMove()
 	int moveX = -( x * keyboardMoveSpeed ) / scale;
 	int moveY = -( y * keyboardMoveSpeed ) / scale;
 
-	if( m_renderer )
+	if ( m_renderer )
 	{
 		m_renderer->move( moveX, moveY );
 	}
@@ -358,8 +361,8 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 		}
 	}
 
-	m_mouseX  = gp.x();
-	m_mouseY  = gp.y();
+	m_mouseX = gp.x();
+	m_mouseY = gp.y();
 
 	if ( Selection::getInstance().hasAction() )
 	{
@@ -378,7 +381,7 @@ void MainWindow::onInitViewAfterLoad()
 	m_moveX = config.get( "moveX" ).toInt();
 	m_moveY = config.get( "moveY" ).toInt();
 	m_renderer->move( m_moveX, m_moveY );
-	
+
 	float scale = config.get( "scale" ).toFloat();
 	m_renderer->setScale( scale );
 }
@@ -704,7 +707,7 @@ void MainWindow::resizeGL( int w, int h )
 {
 	QOpenGLWindow::resizeGL( w, h );
 
-	if( !m_isFullScreen )
+	if ( !m_isFullScreen )
 	{
 		Config::getInstance().set( "WindowWidth", w );
 		Config::getInstance().set( "WindowHeight", h );

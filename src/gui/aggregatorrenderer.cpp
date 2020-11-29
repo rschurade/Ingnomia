@@ -159,13 +159,13 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 
 	auto& creatureList = Global::cm().creatures();
 
-	for( auto creature : creatureList )
+	for ( auto creature : creatureList )
 	{
-		switch( creature->type() )
+		switch ( creature->type() )
 		{
 			case CreatureType::ANIMAL:
 			{
-				auto a = dynamic_cast<Animal*>( creature );
+				auto a             = dynamic_cast<Animal*>( creature );
 				unsigned int posID = a->getPos().toInt();
 				if ( !creatures.contains( posID ) && !a->isDead() )
 				{
@@ -195,7 +195,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 			break;
 			case CreatureType::MONSTER:
 			{
-				auto m = dynamic_cast<Monster*>( creature );
+				auto m             = dynamic_cast<Monster*>( creature );
 				unsigned int posID = m->getPos().toInt();
 				if ( !creatures.contains( posID ) && !m->isDead() )
 				{
@@ -210,7 +210,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 			}
 		}
 	}
-	
+
 	return creatures;
 }
 

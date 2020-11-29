@@ -195,7 +195,7 @@ QString IO::save( bool autosave )
 	}
 	int slot = 0;
 
-	if( autosave )
+	if ( autosave )
 	{
 		folder += "autosave";
 
@@ -210,7 +210,7 @@ QString IO::save( bool autosave )
 	}
 	else
 	{
-	
+
 		QDirIterator directories( folder, QDir::Dirs | QDir::NoDotAndDotDot );
 		QStringList dirs;
 		while ( directories.hasNext() )
@@ -423,9 +423,9 @@ void IO::sanitize()
 				}
 			}
 		}
-		for( auto& ws : Global::wsm().workshops() )
+		for ( auto& ws : Global::wsm().workshops() )
 		{
-			for( auto& vitem : ws->sourceItems() )
+			for ( auto& vitem : ws->sourceItems() )
 			{
 				Global::inv().pickUpItem( vitem.toUInt() );
 			}

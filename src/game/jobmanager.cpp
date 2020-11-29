@@ -191,7 +191,7 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 			rim.available = false;
 
 			//is item craftable?
-			if( Global::craftable.contains( rim.itemSID ) )
+			if ( Global::craftable.contains( rim.itemSID ) )
 			{
 				// create craft job
 				Global::wsm().autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
@@ -220,7 +220,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 				job.addPossibleWorkPosition( testPos );
 			}
 		}
-		
+
 		return job.possibleWorkPositions().size() > 0;
 	}
 	return false;

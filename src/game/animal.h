@@ -135,7 +135,6 @@ private:
 
 	void checkInJob();
 
-
 	bool m_isMulti = false;
 	bool m_tame    = false;
 

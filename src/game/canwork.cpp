@@ -42,11 +42,12 @@
 
 //#include "../gui/strings.h"
 
-#include <exprtk.hpp>
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 
 #include <QDebug>
+
+#include <exprtk.hpp>
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double> expression_t;
@@ -314,7 +315,7 @@ void CanWork::cleanUpJob( bool finished )
 			}
 		}
 	}
-	if( m_btBlackBoard.contains( "ClaimedUniformItem" ) )
+	if ( m_btBlackBoard.contains( "ClaimedUniformItem" ) )
 	{
 		auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
 		inv.setInJob( itemID, 0 );
@@ -732,7 +733,7 @@ bool CanWork::explorativeMineWall()
 		};
 		for ( const auto& candidate : candidates )
 		{
-			if ( world.getTile(candidate).embeddedMaterial == mats.second )
+			if ( world.getTile( candidate ).embeddedMaterial == mats.second )
 			{
 				Global::jm().addJob( "ExplorativeMine", candidate, 0 );
 			}

@@ -16,9 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "neighborsmodel.h"
-#include "neighborsproxy.h"
 
 #include "../strings.h"
+#include "neighborsproxy.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -55,16 +55,16 @@ NeighborKingdomInfo::NeighborKingdomInfo( const GuiNeighborInfo& info ) :
 
 const char* NeighborKingdomInfo::getShowDiploBtn() const
 {
-	if( m_discovered && m_diploMission )
+	if ( m_discovered && m_diploMission )
 	{
 		return "Visible";
 	}
 	return "Hidden";
 }
-	
+
 const char* NeighborKingdomInfo::getShowSpyBtn() const
 {
-	if( m_discovered && m_spyMission )
+	if ( m_discovered && m_spyMission )
 	{
 		return "Visible";
 	}
@@ -73,7 +73,7 @@ const char* NeighborKingdomInfo::getShowSpyBtn() const
 
 const char* NeighborKingdomInfo::getShowRaidBtn() const
 {
-	if( m_discovered && m_raidMission )
+	if ( m_discovered && m_raidMission )
 	{
 		return "Visible";
 	}
@@ -82,7 +82,7 @@ const char* NeighborKingdomInfo::getShowRaidBtn() const
 
 const char* NeighborKingdomInfo::getShowSabotageBtn() const
 {
-	if( m_discovered && m_sabotageMission )
+	if ( m_discovered && m_sabotageMission )
 	{
 		return "Visible";
 	}
@@ -94,170 +94,170 @@ MissionInfo::MissionInfo( const Mission& mission ) :
 	m_id( mission.id ),
 	m_idString( QString::number( mission.id ).toStdString().c_str() )
 {
-	QString qTime;	
+	QString qTime;
 
-	switch( mission.type )
+	switch ( mission.type )
 	{
-	case MissionType::EXPLORE: 
-		m_title = "Explore"; 
-		switch( mission.step )
-		{
-			case MissionStep::LEAVE_MAP:
-				m_currentAction = "Leaving the area.";
-				qTime = "I haven't left yet.";
-				break;
-			case MissionStep::TRAVEL:
-				m_currentAction = "Exploring the surrounding lands.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURN:
-				m_currentAction = "Returning from the mission.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURNED:
+		case MissionType::EXPLORE:
+			m_title = "Explore";
+			switch ( mission.step )
 			{
-				bool success = mission.result.value( "Success" ).toBool();
-				if( success )
+				case MissionStep::LEAVE_MAP:
+					m_currentAction = "Leaving the area.";
+					qTime           = "I haven't left yet.";
+					break;
+				case MissionStep::TRAVEL:
+					m_currentAction = "Exploring the surrounding lands.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURN:
+					m_currentAction = "Returning from the mission.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURNED:
 				{
-					m_currentAction = "I found a neighboring kingdom.";
+					bool success = mission.result.value( "Success" ).toBool();
+					if ( success )
+					{
+						m_currentAction = "I found a neighboring kingdom.";
+					}
+					else
+					{
+						m_currentAction = "I failed to find something new.";
+					}
+					qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
+					break;
 				}
-				else
-				{
-					m_currentAction = "I failed to find something new.";
-				}
-				qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
-				break;
 			}
-		}
-		break;
-	case MissionType::SPY: 
-		m_title = "Spy"; 
-		switch( mission.step )
-		{
-			case MissionStep::LEAVE_MAP:
-				m_currentAction = "Leaving the area.";
-				qTime = "I haven't left yet.";
-				break;
-			case MissionStep::TRAVEL:
-				m_currentAction = "Traveling to the kingdom.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURN:
-				m_currentAction = "Returning from the mission.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURNED:
+			break;
+		case MissionType::SPY:
+			m_title = "Spy";
+			switch ( mission.step )
 			{
-				bool success = mission.result.value( "Success" ).toBool();
-				if( success )
+				case MissionStep::LEAVE_MAP:
+					m_currentAction = "Leaving the area.";
+					qTime           = "I haven't left yet.";
+					break;
+				case MissionStep::TRAVEL:
+					m_currentAction = "Traveling to the kingdom.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURN:
+					m_currentAction = "Returning from the mission.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURNED:
 				{
-					m_currentAction = "Success.";
+					bool success = mission.result.value( "Success" ).toBool();
+					if ( success )
+					{
+						m_currentAction = "Success.";
+					}
+					else
+					{
+						m_currentAction = "Failure.";
+					}
+					qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
+					break;
 				}
-				else
-				{
-					m_currentAction = "Failure.";
-				}
-				qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
-				break;
 			}
-		}
-		break;
-	case MissionType::EMISSARY: 
-		m_title = "Emissary";
-		switch( mission.step )
-		{
-			case MissionStep::LEAVE_MAP:
-				m_currentAction = "Leaving the area.";
-				qTime = "I haven't left yet.";
-				break;
-			case MissionStep::TRAVEL:
-				m_currentAction = "Traveling to the kingdom.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURN:
-				m_currentAction = "Returning from the mission.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
-				break;
-			case MissionStep::RETURNED:
+			break;
+		case MissionType::EMISSARY:
+			m_title = "Emissary";
+			switch ( mission.step )
 			{
-				bool success = mission.result.value( "Success" ).toBool();
-				if( success )
+				case MissionStep::LEAVE_MAP:
+					m_currentAction = "Leaving the area.";
+					qTime           = "I haven't left yet.";
+					break;
+				case MissionStep::TRAVEL:
+					m_currentAction = "Traveling to the kingdom.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURN:
+					m_currentAction = "Returning from the mission.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since I left.";
+					break;
+				case MissionStep::RETURNED:
 				{
-					m_currentAction = "Success." ;
+					bool success = mission.result.value( "Success" ).toBool();
+					if ( success )
+					{
+						m_currentAction = "Success.";
+					}
+					else
+					{
+						m_currentAction = "Failure.";
+					}
+					qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
+					break;
 				}
-				else
-				{
-					m_currentAction = "Failure.";
-				}
-				qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
-				break;
 			}
-		}
-		break;
-	case MissionType::RAID: 
-		m_title = "Raid";
-		switch( mission.step )
-		{
-			case MissionStep::LEAVE_MAP:
-				m_currentAction = "Leaving the area.";
-				qTime = "We haven't left yet.";
-				break;
-			case MissionStep::TRAVEL:
-				m_currentAction = "Traveling to the kingdom.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
-				break;
-			case MissionStep::RETURN:
-				m_currentAction = "Returning from the mission.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
-				break;
-			case MissionStep::RETURNED:
+			break;
+		case MissionType::RAID:
+			m_title = "Raid";
+			switch ( mission.step )
 			{
-				bool success = mission.result.value( "Success" ).toBool();
-				if( success )
+				case MissionStep::LEAVE_MAP:
+					m_currentAction = "Leaving the area.";
+					qTime           = "We haven't left yet.";
+					break;
+				case MissionStep::TRAVEL:
+					m_currentAction = "Traveling to the kingdom.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
+					break;
+				case MissionStep::RETURN:
+					m_currentAction = "Returning from the mission.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
+					break;
+				case MissionStep::RETURNED:
 				{
-					m_currentAction = "Success.";
+					bool success = mission.result.value( "Success" ).toBool();
+					if ( success )
+					{
+						m_currentAction = "Success.";
+					}
+					else
+					{
+						m_currentAction = "Failure.";
+					}
+					qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
+					break;
 				}
-				else
-				{
-					m_currentAction = "Failure.";
-				}
-				qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
-				break;
 			}
-		}
-		break;
-	case MissionType::SABOTAGE: 
-		m_title = "Sabotage"; 
-		switch( mission.step )
-		{
-			case MissionStep::LEAVE_MAP:
-				m_currentAction = "Leaving the area.";
-				qTime = "We haven't left yet.";
-				break;
-			case MissionStep::TRAVEL:
-				m_currentAction = "Traveling to the kingdom.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
-				break;
-			case MissionStep::RETURN:
-				m_currentAction = "Returning from the mission.";
-				qTime = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
-				break;
-			case MissionStep::RETURNED:
+			break;
+		case MissionType::SABOTAGE:
+			m_title = "Sabotage";
+			switch ( mission.step )
 			{
-				bool success = mission.result.value( "Success" ).toBool();
-				if( success )
+				case MissionStep::LEAVE_MAP:
+					m_currentAction = "Leaving the area.";
+					qTime           = "We haven't left yet.";
+					break;
+				case MissionStep::TRAVEL:
+					m_currentAction = "Traveling to the kingdom.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
+					break;
+				case MissionStep::RETURN:
+					m_currentAction = "Returning from the mission.";
+					qTime           = "It's been " + QString::number( qMax( 1, mission.time ) ) + " hours since we left.";
+					break;
+				case MissionStep::RETURNED:
 				{
-					m_currentAction = "Success.";
+					bool success = mission.result.value( "Success" ).toBool();
+					if ( success )
+					{
+						m_currentAction = "Success.";
+					}
+					else
+					{
+						m_currentAction = "Failure.";
+					}
+					qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
+					break;
 				}
-				else
-				{
-					m_currentAction = "Failure.";
-				}
-				qTime = "It took " + S::gi().numberWord( mission.result.value( "TotalTime" ).toInt() / 24 ) + " days.";
-				break;
 			}
-		}
-		break;
+			break;
 	}
 
 	m_time = qTime.toStdString().c_str();
@@ -269,7 +269,6 @@ AvailableGnome::AvailableGnome( unsigned int id, QString name ) :
 	m_idString( QString::number( id ).toStdString().c_str() ),
 	m_name( name.toStdString().c_str() )
 {
-	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,10 +286,10 @@ NeighborsModel::NeighborsModel()
 	m_newMissionBackCmd.SetExecuteFunc( MakeDelegate( this, &NeighborsModel::onNewMissionBackCmd ) );
 	m_newMissionStartCmd.SetExecuteFunc( MakeDelegate( this, &NeighborsModel::onNewMissionStartCmd ) );
 
-	m_neighborList = *new ObservableCollection<NeighborKingdomInfo>();
-	m_missionList = *new ObservableCollection<MissionInfo>();
+	m_neighborList   = *new ObservableCollection<NeighborKingdomInfo>();
+	m_missionList    = *new ObservableCollection<MissionInfo>();
 	m_availGnomeList = *new ObservableCollection<AvailableGnome>();
-	m_actionList = *new ObservableCollection<AvailableGnome>();
+	m_actionList     = *new ObservableCollection<AvailableGnome>();
 }
 
 const char* NeighborsModel::GetShowFirst() const
@@ -301,7 +300,7 @@ const char* NeighborsModel::GetShowFirst() const
 	}
 	return "Hidden";
 }
-	
+
 const char* NeighborsModel::GetShowSecond() const
 {
 	if ( m_page == NeighborsPage::Second )
@@ -322,11 +321,11 @@ const char* NeighborsModel::GetShowThird() const
 
 void NeighborsModel::onPageCmd( BaseComponent* param )
 {
-	if( param->ToString() == "First" )
+	if ( param->ToString() == "First" )
 	{
 		m_page = NeighborsPage::First;
 	}
-	else if( param->ToString() == "Second" )
+	else if ( param->ToString() == "Second" )
 	{
 		m_page = NeighborsPage::Second;
 	}
@@ -334,7 +333,7 @@ void NeighborsModel::onPageCmd( BaseComponent* param )
 	{
 		m_page = NeighborsPage::Third;
 	}
-	
+
 	OnPropertyChanged( "ShowFirst" );
 	OnPropertyChanged( "ShowSecond" );
 	OnPropertyChanged( "ShowThird" );
@@ -345,19 +344,18 @@ void NeighborsModel::onDiploMissionCmd( BaseComponent* param )
 	m_missionTitle = "New diplomatic mission to";
 	OnPropertyChanged( "MissionTitle" );
 
-	for( int i = 0; i < m_neighborList->Count(); ++i )
+	for ( int i = 0; i < m_neighborList->Count(); ++i )
 	{
 		auto neighbor = m_neighborList->Get( i );
-		auto ids = neighbor->getIDString();
+		auto ids      = neighbor->getIDString();
 
-		if( strcmp( param->ToString().Str(), ids ) == 0 )
+		if ( strcmp( param->ToString().Str(), ids ) == 0 )
 		{
-			m_missionTarget = neighbor->getName();
+			m_missionTarget   = neighbor->getName();
 			m_missionTargetID = neighbor->getID();
 			OnPropertyChanged( "MissionTarget" );
 			break;
 		}
-
 	}
 
 	m_actionList->Clear();
@@ -370,13 +368,11 @@ void NeighborsModel::onDiploMissionCmd( BaseComponent* param )
 	OnPropertyChanged( "MissionActions" );
 
 	setSelectedAction( m_actionList->Get( 0 ) );
-	
+
 	m_showSelector = true;
 	OnPropertyChanged( "ShowGnomeSelect" );
 
-
 	m_proxy->requestAvailableGnomes();
-
 
 	qDebug() << "Diplo" << param->ToString().Str();
 }
@@ -400,7 +396,7 @@ void NeighborsModel::neighborsUpdate( const QList<GuiNeighborInfo>& infos )
 {
 	m_neighborList->Clear();
 
-	for( const auto& info : infos )
+	for ( const auto& info : infos )
 	{
 		m_neighborList->Add( MakePtr<NeighborKingdomInfo>( info ) );
 	}
@@ -412,7 +408,7 @@ void NeighborsModel::missionsUpdate( const QList<Mission>& missions )
 {
 	m_missionList->Clear();
 
-	for( const auto& info : missions )
+	for ( const auto& info : missions )
 	{
 		m_missionList->Add( MakePtr<MissionInfo>( info ) );
 	}
@@ -427,13 +423,13 @@ const char* NeighborsModel::getShowGnomeSelect() const
 
 void NeighborsModel::setSelectedGnome( AvailableGnome* gnome )
 {
-	if( m_selectedGnome != gnome )
+	if ( m_selectedGnome != gnome )
 	{
 		m_selectedGnome = gnome;
 		OnPropertyChanged( "SelectedGnome" );
 	}
 }
-	
+
 AvailableGnome* NeighborsModel::getSelectedGnome() const
 {
 	return m_selectedGnome;
@@ -441,13 +437,13 @@ AvailableGnome* NeighborsModel::getSelectedGnome() const
 
 void NeighborsModel::setSelectedAction( AvailableGnome* action )
 {
-	if( m_selectedAction != action )
+	if ( m_selectedAction != action )
 	{
 		m_selectedAction = action;
 		OnPropertyChanged( "SelectedAction" );
 	}
 }
-	
+
 AvailableGnome* NeighborsModel::getSelectedAction() const
 {
 	return m_selectedAction;
@@ -463,17 +459,16 @@ const char* NeighborsModel::getMissionTitle() const
 	return m_missionTitle.Str();
 }
 
-
 void NeighborsModel::updateAvailableGnomes( const QList<GuiAvailableGnome>& gnomes )
 {
 	m_availGnomeList->Clear();
-	for( const auto& gnome : gnomes )
+	for ( const auto& gnome : gnomes )
 	{
 		m_availGnomeList->Add( MakePtr<AvailableGnome>( gnome.id, gnome.name ) );
 	}
 	OnPropertyChanged( "MissionGnomes" );
 
-	if( m_availGnomeList->Count() > 0 )
+	if ( m_availGnomeList->Count() > 0 )
 	{
 		setSelectedGnome( m_availGnomeList->Get( 0 ) );
 	}
@@ -483,28 +478,28 @@ void NeighborsModel::onNewMissionBackCmd( BaseComponent* param )
 {
 	m_showSelector = false;
 	OnPropertyChanged( "ShowGnomeSelect" );
-	m_selectedGnome = nullptr;
-	m_selectedAction = nullptr;
+	m_selectedGnome   = nullptr;
+	m_selectedAction  = nullptr;
 	m_missionTargetID = 0;
 }
 
 void NeighborsModel::onNewMissionStartCmd( BaseComponent* param )
 {
-	if( m_selectedGnome && m_selectedAction && m_missionTargetID )
+	if ( m_selectedGnome && m_selectedAction && m_missionTargetID )
 	{
 		m_showSelector = false;
 		OnPropertyChanged( "ShowGnomeSelect" );
-		
+
 		m_proxy->startMission( MissionType::EMISSARY, (MissionAction)m_selectedAction->getID(), m_missionTargetID, m_selectedGnome->getID() );
 	}
 }
 
 void NeighborsModel::updateMission( const Mission& mission )
 {
-	for( int i = 0; i < m_missionList->Count(); ++i )
+	for ( int i = 0; i < m_missionList->Count(); ++i )
 	{
 		auto mis = m_missionList->Get( i );
-		if( mis->getID() == mission.id )
+		if ( mis->getID() == mission.id )
 		{
 			m_missionList->RemoveAt( i );
 			m_missionList->Insert( i, MakePtr<MissionInfo>( mission ) );
@@ -513,7 +508,6 @@ void NeighborsModel::updateMission( const Mission& mission )
 		}
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION

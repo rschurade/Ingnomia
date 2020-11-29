@@ -812,7 +812,6 @@ bool RegionMap::checkConnectedRegions( const Position& start, const Position& go
 	return checkConnectedRegions( regionID( start ), regionID( goal ) );
 }
 
-
 std::vector<Position> RegionMap::connectedNeighborsUp( const Position& pos )
 {
 	std::vector<Position> out;

@@ -80,7 +80,7 @@ void GameManager::startNewGame( std::function<void( void )> callback )
 
 	// save current settings for fast create new game
 	NewGameSettings::getInstance().save();
-	
+
 	// check if folder exists, set new save folder name if yes
 	createNewGame();
 	callback();
@@ -221,7 +221,7 @@ void GameManager::createNewGame()
 	Util::initAllowedInContainer();
 
 	Config::getInstance().set( "NoRender", false );
-	
+
 	EventConnector::getInstance().onViewLevel( Config::getInstance().get( "viewLevel" ).toInt() );
 	m_game->moveToThread( &m_gameThread );
 
@@ -267,7 +267,7 @@ GameSpeed GameManager::gameSpeed()
 void GameManager::setGameSpeed( GameSpeed speed )
 {
 	qDebug() << (int)speed;
-	if( m_gameSpeed != speed )
+	if ( m_gameSpeed != speed )
 	{
 		m_gameSpeed = speed;
 		emit signalUpdateGameSpeed( m_gameSpeed );
@@ -285,7 +285,7 @@ void GameManager::trySetPaused( bool value )
 
 void GameManager::setPaused( bool value )
 {
-	if( m_paused != value )
+	if ( m_paused != value )
 	{
 		m_paused = value;
 		emit signalUpdatePaused( value );

@@ -192,7 +192,7 @@ Item* Inventory::getItem( unsigned int itemUID )
 	auto it = m_items.find( itemUID );
 	if ( it != m_items.end() )
 	{
-		return &(*it);
+		return &( *it );
 	}
 	return nullptr;
 }
@@ -1729,7 +1729,7 @@ void Inventory::gravity( Position pos )
 		{
 			Position newPos = pos;
 			Global::w().getFloorLevelBelow( newPos, false );
-			if( newPos == pos )
+			if ( newPos == pos )
 			{
 				return;
 			}
@@ -1907,9 +1907,9 @@ QList<QString> Inventory::allMats( unsigned int itemID )
 		QStringList out;
 
 		auto comps = item->components();
-		if( comps.size() )
+		if ( comps.size() )
 		{
-			for( const auto& comp : comps )
+			for ( const auto& comp : comps )
 			{
 				out.append( DBH::materialSID( comp.materialUID ) );
 			}
@@ -1918,7 +1918,6 @@ QList<QString> Inventory::allMats( unsigned int itemID )
 		{
 			out.append( item->materialSID() );
 		}
-
 
 		return out;
 	}

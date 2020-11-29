@@ -199,7 +199,7 @@ void Pasture::addTile( Position& pos )
 	grofi.pos = pos;
 	m_fields.insert( pos.toInt(), grofi );
 
-	if( m_properties.animalSize != 0 )
+	if ( m_properties.animalSize != 0 )
 	{
 		m_properties.max = m_fields.size() / m_properties.animalSize;
 	}
@@ -215,11 +215,11 @@ void Pasture::onTick( quint64 tick )
 	for ( auto field : m_fields )
 	{
 		Tile& tile = Global::w().getTile( field.pos );
-		if( GameState::season != 3 )
+		if ( GameState::season != 3 )
 		{
 			if ( tile.flags & TileFlag::TF_GRASS )
 			{
-				if( tick % 500 == 0 )
+				if ( tick % 500 == 0 )
 				{
 					tile.vegetationLevel = qMin( 100, tile.vegetationLevel + 1 );
 				}
@@ -653,7 +653,7 @@ bool Pasture::removeTile( Position& pos )
 		m_properties.firstPos = Position();
 	}
 
-	if( m_properties.animalSize != 0 )
+	if ( m_properties.animalSize != 0 )
 	{
 		m_properties.max = m_fields.size() / m_properties.animalSize;
 	}
@@ -687,7 +687,7 @@ void Pasture::getInfo( int& numPlots, int& numMale, int& numFemale )
 	for ( auto id : m_animals )
 	{
 		Animal* animal = Global::cm().animal( id );
-		if( animal )
+		if ( animal )
 		{
 			if ( animal->gender() == Gender::MALE )
 			{
@@ -878,7 +878,6 @@ int Pasture::maxFoodLevel()
 	return m_properties.maxTroughCapacity;
 }
 
-
 bool Pasture::eatFromTrough()
 {
 	if ( m_properties.troughContent > 0 )
@@ -912,7 +911,7 @@ void Pasture::setAnimalType( QString type )
 	{
 		int numPlots = m_fields.size();
 
-		if( m_properties.animalSize != 0 )
+		if ( m_properties.animalSize != 0 )
 		{
 			m_properties.max = m_fields.size() / m_properties.animalSize;
 		}
@@ -960,7 +959,7 @@ bool Pasture::tameWild()
 {
 	return m_properties.tameWild;
 }
-	
+
 void Pasture::setTameWild( bool value )
 {
 	m_properties.tameWild = value;

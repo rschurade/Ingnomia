@@ -97,28 +97,27 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	qDebug() << m_parent->context()->format();
 
 	QOpenGLExtraFunctions* f = QOpenGLContext::currentContext()->extraFunctions();
-	GLDEBUGPROC logHandler   = []( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) -> void
-	{
-		static const std::unordered_map<GLenum, const char*> debugTypes = {
-			{ GL_DEBUG_TYPE_ERROR, "Error" },
-			{ GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DeprecatedBehavior" },
-			{ GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UndefinedBehavior" },
-			{ GL_DEBUG_TYPE_PORTABILITY, "Portability" },
-			{ GL_DEBUG_TYPE_PERFORMANCE, "Performance" },
-			{ GL_DEBUG_TYPE_MARKER, "Marker" },
-			{ GL_DEBUG_TYPE_OTHER, "Other" },
-			{ GL_DEBUG_TYPE_PUSH_GROUP, "Push" },
-			{ GL_DEBUG_TYPE_POP_GROUP, "Pop" }
-		};
-		static const std::unordered_map<GLenum, const char*> severities = {
-			{ GL_DEBUG_SEVERITY_LOW, "low" },
-			{ GL_DEBUG_SEVERITY_MEDIUM, "medium" },
-			{ GL_DEBUG_SEVERITY_HIGH, "high" },
-			{ GL_DEBUG_SEVERITY_NOTIFICATION, "notify" },
-		};
-		if ( severity == GL_DEBUG_SEVERITY_NOTIFICATION && !Global::debugMode )
-			return;
-		qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
+	GLDEBUGPROC logHandler   = []( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) -> void {
+        static const std::unordered_map<GLenum, const char*> debugTypes = {
+            { GL_DEBUG_TYPE_ERROR, "Error" },
+            { GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DeprecatedBehavior" },
+            { GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UndefinedBehavior" },
+            { GL_DEBUG_TYPE_PORTABILITY, "Portability" },
+            { GL_DEBUG_TYPE_PERFORMANCE, "Performance" },
+            { GL_DEBUG_TYPE_MARKER, "Marker" },
+            { GL_DEBUG_TYPE_OTHER, "Other" },
+            { GL_DEBUG_TYPE_PUSH_GROUP, "Push" },
+            { GL_DEBUG_TYPE_POP_GROUP, "Pop" }
+        };
+        static const std::unordered_map<GLenum, const char*> severities = {
+            { GL_DEBUG_SEVERITY_LOW, "low" },
+            { GL_DEBUG_SEVERITY_MEDIUM, "medium" },
+            { GL_DEBUG_SEVERITY_HIGH, "high" },
+            { GL_DEBUG_SEVERITY_NOTIFICATION, "notify" },
+        };
+        if ( severity == GL_DEBUG_SEVERITY_NOTIFICATION && !Global::debugMode )
+            return;
+        qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at( severity ) << ":" << message;
 	};
 	glEnable( GL_DEBUG_OUTPUT );
 	f->glDebugMessageCallback( logHandler, nullptr );
@@ -373,10 +372,10 @@ void MainWindowRenderer::createArrayTexture( int unit, int depth )
 	glBindTexture( GL_TEXTURE_2D_ARRAY, m_textures[unit] );
 	glTexStorage3D(
 		GL_TEXTURE_2D_ARRAY,
-		1,             // No mipmaps
-		GL_RGBA8,      // Internal format
-		32, 64,        // width,height
-		depth          // Number of layers
+		1,        // No mipmaps
+		GL_RGBA8, // Internal format
+		32, 64,   // width,height
+		depth     // Number of layers
 	);
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -395,8 +394,7 @@ void MainWindowRenderer::uploadArrayTexture( int unit, int depth, const uint8_t*
 		32, 64, depth,    // width, height, depth
 		GL_RGBA,          // format
 		GL_UNSIGNED_BYTE, // type
-		data
-	);
+		data );
 }
 
 void MainWindowRenderer::initTextures()
@@ -422,7 +420,6 @@ void MainWindowRenderer::initTextures()
 	{
 		uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
 	}
-
 
 	//qDebug() << "stored " << maxArrayTextures << " pixmaps in array texture";
 
@@ -673,7 +670,7 @@ void MainWindowRenderer::paintSelection()
 {
 	// TODO this is a workaround until some transparency solution is implemented
 	auto action = Selection::getInstance().action();
-	if( action == "DigStairsDown" || action == "DigRampDown" )
+	if ( action == "DigStairsDown" || action == "DigRampDown" )
 	{
 		glDisable( GL_DEPTH_TEST );
 	}
@@ -699,7 +696,7 @@ void MainWindowRenderer::paintSelection()
 	}
 
 	m_selectionShader->release();
-	if( action == "DigStairsDown" || action == "DigRampDown" )
+	if ( action == "DigStairsDown" || action == "DigRampDown" )
 	{
 		glEnable( GL_DEPTH_TEST );
 	}
@@ -772,7 +769,7 @@ void MainWindowRenderer::rotate( int direction )
 	m_rotation = ( 4 + m_rotation + direction ) % 4;
 	Config::getInstance().set( "rotation", m_rotation );
 
-	if( direction == 1 )
+	if ( direction == 1 )
 	{
 		updatePositionAfterCWRotation( m_moveX, m_moveY );
 	}
@@ -1206,7 +1203,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 		if ( cursorPos.z > 0 )
 		{
 			Tile& tileBelow = world.getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
-			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
+			if ( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
 			{
 				zFloorFound = true;
 			}
@@ -1253,8 +1250,8 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 {
 	constexpr int tileHeight = 8; //tiles are assumed to be 8 pixels high (and twice as wide)
-	int tmp = x;
-	x = -2 * ( Global::dimX * tileHeight + y );
+	int tmp                  = x;
+	x                        = -2 * ( Global::dimX * tileHeight + y );
 	//y = -Global::dimY * tileHeight + tmp/2;
-	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
+	y = -( Global::dimY - 2 ) * tileHeight + tmp / 2;
 }

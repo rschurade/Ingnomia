@@ -1157,11 +1157,9 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
-
-
 bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 {
-	if( m_jobID )
+	if ( m_jobID )
 	{
 		return false;
 	}
@@ -1280,19 +1278,19 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 		if ( itemToGet )
 		{
 			auto pos = Global::inv().getItemPos( itemToGet );
-			
+
 			m_btBlackBoard.insert( "ClaimedUniformItem", itemToGet );
 			m_btBlackBoard.insert( "ClaimedUniformItemSlot", slot );
-			
+
 			auto& jm = Global::jm();
-			
+
 			m_jobID = jm.addJob( "EquipItem", pos, 0, true );
-			
+
 			if ( m_jobID != 0 )
 			{
 				m_jobChanged = true;
 				m_job        = jm.getJob( m_jobID );
-				if( m_job )
+				if ( m_job )
 				{
 					Global::inv().setInJob( itemToGet, m_jobID );
 					//no change to jobsprite
@@ -2279,10 +2277,10 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 		log( "actionGetTarget" );
 
 	// Unset current attack target if invalidated
-	if (m_currentAttackTarget)
+	if ( m_currentAttackTarget )
 	{
 		const Creature* creature = Global::cm().creature( m_currentAttackTarget );
-		if (!creature || creature->isDead() || !Global::cm().hasPathTo(m_position, creature->id()))
+		if ( !creature || creature->isDead() || !Global::cm().hasPathTo( m_position, creature->id() ) )
 		{
 			m_currentAttackTarget = 0;
 			m_thoughtBubble       = "";
@@ -2312,8 +2310,8 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 					if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
 					{
 						const unsigned int dist = m_position.distSquare( creature->getPos() );
-						bestDistance    = dist;
-						bestCandidate   = creature;
+						bestDistance            = dist;
+						bestCandidate           = creature;
 						// Any legal match is a good hit
 						break;
 					}
@@ -2590,16 +2588,16 @@ bool Gnome::equipItem()
 			Global::inv().setInJob( itemSlot.itemID, 0 );
 			Global::inv().setConstructedOrEquipped( itemSlot.itemID, false );
 		}
-		itemSlot.itemID = itemID;
-		itemSlot.item   = itemSID;
+		itemSlot.itemID     = itemID;
+		itemSlot.item       = itemSID;
 		itemSlot.materialID = materialUID;
 		itemSlot.material   = materialSID;
-		if (part == CP_LEFT_HAND_HELD)
+		if ( part == CP_LEFT_HAND_HELD )
 		{
 			equipHand( itemID, "Left" );
 			itemSlot.allMats = Global::inv().allMats( itemID );
 		}
-		else if (part == CP_RIGHT_HAND_HELD )
+		else if ( part == CP_RIGHT_HAND_HELD )
 		{
 			equipHand( itemID, "Right" );
 			itemSlot.allMats = Global::inv().allMats( itemID );
@@ -2612,7 +2610,6 @@ bool Gnome::equipItem()
 		m_renderParamsChanged = true;
 		return true;
 	}
-
 
 	return false;
 }

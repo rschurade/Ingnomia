@@ -19,8 +19,6 @@
 
 #include "../aggregatormilitary.h"
 
-#include <QString>
-
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
 #include <NsCore/Noesis.h>
@@ -30,6 +28,8 @@
 #include <NsCore/ReflectionDeclareEnum.h>
 #include <NsCore/String.h>
 #include <NsGui/Collection.h>
+
+#include <QString>
 
 class MilitaryProxy;
 
@@ -49,26 +49,45 @@ enum class MilitaryPage
 	Third
 };
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class SquadPriority final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	SquadPriority( const GuiTargetPriority& prio, unsigned int squadID, MilitaryProxy* proxy );
 
-	const char* getIDString() const { return m_idString.Str(); }
-	const char* getName() const { return m_name.Str(); }
+	const char* getIDString() const
+	{
+		return m_idString.Str();
+	}
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
 
-	QString getID() { return m_idString.Str(); }
+	QString getID()
+	{
+		return m_idString.Str();
+	}
 
-	bool getIgnore() const { return m_attitude == MilAttitude::_IGNORE; }
+	bool getIgnore() const
+	{
+		return m_attitude == MilAttitude::_IGNORE;
+	}
 	void setIgnore( bool value );
-	bool getAvoid() const { return m_attitude == MilAttitude::AVOID; }
+	bool getAvoid() const
+	{
+		return m_attitude == MilAttitude::AVOID;
+	}
 	void setAvoid( bool value );
-	bool getAttack() const { return m_attitude == MilAttitude::ATTACK; }
+	bool getAttack() const
+	{
+		return m_attitude == MilAttitude::ATTACK;
+	}
 	void setAttack( bool value );
-	bool getHunt() const { return m_attitude == MilAttitude::HUNT; }
+	bool getHunt() const
+	{
+		return m_attitude == MilAttitude::HUNT;
+	}
 	void setHunt( bool value );
 
 private:
@@ -92,7 +111,7 @@ private:
 		return &m_moveDownCmd;
 	}
 	NoesisApp::DelegateCommand m_moveDownCmd;
-	
+
 	NS_DECLARE_REFLECTION( SquadPriority, NoesisApp::NotifyPropertyChangedBase )
 };
 
@@ -103,35 +122,59 @@ class SquadGnome final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	SquadGnome( const GuiSquadGnome& gnome, bool showLeft, bool showRight, bool showX, MilitaryProxy* proxy );
 
-	const char* getIDString() const { return m_idString.Str(); }
-	const char* getName() const { return m_name.Str(); }
+	const char* getIDString() const
+	{
+		return m_idString.Str();
+	}
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
 
-	unsigned int getID() { return m_id; }
+	unsigned int getID()
+	{
+		return m_id;
+	}
 
-	const char* getShowLeftArrow() const { return m_showLeftArrow ? "Visible" : "Hidden"; }
-	const char* getShowRightArrow() const { return m_showRightArrow ? "Visible" : "Hidden"; }
-	const char* getShowX() const { return m_showX ? "Visible" : "Hidden"; }
+	const char* getShowLeftArrow() const
+	{
+		return m_showLeftArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowRightArrow() const
+	{
+		return m_showRightArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowX() const
+	{
+		return m_showX ? "Visible" : "Hidden";
+	}
 
 	RoleItem* getRole() const;
 	void setRole( RoleItem* role );
-	void nullifyRole() { m_role = nullptr; }
-	unsigned int roleID() { return m_roleID; }
+	void nullifyRole()
+	{
+		m_role = nullptr;
+	}
+	unsigned int roleID()
+	{
+		return m_roleID;
+	}
+
 private:
 	unsigned int m_id = 0;
 	Noesis::String m_idString;
 	Noesis::String m_name;
 	MilitaryProxy* m_proxy = nullptr;
 
-	bool m_showLeftArrow = true;
+	bool m_showLeftArrow  = true;
 	bool m_showRightArrow = true;
-	bool m_showX = true;
+	bool m_showX          = true;
 
 	unsigned int m_roleID = 0;
-	RoleItem* m_role = nullptr;
-	
+	RoleItem* m_role      = nullptr;
+
 	NS_DECLARE_REFLECTION( SquadGnome, NoesisApp::NotifyPropertyChangedBase )
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class SquadItem final : public NoesisApp::NotifyPropertyChangedBase
@@ -139,11 +182,20 @@ class SquadItem final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	SquadItem( const GuiSquad& squad, MilitaryProxy* proxy );
 
-	const char* getIDString() const { return m_idString.Str(); }
-	const char* getName() const { return m_name.Str(); }
+	const char* getIDString() const
+	{
+		return m_idString.Str();
+	}
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
 	void setName( const char* value );
 
-	unsigned int getID() { return m_id; }
+	unsigned int getID()
+	{
+		return m_id;
+	}
 
 	void updatePriorities( const QList<GuiTargetPriority>& prios );
 
@@ -158,17 +210,28 @@ private:
 	Noesis::String m_name;
 	MilitaryProxy* m_proxy = nullptr;
 
-	bool m_showLeftArrow = true;
+	bool m_showLeftArrow  = true;
 	bool m_showRightArrow = true;
 
 	bool m_showConfig = false;
 
-	const char* getShowLeftArrow() const { return m_showLeftArrow ? "Visible" : "Hidden"; }
-	const char* getShowRightArrow() const { return m_showRightArrow ? "Visible" : "Hidden"; }
-	const char* getShowX() const { return ( m_id != 0 ) ? "Visible" : "Hidden"; }
-	const char* getShowConfig() const { return m_showConfig ? "Visible" : "Collapsed"; }
+	const char* getShowLeftArrow() const
+	{
+		return m_showLeftArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowRightArrow() const
+	{
+		return m_showRightArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowX() const
+	{
+		return ( m_id != 0 ) ? "Visible" : "Hidden";
+	}
+	const char* getShowConfig() const
+	{
+		return m_showConfig ? "Visible" : "Collapsed";
+	}
 
-	
 	Noesis::Ptr<Noesis::ObservableCollection<SquadGnome>> m_gnomes;
 
 	void onShowConfigCmd( BaseComponent* param );
@@ -187,15 +250,20 @@ private:
 	NS_DECLARE_REFLECTION( SquadItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class UniformModelType final : public Noesis::BaseComponent
 {
 public:
 	UniformModelType( QString sid, QString name );
 
-	const char* getName() const { return m_name.Str(); }
-	const char* sid() const { return m_sid.Str(); }
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
+	const char* sid() const
+	{
+		return m_sid.Str();
+	}
 
 private:
 	Noesis::String m_name;
@@ -210,8 +278,14 @@ class UniformModelMaterial final : public Noesis::BaseComponent
 public:
 	UniformModelMaterial( QString sid, QString name );
 
-	const char* getName() const { return m_name.Str(); }
-	const char* sid() const { return m_sid.Str(); }
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
+	const char* sid() const
+	{
+		return m_sid.Str();
+	}
 
 private:
 	Noesis::String m_name;
@@ -220,15 +294,20 @@ private:
 	NS_DECLARE_REFLECTION( UniformModelMaterial, Noesis::BaseComponent )
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class UniformModelItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	UniformModelItem( const GuiUniformItem& gui, unsigned int roleID, MilitaryProxy* proxy );
 
-	const char* getName() const { return m_name.Str(); }
-	const char* sid() const { return m_sid.Str(); }
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
+	const char* sid() const
+	{
+		return m_sid.Str();
+	}
 
 	void setPossibleMats( QStringList mats );
 
@@ -236,26 +315,37 @@ private:
 	Noesis::String m_name;
 	Noesis::String m_sid;
 	MilitaryProxy* m_proxy = nullptr;
-	unsigned int m_roleID = 0;
+	unsigned int m_roleID  = 0;
 
 	QString m_mat;
-	
-	Noesis::ObservableCollection<UniformModelType>* availableTypes() const { return m_availableTypes; }
-	Noesis::ObservableCollection<UniformModelMaterial>* availableMaterials() const { return m_availableMats; }
+
+	Noesis::ObservableCollection<UniformModelType>* availableTypes() const
+	{
+		return m_availableTypes;
+	}
+	Noesis::ObservableCollection<UniformModelMaterial>* availableMaterials() const
+	{
+		return m_availableMats;
+	}
 
 	void setSelectedType( UniformModelType* type );
-	UniformModelType* getSelectedType() const { return m_selectedType; };
+	UniformModelType* getSelectedType() const
+	{
+		return m_selectedType;
+	};
 	void setSelectedMaterial( UniformModelMaterial* mat );
-	UniformModelMaterial* getSelectedMaterial() const { return m_selectedMat; };
+	UniformModelMaterial* getSelectedMaterial() const
+	{
+		return m_selectedMat;
+	};
 
-	UniformModelType* m_selectedType = nullptr;
+	UniformModelType* m_selectedType    = nullptr;
 	UniformModelMaterial* m_selectedMat = nullptr;
 
 	Noesis::Ptr<Noesis::ObservableCollection<UniformModelType>> m_availableTypes;
 	Noesis::Ptr<Noesis::ObservableCollection<UniformModelMaterial>> m_availableMats;
 
-
-	NS_DECLARE_REFLECTION( UniformModelItem,  NoesisApp::NotifyPropertyChangedBase )
+	NS_DECLARE_REFLECTION( UniformModelItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,11 +354,20 @@ class RoleItem final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	RoleItem( const GuiMilRole& role, MilitaryProxy* proxy );
 
-	const char* getIDString() const { return m_idString.Str(); }
-	const char* getName() const { return m_name.Str(); }
+	const char* getIDString() const
+	{
+		return m_idString.Str();
+	}
+	const char* getName() const
+	{
+		return m_name.Str();
+	}
 	void setName( const char* value );
 
-	unsigned int getID() { return m_id; }
+	unsigned int getID()
+	{
+		return m_id;
+	}
 	void updatePossibleMaterials( QString slot, QStringList mats );
 
 	bool GetCivilian() const;
@@ -280,19 +379,30 @@ private:
 	Noesis::String m_name;
 	MilitaryProxy* m_proxy = nullptr;
 
-	bool m_showLeftArrow = false;
+	bool m_showLeftArrow  = false;
 	bool m_showRightArrow = false;
 
 	bool m_showConfig = false;
 
 	bool m_civilian = false;
 
-	const char* getShowLeftArrow() const { return m_showLeftArrow ? "Visible" : "Hidden"; }
-	const char* getShowRightArrow() const { return m_showRightArrow ? "Visible" : "Hidden"; }
-	const char* getShowX() const { return ( m_id != 0 ) ? "Visible" : "Hidden"; }
-	const char* getShowConfig() const { return m_showConfig ? "Visible" : "Collapsed"; }
+	const char* getShowLeftArrow() const
+	{
+		return m_showLeftArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowRightArrow() const
+	{
+		return m_showRightArrow ? "Visible" : "Hidden";
+	}
+	const char* getShowX() const
+	{
+		return ( m_id != 0 ) ? "Visible" : "Hidden";
+	}
+	const char* getShowConfig() const
+	{
+		return m_showConfig ? "Visible" : "Collapsed";
+	}
 
-	
 	void onShowConfigCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* getShowConfigCmd() const
 	{
@@ -306,18 +416,8 @@ private:
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<UniformModelItem>> m_uniformItems;
 
-
 	NS_DECLARE_REFLECTION( RoleItem, NoesisApp::NotifyPropertyChangedBase )
 };
-
-
-
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class MilitaryModel final : public NoesisApp::NotifyPropertyChangedBase
@@ -351,7 +451,7 @@ private:
 		return m_squads;
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<SquadItem>> m_squads;
-	
+
 	void onAddSquadCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* getAddSquadCmd() const
 	{
@@ -401,13 +501,11 @@ private:
 	}
 	NoesisApp::DelegateCommand m_moveGnomeRightCmd;
 
-
 	Noesis::ObservableCollection<RoleItem>* getRoles() const
 	{
 		return m_roles;
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<RoleItem>> m_roles;
-
 
 	void onAddRoleCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* getAddRoleCmd() const
@@ -422,9 +520,6 @@ private:
 		return &m_removeRoleCmd;
 	}
 	NoesisApp::DelegateCommand m_removeRoleCmd;
-
-
-
 
 	NS_DECLARE_REFLECTION( MilitaryModel, NotifyPropertyChangedBase )
 };

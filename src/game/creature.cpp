@@ -185,10 +185,10 @@ void Creature::serialize( QVariantMap& out ) const
 	out.insert( "Orientation", m_facing );
 	//unsigned int m_followID = 0;
 	out.insert( "FollowID", m_followID ),
-	//Position m_followPosition;
-	out.insert( "FollowPosition", m_followPosition.toString() ),
-	//Gender m_gender = UNDEFINED;
-	out.insert( "Gender", (unsigned char)m_gender );
+		//Position m_followPosition;
+		out.insert( "FollowPosition", m_followPosition.toString() ),
+		//Gender m_gender = UNDEFINED;
+		out.insert( "Gender", (unsigned char)m_gender );
 	//QString m_name = "not_initialized";
 	out.insert( "Name", m_name );
 	//bool m_immobile = false;
@@ -714,20 +714,20 @@ void Creature::move( Position oldPos )
 		Global::w().removeCreatureFromPosition( oldPos, m_id );
 		Global::w().insertCreatureAtPosition( m_position, m_id );
 
-		if( m_hasTransparency )
+		if ( m_hasTransparency )
 		{
 			Global::w().setTileFlag( m_position, TileFlag::TF_TRANSPARENT );
 			// check if no other creatures with transparency on tile
 			bool transp = false;
-			for( auto c : Global::cm().creaturesAtPosition( oldPos ) )
+			for ( auto c : Global::cm().creaturesAtPosition( oldPos ) )
 			{
-				if( c->hasTransparency() )
+				if ( c->hasTransparency() )
 				{
 					transp = true;
 					break;
 				}
 			}
-			if( !transp )
+			if ( !transp )
 			{
 				Global::w().clearTileFlag( oldPos, TileFlag::TF_TRANSPARENT );
 			}
@@ -838,7 +838,7 @@ bool Creature::kill( bool nocorpse )
 	if ( !toDestroy() && !isDead() )
 	{
 		//kill succeeds
-		if( nocorpse )
+		if ( nocorpse )
 		{
 			destroy();
 		}
@@ -897,7 +897,7 @@ BT_RESULT Creature::conditionTargetPositionValid( bool halt )
 	{
 		creature = resolveTarget( m_currentAttackTarget );
 	}
-	if (creature)
+	if ( creature )
 	{
 		if ( creature->getPos() == m_currentTargetPosition )
 		{
@@ -1050,7 +1050,7 @@ void Creature::die()
 
 void Creature::dropInventory()
 {
-	Inventory &inv = Global::inv();
+	Inventory& inv = Global::inv();
 	for ( const unsigned int it : inventoryItems() )
 	{
 		inv.putDownItem( it, m_position );

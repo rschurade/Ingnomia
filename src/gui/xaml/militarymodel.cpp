@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "militarymodel.h"
+
 #include "militaryproxy.h"
 
 #include <NsApp/Application.h>
@@ -43,10 +44,9 @@ SquadPriority::SquadPriority( const GuiTargetPriority& prio, unsigned int squadI
 	m_moveDownCmd.SetExecuteFunc( MakeDelegate( this, &SquadPriority::onMoveDownCmd ) );
 }
 
-
 void SquadPriority::setIgnore( bool value )
 {
-	if( value && m_attitude != MilAttitude::_IGNORE )
+	if ( value && m_attitude != MilAttitude::_IGNORE )
 	{
 		m_attitude = MilAttitude::_IGNORE;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
@@ -59,7 +59,7 @@ void SquadPriority::setIgnore( bool value )
 
 void SquadPriority::setAvoid( bool value )
 {
-	if( value && m_attitude != MilAttitude::AVOID )
+	if ( value && m_attitude != MilAttitude::AVOID )
 	{
 		m_attitude = MilAttitude::AVOID;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
@@ -72,7 +72,7 @@ void SquadPriority::setAvoid( bool value )
 
 void SquadPriority::setAttack( bool value )
 {
-	if( value && m_attitude != MilAttitude::ATTACK )
+	if ( value && m_attitude != MilAttitude::ATTACK )
 	{
 		m_attitude = MilAttitude::ATTACK;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
@@ -85,7 +85,7 @@ void SquadPriority::setAttack( bool value )
 
 void SquadPriority::setHunt( bool value )
 {
-	if( value && m_attitude != MilAttitude::HUNT )
+	if ( value && m_attitude != MilAttitude::HUNT )
 	{
 		m_attitude = MilAttitude::HUNT;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
@@ -98,7 +98,7 @@ void SquadPriority::setHunt( bool value )
 
 void SquadPriority::onMoveUpCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		m_proxy->movePrioUp( m_squadID, param->ToString().Str() );
 	}
@@ -106,7 +106,7 @@ void SquadPriority::onMoveUpCmd( BaseComponent* param )
 
 void SquadPriority::onMoveDownCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		m_proxy->movePrioDown( m_squadID, param->ToString().Str() );
 	}
@@ -129,18 +129,16 @@ RoleItem* SquadGnome::getRole() const
 {
 	return m_role;
 }
-	
+
 void SquadGnome::setRole( RoleItem* role )
 {
-	if( m_role != role )
+	if ( m_role != role )
 	{
 		m_role = role;
 		m_proxy->setRole( m_id, role->getID() );
 		OnPropertyChanged( "Role" );
 	}
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SquadItem::SquadItem( const GuiSquad& squad, MilitaryProxy* proxy ) :
@@ -152,13 +150,13 @@ SquadItem::SquadItem( const GuiSquad& squad, MilitaryProxy* proxy ) :
 	m_proxy( proxy )
 {
 	m_gnomes = *new ObservableCollection<SquadGnome>();
-	for( const auto& gnome: squad.gnomes )
+	for ( const auto& gnome : squad.gnomes )
 	{
-		m_gnomes->Add( MakePtr<SquadGnome>( gnome, m_showLeftArrow, m_showRightArrow || ( m_id == 0 ), ( m_id != 0 ),  m_proxy ) );
+		m_gnomes->Add( MakePtr<SquadGnome>( gnome, m_showLeftArrow, m_showRightArrow || ( m_id == 0 ), ( m_id != 0 ), m_proxy ) );
 	}
 
 	m_priorities = *new ObservableCollection<SquadPriority>();
-	for( const auto& prio : squad.priorities )
+	for ( const auto& prio : squad.priorities )
 	{
 		m_priorities->Add( MakePtr<SquadPriority>( prio, squad.id, proxy ) );
 	}
@@ -182,7 +180,7 @@ void SquadItem::onShowConfigCmd( BaseComponent* param )
 void SquadItem::updatePriorities( const QList<GuiTargetPriority>& prios )
 {
 	m_priorities->Clear();
-	for( const auto& prio : prios )
+	for ( const auto& prio : prios )
 	{
 		m_priorities->Add( MakePtr<SquadPriority>( prio, m_id, m_proxy ) );
 	}
@@ -193,16 +191,12 @@ UniformModelMaterial::UniformModelMaterial( QString sid, QString name ) :
 	m_name( name.toStdString().c_str() ),
 	m_sid( sid.toStdString().c_str() )
 {
-
 }
-
-
 
 UniformModelType::UniformModelType( QString sid, QString name ) :
 	m_name( name.toStdString().c_str() ),
 	m_sid( sid.toStdString().c_str() )
 {
-
 }
 
 UniformModelItem::UniformModelItem( const GuiUniformItem& gui, unsigned int roleID, MilitaryProxy* proxy ) :
@@ -213,20 +207,20 @@ UniformModelItem::UniformModelItem( const GuiUniformItem& gui, unsigned int role
 	m_proxy( proxy )
 {
 	m_availableTypes = *new ObservableCollection<UniformModelType>();
-	m_availableMats = *new ObservableCollection<UniformModelMaterial>();
+	m_availableMats  = *new ObservableCollection<UniformModelMaterial>();
 
 	int selectedIndex = -1;
-	int i = -1;
-	for( auto type : gui.possibleTypesForSlot )
+	int i             = -1;
+	for ( auto type : gui.possibleTypesForSlot )
 	{
 		++i;
-		if( type == gui.armorType )
+		if ( type == gui.armorType )
 		{
 			selectedIndex = i;
 		}
 		m_availableTypes->Add( MakePtr<UniformModelType>( type, type ) );
 	}
-	if( selectedIndex != -1 )
+	if ( selectedIndex != -1 )
 	{
 		setSelectedType( m_availableTypes->Get( selectedIndex ) );
 		m_mat = gui.material;
@@ -238,9 +232,9 @@ void UniformModelItem::setSelectedType( UniformModelType* type )
 	if ( m_selectedType != type && type != nullptr )
 	{
 		m_selectedType = type;
-		m_mat = "any";
+		m_mat          = "any";
 		m_proxy->setArmorType( m_roleID, m_sid.Str(), type->sid(), "any" );
-		
+
 		//OnPropertyChanged( "SelectedType" );
 	}
 }
@@ -250,8 +244,8 @@ void UniformModelItem::setSelectedMaterial( UniformModelMaterial* mat )
 	if ( m_selectedMat != mat && mat != nullptr )
 	{
 		m_selectedMat = mat;
-		m_mat = mat->sid();
-		if( m_selectedType )
+		m_mat         = mat->sid();
+		if ( m_selectedType )
 		{
 			m_proxy->setArmorType( m_roleID, m_sid.Str(), m_selectedType->sid(), mat->sid() );
 		}
@@ -263,24 +257,23 @@ void UniformModelItem::setPossibleMats( QStringList mats )
 {
 	m_availableMats->Clear();
 	int selectedMat = -1;
-	
-	for( int i = 0; i < mats.size(); ++i )
+
+	for ( int i = 0; i < mats.size(); ++i )
 	{
 		QString mat = mats[i];
 		m_availableMats->Add( MakePtr<UniformModelMaterial>( mat, mat ) );
-		if( mat == m_mat )
+		if ( mat == m_mat )
 		{
 			selectedMat = i;
 		}
 	}
-	if( selectedMat != -1 )
+	if ( selectedMat != -1 )
 	{
 		m_selectedMat = m_availableMats->Get( selectedMat );
 	}
 	OnPropertyChanged( "AvailableMaterials" );
 	OnPropertyChanged( "SelectedMaterial" );
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 RoleItem::RoleItem( const GuiMilRole& role, MilitaryProxy* proxy ) :
@@ -295,11 +288,10 @@ RoleItem::RoleItem( const GuiMilRole& role, MilitaryProxy* proxy ) :
 
 	m_uniformItems = *new ObservableCollection<UniformModelItem>();
 
-	for( const auto& gui : role.uniform )
+	for ( const auto& gui : role.uniform )
 	{
 		m_uniformItems->Add( MakePtr<UniformModelItem>( gui, m_id, m_proxy ) );
 	}
-
 }
 
 void RoleItem::setName( const char* value )
@@ -317,10 +309,10 @@ void RoleItem::onShowConfigCmd( BaseComponent* param )
 
 void RoleItem::updatePossibleMaterials( QString slot, QStringList mats )
 {
-	for( int i = 0; i < m_uniformItems->Count(); ++i )
+	for ( int i = 0; i < m_uniformItems->Count(); ++i )
 	{
 		auto item = m_uniformItems->Get( i );
-		if( item->sid() == slot )
+		if ( item->sid() == slot )
 		{
 			item->setPossibleMats( mats );
 			break;
@@ -332,18 +324,15 @@ bool RoleItem::GetCivilian() const
 {
 	return m_civilian;
 }
-	
+
 void RoleItem::SetCivilian( bool value )
 {
-	if( m_civilian != value )
+	if ( m_civilian != value )
 	{
 		m_civilian = value;
 		m_proxy->setRoleCivilian( m_id, value );
 	}
 }
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 MilitaryModel::MilitaryModel()
@@ -360,13 +349,12 @@ MilitaryModel::MilitaryModel()
 	m_removeGnomeFromSquadCmd.SetExecuteFunc( MakeDelegate( this, &MilitaryModel::onRemoveGnomeFromSquadCmd ) );
 	m_moveGnomeLeftCmd.SetExecuteFunc( MakeDelegate( this, &MilitaryModel::onMoveGnomeLeftCmd ) );
 	m_moveGnomeRightCmd.SetExecuteFunc( MakeDelegate( this, &MilitaryModel::onMoveGnomeRightCmd ) );
-	
+
 	m_addRoleCmd.SetExecuteFunc( MakeDelegate( this, &MilitaryModel::onAddRoleCmd ) );
 	m_removeRoleCmd.SetExecuteFunc( MakeDelegate( this, &MilitaryModel::onRemoveRoleCmd ) );
 
-
 	m_squads = *new ObservableCollection<SquadItem>();
-	m_roles = *new ObservableCollection<RoleItem>();
+	m_roles  = *new ObservableCollection<RoleItem>();
 }
 
 const char* MilitaryModel::getShowFirst() const
@@ -377,7 +365,7 @@ const char* MilitaryModel::getShowFirst() const
 	}
 	return "Hidden";
 }
-	
+
 const char* MilitaryModel::getShowSecond() const
 {
 	if ( m_page == MilitaryPage::Second )
@@ -398,11 +386,11 @@ const char* MilitaryModel::getShowThird() const
 
 void MilitaryModel::onPageCmd( BaseComponent* param )
 {
-	if( param->ToString() == "First" )
+	if ( param->ToString() == "First" )
 	{
 		m_page = MilitaryPage::First;
 	}
-	else if( param->ToString() == "Second" )
+	else if ( param->ToString() == "Second" )
 	{
 		m_proxy->requestRoles();
 		m_page = MilitaryPage::Second;
@@ -411,7 +399,7 @@ void MilitaryModel::onPageCmd( BaseComponent* param )
 	{
 		m_page = MilitaryPage::Third;
 	}
-	
+
 	OnPropertyChanged( "ShowFirst" );
 	OnPropertyChanged( "ShowSecond" );
 	OnPropertyChanged( "ShowThird" );
@@ -421,7 +409,7 @@ void MilitaryModel::updateSquads( const QList<GuiSquad>& squads )
 {
 	m_squads->Clear();
 
-	for( const auto& squad : squads )
+	for ( const auto& squad : squads )
 	{
 		m_squads->Add( MakePtr<SquadItem>( squad, m_proxy ) );
 	}
@@ -432,15 +420,15 @@ void MilitaryModel::updateSquads( const QList<GuiSquad>& squads )
 
 void MilitaryModel::updateRoles( const QList<GuiMilRole>& roles )
 {
-	for( int r = 0; r < m_roles->Count(); ++r )
+	for ( int r = 0; r < m_roles->Count(); ++r )
 	{
 		auto roleItem = m_roles->Get( r );
 
-		for( int i = 0; i < m_squads->Count(); ++i )
+		for ( int i = 0; i < m_squads->Count(); ++i )
 		{
-			auto squad = m_squads->Get( i );
+			auto squad  = m_squads->Get( i );
 			auto gnomes = squad->getGnomes();
-			for( int k = 0; k < gnomes->Count(); ++k )
+			for ( int k = 0; k < gnomes->Count(); ++k )
 			{
 				auto gnome = gnomes->Get( k );
 				gnome->nullifyRole();
@@ -450,23 +438,23 @@ void MilitaryModel::updateRoles( const QList<GuiMilRole>& roles )
 
 	m_roles->Clear();
 
-	for( const auto& role : roles )
+	for ( const auto& role : roles )
 	{
 		m_roles->Add( MakePtr<RoleItem>( role, m_proxy ) );
 	}
-	
-	for( int r = 0; r < m_roles->Count(); ++r )
+
+	for ( int r = 0; r < m_roles->Count(); ++r )
 	{
 		auto roleItem = m_roles->Get( r );
 
-		for( int i = 0; i < m_squads->Count(); ++i )
+		for ( int i = 0; i < m_squads->Count(); ++i )
 		{
-			auto squad = m_squads->Get( i );
+			auto squad  = m_squads->Get( i );
 			auto gnomes = squad->getGnomes();
-			for( int k = 0; k < gnomes->Count(); ++k )
+			for ( int k = 0; k < gnomes->Count(); ++k )
 			{
 				auto gnome = gnomes->Get( k );
-				if( gnome->roleID() == roleItem->getID() )
+				if ( gnome->roleID() == roleItem->getID() )
 				{
 					gnome->setRole( roleItem );
 				}
@@ -483,7 +471,7 @@ void MilitaryModel::onAddSquadCmd( BaseComponent* param )
 
 void MilitaryModel::onRemoveSquadCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -493,7 +481,7 @@ void MilitaryModel::onRemoveSquadCmd( BaseComponent* param )
 
 void MilitaryModel::onMoveSquadLeftCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -503,7 +491,7 @@ void MilitaryModel::onMoveSquadLeftCmd( BaseComponent* param )
 
 void MilitaryModel::onMoveSquadRightCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -513,7 +501,7 @@ void MilitaryModel::onMoveSquadRightCmd( BaseComponent* param )
 
 void MilitaryModel::onRemoveGnomeFromSquadCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -523,7 +511,7 @@ void MilitaryModel::onRemoveGnomeFromSquadCmd( BaseComponent* param )
 
 void MilitaryModel::onMoveGnomeLeftCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -533,7 +521,7 @@ void MilitaryModel::onMoveGnomeLeftCmd( BaseComponent* param )
 
 void MilitaryModel::onMoveGnomeRightCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -543,17 +531,16 @@ void MilitaryModel::onMoveGnomeRightCmd( BaseComponent* param )
 
 void MilitaryModel::updatePriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities )
 {
-	for( int i = 0; i < m_squads->Count(); ++i )
+	for ( int i = 0; i < m_squads->Count(); ++i )
 	{
 		auto squad = m_squads->Get( i );
-		if( squad->getID() == squadID )
+		if ( squad->getID() == squadID )
 		{
 			squad->updatePriorities( priorities );
 			break;
 		}
 	}
 }
-
 
 void MilitaryModel::onAddRoleCmd( BaseComponent* param )
 {
@@ -562,7 +549,7 @@ void MilitaryModel::onAddRoleCmd( BaseComponent* param )
 
 void MilitaryModel::onRemoveRoleCmd( BaseComponent* param )
 {
-	if( param )
+	if ( param )
 	{
 		QString qID( param->ToString().Str() );
 		unsigned int id = qID.toUInt();
@@ -572,9 +559,9 @@ void MilitaryModel::onRemoveRoleCmd( BaseComponent* param )
 
 void MilitaryModel::updatePossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats )
 {
-	for( int i = 0; i < m_roles->Count(); ++i )
+	for ( int i = 0; i < m_roles->Count(); ++i )
 	{
-		if( m_roles->Get( i )->getID() == roleID )
+		if ( m_roles->Get( i )->getID() == roleID )
 		{
 			m_roles->Get( i )->updatePossibleMaterials( slot, mats );
 
@@ -582,7 +569,6 @@ void MilitaryModel::updatePossibleMaterials( unsigned int roleID, const QString 
 		}
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
@@ -625,7 +611,7 @@ NS_IMPLEMENT_REFLECTION( SquadGnome, "IngnomiaGUI.SquadGnome" )
 {
 	NsProp( "ID", &SquadGnome::getIDString );
 	NsProp( "Name", &SquadGnome::getName );
-	
+
 	NsProp( "ShowLeftArrow", &SquadGnome::getShowLeftArrow );
 	NsProp( "ShowRightArrow", &SquadGnome::getShowRightArrow );
 	NsProp( "ShowX", &SquadGnome::getShowX );
@@ -642,7 +628,6 @@ NS_IMPLEMENT_REFLECTION( SquadPriority, "IngnomiaGUI.SquadPriority" )
 	NsProp( "Hunt", &SquadPriority::getHunt, &SquadPriority::setHunt );
 	NsProp( "MoveUpCmd", &SquadPriority::getMoveUpCmd );
 	NsProp( "MoveDownCmd", &SquadPriority::getMoveDownCmd );
-	
 }
 
 NS_IMPLEMENT_REFLECTION( RoleItem, "IngnomiaGUI.RoleItem" )
