@@ -30,7 +30,7 @@ BT_RESULT BT_NodeFallbackStar::tick()
 {
 	m_status = BT_RESULT::RUNNING;
 
-	while ( size_t( m_index ) < m_children.size() )
+	while ( static_cast<size_t>( m_index ) < m_children.size() )
 	{
 		BT_RESULT child_status = m_children[m_index]->tick();
 

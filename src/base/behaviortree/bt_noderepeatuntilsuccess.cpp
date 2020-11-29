@@ -59,7 +59,7 @@ void BT_NodeRepeatUntilSuccess::deserialize( QVariantMap in )
 
 	auto vcl  = in.value( "Childs" ).toList();
 	int index = 0;
-	if ( size_t( vcl.size() ) == m_children.size() )
+	if ( static_cast<size_t>( vcl.size() ) == m_children.size() )
 	{
 
 		for ( auto child : m_children )
@@ -71,7 +71,7 @@ void BT_NodeRepeatUntilSuccess::deserialize( QVariantMap in )
 	{
 		//tree changed between saving and loading, this will have undetermined results
 		// TODO throw exception or make config option to allow or deny loading this
-		if ( size_t( vcl.size() ) < m_children.size() )
+		if ( static_cast<size_t>( vcl.size() ) < m_children.size() )
 		{
 			for ( auto vcm : vcl )
 			{
