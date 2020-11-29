@@ -238,7 +238,7 @@ void AggregatorRenderer::onAllTileInfo()
 
 		tileUpdates.updates.push_back( update );
 
-		if ( tileUpdates.updates.size() >= batchSize )
+		if ( tileUpdates.updates.size() >= size_t( batchSize ) )
 		{
 			{
 				emit signalTileUpdates( tileUpdates );
@@ -276,7 +276,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 
 		tileUpdates.updates.push_back( update );
 
-		if ( tileUpdates.updates.size() >= batchSize )
+		if ( tileUpdates.updates.size() >= size_t( batchSize ) )
 		{
 			{
 				emit signalTileUpdates( tileUpdates );

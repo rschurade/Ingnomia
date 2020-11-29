@@ -1462,7 +1462,7 @@ void WorldGenerator::createRivers()
 	{
 		int prevZ = m_dimZ - 1;
 
-		for ( int i = 0; i < worm.size(); ++i )
+		for ( size_t i = 0; i < worm.size(); ++i )
 		{
 			auto pos = worm[i];
 			Global::w().getFloorLevelBelow( pos, false );
@@ -1478,7 +1478,7 @@ void WorldGenerator::createRivers()
 	}
 	for ( auto worm : worms2 )
 	{
-		for ( int i = 0; i < worm.size(); ++i )
+		for ( size_t i = 0; i < worm.size(); ++i )
 		{
 			auto pos = worm[i];
 			carveRiver( world, pos );

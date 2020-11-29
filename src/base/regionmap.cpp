@@ -78,7 +78,7 @@ void RegionMap::initRegions()
 	m_regions.emplace_back( 0 );
 	m_regionMap.clear();
 	m_regionMap.resize( world.world().size() );
-	for ( auto i = 0; i < m_regionMap.size(); ++i )
+	for ( size_t i = 0; i < m_regionMap.size(); ++i )
 		m_regionMap[i] = 0;
 
 	QElapsedTimer timer;
