@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - improved cursor for building floor on walls
 - optimized pathfinding if multiple gnomes have same goal
+- reduced water pressure on the faucet
 
 ### Removed
 - old networking code

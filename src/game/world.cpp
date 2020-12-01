@@ -806,7 +806,7 @@ void World::processWater()
 	for ( const auto& pos : m_aquifiers )
 	{
 		Tile& tile = getTile( pos );
-		if ( tile.pressure < 2 )
+		if ( tile.pressure == 0 )
 		{
 			if ( tile.fluidLevel < 10 )
 			{
@@ -816,6 +816,7 @@ void World::processWater()
 			{
 				tile.pressure++;
 			}
+			tile.flags += TileFlag::TF_WATER;
 			waterUpdates.append( pos.toInt() );
 		}
 		m_water.insert( pos.toInt() );
@@ -858,10 +859,10 @@ struct Neighbors
 	inline Neighbors( unsigned int pos )
 #endif
 	{
-		const auto pitchY = Global::dimX;
-		const auto pitchZ = pitchY * Global::dimY;
+		const unsigned int pitchY = Global::dimX;
+		const unsigned int pitchZ = pitchY * Global::dimY;
 
-		const auto maxZ = pitchZ * ( Global::dimZ - 1 );
+		const unsigned int maxZ = pitchZ * ( Global::dimZ - 1 );
 
 		const auto plane = pos % pitchZ;
 		const auto row   = pos % pitchY;
@@ -927,73 +928,114 @@ void World::processWaterFlow()
 
 			const Neighbors neighbors( currentPos );
 
-			// Flow down if no back-pressure
-			const Tile& downTile = getTile( neighbors.below );
-			if (
-				neighbors.below && !(bool)( here.floorType & FloorType::FT_SOLIDFLOOR ) && !(bool)( downTile.wallType & WallType::WT_MOVEBLOCKING ) && ( downTile.fluidLevel < 10 || here.pressure >= downTile.pressure ) )
-			{
-				here.flow = WF_DOWN;
-				drain.append( currentPos );
-				flood.append( neighbors.below );
-				continue;
-			}
-
-			// Flow sidewards in direction of lowest level
-			const unsigned int candidates[5] = {
+			const unsigned int candidates[7] = {
 				neighbors.north,
 				neighbors.south,
 				neighbors.east,
 				neighbors.west,
-				currentPos
+				currentPos,
+				neighbors.above,
+				neighbors.below,
 			};
-			constexpr WaterFlow direction[5] = {
+			constexpr WaterFlow direction[7] = {
 				WF_NORTH,
 				WF_SOUTH,
 				WF_EAST,
 				WF_WEST,
-				WF_NOFLOW
+				WF_NOFLOW,
+				WF_UP,
+				WF_DOWN
+			};
+			enum index : size_t
+			{
+				north = 0,
+				south,
+				east,
+				west,
+				center,
+				up,
+				down
 			};
 
-			unsigned int pressure[5] = { UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX };
-			for ( size_t i = 0; i < 5; i++ )
+			// Compute pressure for passable directions
+			constexpr int invalidPressure = INT_MAX;
+			int pressure[7];
+			for ( size_t i = north; i <= center; i++ )
 			{
 				const Tile& there = getTile( candidates[i] );
-				if (
-					candidates[i] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) )
+				if ( candidates[i] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) )
 				{
-					pressure[i] = there.pressure * 10 + there.fluidLevel;
+					pressure[i] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[i] = invalidPressure;
+				}
+			}
+			{
+				const Tile& there = getTile( candidates[up] );
+				if ( candidates[up] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) && !(bool)( there.floorType & FloorType::FT_SOLIDFLOOR ) )
+				{
+					pressure[up] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[up] = invalidPressure;
+				}
+			}
+			{
+				const Tile& there = getTile( candidates[down] );
+				if ( candidates[down] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) && !(bool)( here.floorType & FloorType::FT_SOLIDFLOOR ) )
+				{
+					pressure[down] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[down] = invalidPressure;
 				}
 			}
 
-			// First order of sampled directions is randomized ...
-			const size_t start = seed % 4;
-			size_t minIndex    = 4;
-			for ( size_t i = 0; i < 4; ++i )
+			// Flow down if no back-pressure
+			if ( pressure[down] != invalidPressure && pressure[down] <= pressure[center] || pressure[down] < 10 )
 			{
-				const size_t j = ( i + start ) % 4;
-				if ( pressure[minIndex] > pressure[j] )
-				{
-					minIndex = j;
-				}
-			}
-			// ... and chance for flow to happen is then proportional to pressure difference
-			if ( minIndex != 4 && ( seed % 41 ) < ( pressure[4] - pressure[minIndex] ) )
-			{
-				here.flow = direction[minIndex];
+				here.flow += WF_DOWN;
 				drain.append( currentPos );
-				flood.append( candidates[minIndex] );
-				continue;
+				flood.append( neighbors.below );
+				pressure[center]--;
+				pressure[up]++;
+			}
+
+			// Decide whether to enter instable states this frame
+			// In an unstable state, distribution can reverse right in the next frame
+			// Still need to allow it occasionally to relax gradients
+			const int preventInstability = seed % 127 == 0 ? 0 : 1;
+			{
+				const bool waterAbove = pressure[up] != invalidPressure && pressure[up] != 0;
+				for ( size_t i = 0; i < 4; ++i )
+				{
+					// First order of sampled directions is randomized ...
+					const size_t j = ( i + seed ) % 4;
+					// Prevent flow to side if that would cause vacuum
+					const bool vacuum = waterAbove && pressure[center] == 10;
+					if ( pressure[j] != invalidPressure && ( pressure[center] > pressure[j] + preventInstability ) && !vacuum )
+					{
+						drain.append( currentPos );
+						flood.append( candidates[j] );
+						here.flow += direction[j];
+						pressure[center]--;
+						pressure[j]++;
+					}
+				}
 			}
 
 			// Only if nothing else worked, flow upwards
-			const Tile& upTile = getTile( neighbors.above );
-			if (
-				neighbors.above && !(bool)( upTile.floorType & FloorType::FT_SOLIDFLOOR ) && !(bool)( upTile.wallType & WallType::WT_MOVEBLOCKING ) && here.fluidLevel == 10 && here.pressure > upTile.pressure + 1 )
+			if ( pressure[up] != invalidPressure && ( pressure[center] > 10 ) && ( pressure[center] > pressure[up] + preventInstability + 1 ) )
 			{
-				here.flow = WF_UP;
+				here.flow += WF_UP;
 				drain.append( currentPos );
 				flood.append( neighbors.above );
-				continue;
+				pressure[center]--;
+				pressure[up]++;
 			}
 		}
 		else
