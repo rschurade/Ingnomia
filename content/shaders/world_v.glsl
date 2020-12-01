@@ -136,6 +136,8 @@ void main()
 {
 	uint id = gl_InstanceID;
 
+	const bool uIsWall = aPos.z != 0;
+
 	// Min and max are inclusive in volume
 	const uvec3 renderVolume = uRenderMax - uRenderMin + uvec3(1, 1, 1);
 
@@ -172,7 +174,17 @@ void main()
 	uint jobWallSprite = 0;
 	uint creatureSprite = 0;
 	// Render in first pass if no transparency effects, and in second pass otherwise
-	if( uPaintFrontToBack ^^ ( vFlags & TF_TRANSPARENT ) != 0 )
+	bool containsTransparency;
+	if( uIsWall )
+	{
+		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) >= 3 || tileData.data[index].jobSpriteWallUID != 0;
+	}
+	else
+	{
+		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) != 0 || tileData.data[index].jobSpriteFloorUID != 0;
+	}
+	const bool renderingEnabled = uPaintFrontToBack ^^ containsTransparency;
+	if( renderingEnabled )
 	{
 		floorSprite = tileData.data[index].floorSpriteUID;
 		wallSprite = tileData.data[index].wallSpriteUID;
@@ -245,8 +257,6 @@ void main()
 
 		vFluidLevelPacked1 = (vFluidLevel << 0) | (vFluidLevelLeft << 8) | (vFluidLevelRight << 16) | (vFluidFlags << 24);
 	}
-
-	const bool uIsWall = aPos.z != 0;
 
 	// Check if rendering is applicable at all for the current tile and rendering pass...
 	if(
