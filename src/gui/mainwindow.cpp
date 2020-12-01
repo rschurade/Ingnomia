@@ -617,6 +617,7 @@ void MainWindow::noesisInit()
 
 	Noesis::GUI::SetLogHandler( logHandler );
 	Noesis::GUI::SetErrorHandler( errorHandler );
+	Noesis::GUI::DisableInspector();
 
 	// Noesis initialization. This must be the first step before using any NoesisGUI functionality
 	Noesis::GUI::Init( licenseName, licenseKey );
