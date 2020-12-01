@@ -459,7 +459,7 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_renderDepth = Config::getInstance().get( "renderDepth" ).toInt();
 
-	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
+	m_viewLevel = GameState::viewLevel;
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
@@ -793,9 +793,9 @@ void MainWindowRenderer::move( int x, int y )
 	m_moveX = qBound( -Global::dimX * 16.f, m_moveX, Global::dimX * 16.f );
 	m_moveY = qBound( -Global::dimX * 16.f, m_moveY, 0.f );
 
-	Config::getInstance().set( "moveX", m_moveX );
-	Config::getInstance().set( "moveY", m_moveY );
-
+	GameState::moveX = m_moveX;
+	GameState::moveY = m_moveY;
+	
 	onRenderParamsChanged();
 }
 
@@ -803,7 +803,7 @@ void MainWindowRenderer::scale( float factor )
 {
 	m_scale *= factor;
 	m_scale = qBound( 0.25f, m_scale, 15.f );
-	Config::getInstance().set( "scale", m_scale );
+	GameState::scale = m_scale;
 	onRenderParamsChanged();
 }
 

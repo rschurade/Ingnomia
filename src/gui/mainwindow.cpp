@@ -313,7 +313,7 @@ void MainWindow::keyboardMove()
 
 	float keyboardMoveSpeed = Config::getInstance().get( "keyboardMoveSpeed" ).toFloat();
 
-	float scale = Config::getInstance().get( "scale" ).toFloat();
+	float scale = GameState::scale;
 
 	int moveX = -( x * keyboardMoveSpeed ) / scale;
 	int moveY = -( y * keyboardMoveSpeed ) / scale;
@@ -375,12 +375,11 @@ void MainWindow::onInitViewAfterLoad()
 	Config& config = Config::getInstance();
 
 	m_renderer->setScale( 1.0 );
-	m_moveX = config.get( "moveX" ).toInt();
-	m_moveY = config.get( "moveY" ).toInt();
+	m_moveX = GameState::moveX;
+	m_moveY = GameState::moveY;
 	m_renderer->move( m_moveX, m_moveY );
 	
-	float scale = config.get( "scale" ).toFloat();
-	m_renderer->setScale( scale );
+	m_renderer->setScale( GameState::scale );
 }
 
 void MainWindow::mousePressEvent( QMouseEvent* event )
@@ -554,13 +553,11 @@ void MainWindow::focusOutEvent( QFocusEvent* e )
 void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
-	int viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
-	viewLevel += 1;
-	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
-	Config::getInstance().set( "viewLevel", viewLevel );
+	GameState::viewLevel += 1;
+	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
-	emit signalViewLevel( viewLevel );
+	emit signalViewLevel( GameState::viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
 	{
@@ -574,13 +571,11 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
-	int viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
-	viewLevel -= 1;
-	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
-	Config::getInstance().set( "viewLevel", viewLevel );
+	GameState::viewLevel -= 1;
+	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
-	emit signalViewLevel( viewLevel );
+	emit signalViewLevel( GameState::viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
 	{

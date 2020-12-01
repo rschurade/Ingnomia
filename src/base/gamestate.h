@@ -113,6 +113,11 @@ public:
 	static QVariantList addedMaterials;
 	static QVariantMap addedTranslations;
 
+	static int moveX;
+	static int moveY;
+	static float scale;
+	static int viewLevel;
+
 private:
 	static unsigned int nextID;
 

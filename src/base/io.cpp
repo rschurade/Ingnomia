@@ -485,13 +485,6 @@ bool IO::loadConfig( QJsonDocument& jd )
 	for ( auto entry : ja.toVariantList() )
 	{
 		auto map = entry.toMap();
-
-		Config::getInstance().set( "moveX", map.value( "moveX" ).toInt() );
-		Config::getInstance().set( "moveY", map.value( "moveY" ).toInt() );
-		Config::getInstance().set( "oldMoveX", map.value( "oldMoveX" ).toInt() );
-		Config::getInstance().set( "oldMoveY", map.value( "oldMoveY" ).toInt() );
-		Config::getInstance().set( "viewLevel", map.value( "viewLevel" ).toInt() );
-		Config::getInstance().set( "scale", map.value( "scale" ).toInt() );
 	}
 
 	return true;

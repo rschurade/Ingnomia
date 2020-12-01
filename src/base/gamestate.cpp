@@ -93,6 +93,11 @@ QVariantMap GameState::allowedTrees;
 QVariantList GameState::addedMaterials;
 QVariantMap GameState::addedTranslations;
 
+int GameState::moveX = 0;
+int GameState::moveY = 0;
+float GameState::scale = 0.0;
+int GameState::viewLevel = 100;
+
 bool GameState::init()
 {
 	nextID = 1000000;
@@ -173,6 +178,11 @@ void GameState::serialize( QVariantMap& out )
 	out.insert( "dimX", Global::dimX );
 	out.insert( "dimY", Global::dimY );
 	out.insert( "dimZ", Global::dimZ );
+
+	out.insert( "moveX", moveX );
+	out.insert( "moveY", moveY );
+	out.insert( "scale", scale );
+	out.insert( "viewLevel", viewLevel );
 }
 
 void GameState::load( QVariantMap& vals )
@@ -292,6 +302,11 @@ void GameState::load( QVariantMap& vals )
 	Global::dimX = tmp.value( "dimX" ).toInt();
 	Global::dimY = tmp.value( "dimY" ).toInt();
 	Global::dimZ = tmp.value( "dimZ" ).toInt();
+
+	moveX = tmp.value( "moveX" ).toInt();
+	moveY = tmp.value( "moveY" ).toInt();
+	scale = qMax( tmp.value( "scale" ).toFloat(), 1.0f );
+	viewLevel = qMax( tmp.value( "viewLevel" ).toInt(), 100 );
 }
 
 unsigned int GameState::createID()
