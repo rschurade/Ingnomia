@@ -69,6 +69,9 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 
 	connect( this, &ProxyGameView::signalSetPaused, &GameManager::getInstance(), &GameManager::setPaused, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetGameSpeed, &GameManager::getInstance(), &GameManager::setGameSpeed, Qt::QueuedConnection );
+
+	connect( this, &ProxyGameView::signalSetRenderOptions, &EventConnector::getInstance(), &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
+	connect( &EventConnector::getInstance(), &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
 }
 
 ProxyGameView::~ProxyGameView()
@@ -240,4 +243,17 @@ void ProxyGameView::setGameSpeed( GameSpeed speed )
 void ProxyGameView::setPaused( bool paused )
 {
 	emit signalSetPaused( paused );
+}
+
+void ProxyGameView::setRenderOptions( bool designations, bool jobs, bool walls, bool axles )
+{
+	emit signalSetRenderOptions( designations, jobs, walls, axles );
+}
+
+void ProxyGameView::onUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles )
+{
+	if( m_parent )
+	{
+		m_parent->updateRenderOptions( designation, jobs, walls, axles );
+	}
 }

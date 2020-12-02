@@ -228,6 +228,8 @@ public:
 	void setViewLevel( int level );
 	void updatePause( bool value );
 	void updateGameSpeed( GameSpeed speed );
+	void updateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
+
 
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
@@ -263,7 +265,18 @@ private:
 	const char* getKingdomInfo1() const;
 	const char* getKingdomInfo2() const;
 	const char* getKingdomInfo3() const;
-	
+
+
+	bool getRenderDesignations() const;
+	bool getRenderJobs() const;
+	bool getRenderWalls() const;
+	bool getRenderAxles() const;
+
+	void setRenderJobs( bool value );
+	void setRenderDesignations( bool value );
+	void setRenderWalls( bool value );
+	void setRenderAxles( bool value );
+
 	const char* showCommandButtons() const;
 
 	const char* showCategoryButtons() const;
@@ -338,6 +351,11 @@ private:
 	Noesis::String m_kingdomInfo1;
 	Noesis::String m_kingdomInfo2;
 	Noesis::String m_kingdomInfo3;
+
+	bool m_renderDesignations = true;
+	bool m_renderJobs = true;
+	bool m_wallsLowered = false;
+	bool m_renderAxles = false;
 
 	ProxyGameView* m_proxy = nullptr;
 

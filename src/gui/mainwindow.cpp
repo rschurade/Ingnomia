@@ -105,6 +105,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
+	connect( this, &MainWindow::signalUpdateRenderOptions, &EventConnector::getInstance(), &EventConnector::onUpdateRenderOptions );
 
 	connect( EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
@@ -213,7 +214,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 		{
 			case Qt::Key_H:
 				Global::wallsLowered = !Global::wallsLowered;
-				m_renderer->onRenderParamsChanged();
+				emit signalUpdateRenderOptions();
 				break;
 			case Qt::Key_K:
 				break;
@@ -224,8 +225,8 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				}
 				else
 				{
-					auto& config = Config::getInstance();
-					config.set( "overlay", !config.get( "overlay" ).toBool() );
+					Global::showDesignations = !Global::showDesignations;
+					emit signalUpdateRenderOptions();
 				}
 				m_renderer->onRenderParamsChanged();
 				break;

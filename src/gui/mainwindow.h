@@ -139,4 +139,5 @@ signals:
 	void signalSelectTile( unsigned int );
 
 	void signalKeyPress( int key );
+	void signalUpdateRenderOptions();
 };

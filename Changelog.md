@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - build scaffolds on top of each other
 
 ### Added
+- ui elements to show state of and toggle certain render options
 
 ### Changed
 - improved cursor for building floor on walls

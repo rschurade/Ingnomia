@@ -470,7 +470,6 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_rotation = Config::getInstance().get( "rotation" ).toInt();
 
-	m_overlay = Config::getInstance().get( "overlay" ).toBool();
 	m_debug   = Global::debugMode;
 
 	m_projectionMatrix.setToIdentity();
@@ -628,7 +627,7 @@ void MainWindowRenderer::paintTiles()
 	}
 
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	m_worldShader->setUniformValue( "uOverlay", m_overlay );
+	m_worldShader->setUniformValue( "uOverlay", Global::showDesignations );
 	m_worldShader->setUniformValue( "uDebug", m_debug );
 	m_worldShader->setUniformValue( "uWallsLowered", Global::wallsLowered );
 

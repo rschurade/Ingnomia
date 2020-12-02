@@ -80,6 +80,8 @@ public:
 
 	//static KeyBindings& keyBindings();
 	static bool wallsLowered;
+	static bool showDesignations;
+	static bool showJobs;
 	static bool showAxles;
 
 	static unsigned int waterSpriteUID;

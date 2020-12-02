@@ -499,6 +499,14 @@ void GameModel::updateGameSpeed( GameSpeed speed )
 	setGameSpeed( speed );
 }
 
+void GameModel::updateRenderOptions( bool designation, bool jobs, bool walls, bool axles )
+{
+	setRenderDesignations( designation );
+	setRenderJobs( jobs );
+	setRenderWalls( walls );
+	setRenderAxles( axles );
+}
+
 void GameModel::onBuild()
 {
 	//m_selectedButtons = ButtonSelection::None;
@@ -892,6 +900,59 @@ void GameModel::setFastSpeed( bool value )
 	if( value )
 	{
 		setGameSpeed( GameSpeed::Fast );
+	}
+}
+
+bool GameModel::getRenderDesignations() const
+{
+	return m_renderDesignations;
+}
+void GameModel::setRenderDesignations( bool value )
+{
+	if( m_renderDesignations != value )
+	{
+		m_renderDesignations = value;
+		m_proxy->setRenderOptions( m_renderDesignations, m_renderJobs, m_wallsLowered, m_renderAxles );
+		OnPropertyChanged( "RenderDesignations" );
+	}
+}
+bool GameModel::getRenderJobs() const
+{
+	return m_renderJobs;
+}
+void GameModel::setRenderJobs( bool value )
+{
+	if( m_renderJobs != value )
+	{
+		m_renderJobs = value;
+		m_proxy->setRenderOptions( m_renderDesignations, m_renderJobs, m_wallsLowered, m_renderAxles );
+		OnPropertyChanged( "RenderJobs" );
+	}
+}
+bool GameModel::getRenderWalls() const
+{
+	return m_wallsLowered;
+}
+void GameModel::setRenderWalls( bool value )
+{
+	if( m_wallsLowered != value )
+	{
+		m_wallsLowered = value;
+		m_proxy->setRenderOptions( m_renderDesignations, m_renderJobs, m_wallsLowered, m_renderAxles );
+		OnPropertyChanged( "RenderWalls" );
+	}
+}
+bool GameModel::getRenderAxles() const
+{
+	return m_renderAxles;
+}
+void GameModel::setRenderAxles( bool value )
+{
+	if( m_renderAxles != value )
+	{
+		m_renderAxles = value;
+		m_proxy->setRenderOptions( m_renderDesignations, m_renderJobs, m_wallsLowered, m_renderAxles );
+		OnPropertyChanged( "RenderWalls" );
 	}
 }
 
@@ -1498,6 +1559,11 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "KingdomInfo1", &GameModel::getKingdomInfo1 );
 	NsProp( "KingdomInfo2", &GameModel::getKingdomInfo2 );
 	NsProp( "KingdomInfo3", &GameModel::getKingdomInfo3 );
+
+	NsProp( "RenderDesignations", &GameModel::getRenderDesignations, &GameModel::setRenderDesignations );
+	NsProp( "RenderJobs", &GameModel::getRenderJobs, &GameModel::setRenderJobs );
+	NsProp( "RenderWalls", &GameModel::getRenderWalls, &GameModel::setRenderWalls );
+	NsProp( "RenderAxles", &GameModel::getRenderAxles, &GameModel::setRenderAxles );
 
 	NsProp( "CmdButtonCommand", &GameModel::GetCmdButtonCommand );
 	NsProp( "CmdCategory", &GameModel::GetCmdCategory );

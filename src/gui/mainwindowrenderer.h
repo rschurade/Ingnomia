@@ -108,7 +108,6 @@ private:
 	int m_renderSize    = 100;
 	int m_viewLevel     = 100;
 	int m_renderDepth   = 10;
-	bool m_overlay      = true;
 	bool m_debug        = false;
 
 	struct RenderVolume
