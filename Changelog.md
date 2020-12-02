@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - improved cursor for building floor on walls
 - optimized pathfinding if multiple gnomes have same goal
 - reduced water pressure on the faucet
+- mining job sprite, first poc for job sprites giving more visual feedback about the job
 
 ### Removed
 - old networking code

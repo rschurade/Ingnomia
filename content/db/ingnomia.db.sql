@@ -888,11 +888,11 @@ INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFlo
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyWall','BuildWall','Wall',1,0,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyFloor','BuildFloor','Floor',1,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('FillHole','FillHole','Wall',1,0,1,0,0);
-INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('Mine','0 0 0','SolidSelectionWall',0,'Floor|MineableWall','Construction|Job|Mechanism');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('Mine','0 0 0','MiningJobWall',0,'Floor|MineableWall','Construction|Job|Mechanism');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('DigHole','0 0 0','SolidSelectionFloor',0,'Floor','AnyWall|Mechanism');
-INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('DigHole','0 0 -1','SelectionWall',0,'Floor|Wall','Construction|Job|Mechanism');
-INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('ExplorativeMine','0 0 0','SolidSelectionWall',0,'Floor|Wall','Construction|Job|Mechanism');
-INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('RemoveRamp','0 0 0','SolidSelectionWall',0,'Ramp',NULL);
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('DigHole','0 0 -1','MiningJobWall',0,'Floor|Wall','Construction|Job|Mechanism');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('ExplorativeMine','0 0 0','MiningJobWall',0,'Floor|Wall','Construction|Job|Mechanism');
+INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('RemoveRamp','0 0 0','MiningJobWall',0,'Ramp',NULL);
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('RemoveFloor','0 0 0','SolidSelectionFloor',0,'Floor','AnyWall|Mechanism');
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('RemovePlant','0 0 0','SelectionWall',0,'Floor|Plant',NULL);
 INSERT INTO "Actions_Tiles" ("ID","Offset","SpriteID","IsFloor","Required","Forbidden") VALUES ('MineStairsUp','0 0 0','Stairs',0,'Floor|Wall','Job|Construction|Plant|Mechanism');
@@ -1354,6 +1354,7 @@ INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('Selectio
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('SelectionWall','0 32 32 32','terrain.png');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('SolidSelectionFloor','32 0 32 32','terrain.png');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('SolidSelectionWall','32 32 32 32','terrain.png');
+INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('MiningJobWall','0 576 32 32','terrain.png');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('RoughSoilFloor','0 64 32 32','terrain.png');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('RoughSoilWall','0 96 32 32','terrain.png');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('RoughClayFloor','256 64 32 32','terrain.png');
@@ -6012,11 +6013,11 @@ INSERT INTO "Jobs" ("ID","ConstructionType","MayTrapGnome","RequiredToolItemID",
 INSERT INTO "Jobs" ("ID","ConstructionType","MayTrapGnome","RequiredToolItemID","RequiredToolLevel","SkillGain","SkillID","TechGain","WorkPosition") VALUES ('HarvestHay',NULL,0,NULL,NULL,NULL,'Farming',NULL,'0 0 0');
 INSERT INTO "Jobs" ("ID","ConstructionType","MayTrapGnome","RequiredToolItemID","RequiredToolLevel","SkillGain","SkillID","TechGain","WorkPosition") VALUES ('EquipItem',NULL,0,NULL,NULL,NULL,'Hauling',NULL,'0 0 0');
 INSERT INTO "Jobs" ("ID","ConstructionType","MayTrapGnome","RequiredToolItemID","RequiredToolLevel","SkillGain","SkillID","TechGain","WorkPosition") VALUES ('SoundAlarm','',0,'','','','Machining','','0 0 0');
-INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('Mine','0 0 0',0,'SolidSelectionWall',NULL);
-INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('DigHole','0 0 -1',0,'SolidSelectionWall',NULL);
+INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('Mine','0 0 0',0,'MiningJobWall',NULL);
+INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('DigHole','0 0 -1',0,'MiningJobWall',NULL);
 INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('DigHole','0 0 0',0,'SolidSelectionFloor','Floor');
-INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('ExplorativeMine','0 0 0',0,'SolidSelectionWall',NULL);
-INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('RemoveRamp','0 0 0',0,'SolidSelectionWall',NULL);
+INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('ExplorativeMine','0 0 0',0,'MiningJobWall',NULL);
+INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('RemoveRamp','0 0 0',0,'MiningJobWall',NULL);
 INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('RemoveFloor','0 0 0',0,'SolidSelectionFloor','Floor');
 INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('Deconstruct','0 0 0',0,'SelectionWall',NULL);
 INSERT INTO "Jobs_SpriteID" ("ID","Offset","Rotate","SpriteID","Type") VALUES ('RemovePlant','0 0 0',0,'SelectionWall',NULL);
@@ -7274,6 +7275,8 @@ INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Ti
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SolidSelectionFloor',0,NULL,0,'0 16',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SolidSelectionWall',0,NULL,0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SolidSelectionWallShort',0,'SolidSelectionWall',0,'0 0',0,'Material',NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('MiningJobWall',0,NULL,0,'0 0',0,'Material',NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('MiningJobWallShort',0,'MiningJobWall',0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SelectionWallShort',0,'SelectionWall',0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Mattress',0,'MattressFR',0,'0 4',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('WoodBedFrame',0,NULL,0,'0 0',0,'Material',NULL,0);
