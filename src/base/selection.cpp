@@ -331,7 +331,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 			}
 
 			testPos = Position( pos.x + offset.x, pos.y + offset.y, pos.z + offset.z );
-			if ( testPos.x < 0 || testPos.x >= dim || testPos.y < 0 || testPos.y >= dim )
+			if ( !testPos.valid() )
 			{
 				return false;
 			}
@@ -340,6 +340,10 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		else
 		{
 			testPos = pos;
+			if ( !testPos.valid() )
+			{
+				return false;
+			}
 			tile    = &world.getTile( pos );
 		}
 

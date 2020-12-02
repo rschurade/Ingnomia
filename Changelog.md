@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - gnomes trying to work in deep water
 - missing floor texture for undiscovered areas
 - find new path if target has moved
+- crash with selected dig stairs tool at layer 0
 
 ### Added
 
