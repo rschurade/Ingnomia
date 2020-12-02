@@ -356,6 +356,11 @@ bool Selection::testTileForJobSelection( const Position& pos )
 				required.append( "Floor" );
 			}
 		}
+		if( Global::debugMode)
+		{
+			qDebug() << testPos.toString() << QString::number( (quint64)tile->flags, 16 ) << tile->wallType << tile->floorType;
+		}
+
 		for ( auto req : required )
 		{
 			//if ( Global::debugMode )
