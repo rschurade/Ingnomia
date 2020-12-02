@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - missing floor texture for undiscovered areas
 - find new path if target has moved
 - crash with selected dig stairs tool at layer 0
+- build scaffolds on top of each other
 
 ### Added
 

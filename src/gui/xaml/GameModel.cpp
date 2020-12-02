@@ -261,7 +261,14 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 			}
 			else
 			{
-				Selection::getInstance().setAction( "Build" + type );
+				if( type == "Stairs" && m_sid == "Scaffold" )
+				{
+					Selection::getInstance().setAction( "BuildScaffold" );
+				}
+				else
+				{
+					Selection::getInstance().setAction( "Build" + type );
+				}
 			}
 		}
 		break;
@@ -274,7 +281,6 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 
 	Selection::getInstance().setMaterials( mats );
 	Selection::getInstance().setItemID( m_sid );
-
 	EventConnector::getInstance().onBuild();
 }
 
