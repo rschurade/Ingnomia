@@ -184,7 +184,8 @@ void main()
 				}
 
 				animFrame = ( uTickNumber / 10 ) % 4;
-				texel.rgba = mix( texel.rgba, tmpTexel.rgba, animFrame * 0.333 );
+				
+				texel.rgba = mix( texel.rgba, tmpTexel.rgba, (float)animFrame * 0.333 );
 			}
 
 			if( uOverlay && 0 != ( vFlags & ( TF_STOCKPILE | TF_FARM | TF_GROVE | TF_PASTURE | TF_WORKSHOP | TF_ROOM | TF_NOPASS ) ) )
@@ -360,7 +361,7 @@ void main()
 				tmpTexel.b *= 0.3;
 			}
 			animFrame = ( uTickNumber / 10 ) % 4;
-			texel.rgba = mix( texel.rgba, tmpTexel.rgba, animFrame * 0.333 );
+			texel.rgba = mix( texel.rgba, tmpTexel.rgba, (float)animFrame * 0.333 );
 		}
 
 	
