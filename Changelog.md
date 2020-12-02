@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - ui elements to show state of and toggle certain render options
+- toggle for job sprites
 
 ### Changed
 - improved cursor for building floor on walls

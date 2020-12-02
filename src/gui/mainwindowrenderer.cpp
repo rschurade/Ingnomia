@@ -628,6 +628,7 @@ void MainWindowRenderer::paintTiles()
 
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	m_worldShader->setUniformValue( "uOverlay", Global::showDesignations );
+	m_worldShader->setUniformValue( "uShowJobs", Global::showJobs );
 	m_worldShader->setUniformValue( "uDebug", m_debug );
 	m_worldShader->setUniformValue( "uWallsLowered", Global::wallsLowered );
 

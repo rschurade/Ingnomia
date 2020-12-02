@@ -286,17 +286,18 @@ void World::clearJobSprite( Position pos, bool floor )
 		if ( floor )
 		{
 			m_jobSprites[pos.toInt()].remove( "Floor" );
+			clearTileFlag( pos, TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_BUSY_FLOOR );
 		}
 		else
 		{
 			m_jobSprites[pos.toInt()].remove( "Wall" );
+			clearTileFlag( pos, TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL );
 		}
 	}
 	if ( m_jobSprites[pos.toInt()].isEmpty() )
 	{
 		m_jobSprites.remove( pos.toInt() );
 	}
-	clearTileFlag( pos, TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_FLOOR + TileFlag::TF_JOB_BUSY_WALL );
 	addToUpdateList( pos.toInt() );
 }
 

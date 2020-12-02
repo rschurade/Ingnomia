@@ -61,6 +61,8 @@ uniform float uDaylight;
 uniform float uLightMin;
 uniform bool uPaintFrontToBack;
 
+uniform bool uShowJobs;
+
 const float waterAlpha = 0.6;
 const float flSize =  ( 1.0 / 32. );
 const int rightWallOffset = 4;
@@ -163,7 +165,7 @@ void main()
 			
 			spriteID = jobFloorSpriteID;
 			animFrame = 0;
-			if( ( spriteID != 0 )  )
+			if( uShowJobs && ( spriteID != 0 )  )
 			{
 				rot = jobFloorSpriteFlags & 3;
 				rot = ( rot + uWorldRotation ) % 4;
@@ -183,9 +185,7 @@ void main()
 					tmpTexel.b *= 0.3;
 				}
 
-				animFrame = ( uTickNumber / 10 ) % 4;
-				
-				texel.rgba = mix( texel.rgba, tmpTexel.rgba, (float)animFrame * 0.333 );
+				texel.rgba = tmpTexel.rgba;
 			}
 
 			if( uOverlay && 0 != ( vFlags & ( TF_STOCKPILE | TF_FARM | TF_GROVE | TF_PASTURE | TF_WORKSHOP | TF_ROOM | TF_NOPASS ) ) )
@@ -341,7 +341,7 @@ void main()
 	
 		spriteID = jobWallSpriteID;
 		animFrame = 0;
-		if( spriteID != 0 && ( vFlags & TF_JOB_WALL ) > 0 )
+		if( uShowJobs && spriteID != 0 )
 		{
 			rot = jobWallSpriteFlags & 3;
 			rot = ( rot + uWorldRotation ) % 4;
@@ -360,8 +360,8 @@ void main()
 				tmpTexel.g *= 0.7;
 				tmpTexel.b *= 0.3;
 			}
-			animFrame = ( uTickNumber / 10 ) % 4;
-			texel.rgba = mix( texel.rgba, tmpTexel.rgba, (float)animFrame * 0.333 );
+
+			texel.rgba = tmpTexel.rgba;
 		}
 
 	

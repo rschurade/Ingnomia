@@ -177,11 +177,11 @@ void main()
 	bool containsTransparency;
 	if( uIsWall )
 	{
-		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) >= 3 || tileData.data[index].jobSpriteWallUID != 0;
+		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) >= 3;
 	}
 	else
 	{
-		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) != 0 || tileData.data[index].jobSpriteFloorUID != 0;
+		containsTransparency = ( vFlags & TF_TRANSPARENT ) != 0 || ( tileData.data[index].packedLevels & 0xff ) != 0;
 	}
 	const bool renderingEnabled = uPaintFrontToBack ^^ containsTransparency;
 	if( renderingEnabled )
