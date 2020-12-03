@@ -195,10 +195,7 @@ int main( int argc, char* argv[] )
 	//MainWindow w;
 	MainWindow w;
 	
-#ifdef _WIN32
-	w.setIcon( QFileIconProvider().icon( QFileInfo( QCoreApplication::applicationFilePath() ) ) );
-#endif // _WIN32
-
+	w.setIcon( QIcon( QCoreApplication::applicationDirPath() + "/content/icon.png" ) );
 	w.resize( width, height );
 	w.setPosition( Config::getInstance().get( "WindowPosX" ).toInt(), Config::getInstance().get( "WindowPosY" ).toInt() );
 	w.show();
