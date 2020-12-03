@@ -17,6 +17,7 @@
 */
 #include "eventconnector.h"
 
+#include "../base/config.h"
 #include "../base/global.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
@@ -154,4 +155,21 @@ void EventConnector::onManageCommand( unsigned int tileID )
 		case TileFlag::TF_ROOM:
 			break;
 	}
+}
+
+
+void EventConnector::onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles )
+{
+	
+	Global::wallsLowered = walls;
+	Global::showDesignations = designations;
+	Global::showJobs = jobs;
+	Global::showAxles = axles;
+	
+	
+}
+
+void EventConnector::onUpdateRenderOptions()
+{
+	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
 }

@@ -283,8 +283,7 @@ public:
 	Tile& getTile( const Position pos );
 	Tile& getTile( const unsigned int id );
 
-	bool setNetworkMove( unsigned int id, Position newPos, int facing );
-
+	
 	bool noTree( const Position pos, const int xRange, const int yRange );
 	bool noShroom( const Position pos, const int xRange, const int yRange );
 

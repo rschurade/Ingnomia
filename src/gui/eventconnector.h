@@ -136,6 +136,8 @@ public slots:
 	void onTerrainCommand( unsigned int tileID, QString cmd );
 	void onManageCommand( unsigned int tileID );
 
+	void onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
+	void onUpdateRenderOptions();
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
@@ -147,4 +149,5 @@ signals:
 	void signalKeyEsc();
 	void signalPropagateKeyEsc();
 	void signalBuild();
+	void signalUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 };

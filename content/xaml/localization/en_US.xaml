@@ -80,7 +80,6 @@
 
 	<!--{StaticResource GameGui_}-->
 	<system:String x:Key="GameGui_">GameGui_</system:String>
-	<system:String x:Key="GameGui_Ingnomia">Ingnomia</system:String>
 	<system:String x:Key="GameGui_KingdomName">Kingdom name</system:String>
 	<system:String x:Key="GameGui_Something1">something</system:String>
 	<system:String x:Key="GameGui_Something2">something</system:String>
@@ -206,6 +205,7 @@
 	<system:String x:Key="SettingsPage_Language">Language</system:String>
 	<system:String x:Key="SettingsPage_KeyboardSpeed">Keyboard speed</system:String>
 	<system:String x:Key="SettingsPage_LightMin">minimum light level</system:String>
+	<system:String x:Key="SettingsPage_KeybindingsPlaceholder">This page is a placeholder. Keybindings are not implemented yet.</system:String>
 	
 
 	<!--{StaticResource StockpileGui_}-->

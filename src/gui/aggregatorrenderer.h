@@ -87,9 +87,9 @@ struct AxleDataInfo
 Q_DECLARE_METATYPE( AxleDataInfo );
 
 constexpr size_t TD_SIZE  = sizeof( TileData ) / sizeof( unsigned int );
-constexpr size_t ROT_BIT  = 65536;
-constexpr size_t ANIM_BIT = 262144;
-constexpr size_t WALL_BIT = 524288;
+constexpr size_t ROT_BIT  = 0x10000;
+constexpr size_t ANIM_BIT = 0x40000;
+constexpr size_t WALL_BIT = 0x80000;
 
 class AggregatorRenderer : public QObject
 {

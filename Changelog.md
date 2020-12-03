@@ -4,12 +4,25 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+- suboptimal paths due to wrong heuristic in pathfinding
+- gnomes trying to work in deep water
+- missing floor texture for undiscovered areas
+- find new path if target has moved
+- crash with selected dig stairs tool at layer 0
+- build scaffolds on top of each other
 
 ### Added
+- ui elements to show state of and toggle certain render options
+- toggle for job sprites
 
 ### Changed
+- improved cursor for building floor on walls
+- optimized pathfinding if multiple gnomes have same goal
+- reduced water pressure on the faucet
+- mining job sprite, first poc for job sprites giving more visual feedback about the job
 
-
+### Removed
+- old networking code
 
 ## [0.8.1]
 

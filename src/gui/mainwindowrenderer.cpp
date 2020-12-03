@@ -459,7 +459,7 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_renderDepth = Config::getInstance().get( "renderDepth" ).toInt();
 
-	m_viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
+	m_viewLevel = GameState::viewLevel;
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
@@ -470,7 +470,6 @@ void MainWindowRenderer::updateRenderParams()
 
 	m_rotation = Config::getInstance().get( "rotation" ).toInt();
 
-	m_overlay = Config::getInstance().get( "overlay" ).toBool();
 	m_debug   = Global::debugMode;
 
 	m_projectionMatrix.setToIdentity();
@@ -628,7 +627,8 @@ void MainWindowRenderer::paintTiles()
 	}
 
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	m_worldShader->setUniformValue( "uOverlay", m_overlay );
+	m_worldShader->setUniformValue( "uOverlay", Global::showDesignations );
+	m_worldShader->setUniformValue( "uShowJobs", Global::showJobs );
 	m_worldShader->setUniformValue( "uDebug", m_debug );
 	m_worldShader->setUniformValue( "uWallsLowered", Global::wallsLowered );
 
@@ -793,9 +793,9 @@ void MainWindowRenderer::move( int x, int y )
 	m_moveX = qBound( -Global::dimX * 16.f, m_moveX, Global::dimX * 16.f );
 	m_moveY = qBound( -Global::dimX * 16.f, m_moveY, 0.f );
 
-	Config::getInstance().set( "moveX", m_moveX );
-	Config::getInstance().set( "moveY", m_moveY );
-
+	GameState::moveX = m_moveX;
+	GameState::moveY = m_moveY;
+	
 	onRenderParamsChanged();
 }
 
@@ -803,7 +803,7 @@ void MainWindowRenderer::scale( float factor )
 {
 	m_scale *= factor;
 	m_scale = qBound( 0.25f, m_scale, 15.f );
-	Config::getInstance().set( "scale", m_scale );
+	GameState::scale = m_scale;
 	onRenderParamsChanged();
 }
 
@@ -1070,7 +1070,7 @@ unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )
 	return 0;
 }
 
-Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool useViewLevel ) const
+Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
 	Position cursorPos;
 	int dim = Global::dimX;
@@ -1206,7 +1206,11 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool useViewLev
 		if ( cursorPos.z > 0 )
 		{
 			Tile& tileBelow = world.getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
-			if ( tile.floorType != FloorType::FT_NOFLOOR || tileBelow.wallType == WallType::WT_SOLIDWALL || useViewLevel )
+			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
+			{
+				zFloorFound = true;
+			}
+			else if ( tile.floorType != FloorType::FT_NOFLOOR || tileBelow.wallType == WallType::WT_SOLIDWALL || useViewLevel )
 			{
 				zFloorFound = true;
 			}

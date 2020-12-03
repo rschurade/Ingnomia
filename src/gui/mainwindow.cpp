@@ -105,6 +105,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
+	connect( this, &MainWindow::signalUpdateRenderOptions, &EventConnector::getInstance(), &EventConnector::onUpdateRenderOptions );
 
 	connect( EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
@@ -213,7 +214,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 		{
 			case Qt::Key_H:
 				Global::wallsLowered = !Global::wallsLowered;
-				m_renderer->onRenderParamsChanged();
+				emit signalUpdateRenderOptions();
 				break;
 			case Qt::Key_K:
 				break;
@@ -224,8 +225,8 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				}
 				else
 				{
-					auto& config = Config::getInstance();
-					config.set( "overlay", !config.get( "overlay" ).toBool() );
+					Global::showDesignations = !Global::showDesignations;
+					emit signalUpdateRenderOptions();
 				}
 				m_renderer->onRenderParamsChanged();
 				break;
@@ -313,7 +314,7 @@ void MainWindow::keyboardMove()
 
 	float keyboardMoveSpeed = Config::getInstance().get( "keyboardMoveSpeed" ).toFloat();
 
-	float scale = Config::getInstance().get( "scale" ).toFloat();
+	float scale = GameState::scale;
 
 	int moveX = -( x * keyboardMoveSpeed ) / scale;
 	int moveY = -( y * keyboardMoveSpeed ) / scale;
@@ -363,7 +364,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 		Selection::getInstance().updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 		Selection::getInstance().setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
@@ -375,12 +376,11 @@ void MainWindow::onInitViewAfterLoad()
 	Config& config = Config::getInstance();
 
 	m_renderer->setScale( 1.0 );
-	m_moveX = config.get( "moveX" ).toInt();
-	m_moveY = config.get( "moveY" ).toInt();
+	m_moveX = GameState::moveX;
+	m_moveY = GameState::moveY;
 	m_renderer->move( m_moveX, m_moveY );
-
-	float scale = config.get( "scale" ).toFloat();
-	m_renderer->setScale( scale );
+	
+	m_renderer->setScale( GameState::scale );
 }
 
 void MainWindow::mousePressEvent( QMouseEvent* event )
@@ -445,7 +445,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 					if ( Selection::getInstance().hasAction() )
 					{
 						if ( Selection::getInstance().leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
@@ -486,7 +486,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( Selection::getInstance().hasAction() )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier );
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
 					Selection::getInstance().rightClick( m_cursorPos );
 					m_selectedAction = Selection::getInstance().action();
 					redraw();
@@ -554,17 +554,15 @@ void MainWindow::focusOutEvent( QFocusEvent* e )
 void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
-	int viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
-	viewLevel += 1;
-	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
-	Config::getInstance().set( "viewLevel", viewLevel );
+	GameState::viewLevel += 1;
+	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
-	emit signalViewLevel( viewLevel );
+	emit signalViewLevel( GameState::viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, shift );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
 		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
 		Selection::getInstance().setControlActive( ctrl );
 		redraw();
@@ -574,17 +572,15 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
-	int viewLevel = Config::getInstance().get( "viewLevel" ).toInt();
-	viewLevel -= 1;
-	viewLevel = qMax( 0, qMin( dimZ, viewLevel ) );
-	Config::getInstance().set( "viewLevel", viewLevel );
+	GameState::viewLevel -= 1;
+	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
-	emit signalViewLevel( viewLevel );
+	emit signalViewLevel( GameState::viewLevel );
 
 	if ( Selection::getInstance().hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, shift );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
 		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
 		Selection::getInstance().setControlActive( ctrl );
 		redraw();
@@ -617,6 +613,7 @@ void MainWindow::noesisInit()
 
 	Noesis::GUI::SetLogHandler( logHandler );
 	Noesis::GUI::SetErrorHandler( errorHandler );
+	Noesis::GUI::DisableInspector();
 
 	// Noesis initialization. This must be the first step before using any NoesisGUI functionality
 	Noesis::GUI::Init( licenseName, licenseKey );

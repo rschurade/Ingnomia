@@ -162,7 +162,5 @@ public:
 		m_ctrlActive = active;
 	}
 
-	void setNetworkCommand( QVariantMap data );
-
 	bool changed();
 };

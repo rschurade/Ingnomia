@@ -22,36 +22,25 @@
 #include <functional>
 #include <utility>
 
-template <typename T, typename priority_t>
-struct PriorityQueue
+template <typename T, typename priority_t, typename value_t = std::pair<priority_t, T>>
+class PriorityQueue : public std::priority_queue<value_t, std::vector<value_t>, std::greater<value_t>>
 {
-	typedef std::pair<priority_t, T> PQElement;
-	std::priority_queue<PQElement, std::vector<PQElement>, std::greater<PQElement>> elements;
-
-	inline bool empty() const
+public:
+	using base_type = std::priority_queue<value_t, std::vector<value_t>, std::greater<value_t>>;
+	inline void put( const T &item, const priority_t &priority )
 	{
-		return elements.empty();
-	}
-
-	inline size_t size() const
-	{
-		return elements.size();
-	}
-
-	inline void put( T item, priority_t priority )
-	{
-		elements.emplace( priority, item );
+		base_type::emplace( priority, item );
 	}
 
 	inline T get()
 	{
-		T best_item = elements.top().second;
-		elements.pop();
+		T best_item = base_type::top().second;
+		base_type::pop();
 		return best_item;
 	}
 
-	inline std::priority_queue<PQElement, std::vector<PQElement>, std::greater<PQElement>> getElements()
+	inline const std::vector<value_t>& raw() const
 	{
-		return elements;
+		return base_type::c;
 	}
 };

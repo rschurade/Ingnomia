@@ -48,6 +48,8 @@ public:
 	void setGameSpeed( GameSpeed speed );
 	void setPaused( bool paused );
 
+	void setRenderOptions( bool designations, bool jobs, bool walls, bool axels );
+
 
 private:
 	IngnomiaGUI::GameModel* m_parent = nullptr;
@@ -71,7 +73,7 @@ private slots:
 	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
 	void onKeyEscape();
-	
+	void onUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
 signals:
 	void signalCloseStockpileWindow();
@@ -87,4 +89,5 @@ signals:
 	void signalPropagateEscape();
 	void signalSetGameSpeed( GameSpeed speed );
 	void signalSetPaused( bool paused );
+	void signalSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
 };

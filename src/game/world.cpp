@@ -173,14 +173,12 @@ void World::setFloorSprite( unsigned short x, unsigned short y, unsigned short z
 {
 	getTile( x, y, z ).floorSpriteUID = spriteUID;
 	addToUpdateList( x, y, z );
-	GameState::addChange( NetworkCommand::SETFLOORSPRITE, { QString::number( Position( x, y, z ).toInt() ), QString::number( spriteUID ) } );
 }
 
 void World::setFloorSprite( Position pos, unsigned int spriteUID )
 {
 	getTile( pos ).floorSpriteUID = spriteUID;
 	addToUpdateList( pos );
-	GameState::addChange( NetworkCommand::SETFLOORSPRITE, { QString::number( pos.toInt() ), QString::number( spriteUID ) } );
 }
 
 void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
@@ -189,7 +187,6 @@ void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z,
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -199,7 +196,6 @@ void World::setWallSprite( Position pos, unsigned int spriteUID, unsigned char r
 	unsigned int UID           = pos.toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -214,7 +210,6 @@ void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z,
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
-	//GameState::addChange( NetworkCommand::SETITEMSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -224,7 +219,6 @@ void World::setItemSprite( Position pos, unsigned int spriteUID, unsigned char r
 	unsigned int UID           = pos.toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
-	GameState::addChange( NetworkCommand::SETWALLSPRITE, { QString::number( UID ), QString::number( spriteUID ) } );
 	addToUpdateList( UID );
 }
 
@@ -281,7 +275,6 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 	}
 
 	addToUpdateList( pos.toInt() );
-	GameState::addChange( NetworkCommand::SETJOBSPRITE, { QString::number( pos.toInt() ), QString::number( spriteUID ), QString::number( rotation ), ( floor ) ? QString::number( 1 ) : QString::number( 0 ), QString::number( jobID ) } );
 }
 
 void World::clearJobSprite( Position pos, bool floor )
@@ -293,18 +286,18 @@ void World::clearJobSprite( Position pos, bool floor )
 		if ( floor )
 		{
 			m_jobSprites[pos.toInt()].remove( "Floor" );
+			clearTileFlag( pos, TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_BUSY_FLOOR );
 		}
 		else
 		{
 			m_jobSprites[pos.toInt()].remove( "Wall" );
+			clearTileFlag( pos, TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL );
 		}
 	}
 	if ( m_jobSprites[pos.toInt()].isEmpty() )
 	{
 		m_jobSprites.remove( pos.toInt() );
 	}
-	clearTileFlag( pos, TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_FLOOR + TileFlag::TF_JOB_BUSY_WALL );
-	GameState::addChange2( NetworkCommand::CLEARJOBSPRITE, pos.toString() );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -324,7 +317,6 @@ void World::setTileFlag( Position pos, TileFlag flag )
 	{
 		m_regionMap.updatePosition( pos );
 	}
-	GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -342,8 +334,6 @@ void World::clearTileFlag( Position pos, TileFlag flag )
 		Global::spm().removeTile( pos );
 		Global::rm().removeTile( pos );
 	}
-
-	GameState::addChange( NetworkCommand::SETTILEFLAGS, { QString::number( tid ), Util::tile2String( tile ) } );
 	addToUpdateList( pos.toInt() );
 }
 
@@ -817,7 +807,7 @@ void World::processWater()
 	for ( const auto& pos : m_aquifiers )
 	{
 		Tile& tile = getTile( pos );
-		if ( tile.pressure < 2 )
+		if ( tile.pressure == 0 )
 		{
 			if ( tile.fluidLevel < 10 )
 			{
@@ -827,6 +817,7 @@ void World::processWater()
 			{
 				tile.pressure++;
 			}
+			tile.flags += TileFlag::TF_WATER;
 			waterUpdates.append( pos.toInt() );
 		}
 		m_water.insert( pos.toInt() );
@@ -869,10 +860,10 @@ struct Neighbors
 	inline Neighbors( unsigned int pos )
 #endif
 	{
-		const auto pitchY = Global::dimX;
-		const auto pitchZ = pitchY * Global::dimY;
+		const unsigned int pitchY = Global::dimX;
+		const unsigned int pitchZ = pitchY * Global::dimY;
 
-		const auto maxZ = pitchZ * ( Global::dimZ - 1 );
+		const unsigned int maxZ = pitchZ * ( Global::dimZ - 1 );
 
 		const auto plane = pos % pitchZ;
 		const auto row   = pos % pitchY;
@@ -938,73 +929,114 @@ void World::processWaterFlow()
 
 			const Neighbors neighbors( currentPos );
 
-			// Flow down if no back-pressure
-			const Tile& downTile = getTile( neighbors.below );
-			if (
-				neighbors.below && !(bool)( here.floorType & FloorType::FT_SOLIDFLOOR ) && !(bool)( downTile.wallType & WallType::WT_MOVEBLOCKING ) && ( downTile.fluidLevel < 10 || here.pressure >= downTile.pressure ) )
-			{
-				here.flow = WF_DOWN;
-				drain.append( currentPos );
-				flood.append( neighbors.below );
-				continue;
-			}
-
-			// Flow sidewards in direction of lowest level
-			const unsigned int candidates[5] = {
+			const unsigned int candidates[7] = {
 				neighbors.north,
 				neighbors.south,
 				neighbors.east,
 				neighbors.west,
-				currentPos
+				currentPos,
+				neighbors.above,
+				neighbors.below,
 			};
-			constexpr WaterFlow direction[5] = {
+			constexpr WaterFlow direction[7] = {
 				WF_NORTH,
 				WF_SOUTH,
 				WF_EAST,
 				WF_WEST,
-				WF_NOFLOW
+				WF_NOFLOW,
+				WF_UP,
+				WF_DOWN
+			};
+			enum index : size_t
+			{
+				north = 0,
+				south,
+				east,
+				west,
+				center,
+				up,
+				down
 			};
 
-			unsigned int pressure[5] = { UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX };
-			for ( size_t i = 0; i < 5; i++ )
+			// Compute pressure for passable directions
+			constexpr int invalidPressure = INT_MAX;
+			int pressure[7];
+			for ( size_t i = north; i <= center; i++ )
 			{
 				const Tile& there = getTile( candidates[i] );
-				if (
-					candidates[i] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) )
+				if ( candidates[i] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) )
 				{
-					pressure[i] = there.pressure * 10 + there.fluidLevel;
+					pressure[i] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[i] = invalidPressure;
+				}
+			}
+			{
+				const Tile& there = getTile( candidates[up] );
+				if ( candidates[up] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) && !(bool)( there.floorType & FloorType::FT_SOLIDFLOOR ) )
+				{
+					pressure[up] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[up] = invalidPressure;
+				}
+			}
+			{
+				const Tile& there = getTile( candidates[down] );
+				if ( candidates[down] && !(bool)( there.wallType & WallType::WT_MOVEBLOCKING ) && !(bool)( here.floorType & FloorType::FT_SOLIDFLOOR ) )
+				{
+					pressure[down] = there.pressure + there.fluidLevel;
+				}
+				else
+				{
+					pressure[down] = invalidPressure;
 				}
 			}
 
-			// First order of sampled directions is randomized ...
-			const size_t start = seed % 4;
-			size_t minIndex    = 4;
-			for ( size_t i = 0; i < 4; ++i )
+			// Flow down if no back-pressure
+			if ( pressure[down] != invalidPressure && pressure[down] <= pressure[center] || pressure[down] < 10 )
 			{
-				const size_t j = ( i + start ) % 4;
-				if ( pressure[minIndex] > pressure[j] )
-				{
-					minIndex = j;
-				}
-			}
-			// ... and chance for flow to happen is then proportional to pressure difference
-			if ( minIndex != 4 && ( seed % 41 ) < ( pressure[4] - pressure[minIndex] ) )
-			{
-				here.flow = direction[minIndex];
+				here.flow += WF_DOWN;
 				drain.append( currentPos );
-				flood.append( candidates[minIndex] );
-				continue;
+				flood.append( neighbors.below );
+				pressure[center]--;
+				pressure[up]++;
+			}
+
+			// Decide whether to enter instable states this frame
+			// In an unstable state, distribution can reverse right in the next frame
+			// Still need to allow it occasionally to relax gradients
+			const int preventInstability = seed % 127 == 0 ? 0 : 1;
+			{
+				const bool waterAbove = pressure[up] != invalidPressure && pressure[up] != 0;
+				for ( size_t i = 0; i < 4; ++i )
+				{
+					// First order of sampled directions is randomized ...
+					const size_t j = ( i + seed ) % 4;
+					// Prevent flow to side if that would cause vacuum
+					const bool vacuum = waterAbove && pressure[center] == 10;
+					if ( pressure[j] != invalidPressure && ( pressure[center] > pressure[j] + preventInstability ) && !vacuum )
+					{
+						drain.append( currentPos );
+						flood.append( candidates[j] );
+						here.flow += direction[j];
+						pressure[center]--;
+						pressure[j]++;
+					}
+				}
 			}
 
 			// Only if nothing else worked, flow upwards
-			const Tile& upTile = getTile( neighbors.above );
-			if (
-				neighbors.above && !(bool)( upTile.floorType & FloorType::FT_SOLIDFLOOR ) && !(bool)( upTile.wallType & WallType::WT_MOVEBLOCKING ) && here.fluidLevel == 10 && here.pressure > upTile.pressure + 1 )
+			if ( pressure[up] != invalidPressure && ( pressure[center] > 10 ) && ( pressure[center] > pressure[up] + preventInstability + 1 ) )
 			{
-				here.flow = WF_UP;
+				here.flow += WF_UP;
 				drain.append( currentPos );
 				flood.append( neighbors.above );
-				continue;
+				pressure[center]--;
+				pressure[up]++;
 			}
 		}
 		else
@@ -1140,10 +1172,8 @@ QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& w
 	discover( pos );
 
 	QString ncd = QString::number( pos.toInt() );
-	GameState::addChange2( NetworkCommand::CLEARWALLSPRITE, ncd );
 	ncd += ";";
 	ncd += Util::tile2String( tile );
-	GameState::addChange2( NetworkCommand::SETTILEFLAGS, ncd );
 
 	return { materialInt, embeddedInt };
 }
@@ -1177,10 +1207,8 @@ QPair<unsigned short, unsigned short> World::removeWall( Position pos, Position&
 	discover( pos );
 
 	QString ncd = QString::number( pos.toInt() );
-	GameState::addChange2( NetworkCommand::CLEARWALLSPRITE, ncd );
 	ncd += ";";
 	ncd += Util::tile2String( tile );
-	GameState::addChange2( NetworkCommand::SETTILEFLAGS, ncd );
 
 	return { materialInt, embeddedInt };
 }
@@ -1666,18 +1694,6 @@ void World::createRampOuterCorners( int x, int y, int z )
 		tile.wallSpriteUID = corner;
 		tile.wallRotation  = 2;
 	}
-}
-
-bool World::setNetworkMove( unsigned int id, Position newPos, int facing )
-{
-	/* TODO
-	if( Global::cm().animals().contains( id ) )
-	{
-		Global::cm().animals()[id].setNetworkMove( newPos, facing );
-		return true;
-	}
-	*/
-	return false;
 }
 
 void World::addToUpdateList( const unsigned int uID )

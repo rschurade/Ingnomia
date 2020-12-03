@@ -166,8 +166,6 @@ public:
 	unsigned int spriteUID( QString name ) const;
 	unsigned int spriteUID() const;
 
-	void setNetworkMove( Position& newPos, int facing );
-
 	bool renderParamsChanged();
 
 	bool isDead() const
@@ -404,6 +402,7 @@ protected:
 	BT_RESULT conditionIsInCombat( bool halt );
 	BT_RESULT conditionIsOnMission( bool halt );
 	BT_RESULT conditionTargetAdjacent( bool halt );
+	BT_RESULT conditionTargetPositionValid( bool halt );
 
 	BT_RESULT actionRandomMove( bool halt );
 	BT_RESULT actionGetExitPosition( bool halt );
@@ -424,6 +423,8 @@ protected:
 	void removeClaimedItem( unsigned int item );
 	void unclaimAll();
 	void clearClaimedItems();
+
+	Creature* resolveTarget( unsigned int creatureId );
 };
 
 struct CreatureCompare

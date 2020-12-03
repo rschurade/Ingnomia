@@ -132,15 +132,15 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		m_firstClick          = pos;
 		m_firstClicked        = true;
 		QVariantMap actionMap = DB::selectRow( "Actions", m_action );
-		m_isFloor             = DB::select( "IsFloor", "Actions", m_action ).toBool();
-		m_isMulti             = DB::select( "Multi", "Actions", m_action ).toBool();
+		m_isFloor             = actionMap.value( "IsFloor" ).toBool();
+		m_isMulti             = actionMap.value( "Multi" ).toBool();
 		if ( m_action == "BuildItem" && DB::select( "IsContainer", "Items", m_item ).toBool() )
 		{
 			m_isMulti = true;
 		}
 
-		m_isMultiZ  = DB::select( "MultiZ", "Actions", m_action ).toBool();
-		m_canRotate = DB::select( "Rotate", "Actions", m_action ).toBool();
+		m_isMultiZ  = actionMap.value( "MultiZ" ).toBool();
+		m_canRotate = actionMap.value( "Rotate" ).toBool();
 		m_selection.push_back( QPair<Position, bool>( pos, testTileForJobSelection( pos ) ) );
 		if ( !m_isMulti && !shift )
 		{
@@ -172,10 +172,10 @@ void Selection::setAction( QString action )
 	m_action              = action;
 	QVariantMap actionMap = DB::selectRow( "Actions", m_action );
 
-	m_isFloor   = DB::select( "IsFloor", "Actions", m_action ).toBool();
-	m_isMulti   = DB::select( "Multi", "Actions", m_action ).toBool();
-	m_isMultiZ  = DB::select( "MultiZ", "Actions", m_action ).toBool();
-	m_canRotate = DB::select( "Rotate", "Actions", m_action ).toBool();
+	m_isFloor   = actionMap.value( "IsFloor" ).toBool();
+	m_isMulti   = actionMap.value( "Multi" ).toBool();
+	m_isMultiZ  = actionMap.value( "MultiZ" ).toBool();
+	m_canRotate = actionMap.value( "Rotate" ).toBool();
 }
 
 void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
@@ -263,7 +263,6 @@ void Selection::rightClick( Position& pos )
 		m_firstClicked         = false;
 		m_selectionSize.first  = 0;
 		m_selectionSize.second = 0;
-		m_isFloor              = actionMap.value( "Floor" ).toBool();
 	}
 	else
 	{
@@ -332,7 +331,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 			}
 
 			testPos = Position( pos.x + offset.x, pos.y + offset.y, pos.z + offset.z );
-			if ( testPos.x < 0 || testPos.x >= dim || testPos.y < 0 || testPos.y >= dim )
+			if ( !testPos.valid() )
 			{
 				return false;
 			}
@@ -341,6 +340,10 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		else
 		{
 			testPos = pos;
+			if ( !testPos.valid() )
+			{
+				return false;
+			}
 			tile    = &world.getTile( pos );
 		}
 
@@ -353,10 +356,15 @@ bool Selection::testTileForJobSelection( const Position& pos )
 				required.append( "Floor" );
 			}
 		}
+		if( Global::debugMode)
+		{
+			qDebug() << testPos.toString() << QString::number( (quint64)tile->flags, 16 ) << tile->wallType << tile->floorType;
+		}
+
 		for ( auto req : required )
 		{
-			if ( Global::debugMode )
-				qDebug() << "test requirement: " << req << "...";
+			//if ( Global::debugMode )
+			//	qDebug() << "test requirement: " << req << "...";
 			switch ( m_reqMap.value( req ) )
 			{
 				case SEL_NONE:
@@ -476,8 +484,8 @@ bool Selection::testTileForJobSelection( const Position& pos )
 				break;
 			}
 
-			if ( Global::debugMode )
-				qDebug() << "passed.";
+			//if ( Global::debugMode )
+			//	qDebug() << "passed.";
 		}
 
 		QStringList forbidden = tm.value( "Forbidden" ).toString().split( "|" );
@@ -487,8 +495,8 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		}
 		for ( auto forb : forbidden )
 		{
-			if ( Global::debugMode )
-				qDebug() << "test forbidden: " << forb << "...";
+			//if ( Global::debugMode )
+			//	qDebug() << "test forbidden: " << forb << "...";
 			if ( m_action.startsWith( "Build" ) && tile->flags & TileFlag::TF_OCCUPIED )
 			{
 				return false;
@@ -617,8 +625,8 @@ bool Selection::testTileForJobSelection( const Position& pos )
 					break;
 			}
 
-			if ( Global::debugMode )
-				qDebug() << "passed.";
+			//if ( Global::debugMode )
+			//	qDebug() << "passed.";
 		}
 	}
 
@@ -844,25 +852,6 @@ int Selection::rotation()
 	{
 		return 0;
 	}
-}
-
-void Selection::setNetworkCommand( QVariantMap data )
-{
-	m_rotation        = data.value( "Rot" ).toInt();
-	m_firstClick      = Position( data.value( "Pos" ).toString() );
-	m_action          = data.value( "Action" ).toString();
-	m_item            = data.value( "Item" ).toString();
-	m_materials       = data.value( "Mats" ).toString().split( "_" );
-	QVariantList sels = data.value( "Selection" ).toList();
-	m_selection.clear();
-	QVariantMap actionMap = DB::selectRow( "Actions", m_action );
-
-	for ( auto sel : sels )
-	{
-		m_selection.push_back( QPair<Position, bool>( Position( sel.toString() ), testTileForJobSelection( Position( sel.toString() ) ) ) );
-	}
-	onSecondClick( false, false );
-	m_firstClicked = false;
 }
 
 bool Selection::changed()

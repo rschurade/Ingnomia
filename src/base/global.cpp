@@ -71,7 +71,8 @@ MilitaryManager Global::m_militaryManager;
 
 bool Global::wallsLowered = false;
 bool Global::showAxles    = false;
-
+bool Global::showDesignations = true;
+bool Global::showJobs = true;
 
 unsigned int Global::waterSpriteUID  = 0;
 unsigned int Global::undiscoveredUID = 0;

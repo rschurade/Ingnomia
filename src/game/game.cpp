@@ -189,6 +189,8 @@ void Game::loop()
 
 		Global::w().processWater();
 
+		PathFinder::getInstance().findPaths();
+
 		++GameState::tick;
 	}
 
@@ -384,7 +386,6 @@ void Game::processPlants()
 	}
 	for ( auto p : toRemove )
 	{
-		//GameState::addChange2( NetworkCommand::PLANTREMOVE, p.toString() );
 		Global::w().removePlant( p );
 	}
 }

@@ -251,20 +251,24 @@ BT_RESULT Monster::actionMove( bool halt )
 	// monster has a path, move on path and return
 	if ( !m_currentPath.empty() )
 	{
-		if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
+		if ( m_currentAttackTarget )
 		{
-			m_currentPath.clear();
-			return BT_RESULT::SUCCESS;
+			if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
+			{
+				m_currentPath.clear();
+				return BT_RESULT::SUCCESS;
+			}
+
+			if ( conditionTargetPositionValid( false ) == BT_RESULT::FAILURE )
+			{
+				m_currentPath.clear();
+				return BT_RESULT::FAILURE;
+			}
 		}
 
 		if ( !moveOnPath() )
 		{
-			if ( !m_aggroList.isEmpty() )
-			{
-				auto curTarget = m_aggroList.takeFirst();
-				m_aggroList.append( curTarget );
-			}
-
+			m_currentPath.clear();
 			return BT_RESULT::FAILURE;
 		}
 		return BT_RESULT::RUNNING;
@@ -316,17 +320,39 @@ BT_RESULT Monster::actionGetTarget( bool halt )
 {
 	if ( m_aggroList.size() )
 	{
-		unsigned int targetID = m_aggroList.first().id;
-		Creature* creature    = Global::gm().gnome( targetID );
-		if ( creature && !creature->isDead() )
+		unsigned int minDistance = std::numeric_limits<unsigned int>::max();
+		const auto myPos         = getPos();
+		const Creature* selectedTarget = nullptr;
+		for ( auto it = m_aggroList.begin(); it != m_aggroList.end(); )
 		{
-			m_currentAttackTarget = targetID;
-			setCurrentTarget( creature->getPos() );
+			const Creature* creature = Global::gm().gnome( it->id );
+			if ( creature && !creature->isDead() )
+			{
+				auto otherPos = creature->getPos();
+				if ( Global::w().regionMap().checkConnectedRegions( myPos, otherPos ) )
+				{
+					const unsigned int dist = myPos.distSquare( otherPos );
+					if ( dist < minDistance )
+					{
+						selectedTarget = creature;
+						minDistance    = dist;
+					}
+				}
+				++it;
+			}
+			else
+			{
+				it = m_aggroList.erase( it );
+			}
+		}
+		if ( selectedTarget )
+		{
+			m_currentAttackTarget = selectedTarget->id();
+			setCurrentTarget( selectedTarget->getPos() );
 			return BT_RESULT::SUCCESS;
 		}
 		else
 		{
-			m_aggroList.removeFirst();
 			return BT_RESULT::FAILURE;
 		}
 	}

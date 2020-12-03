@@ -161,7 +161,6 @@ bool WorkshopManager::finishJob( unsigned int jobID )
 	{
 		if ( w->finishJob( jobID ) )
 		{
-			//GameState::addChange( NetworkCommand::WORKSHOPINFO, { QString::number( w->id() ), QJsonDocument::fromVariant( w->serializeJobQueue() ).toJson() } );
 			emit signalJobListChanged( w->id() );
 			return true;
 		}

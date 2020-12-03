@@ -1,0 +1,289 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+	<!-- String resource that can be localized -->
+	<!--{StaticResource MainPage_}-->
+	<system:String x:Key="MainPage_">MainPage_</system:String>
+	<system:String x:Key="MainPage_Ingnomia">Ingnomia</system:String>
+	<system:String x:Key="MainPage_Continue">Continuar</system:String>
+	<system:String x:Key="MainPage_NewGame">Novo Jogo</system:String>
+	<system:String x:Key="MainPage_SetUpGame">Preparar Jogo</system:String>
+	<system:String x:Key="MainPage_LoadGame">Carregar Jogo</system:String>
+	<system:String x:Key="MainPage_Settings">Configurações</system:String>
+	<system:String x:Key="MainPage_Exit">Sair</system:String>
+	<system:String x:Key="MainPage_Hint_MMContinue">Continua o último jogo salvo.</system:String>
+	<system:String x:Key="MainPage_Hint_MMNewGame">Inicia um novo jogo com as configurações anteriores.</system:String>
+	<system:String x:Key="MainPage_Hint_MMSetupGame">Inicia um novo jogo com novas configurações.</system:String>
+	<system:String x:Key="MainPage_Hint_MMLoadGame">Carrega um jogo salvo anteriormente.</system:String>
+	<system:String x:Key="MainPage_Hint_MMSettings">Configura as opções do jogo.</system:String>
+	<system:String x:Key="MainPage_Hint_MMExit">Sai do jogo.</system:String>
+
+	<!--{StaticResource Agriculture_}-->
+	<system:String x:Key="Agriculture_">Agriculture_</system:String>
+	<system:String x:Key="Agriculture_TilledPlots">Lotes arados</system:String>
+	<system:String x:Key="Agriculture_PlantsPlanted">Plantas plantadas</system:String>
+	<system:String x:Key="Agriculture_CropsReady">Safra pronta</system:String>
+	<system:String x:Key="Agriculture_Suspend">Suspender</system:String>
+	<system:String x:Key="Agriculture_Harvest">Colher</system:String>
+	<system:String x:Key="Agriculture_SelectCrop">Selecionar colheita</system:String>
+	<system:String x:Key="Agriculture_NumberOfSeeds">Número de sementes</system:String>
+	<system:String x:Key="Agriculture_NumberOfItems">Número de itens</system:String>
+	<system:String x:Key="Agriculture_NumberOfPlants">Número de plantas</system:String>
+	<system:String x:Key="Agriculture_Manage">Gerenciar</system:String>
+	<system:String x:Key="Agriculture_Animals">Animais</system:String>
+	<system:String x:Key="Agriculture_Male">Macho</system:String>
+	<system:String x:Key="Agriculture_Female">Fêmea</system:String>
+	<system:String x:Key="Agriculture_TameWildAnimals">Domesticar animais</system:String>
+	<system:String x:Key="Agriculture_HarvestAnimals">Colher animais</system:String>
+	<system:String x:Key="Agriculture_HarvestHay">Colher feno</system:String>
+	<system:String x:Key="Agriculture_StoredFood">Comida armazenada</system:String>
+	<system:String x:Key="Agriculture_Settings">Opções</system:String>
+	<system:String x:Key="Agriculture_Back">Voltar</system:String>
+	<system:String x:Key="Agriculture_SelectFoodForTroughs">Selecionar comida para pensamentos</system:String>
+	<system:String x:Key="Agriculture_ManageAnimals">Gerenciar animais</system:String>
+	<system:String x:Key="Agriculture_SelectAnimalType">Selecione o tipo de animal</system:String>
+	<system:String x:Key="Agriculture_NumberOfAnimals">Número de animais</system:String>
+	<system:String x:Key="Agriculture_Trees">Árvores</system:String>
+	<system:String x:Key="Agriculture_PlantTrees">Plantar árvores</system:String>
+	<system:String x:Key="Agriculture_PickFruit">Colher frutas</system:String>
+	<system:String x:Key="Agriculture_FellTrees">Derrubar árvores</system:String>
+	<system:String x:Key="Agriculture_SelectTreeType">Selecione o tipo de árvore</system:String>
+
+	<!--{StaticResource CreatureInfo_}-->
+	<system:String x:Key="CreatureInfo_">CreatureInfo_</system:String>
+	<system:String x:Key="CreatureInfo_Happiness">Felicidade</system:String>
+	<system:String x:Key="CreatureInfo_Sleep">Sono</system:String>
+	<system:String x:Key="CreatureInfo_Thirst">Sede</system:String>
+	<system:String x:Key="CreatureInfo_Hunger">Fome</system:String>
+	<system:String x:Key="CreatureInfo_Cha">CAR</system:String>
+	<system:String x:Key="CreatureInfo_Wis">SAB</system:String>
+	<system:String x:Key="CreatureInfo_Int">INT</system:String>
+	<system:String x:Key="CreatureInfo_Con">CON</system:String>
+	<system:String x:Key="CreatureInfo_Dex">DES</system:String>
+	<system:String x:Key="CreatureInfo_Str">FOR</system:String>
+	<system:String x:Key="CreatureInfo_Inventory">Inventário</system:String>
+	<system:String x:Key="CreatureInfo_Equipment">Equipamentos</system:String>
+
+	<!--{StaticResource DebugPage_}-->
+	<system:String x:Key="DebugPage_">DebugPage_</system:String>
+	<system:String x:Key="DebugPage_Misc">Misc</system:String>
+	<system:String x:Key="DebugPage_Stuff">Coisas</system:String>
+	<system:String x:Key="DebugPage_More">Mais</system:String>
+	<system:String x:Key="DebugPage_DebugFirstPage">Primeira página de depuração</system:String>
+	<system:String x:Key="DebugPage_SpawnGnome">Gerar Gnomo</system:String>
+	<system:String x:Key="DebugPage_SpawnTrader">Gerar Vendedor</system:String>
+	<system:String x:Key="DebugPage_SpawnGoblin">Gerar Goblin</system:String>
+	<system:String x:Key="DebugPage_DebugSecondPage">Segunda página de depuração</system:String>
+	<system:String x:Key="DebugPage_DebugThirdPage">Terceira página de depuração</system:String>
+
+	<!--{StaticResource GameGui_}-->
+	<system:String x:Key="GameGui_">GameGui_</system:String>
+	<system:String x:Key="GameGui_KingdomName">Nome do Reino</system:String>
+	<system:String x:Key="GameGui_Something1">algo</system:String>
+	<system:String x:Key="GameGui_Something2">algo</system:String>
+	<system:String x:Key="GameGui_D">D</system:String>
+	<system:String x:Key="GameGui_Yes">Sim</system:String>
+	<system:String x:Key="GameGui_Ok">OK</system:String>
+	<system:String x:Key="GameGui_No">Não</system:String>
+	<system:String x:Key="GameGui_Build">Construir</system:String>
+	<system:String x:Key="GameGui_Mine">Minerar</system:String>
+	<system:String x:Key="GameGui_Agriculture">Agricultura</system:String>
+	<system:String x:Key="GameGui_Designations">Áreas</system:String>
+	<system:String x:Key="GameGui_Job">Tarefas</system:String>
+	<system:String x:Key="GameGui_Magic">Magia</system:String>
+	<system:String x:Key="GameGui_Kingdom">Reino</system:String>
+	<system:String x:Key="GameGui_Stockpiles">Estoque</system:String>
+	<system:String x:Key="GameGui_Military">Militar</system:String>
+	<system:String x:Key="GameGui_Population">População</system:String>
+	<system:String x:Key="GameGui_Missions">Missões</system:String>
+
+	<!--{StaticResource InGamePage_}-->
+	<system:String x:Key="InGamePage_">InGamePage_</system:String>
+	<system:String x:Key="InGamePage_Ingnomia">Ingnomia</system:String>
+	<system:String x:Key="InGamePage_Resume">Continuar</system:String>
+	<system:String x:Key="InGamePage_LoadGame">Carregar Jogo</system:String>
+	<system:String x:Key="InGamePage_SaveGame">Salvar Jogo</system:String>
+	<system:String x:Key="InGamePage_Settings">Configurações</system:String>
+	<system:String x:Key="InGamePage_QuitGame">Sair do Jogo</system:String>
+
+	<!--{StaticResource LoadGamePage_}-->
+	<system:String x:Key="LoadGamePage_">LoadGamePage_</system:String>
+	<system:String x:Key="LoadGamePage_LoadGame">Carregar Jogo</system:String>
+	<system:String x:Key="LoadGamePage_HereSelectedGameInfo">Aqui vai ter informações sobre o jogo selecionado.</system:String>
+	<system:String x:Key="LoadGamePage_Load">Carregar</system:String>
+	<system:String x:Key="LoadGamePage_Back">Voltar</system:String>
+
+	<!--{StaticResource MilitaryGui_}-->
+	<system:String x:Key="MilitaryGui_">MilitaryGui_</system:String>
+	<system:String x:Key="MilitaryGui_Squads">Esquadrões</system:String>
+	<system:String x:Key="MilitaryGui_Roles">Papéis</system:String>
+	<system:String x:Key="MilitaryGui_More">Mais</system:String>
+	<system:String x:Key="MilitaryGui_MilitarySquads">Militar - Esquadrões</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryRoles">Militar - Papéis</system:String>
+	<system:String x:Key="MilitaryGui_MilitaryPriorities">Militar - Prioridades</system:String>
+
+	<!--{StaticResource Neighbors_}-->
+	<system:String x:Key="Neighbors_">Neighbors_</system:String>
+	<system:String x:Key="Neighbors_Neighbors">Vizinhos</system:String>
+	<system:String x:Key="Neighbors_Missions">Missões</system:String>
+	<system:String x:Key="Neighbors_More">Mais</system:String>
+	<system:String x:Key="Neighbors_NeighborsPage">Vizinhos</system:String>
+	<system:String x:Key="Neighbors_MissionsPage">Missões</system:String>
+	<system:String x:Key="Neighbors_NeighborsThirdPage">Vizinhos terceira página</system:String>
+
+	<!--{StaticResource NewGamePage_}-->
+	<system:String x:Key="NewGamePage_">NewGamePage_</system:String>
+	<system:String x:Key="NewGamePage_SetUpNewGame">Preparar novo jogo</system:String>
+	<system:String x:Key="NewGamePage_World">Mundo</system:String>
+	<system:String x:Key="NewGamePage_KingdomName">Nome do reino:</system:String>
+	<system:String x:Key="NewGamePage_Seed">Seed:</system:String>
+	<system:String x:Key="NewGamePage_Random">Aleatório</system:String>
+	<system:String x:Key="NewGamePage_WorldSize">Tamanho:</system:String>
+	<system:String x:Key="NewGamePage_LargerSizePerformance">Tamanhos maiores terão impacto na performance.</system:String>
+	<system:String x:Key="NewGamePage_Flatness">Rugosidade:</system:String>
+	<system:String x:Key="NewGamePage_OceanSize">Oceano (tamanho):</system:String>
+	<system:String x:Key="NewGamePage_Rivers">Rios:</system:String>
+	<system:String x:Key="NewGamePage_RiverSize">Rios (tamanho):</system:String>
+	<system:String x:Key="NewGamePage_StartArea">Área inicial:</system:String>
+	<system:String x:Key="NewGamePage_StartingItems">Itens iniciais</system:String>
+	<system:String x:Key="NewGamePage_Presets">Pré-ajuste:</system:String>
+	<system:String x:Key="NewGamePage_NewPreset">Novo pré-ajuste</system:String>
+	<system:String x:Key="NewGamePage_DeletePreset">Remover pré-ajuste</system:String>
+	<system:String x:Key="NewGamePage_Gnomes">Gnomos:</system:String>
+	<system:String x:Key="NewGamePage_Items">Itens</system:String>
+	<system:String x:Key="NewGamePage_Animals">Animais</system:String>
+	<system:String x:Key="NewGamePage_Add">Adicionar</system:String>
+	<system:String x:Key="NewGamePage_Enemies">Inimigos</system:String>
+	<system:String x:Key="NewGamePage_PeacefulMode">Modo pacífico.</system:String>
+	<system:String x:Key="NewGamePage_NoEnemyKingdoms">Sem reinos inimigos.</system:String>
+	<system:String x:Key="NewGamePage_PeacefulAnimalsMayStillAttack">Animais agressivos ainda podem atacar.</system:String>
+	<system:String x:Key="NewGamePage_Flora">Flora</system:String>
+	<system:String x:Key="NewGamePage_TreeDensity">Árvores (%):</system:String>
+	<system:String x:Key="NewGamePage_PlantDensity">Plantas (%):</system:String>
+	<system:String x:Key="NewGamePage_Fauna">Fauna</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsPage">Animais selvagens:</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimals">Número máximo de animais</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxWildAnimalsAtStart">selvagens no início do jogo.</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimalsPage">Máx por tipo:</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimals">Número máximo de animais de cada tipo,</system:String>
+	<system:String x:Key="NewGamePage_NumberMaxAnimalsIncludesDomesticated">também influencia os animais domesticados.</system:String>
+	<system:String x:Key="NewGamePage_Back">Voltar</system:String>
+	<system:String x:Key="NewGamePage_Embark">Embarcar</system:String>
+
+	<!--{StaticResource PopulationWindow_}-->
+	<system:String x:Key="PopulationWindow_">PopulationWindow_</system:String>
+	<system:String x:Key="PopulationWindow_Skills">Proficiências</system:String>
+	<system:String x:Key="PopulationWindow_Schedule">Agenda</system:String>
+	<system:String x:Key="PopulationWindow_EditProf">Edit Prof</system:String>
+	<system:String x:Key="PopulationWindow_Name">Nome</system:String>
+	<system:String x:Key="PopulationWindow_Professions">Profissões</system:String>
+	<system:String x:Key="PopulationWindow_None">Nada</system:String>
+	<system:String x:Key="PopulationWindow_Eat">Comer</system:String>
+	<system:String x:Key="PopulationWindow_Sleep">Dormir</system:String>
+	<system:String x:Key="PopulationWindow_Train">Treinar</system:String>
+	<system:String x:Key="PopulationWindow_EditProfessions">Editar Profissões</system:String>
+	<system:String x:Key="PopulationWindow_New">Nova</system:String>
+	<system:String x:Key="PopulationWindow_Delete">Remover</system:String>
+
+	<!--{StaticResource SettingsPage_}-->
+	<system:String x:Key="SettingsPage_">SettingsPage_</system:String>
+	<system:String x:Key="SettingsPage_Settings">Configurações</system:String>
+	<system:String x:Key="SettingsPage_Game">Jogo</system:String>
+	<system:String x:Key="SettingsPage_Video">Vídeo</system:String>
+	<system:String x:Key="SettingsPage_VideoContent">Configurações do Vídeo</system:String>
+	<system:String x:Key="SettingsPage_Audio">Áudio</system:String>
+	<system:String x:Key="SettingsPage_AudioContent">Ainda não tem áudio.</system:String>
+	<system:String x:Key="SettingsPage_Controls">Controles</system:String>
+	<system:String x:Key="SettingsPage_Back">Voltar</system:String>
+	<system:String x:Key="SettingsPage_Accept">Aceitar</system:String>
+	<system:String x:Key="SettingsPage_UiScale">Escala da Interface</system:String>
+	<system:String x:Key="SettingsPage_FullScreen">Tela Cheia</system:String>
+	<system:String x:Key="SettingsPage_Language">Idioma</system:String>
+	<system:String x:Key="SettingsPage_KeyboardSpeed">Velocidade do teclado</system:String>
+	<system:String x:Key="SettingsPage_LightMin">Nível mínimo de luz</system:String>
+	<system:String x:Key="SettingsPage_KeybindingsPlaceholder">Esta página é um espaço reservado. As combinações de teclas ainda não foram implementadas.</system:String>
+	
+
+	<!--{StaticResource StockpileGui_}-->
+	<system:String x:Key="StockpileGui_">StockpileGui_</system:String>
+	<system:String x:Key="StockpileGui_Stockpile">Estoque</system:String>
+	<system:String x:Key="StockpileGui_Suspend">Suspender</system:String>
+	<system:String x:Key="StockpileGui_StockpileSuspend">Suspender estoque.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePushable">O estoque parará de aceitar itens.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullable">Itens ainda podem ser retirados do estoque.</system:String>
+	<system:String x:Key="StockpileGui_PullFromHere">Pegar daqui</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHere">Pegar daqui.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromHigher">Estoques com maior prioridade podem pedir itens daqui.</system:String>
+	<system:String x:Key="StockpileGui_PullFromOther">Pedir de outro</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromOther">Pedir de outro.</system:String>
+	<system:String x:Key="StockpileGui_StockpilePullFromLower">Estoques podem pedir de outros estoques com menor prioridade.</system:String>
+	<system:String x:Key="StockpileGui_CopySetup">Copiar opções</system:String>
+	<system:String x:Key="StockpileGui_PasteSetup">Colar opções</system:String>
+	<system:String x:Key="StockpileGui_Filters">Filtros</system:String>
+	<system:String x:Key="StockpileGui_Stock">Estoque</system:String>
+	<system:String x:Key="StockpileGui_Limits">Limites</system:String>
+	<system:String x:Key="StockpileGui_LimitsImplementedLater">Será implementado mais tarde.</system:String>
+
+	<!--{StaticResource TileInfo_}-->
+	<system:String x:Key="TileInfo_">TileInfo_</system:String>
+	<system:String x:Key="TileInfo_Stockpile">Estoque:</system:String>
+	<system:String x:Key="TileInfo_Manage">Gerenciar</system:String>
+	<system:String x:Key="TileInfo_AssignTo">Atribuir para:</system:String>
+	<system:String x:Key="TileInfo_Value">Valor:</system:String>
+	<system:String x:Key="TileInfo_Enclosed">Fechado:</system:String>
+	<system:String x:Key="TileInfo_HasRoof">Têm telhado:</system:String>
+	<system:String x:Key="TileInfo_Beds">Camas:</system:String>
+	<system:String x:Key="TileInfo_SoundAlarm">Soar o alarme!</system:String>
+	<system:String x:Key="TileInfo_AlarmSoundAlarm">Soar o alarme!</system:String>
+	<system:String x:Key="TileInfo_AlarmRetreatHere">Gnomos civís fugiram para cá.</system:String>
+	<system:String x:Key="TileInfo_Job">Tarefa:</system:String>
+	<system:String x:Key="TileInfo_WorkedBy">Feito por:</system:String>
+	<system:String x:Key="TileInfo_JobPriority">Prioridade da tarefa:</system:String>
+	<system:String x:Key="TileInfo_RequiredSkill">Proficiência necessária:</system:String>
+	<system:String x:Key="TileInfo_RequiredTool">Ferramenta necessária:</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAvailable">Ferramenta necessária disponível:</system:String>
+	<system:String x:Key="TileInfo_RequiredToolAccessible">Acessível:</system:String>
+	<system:String x:Key="TileInfo_RequiredItems">Itens necessários:</system:String>
+
+	<!--{StaticResource WaitPage_}-->
+	<system:String x:Key="WaitPage_">WaitPage_</system:String>
+	<system:String x:Key="WaitPage_CreatingGame">Criando jogo</system:String>
+	<system:String x:Key="WaitPage_PleaseWait">Por favor aguarde</system:String>
+
+	<!--{StaticResource WorkshopGui_}-->
+	<system:String x:Key="WorkshopGui_">WorkshopGui_</system:String>
+	<system:String x:Key="WorkshopGui_AllowAcceptGeneratedJobs">Aceitar tarefas geradas</system:String>
+	<system:String x:Key="WorkshopGui_AcceptGeneratedJobs">Aceita tarefas geradas.</system:String>
+	<system:String x:Key="WorkshopGui_AutoGenerateCraftJobs">Irá gerar automaticamente as tarefas para fazer os itens de construção e outras oficinas.</system:String>
+	<system:String x:Key="WorkshopGui_AutoCraftMissingComponents">Auto gerar componentes em falta</system:String>
+	<system:String x:Key="WorkshopGui_AllowAutoCraftMissingComponents">Irá gerar componentes em falta.</system:String>
+	<system:String x:Key="WorkshopGui_GeneratesCraftingJobsForMissingComponents">Gera tarefas para fazer os componentes em falta nas oficinas.</system:String>
+	<system:String x:Key="WorkshopGui_AvailableProducts">Produtos disponíveis</system:String>
+	<system:String x:Key="WorkshopGui_ProductionLine">Linha de produção</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcessAnimals">Abater animais excedentes</system:String>
+	<system:String x:Key="WorkshopGui_ButcherExcess">Irá abater os animais que excederem.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherTameNotOnPasture">Abater qualquer animal domesticado que não esteja num pasto.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherCorpse">Abater corpos</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAllowCorpse">Abater carniças.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherOnlyStockpileCorpse">Carniças devem estar em estoques para serem consideradas.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectToStockpile">Conectar ao estoque</system:String>
+	<system:String x:Key="WorkshopGui_ConnectStockpile">Conecta estoque.</system:String>
+	<system:String x:Key="WorkshopGui_Connect3x3Stockpile">Conecta a um estoque de tamanho máximo de 3x3.</system:String>
+	<system:String x:Key="WorkshopGui_ConnectAdjacentStockpile">O estoque precisa estar adjacente ao bloco de entrada.</system:String>
+	<system:String x:Key="WorkshopGui_ButcherAnimals">Abater animais</system:String>
+	<system:String x:Key="WorkshopGui_SuspendWorkshop">Suspender</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopSuspendWork">Suspende a oficina.</system:String>
+	<system:String x:Key="WorkshopGui_WorkshopStopWork">A oficina parará de trabalhar.</system:String>
+	<system:String x:Key="WorkshopGui_Trade">Comércio</system:String>
+	<system:String x:Key="WorkshopGui_Max">max</system:String>
+	<system:String x:Key="WorkshopGui_TraderInventory">Inventário do Comerciante:</system:String>
+	<system:String x:Key="WorkshopGui_TraderValue">Valor do Comerciante:</system:String>
+	<system:String x:Key="WorkshopGui_PlayerInventory">Inventário do Jogador:</system:String>
+	<system:String x:Key="WorkshopGui_PlayerValue">Valor do jogador:</system:String>
+	<system:String x:Key="WorkshopGui_TradeAction">Trocar</system:String>
+	
+	
+	<system:String x:Key="TestItemName_RawWood">-madeira pura-</system:String>
+</ResourceDictionary>

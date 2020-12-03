@@ -178,14 +178,13 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 		connect( m_game, &Game::signalTimeAndDate, &EventConnector::getInstance(), &EventConnector::onTimeAndDate );
 		connect( m_game, &Game::signalKingdomInfo, &EventConnector::getInstance(), &EventConnector::onKingdomInfo );
 		m_game->sendTime();
-		EventConnector::getInstance().onViewLevel( Config::getInstance().get( "viewLevel" ).toInt() );
+		EventConnector::getInstance().onViewLevel( GameState::viewLevel );
 
 		Config::getInstance().set( "NoRender", false );
 
 		m_game->moveToThread( &m_gameThread );
 
 		Config::getInstance().set( "gameRunning", true );
-		GameState::setAcceptChangeSets( true );
 
 		m_showMainMenu = false;
 
@@ -223,11 +222,10 @@ void GameManager::createNewGame()
 
 	Config::getInstance().set( "NoRender", false );
 	
-	EventConnector::getInstance().onViewLevel( Config::getInstance().get( "viewLevel" ).toInt() );
+	EventConnector::getInstance().onViewLevel( GameState::viewLevel );
 	m_game->moveToThread( &m_gameThread );
 
 	Config::getInstance().set( "gameRunning", true );
-	GameState::setAcceptChangeSets( true );
 
 	m_showMainMenu = false;
 

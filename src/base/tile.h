@@ -148,6 +148,15 @@ enum WaterFlow : unsigned char
 	WF_DOWN   = 0x20,
 	WF_EVAP   = 0x40
 };
+constexpr inline WaterFlow operator+( const WaterFlow& a, const WaterFlow& b )
+{
+	return static_cast<WaterFlow>( static_cast<unsigned char>( a ) | static_cast<unsigned char>( b ) );
+}
+constexpr inline void operator+=( WaterFlow& a, const WaterFlow& b )
+{
+	a = a + b;
+}
+
 Q_DECLARE_TYPEINFO( WaterFlow, Q_PRIMITIVE_TYPE );
 
 struct Tile

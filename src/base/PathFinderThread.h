@@ -25,30 +25,34 @@
 
 #include <functional>
 #include <vector>
+#include <unordered_set>
 
 class PathFinderThread : public QRunnable
 {
 public:
 	using Path               = std::vector<Position>;
-	using CompletionCallback = std::function<void( Path )>;
+	using CompletionCallback = std::function<void(Position, Position, bool ignoreNoPass, Path )>;
 	PathFinderThread()       = delete;
-	PathFinderThread( Position start, Position goal, bool ignoreNoPass, CompletionCallback callback );
+	PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, CompletionCallback callback );
 	~PathFinderThread();
 
 	virtual void run() override;
 
 private:
-	Path findPath();
+	void findPath();
 
 	const Position m_start;
-	const Position m_goal;
+	const std::unordered_set<Position> m_goals;
 	const bool m_ignoreNoPass = false;
 
 	CompletionCallback m_callback;
 
 	static inline double heuristic( const Position& a, const Position& b )
 	{
-		return abs( a.x - b.x ) + abs( a.y - b.y ) + abs( a.z - b.z );
+		// Heuristic needs to represent the lowest, possible cost from a to b
+		// Going even lower increases the search space, but still yields correct path
+		// Going too high will result in fiding sub-optimal paths as the search space is reduced too much
+		return cost(a, b);
 	}
 
 	static inline double cost( const Position& lhs, const Position& rhs )
@@ -62,6 +66,6 @@ private:
 		Position previous;
 	};
 
-	bool evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
-	bool evalRampPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier );
+	bool evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const;
+	bool evalRampPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const;
 };

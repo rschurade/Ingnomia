@@ -185,14 +185,8 @@ BT_RESULT Gnome::actionMove( bool halt )
 	if ( halt )
 	{
 		//abortJob( "actionMove - halt" );
+		m_currentPath.clear();
 		return BT_RESULT::IDLE;
-	}
-	if ( !m_currentPath.empty() )
-	{
-		if ( m_currentPath[m_currentPath.size() - 1] == m_position )
-		{
-			m_currentPath.pop_back();
-		}
 	}
 	// gnome has a path, move on path and return
 	if ( !m_currentPath.empty() )
@@ -218,15 +212,12 @@ BT_RESULT Gnome::actionMove( bool halt )
 				m_currentPath.clear();
 				return BT_RESULT::SUCCESS;
 			}
-			else
+
+			if ( conditionTargetPositionValid( false ) == BT_RESULT::FAILURE )
 			{
-				if ( !moveOnPath() )
-				{
-					//abortJob( "actionMove - 1" );
-					return BT_RESULT::FAILURE;
-				}
+				// Repath
 				m_currentPath.clear();
-				return BT_RESULT::RUNNING;
+				return BT_RESULT::FAILURE;
 			}
 		}
 
@@ -235,6 +226,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 		if ( !moveOnPath() )
 		{
 			//abortJob( "actionMove - 1" );
+			m_currentPath.clear();
 			return BT_RESULT::FAILURE;
 		}
 
@@ -2295,12 +2287,17 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 			m_currentAttackTarget = 0;
 			m_thoughtBubble       = "";
 		}
+		else
+		{
+			// Update target position
+			setCurrentTarget( creature->getPos() );
+		}
 	}
 
 	if ( !m_currentAttackTarget )
 	{
 		const Creature* bestCandidate = nullptr;
-		int bestDistance     = std::numeric_limits<unsigned int>::max();
+		unsigned int bestDistance     = std::numeric_limits<unsigned int>::max();
 
 		const Squad* squad = Global::mil().getSquadForGnome( m_id );
 		if ( squad )
@@ -2314,7 +2311,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 					const Creature* creature = Global::cm().creature( gnome->m_currentAttackTarget );
 					if ( creature && Global::cm().hasPathTo( m_position, creature->id() ) )
 					{
-						const auto dist = m_position.distSquare( creature->getPos() );
+						const unsigned int dist = m_position.distSquare( creature->getPos() );
 						bestDistance    = dist;
 						bestCandidate   = creature;
 						// Any legal match is a good hit
@@ -2336,7 +2333,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 							const Creature* creature = Global::cm().creature( targetID );
 							if ( creature && !creature->isDead() && Global::cm().hasPathTo( m_position, targetID ) )
 							{
-								const auto dist = m_position.distSquare( creature->getPos() );
+								const unsigned int dist = m_position.distSquare( creature->getPos() );
 								if ( dist < bestDistance )
 								{
 									bestDistance  = dist;

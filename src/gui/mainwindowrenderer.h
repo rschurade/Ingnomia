@@ -44,7 +44,7 @@ public:
 	MainWindowRenderer( MainWindow* parent = Q_NULLPTR );
 	~MainWindowRenderer();
 
-	Position calcCursor( int mouseX, int mouseY, bool useViewLevel ) const;
+	Position calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const;
 
 protected:
 	QOpenGLVertexArrayObject m_vao;
@@ -108,7 +108,6 @@ private:
 	int m_renderSize    = 100;
 	int m_viewLevel     = 100;
 	int m_renderDepth   = 10;
-	bool m_overlay      = true;
 	bool m_debug        = false;
 
 	struct RenderVolume
