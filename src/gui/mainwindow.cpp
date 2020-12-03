@@ -624,7 +624,8 @@ void MainWindow::noesisInit()
 	installResourceProviders();
 
 	registerComponents();
-	Noesis::GUI::SetApplicationResources( Noesis::GUI::LoadXaml<Noesis::ResourceDictionary>( ( "localization/" + Config::getInstance().get( "language" ).toString() + ".xaml" ).toStdString().c_str() ) );
+	//Noesis::GUI::SetApplicationResources( Noesis::GUI::LoadXaml<Noesis::ResourceDictionary>( ( "localization/" + Config::getInstance().get( "language" ).toString() + ".xaml" ).toStdString().c_str() ) );
+	SetLanguageDictionary();
 
 	Noesis::Ptr<Noesis::FrameworkElement> xaml = Noesis::GUI::LoadXaml<Noesis::FrameworkElement>( "Main.xaml" );
 
@@ -808,4 +809,20 @@ void MainWindow::registerComponents()
 	Noesis::RegisterComponent<IngnomiaGUI::ColorToBrushConverterDark>();
 
 	Noesis::RegisterComponent<IngnomiaGUI::GameGui>();
+}
+
+void SetLanguageDictionary()
+{
+	switch ( Thread.CurrentThread.CurrentCulture.ToString() )
+	{
+		case "nl-NL":
+			Resources.Culture = new System.Globalization.CultureInfo( "nl-NL" );
+			break;
+		case "en-GB":
+			Resources.Culture = new System.Globalization.CultureInfo( "en-GB" );
+			break;
+		default: //default english because there can be so many different system language, we rather fallback on english in this case.
+			Resources.Culture = new System.Globalization.CultureInfo( "en-GB" );
+			break;
+	}
 }

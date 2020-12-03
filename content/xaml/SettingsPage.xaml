@@ -3,6 +3,7 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:IngnomiaGUI"
+	xmlns:lang="clr-namespace:Ingnomia.Localization"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -43,7 +44,7 @@
 		</Grid.ColumnDefinitions>
 
 		<Viewbox Grid.Row="0" Grid.Column="1">
-			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource SettingsPage_Settings}" />
+			<TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{x:Static lang:Resources.SettingsPage_Settings}" />
 		</Viewbox>
 		<Viewbox Grid.Row="1" Grid.Column="1" MinWidth="800" MaxWidth="800" MinHeight="600" MaxHeight="600" >
 			<Grid >
@@ -53,7 +54,7 @@
 				</Grid.RowDefinitions>
 
 				<TabControl Style="{StaticResource MainMenuTabControlStyle}" Grid.Row="0">
-					<TabItem Header="{StaticResource SettingsPage_Game}">
+					<TabItem Header="{x:Static lang:Resources.SettingsPage_Game}">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="1*" />
@@ -70,7 +71,7 @@
 										<ColumnDefinition Width="1*" />
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
-									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_UiScale}" VerticalAlignment="Center"/>
+									<TextBlock  Grid.Column="1" FontSize="10" Text="{x:Static lang:Resources.SettingsPage_UiScale}" VerticalAlignment="Center"/>
 									<ComboBox   Grid.Column="2" VerticalAlignment="Center" Margin="2"
 											ItemsSource="{Binding UIScales}"
 											SelectedItem="{Binding UIScale, Mode=TwoWay}"
@@ -87,7 +88,7 @@
 										<ColumnDefinition Width="1*" />
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
-									<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="{StaticResource SettingsPage_FullScreen}"/>
+									<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="{x:Static lang:Resources.SettingsPage_FullScreen}"/>
 									<CheckBox   Grid.Column="2" VerticalAlignment="Center" Content="" IsChecked="{Binding FullScreen}"/>
 								</Grid>
 								<Grid Margin="0,20,0,0">
@@ -97,7 +98,7 @@
 										<ColumnDefinition Width="1*" />
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
-									<TextBlock  Grid.Column="1" VerticalAlignment="Center" FontSize="10" Text="{StaticResource SettingsPage_Language}"/>
+									<TextBlock  Grid.Column="1" VerticalAlignment="Center" FontSize="10" Text="{x:Static lang:Resources.SettingsPage_Language}"/>
 									<ComboBox   Grid.Column="2" VerticalAlignment="Center" Margin="2"
 											ItemsSource="{Binding Languages}"
 											SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
@@ -110,7 +111,7 @@
 										<ColumnDefinition Width="1*" />
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
-									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_KeyboardSpeed}" VerticalAlignment="Center"/>
+									<TextBlock  Grid.Column="1" FontSize="10" Text="{x:Static lang:Resources.SettingsPage_KeyboardSpeed}" VerticalAlignment="Center"/>
 									<Slider     Grid.Column="2" Minimum="10" Maximum="200" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding KeyboardSpeed}" />
 								</Grid>
@@ -121,19 +122,19 @@
 										<ColumnDefinition Width="1*" />
 										<ColumnDefinition Width="1*" />
 									</Grid.ColumnDefinitions>
-									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_LightMin}" VerticalAlignment="Center"/>
+									<TextBlock  Grid.Column="1" FontSize="10" Text="{x:Static lang:Resources.SettingsPage_LightMin}" VerticalAlignment="Center"/>
 									<Slider     Grid.Column="2" Minimum="0" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding LightMin}" />
 								</Grid>
 							</StackPanel>
 						</Grid>
 					</TabItem>
-					<TabItem Header="{StaticResource SettingsPage_Controls}">
+					<TabItem Header="{x:Static lang:Resources.SettingsPage_Controls}">
 						<TextBlock  Grid.Column="1" FontSize="10" Text="This page is a placeholder. Keybindings are not implemented yet." VerticalAlignment="Center"/>
 					</TabItem>
 				</TabControl>
 
-				<Button Grid.Row="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
+				<Button Grid.Row="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.SettingsPage_Back}"
 						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
 
 				<!--
@@ -143,9 +144,9 @@
 						<ColumnDefinition Width="3*" />
 						<ColumnDefinition Width="1*" />
 					</Grid.ColumnDefinitions>
-					<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"
+					<Button Grid.Column="0" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.SettingsPage_Back}"
 						Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.Back }" />
-					<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Accept}" />
+					<Button Grid.Column="2" x:Name="Embark"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.SettingsPage_Accept}" />
 				</Grid>
 				-->
 			</Grid>

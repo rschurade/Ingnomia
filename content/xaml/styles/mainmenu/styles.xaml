@@ -11,9 +11,6 @@
 		<ResourceDictionary Source="../../Theme/NoesisTheme.DarkBlue.xaml" />
 		<ResourceDictionary Source="../colors.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-	
-	<local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
-	<local:ColorToBrushConverterDark x:Key="ColorToBrushConverterDark"/>
 
 	<Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Control.Foreground" Value="{StaticResource NormalFgBrush}"/>
@@ -191,7 +188,7 @@
 		<Setter Property="MaxWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
 	</Style>
-	
+
 	<Style TargetType="Button" x:Key="CommandButton" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Margin" Value="3"/>
 		<Setter Property="Padding" Value="3"/>
@@ -267,9 +264,9 @@
 
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="InvCategoryButtonTemplate">
-		<Button 
+		<Button
 			FontSize="16"
 			Width="100"
 			Height="50"
@@ -279,9 +276,9 @@
 			Content="{Binding Name}">
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="InvGroupButtonTemplate">
-		<Button 
+		<Button
 			FontSize="16"
 			Height="50"
 			Width="120"
@@ -291,7 +288,7 @@
 			Content="{Binding Name}">
 		</Button>
 	</DataTemplate>
-	
+
 	<DataTemplate x:Key="InvItemTemplate">
 		<StackPanel Orientation="Horizontal">
 			<TextBlock Text="{Binding Item}"     FontSize="16" Margin="2" Width="200" TextAlignment="Center"/>
@@ -745,7 +742,7 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		
+
 		<Style.Triggers>
 			<Trigger Property="IsChecked" Value="False">
 				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverterDark}}" />
@@ -798,9 +795,9 @@
 						<TextBlock Text="Right click to disable all skills in this column." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center"/>
 					</StackPanel>
 				</Button.ToolTip>
-				
+
 				Background="{Binding SkillID, Converter={StaticResource SkillToColorConverter}}"
-				
+
 			-->
 		</StackPanel>
 	</DataTemplate>

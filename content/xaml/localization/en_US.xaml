@@ -190,7 +190,7 @@
 	<system:String x:Key="PopulationWindow_New">new</system:String>
 	<system:String x:Key="PopulationWindow_Delete">delete</system:String>
 
-	<!--{StaticResource SettingsPage_}-->
+	<!--{x:Static lang:Resources.SettingsPage_}-->
 	<system:String x:Key="SettingsPage_">SettingsPage_</system:String>
 	<system:String x:Key="SettingsPage_Settings">Settings</system:String>
 	<system:String x:Key="SettingsPage_Game">Game</system:String>

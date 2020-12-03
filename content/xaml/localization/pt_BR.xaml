@@ -1,0 +1,10 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+	<!-- String resource that can be localized -->
+	<!--{StaticResource MainPage_}-->
+	<system:String x:Key="MainPage_">MainPage_</system:String>
+	<system:String x:Key="MainPage_Ingnomia">Void pt_BR test</system:String>
+</ResourceDictionary>

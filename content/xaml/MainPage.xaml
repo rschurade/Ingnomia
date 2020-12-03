@@ -7,6 +7,7 @@
 	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
 	xmlns:system="clr-namespace:System;assembly=mscorlib"
 	xmlns:local="clr-namespace:IngnomiaGUI"
+	xmlns:lang="clr-namespace:Ingnomia.Localization"
 	x:Name="MainMenuControl">
 
 	<UserControl.Resources>
@@ -48,23 +49,23 @@
 			<ColumnDefinition Width="1*" />
 		</Grid.ColumnDefinitions>
 
-		<TextBlock Grid.Row="0" Grid.Column="1" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{StaticResource MainPage_Ingnomia}" />
+        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{x:Static lang:Resources.MainPage_Ingnomia}" />
 
 		<Viewbox Grid.Row="1" Grid.Column="1" StretchDirection="DownOnly">
 			<StackPanel>
-				<Button x:Name="MMContinue"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_Continue}" Command="{Binding ContinueGame}" />
-				<Button x:Name="MMNewGame"   Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_NewGame}" Command="{Binding NewGame}" />
-				<Button x:Name="MMSetupGame" Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_SetUpGame}" Command="{Binding SetupGame}" />
-				<Button x:Name="MMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_LoadGame}" Command="{Binding LoadGame}" />
-				<Button x:Name="MMSettings"    Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_Settings}" Command="{Binding Settings}" />
-				<Button x:Name="MMExit"      Style="{StaticResource MenuButtonStyle}" Content="{StaticResource MainPage_Exit}" Command="{Binding Exit}" />
+				<Button x:Name="MMContinue"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_Continue}" Command="{Binding ContinueGame}" />
+				<Button x:Name="MMNewGame"   Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_NewGame}" Command="{Binding NewGame}" />
+				<Button x:Name="MMSetupGame" Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_SetUpGame}" Command="{Binding SetupGame}" />
+				<Button x:Name="MMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_LoadGame}" Command="{Binding LoadGame}" />
+				<Button x:Name="MMSettings"    Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_Settings}" Command="{Binding Settings}" />
+				<Button x:Name="MMExit"      Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_Exit}" Command="{Binding Exit}" />
 				<Grid>
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMContinue}" IsEnabled="{Binding IsMouseOver, ElementName=MMContinue}" />
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMNewGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMNewGame}" />
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMSetupGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMSetupGame}" />
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMLoadGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMLoadGame}" />
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMSettings}" IsEnabled="{Binding IsMouseOver, ElementName=MMSettings}" />
-					<ContentControl Style="{StaticResource HintStyle}" Content="{StaticResource MainPage_Hint_MMExit}" IsEnabled="{Binding IsMouseOver, ElementName=MMExit}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMContinue}" IsEnabled="{Binding IsMouseOver, ElementName=MMContinue}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMNewGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMNewGame}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMSetupGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMSetupGame}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMLoadGame}" IsEnabled="{Binding IsMouseOver, ElementName=MMLoadGame}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMSettings}" IsEnabled="{Binding IsMouseOver, ElementName=MMSettings}" />
+					<ContentControl Style="{StaticResource HintStyle}" Content="{x:Static lang:Resources.MainPage_Hint_MMExit}" IsEnabled="{Binding IsMouseOver, ElementName=MMExit}" />
 				</Grid>
 			</StackPanel>
 		</Viewbox>
