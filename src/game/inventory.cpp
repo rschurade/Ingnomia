@@ -1251,6 +1251,76 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 	return result;
 }
 
+Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QString materialID )
+{
+	ItemCountDetailed result = { 0 };
+
+	if ( materialID == "any" )
+	{
+		if ( m_hash.contains( itemID ) )
+		{
+			for ( auto it : m_hash[itemID] )
+			{
+				for ( auto item : it )
+				{
+					result.total++;
+
+					if ( item->isConstructedOrEquipped() )
+					{
+						if ( item->isPickedUp() )
+							result.equipped++;
+						else
+							result.constructed++;
+					}
+					else if ( item->isInStockpile() )
+						result.inStockpile++;
+					else
+						result.loose++;
+
+					if ( item->isInJob() )
+						result.inJob++;
+
+					result.totalValue += item->value();
+				}
+			}
+		}
+	}
+	else
+	{
+		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
+		{
+			for ( auto item : m_hash[itemID][materialID] )
+			{
+				if ( item->materialSID() == materialID )
+				{
+					result.total++;
+
+					if ( item->isConstructedOrEquipped() )
+					{
+						if ( item->isPickedUp() )
+							result.equipped++;
+						else
+							result.constructed++;
+					}
+					else if ( item->isInStockpile() )
+						result.inStockpile++;
+					else
+						result.loose++;
+
+					if ( item->isInJob() )
+						result.inJob++;
+
+					result.totalValue += item->value();
+				}
+			}
+		}
+	}
+
+	return result;
+
+	return ItemCountDetailed();
+}
+
 bool Inventory::isContainer( unsigned int id )
 {
 	//DB::execQuery( "SELECT isContainer FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );

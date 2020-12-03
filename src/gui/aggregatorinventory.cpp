@@ -18,11 +18,8 @@
 #include "aggregatorinventory.h"
 
 #include "../base/global.h"
-
 #include "../game/inventory.h"
-
 #include "../gui/strings.h"
-
 
 AggregatorInventory::AggregatorInventory( QObject* parent )
 {
@@ -34,78 +31,85 @@ AggregatorInventory::~AggregatorInventory()
 
 void AggregatorInventory::onRequestCategories()
 {
-    m_categories.clear();
-    for( const auto& cat : Global::inv().categories() )
+	m_categories.clear();
+	for ( const auto& cat : Global::inv().categories() )
 	{
-        int catTotal = 0;
-        for( const auto& group : Global::inv().groups( cat ) )
+		/*
+		int catTotal = 0;
+		for ( const auto& group : Global::inv().groups( cat ) )
 		{
-            int groupTotal = 0;
-            for( const auto& item : Global::inv().items( cat, group ) )
+			int groupTotal = 0;
+			for ( const auto& item : Global::inv().items( cat, group ) )
 			{
-                for( const auto& mat : Global::inv().materials( cat, group, item ) )
+				for ( const auto& mat : Global::inv().materials( cat, group, item ) )
 				{
-                    QString iName = S::s( "$ItemName_" + item );
-                    QString mName = S::s( "$MaterialName_" + mat );
-                    int total = Global::inv().itemCount( item, mat );
-                    int inSP = Global::inv().itemCountInStockpile( item, mat );
-                    groupTotal += total;
+					QString iName = S::s( "$ItemName_" + item );
+					QString mName = S::s( "$MaterialName_" + mat );
+					int total     = Global::inv().itemCount( item, mat );
+					int inSP      = Global::inv().itemCountInStockpile( item, mat );
+					groupTotal += total;
 				}
 			}
-            catTotal += groupTotal;
+			catTotal += groupTotal;
 		}
-        //if( catTotal > 0 )
+		if( catTotal > 0 )
+		*/
 		{
-            m_categories.append( { cat, S::s( "$CategoryName_" + cat ) } );
-        }
+			m_categories.append( { cat, S::s( "$CategoryName_" + cat ) } );
+		}
 	}
 
-    emit signalInventoryCategories( m_categories );
+	emit signalInventoryCategories( m_categories );
 }
 
 void AggregatorInventory::onRequestGroups( QString category )
 {
-    m_groups.clear();
+	m_groups.clear();
 
-    for( const auto& group : Global::inv().groups( category ) )
+	for ( const auto& group : Global::inv().groups( category ) )
 	{
-        int total = 0;
-        for( const auto& item : Global::inv().items( category, group ) )
+		/*
+		int total = 0;
+		for ( const auto& item : Global::inv().items( category, group ) )
 		{
-            for( const auto& mat : Global::inv().materials( category, group, item ) )
+			for ( const auto& mat : Global::inv().materials( category, group, item ) )
 			{
-                total += Global::inv().itemCount( item, mat );
+				total += Global::inv().itemCount( item, mat );
 			}
 		}
-        //if( total )
+		if( total )
+		*/
 		{
-            m_groups.append( { group, S::s( "$GroupName_" + group ) } );
+			m_groups.append( { group, S::s( "$GroupName_" + group ) } );
 		}
 	}
 
-    emit signalInventoryGroups( m_groups );
+	emit signalInventoryGroups( m_groups );
 }
-    
+
 void AggregatorInventory::onRequestItems( QString category, QString group )
 {
-    m_items.clear();
+	m_items.clear();
 
-    for( const auto& item : Global::inv().items( category, group ) )
+	for ( const auto& item : Global::inv().items( category, group ) )
 	{
-        for( const auto& mat : Global::inv().materials( category, group, item ) )
+		for ( const auto& mat : Global::inv().materials( category, group, item ) )
 		{
-            QString iName = S::s( "$ItemName_" + item );
-            QString mName = S::s( "$MaterialName_" + mat );
-            int total = Global::inv().itemCount( item, mat );
-            int inSP = Global::inv().itemCountInStockpile( item, mat );
+			QString iName = S::s( "$ItemName_" + item );
+			QString mName = S::s( "$MaterialName_" + mat );
+			auto result   = Global::inv().itemCountDetailed( item, mat );
 
-            //if( total > 0 )
-			{
-			    m_items.append( { iName, mName, inSP, total } );
-            }
+			m_items.append( { iName, mName, result.total, result.inJob, result.inStockpile, result.equipped, result.constructed, result.loose, result.totalValue } );
 		}
 	}
 
-    emit signalInventoryItems( m_items );
-}
+	std::sort( m_items.begin(), m_items.end(), []( const GuiInventoryItem a, const GuiInventoryItem& b ) -> bool {
+		if ( a.countTotal != b.countTotal )
+			return a.countTotal > b.countTotal;
+		if ( a.item != b.item )
+			return a.item > b.item;
+		return a.material > b.material;
+	} );
 
+	emit signalInventoryItems( m_items );
+}

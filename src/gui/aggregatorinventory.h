@@ -24,8 +24,13 @@ struct GuiInventoryItem
 {
 	QString item;
     QString material;
-    int countInStockpiles = 0;
-    int countTotal = 0;
+	unsigned int countTotal;
+	unsigned int countInJob;
+	unsigned int countInStockpiles;
+	unsigned int countEquipped;
+	unsigned int countConstructed;
+	unsigned int countLoose;
+	unsigned int totalValue;
 };
 Q_DECLARE_METATYPE( GuiInventoryItem )
 

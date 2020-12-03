@@ -90,6 +90,19 @@ public:
 	unsigned int itemCountInStockpile( QString itemID, QString materialID );
 	unsigned int itemCountNotInStockpile( QString itemID, QString materialID );
 
+	struct ItemCountDetailed
+	{
+		unsigned int total;
+		unsigned int inJob;
+		unsigned int inStockpile;
+		unsigned int equipped;
+		unsigned int constructed;
+		unsigned int loose;
+		unsigned int totalValue;
+	};
+	ItemCountDetailed itemCountDetailed( QString itemID, QString materialID );
+
+
 	bool isContainer( unsigned int item );
 
 	unsigned int isInStockpile( unsigned int id );
