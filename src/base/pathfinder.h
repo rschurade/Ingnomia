@@ -40,7 +40,8 @@ enum class PathFinderResult
 {
 	NoConnection,
 	FoundPath,
-	Running
+	Running,
+	Pending
 };
 
 class PathFinder : public QObject
@@ -54,14 +55,12 @@ private:
 	PathFinder( PathFinder const& copy ) = delete;
 	PathFinder& operator=( PathFinder const& copy ) = delete;
 
-	QThreadPool* m_threadPool;
-
 	struct PathFinderJob
 	{
 		Position start;
 		Position goal;
 		bool ignoreNoPass      = false;
-		PathFinderResult state = PathFinderResult::Running;
+		PathFinderResult state = PathFinderResult::Pending;
 		std::vector<Position> path;
 	};
 

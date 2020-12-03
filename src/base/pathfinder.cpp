@@ -31,18 +31,12 @@ PathFinder::PathFinder()
 
 PathFinder::~PathFinder()
 {
-	m_threadPool->waitForDone();
 	m_jobs.clear();
 }
 
 void PathFinder::init()
 {
-	m_threadPool = new QThreadPool( this );
 	m_jobs.clear();
-
-	int maxThreads = Config::getInstance().get( "maxThreads" ).toInt();
-	m_threadPool->setMaxThreadCount( maxThreads );
-	qDebug() << "create " << maxThreads << " pathfinding threads";
 }
 
 void PathFinder::cancelRequest( unsigned int id )
@@ -56,7 +50,7 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 	auto it = m_jobs.find( id );
 	if ( it != m_jobs.end() )
 	{
-		if ( it->state != PathFinderResult::Running )
+		if ( it->state != PathFinderResult::Running && it->state != PathFinderResult::Pending )
 		{
 			path = std::move( it->path );
 			const auto result = it->state;
@@ -101,7 +95,7 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 				start,
 				goal,
 				ignoreNoPass,
-				PathFinderResult::Running,
+				PathFinderResult::Pending,
 				{}
 			}
 		);
@@ -113,66 +107,64 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 void PathFinder::findPaths()
 {
 	using namespace std::placeholders;
+
+	std::vector<std::future<void>> tasks;
+	decltype( m_jobs ) jobs;
+
 	{
 		QMutexLocker lock( &m_mutex );
 
-		// Copy job list for the purpose of reduction
-		auto jobs = m_jobs;
-
-		// Remove jobs which already have a solution
-		for ( auto it = jobs.begin(); it != jobs.end(); )
+		// Filter jobs which are not pending yet
+		for ( auto it = m_jobs.begin(); it != m_jobs.end(); ++it )
 		{
-			if (it->state != PathFinderResult::Running)
+			if ( it.value().state == PathFinderResult::Pending )
 			{
-				it = jobs.erase( it );
-			}
-			else
-			{
-				++it;
+				it.value().state = PathFinderResult::Running;
+				jobs.insert( it.key(), it.value() );
 			}
 		}
+	}
 
-		for ( auto it = jobs.begin(); it != jobs.end(); ++it)
+	for ( auto it = jobs.begin(); it != jobs.end(); ++it)
+	{
+		// Common case is for many creatures to have the same goal, so invert path finding direction by default
+		const Position start = it->goal;
+		std::unordered_set<Position> goals = { it->start };
+		const bool ignoreNoPass = it->ignoreNoPass;
+		// Fold all other requests which share either of goal or start into this one
+		for (auto it2 = it + 1; it2 != jobs.end();)
 		{
-			// Common case is for many creatures to have the same goal, so invert path finding direction by default
-			const Position start = it->goal;
-			std::unordered_set<Position> goals = { it->start };
-			const bool ignoreNoPass = it->ignoreNoPass;
-			// Fold all other requests which share either of goal or start into this one
-			for (auto it2 = it + 1; it2 != jobs.end();)
+			if (it2->ignoreNoPass == ignoreNoPass)
 			{
-				if (it2->ignoreNoPass == ignoreNoPass)
+				if (it2->goal == start)
 				{
-					if (it2->goal == start)
-					{
-						goals.emplace( it2->start );
-						it2 = jobs.erase( it2 );
-					}
-					else if (it2->start == start)
-					{
-						goals.emplace( it2->goal );
-						it2 = jobs.erase( it2 );
-					}
-					else
-					{
-						++it2;
-					}
+					goals.emplace( it2->start );
+					it2 = jobs.erase( it2 );
+				}
+				else if (it2->start == start)
+				{
+					goals.emplace( it2->goal );
+					it2 = jobs.erase( it2 );
 				}
 				else
 				{
 					++it2;
 				}
 			}
-			PathFinderThread* pft = new PathFinderThread(
-				start,
-				std::move(goals),
-				ignoreNoPass,
-				std::bind( &PathFinder::onResult, this, _1, _2, _3, _4 ) );
-			m_threadPool->start( pft );
+			else
+			{
+				++it2;
+			}
 		}
+		tasks.emplace_back(std::async(
+			std::launch::async,
+			PathFinderThread( start, std::move( goals ), ignoreNoPass, std::bind( &PathFinder::onResult, this, _1, _2, _3, _4 ) )
+		));
 	}
-
-	m_threadPool->waitForDone();
+	for ( auto& task : tasks )
+	{
+		task.get();
+	}
 }
 
 

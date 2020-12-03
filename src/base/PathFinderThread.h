@@ -20,24 +20,19 @@
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
-#include <QRunnable>
-#include <QThread>
-
 #include <functional>
 #include <vector>
 #include <unordered_set>
 
-class PathFinderThread : public QRunnable
+class PathFinderThread
 {
 public:
 	using Path               = std::vector<Position>;
 	using CompletionCallback = std::function<void(Position, Position, bool ignoreNoPass, Path )>;
 	PathFinderThread()       = delete;
 	PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, CompletionCallback callback );
-	~PathFinderThread();
 
-	virtual void run() override;
-
+	void operator()();
 private:
 	void findPath();
 
@@ -57,7 +52,7 @@ private:
 
 	static inline double cost( const Position& lhs, const Position& rhs )
 	{
-		return sqrt( abs( lhs.x - rhs.x ) + abs( lhs.y - rhs.y ) + 2 * abs( lhs.z - rhs.z ) );
+		return std::sqrt( abs( lhs.x - rhs.x ) + abs( lhs.y - rhs.y ) + 2 * abs( lhs.z - rhs.z ) );
 	}
 
 	struct PathElement

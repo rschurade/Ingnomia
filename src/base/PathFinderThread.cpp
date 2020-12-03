@@ -34,11 +34,7 @@ PathFinderThread::PathFinderThread( Position start, const std::unordered_set<Pos
 {
 }
 
-PathFinderThread::~PathFinderThread()
-{
-}
-
-void PathFinderThread::run()
+void PathFinderThread::operator()()
 {
 	findPath();
 }
