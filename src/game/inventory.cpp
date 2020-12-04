@@ -1253,7 +1253,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 
 Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QString materialID )
 {
-	ItemCountDetailed result = { 0 };
+	ItemCountDetailed result = { 0, 0, 0, 0, 0, 0, 0 };
 
 	if ( materialID == "any" )
 	{
