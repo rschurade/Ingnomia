@@ -21,12 +21,20 @@
 #include "../base/db.h"
 #include "../base/dbhelper.h"
 #include "../base/global.h"
+#include "../base/gamestate.h"
+#include "../base/util.h"
+
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/inventory.h"
 #include "../game/plant.h"
 #include "../game/world.h"
+
+#include "../gfx/spritefactory.h";
+
 #include "../gui/strings.h"
+
+
 
 #include <QDebug>
 
@@ -38,6 +46,14 @@ AggregatorAgri::AggregatorAgri( QObject* parent )
 	qRegisterMetaType<QList<GuiPlant>>();
 	qRegisterMetaType<QList<GuiAnimal>>();
 
+
+
+	connect( &Global::fm(), &FarmingManager::signalFarmChanged, this, &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
+	connect( &Global::fm(), &FarmingManager::signalPastureChanged, this, &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
+}
+
+void AggregatorAgri::init()
+{
 	m_globalPlantInfo.clear();
 	QStringList keys = DB::ids( "Plants" );
 	keys.sort();
@@ -53,6 +69,7 @@ AggregatorAgri::AggregatorAgri( QObject* parent )
 			gp.seedCount     = 0;
 			gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", key ).toString();
 			gp.name          = S::s( "$MaterialName_" + gp.materialID );
+			gp.sprite		 = Util::smallPixmap( Global::sf().createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
 			m_globalPlantInfo.append( gp );
 
 			//QIcon icon = Util::smallPixmap( Global::sf().createSprite( harvestedItemID, { material } ), season, 0 );
@@ -71,13 +88,15 @@ AggregatorAgri::AggregatorAgri( QObject* parent )
 			gp.plantID       = key;
 			gp.seedID        = plantRow.value( "SeedItemID" ).toString();
 			gp.materialID    = plantRow.value( "Material" ).toString();
-			gp.spriteID      = plantRow.value( "ToolButtonSprite" ).toString();
+			gp.sprite        = Util::smallPixmap( Global::sf().createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
 			gp.seedCount     = 0;
 			gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", key ).toString();
 			gp.name          = S::s( "$MaterialName_" + gp.materialID );
+			
+
 			m_globalTreeInfo.append( gp );
 
-			//QIcon icon = Util::smallPixmap( Global::sf().createSprite( harvestedItemID, { material } ), season, 0 );
+			//QIcon icon = Util::smallPixmap( Global::sf().createSprite( harvestedItemID, { material } ), GameState::seasonString, 0 );
 		}
 	}
 
@@ -98,16 +117,14 @@ AggregatorAgri::AggregatorAgri( QObject* parent )
 			{
 				if ( sm.value( "ID2" ).toString() == "Adult" )
 				{
-					ga.spriteSID = sm.value( "SpriteID" ).toString();
+					ga.sprite = Util::smallPixmap( Global::sf().createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
 					break;
 				}
 			}
 			m_globalAnimalInfo.append( ga );
 		}
 	}
-
-	connect( &Global::fm(), &FarmingManager::signalFarmChanged, this, &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
-	connect( &Global::fm(), &FarmingManager::signalPastureChanged, this, &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
+	m_init = true;
 }
 
 AggregatorAgri::~AggregatorAgri()
@@ -124,6 +141,10 @@ void AggregatorAgri::onCloseWindow()
 
 void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 {
+	if( !m_init)
+	{
+		init();
+	}
 	qDebug() << "AggregatorAgri::onOpen";
 	if ( m_currentTileID != tileID )
 	{
@@ -280,7 +301,12 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 					for( auto mat : mats )
 					{
 						QString name = S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + food );
-						GuiPastureFoodItem pfi{ food, mat, name, foodSettings.contains( food + "_" + mat ) };
+						GuiPastureFoodItem pfi;
+						pfi.itemSID = food;
+						pfi.materialSID = mat;
+						pfi.name = name;
+						pfi.checked = foodSettings.contains( food + "_" + mat );
+						pfi.sprite = Util::smallPixmap( Global::sf().createSprite( food, { mat } ), GameState::seasonString, 0 );
 						m_pastureInfo.food.append( pfi );
 					}
 				}
@@ -503,6 +529,8 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.itemCount     = Global::inv().itemCount( gp.plantID, gp.materialID );
 
 						gp.name = S::s( "$MaterialName_" + gp.materialID );
+
+						gp.sprite = Util::smallPixmap( Global::sf().createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
 					}
 					m_farmInfo.product = gp;
 					emit signalUpdateFarm( m_farmInfo );
@@ -536,7 +564,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						{
 							if ( sm.value( "ID2" ).toString() == "Adult" )
 							{
-								ga.spriteSID = sm.value( "SpriteID" ).toString();
+								ga.sprite = Util::smallPixmap( Global::sf().createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
 								break;
 							}
 						}
@@ -582,7 +610,9 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.itemCount     = Global::inv().itemCount( gp.harvestedItem, gp.materialID );
 
 						gp.name     = S::s( "$MaterialName_" + gp.materialID );
-						gp.spriteID = plantRow.value( "ToolButtonSprite" ).toString();
+
+						auto pm = Util::smallPixmap( Global::sf().createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
+						gp.sprite = pm;
 					}
 					m_groveInfo.product = gp;
 					emit signalUpdateGrove( m_groveInfo );

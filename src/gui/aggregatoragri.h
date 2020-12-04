@@ -31,7 +31,7 @@ struct GuiAnimal
 	int totalcount  = 0;
 	int maleCount   = 0;
 	int femaleCount = 0;
-	QString spriteSID;
+	QPixmap sprite;
 };
 Q_DECLARE_METATYPE( GuiAnimal )
 
@@ -58,7 +58,7 @@ struct GuiPlant
 	QString harvestedItem;
 	int itemCount  = 0;
 	int plantCount = 0;
-	QString spriteID;
+	QPixmap sprite;
 };
 Q_DECLARE_METATYPE( GuiPlant )
 
@@ -96,6 +96,7 @@ struct GuiPastureFoodItem
 	QString materialSID;
 	QString name;
 	bool checked = false;
+	QPixmap sprite;
 };
 
 struct GuiPastureInfo
@@ -161,7 +162,10 @@ public:
 	AggregatorAgri( QObject* parent = nullptr );
 	~AggregatorAgri();
 
+	void init();
+
 private:
+	bool m_init = false;
 	bool m_AgriDirty             = false;
 	unsigned int m_currentTileID = 0;
 	AgriType m_currentType       = AgriType::Farm;

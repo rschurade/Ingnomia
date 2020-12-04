@@ -17,11 +17,8 @@
 */
 #include "agriculturemodel.h"
 
-#include "../../base/gamestate.h"
-#include "../../base/global.h"
 #include "../../base/util.h"
 #include "agricultureproxy.h"
-#include "../../gfx/spritefactory.h"
 #include "../strings.h"
 
 #include <NsApp/Application.h>
@@ -57,13 +54,9 @@ TreeSelectEntry::TreeSelectEntry( const GuiPlant& tree )
 	m_name = tree.name.toStdString().c_str();
 	m_sid  = tree.plantID.toStdString().c_str();
 
-	auto pm = Util::smallPixmap( Global::sf().createSprite( tree.spriteID, { tree.materialID } ), GameState::seasonString, 0 );
-
 	std::vector<unsigned char> buffer;
-
-	Util::createBufferForNoesisImage( pm, buffer );
-
-	m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	Util::createBufferForNoesisImage( tree.sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( tree.sprite.width(), tree.sprite.height(), 96, 96, buffer.data(), tree.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* TreeSelectEntry::GetName() const
@@ -100,13 +93,10 @@ AnimalSelectEntry::AnimalSelectEntry( const GuiAnimal& animal )
 	m_name = animal.name.toStdString().c_str();
 	m_sid  = animal.animalID.toStdString().c_str();
 
-	auto pm = Util::smallPixmap( Global::sf().createAnimalSprite( animal.spriteSID ), GameState::seasonString, 0 );
-
 	std::vector<unsigned char> buffer;
+	Util::createBufferForNoesisImage( animal.sprite, buffer );
 
-	Util::createBufferForNoesisImage( pm, buffer );
-
-	m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapSource = BitmapImage::Create( animal.sprite.width(), animal.sprite.height(), 96, 96, buffer.data(), animal.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* AnimalSelectEntry::GetName() const
@@ -143,13 +133,9 @@ PlantSelectEntry::PlantSelectEntry( const GuiPlant& plant )
 	m_name = plant.name.toStdString().c_str();
 	m_sid  = plant.plantID.toStdString().c_str();
 
-	auto pm = Util::smallPixmap( Global::sf().createSprite( plant.harvestedItem, { plant.materialID } ), GameState::seasonString, 0 );
-
 	std::vector<unsigned char> buffer;
-
-	Util::createBufferForNoesisImage( pm, buffer );
-
-	m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	Util::createBufferForNoesisImage( plant.sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( plant.sprite.width(), plant.sprite.height(), 96, 96, buffer.data(), plant.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* PlantSelectEntry::GetName() const
@@ -243,13 +229,9 @@ FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem& food, AgriculturePro
 	m_materialSID = food.materialSID;
 	m_checked = food.checked;
 
-	auto pm = Util::smallPixmap( Global::sf().createSprite( food.itemSID, { food.materialSID } ), GameState::seasonString, 0 );
-
 	std::vector<unsigned char> buffer;
-
-	Util::createBufferForNoesisImage( pm, buffer );
-
-	m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	Util::createBufferForNoesisImage( food.sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( food.sprite.width(), food.sprite.height(), 96, 96, buffer.data(), food.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* FoodSelectEntry::GetName() const
@@ -463,10 +445,9 @@ void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 	m_bitmapSource = nullptr;
 	if ( !info.product.plantID.isEmpty() )
 	{
-		auto pm = Util::smallPixmap( Global::sf().createSprite( info.product.harvestedItem, { info.product.materialID } ), GameState::seasonString, 0 );
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( pm, buffer );
-		m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$MaterialName_" + info.product.plantID ) + ")" ).toStdString().c_str();
 	}
@@ -535,10 +516,9 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	m_bitmapSource = nullptr;
 	if ( !info.product.animalID.isEmpty() )
 	{
-		auto pm = Util::smallPixmap( Global::sf().createAnimalSprite( info.product.spriteSID ), GameState::seasonString, 0 );
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( pm, buffer );
-		m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$CreatureName_" + info.product.animalID ) + ")" ).toStdString().c_str();
 	}
@@ -584,10 +564,10 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	m_bitmapSource = nullptr;
 	if ( !info.product.plantID.isEmpty() )
 	{
-		auto pm = Util::smallPixmap( Global::sf().createSprite( info.product.spriteID, { info.product.materialID } ), GameState::seasonString, 0 );
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( pm, buffer );
-		m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+
+		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$ItemName_" + info.product.plantID ) + ")" ).toStdString().c_str();
 	}
