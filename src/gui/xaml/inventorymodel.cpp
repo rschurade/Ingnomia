@@ -140,7 +140,10 @@ void InventoryModel::updateItems( const QList<GuiInventoryItem>& items )
 	m_items->Add( MakePtr<InvItemEntry>( "Item", "Material", "In Stockpiles", "Total in world" ) );
 	for( const auto& item : items )
 	{
-		m_items->Add( MakePtr<InvItemEntry>( item.item, item.material, QString::number( item.countInStockpiles ), QString::number( item.countTotal ) ) );
+		if( item.countTotal > 0 )
+		{
+			m_items->Add( MakePtr<InvItemEntry>( item.item, item.material, QString::number( item.countInStockpiles ), QString::number( item.countTotal ) ) );
+		}
 	}
 
 	OnPropertyChanged( "Items" );
