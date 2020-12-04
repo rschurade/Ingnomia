@@ -21,6 +21,8 @@
 
 QMap<QString, QString> DBHelper::m_spriteIDCache;
 QMap<QString, bool> DBHelper::m_spriteIsRandomCache;
+QMap<QString, bool> DBHelper::m_spriteHasAnimCache;
+QMap<QString, QString> DBHelper::m_materialColorCache;
 QMap<int, QString> DBHelper::m_materialSIDCache;
 QMap<int, QString> DBHelper::m_itemSIDCache;
 QMap<QString, int> DBHelper::m_materialUIDCache;
@@ -30,6 +32,8 @@ QMap<int, bool> DBHelper::m_itemIsContainerCache;
 QMap<int, QString> DBHelper::m_qualitySIDCache;
 QMap<int, float> DBHelper::m_qualityModCache;
 QMap<QString, QString> DBHelper::m_itemGroupCache;
+
+QMutex DBHelper::m_mutex;
 
 /*
 QStringList DBHelper::getWorkPositions( QString jobID )
@@ -41,6 +45,7 @@ QStringList DBHelper::getWorkPositions( QString jobID )
 
 QString DBH::spriteID( QString itemID )
 {
+	QMutexLocker ml( &m_mutex );
 	if ( m_spriteIDCache.contains( itemID ) )
 	{
 		return m_spriteIDCache.value( itemID );
@@ -52,6 +57,7 @@ QString DBH::spriteID( QString itemID )
 
 bool DBHelper::spriteIsRandom( QString spriteID )
 {
+	QMutexLocker ml( &m_mutex );
 	if ( m_spriteIsRandomCache.contains( spriteID ) )
 	{
 		return m_spriteIsRandomCache.value( spriteID );
@@ -59,6 +65,30 @@ bool DBHelper::spriteIsRandom( QString spriteID )
 	bool isRandom = DB::select( "HasRandom", "Sprites", spriteID ).toBool();
 	m_spriteIsRandomCache.insert( spriteID, isRandom );
 	return isRandom;
+}
+
+bool DBHelper::spriteHasAnim( QString spriteID )
+{
+	QMutexLocker ml( &m_mutex );
+	if ( m_spriteHasAnimCache.contains( spriteID ) )
+	{
+		return m_spriteHasAnimCache.value( spriteID );
+	}
+	bool hasAnim = DB::select( "Anim", "Sprites", spriteID ).toBool();
+	m_spriteHasAnimCache.insert( spriteID, hasAnim );
+	return hasAnim;
+}
+
+QString DBHelper::materialColor( QString materialID )
+{
+	QMutexLocker ml( &m_mutex );
+	if ( m_materialColorCache.contains( materialID ) )
+	{
+		return m_materialColorCache.value( materialID );
+	}
+	QString color = DB::select( "Color", "Materials", materialID ).toString();
+	m_materialColorCache.insert( materialID, color );
+	return color;
 }
 
 int DBHelper::materialToolLevel( QString material )

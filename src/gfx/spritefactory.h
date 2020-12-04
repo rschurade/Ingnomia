@@ -76,7 +76,6 @@ private:
 	Sprite* createSpriteMaterial( const QString itemSID, const QStringList materialSIDs, const QString key );
 	Sprite* getBaseSprite( const DefNode* node, const QString itemSID, const QStringList materialSIDs, int materialID = 0 );
 
-	bool createSpriteDefinition( QString spriteID );
 	QString createSpriteMaterialDryRun( const QString itemSID, const QStringList materialSIDs );
 	void getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation, const int animFrame );
 
@@ -135,6 +134,17 @@ private:
 
 	QPixmap getTintedBaseSprite( QString baseSprite, QString material );
 
+	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
+	
+	void printDebug();
+
+	QStringList pixmaps();
+	QPixmap pixmap( QString name );
+
+	QPixmap baseSprite( QString id );
+
+	QMutex m_mutex;
+
 public:
 	SpriteFactory();
 	~SpriteFactory();
@@ -142,10 +152,7 @@ public:
 	bool init();
 
 	Sprite* createSprite( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
-	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
-
 	Sprite* createAnimalSprite( const QString spriteSID, const QMap<int, int>& random = QMap<int, int>() );
-
 	Sprite* getSprite( const int id );
 
 	Sprite* setCreatureSprite( const unsigned int gnomeUID, QVariantList components, QVariantList componentsBack, bool isDead = false );
@@ -156,38 +163,24 @@ public:
 	{
 		return m_spriteCreations;
 	}
+
 	void createSprites( QList<SpriteCreation> scl );
-	void printDebug();
 
-	unsigned int size()
-	{
-		return m_spriteIDs.size();
-	}
-
-	QVector<uint8_t> pixelData( int index ) const
-	{
-		return m_pixelData[index];
-	}
+	
 
 	bool textureAdded();
 	bool creatureTextureAdded();
 
 	void forceUpdate();
 
-	unsigned int thoughtBubbleID( QString sid )
-	{
-		return m_thoughtBubbleIDs.value( sid );
-	}
-
-	QStringList pixmaps();
-	QPixmap pixmap( QString name );
-
-	QPixmap baseSprite( QString id );
-
 	void addPixmapSource( QString name, QString path );
 
-	int texesUsed()
-	{
-		return m_texesUsed;
-	}
+	unsigned int thoughtBubbleID( QString sid );
+	
+	int texesUsed();
+	
+	unsigned int size();
+	
+	QVector<uint8_t> pixelData( int index );
+	
 };

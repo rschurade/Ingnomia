@@ -392,15 +392,7 @@ unsigned char SpriteFactory::rotationToChar( const QString suffix )
 
 Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
 {
-#if DEBUG
-	for ( auto& matString : materialSIDs )
-	{
-		if ( matString == "None" )
-		{
-			qDebug() << "#" << itemSID << materialSIDs;
-		}
-	}
-#endif
+	QMutexLocker ml( &m_mutex );
 	QString key = itemSID;
 	m_randomNumbers.clear();
 	if ( random.isEmpty() )
@@ -468,28 +460,19 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 			m_sprites.append( nullptr );
 			m_sprites.append( nullptr );
 		}
-		QString ncd = itemSID + ";" + materialSIDs.join( '_' ) + ";";
-		if ( !random.isEmpty() )
-		{
-			ncd += Util::mapJoin( random );
-		}
 	}
 
 	if ( itemSID.endsWith( "Wall" ) )
 	{
+		ml.unlock();
 		createSprite( itemSID + "Short", materialSIDs, random );
 	}
-	/*
-	if( itemSID.startsWith( "GrassSoilU" ) )
-	{
-		QImage img_ = sprite->pixmap( "Spring", 0 ).toImage();
-		img_.save( "d:/tmp/gnome/" + key +  ".png", "PNG" );
-	}
-	*/
 
 	return sprite;
 }
 
+// used for loading definitions, doesn't check if sprite exists as it will not exist and 
+// doesn't create short walls because they are in the definition anyway
 Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
 {
 	QString key = itemSID;
@@ -554,18 +537,12 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 		m_sprites.append( nullptr );
 		m_sprites.append( nullptr );
 	}
-
-	QString ncd = itemSID + ";" + materialSIDs.join( '_' ) + ";";
-	if ( !random.isEmpty() )
-	{
-		ncd += Util::mapJoin( random );
-	}
-
 	return sprite;
 }
 
 Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<int, int>& random )
 {
+	QMutexLocker ml( &m_mutex );
 	QString key = spriteSID;
 	m_randomNumbers.clear();
 	if ( random.isEmpty() )
@@ -620,11 +597,6 @@ bool SpriteFactory::containsRandom( const QString itemSID, const QStringList mat
 		spriteSID = itemSID;
 	}
 	return DBH::spriteIsRandom( spriteSID );
-}
-
-bool SpriteFactory::createSpriteDefinition( QString spriteID )
-{
-	return true;
 }
 
 QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const QStringList materialSIDs )
@@ -710,7 +682,7 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 
 		sprite->opacity       = m_opacity;
 		sprite->randomNumbers = m_randomNumbers;
-		sprite->anim          = DB::select( "Anim", "Sprites", spriteSID ).toBool();
+		sprite->anim          = DBH::spriteHasAnim( spriteSID );
 	}
 	return sprite;
 }
@@ -1130,6 +1102,7 @@ QString SpriteFactory::getMaterialType( const QString materialSID )
 
 Sprite* SpriteFactory::getSprite( const int id )
 {
+	QMutexLocker ml( &m_mutex );
 	if ( m_sprites.size() > id )
 	{
 		return m_sprites[id];
@@ -1402,12 +1375,13 @@ QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material
 	}
 
 	QPixmap pm = m_baseSprites[baseSprite];
-	tintPixmap( pm, Util::string2QColor( DB::select( "Color", "Materials", material ).toString() ) );
+	tintPixmap( pm, Util::string2QColor( DBH::materialColor( material ) ) );
 	return pm;
 }
 
 Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVariantList components, QVariantList componentsBack, bool isDead )
 {
+	QMutexLocker ml( &m_mutex );
 	QPixmap pmfr( 32, 32 );
 	pmfr.fill( QColor( 0, 0, 0, 0 ) );
 	QPainter painter( &pmfr );
@@ -1585,6 +1559,7 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 
 Sprite* SpriteFactory::getCreatureSprite( const unsigned int id, unsigned int& spriteID )
 {
+	QMutexLocker ml( &m_mutex );
 	if ( m_creatureSpriteIDs.contains( id ) )
 	{
 		spriteID = m_creatureSpriteIDs[id];
@@ -1635,4 +1610,28 @@ QPixmap SpriteFactory::baseSprite( QString id )
 	}
 	qDebug() << "Base sprite " << id << " doesn't exist";
 	return QPixmap( 32, 32 );
+}
+
+unsigned int SpriteFactory::thoughtBubbleID( QString sid )
+{
+	QMutexLocker ml( &m_mutex );
+	return m_thoughtBubbleIDs.value( sid );
+}
+
+int SpriteFactory::texesUsed()
+{
+	QMutexLocker ml( &m_mutex );
+	return m_texesUsed;
+}
+
+unsigned int SpriteFactory::size()
+{
+	QMutexLocker ml( &m_mutex );
+	return m_spriteIDs.size();
+}
+
+QVector<uint8_t> SpriteFactory::pixelData( int index )
+{
+	QMutexLocker ml( &m_mutex );
+	return m_pixelData[index];
 }

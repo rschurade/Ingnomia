@@ -28,6 +28,8 @@ public:
 
 	static QString spriteID( QString itemID );
 	static bool spriteIsRandom( QString spriteID );
+	static bool spriteHasAnim( QString spriteID );
+	static QString materialColor( QString materialID );
 
 	static int materialToolLevel( QString material );
 
@@ -52,6 +54,8 @@ private:
 
 	static QMap<QString, QString> m_spriteIDCache;
 	static QMap<QString, bool> m_spriteIsRandomCache;
+	static QMap<QString, bool> m_spriteHasAnimCache;
+	static QMap<QString, QString> m_materialColorCache;
 
 	static QMap<int, QString> m_materialSIDCache;
 	static QMap<int, QString> m_itemSIDCache;
@@ -62,4 +66,7 @@ private:
 	static QMap<int, QString> m_qualitySIDCache;
 	static QMap<int, float> m_qualityModCache;
 	static QMap<QString, QString> m_itemGroupCache;
+
+
+	static QMutex m_mutex;
 };
