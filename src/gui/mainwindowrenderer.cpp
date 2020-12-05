@@ -87,7 +87,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 		QMessageBox msgBox;
 		msgBox.setText( "Failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3" );
 		msgBox.exec();
-		exit( 0 );
+		abort();
 	}
 
 	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VENDOR ) );

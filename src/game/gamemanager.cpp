@@ -145,13 +145,13 @@ void GameManager::init()
 	if ( !S::gi().init() )
 	{
 		qDebug() << "Failed to init translation.";
-		exit( 0 );
+		abort();
 	}
 
 	if ( !Global::sf().init() )
 	{
 		qDebug() << "Failed to init SpriteFactory.";
-		exit( 0 );
+		abort();
 	}
 }
 

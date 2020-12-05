@@ -67,7 +67,7 @@ QSqlDatabase& DB::getDB()
 		if ( !db.open() )
 		{
 			qDebug() << "Error: create in memory db";
-			exit( 0 );
+			abort();
 		}
 		else
 		{

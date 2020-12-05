@@ -97,7 +97,7 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 		if ( !actions.contains( domElement.attribute( "ID" ) ) )
 		{
 			qCritical() << "Action " << domElement.attribute( "ID" ) << " doesn't exist in behaviorMap";
-			exit( 0 );
+			abort();
 		}
 		bn = parent->addAction( domElement.attribute( "ID" ), actions[domElement.attribute( "ID" )] );
 	}
@@ -106,7 +106,7 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 		if ( !actions.contains( domElement.attribute( "ID" ) ) )
 		{
 			qCritical() << "Condition doesn't exist in behaviorMap:" << domElement.attribute( "ID" );
-			exit( 0 );
+			abort();
 		}
 		bn = parent->addConditional( domElement.attribute( "ID" ), actions[domElement.attribute( "ID" )] );
 	}

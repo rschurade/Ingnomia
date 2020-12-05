@@ -155,7 +155,7 @@ void NewGameSettings::loadEmbarkMap()
 		else
 		{
 			qDebug() << "Unable to find new game config!";
-			exit( 0 );
+			abort();
 		}
 	}
 	auto embarkMap = sd.toVariant().toMap();

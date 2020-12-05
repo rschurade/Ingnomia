@@ -612,7 +612,7 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 	if ( !m_spriteDefinitions.contains( spriteSID ) )
 	{
 		qDebug() << "***ERROR*** sprite definition " << spriteSID << " for item " << itemSID << " doesn't exist.";
-		//exit( 0 );
+		//abort();
 	}
 	DefNode* dn = m_spriteDefinitions.value( spriteSID );
 	if ( dn )
@@ -655,7 +655,7 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 	if ( !m_spriteDefinitions.contains( spriteSID ) )
 	{
 		qDebug() << "***ERROR*** sprite definition " << spriteSID << " for item " << itemSID << " doesn't exist.";
-		//exit( 0 );
+		//abort();
 	}
 	DefNode* dn    = m_spriteDefinitions.value( spriteSID );
 	Sprite* sprite = nullptr;

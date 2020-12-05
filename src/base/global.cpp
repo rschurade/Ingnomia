@@ -150,7 +150,7 @@ void Global::reset()
 	if ( !loadBehaviorTrees() )
 	{
 		qCritical() << "failed to load behavior trees";
-		exit( 0 );
+		abort();
 	}
 
 	needIDs.clear();

@@ -146,7 +146,7 @@ int main( int argc, char* argv[] )
 	if ( !Config::getInstance().init() )
 	{
 		qDebug() << "Failed to init Config.";
-		exit( 0 );
+		abort();
 	}
 
 	DB::init();
@@ -154,7 +154,7 @@ int main( int argc, char* argv[] )
 	if ( !S::gi().init() )
 	{
 		qDebug() << "Failed to init translation.";
-		exit( 0 );
+		abort();
 	}
 
 	Config::getInstance().set( "CurrentVersion", PROJECT_VERSION );
@@ -210,7 +210,6 @@ int main( int argc, char* argv[] )
 INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
 {
 	return main( 0, nullptr );
-	return 0;
 }
 
 extern "C"
