@@ -15,6 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#pragma optimize( "", off) // prevent optimizer from interfering with our crash-producing code
+
 #include "base/config.h"
 #include "base/db.h"
 #include "gui/mainwindow.h"
@@ -37,8 +39,17 @@
 #endif
 #include "version.h"
 
+#define WIDEN2(x) L ## x
+#define WIDEN(x) WIDEN2(x)
+
 QTextStream* out = 0;
 bool verbose     = false;
+
+#ifdef HAVE_BUGSPLAT
+#include <BugSplat.h>
+#include "gui/license.h"
+MiniDmpSender *mpSender = nullptr;
+#endif // _WIN32
 
 void clearLog()
 {
@@ -136,6 +147,25 @@ int main( int argc, char* argv[] )
 			<< "build" << BUILD_ID;
 #endif // GIT_REPO
 
+#ifdef HAVE_BUGSPLAT
+	// BugSplat initialization.  Post crash reports to the "Fred" database for application "myConsoleCrasher" version "1.0"
+	mpSender = new MiniDmpSender( bugsplat_db, WIDEN(PROJECT_NAME), WIDEN(PROJECT_VERSION), NULL, MDSF_USEGUARDMEMORY | MDSF_LOGFILE | MDSF_PREVENTHIJACKING);
+
+	// The following calls add support for collecting crashes for abort(), vectored exceptions, out of memory,
+	// pure virtual function calls, and for invalid parameters for OS functions.
+	// These calls should be used for each module that links with a separate copy of the CRT.
+	SetGlobalCRTExceptionBehavior();
+	SetPerThreadCRTExceptionBehavior();  // This call needed in each thread of your app
+
+	// A guard buffer of 20mb is needed to catch OutOfMemory crashes
+	mpSender->setGuardByteBufferSize(20*1024*1024);
+
+	// Set optional default values for user, email, and user description of the crash.
+	//mpSender->setDefaultUserName( L"Crash reporter");
+	//mpSender->setDefaultUserEmail( L"user@mail.com");
+	//mpSender->setDefaultUserDescription( L"This is the default user crash description.");
+#endif // _WIN32
+
 	QApplication a( argc, argv );
 	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );
 	QCoreApplication::setOrganizationDomain( PROJECT_HOMEPAGE_URL );
@@ -146,7 +176,7 @@ int main( int argc, char* argv[] )
 	if ( !Config::getInstance().init() )
 	{
 		qDebug() << "Failed to init Config.";
-		abort();
+		exit( 0 );
 	}
 
 	DB::init();
@@ -154,7 +184,7 @@ int main( int argc, char* argv[] )
 	if ( !S::gi().init() )
 	{
 		qDebug() << "Failed to init translation.";
-		abort();
+		exit( 0 );
 	}
 
 	Config::getInstance().set( "CurrentVersion", PROJECT_VERSION );
@@ -203,6 +233,7 @@ int main( int argc, char* argv[] )
 	{
 		w.onFullScreen( true );
 	}
+
 	return a.exec();
 }
 
@@ -210,6 +241,7 @@ int main( int argc, char* argv[] )
 INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
 {
 	return main( 0, nullptr );
+	return 0;
 }
 
 extern "C"

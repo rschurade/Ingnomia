@@ -8,3 +8,7 @@ static const char licenseName[] = "@NOESIS_LICENSE_NAME@";
 static const char licenseKey[]  = "@NOESIS_LICENSE_KEY@";
 
 static_assert( sizeof( licenseName ) > 1 && sizeof( licenseKey ) > 1, "Please provide a working Noesis license or Noesis will stop working after a few minutes" );
+
+#ifdef HAVE_BUGSPLAT
+static const wchar_t* bugsplat_db = L"@BUGSPLAT_DB@";
+#endif
