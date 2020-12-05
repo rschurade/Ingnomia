@@ -15,8 +15,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#pragma optimize( "", off) // prevent optimizer from interfering with our crash-producing code
-
 #include "base/config.h"
 #include "base/db.h"
 #include "gui/mainwindow.h"
@@ -176,7 +174,7 @@ int main( int argc, char* argv[] )
 	if ( !Config::getInstance().init() )
 	{
 		qDebug() << "Failed to init Config.";
-		exit( 0 );
+		abort();
 	}
 
 	DB::init();
@@ -184,7 +182,7 @@ int main( int argc, char* argv[] )
 	if ( !S::gi().init() )
 	{
 		qDebug() << "Failed to init translation.";
-		exit( 0 );
+		abort();
 	}
 
 	Config::getInstance().set( "CurrentVersion", PROJECT_VERSION );
