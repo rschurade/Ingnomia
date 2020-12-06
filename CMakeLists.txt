@@ -28,9 +28,7 @@ find_package(Noesis REQUIRED)
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
 set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
 
-find_package(BugSplat)
 set(BUGSPLAT_DB "" CACHE STRING "BSDB")
-
 
 # Without this, paths are not relative in the sources list
 cmake_policy(SET CMP0076 NEW)
@@ -97,13 +95,6 @@ target_link_libraries(${PROJECT_NAME}
 		exprtk
 )
 
-if(BUGSPLAT_FOUND)
-target_link_libraries(${PROJECT_NAME}
-	PRIVATE
-		BugSplat
-)
-endif()
-
 # Noesis license
 configure_file(
 	${CMAKE_SOURCE_DIR}/src/gui/license.h.in
@@ -152,6 +143,20 @@ if(MSVC)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
 
+if(MSVC AND NOT BUGSPLAT_DB STREQUAL "")
+	find_package(BugSplat REQUIRED)
+
+	target_link_libraries(${PROJECT_NAME}
+		PRIVATE
+			BugSplat
+	)
+
+	get_target_property(BUGSPLAT_DLL BugSplat LOCATION)
+	get_target_property(BUGSPLAT_RC_DLL BugSplatRc LOCATION)
+	get_target_property(BUGSPLAT_SEND_DLL BugSplatSendReport LOCATION)
+	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL} ${BUGSPLAT_RC_DLL} ${BUGSPLAT_SEND_DLL})
+endif()
+
 # Install target
 install(
 	TARGETS ${PROJECT_NAME}
@@ -162,13 +167,6 @@ get_target_property(STEAM_DLL Steam LOCATION)
 get_target_property(NOESIS_DLL Noesis LOCATION)
 list(APPEND RUNTIME_DLLS ${STEAM_DLL})
 list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
-
-if(BUGSPLAT_FOUND)
-	get_target_property(BUGSPLAT_DLL BugSplat LOCATION)
-	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL1})
-	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL2})
-	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL3})
-endif()
 
 install(
 	FILES

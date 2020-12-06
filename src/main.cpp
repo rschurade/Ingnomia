@@ -17,6 +17,7 @@
 */
 #include "base/config.h"
 #include "base/db.h"
+#include "base/crashhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/strings.h"
 
@@ -37,17 +38,8 @@
 #endif
 #include "version.h"
 
-#define WIDEN2(x) L ## x
-#define WIDEN(x) WIDEN2(x)
-
 QTextStream* out = 0;
 bool verbose     = false;
-
-#ifdef HAVE_BUGSPLAT
-#include <BugSplat.h>
-#include "gui/license.h"
-MiniDmpSender *mpSender = nullptr;
-#endif // _WIN32
 
 void clearLog()
 {
@@ -137,6 +129,7 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 
 int main( int argc, char* argv[] )
 {
+	setupCrashHandler();
 	clearLog();
 	qInstallMessageHandler( &logOutput );
 	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION;
@@ -144,26 +137,6 @@ int main( int argc, char* argv[] )
 	qInfo() << "Built from" << GIT_REPO << GIT_REF << "(" << GIT_SHA << ")"
 			<< "build" << BUILD_ID;
 #endif // GIT_REPO
-
-#ifdef HAVE_BUGSPLAT
-	// BugSplat initialization.  Post crash reports to the "Fred" database for application "myConsoleCrasher" version "1.0"
-	mpSender = new MiniDmpSender( bugsplat_db, WIDEN(PROJECT_NAME), WIDEN(PROJECT_VERSION), NULL, MDSF_USEGUARDMEMORY | MDSF_LOGFILE | MDSF_PREVENTHIJACKING);
-
-	// The following calls add support for collecting crashes for abort(), vectored exceptions, out of memory,
-	// pure virtual function calls, and for invalid parameters for OS functions.
-	// These calls should be used for each module that links with a separate copy of the CRT.
-	SetGlobalCRTExceptionBehavior();
-	SetPerThreadCRTExceptionBehavior();  // This call needed in each thread of your app
-
-	// A guard buffer of 20mb is needed to catch OutOfMemory crashes
-	mpSender->setGuardByteBufferSize(20*1024*1024);
-
-	// Set optional default values for user, email, and user description of the crash.
-	//mpSender->setDefaultUserName( L"Crash reporter");
-	//mpSender->setDefaultUserEmail( L"user@mail.com");
-	//mpSender->setDefaultUserDescription( L"This is the default user crash description.");
-	qDebug() << "Compiled with BugSplat";
-#endif // _WIN32
 
 	QApplication a( argc, argv );
 	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );

@@ -30,7 +30,7 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include "../gfx/spritefactory.h";
+#include "../gfx/spritefactory.h"
 
 #include "../gui/strings.h"
 

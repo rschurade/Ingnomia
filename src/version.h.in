@@ -14,3 +14,4 @@
 #cmakedefine GIT_REF "@GIT_REF@"
 #cmakedefine GIT_SHA "@GIT_SHA@"
 #cmakedefine BUILD_ID "@BUILD_ID@"
+#cmakedefine BUGSPLAT_DB "@BUGSPLAT_DB@"

@@ -5,7 +5,6 @@ find_path(STEAM_INCLUDE_DIR
 		steam/steam_api.h
 	HINTS
 		${STEAM_SDK_ROOT}/public
-	REQUIRED
 )
 
 if(UNIX)
@@ -14,7 +13,6 @@ if(UNIX)
 			steam_api
 		HINTS
 			${STEAM_SDK_ROOT}/redistributable_bin/linux64
-		REQUIRED
 	)
 	set(STEAM_DLL ${STEAM_LIBRARY})
 else()
@@ -23,14 +21,12 @@ else()
 			steam_api64
 		HINTS
 			${STEAM_SDK_ROOT}/redistributable_bin/win64
-		REQUIRED
 	)
 	find_file(STEAM_DLL
 		NAMES
 			steam_api64.dll
 		HINTS
 			${STEAM_SDK_ROOT}/redistributable_bin/win64
-		REQUIRED
 	)
 endif()
 

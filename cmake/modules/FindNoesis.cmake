@@ -5,7 +5,6 @@ find_path(NOESIS_INCLUDE_DIR
 		NoesisPCH.h
 	HINTS
 		${NOESIS_ROOT}/Include
-	REQUIRED
 )
 
 find_library(NOESIS_LIBRARY
@@ -14,7 +13,6 @@ find_library(NOESIS_LIBRARY
 	HINTS
 		${NOESIS_ROOT}/Bin/linux_x86_64
 		${NOESIS_ROOT}/Lib/windows_x86_64
-	REQUIRED
 )
 
 if(WIN32)
@@ -23,7 +21,6 @@ if(WIN32)
 			Noesis.dll
 		HINTS
 			${NOESIS_ROOT}/Bin/windows_x86_64
-		REQUIRED
 	)
 else()
 	set(NOESIS_DLL ${NOESIS_LIBRARY})
