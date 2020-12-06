@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.8.2]
 
 ### Fixed
 - suboptimal paths due to wrong heuristic in pathfinding
@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - prevent creatures from walking into deep water
 - constrain camera to actual game area
 - reasonable speed range for WASD
+- load game screen updates without restarting now
 
 ### Added
 - ui elements to show state of and toggle certain render options
