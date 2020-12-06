@@ -19,13 +19,6 @@ project(Ingnomia
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
-set(USE_BUGSPLAT OFF CACHE BOOL "USEBS")
-    
-if(USE_BUGSPLAT)
-	find_package(BugSplat REQUIRED)
-	set(BUGSPLAT_DB "" CACHE STRING "BSDB")
-endif()
-
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(Steam REQUIRED)
@@ -35,6 +28,8 @@ find_package(Noesis REQUIRED)
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
 set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
 
+find_package(BugSplat)
+set(BUGSPLAT_DB "" CACHE STRING "BSDB")
 
 
 # Without this, paths are not relative in the sources list
@@ -102,7 +97,7 @@ target_link_libraries(${PROJECT_NAME}
 		exprtk
 )
 
-if(USE_BUGSPLAT)
+if(BUGSPLAT_FOUND)
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		BugSplat
@@ -168,9 +163,11 @@ get_target_property(NOESIS_DLL Noesis LOCATION)
 list(APPEND RUNTIME_DLLS ${STEAM_DLL})
 list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
 
-if(USE_BUGSPLAT)
+if(BUGSPLAT_FOUND)
 	get_target_property(BUGSPLAT_DLL BugSplat LOCATION)
-	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL})
+	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL1})
+	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL2})
+	list(APPEND RUNTIME_DLLS ${BUGSPLAT_DLL3})
 endif()
 
 install(
