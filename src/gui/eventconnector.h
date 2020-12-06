@@ -29,6 +29,7 @@
 #include "aggregatorneighbors.h"
 #include "aggregatormilitary.h"
 #include "aggregatorsettings.h"
+#include "aggregatorloadgame.h"
 
 #include <QObject>
 
@@ -103,6 +104,10 @@ public:
 	{
 		return m_inventoryAggregator;
 	}
+	AggregatorLoadGame* aggregatorLoadGame()
+	{
+		return m_loadGameAggregator;
+	}
 
 private:
 	AggregatorTileInfo* m_tiAggregator = nullptr;
@@ -117,6 +122,7 @@ private:
 	AggregatorMilitary* m_militaryAggregator = nullptr;
 	AggregatorSettings* m_settingsAggregator = nullptr;
 	AggregatorInventory* m_inventoryAggregator = nullptr;
+	AggregatorLoadGame* m_loadGameAggregator = nullptr;
 
 public slots:
 	void onExit();

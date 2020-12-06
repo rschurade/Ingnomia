@@ -17,31 +17,32 @@
 */
 #pragma once
 
-#include "ViewModel.h"
+#include "../aggregatorloadgame.h"
+#include "LoadGameModel.h"
 
 #include <QObject>
 
-class ProxyMainView : public QObject
+class LoadGameProxy : public QObject
 {
 	Q_OBJECT
 
 public:
-	ProxyMainView( QObject* parent = nullptr );
-	~ProxyMainView();
+	LoadGameProxy( QObject* parent = nullptr );
+	void setParent( IngnomiaGUI::LoadGameModel* parent );
 
-	void setParent( IngnomiaGUI::ViewModel* parent );
-
-    void requestLoadScreenUpdate();
+    void requestKingdoms();
+    void requestSaveGames( const QString path );
 
 private:
-	IngnomiaGUI::ViewModel* m_parent = nullptr;
+	IngnomiaGUI::LoadGameModel* m_parent = nullptr;
+
+
 
 private slots:
-	void onWindowSize( int w, int h );
-	void onKeyEsc();
-
-    void onUIScale( float value );
-
+    void onKingdoms( const QList<GuiSaveInfo>& kingdoms );
+    void onSaveGames( const QList<GuiSaveInfo>& saveGames );
+    
 signals:
-    void signalRequestLoadScreenUpdate();
+	void signalRequestKingdoms();
+    void signalRequestSaveGames( const QString path );
 };

@@ -175,6 +175,7 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"/>
+			<TextBlock Text="{Binding Dir}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="16" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"/>
 			<!--<Button  x:Name="RemoveSI"  Content="Remove" Command="{Binding ElementName=ICStartingItems, Path=DataContext.RemoveItem}" CommandParameter="{Binding ElementName=ItemName, Path=Tag}" Grid.Column="4" /> -->
 			<TextBlock Text="{Binding Version}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="0"/>
 			<TextBlock Text="{Binding Date}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="1"/>

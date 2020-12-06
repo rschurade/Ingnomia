@@ -17,31 +17,38 @@
 */
 #pragma once
 
-#include "ViewModel.h"
-
 #include <QObject>
 
-class ProxyMainView : public QObject
+struct GuiSaveInfo
+{
+    QString name;
+    QString folder;
+    QString dir;
+    QString version;
+    QString date;
+    bool compatible = true;
+};
+
+Q_DECLARE_METATYPE( GuiSaveInfo )
+
+
+class AggregatorLoadGame : public QObject
 {
 	Q_OBJECT
 
 public:
-	ProxyMainView( QObject* parent = nullptr );
-	~ProxyMainView();
-
-	void setParent( IngnomiaGUI::ViewModel* parent );
-
-    void requestLoadScreenUpdate();
+	AggregatorLoadGame( QObject* parent = nullptr );
+	~AggregatorLoadGame();
 
 private:
-	IngnomiaGUI::ViewModel* m_parent = nullptr;
+	QList<GuiSaveInfo> m_kingdomList;
+    QList<GuiSaveInfo> m_gameList;
 
-private slots:
-	void onWindowSize( int w, int h );
-	void onKeyEsc();
-
-    void onUIScale( float value );
+public slots:
+	void onRequestKingdoms();
+    void onRequestSaveGames( const QString path );
 
 signals:
-    void signalRequestLoadScreenUpdate();
+	void signalKingdoms( const QList<GuiSaveInfo>& kingdoms );
+    void signalSaveGames( const QList<GuiSaveInfo>& kingdoms );
 };

@@ -41,6 +41,7 @@ EventConnector::EventConnector( QObject* parent ) :
 	m_militaryAggregator     = new AggregatorMilitary( this );
 	m_settingsAggregator	 = new AggregatorSettings( this );
 	m_inventoryAggregator    = new AggregatorInventory( this );
+	m_loadGameAggregator	 = new AggregatorLoadGame( this );
 }
 
 EventConnector::~EventConnector()

@@ -282,6 +282,7 @@ void ViewModel::OnLoadGame( BaseComponent* )
 {
 	qDebug() << "ViewModel OnLoadGame";
 	NS_LOG_INFO( "ViewModel OnLoadGame" );
+	m_proxy->requestLoadScreenUpdate();
 	SetState( State::LoadGame );
 }
 

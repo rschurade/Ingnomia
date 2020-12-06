@@ -19,6 +19,7 @@
 
 #include "../eventconnector.h"
 #include "../aggregatorsettings.h"
+#include "../aggregatorloadgame.h"
 
 #include "ViewModel.h"
 
@@ -30,7 +31,7 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
 
-
+	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
 }
 
 ProxyMainView::~ProxyMainView()
@@ -64,4 +65,9 @@ void ProxyMainView::onUIScale( float value )
 	{
 		m_parent->setUIScale( value );
 	}
+}
+
+void ProxyMainView::requestLoadScreenUpdate()
+{
+	emit signalRequestLoadScreenUpdate();
 }

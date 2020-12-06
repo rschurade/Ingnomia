@@ -18,6 +18,8 @@
 #ifndef __MENU3D_LOADGAMEMODEL_H__
 #define __MENU3D_LOADGAMEMODEL_H__
 
+#include "../aggregatorloadgame.h"
+
 #include <NsApp/DelegateCommand.h>
 #include <NsApp/NotifyPropertyChangedBase.h>
 #include <NsCore/Noesis.h>
@@ -28,6 +30,8 @@
 #include <NsGui/Collection.h>
 
 #include <QString>
+
+class LoadGameProxy;
 
 namespace Noesis
 {
@@ -42,10 +46,11 @@ namespace IngnomiaGUI
 struct SaveItem : public Noesis::BaseComponent
 {
 public:
-	SaveItem( QString name, QString path, QString version, QString date, bool compatible = true );
+	SaveItem( QString name, QString path, QString dir, QString version, QString date, bool compatible = true );
 
 	Noesis::String _name;
 	Noesis::String _path;
+	Noesis::String _dir;
 	Noesis::String _version;
 	Noesis::String _date;
 	bool _compatible;
@@ -59,7 +64,12 @@ class LoadGameModel final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	LoadGameModel();
 
+	void updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms );
+	void updateSaveGames( const QList<GuiSaveInfo>& kingdoms );
+
 private:
+	LoadGameProxy* m_proxy = nullptr;
+
 	const NoesisApp::DelegateCommand* GetLoadGame() const;
 
 	void OnLoadGame( BaseComponent* param );
@@ -75,8 +85,7 @@ private:
 	void SetSelectedGame( SaveItem* item );
 	SaveItem* GetSelectedGame() const;
 
-	void updateSavedKingdoms();
-	void updateSavedGames( const Noesis::String& path );
+	
 
 	NoesisApp::DelegateCommand _loadGame;
 

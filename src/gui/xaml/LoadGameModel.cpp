@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "LoadGameModel.h"
+#include "loadgameproxy.h"
 
 #include "../../base/io.h"
 
@@ -26,30 +27,22 @@
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
 
-#include <QDateTime>
 #include <QDebug>
-#include <QDir>
-#include <QDirIterator>
-#include <QFile>
-#include <QFileInfo>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QStandardPaths>
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-SaveItem::SaveItem( QString name, QString path, QString version, QString date, bool compatible )
+SaveItem::SaveItem( QString name, QString path, QString dir, QString version, QString date, bool compatible )
 {
 	_name       = name.toStdString().c_str();
 	_path       = path.toStdString().c_str();
+	_dir        = dir.toStdString().c_str();
 	_version    = version.toStdString().c_str();
 	_date       = date.toStdString().c_str();
 	_compatible = compatible;
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,17 +50,15 @@ LoadGameModel::LoadGameModel() :
 	_selectedKingdom( nullptr ),
 	_selectedGame( nullptr )
 {
+	m_proxy = new LoadGameProxy;
+	m_proxy->setParent( this );
+
 	_loadGame.SetExecuteFunc( MakeDelegate( this, &LoadGameModel::OnLoadGame ) );
 
 	_savedKingdoms = *new ObservableCollection<SaveItem>();
 	_savedGames    = *new ObservableCollection<SaveItem>();
 
-	updateSavedKingdoms();
-
-	if ( _savedKingdoms->Count() > 0 )
-	{
-		SetSelectedKingdom( _savedKingdoms->Get( 0 ) );
-	}
+	m_proxy->requestKingdoms();
 }
 
 Noesis::ObservableCollection<SaveItem>* LoadGameModel::GetSavedKingdoms() const
@@ -80,99 +71,38 @@ Noesis::ObservableCollection<SaveItem>* LoadGameModel::GetSavedGames() const
 	return _savedGames;
 }
 
-void LoadGameModel::updateSavedKingdoms()
+void LoadGameModel::updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms )
 {
 	_savedKingdoms->Clear();
 
-	QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
-
-	QDir dir( sfolder );
-	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
-	dir.setSorting( QDir::Time );
-
-	auto entryList = dir.entryList();
-
-	for ( auto sdir : entryList )
+	for( const auto& gsk : kingdoms )
 	{
-		QString kingdomFolder = sfolder + sdir;
-
-		QDirIterator gdirectories( kingdomFolder, QDir::Dirs | QDir::NoDotAndDotDot );
-		QStringList gdirs;
-		while ( gdirectories.hasNext() )
-		{
-			gdirectories.next();
-			gdirs.push_back( gdirectories.filePath() );
-		}
-		if ( !gdirs.empty() )
-		{
-			QString gdir = gdirs.last();
-
-			QJsonDocument jd;
-			IO::loadFile( gdir + "/game.json", jd );
-
-			if ( jd.isArray() )
-			{
-				QJsonArray ja = jd.array();
-
-				QVariantMap vm = ja.toVariantList().first().toMap();
-
-				QFile file( gdir + "/game.json" );
-				QFileInfo fi( file );
-
-				QString name    = vm.value( "kingdomName" ).toString();
-				QString version = vm.value( "Version" ).toString();
-				QString date    = fi.lastModified().toString();
-
-				_savedKingdoms->Add( MakePtr<SaveItem>( name, kingdomFolder, version, date ) );
-			}
-		}
+		_savedKingdoms->Add( MakePtr<SaveItem>( gsk.name, gsk.folder, "", gsk.version, gsk.date ) );
 	}
+
 	OnPropertyChanged( "SavedKingdoms" );
+
+	if ( _savedKingdoms->Count() > 0 )
+	{
+		SetSelectedKingdom( _savedKingdoms->Get( 0 ) );
+	}
 }
 
-void LoadGameModel::updateSavedGames( const Noesis::String& path )
+void LoadGameModel::updateSaveGames( const QList<GuiSaveInfo>& saveGames )
 {
 	_savedGames->Clear();
-	QString kFolder( path.Str() );
-	QDir dir( kFolder );
-	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
-	dir.setSorting( QDir::Time );
 
-	auto dirs = dir.entryList();
-
-	for ( auto sdir : dirs )
+	for( const auto& gsi : saveGames )
 	{
-		QString folder = kFolder + "/" + sdir;
-
-		QJsonDocument jd;
-		IO::loadFile( folder + "/game.json", jd );
-		QJsonArray ja  = jd.array();
-		QVariantMap vm = ja.toVariantList().first().toMap();
-
-		QString version = IO::versionString( folder );
-		bool compatible = true;
-
-		if ( !IO::saveCompatible( folder ) )
-		{
-			version += " - not compatible - sorry broke save games again";
-			compatible = false;
-		}
-
-		QString name = vm.value( "kingdomName" ).toString();
-
-		QFile file( folder + "/game.json" );
-		QFileInfo fi( file );
-		QString date( fi.lastModified().toString() );
-
-		_savedGames->Add( MakePtr<SaveItem>( name, folder, version, date, compatible ) );
+		_savedGames->Add( MakePtr<SaveItem>( gsi.name, gsi.folder, gsi.dir, gsi.version, gsi.date, gsi.compatible ) );
 	}
+
+	OnPropertyChanged( "SavedGames" );
 
 	if ( _savedGames->Count() > 0 )
 	{
 		SetSelectedGame( _savedGames->Get( 0 ) );
 	}
-
-	OnPropertyChanged( "SavedGames" );
 }
 
 void LoadGameModel::SetSelectedKingdom( SaveItem* item )
@@ -185,7 +115,7 @@ void LoadGameModel::SetSelectedKingdom( SaveItem* item )
 
 		if ( item )
 		{
-			updateSavedGames( item->_path );
+			m_proxy->requestSaveGames( item->_path.Str() );
 		}
 	}
 }
@@ -216,7 +146,7 @@ const NoesisApp::DelegateCommand* LoadGameModel::GetLoadGame() const
 
 void LoadGameModel::OnLoadGame( BaseComponent* param )
 {
-	qDebug() << "OnLoadGame";
+	qDebug() << "OnLoadGame"; 
 	if ( _selectedGame )
 	{
 		qDebug() << _selectedGame->_path.Str();
@@ -241,6 +171,7 @@ NS_IMPLEMENT_REFLECTION( SaveItem )
 {
 	NsProp( "Name", &SaveItem::_name );
 	NsProp( "Path", &SaveItem::_path );
+	NsProp( "Dir", &SaveItem::_dir );
 	NsProp( "Version", &SaveItem::_version );
 	NsProp( "Date", &SaveItem::_date );
 }
