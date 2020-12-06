@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - build scaffolds on top of each other
 - added check for corrupted config file and load standard config if needed
 - deconstruct workshops sets tile flags correctly, allowing to build on that tile again
+- prevent creatures from walking into deep water
 
 ### Added
 - ui elements to show state of and toggle certain render options

@@ -450,6 +450,10 @@ void Creature::randomMove()
 				{
 					int dir   = rand() % neighbors.size();
 					newPos    = neighbors[dir];
+					if ( !Global::w().isWalkableGnome( newPos ) )
+					{
+						return;
+					}
 					newFacing = m_facing;
 					if ( m_position.x != newPos.x )
 					{
@@ -533,7 +537,7 @@ bool Creature::moveOnPath()
 			m_currentPath.pop_back();
 
 			// check if we can move onto the next position
-			if ( !Global::w().isWalkable( p ) )
+			if ( !Global::w().isWalkableGnome( p ) )
 			{
 				m_currentPath.clear();
 				if ( Global::debugMode )

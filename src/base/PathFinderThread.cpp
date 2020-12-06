@@ -24,7 +24,7 @@
 
 #include <map>
 
-#define DEADLYFLUIDLEVEL 6
+#define DEADLYFLUIDLEVEL 4
 
 PathFinderThread::PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
 	m_start( start ),
