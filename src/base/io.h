@@ -29,6 +29,7 @@ public:
 
 	static bool createFolders();
 	static bool saveConfig();
+	static bool loadOriginalConfig( QJsonDocument& jd );
 
 	static bool saveGameExists();
 

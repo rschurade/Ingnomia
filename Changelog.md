@@ -10,10 +10,12 @@ All notable changes to this project will be documented in this file.
 - find new path if target has moved
 - crash with selected dig stairs tool at layer 0
 - build scaffolds on top of each other
+- added check for corrupted config file and load standard config if needed
 
 ### Added
 - ui elements to show state of and toggle certain render options
 - toggle for job sprites
+- added bugsplat crash reporting to windows builds
 
 ### Changed
 - improved cursor for building floor on walls

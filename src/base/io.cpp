@@ -172,6 +172,13 @@ bool IO::createFolders()
 	return QDir( folder ).exists();
 }
 
+bool IO::loadOriginalConfig( QJsonDocument& jd )
+{
+	qDebug() << "load standard config";
+	QString exePath = QCoreApplication::applicationDirPath();
+	return IO::loadFile( exePath + "/content/JSON/config.json", jd );
+}
+
 QString IO::save( bool autosave )
 {
 	QElapsedTimer timer;

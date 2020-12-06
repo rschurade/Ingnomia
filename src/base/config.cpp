@@ -45,10 +45,19 @@ bool Config::init()
 
 	if ( !IO::loadFile( folder + "settings/config.json", jd ) )
 	{
+		if( !IO::loadOriginalConfig( jd ) )
+		{
+			return false;
+		}
+	}
+	
+	m_settings = jd.toVariant().toMap();
+
+	if( m_settings.keys().size() == 0 )
+	{
 		return false;
 	}
 
-	m_settings = jd.toVariant().toMap();
 
 	/*
 	if ( !IO::loadFile( folder + "settings/keybindings.json", jd ) )
