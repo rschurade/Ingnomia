@@ -758,7 +758,6 @@ bool World::constructWorkshop( QVariantMap& con, Position pos, int rotation, QVa
 		addToUpdateList( tid );
 		QVariantMap scm;
 		scm.insert( "Pos", constrPos.toString() );
-		scm.insert( "OldTileVals", Util::tile2String( tile ) );
 
 		if ( spm.value( "SpriteID" ).toString().isEmpty() || spm.value( "SpriteID" ).toString() == "WorkshopInputIndicator" )
 		{
@@ -1123,15 +1122,10 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 			Position wsPos( spritevm.toMap().value( "Pos" ).toString() );
 			unsigned int tid = wsPos.toInt();
 			Tile& tile       = getTile( tid );
-			if ( !m_floorConstructions.contains( wsPos.toInt() ) )
-			{
-				Util::string2Tile( tile, spritevm.toMap().value( "OldTileVals" ).toString() );
-			}
-			else
-			{
-				tile.wallSpriteUID = 0;
-				clearTileFlag( wsPos, TileFlag::TF_WORKSHOP );
-			}
+			
+			tile.wallSpriteUID = 0;
+			clearTileFlag( wsPos, TileFlag::TF_WORKSHOP );
+			tile.wallType = WallType::WT_NOWALL;
 
 			updateWalkable( wsPos );
 			addToUpdateList( wsPos );
