@@ -63,6 +63,21 @@ jobs:
         pathSource: ${{ steps.download-noesis.outputs.file-path }}
         pathTarget: noesis_sdk
 
+    - name: Download Bug BugSplat
+      if: (startsWith(matrix.os, 'windows'))
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-bugsplat
+      with:
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/BugSplatNative.zip'
+
+    - name: Unpack BugSplat
+      if: (startsWith(matrix.os, 'windows'))
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-bugsplat.outputs.file-path }}
+        pathTarget: bugsplat_sdk
+
+
     - name: Download Tilesheets
       uses: carlosperate/download-file-action@v1.0.3
       id: download-tilesheet
@@ -83,7 +98,21 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory build
 
+    - name: Configure CMakeWin
+      if: (startsWith(matrix.os, 'windows'))
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      env:
+        NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
+        NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
+        BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
+        USE_BUGSPLAT: ON
+      run: |
+        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+
+
     - name: Configure CMake
+      if: (!startsWith(matrix.os, 'windows'))
       working-directory: ${{github.workspace}}/build
       shell: bash
       env:
