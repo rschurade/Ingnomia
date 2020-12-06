@@ -96,7 +96,7 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory build
 
-    - name: Configure CMakeWin
+    - name: Configure CMake
       working-directory: ${{github.workspace}}/build
       shell: bash
       env:
