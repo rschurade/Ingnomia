@@ -63,7 +63,7 @@ jobs:
         pathSource: ${{ steps.download-noesis.outputs.file-path }}
         pathTarget: noesis_sdk
 
-    - name: Download Bug BugSplat
+    - name: Download BugSplat
       uses: carlosperate/download-file-action@v1.0.3
       id: download-bugsplat
       with:
