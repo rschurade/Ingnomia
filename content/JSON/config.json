@@ -22,7 +22,7 @@
     "framelessWindow": "false",
     "gameRunning": true,
     "gfxPath": "content/tilesheet",
-    "keyboardMoveSpeed": "20",
+    "keyboardMoveSpeed": "100",
     "language": "english",
     "lightDecay": "3",
     "maxThreads": "20",

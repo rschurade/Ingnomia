@@ -113,10 +113,6 @@ MainWindow::MainWindow( QWidget* parent ) :
 
 	connect( &GameManager::getInstance(), &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 
-	m_keyboardTimer = new QTimer( this );
-	connect( m_keyboardTimer, &QTimer::timeout, this, &MainWindow::keyboardMove );
-	m_keyboardTimer->start( 20 );
-
 	instance = this;
 }
 
@@ -251,16 +247,24 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				GameManager::getInstance().trySetPaused( !GameManager::getInstance().paused() );
 				break;
 			case Qt::Key_W:
-				m_keyboardMove |= KeyboardMove::Up;
+				keyboardMove();
+				m_keyboardMove += KeyboardMove::Up;
+				redraw();
 				break;
 			case Qt::Key_S:
-				m_keyboardMove |= KeyboardMove::Down;
+				keyboardMove();
+				m_keyboardMove += KeyboardMove::Down;
+				redraw();
 				break;
 			case Qt::Key_A:
-				m_keyboardMove |= KeyboardMove::Left;
+				keyboardMove();
+				m_keyboardMove += KeyboardMove::Left;
+				redraw();
 				break;
 			case Qt::Key_D:
-				m_keyboardMove |= KeyboardMove::Right;
+				keyboardMove();
+				m_keyboardMove += KeyboardMove::Right;
+				redraw();
 				break;
 		}
 	}
@@ -278,16 +282,24 @@ void MainWindow::keyReleaseEvent( QKeyEvent* event )
 	switch ( event->key() )
 	{
 		case Qt::Key_W:
-			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Up ) );
+			keyboardMove();
+			m_keyboardMove -= KeyboardMove::Up;
+			redraw();
 			break;
 		case Qt::Key_S:
-			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Down ) );
+			keyboardMove();
+			m_keyboardMove -= KeyboardMove::Down;
+			redraw();
 			break;
 		case Qt::Key_A:
-			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Left ) );
+			keyboardMove();
+			m_keyboardMove -= KeyboardMove::Left;
+			redraw();
 			break;
 		case Qt::Key_D:
-			m_keyboardMove = static_cast<KeyboardMove>( static_cast<unsigned char>( m_keyboardMove ) & ~static_cast<unsigned char>( KeyboardMove::Right ) );
+			keyboardMove();
+			m_keyboardMove -= KeyboardMove::Right;
+			redraw();
 			break;
 	}
 }
@@ -303,8 +315,6 @@ bool MainWindow::isOverGui( int x, int y )
 
 void MainWindow::keyboardMove()
 {
-	if( m_keyboardMove == KeyboardMove::None ) return;
-
 	int x = 0;
 	int y = 0;
 	if( (bool)( m_keyboardMove & KeyboardMove::Up ) ) y -= 1;
@@ -312,15 +322,23 @@ void MainWindow::keyboardMove()
 	if( (bool)( m_keyboardMove & KeyboardMove::Left ) ) x -= 1;
 	if( (bool)( m_keyboardMove & KeyboardMove::Right ) ) x += 1;
 
-	float keyboardMoveSpeed = Config::getInstance().get( "keyboardMoveSpeed" ).toFloat();
+	// Elapsed time in second
+	const float elapsedTime = m_keyboardMovementTimer.nsecsElapsed() * 0.000000001f;
+	m_keyboardMovementTimer.restart();
 
-	float scale = GameState::scale;
-
-	int moveX = -( x * keyboardMoveSpeed ) / scale;
-	int moveY = -( y * keyboardMoveSpeed ) / scale;
-
-	if( m_renderer )
+	if( m_renderer && (x || y) )
 	{
+		const float keyboardMoveSpeed = (Config::getInstance().get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
+
+		float moveX = -x * keyboardMoveSpeed * elapsedTime;
+		float moveY = -y * keyboardMoveSpeed * elapsedTime;
+
+		if (x && y)
+		{
+			moveX /= sqrt( 2 );
+			moveY /= sqrt( 2 );
+		}
+
 		m_renderer->move( moveX, moveY );
 	}
 }
@@ -660,6 +678,10 @@ bool MainWindow::noesisUpdate()
 
 void MainWindow::noesisTick()
 {
+	// Check for ongoing keyboard movement
+	keyboardMove();
+
+	// Check if redraw is required
 	if ( noesisUpdate() && !m_pendingUpdate )
 	{
 		// Trigger rendering

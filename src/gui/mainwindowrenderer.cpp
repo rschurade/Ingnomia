@@ -788,13 +788,24 @@ void MainWindowRenderer::rotate( int direction )
 	onRenderParamsChanged();
 }
 
-void MainWindowRenderer::move( int x, int y )
+void MainWindowRenderer::move( float x, float y )
 {
 	m_moveX += x / m_scale;
 	m_moveY += y / m_scale;
 
-	m_moveX = qBound( -Global::dimX * 16.f, m_moveX, Global::dimX * 16.f );
-	m_moveY = qBound( -Global::dimX * 16.f, m_moveY, 0.f );
+	const auto centerY = -Global::dimX * 8.f;
+	const auto centerX = 0;
+
+	float oldX, oldY;
+	do
+	{
+		oldX   = m_moveX;
+		oldY   = m_moveY;
+		const auto rangeY = Global::dimX * 8.f - abs( m_moveX - centerX ) / 2.f;
+		const auto rangeX = Global::dimX * 16.f - abs( m_moveY - centerY ) * 2.f;
+		m_moveX           = qBound( centerX - rangeX, m_moveX, centerX + rangeX );
+		m_moveY           = qBound( centerY - rangeY, m_moveY, centerY + rangeY );
+	} while ( oldX != m_moveX || oldY != m_moveY );
 
 	GameState::moveX = m_moveX;
 	GameState::moveY = m_moveY;

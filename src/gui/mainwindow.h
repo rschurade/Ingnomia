@@ -26,29 +26,39 @@
 #include <QOpenGLWindow>
 #include <QTimer>
 
-enum class KeyboardMove : unsigned char {
-	None = 0,
-	Up = 0x01,
-	Down = 0x02,
-	Left = 0x04,
+enum class KeyboardMove : unsigned char
+{
+	None  = 0,
+	Up    = 0x01,
+	Down  = 0x02,
+	Left  = 0x04,
 	Right = 0x08
 };
 
-inline KeyboardMove operator | ( KeyboardMove a, KeyboardMove b )
+inline KeyboardMove operator+( KeyboardMove a, KeyboardMove b )
 {
-    return static_cast<KeyboardMove>( static_cast<unsigned char>(a) | static_cast<unsigned char>(b) );
+	return static_cast<KeyboardMove>( static_cast<unsigned char>( a ) | static_cast<unsigned char>( b ) );
 }
 
-inline KeyboardMove operator & ( KeyboardMove a, KeyboardMove b )
+inline KeyboardMove operator&( KeyboardMove a, KeyboardMove b )
 {
-    return static_cast<KeyboardMove>( static_cast<unsigned char>( a ) & static_cast<unsigned char>( b ) );
+	return static_cast<KeyboardMove>( static_cast<unsigned char>( a ) & static_cast<unsigned char>( b ) );
 }
 
-inline KeyboardMove& operator |= ( KeyboardMove& a, KeyboardMove b )
+inline KeyboardMove operator-( KeyboardMove a )
 {
-    return a= a | b;
+	return static_cast<KeyboardMove>( ~static_cast<unsigned char>( a ) );
 }
 
+inline KeyboardMove& operator+=( KeyboardMove& a, KeyboardMove b )
+{
+	return a = a + b;
+}
+
+inline KeyboardMove& operator-=( KeyboardMove& a, KeyboardMove b )
+{
+	return a = a & -b;
+}
 
 struct Position;
 class QOpenGLTexture;
@@ -100,7 +110,7 @@ private:
 	QString m_selectedAction = "";
 
 	QTimer* m_timer = nullptr;
-	QTimer* m_keyboardTimer = nullptr;
+	QElapsedTimer m_keyboardMovementTimer;
 
 	Noesis::IView* m_view          = nullptr;
 	MainWindowRenderer* m_renderer = nullptr;
