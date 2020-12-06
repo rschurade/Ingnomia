@@ -135,7 +135,7 @@ private:
 
 public slots:
 	void redraw();
-	void noesisTick();
+	void idleRenderTick();
 	void onFullScreen( bool value );
 	void keyboardMove();
 

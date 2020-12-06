@@ -201,7 +201,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 	
 	if ( ret )
 	{
-		noesisTick();
+		idleRenderTick();
 	}
 
 	if ( !ret )
@@ -276,7 +276,7 @@ void MainWindow::keyReleaseEvent( QKeyEvent* event )
 	//qDebug() << "keyReleaseEvent" << event->key() << " " << event->text() << noesisKey;
 	if ( m_view->KeyUp( noesisKey ) )
 	{
-		noesisTick();
+		idleRenderTick();
 	}
 
 	switch ( event->key() )
@@ -351,7 +351,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 		// Mouse movement needs to be handled by both Qt and Noesis, to correctly handle ongoing mouse gestures
 		if ( m_view->MouseMove( gp.x(), gp.y() ) )
 		{
-			noesisTick();
+			idleRenderTick();
 		}
 
 		if ( event->buttons() & Qt::LeftButton && m_leftDown )
@@ -413,7 +413,7 @@ void MainWindow::mousePressEvent( QMouseEvent* event )
 			{
 				if ( m_view->MouseButtonDown( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Left ) )
 				{
-					noesisTick();
+					idleRenderTick();
 				}
 			}
 			else
@@ -433,7 +433,7 @@ void MainWindow::mousePressEvent( QMouseEvent* event )
 			{
 				if ( m_view->MouseButtonDown( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Right ) )
 				{
-					noesisTick();
+					idleRenderTick();
 				}
 			}
 			else
@@ -456,7 +456,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( m_view->MouseButtonUp( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Left ) )
 				{
-					noesisTick();
+					idleRenderTick();
 				}
 			}
 			else
@@ -497,7 +497,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( m_view->MouseButtonUp( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Right ) )
 				{
-					noesisTick();
+					idleRenderTick();
 				}
 			}
 			else
@@ -525,7 +525,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		{
 			if ( m_view->MouseWheel( gp.x(), gp.y(), wEvent->delta() ) )
 			{
-				noesisTick();
+				idleRenderTick();
 			}
 		}
 		else
@@ -556,7 +556,7 @@ void MainWindow::focusInEvent( QFocusEvent* e )
 	if ( m_view )
 	{
 		m_view->Activate();
-		noesisTick();
+		idleRenderTick();
 	}
 }
 
@@ -565,7 +565,7 @@ void MainWindow::focusOutEvent( QFocusEvent* e )
 	if ( m_view )
 	{
 		m_view->Deactivate();
-		noesisTick();
+		idleRenderTick();
 	}
 }
 
@@ -676,7 +676,7 @@ bool MainWindow::noesisUpdate()
 	return false;
 }
 
-void MainWindow::noesisTick()
+void MainWindow::idleRenderTick()
 {
 	// Check for ongoing keyboard movement
 	keyboardMove();
@@ -697,6 +697,9 @@ void MainWindow::noesisTick()
 
 void MainWindow::paintGL()
 {
+	// Apply latest position
+	keyboardMove();
+
 	// Trigger noesis updates again, to avoid "stuttering UI"
 	noesisUpdate();
 
@@ -715,7 +718,7 @@ void MainWindow::paintGL()
 	// Rendering is done in the active framebuffer
 	m_view->GetRenderer()->Render();
 
-	m_timer->start( 50 );
+	m_timer->start( 0 );
 	m_pendingUpdate = false;
 }
 
@@ -764,7 +767,7 @@ void MainWindow::initializeGL()
 
 	noesisInit();
 	m_timer = new QTimer( this );
-	connect( m_timer, &QTimer::timeout, this, &MainWindow::noesisTick );
+	connect( m_timer, &QTimer::timeout, this, &MainWindow::idleRenderTick );
 
 	update();
 }
