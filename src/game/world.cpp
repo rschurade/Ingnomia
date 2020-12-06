@@ -807,16 +807,9 @@ void World::processWater()
 	for ( const auto& pos : m_aquifiers )
 	{
 		Tile& tile = getTile( pos );
-		if ( tile.pressure == 0 )
+		if ( tile.pressure == 0 && tile.fluidLevel < 10)
 		{
-			if ( tile.fluidLevel < 10 )
-			{
-				tile.fluidLevel++;
-			}
-			else
-			{
-				tile.pressure++;
-			}
+			tile.fluidLevel++;
 			tile.flags += TileFlag::TF_WATER;
 			waterUpdates.append( pos.toInt() );
 		}
