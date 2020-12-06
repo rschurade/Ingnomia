@@ -162,6 +162,7 @@ int main( int argc, char* argv[] )
 	//mpSender->setDefaultUserName( L"Crash reporter");
 	//mpSender->setDefaultUserEmail( L"user@mail.com");
 	//mpSender->setDefaultUserDescription( L"This is the default user crash description.");
+	qDebug() << "Compiled with BugSplat";
 #endif // _WIN32
 
 	QApplication a( argc, argv );
