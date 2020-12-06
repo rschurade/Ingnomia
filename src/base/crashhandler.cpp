@@ -3,7 +3,7 @@
 #include "../version.h"
 
 #if defined( PROJECT_VERSION) && defined( BUILD_ID )
-#define BUILD_VERSION PROJECT_VERSION BUILD_ID
+#define BUILD_VERSION PROJECT_VERSION "-" BUILD_ID
 #endif
 
 #if defined( HAVE_BUGSPLAT ) && defined( BUGSPLAT_DB ) && defined( BUILD_VERSION )
