@@ -100,7 +100,7 @@ private:
 	void OnResume( BaseComponent* param );
 	void OnFadeInCompleted( BaseComponent* params );
 	void OnPause( BaseComponent* params );
-	
+
 	State GetState() const;
 	void SetState( State value );
 
@@ -119,7 +119,7 @@ private:
 	NoesisApp::DelegateCommand _backToMain;
 	NoesisApp::DelegateCommand _resume;
 	NoesisApp::DelegateCommand _fadeInCompleted;
-	
+
 	State _state;
 	NewGameModel _newGameModel;
 

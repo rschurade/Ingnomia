@@ -62,7 +62,7 @@ ViewModel::ViewModel()
 	_showMainMenu = true;
 	_showGameGUI  = false;
 	_ingame       = false;
-	m_scale		  = qMax( 1.0f, Config::getInstance().get( "uiscale" ).toFloat() );
+	m_scale       = qMax( 1.0f, Config::getInstance().get( "uiscale" ).toFloat() );
 	setWindowSize( 1920, 1080 );
 }
 
@@ -352,7 +352,7 @@ void ViewModel::OnBack( BaseComponent* )
 				SetState( State::Main );
 			}
 			_showMainMenu = true;
-			_showGameGUI = false;
+			_showGameGUI  = false;
 			OnPropertyChanged( "ShowMainMenu" );
 			OnPropertyChanged( "ShowGameGui" );
 			GameManager::getInstance().setShowMainMenu( true );
@@ -380,7 +380,7 @@ void ViewModel::OnResume( BaseComponent* )
 {
 	SetState( State::GameRunning );
 	_showMainMenu = false;
-	_showGameGUI = true;
+	_showGameGUI  = true;
 	OnPropertyChanged( "ShowMainMenu" );
 	OnPropertyChanged( "ShowGameGui" );
 	GameManager::getInstance().setShowMainMenu( false );

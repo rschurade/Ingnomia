@@ -25,10 +25,10 @@ LoadGameProxy::LoadGameProxy( QObject* parent ) :
 	QObject( parent )
 {
 	connect( this, &LoadGameProxy::signalRequestKingdoms, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms, Qt::QueuedConnection );
-    connect( this, &LoadGameProxy::signalRequestSaveGames, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestSaveGames, Qt::QueuedConnection );
+	connect( this, &LoadGameProxy::signalRequestSaveGames, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestSaveGames, Qt::QueuedConnection );
 
-    connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalKingdoms, this, &LoadGameProxy::onKingdoms, Qt::QueuedConnection );
-    connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
+	connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalKingdoms, this, &LoadGameProxy::onKingdoms, Qt::QueuedConnection );
+	connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
 }
 
 void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )
@@ -38,26 +38,26 @@ void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )
 
 void LoadGameProxy::requestKingdoms()
 {
-    emit signalRequestKingdoms();
+	emit signalRequestKingdoms();
 }
 
 void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
 {
-    if( m_parent )
+	if ( m_parent )
 	{
-        m_parent->updateSavedKingdoms( kingdoms );
+		m_parent->updateSavedKingdoms( kingdoms );
 	}
 }
 
 void LoadGameProxy::requestSaveGames( const QString path )
 {
-    emit signalRequestSaveGames( path );
+	emit signalRequestSaveGames( path );
 }
 
 void LoadGameProxy::onSaveGames( const QList<GuiSaveInfo>& saveGames )
 {
-    if( m_parent )
+	if ( m_parent )
 	{
-        m_parent->updateSaveGames( saveGames );
+		m_parent->updateSaveGames( saveGames );
 	}
 }

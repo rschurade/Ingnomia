@@ -85,8 +85,6 @@ private:
 	void SetSelectedGame( SaveItem* item );
 	SaveItem* GetSelectedGame() const;
 
-	
-
 	NoesisApp::DelegateCommand _loadGame;
 
 	Noesis::Ptr<Noesis::ObservableCollection<SaveItem>> _savedKingdoms;

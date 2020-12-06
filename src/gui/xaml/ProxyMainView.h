@@ -31,7 +31,7 @@ public:
 
 	void setParent( IngnomiaGUI::ViewModel* parent );
 
-    void requestLoadScreenUpdate();
+	void requestLoadScreenUpdate();
 
 private:
 	IngnomiaGUI::ViewModel* m_parent = nullptr;
@@ -40,8 +40,8 @@ private slots:
 	void onWindowSize( int w, int h );
 	void onKeyEsc();
 
-    void onUIScale( float value );
+	void onUIScale( float value );
 
 signals:
-    void signalRequestLoadScreenUpdate();
+	void signalRequestLoadScreenUpdate();
 };

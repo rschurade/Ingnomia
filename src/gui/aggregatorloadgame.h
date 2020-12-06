@@ -21,16 +21,15 @@
 
 struct GuiSaveInfo
 {
-    QString name;
-    QString folder;
-    QString dir;
-    QString version;
-    QString date;
-    bool compatible = true;
+	QString name;
+	QString folder;
+	QString dir;
+	QString version;
+	QString date;
+	bool compatible = true;
 };
 
 Q_DECLARE_METATYPE( GuiSaveInfo )
-
 
 class AggregatorLoadGame : public QObject
 {
@@ -42,13 +41,13 @@ public:
 
 private:
 	QList<GuiSaveInfo> m_kingdomList;
-    QList<GuiSaveInfo> m_gameList;
+	QList<GuiSaveInfo> m_gameList;
 
 public slots:
 	void onRequestKingdoms();
-    void onRequestSaveGames( const QString path );
+	void onRequestSaveGames( const QString path );
 
 signals:
 	void signalKingdoms( const QList<GuiSaveInfo>& kingdoms );
-    void signalSaveGames( const QList<GuiSaveInfo>& kingdoms );
+	void signalSaveGames( const QList<GuiSaveInfo>& kingdoms );
 };

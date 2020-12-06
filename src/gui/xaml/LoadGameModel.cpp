@@ -16,9 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "LoadGameModel.h"
-#include "loadgameproxy.h"
 
 #include "../../base/io.h"
+#include "loadgameproxy.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -42,7 +42,6 @@ SaveItem::SaveItem( QString name, QString path, QString dir, QString version, QS
 	_version    = version.toStdString().c_str();
 	_date       = date.toStdString().c_str();
 	_compatible = compatible;
-	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ void LoadGameModel::updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms )
 {
 	_savedKingdoms->Clear();
 
-	for( const auto& gsk : kingdoms )
+	for ( const auto& gsk : kingdoms )
 	{
 		_savedKingdoms->Add( MakePtr<SaveItem>( gsk.name, gsk.folder, "", gsk.version, gsk.date ) );
 	}
@@ -92,7 +91,7 @@ void LoadGameModel::updateSaveGames( const QList<GuiSaveInfo>& saveGames )
 {
 	_savedGames->Clear();
 
-	for( const auto& gsi : saveGames )
+	for ( const auto& gsi : saveGames )
 	{
 		_savedGames->Add( MakePtr<SaveItem>( gsi.name, gsi.folder, gsi.dir, gsi.version, gsi.date, gsi.compatible ) );
 	}
@@ -146,7 +145,7 @@ const NoesisApp::DelegateCommand* LoadGameModel::GetLoadGame() const
 
 void LoadGameModel::OnLoadGame( BaseComponent* param )
 {
-	qDebug() << "OnLoadGame"; 
+	qDebug() << "OnLoadGame";
 	if ( _selectedGame )
 	{
 		qDebug() << _selectedGame->_path.Str();

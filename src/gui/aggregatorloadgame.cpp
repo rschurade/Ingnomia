@@ -19,8 +19,6 @@
 
 #include "../base/io.h"
 
-#include <QDebug>
-
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
@@ -33,10 +31,8 @@
 #include <QJsonValue>
 #include <QStandardPaths>
 
-
 AggregatorLoadGame::AggregatorLoadGame( QObject* parent )
 {
-	
 }
 
 AggregatorLoadGame::~AggregatorLoadGame()
@@ -45,7 +41,7 @@ AggregatorLoadGame::~AggregatorLoadGame()
 
 void AggregatorLoadGame::onRequestKingdoms()
 {
-    QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
+	QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
 
 	m_kingdomList.clear();
 
@@ -111,14 +107,14 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 		GuiSaveInfo gsi;
 
 		gsi.folder = path + "/" + sdir;
-		gsi.dir = sdir;
+		gsi.dir    = sdir;
 
 		QJsonDocument jd;
 		IO::loadFile( gsi.folder + "/game.json", jd );
 		QJsonArray ja  = jd.array();
 		QVariantMap vm = ja.toVariantList().first().toMap();
 
-		gsi.version = IO::versionString( gsi.folder );
+		gsi.version    = IO::versionString( gsi.folder );
 		gsi.compatible = true;
 
 		if ( !IO::saveCompatible( gsi.folder ) )
@@ -128,7 +124,6 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 		}
 
 		gsi.name = vm.value( "kingdomName" ).toString();
-
 
 		QFile file( gsi.folder + "/game.json" );
 		QFileInfo fi( file );

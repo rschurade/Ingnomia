@@ -30,19 +30,17 @@ public:
 	LoadGameProxy( QObject* parent = nullptr );
 	void setParent( IngnomiaGUI::LoadGameModel* parent );
 
-    void requestKingdoms();
-    void requestSaveGames( const QString path );
+	void requestKingdoms();
+	void requestSaveGames( const QString path );
 
 private:
 	IngnomiaGUI::LoadGameModel* m_parent = nullptr;
 
-
-
 private slots:
-    void onKingdoms( const QList<GuiSaveInfo>& kingdoms );
-    void onSaveGames( const QList<GuiSaveInfo>& saveGames );
-    
+	void onKingdoms( const QList<GuiSaveInfo>& kingdoms );
+	void onSaveGames( const QList<GuiSaveInfo>& saveGames );
+
 signals:
 	void signalRequestKingdoms();
-    void signalRequestSaveGames( const QString path );
+	void signalRequestSaveGames( const QString path );
 };
