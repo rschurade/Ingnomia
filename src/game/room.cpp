@@ -213,8 +213,8 @@ bool Room::checkRoofed()
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
-		Tile& _tile   = Global::w().getTile( pos );
-		if ( !( _tile.floorType & FloorType::FT_SOLIDFLOOR ) )
+		Tile& _tile  = Global::w().getTile( pos );
+		if ( !( (bool)( _tile.floorType & FloorType::FT_SOLIDFLOOR ) ) )
 		{
 			roofed = false;
 			break;
@@ -237,7 +237,7 @@ bool Room::checkEnclosed()
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
 			Tile& tn = world.getTile( pos );
-			if ( !( tn.wallType & WT_SOLIDWALL || tn.flags & TileFlag::TF_DOOR ) )
+			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
 				break;
@@ -247,7 +247,7 @@ bool Room::checkEnclosed()
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
 			Tile& tn = world.getTile( pos );
-			if ( !( tn.wallType & WT_SOLIDWALL || tn.flags & TileFlag::TF_DOOR ) )
+			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
 				break;
@@ -257,7 +257,7 @@ bool Room::checkEnclosed()
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
 			Tile& tn = world.getTile( pos );
-			if ( !( tn.wallType & WT_SOLIDWALL || tn.flags & TileFlag::TF_DOOR ) )
+			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
 				break;
@@ -267,8 +267,9 @@ bool Room::checkEnclosed()
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
 			Tile& tn = world.getTile( pos );
-			if ( !( tn.wallType & WT_SOLIDWALL || tn.flags & TileFlag::TF_DOOR ) )
+			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
+				qDebug() << "##4" << (bool)( tn.wallType & WT_SOLIDWALL ) << (bool)( tn.flags & TileFlag::TF_DOOR );
 				enclosed = false;
 				break;
 			}
