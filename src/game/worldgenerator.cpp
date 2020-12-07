@@ -38,7 +38,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-WorldGenerator::WorldGenerator()
+WorldGenerator::WorldGenerator( QObject* parent ) :
+	QObject(parent)
 {
 }
 

@@ -115,7 +115,7 @@ class MilitaryManager : public QObject
 	Q_OBJECT
 
 public:
-	MilitaryManager();
+	MilitaryManager( QObject* parent = nullptr);
 	~MilitaryManager();
 
 	void reset();

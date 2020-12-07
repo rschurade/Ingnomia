@@ -73,7 +73,8 @@ void GuiWorkshopProduct::updateComponents()
 	}
 }
 
-AggregatorWorkshop::AggregatorWorkshop( QObject* parent )
+AggregatorWorkshop::AggregatorWorkshop( QObject* parent ) :
+	QObject(parent)
 {
 	qRegisterMetaType<GuiWorkshopInfo>();
 

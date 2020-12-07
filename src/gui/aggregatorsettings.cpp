@@ -21,7 +21,8 @@
 
 #include <QDebug>
 
-AggregatorSettings::AggregatorSettings( QObject* parent )
+AggregatorSettings::AggregatorSettings( QObject* parent ) :
+	QObject(parent)
 {
 
 }

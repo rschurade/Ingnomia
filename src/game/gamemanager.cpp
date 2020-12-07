@@ -165,7 +165,7 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
 	if ( io.load( folder ) )
 	{
-		m_game = new Game( true );
+		m_game = new Game();
 		connect( this, &GameManager::stopGame, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
 		connect( this, &GameManager::startGame, m_game, &Game::start );
 

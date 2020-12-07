@@ -21,7 +21,8 @@
 #include "../game/inventory.h"
 #include "../gui/strings.h"
 
-AggregatorInventory::AggregatorInventory( QObject* parent )
+AggregatorInventory::AggregatorInventory( QObject* parent ) :
+	QObject(parent)
 {
 }
 

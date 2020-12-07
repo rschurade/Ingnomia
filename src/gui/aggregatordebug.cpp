@@ -19,7 +19,8 @@
 
 #include <QDebug>
 
-AggregatorDebug::AggregatorDebug( QObject* parent )
+AggregatorDebug::AggregatorDebug( QObject* parent ) :
+	QObject(parent)
 {
 	connect( this, &AggregatorDebug::signalTriggerEvent, &Global::em(), &EventManager::onDebugEvent );
 }

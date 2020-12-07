@@ -35,7 +35,8 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
-Inventory::Inventory()
+Inventory::Inventory( QObject* parent ) :
+	QObject(parent)
 {
 	//init();
 }

@@ -41,7 +41,7 @@ private:
 	QHash<unsigned int, Job*> m_jobs;
 
 public:
-	GnomeManager();
+	GnomeManager( QObject* parent = nullptr );
 	~GnomeManager();
 
 	void init();

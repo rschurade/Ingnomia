@@ -35,7 +35,8 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
-GnomeManager::GnomeManager()
+GnomeManager::GnomeManager( QObject* parent ) :
+	QObject(parent)
 {
 }
 

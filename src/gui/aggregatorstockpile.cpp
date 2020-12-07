@@ -26,7 +26,8 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-AggregatorStockpile::AggregatorStockpile( QObject* parent )
+AggregatorStockpile::AggregatorStockpile( QObject* parent ) :
+	QObject(parent)
 {
 	qRegisterMetaType<GuiStockpileInfo>();
 

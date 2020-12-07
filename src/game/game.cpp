@@ -53,7 +53,8 @@
 
 #include <time.h>
 
-Game::Game()
+Game::Game( QObject* parent) :
+	QObject(parent)
 {
 	qDebug() << "init game...";
 
@@ -101,14 +102,6 @@ Game::Game()
 
 	//TechTree tt;
 	//tt.create();
-}
-
-Game::Game( bool isLoaded )
-{
-	m_millisecondsSlow = DB::select( "Value_", "Time", "MillisecondsSlow" ).toInt();
-	m_millisecondsFast = DB::select( "Value_", "Time", "MillisecondsFast" ).toInt();
-
-	Global::xpMod = Config::getInstance().get( "XpMod" ).toDouble();
 }
 
 

@@ -27,7 +27,8 @@
 
 #include <QDebug>
 
-AggregatorPopulation::AggregatorPopulation( QObject* parent )
+AggregatorPopulation::AggregatorPopulation( QObject* parent ) :
+	QObject(parent)
 {
 	//qRegisterMetaType<GuiGnomeScheduleInfo>();
 	qRegisterMetaType<ScheduleActivity>();

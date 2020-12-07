@@ -181,7 +181,8 @@ Squad::Squad( const QVariantMap& in )
 	}
 }
 
-MilitaryManager::MilitaryManager()
+MilitaryManager::MilitaryManager( QObject* parent ) :
+	QObject(parent)
 {
 }
 MilitaryManager::~MilitaryManager()

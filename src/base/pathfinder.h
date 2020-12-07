@@ -50,7 +50,7 @@ class PathFinder : public QObject
 
 private:
 	// Private Constructor
-	PathFinder();
+	PathFinder(QObject* parent = nullptr);
 	// Stop the compiler generating methods of copy the object
 	PathFinder( PathFinder const& copy ) = delete;
 	PathFinder& operator=( PathFinder const& copy ) = delete;

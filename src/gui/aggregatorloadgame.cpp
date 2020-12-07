@@ -31,7 +31,8 @@
 #include <QJsonValue>
 #include <QStandardPaths>
 
-AggregatorLoadGame::AggregatorLoadGame( QObject* parent )
+AggregatorLoadGame::AggregatorLoadGame( QObject* parent ) :
+	QObject(parent)
 {
 }
 

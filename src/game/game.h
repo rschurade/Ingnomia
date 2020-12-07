@@ -32,8 +32,7 @@ class Game : public QObject
 	Q_OBJECT
 
 public:
-	Game();
-	Game( bool isLoaded );
+	Game(QObject* parent = nullptr);
 	virtual ~Game();
 
 	void save();

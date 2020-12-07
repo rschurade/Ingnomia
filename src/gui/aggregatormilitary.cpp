@@ -23,7 +23,8 @@
 
 #include "../gui/strings.h"
 
-AggregatorMilitary::AggregatorMilitary( QObject* parent )
+AggregatorMilitary::AggregatorMilitary( QObject* parent ) :
+	QObject(parent)
 {
 }
 

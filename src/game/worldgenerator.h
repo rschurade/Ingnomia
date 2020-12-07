@@ -36,7 +36,7 @@ class WorldGenerator : public QObject
 	Q_OBJECT
 
 public:
-	WorldGenerator();
+	WorldGenerator( QObject* parent = nullptr);
 	~WorldGenerator();
 
 	void generate();

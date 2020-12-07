@@ -25,7 +25,8 @@
 #include "../game/militarymanager.h"
 #include "../gui/strings.h"
 
-AggregatorCreatureInfo::AggregatorCreatureInfo( QObject* parent )
+AggregatorCreatureInfo::AggregatorCreatureInfo( QObject* parent ) :
+	QObject(parent)
 {
 }
 

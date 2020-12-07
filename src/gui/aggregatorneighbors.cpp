@@ -22,7 +22,8 @@
 
 #include "../gui/strings.h"
 
-AggregatorNeighbors::AggregatorNeighbors( QObject* parent )
+AggregatorNeighbors::AggregatorNeighbors( QObject* parent ) :
+	QObject(parent)
 {
 	
 }

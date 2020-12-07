@@ -36,7 +36,7 @@ class Inventory : public QObject
 	Q_OBJECT
 
 public:
-	Inventory();
+	Inventory( QObject* parent = nullptr );
 	~Inventory();
 
 	void reset();

@@ -44,7 +44,8 @@ Beehive::Beehive( QVariantMap& in )
 	harvest = in.value( "Harvest" ).toBool();
 }
 
-FarmingManager::FarmingManager()
+FarmingManager::FarmingManager( QObject* parent ) :
+	QObject(parent)
 {
 }
 

@@ -43,7 +43,7 @@ class FarmingManager : public QObject
 	Q_OBJECT
 
 public:
-	FarmingManager();
+	FarmingManager(QObject* parent = nullptr);
 	~FarmingManager();
 
 	void reset();

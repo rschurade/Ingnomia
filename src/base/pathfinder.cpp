@@ -25,7 +25,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-PathFinder::PathFinder()
+PathFinder::PathFinder(QObject* parent) :
+	QObject(parent)
 {
 }
 

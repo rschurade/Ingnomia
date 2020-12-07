@@ -38,7 +38,8 @@
 
 #include <QDebug>
 
-AggregatorAgri::AggregatorAgri( QObject* parent )
+AggregatorAgri::AggregatorAgri( QObject* parent ) :
+	QObject(parent)
 {
 	qRegisterMetaType<GuiFarmInfo>();
 	qRegisterMetaType<GuiPastureInfo>();

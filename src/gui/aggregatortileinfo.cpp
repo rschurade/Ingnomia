@@ -35,7 +35,8 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-AggregatorTileInfo::AggregatorTileInfo( QObject* parent )
+AggregatorTileInfo::AggregatorTileInfo( QObject* parent ) :
+	QObject(parent)
 {
 	qRegisterMetaType<GuiTileInfo>();
 }
