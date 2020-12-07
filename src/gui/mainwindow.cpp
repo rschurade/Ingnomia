@@ -667,11 +667,7 @@ bool MainWindow::noesisUpdate()
 	// See if anything needs to be animated
 	if ( m_view->Update( timeDiff.count() ) )
 	{
-		// If necessary, actually update
-		if ( m_view->GetRenderer()->UpdateRenderTree() )
-		{
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
@@ -700,10 +696,15 @@ void MainWindow::paintGL()
 	// Apply latest position
 	keyboardMove();
 
+	// Get the GPU busy
+	m_renderer->paintWorld();
+
 	// Trigger noesis updates again, to avoid "stuttering UI"
 	noesisUpdate();
 
 	// Offscreen rendering phase populates textures needed by the on-screen rendering
+	// If necessary, actually update
+	m_view->GetRenderer()->UpdateRenderTree();
 
 	// If you are going to render here with your own engine you need to restore the GPU state
 	// because noesis changes it. In this case only framebuffer and viewport need to be restored
@@ -712,8 +713,6 @@ void MainWindow::paintGL()
 		// Restore state managed by QOpenGLWindow
 		makeCurrent();
 	}
-
-	m_renderer->paintWorld();
 
 	// Rendering is done in the active framebuffer
 	m_view->GetRenderer()->Render();
