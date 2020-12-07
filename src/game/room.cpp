@@ -269,7 +269,6 @@ bool Room::checkEnclosed()
 			Tile& tn = world.getTile( pos );
 			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
-				qDebug() << "##4" << (bool)( tn.wallType & WT_SOLIDWALL ) << (bool)( tn.flags & TileFlag::TF_DOOR );
 				enclosed = false;
 				break;
 			}
