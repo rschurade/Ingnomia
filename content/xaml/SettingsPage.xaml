@@ -60,10 +60,9 @@
 								<RowDefinition Height="1*" />
 								<RowDefinition Height="6*" />
 								<RowDefinition Height="1*" />
-
 							</Grid.RowDefinitions>
-
-							<StackPanel Grid.Row="1">
+							<ScrollViewer HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="1">
+							<StackPanel >
 								<Grid Margin="0,20,0,0">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*" />
@@ -126,7 +125,18 @@
 									<Slider     Grid.Column="2" Minimum="0" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
 												Value="{Binding LightMin}" />
 								</Grid>
+								<Grid Margin="0,20,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock  Grid.Column="1" FontSize="10" VerticalAlignment="Center" Text="Mousewheel behavior"/>
+									<CheckBox   Grid.Column="2" VerticalAlignment="Center" Content="" IsChecked="{Binding MouseWheelBehavior}"/>
+								</Grid>
 							</StackPanel>
+							</ScrollViewer>
 						</Grid>
 					</TabItem>
 					<TabItem Header="{StaticResource SettingsPage_Controls}">

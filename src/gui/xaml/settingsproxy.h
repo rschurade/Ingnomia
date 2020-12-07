@@ -38,6 +38,8 @@ public:
     void setFullScreen( bool value );
     void setKeyboardSpeed( int value );
     void setLightMin( int value );
+    void setToggleMouseWheel( bool value );
+
 private:
 	IngnomiaGUI::SettingsModel* m_parent = nullptr;
 
@@ -54,4 +56,5 @@ signals:
     void signalSetFullScreen( bool value );
     void signalSetKeyboardSpeed( int value );
     void signalSetLightMin( int value );
+    void signalSetToggleMouseWheel( bool value );
 };

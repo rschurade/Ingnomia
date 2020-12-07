@@ -102,6 +102,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
     m_fullScreen = settings.fullscreen;
     m_keyboardSpeed = settings.keyboardSpeed;
     m_lightMin = settings.lightMin;
+    m_toggleMouseWheel = settings.toggleMouseWheel;
 
     OnPropertyChanged( "Languages" );
     OnPropertyChanged( "SelectedLanguage" );
@@ -110,6 +111,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
     OnPropertyChanged( "KeyboardSpeed" );
     OnPropertyChanged( "FullScreen" );
     OnPropertyChanged( "LightMin" );
+    OnPropertyChanged( "MouseWheelBehavior" );
 }
 
     
@@ -197,6 +199,21 @@ void SettingsModel::setLightMin( int value )
 	}
 }
 
+    
+bool SettingsModel::getMouseWheelBehavior() const
+{
+    return m_toggleMouseWheel;
+}
+
+void SettingsModel::setMouseWheelBehavior( bool value )
+{
+    if( value != m_toggleMouseWheel )
+	{
+	    m_toggleMouseWheel = value;
+        m_proxy->setToggleMouseWheel( value );
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -209,6 +226,7 @@ NS_IMPLEMENT_REFLECTION( SettingsModel, "IngnomiaGUI.SettingsModel" )
     NsProp( "KeyboardSpeed", &SettingsModel::getKeyboardSpeed, &SettingsModel::setKeyboardSpeed );
     NsProp( "FullScreen", &SettingsModel::getFullScreen, &SettingsModel::setFullScreen );
     NsProp( "LightMin", &SettingsModel::getLightMin, &SettingsModel::setLightMin );
+    NsProp( "MouseWheelBehavior", &SettingsModel::getMouseWheelBehavior, &SettingsModel::setMouseWheelBehavior );
 }
 
 NS_IMPLEMENT_REFLECTION( LanguageEntry )

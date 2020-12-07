@@ -28,6 +28,7 @@ struct GuiSettings
     QString language;
     int keyboardSpeed = 20;
     int lightMin = 30;
+    bool toggleMouseWheel = false;
 };
 
 Q_DECLARE_METATYPE( GuiSettings )
@@ -51,6 +52,7 @@ public slots:
     void onSetKeyboardSpeed( int value );
     void onSetFullScreen( bool value );
     void onSetLightMin( int value );
+    void onSetToggleMouseWheel( bool value );
 
 signals:
 	void signalUpdateSettings( const GuiSettings& info );

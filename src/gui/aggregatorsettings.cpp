@@ -43,6 +43,8 @@ void AggregatorSettings::onRequestSettings()
 
     m_settings.lightMin = Config::getInstance().get( "lightMin" ).toFloat() * 100; 
 
+    m_settings.toggleMouseWheel = Config::getInstance().get( "toggleMouseWheel" ).toBool();
+
     emit signalUpdateSettings( m_settings );
 }
 
@@ -72,4 +74,9 @@ void AggregatorSettings::onSetKeyboardSpeed( int value )
 void AggregatorSettings::onSetLightMin( int value )
 {
     Config::getInstance().set( "lightMin", (float)value / 100. );
+}
+
+void AggregatorSettings::onSetToggleMouseWheel( bool value )
+{
+    Config::getInstance().set( "toggleMouseWheel", value );
 }

@@ -96,6 +96,9 @@ private:
     int getLightMin() const;
 	void setLightMin( int value );
 
+    bool getMouseWheelBehavior() const;
+	void setMouseWheelBehavior( bool value );
+
 
     Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
     LanguageEntry* m_selectedLanguage = nullptr;;
@@ -105,6 +108,7 @@ private:
 
     float m_scale = 1.0f;
     bool m_fullScreen = false;
+    bool m_toggleMouseWheel = false;
     int m_keyboardSpeed = 20;
     int m_lightMin = 30;
 

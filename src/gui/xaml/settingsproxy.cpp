@@ -30,6 +30,7 @@ SettingsProxy::SettingsProxy( QObject* parent ) :
     connect( this, &SettingsProxy::signalSetFullScreen, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetFullScreen, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetLanguage, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetLightMin, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetLightMin, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetToggleMouseWheel, EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::onSetToggleMouseWheel, Qt::QueuedConnection );
     
     connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalUpdateSettings, this, &SettingsProxy::onSettings, Qt::QueuedConnection );
 }
@@ -75,4 +76,9 @@ void SettingsProxy::setKeyboardSpeed( int value )
 void SettingsProxy::setLightMin( int value )
 {
     emit signalSetLightMin( value );
+}
+
+void SettingsProxy::setToggleMouseWheel( bool value )
+{
+    emit signalSetToggleMouseWheel( value );
 }

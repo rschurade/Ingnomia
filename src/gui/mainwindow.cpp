@@ -530,7 +530,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		}
 		else
 		{
-			if ( wEvent->modifiers() & Qt::ControlModifier )
+			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Config::getInstance().get( "toggleMouseWheel" ).toBool() ) 
 			{
 				// Scale the view / do the zoom
 				auto delta = wEvent->delta();
