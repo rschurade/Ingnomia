@@ -65,8 +65,8 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( &Global::em(), &EventManager::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalEventAnswer, &Global::em(), &EventManager::onAnswer, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalSetPaused, Global::eventConnector, &EventConnector::onUpdatePause, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalSetGameSpeed, Global::eventConnector, &EventConnector::onUpdateGameSpeed, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetPaused, Global::eventConnector, &EventConnector::onSetPause, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetGameSpeed, Global::eventConnector, &EventConnector::onSetGameSpeed, Qt::QueuedConnection );
 
 	connect( this, &ProxyGameView::signalSetRenderOptions, Global::eventConnector, &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );

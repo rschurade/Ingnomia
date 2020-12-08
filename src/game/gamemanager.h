@@ -46,7 +46,6 @@ public:
 	void setGameSpeed( GameSpeed speed );
 
 	bool paused();
-	void trySetPaused( bool value );
 	void setPaused( bool value );
 
 	EventConnector* eventConnector();

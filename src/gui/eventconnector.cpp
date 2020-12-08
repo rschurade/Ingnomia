@@ -75,13 +75,13 @@ void EventConnector::onViewLevel( int level )
 	emit signalViewLevel( level );
 }
 
-void EventConnector::onUpdatePause( bool paused )
+void EventConnector::onSetPause( bool paused )
 {
 	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->setPaused( paused );
 }
 
-void EventConnector::onUpdateGameSpeed( GameSpeed speed )
+void EventConnector::onSetGameSpeed( GameSpeed speed )
 {
 	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->setGameSpeed( speed );
@@ -100,7 +100,7 @@ void EventConnector::onKeyPress( int key )
 void EventConnector::onTogglePause()
 {
 	auto gm = dynamic_cast<GameManager*>( parent() );
-	gm->trySetPaused( !gm->paused() );
+	emit signalUpdatePause( !gm->paused() );
 }
 
 void EventConnector::onPropagateEscape()
@@ -242,4 +242,14 @@ void EventConnector::sendResume()
 void EventConnector::sendLoadGameDone( bool value )
 {
 	emit signalLoadGameDone( value );
+}
+
+void EventConnector::emitPause( bool paused )
+{
+	emit signalUpdatePause( paused );
+}
+	
+void EventConnector::emitGameSpeed( GameSpeed speed )
+{
+	emit signalUpdateGameSpeed( speed );
 }

@@ -19,14 +19,10 @@
 #include "mainwindow.h"
 
 #include "../base/config.h"
-#include "../base/global.h"
 #include "../base/io.h"
 #include "../base/selection.h"
-#include "../base/tile.h"
-#include "../game/world.h"
 #include "../gui/eventconnector.h"
-#include "../gui/aggregatordebug.h"
-#include "../gui/aggregatorsettings.h"
+
 #include "license.h"
 #include "mainwindowrenderer.h"
 #include "xaml/GameGui.xaml.h"

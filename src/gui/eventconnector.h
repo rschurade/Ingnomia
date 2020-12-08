@@ -100,6 +100,9 @@ public:
 	void emitInitView();
 	void emitInMenu( bool value );
 
+	void emitPause( bool paused );
+	void emitGameSpeed( GameSpeed speed );
+
 	void sendResume();
 	void sendLoadGameDone( bool value );
 
@@ -126,8 +129,9 @@ public slots:
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
-	void onUpdatePause( bool paused );
-	void onUpdateGameSpeed( GameSpeed speed );
+	void onSetPause( bool paused );
+	void onSetGameSpeed( GameSpeed speed );
+
 	void onKeyPress( int key );
 	void onTogglePause();
 	void onPropagateEscape();

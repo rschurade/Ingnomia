@@ -268,7 +268,7 @@ void GameManager::setGameSpeed( GameSpeed speed )
 		if( m_game->gameSpeed() != speed )
 		{
 			m_game->setGameSpeed( speed );
-			m_eventConnector->onUpdateGameSpeed( m_game->gameSpeed() );
+			m_eventConnector->emitGameSpeed( m_game->gameSpeed() );
 		}
 	}
 }
@@ -281,10 +281,6 @@ bool GameManager::paused()
 	}
 	return true;
 }
-void GameManager::trySetPaused( bool value )
-{
-	m_eventConnector->onUpdatePause( value );
-}
 
 void GameManager::setPaused( bool value )
 {
@@ -293,7 +289,7 @@ void GameManager::setPaused( bool value )
 		if( m_game->paused() != value )
 		{
 			m_game->setPaused( value );
-			m_eventConnector->onUpdatePause( value );
+			m_eventConnector->emitPause( value );
 		}
 	}
 }
