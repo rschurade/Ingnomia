@@ -309,7 +309,7 @@ void ViewModel::OnExit( BaseComponent* )
 	qDebug() << "ViewModel OnExit";
 	NS_LOG_INFO( "Exiting game" );
 	//NoesisApp::Application::Current()->Shutdown();
-	EventConnector::getInstance().onExit();
+	Global::gameManager->eventConnector()->onExit();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

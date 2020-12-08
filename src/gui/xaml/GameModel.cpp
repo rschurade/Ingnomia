@@ -281,7 +281,7 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 
 	Selection::getInstance().setMaterials( mats );
 	Selection::getInstance().setItemID( m_sid );
-	EventConnector::getInstance().onBuild();
+	Global::gameManager->eventConnector()->onBuild();
 }
 
 

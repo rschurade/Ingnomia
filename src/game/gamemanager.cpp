@@ -47,10 +47,12 @@ GameManager::GameManager( QObject* parent ) :
 {
 	qRegisterMetaType<GameSpeed>();
 
+	m_eventConnector = new EventConnector( this );
+
 	GameState::init();
 
-	connect( this, &GameManager::signalUpdatePaused, &EventConnector::getInstance(), &EventConnector::onUpdatePause );
-	connect( this, &GameManager::signalUpdateGameSpeed, &EventConnector::getInstance(), &EventConnector::onUpdateGameSpeed );
+	connect( this, &GameManager::signalUpdatePaused, m_eventConnector, &EventConnector::onUpdatePause );
+	connect( this, &GameManager::signalUpdateGameSpeed, m_eventConnector, &EventConnector::onUpdateGameSpeed );
 }
 
 GameManager::~GameManager()
@@ -59,6 +61,11 @@ GameManager::~GameManager()
 	{
 		delete m_game;
 	}
+}
+
+EventConnector* GameManager::eventConnector()
+{
+	return m_eventConnector;
 }
 
 void GameManager::setShowMainMenu( bool value )
@@ -154,19 +161,19 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 	if ( io.load( folder ) )
 	{
 		m_game = new Game();
-		connect( this, &GameManager::stopGame, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
+		connect( this, &GameManager::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
 		connect( this, &GameManager::startGame, m_game, &Game::start );
 
 		qRegisterMetaType<QSet<unsigned int>>();
-		connect( m_game, &Game::signalUpdateTileInfo, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
-		connect( m_game, &Game::signalUpdateStockpile, EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
+		connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
+		connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
 
-		connect( m_game, &Game::signalUpdateTileInfo, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
+		connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
 
-		connect( m_game, &Game::signalTimeAndDate, &EventConnector::getInstance(), &EventConnector::onTimeAndDate );
-		connect( m_game, &Game::signalKingdomInfo, &EventConnector::getInstance(), &EventConnector::onKingdomInfo );
+		connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
+		connect( m_game, &Game::signalKingdomInfo, m_eventConnector, &EventConnector::onKingdomInfo );
 		m_game->sendTime();
-		EventConnector::getInstance().onViewLevel( GameState::viewLevel );
+		m_eventConnector->onViewLevel( GameState::viewLevel );
 
 		Config::getInstance().set( "NoRender", false );
 
@@ -208,22 +215,22 @@ void GameManager::createNewGame()
 
 	Config::getInstance().set( "NoRender", false );
 	
-	EventConnector::getInstance().onViewLevel( GameState::viewLevel );
+	m_eventConnector->onViewLevel( GameState::viewLevel );
 
 	Config::getInstance().set( "gameRunning", true );
 
 	m_showMainMenu = false;
 
-	connect( this, &GameManager::stopGame, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
+	connect( this, &GameManager::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
 	connect( this, &GameManager::startGame, m_game, &Game::start );
 
 	qRegisterMetaType<QSet<unsigned int>>();
-	connect( m_game, &Game::signalUpdateTileInfo, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
-	connect( m_game, &Game::signalUpdateStockpile, EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
+	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
+	connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
 
-	connect( m_game, &Game::signalUpdateTileInfo, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
+	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
 
-	connect( m_game, &Game::signalTimeAndDate, &EventConnector::getInstance(), &EventConnector::onTimeAndDate );
+	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
 
 	//thread1->setPriority( QThread::HighPriority );

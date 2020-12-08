@@ -17,6 +17,8 @@
 */
 #include "neighborsproxy.h"
 
+#include "../../base/global.h"
+#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -24,12 +26,12 @@
 NeighborsProxy::NeighborsProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &NeighborsProxy::signalRequestAvailableGnomes, EventConnector::getInstance().aggregatorNeighbors(), &AggregatorNeighbors::onRequestAvailableGnomes, Qt::QueuedConnection );
-	connect( this, &NeighborsProxy::signalStartMission, EventConnector::getInstance().aggregatorNeighbors(), &AggregatorNeighbors::onStartMission, Qt::QueuedConnection );
+	connect( this, &NeighborsProxy::signalRequestAvailableGnomes, Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::onRequestAvailableGnomes, Qt::QueuedConnection );
+	connect( this, &NeighborsProxy::signalStartMission, Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::onStartMission, Qt::QueuedConnection );
 	
-	connect( EventConnector::getInstance().aggregatorNeighbors(), &AggregatorNeighbors::signalNeighborsUpdate, this, &NeighborsProxy::onNeighborsUpdate, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorNeighbors(), &AggregatorNeighbors::signalAvailableGnomes, this, &NeighborsProxy::onAvailableGnomes, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorNeighbors(), &AggregatorNeighbors::signalMissions, this, &NeighborsProxy::onMissions, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::signalNeighborsUpdate, this, &NeighborsProxy::onNeighborsUpdate, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::signalAvailableGnomes, this, &NeighborsProxy::onAvailableGnomes, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::signalMissions, this, &NeighborsProxy::onMissions, Qt::QueuedConnection );
 
 	connect( &Global::em(), &EventManager::signalUpdateMission, this, &NeighborsProxy::onUpdateMission, Qt::QueuedConnection );
 }

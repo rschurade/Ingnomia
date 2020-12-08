@@ -200,7 +200,7 @@ void Game::loop()
 	}
 	emit signalUpdateStockpile();
 
-	EventConnector::getInstance().aggregatorCreatureInfo()->update();
+	Global::gameManager->eventConnector()->aggregatorCreatureInfo()->update();
 
 	int ms        = timer.elapsed();
 	m_maxLoopTime = qMax( ms2, m_maxLoopTime );

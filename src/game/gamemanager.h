@@ -24,6 +24,7 @@
 #include <QThread>
 
 class Game;
+class EventConnector;
 
 class GameManager : public QObject
 {
@@ -52,8 +53,12 @@ public:
 	void trySetPaused( bool value );
 	void setPaused( bool value );
 
+	EventConnector* eventConnector();
+
 private:
 	bool m_showMainMenu = true;
+
+	EventConnector* m_eventConnector = nullptr;
 
 	Game* m_game = nullptr;
 

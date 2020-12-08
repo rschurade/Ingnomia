@@ -65,16 +65,16 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	QObject( parent ),
 	m_parent( parent )
 {
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
+	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
 
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
+	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
+	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
 
 	// Full polling of initial state on load
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
 
 	qDebug() << "initialize GL ...";
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );

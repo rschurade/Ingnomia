@@ -100,16 +100,16 @@ MainWindow::MainWindow( QWidget* parent ) :
 	QOpenGLWindow()
 {
 	qDebug() << "Create main window.";
-	connect( &EventConnector::getInstance(), &EventConnector::signalExit, this, &MainWindow::onExit );
-	connect( this, &MainWindow::signalWindowSize, &EventConnector::getInstance(), &EventConnector::onWindowSize );
-	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
-	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
-	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
-	connect( this, &MainWindow::signalUpdateRenderOptions, &EventConnector::getInstance(), &EventConnector::onUpdateRenderOptions );
+	connect( Global::gameManager->eventConnector(), &EventConnector::signalExit, this, &MainWindow::onExit );
+	connect( this, &MainWindow::signalWindowSize, Global::gameManager->eventConnector(), &EventConnector::onWindowSize );
+	connect( this, &MainWindow::signalViewLevel, Global::gameManager->eventConnector(), &EventConnector::onViewLevel );
+	connect( this, &MainWindow::signalSelectTile, Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
+	connect( this, &MainWindow::signalKeyPress, Global::gameManager->eventConnector(), &EventConnector::onKeyPress );
+	connect( this, &MainWindow::signalUpdateRenderOptions, Global::gameManager->eventConnector(), &EventConnector::onUpdateRenderOptions );
 
-	connect( EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
 	connect( Global::gameManager, &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 

@@ -37,24 +37,10 @@ class EventConnector : public QObject
 {
 	Q_OBJECT
 
-private:
+public:
 	// Private Constructor
 	EventConnector( QObject* parent = 0 );
-	// Stop the compiler generating methods of copy the object
-	EventConnector( EventConnector const& copy );            // Not Implemented
-	EventConnector& operator=( EventConnector const& copy ); // Not Implemented
-
-public:
 	~EventConnector();
-
-	static EventConnector& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static EventConnector instance;
-		return instance;
-	}
 
 	AggregatorTileInfo* aggregatorTileInfo()
 	{

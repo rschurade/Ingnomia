@@ -21,6 +21,7 @@
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
 #include "../../base/global.h"
+#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -29,31 +30,31 @@
 WorkshopProxy::WorkshopProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateInfo, this, &WorkshopProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateCraftList, this, &WorkshopProxy::onUpdateCraftList, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateInfo, this, &WorkshopProxy::onUpdateInfo, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateCraftList, this, &WorkshopProxy::onUpdateCraftList, Qt::QueuedConnection );
 
-	connect( this, &WorkshopProxy::signalSetBasicOptions, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalSetButcherOptions, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onSetButcherOptions, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftItem, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onCraftItem, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftJobCommand, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobCommand, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftJobParams, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobParams, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalSetBasicOptions, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onSetBasicOptions, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalSetButcherOptions, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onSetButcherOptions, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalCraftItem, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onCraftItem, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalCraftJobCommand, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobCommand, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalCraftJobParams, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobParams, Qt::QueuedConnection );
 
-	connect( this, &WorkshopProxy::signalRequestAllTradeItems, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onRequestAllTradeItems, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalRequestAllTradeItems, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onRequestAllTradeItems, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalTraderStock, this, &WorkshopProxy::onUpdateTraderStock, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalPlayerStock, this, &WorkshopProxy::onUpdatePlayerStock, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalTraderStock, this, &WorkshopProxy::onUpdateTraderStock, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalPlayerStock, this, &WorkshopProxy::onUpdatePlayerStock, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderStockItem, this, &WorkshopProxy::onUpdateTraderStockItem, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerStockItem, this, &WorkshopProxy::onUpdatePlayerStockItem, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderValue, this, &WorkshopProxy::onUpdateTraderValue, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerValue, this, &WorkshopProxy::onUpdatePlayerValue, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderStockItem, this, &WorkshopProxy::onUpdateTraderStockItem, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerStockItem, this, &WorkshopProxy::onUpdatePlayerStockItem, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderValue, this, &WorkshopProxy::onUpdateTraderValue, Qt::QueuedConnection );
+	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerValue, this, &WorkshopProxy::onUpdatePlayerValue, Qt::QueuedConnection );
 
-	connect( this, &WorkshopProxy::signalTraderStocktoOffer, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onTraderStocktoOffer, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalTraderOffertoStock, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onTraderOffertoStock, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalPlayerStocktoOffer, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onPlayerStocktoOffer, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalPlayerOffertoStock, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onPlayerOffertoStock, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalTraderStocktoOffer, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onTraderStocktoOffer, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalTraderOffertoStock, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onTraderOffertoStock, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalPlayerStocktoOffer, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onPlayerStocktoOffer, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalPlayerOffertoStock, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onPlayerOffertoStock, Qt::QueuedConnection );
 	
-	connect( this, &WorkshopProxy::signalTrade, EventConnector::getInstance().aggregatorWorkshop(), &AggregatorWorkshop::onTrade, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalTrade, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onTrade, Qt::QueuedConnection );
 }
 
 WorkshopProxy::~WorkshopProxy()
