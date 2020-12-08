@@ -18,9 +18,7 @@
 #include "ViewModel.h"
 #include "ProxyMainView.h"
 
-//#include "../../base/config.h"
 #include "../../game/gamemanager.h"
-#include "../../game/newgamesettings.h"
 
 #include "../eventconnector.h"
 #include "../strings.h"
