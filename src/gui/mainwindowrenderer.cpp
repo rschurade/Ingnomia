@@ -453,6 +453,8 @@ void MainWindowRenderer::initWorld()
 
 	m_texesInitialized = true;
 
+	m_rotation = 0;
+
 	emit fullDataRequired();
 }
 
@@ -470,8 +472,6 @@ void MainWindowRenderer::updateRenderParams()
 	m_lightMin = Config::getInstance().get( "lightMin" ).toFloat();
 	if ( m_lightMin < 0.01 )
 		m_lightMin = 0.3f;
-
-	m_rotation = Config::getInstance().get( "rotation" ).toInt();
 
 	m_debug   = Global::debugMode;
 
@@ -773,8 +773,7 @@ void MainWindowRenderer::rotate( int direction )
 {
 	direction  = qBound( -1, direction, 1 );
 	m_rotation = ( 4 + m_rotation + direction ) % 4;
-	Config::getInstance().set( "rotation", m_rotation );
-
+	
 	if( direction == 1 )
 	{
 		updatePositionAfterCWRotation( m_moveX, m_moveY );
