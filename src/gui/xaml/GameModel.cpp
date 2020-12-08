@@ -19,7 +19,6 @@
 #include "ProxyGameView.h"
 
 #include "../../base/db.h"
-#include "../../base/selection.h"
 #include "../../base/util.h"
 #include "../../game/inventory.h"
 
@@ -36,8 +35,6 @@
 #include <QDebug>
 #include <QImage>
 #include <QPixmap>
-
-#include <functional>
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
@@ -85,11 +82,12 @@ const char* BuildButton::GetImage() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
+BuildItem::BuildItem( QString name, QString sid, BuildItemType type, ProxyGameView* proxy )
 {
 	m_name = name.toStdString().c_str();
 	m_sid  = sid;
 	m_type = type;
+	m_proxy = proxy;
 
 	m_cmdBuild.SetExecuteFunc( MakeDelegate( this, &BuildItem::onCmdBuild ) );
 
@@ -238,7 +236,7 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 	{
 		case BuildItemType::Workshop:
 		{
-			Selection::getInstance().setAction( "BuildWorkshop" );
+			m_proxy->setSelectionAction( "BuildWorkshop" );
 		}
 		break;
 		case BuildItemType::Terrain:
@@ -250,35 +248,36 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 				QString qParam = param->ToString().Str();
 				if( qParam == "FillHole" )
 				{
-					Selection::getInstance().setAction( qParam );
+					m_proxy->setSelectionAction( qParam );
 				}
 				else
 				{
-					Selection::getInstance().setAction( qParam + type );
+					m_proxy->setSelectionAction( qParam + type );
 				}
 			}
 			else
 			{
 				if( type == "Stairs" && m_sid == "Scaffold" )
 				{
-					Selection::getInstance().setAction( "BuildScaffold" );
+					m_proxy->setSelectionAction( "BuildScaffold" );
 				}
 				else
 				{
-					Selection::getInstance().setAction( "Build" + type );
+					m_proxy->setSelectionAction( "Build" + type );
 				}
 			}
 		}
 		break;
 		case BuildItemType::Item:
 		{
-			Selection::getInstance().setAction( "BuildItem" );
+			m_proxy->setSelectionAction( "BuildItem" );
 		}
 		break;
 	}
 
-	Selection::getInstance().setMaterials( mats );
-	Selection::getInstance().setItemID( m_sid );
+	m_proxy->setSelectionMaterials( mats );
+	m_proxy->setSelectionItem( m_sid );
+
 	Global::eventConnector->onBuild();
 }
 
@@ -975,7 +974,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Type" ).toString() == "Wall" )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain, m_proxy ) );
 				}
 			}
 			break;
@@ -987,7 +986,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Type" ).toString() == "Floor" )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain, m_proxy ) );
 				}
 			}
 			break;
@@ -999,7 +998,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Type" ).toString() == "Stairs" )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain, m_proxy ) );
 				}
 			}
 			break;
@@ -1011,7 +1010,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Type" ).toString() == "Ramp" )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain, m_proxy ) );
 				}
 			}
 			break;
@@ -1023,7 +1022,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Type" ).toString() == "Fence" )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain, m_proxy ) );
 				}
 			}
 			break;
@@ -1034,7 +1033,7 @@ void GameModel::setCategory( const char* cats )
 
 			for ( auto row : rows )
 			{
-				_buildItems->Add( MakePtr<BuildItem>( S::s( "$WorkshopName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Workshop ) );
+				_buildItems->Add( MakePtr<BuildItem>( S::s( "$WorkshopName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Workshop, m_proxy ) );
 			}
 			break;
 		}
@@ -1045,7 +1044,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "Buildable" ).toBool() )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item, m_proxy ) );
 				}
 			}
 			break;
@@ -1057,7 +1056,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "ItemGroup" ).toString() == cat )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item, m_proxy ) );
 				}
 			}
 			break;
@@ -1070,7 +1069,7 @@ void GameModel::setCategory( const char* cats )
 			{
 				if ( row.value( "ItemGroup" ).toString() == cat )
 				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
+					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item, m_proxy ) );
 				}
 			}
 			break;
@@ -1399,7 +1398,10 @@ const NoesisApp::DelegateCommand* GameModel::GetCmdRightCommandButton() const
 
 void GameModel::OnCmdSimple( BaseComponent* param )
 {
-	Selection::getInstance().setAction( param->ToString().Str() );
+	if( param )
+	{
+		m_proxy->setSelectionAction( param->ToString().Str() );
+	}
 }
 
 void GameModel::onCloseWindowCmd( BaseComponent* param )

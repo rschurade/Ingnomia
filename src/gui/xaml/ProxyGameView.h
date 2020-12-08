@@ -50,6 +50,10 @@ public:
 
 	void setRenderOptions( bool designations, bool jobs, bool walls, bool axels );
 
+	void setSelectionAction( QString action );
+	void setSelectionItem( QString item );
+	void setSelectionMaterials( QStringList mats );
+
 
 private:
 	IngnomiaGUI::GameModel* m_parent = nullptr;
@@ -90,4 +94,8 @@ signals:
 	void signalSetGameSpeed( GameSpeed speed );
 	void signalSetPaused( bool paused );
 	void signalSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
+
+	void signalSetSelectionAction( QString action );
+	void signalSetSelectionItem( QString item );
+	void signalSetSelectionMaterials( QStringList mats );
 };

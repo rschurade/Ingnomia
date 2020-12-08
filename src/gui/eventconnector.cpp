@@ -19,6 +19,7 @@
 
 #include "../base/config.h"
 #include "../base/global.h"
+#include "../base/selection.h"
 #include "../game/gamemanager.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
@@ -252,4 +253,19 @@ void EventConnector::emitPause( bool paused )
 void EventConnector::emitGameSpeed( GameSpeed speed )
 {
 	emit signalUpdateGameSpeed( speed );
+}
+
+void EventConnector::onSetSelectionAction( QString action )
+{
+	Selection::getInstance().setAction( action );
+}
+	
+void EventConnector::onSetSelectionItem( QString item )
+{
+	Selection::getInstance().setItemID( item );
+}
+
+void EventConnector::onSetSelectionMaterials( QStringList mats )
+{
+	Selection::getInstance().setMaterials( mats );
 }

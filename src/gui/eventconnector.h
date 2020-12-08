@@ -150,6 +150,10 @@ public slots:
 	void onSaveGame();
 	void onSetShowMainMenu( bool value );
 
+	void onSetSelectionAction( QString action );
+	void onSetSelectionItem( QString item );
+	void onSetSelectionMaterials( QStringList mats );
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );

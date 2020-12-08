@@ -70,6 +70,10 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 
 	connect( this, &ProxyGameView::signalSetRenderOptions, Global::eventConnector, &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
+
+	connect( this, &ProxyGameView::signalSetSelectionAction, Global::eventConnector, &EventConnector::onSetSelectionAction, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetSelectionItem, Global::eventConnector, &EventConnector::onSetSelectionItem, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetSelectionMaterials, Global::eventConnector, &EventConnector::onSetSelectionMaterials, Qt::QueuedConnection );
 }
 
 ProxyGameView::~ProxyGameView()
@@ -254,4 +258,19 @@ void ProxyGameView::onUpdateRenderOptions( bool designation, bool jobs, bool wal
 	{
 		m_parent->updateRenderOptions( designation, jobs, walls, axles );
 	}
+}
+
+void ProxyGameView::setSelectionAction( QString action )
+{
+	emit signalSetSelectionAction( action );
+}
+
+void ProxyGameView::setSelectionItem( QString item )
+{
+	emit signalSetSelectionItem( item );
+}
+
+void ProxyGameView::setSelectionMaterials( QStringList mats )
+{
+	emit signalSetSelectionMaterials( mats );
 }

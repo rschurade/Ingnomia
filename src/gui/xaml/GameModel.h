@@ -137,7 +137,7 @@ enum class BuildItemType
 class BuildItem final : public Noesis::BaseComponent
 {
 public:
-	BuildItem( QString name, QString sid, BuildItemType type );
+	BuildItem( QString name, QString sid, BuildItemType type, ProxyGameView* proxy );
 
 	const char* GetName() const;
 	QString sid() const;
@@ -147,6 +147,8 @@ private:
 	Noesis::String m_name;
 	QString m_sid;
 	BuildItemType m_type;
+	ProxyGameView* m_proxy = nullptr;
+
 	Noesis::Ptr<Noesis::BitmapSource> m_bitmapSource;
 
 	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> m_requiredItems;
