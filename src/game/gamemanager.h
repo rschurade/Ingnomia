@@ -40,10 +40,6 @@ public:
 	void loadGame( QString folder, std::function<void( bool )> callback );
 	void saveGame();
 
-	bool showMainMenu()
-	{
-		return m_showMainMenu;
-	}
 	void setShowMainMenu( bool value );
 
 	GameSpeed gameSpeed();
@@ -56,25 +52,14 @@ public:
 	EventConnector* eventConnector();
 
 private:
-	bool m_showMainMenu = true;
-
 	EventConnector* m_eventConnector = nullptr;
 
 	Game* m_game = nullptr;
-
-	GameSpeed m_gameSpeed = GameSpeed::Normal;
-	bool m_paused         = true;
-
+	
 	void init();
 	void createNewGame();
 
 signals:
-	void startGame();
-	void stopGame();
-	void signalUpdateGameSpeed( GameSpeed speed );
-	void signalUpdatePaused( bool value );
-
-	void signalInitView();
 
 public slots:
 	void onGeneratorMessage( QString message );

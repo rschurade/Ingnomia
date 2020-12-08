@@ -51,7 +51,7 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
-GameManager* Global::gameManager = nullptr;
+EventConnector* Global::eventConnector = nullptr;
 
 Logger Global::m_logger;
 Inventory Global::m_inventory;

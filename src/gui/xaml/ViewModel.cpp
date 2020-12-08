@@ -18,8 +18,6 @@
 #include "ViewModel.h"
 #include "ProxyMainView.h"
 
-#include "../../game/gamemanager.h"
-
 #include "../eventconnector.h"
 #include "../strings.h"
 
@@ -309,7 +307,7 @@ void ViewModel::OnExit( BaseComponent* )
 	qDebug() << "ViewModel OnExit";
 	NS_LOG_INFO( "Exiting game" );
 	//NoesisApp::Application::Current()->Shutdown();
-	Global::gameManager->eventConnector()->onExit();
+	Global::eventConnector->onExit();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

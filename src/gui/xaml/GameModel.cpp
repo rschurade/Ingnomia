@@ -23,7 +23,6 @@
 #include "../../base/global.h"
 #include "../../base/selection.h"
 #include "../../base/util.h"
-#include "../../game/gamemanager.h"
 #include "../../game/inventory.h"
 
 #include "../eventconnector.h"
@@ -282,7 +281,7 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 
 	Selection::getInstance().setMaterials( mats );
 	Selection::getInstance().setItemID( m_sid );
-	Global::gameManager->eventConnector()->onBuild();
+	Global::eventConnector->onBuild();
 }
 
 

@@ -22,7 +22,6 @@
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 
 #include "PopulationModel.h"
@@ -33,11 +32,11 @@
 CreatureInfoProxy::CreatureInfoProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector()->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalCreatureUpdate, this, &CreatureInfoProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalProfessionList, this, &CreatureInfoProxy::onProfessionList, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalCreatureUpdate, this, &CreatureInfoProxy::onUpdateInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalProfessionList, this, &CreatureInfoProxy::onProfessionList, Qt::QueuedConnection );
 	
-	connect( this, &CreatureInfoProxy::signalRequestProfessionList, Global::gameManager->eventConnector()->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestProfessionList, Qt::QueuedConnection );
-	connect( this, &CreatureInfoProxy::signalSetProfession, Global::gameManager->eventConnector()->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onSetProfession, Qt::QueuedConnection );
+	connect( this, &CreatureInfoProxy::signalRequestProfessionList, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestProfessionList, Qt::QueuedConnection );
+	connect( this, &CreatureInfoProxy::signalSetProfession, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onSetProfession, Qt::QueuedConnection );
 	
 	
 }

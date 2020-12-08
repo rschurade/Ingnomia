@@ -20,6 +20,8 @@
 
 #include <QObject>
 
+#include "../base/enums.h"
+
 class Config;
 
 class QTimer;
@@ -37,10 +39,15 @@ public:
 
 	void save();
 
+	GameSpeed gameSpeed();
+	void setGameSpeed( GameSpeed speed );
+
+	bool paused();
+	void setPaused( bool value );
+
 private:
 	QTimer* m_timer = nullptr;
 
-	int m_speed            = 0;
 	int m_millisecondsSlow = 50;
 	int m_millisecondsFast = 5;
 
@@ -54,6 +61,9 @@ private:
 	QString intToTime( int time );
 
 	void autoSave();
+
+	bool m_paused = true;
+	GameSpeed m_gameSpeed = GameSpeed::Normal;
 
 public slots:
 	void loop();

@@ -18,7 +18,6 @@
 #include "settingsproxy.h"
 
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -26,15 +25,15 @@
 SettingsProxy::SettingsProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &SettingsProxy::signalRequestSettings, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onRequestSettings, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetUIScale, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetUIScale, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetKeyboardSpeed, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetKeyboardSpeed, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetFullScreen, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetFullScreen, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetLanguage, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetLightMin, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetLightMin, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetToggleMouseWheel, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onSetToggleMouseWheel, Qt::QueuedConnection );
+	connect( this, &SettingsProxy::signalRequestSettings, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestSettings, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetUIScale, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetKeyboardSpeed, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetKeyboardSpeed, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetFullScreen, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetFullScreen, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetLanguage, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetLightMin, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLightMin, Qt::QueuedConnection );
+    connect( this, &SettingsProxy::signalSetToggleMouseWheel, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetToggleMouseWheel, Qt::QueuedConnection );
     
-    connect( Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::signalUpdateSettings, this, &SettingsProxy::onSettings, Qt::QueuedConnection );
+    connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUpdateSettings, this, &SettingsProxy::onSettings, Qt::QueuedConnection );
 }
 
 void SettingsProxy::setParent( IngnomiaGUI::SettingsModel* parent )

@@ -174,3 +174,23 @@ void EventConnector::onUpdateRenderOptions()
 {
 	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
 }
+
+void EventConnector::emitStartGame()
+{
+	emit startGame();
+}
+	
+void EventConnector::emitStopGame()
+{
+	emit stopGame();
+}
+
+void EventConnector::emitInitView()
+{
+	emit signalInitView();
+}
+
+void EventConnector::emitInMenu( bool value )
+{
+	emit signalInMenu( value );
+}

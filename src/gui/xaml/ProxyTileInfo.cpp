@@ -22,7 +22,6 @@
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 #include "TileInfoModel.h"
 
@@ -32,15 +31,15 @@
 ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateTileInfo, this, &ProxyTileInfo::onUpdateTileInfo, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalTerrainCommand, Global::gameManager->eventConnector(), &EventConnector::onTerrainCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalManageCommand, Global::gameManager->eventConnector(), &EventConnector::onManageCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalRequestStockpileItems, Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateTileInfo, this, &ProxyTileInfo::onUpdateTileInfo, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalTerrainCommand, Global::eventConnector, &EventConnector::onTerrainCommand, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalManageCommand, Global::eventConnector, &EventConnector::onManageCommand, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalRequestStockpileItems, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
 
-	connect( this, &ProxyTileInfo::signalSetTennant, Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalSetAlarm, Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetTennant, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetAlarm, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
 }
 
 ProxyTileInfo::~ProxyTileInfo()

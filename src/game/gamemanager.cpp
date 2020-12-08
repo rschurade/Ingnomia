@@ -51,8 +51,6 @@ GameManager::GameManager( QObject* parent ) :
 
 	GameState::init();
 
-	connect( this, &GameManager::signalUpdatePaused, m_eventConnector, &EventConnector::onUpdatePause );
-	connect( this, &GameManager::signalUpdateGameSpeed, m_eventConnector, &EventConnector::onUpdateGameSpeed );
 }
 
 GameManager::~GameManager()
@@ -70,7 +68,7 @@ EventConnector* GameManager::eventConnector()
 
 void GameManager::setShowMainMenu( bool value )
 {
-	m_showMainMenu = value;
+	m_eventConnector->emitInMenu( value );
 }
 
 void GameManager::startNewGame( std::function<void( void )> callback )
@@ -133,7 +131,7 @@ void GameManager::init()
 	// reset everything and initialize components;
 	Global::reset();
 
-	emit stopGame();
+	m_eventConnector->emitStopGame();
 
 	GameState::init();
 
@@ -161,8 +159,8 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 	if ( io.load( folder ) )
 	{
 		m_game = new Game();
-		connect( this, &GameManager::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
-		connect( this, &GameManager::startGame, m_game, &Game::start );
+		connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
+		connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
 
 		qRegisterMetaType<QSet<unsigned int>>();
 		connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
@@ -179,11 +177,11 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 
 		Config::getInstance().set( "gameRunning", true );
 
-		m_showMainMenu = false;
+		m_eventConnector->emitInMenu( false );
 
-		emit signalInitView();
+		m_eventConnector->emitInitView();
+		m_eventConnector->emitStartGame();
 
-		emit startGame();
 		callback( true );
 	}
 	else
@@ -219,10 +217,10 @@ void GameManager::createNewGame()
 
 	Config::getInstance().set( "gameRunning", true );
 
-	m_showMainMenu = false;
+	m_eventConnector->emitInMenu( false );
 
-	connect( this, &GameManager::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
-	connect( this, &GameManager::startGame, m_game, &Game::start );
+	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
+	connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
 
 	qRegisterMetaType<QSet<unsigned int>>();
 	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
@@ -234,7 +232,7 @@ void GameManager::createNewGame()
 	m_game->sendTime();
 
 	//thread1->setPriority( QThread::HighPriority );
-	emit startGame();
+	m_eventConnector->emitStartGame();
 }
 
 void GameManager::onGeneratorMessage( QString message )
@@ -244,42 +242,56 @@ void GameManager::onGeneratorMessage( QString message )
 
 void GameManager::saveGame()
 {
-	bool paused = m_paused;
-
-	m_paused = true;
-	IO::save();
-
-	m_paused = paused;
+	if( m_game )
+	{
+		bool paused = m_game->paused();
+		m_game->setPaused( true );
+		IO::save();
+		m_game->setPaused( paused );
+	}
 }
 
 GameSpeed GameManager::gameSpeed()
 {
-	return m_gameSpeed;
+	if( m_game )
+	{
+		return m_game->gameSpeed();
+	}
+	return GameSpeed::Normal;
 }
 void GameManager::setGameSpeed( GameSpeed speed )
 {
-	qDebug() << (int)speed;
-	if( m_gameSpeed != speed )
+	if( m_game )
 	{
-		m_gameSpeed = speed;
-		emit signalUpdateGameSpeed( m_gameSpeed );
+		if( m_game->gameSpeed() != speed )
+		{
+			m_game->setGameSpeed( speed );
+			m_eventConnector->onUpdateGameSpeed( m_game->gameSpeed() );
+		}
 	}
 }
 
 bool GameManager::paused()
 {
-	return m_paused;
+	if( m_game )
+	{
+		return m_game->paused();
+	}
+	return true;
 }
 void GameManager::trySetPaused( bool value )
 {
-	emit signalUpdatePaused( value );
+	m_eventConnector->onUpdatePause( value );
 }
 
 void GameManager::setPaused( bool value )
 {
-	if( m_paused != value )
+	if( m_game )
 	{
-		m_paused = value;
-		emit signalUpdatePaused( value );
+		if( m_game->paused() != value )
+		{
+			m_game->setPaused( value );
+			m_eventConnector->onUpdatePause( value );
+		}
 	}
 }

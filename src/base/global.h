@@ -29,7 +29,7 @@
 #include <QVariant>
 #include <QtGlobal>
 
-class GameManager;
+class EventConnector;
 
 class FarmingManager;
 class Inventory;
@@ -118,7 +118,7 @@ public:
 
 	static QSet<QString> craftable;
 
-	static GameManager* gameManager;
+	static EventConnector* eventConnector;
 
 private:
 	static Logger m_logger;

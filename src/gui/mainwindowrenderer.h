@@ -157,6 +157,8 @@ public slots:
 	void paintWorld();
 	void onRenderParamsChanged();
 
+	void onSetInMenu( bool value );
+
 signals:
 	void redrawRequired();
 	void fullDataRequired();

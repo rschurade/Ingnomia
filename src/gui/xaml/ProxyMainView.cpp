@@ -18,7 +18,6 @@
 #include "ProxyMainView.h"
 
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 
 #include "../aggregatorloadgame.h"
 #include "../aggregatorsettings.h"
@@ -28,14 +27,14 @@
 ProxyMainView::ProxyMainView( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
 
-	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::gameManager->eventConnector()->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
+	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
 
-	connect( this, &ProxyMainView::signalRequestUIScale, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalRequestUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
 }
 
 ProxyMainView::~ProxyMainView()

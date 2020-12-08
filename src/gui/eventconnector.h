@@ -95,6 +95,11 @@ public:
 		return m_loadGameAggregator;
 	}
 
+	void emitStartGame();
+	void emitStopGame();
+	void emitInitView();
+	void emitInMenu( bool value );
+
 private:
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;
@@ -142,4 +147,9 @@ signals:
 	void signalPropagateKeyEsc();
 	void signalBuild();
 	void signalUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
+
+	void startGame();
+	void stopGame();
+	void signalInitView();
+	void signalInMenu( bool value );
 };

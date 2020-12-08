@@ -65,16 +65,18 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	QObject( parent ),
 	m_parent( parent )
 {
-	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
 
-	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
-	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
-	connect( Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
+
 
 	// Full polling of initial state on load
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::gameManager->eventConnector()->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
 
 	qDebug() << "initialize GL ...";
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
@@ -518,7 +520,7 @@ void MainWindowRenderer::paintWorld()
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 
-	if ( Global::gameManager->showMainMenu() )
+	if ( m_inMenu )
 	{
 		return;
 	}
@@ -1270,4 +1272,9 @@ void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 	x = -2 * ( Global::dimX * tileHeight + y );
 	//y = -Global::dimY * tileHeight + tmp/2;
 	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
+}
+
+void MainWindowRenderer::onSetInMenu( bool value )
+{
+	m_inMenu = value;
 }

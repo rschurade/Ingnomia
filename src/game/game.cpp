@@ -85,8 +85,6 @@ Game::Game( QObject* parent) :
 
 	qDebug() << "init game done";
 
-	m_speed = (int)GameSpeed::Normal;
-
 	/*
 	int lastlvl = 1;
 	for( int i = 1; i < 10000000; ++i )
@@ -142,14 +140,12 @@ void Game::stop()
 
 void Game::loop()
 {
-	bool pause = Global::gameManager->paused();
-
 	emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
 
 	QElapsedTimer timer;
 	timer.start();
 	int ms2 = 0;
-	if ( !pause )
+	if ( !m_paused )
 	{
 		sendClock();
 
@@ -200,7 +196,7 @@ void Game::loop()
 	}
 	emit signalUpdateStockpile();
 
-	Global::gameManager->eventConnector()->aggregatorCreatureInfo()->update();
+	Global::eventConnector->aggregatorCreatureInfo()->update();
 
 	int ms        = timer.elapsed();
 	m_maxLoopTime = qMax( ms2, m_maxLoopTime );
@@ -216,18 +212,14 @@ void Game::loop()
 
 	emit signalKingdomInfo( GameState::kingdomName, "", "", "" );
 
-	if ( (int)Global::gameManager->gameSpeed() != (int)m_speed )
+	switch( m_gameSpeed )
 	{
-		m_timer->stop();
-		m_speed = (int)Global::gameManager->gameSpeed();
-		if ( m_speed == (int)GameSpeed::Normal )
-		{
+		case GameSpeed::Normal:
 			m_timer->start( m_millisecondsSlow );
-		}
-		else
-		{
+			break;
+		case GameSpeed::Fast:
 			m_timer->start( m_millisecondsFast );
-		}
+			break;
 	}
 }
 
@@ -423,4 +415,25 @@ void Game::save()
 		emit signalPause( false );
 		Config::getInstance().set( "Pause", false );
 	}
+}
+
+	
+GameSpeed Game::gameSpeed()
+{
+	return m_gameSpeed;
+}
+
+void Game::setGameSpeed( GameSpeed speed )
+{
+	m_gameSpeed = speed;
+}
+
+bool Game::paused()
+{
+	return m_paused;
+}
+
+void Game::setPaused( bool value )
+{
+	m_paused = value;
 }

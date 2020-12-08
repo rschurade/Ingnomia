@@ -22,7 +22,6 @@
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 #include "PopulationModel.h"
 
@@ -32,31 +31,31 @@
 PopulationProxy::PopulationProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalPopulationUpdate, this, &PopulationProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalProfessionList, this, &PopulationProxy::onProfessionList, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalProfessionSkills, this, &PopulationProxy::onProfessionSkills, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalUpdateSingleGnome, this, &PopulationProxy::onUpdateSingleGnome, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalPopulationUpdate, this, &PopulationProxy::onUpdateInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalProfessionList, this, &PopulationProxy::onProfessionList, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalProfessionSkills, this, &PopulationProxy::onProfessionSkills, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalUpdateSingleGnome, this, &PopulationProxy::onUpdateSingleGnome, Qt::QueuedConnection );
 
-	connect( this, &PopulationProxy::signalSetSkillActive, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetSkillActive, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllSkills, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetAllSkills, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllGnomes, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetAllGnomes, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetProfession, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSortGnomes, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSortGnomes, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetSkillActive, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetSkillActive, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetAllSkills, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllSkills, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetAllGnomes, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllGnomes, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetProfession, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSortGnomes, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSortGnomes, Qt::QueuedConnection );
 
-	connect( this, &PopulationProxy::signalRequestSchedules, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onRequestSchedules, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetSchedule, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetSchedule, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllHours, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetAllHours, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetHourForAll, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onSetHourForAll, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalRequestSchedules, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestSchedules, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetSchedule, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetSchedule, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetAllHours, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllHours, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalSetHourForAll, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetHourForAll, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdate, this, &PopulationProxy::onUpdateSchedules, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdateSingleGnome, this, &PopulationProxy::onScheduleUpdateSingleGnome, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::signalSelectEditProfession, this, &PopulationProxy::onSelectEditProfession, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdate, this, &PopulationProxy::onUpdateSchedules, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdateSingleGnome, this, &PopulationProxy::onScheduleUpdateSingleGnome, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalSelectEditProfession, this, &PopulationProxy::onSelectEditProfession, Qt::QueuedConnection );
 	
-	connect( this, &PopulationProxy::signalRequestProfessions, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onRequestProfessions, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalRequestSkills, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onRequestSkills, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalUpdateProfession, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onUpdateProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalNewProfession, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onNewProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalDeleteProfession, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onDeleteProfession, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalRequestProfessions, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestProfessions, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalRequestSkills, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestSkills, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalUpdateProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onUpdateProfession, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalNewProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onNewProfession, Qt::QueuedConnection );
+	connect( this, &PopulationProxy::signalDeleteProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onDeleteProfession, Qt::QueuedConnection );
 }
 
 PopulationProxy::~PopulationProxy()

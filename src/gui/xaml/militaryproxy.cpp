@@ -18,7 +18,6 @@
 #include "militaryproxy.h"
 
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -26,29 +25,29 @@
 MilitaryProxy::MilitaryProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &MilitaryProxy::signalAddSquad, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onAddSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveSquad, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRemoveSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRenameSquad, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRenameSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveSquadLeft, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadLeft, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveSquadRight, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadRight, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveGnomeFromSquad, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRemoveGnomeFromSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveGnomeLeft, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeLeft, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveGnomeRight, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeRight, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalAddSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onAddSquad, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRemoveSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveSquad, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRenameSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRenameSquad, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMoveSquadLeft, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadLeft, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMoveSquadRight, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadRight, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRemoveGnomeFromSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveGnomeFromSquad, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMoveGnomeLeft, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeLeft, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMoveGnomeRight, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeRight, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalSetAttitude, &Global::mil(), &MilitaryManager::onSetAttitude, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMovePrioUp, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMovePrioUp, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMovePrioDown, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onMovePrioDown, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRequestRoles, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRequestRoles, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalAddRole, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onAddRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveRole, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRemoveRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRenameRole, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRenameRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetArmorType, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onSetArmorType, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetRole, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onSetRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetRoleCivilian, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onSetRoleCivilian, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMovePrioUp, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioUp, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalMovePrioDown, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioDown, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRequestRoles, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestRoles, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalAddRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onAddRole, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRemoveRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveRole, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalRenameRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRenameRole, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalSetArmorType, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetArmorType, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalSetRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetRole, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalSetRoleCivilian, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetRoleCivilian, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::signalSquads, this, &MilitaryProxy::onSquads, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::signalPriorities, this, &MilitaryProxy::onPriorities, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::signalRoles, this, &MilitaryProxy::onRoles, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::signalPossibleMaterials, this, &MilitaryProxy::onPossibleMaterials, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalSquads, this, &MilitaryProxy::onSquads, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalPriorities, this, &MilitaryProxy::onPriorities, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalRoles, this, &MilitaryProxy::onRoles, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalPossibleMaterials, this, &MilitaryProxy::onPossibleMaterials, Qt::QueuedConnection );
 
 
 }

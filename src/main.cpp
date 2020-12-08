@@ -198,10 +198,11 @@ int main( int argc, char* argv[] )
 	defaultFormat.setOption( QSurfaceFormat::DebugContext );
 	QSurfaceFormat::setDefaultFormat( defaultFormat );
 
-	Global::gameManager = new GameManager;
+	GameManager* gm = new GameManager;
+	Global::eventConnector = gm->eventConnector();
 	QThread gameThread;
 	gameThread.start();
-	Global::gameManager->moveToThread( &gameThread );
+	gm->moveToThread( &gameThread );
 
 
 	//MainWindow w;

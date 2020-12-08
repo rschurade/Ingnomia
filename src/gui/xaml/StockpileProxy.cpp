@@ -22,7 +22,6 @@
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
 #include "../../base/global.h"
-#include "../../game/gamemanager.h"
 #include "../eventconnector.h"
 #include "TileInfoModel.h"
 
@@ -32,11 +31,11 @@
 StockpileProxy::StockpileProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::signalUpdateInfo, this, &StockpileProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::signalUpdateContent, this, &StockpileProxy::onUpdateContent, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateInfo, this, &StockpileProxy::onUpdateInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateContent, this, &StockpileProxy::onUpdateContent, Qt::QueuedConnection );
 
-	connect( this, &StockpileProxy::signalSetBasicOptions, Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &StockpileProxy::signalSetActive, Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::onSetActive, Qt::QueuedConnection );
+	connect( this, &StockpileProxy::signalSetBasicOptions, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetBasicOptions, Qt::QueuedConnection );
+	connect( this, &StockpileProxy::signalSetActive, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetActive, Qt::QueuedConnection );
 }
 
 StockpileProxy::~StockpileProxy()

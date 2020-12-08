@@ -25,8 +25,6 @@
 #include "../aggregatorinventory.h"
 #include "../eventconnector.h"
 
-#include "../../game/gamemanager.h"
-
 #include "ViewModel.h"
 
 #include <QDebug>
@@ -35,34 +33,34 @@
 ProxyGameView::ProxyGameView( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalKeyEsc, this, &ProxyGameView::onKeyEscape, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalPropagateEscape, Global::gameManager->eventConnector(), &EventConnector::onPropagateEscape );
+	connect( Global::eventConnector, &EventConnector::signalKeyEsc, this, &ProxyGameView::onKeyEscape, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalPropagateEscape, Global::eventConnector, &EventConnector::onPropagateEscape );
 
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalKingdomInfo, this, &ProxyGameView::onKingdomInfo, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalKingdomInfo, this, &ProxyGameView::onKingdomInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalUpdatePause, this, &ProxyGameView::onUpdatePause, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalUpdateGameSpeed, this, &ProxyGameView::onUpdateGameSpeed, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalUpdatePause, this, &ProxyGameView::onUpdatePause, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalUpdateGameSpeed, this, &ProxyGameView::onUpdateGameSpeed, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalBuild, this, &ProxyGameView::onBuild, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorTileInfo(), &AggregatorTileInfo::signalShowTileInfo, this, &ProxyGameView::onShowTileInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalBuild, this, &ProxyGameView::onBuild, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalShowTileInfo, this, &ProxyGameView::onShowTileInfo, Qt::QueuedConnection );
 
-	connect( Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::signalOpenStockpileWindow, this, &ProxyGameView::onOpenStockpileWindow, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::signalOpenWorkshopWindow, this, &ProxyGameView::onOpenWorkshopWindow, Qt::QueuedConnection );
-	//connect( Global::gameManager->eventConnector()->aggregatorAgri(), &AggregatorAgri::signalShowAgri, this, &ProxyGameView::onOpenAgriWindow, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalOpenStockpileWindow, this, &ProxyGameView::onOpenStockpileWindow, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalOpenWorkshopWindow, this, &ProxyGameView::onOpenWorkshopWindow, Qt::QueuedConnection );
+	//connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalShowAgri, this, &ProxyGameView::onOpenAgriWindow, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalCloseStockpileWindow, Global::gameManager->eventConnector()->aggregatorStockpile(), &AggregatorStockpile::onCloseWindow, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalCloseWorkshopWindow, Global::gameManager->eventConnector()->aggregatorWorkshop(), &AggregatorWorkshop::onCloseWindow, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalCloseAgricultureWindow, Global::gameManager->eventConnector()->aggregatorAgri(), &AggregatorAgri::onCloseWindow, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalCloseStockpileWindow, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onCloseWindow, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalCloseWorkshopWindow, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCloseWindow, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalCloseAgricultureWindow, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onCloseWindow, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalRequestPopulationUpdate, Global::gameManager->eventConnector()->aggregatorPopulation(), &AggregatorPopulation::onRequestPopulationUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestCreatureUpdate, Global::gameManager->eventConnector()->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestCreatureUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestNeighborsUpdate, Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::onRequestNeighborsUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestMissionsUpdate, Global::gameManager->eventConnector()->aggregatorNeighbors(), &AggregatorNeighbors::onRequestMissions, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestPopulationUpdate, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestPopulationUpdate, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestCreatureUpdate, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestCreatureUpdate, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestNeighborsUpdate, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onRequestNeighborsUpdate, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestMissionsUpdate, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onRequestMissions, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalRequestMilitaryUpdate, Global::gameManager->eventConnector()->aggregatorMilitary(), &AggregatorMilitary::onRequestMilitary, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestInventoryUpdate, Global::gameManager->eventConnector()->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestMilitaryUpdate, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestMilitary, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestInventoryUpdate, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
 
 	connect( &Global::em(), &EventManager::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalEventAnswer, &Global::em(), &EventManager::onAnswer, Qt::QueuedConnection );
@@ -70,8 +68,8 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( this, &ProxyGameView::signalSetPaused, Global::gameManager, &GameManager::setPaused, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetGameSpeed, Global::gameManager, &GameManager::setGameSpeed, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalSetRenderOptions, Global::gameManager->eventConnector(), &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
-	connect( Global::gameManager->eventConnector(), &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalSetRenderOptions, Global::eventConnector, &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
 }
 
 ProxyGameView::~ProxyGameView()
