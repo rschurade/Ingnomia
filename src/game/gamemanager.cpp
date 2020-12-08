@@ -182,6 +182,7 @@ void GameManager::loadGame( QString folder )
 		m_eventConnector->emitInitView();
 		m_eventConnector->emitStartGame();
 
+		m_eventConnector->emitPause( m_game->paused() );
 		m_eventConnector->sendLoadGameDone( true );
 	}
 	else
@@ -232,6 +233,7 @@ void GameManager::createNewGame()
 	m_game->sendTime();
 
 	//thread1->setPriority( QThread::HighPriority );
+	m_eventConnector->emitPause( m_game->paused() );
 	m_eventConnector->emitStartGame();
 }
 

@@ -18,9 +18,7 @@
 #include "GameModel.h"
 #include "ProxyGameView.h"
 
-#include "../../base/config.h"
 #include "../../base/db.h"
-#include "../../base/global.h"
 #include "../../base/selection.h"
 #include "../../base/util.h"
 #include "../../game/inventory.h"
