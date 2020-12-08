@@ -17,7 +17,6 @@
 */
 #include "LoadGameModel.h"
 
-#include "../../base/io.h"
 #include "loadgameproxy.h"
 
 #include <NsApp/Application.h>

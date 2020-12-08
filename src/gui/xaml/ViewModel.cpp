@@ -16,13 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "ViewModel.h"
+#include "ProxyMainView.h"
 
-#include "../../base/config.h"
+//#include "../../base/config.h"
 #include "../../game/gamemanager.h"
 #include "../../game/newgamesettings.h"
+
 #include "../eventconnector.h"
 #include "../strings.h"
-#include "ProxyMainView.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -62,8 +63,9 @@ ViewModel::ViewModel()
 	_showMainMenu = true;
 	_showGameGUI  = false;
 	_ingame       = false;
-	m_scale       = qMax( 1.0f, Config::getInstance().get( "uiscale" ).toFloat() );
-	setWindowSize( 1920, 1080 );
+	m_scale       = 1.0f; 
+
+	m_proxy->requestUIScale();
 }
 
 void ViewModel::setWindowSize( int w, int h )

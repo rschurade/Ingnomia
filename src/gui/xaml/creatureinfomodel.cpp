@@ -21,6 +21,7 @@
 
 #include "../../base/util.h"
 #include "../../game/militarymanager.h"
+
 #include "../../gfx/spritefactory.h"
 
 #include <NsApp/Application.h>

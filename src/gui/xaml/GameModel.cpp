@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "GameModel.h"
+#include "ProxyGameView.h"
 
 #include "../../base/config.h"
 #include "../../base/db.h"
@@ -24,9 +25,9 @@
 #include "../../base/util.h"
 #include "../../game/gamemanager.h"
 #include "../../game/inventory.h"
+
 #include "../eventconnector.h"
 #include "../strings.h"
-#include "ProxyGameView.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>

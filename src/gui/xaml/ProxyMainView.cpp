@@ -34,6 +34,8 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 	connect( Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
 
 	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::gameManager->eventConnector()->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
+
+	connect( this, &ProxyMainView::signalRequestUIScale, Global::gameManager->eventConnector()->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
 }
 
 ProxyMainView::~ProxyMainView()
@@ -72,4 +74,9 @@ void ProxyMainView::onUIScale( float value )
 void ProxyMainView::requestLoadScreenUpdate()
 {
 	emit signalRequestLoadScreenUpdate();
+}
+
+void ProxyMainView::requestUIScale()
+{
+	emit signalRequestUIScale();
 }

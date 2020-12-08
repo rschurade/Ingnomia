@@ -81,3 +81,9 @@ void AggregatorSettings::onSetToggleMouseWheel( bool value )
 {
     Config::getInstance().set( "toggleMouseWheel", value );
 }
+
+void AggregatorSettings::onRequestUIScale()
+{
+    float scale = Config::getInstance().get( "uiscale" ).toFloat();
+    emit signalUIScale( scale );
+}

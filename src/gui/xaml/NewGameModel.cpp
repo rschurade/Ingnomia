@@ -21,6 +21,7 @@
 #include "../../base/db.h"
 #include "../../game/gamemanager.h"
 #include "../../game/newgamesettings.h"
+
 #include "../eventconnector.h"
 #include "../strings.h"
 
