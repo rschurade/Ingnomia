@@ -216,7 +216,12 @@ int main( int argc, char* argv[] )
 		w.onFullScreen( true );
 	}
 
-	return a.exec();
+	auto ret = a.exec();
+
+	gameThread.terminate();
+	gameThread.wait();
+
+	return ret;
 }
 
 #ifdef _WIN32
