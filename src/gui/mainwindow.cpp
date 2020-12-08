@@ -23,7 +23,6 @@
 #include "../base/io.h"
 #include "../base/selection.h"
 #include "../base/tile.h"
-#include "../game/gamemanager.h"
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
 #include "../gui/aggregatordebug.h"
@@ -105,13 +104,14 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalViewLevel, Global::eventConnector, &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalSelectTile, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, Global::eventConnector, &EventConnector::onKeyPress );
+	connect( this, &MainWindow::signalTogglePause, Global::eventConnector, &EventConnector::onTogglePause );
 	connect( this, &MainWindow::signalUpdateRenderOptions, Global::eventConnector, &EventConnector::onUpdateRenderOptions );
 
 	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
 	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
-	connect( Global::gameManager, &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 
 	instance = this;
 }
@@ -244,7 +244,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				emit signalKeyPress( event->key() );
 				break;
 			case Qt::Key_Space:
-				Global::gameManager->trySetPaused( !Global::gameManager->paused() );
+				emit signalTogglePause();
 				break;
 			case Qt::Key_W:
 				keyboardMove();

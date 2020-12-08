@@ -19,6 +19,7 @@
 
 #include "../base/config.h"
 #include "../base/global.h"
+#include "../game/gamemanager.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 #include "../game/plant.h"
@@ -76,12 +77,14 @@ void EventConnector::onViewLevel( int level )
 
 void EventConnector::onUpdatePause( bool paused )
 {
-	emit signalUpdatePause( paused );
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->setPaused( paused );
 }
 
 void EventConnector::onUpdateGameSpeed( GameSpeed speed )
 {
-	emit signalUpdateGameSpeed( speed );
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->setGameSpeed( speed );
 }
 
 void EventConnector::onKeyPress( int key )
@@ -92,6 +95,12 @@ void EventConnector::onKeyPress( int key )
 			emit signalKeyEsc();
 			break;
 	}
+}
+
+void EventConnector::onTogglePause()
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->trySetPaused( !gm->paused() );
 }
 
 void EventConnector::onPropagateEscape()

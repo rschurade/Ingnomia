@@ -126,6 +126,7 @@ public slots:
 	void onUpdatePause( bool paused );
 	void onUpdateGameSpeed( GameSpeed speed );
 	void onKeyPress( int key );
+	void onTogglePause();
 	void onPropagateEscape();
 
 	void onBuild();
@@ -135,6 +136,7 @@ public slots:
 
 	void onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
 	void onUpdateRenderOptions();
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
