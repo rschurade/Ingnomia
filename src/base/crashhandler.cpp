@@ -27,6 +27,10 @@ void setupCrashHandler()
 
 	// A guard buffer of 20mb is needed to catch OutOfMemory crashes
 	mpSender->setGuardByteBufferSize( 20 * 1024 * 1024 );
+
+	// Include main log file
+	QString logFile = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/log.txt";
+	mpSender->sendAdditionalFile( logFile.replace( '/', '\\' ).toStdWString().c_str() );
 }
 #else
 void setupCrashHandler()
