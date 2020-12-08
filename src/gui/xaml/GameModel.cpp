@@ -848,7 +848,7 @@ void GameModel::setGameSpeed( GameSpeed value )
 	}
 	else
 	{
-		if ( GameManager::getInstance().gameSpeed() != value )
+		if ( Global::gameManager->gameSpeed() != value )
 		{
 			m_proxy->setGameSpeed( value );
 		}
@@ -861,7 +861,7 @@ void GameModel::setGameSpeed( GameSpeed value )
 
 bool GameModel::getPaused() const
 {
-	return GameManager::getInstance().paused();
+	return Global::gameManager->paused();
 }
 
 void GameModel::setPaused( bool value )
@@ -879,7 +879,7 @@ void GameModel::setPaused( bool value )
 
 bool GameModel::getNormalSpeed() const
 {
-	return ( GameManager::getInstance().gameSpeed() == GameSpeed::Normal && !GameManager::getInstance().paused() );
+	return ( Global::gameManager->gameSpeed() == GameSpeed::Normal && !Global::gameManager->paused() );
 }
 
 void GameModel::setNormalSpeed( bool value )
@@ -892,7 +892,7 @@ void GameModel::setNormalSpeed( bool value )
 
 bool GameModel::getFastSpeed() const
 {
-	return ( GameManager::getInstance().gameSpeed() == GameSpeed::Fast && !GameManager::getInstance().paused() );
+	return ( Global::gameManager->gameSpeed() == GameSpeed::Fast && !Global::gameManager->paused() );
 }
 
 void GameModel::setFastSpeed( bool value )

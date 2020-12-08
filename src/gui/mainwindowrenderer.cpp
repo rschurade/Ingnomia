@@ -518,7 +518,7 @@ void MainWindowRenderer::paintWorld()
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 
-	if ( GameManager::getInstance().showMainMenu() )
+	if ( Global::gameManager->showMainMenu() )
 	{
 		return;
 	}

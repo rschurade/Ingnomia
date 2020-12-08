@@ -18,6 +18,10 @@
 #include "base/config.h"
 #include "base/db.h"
 #include "base/crashhandler.h"
+#include "base/global.h"
+
+#include "game/gamemanager.h"
+
 #include "gui/mainwindow.h"
 #include "gui/strings.h"
 
@@ -193,6 +197,12 @@ int main( int argc, char* argv[] )
 	defaultFormat.setProfile( QSurfaceFormat::CoreProfile );
 	defaultFormat.setOption( QSurfaceFormat::DebugContext );
 	QSurfaceFormat::setDefaultFormat( defaultFormat );
+
+	Global::gameManager = new GameManager;
+	QThread gameThread;
+	gameThread.start();
+	Global::gameManager->moveToThread( &gameThread );
+
 
 	//MainWindow w;
 	MainWindow w;

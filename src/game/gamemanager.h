@@ -29,24 +29,9 @@ class GameManager : public QObject
 {
 	Q_OBJECT
 
-private:
-	// Private Constructor
-	GameManager( QObject* parent = nullptr );
-	// Stop the compiler generating methods of copy the object
-	GameManager( GameManager const& copy );            // Not Implemented
-	GameManager& operator=( GameManager const& copy ); // Not Implemented
-
 public:
+	GameManager( QObject* parent = nullptr );
 	~GameManager();
-
-	static GameManager& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static GameManager instance;
-		return instance;
-	}
 
 	void startNewGame( std::function<void( void )> callback );
 	void setUpNewGame();
@@ -71,7 +56,6 @@ private:
 	bool m_showMainMenu = true;
 
 	Game* m_game = nullptr;
-	QThread m_gameThread;
 
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
 	bool m_paused         = true;

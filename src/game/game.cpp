@@ -142,7 +142,7 @@ void Game::stop()
 
 void Game::loop()
 {
-	bool pause = GameManager::getInstance().paused();
+	bool pause = Global::gameManager->paused();
 
 	emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
 
@@ -216,10 +216,10 @@ void Game::loop()
 
 	emit signalKingdomInfo( GameState::kingdomName, "", "", "" );
 
-	if ( (int)GameManager::getInstance().gameSpeed() != (int)m_speed )
+	if ( (int)Global::gameManager->gameSpeed() != (int)m_speed )
 	{
 		m_timer->stop();
-		m_speed = (int)GameManager::getInstance().gameSpeed();
+		m_speed = (int)Global::gameManager->gameSpeed();
 		if ( m_speed == (int)GameSpeed::Normal )
 		{
 			m_timer->start( m_millisecondsSlow );

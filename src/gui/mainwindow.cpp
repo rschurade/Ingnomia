@@ -111,7 +111,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 
 	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
-	connect( &GameManager::getInstance(), &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
+	connect( Global::gameManager, &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 
 	instance = this;
 }
@@ -244,7 +244,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				emit signalKeyPress( event->key() );
 				break;
 			case Qt::Key_Space:
-				GameManager::getInstance().trySetPaused( !GameManager::getInstance().paused() );
+				Global::gameManager->trySetPaused( !Global::gameManager->paused() );
 				break;
 			case Qt::Key_W:
 				keyboardMove();

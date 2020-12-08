@@ -216,7 +216,7 @@ void ViewModel::OnNewGame( BaseComponent* )
 	qDebug() << "ViewModel OnNewGame";
 	NS_LOG_INFO( "ViewModel OnNewGame" );
 	SetState( State::Wait );
-	GameManager::getInstance().startNewGame( std::bind( &ViewModel::OnNewGameFinished, this ) );
+	Global::gameManager->startNewGame( std::bind( &ViewModel::OnNewGameFinished, this ) );
 }
 
 void ViewModel::OnNewGameFinished()
@@ -238,17 +238,17 @@ void ViewModel::OnContinueGame( BaseComponent* param )
 	{
 		qDebug() << "ViewModel OnContinueGame last game";
 		SetState( State::Wait );
-		GameManager::getInstance().continueLastGame( std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
+		Global::gameManager->continueLastGame( std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
 	}
 	else
 	{
 		qDebug() << "ViewModel OnContinueGame" << param->ToString().Str();
 		SetState( State::Wait );
-		GameManager::getInstance().loadGame( param->ToString().Str(), std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
+		Global::gameManager->loadGame( param->ToString().Str(), std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
 	}
 	NS_LOG_INFO( "ViewModel OnContinueGame" );
 	//SetState( State::Wait );
-	//GameManager::getInstance().startNewGame( std::bind( &ViewModel::OnContinueGameFinished, this ) );
+	//Global::gameManager->startNewGame( std::bind( &ViewModel::OnContinueGameFinished, this ) );
 }
 
 void ViewModel::OnContinueGameFinished( bool gameLoaded )
@@ -292,7 +292,7 @@ void ViewModel::OnSaveGame( BaseComponent* )
 	qDebug() << "ViewModel OnSaveGame";
 	NS_LOG_INFO( "ViewModel OnSaveGame" );
 
-	GameManager::getInstance().saveGame();
+	Global::gameManager->saveGame();
 
 	SetState( State::GameRunning );
 	_showMainMenu = false;
@@ -300,7 +300,7 @@ void ViewModel::OnSaveGame( BaseComponent* )
 	OnPropertyChanged( "ShowMainMenu" );
 	_showGameGUI = true;
 	OnPropertyChanged( "ShowGameGui" );
-	GameManager::getInstance().setShowMainMenu( false );
+	Global::gameManager->setShowMainMenu( false );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,7 +320,7 @@ void ViewModel::OnBackToMain( BaseComponent* )
 	OnPropertyChanged( "ShowMainMenu" );
 	_showGameGUI = false;
 	OnPropertyChanged( "ShowGameGui" );
-	GameManager::getInstance().setShowMainMenu( true );
+	Global::gameManager->setShowMainMenu( true );
 	SetState( State::Main );
 }
 
@@ -338,7 +338,7 @@ void ViewModel::OnBack( BaseComponent* )
 			_showGameGUI = false;
 			OnPropertyChanged( "ShowGameGui" );
 			SetState( State::Ingame );
-			GameManager::getInstance().setShowMainMenu( true );
+			Global::gameManager->setShowMainMenu( true );
 			break;
 		case State::Settings:
 		case State::LoadGame:
@@ -355,7 +355,7 @@ void ViewModel::OnBack( BaseComponent* )
 			_showGameGUI  = false;
 			OnPropertyChanged( "ShowMainMenu" );
 			OnPropertyChanged( "ShowGameGui" );
-			GameManager::getInstance().setShowMainMenu( true );
+			Global::gameManager->setShowMainMenu( true );
 			break;
 		case State::Start:
 		case State::Ingame:
@@ -365,7 +365,7 @@ void ViewModel::OnBack( BaseComponent* )
 			OnPropertyChanged( "ShowMainMenu" );
 			_showGameGUI = true;
 			OnPropertyChanged( "ShowGameGui" );
-			GameManager::getInstance().setShowMainMenu( false );
+			Global::gameManager->setShowMainMenu( false );
 			SetState( State::GameRunning );
 			break;
 		}
@@ -383,7 +383,7 @@ void ViewModel::OnResume( BaseComponent* )
 	_showGameGUI  = true;
 	OnPropertyChanged( "ShowMainMenu" );
 	OnPropertyChanged( "ShowGameGui" );
-	GameManager::getInstance().setShowMainMenu( false );
+	Global::gameManager->setShowMainMenu( false );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -412,7 +412,7 @@ void ViewModel::SetState( State value )
 void ViewModel::OnPause( BaseComponent* params )
 {
 	qDebug() << "viewmodel on pause";
-	GameManager::getInstance().setPaused( !GameManager::getInstance().paused() );
+	Global::gameManager->setPaused( !Global::gameManager->paused() );
 }
 
 void ViewModel::setUIScale( float value )

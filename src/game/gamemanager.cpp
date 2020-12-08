@@ -47,20 +47,14 @@ GameManager::GameManager( QObject* parent ) :
 {
 	qRegisterMetaType<GameSpeed>();
 
-	m_gameThread.start();
 	GameState::init();
 
 	connect( this, &GameManager::signalUpdatePaused, &EventConnector::getInstance(), &EventConnector::onUpdatePause );
 	connect( this, &GameManager::signalUpdateGameSpeed, &EventConnector::getInstance(), &EventConnector::onUpdateGameSpeed );
-
-	EventConnector::getInstance().moveToThread( &m_gameThread );
 }
 
 GameManager::~GameManager()
 {
-	m_gameThread.terminate();
-	m_gameThread.wait();
-
 	if ( m_game )
 	{
 		delete m_game;
@@ -125,16 +119,10 @@ void GameManager::continueLastGame( std::function<void( bool )> callback )
 void GameManager::init()
 {
 	// Temporarily stop thread, so we can safely destroy the game
-	m_gameThread.quit();
-	m_gameThread.wait();
-
 	if ( m_game )
 	{
 		delete m_game;
 	}
-
-	m_gameThread.start();
-
 	// reset everything and initialize components;
 	Global::reset();
 
@@ -182,8 +170,6 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 
 		Config::getInstance().set( "NoRender", false );
 
-		m_game->moveToThread( &m_gameThread );
-
 		Config::getInstance().set( "gameRunning", true );
 
 		m_showMainMenu = false;
@@ -223,7 +209,6 @@ void GameManager::createNewGame()
 	Config::getInstance().set( "NoRender", false );
 	
 	EventConnector::getInstance().onViewLevel( GameState::viewLevel );
-	m_game->moveToThread( &m_gameThread );
 
 	Config::getInstance().set( "gameRunning", true );
 

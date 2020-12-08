@@ -29,6 +29,8 @@
 #include <QVariant>
 #include <QtGlobal>
 
+class GameManager;
+
 class FarmingManager;
 class Inventory;
 class ItemHistory;
@@ -116,9 +118,11 @@ public:
 
 	static QSet<QString> craftable;
 
+	static GameManager* gameManager;
+
 private:
 	static Logger m_logger;
-
+	
 	static Inventory m_inventory;
 	static ItemHistory m_itemHistory;
 	static JobManager m_jobManager;

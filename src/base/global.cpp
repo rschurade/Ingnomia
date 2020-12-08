@@ -23,6 +23,9 @@
 #include "../base/io.h"
 #include "../base/logger.h"
 #include "../base/util.h"
+
+#include "../game/gamemanager.h"
+
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
@@ -47,6 +50,8 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QStandardPaths>
+
+GameManager* Global::gameManager = nullptr;
 
 Logger Global::m_logger;
 Inventory Global::m_inventory;
