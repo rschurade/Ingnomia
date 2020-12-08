@@ -61,6 +61,7 @@ void FarmingManager::reset()
 	m_allFarmTiles.clear();
 	m_pastures.clear();
 	m_allPastureTiles.clear();
+	m_beehives.clear();
 }
 
 bool FarmingManager::load( QVariantMap vm )
