@@ -32,6 +32,7 @@ QMap<int, bool> DBHelper::m_itemIsContainerCache;
 QMap<int, QString> DBHelper::m_qualitySIDCache;
 QMap<int, float> DBHelper::m_qualityModCache;
 QMap<QString, QString> DBHelper::m_itemGroupCache;
+QMap<QString, QMap<QString, QMultiMap<QString, QString>>> DBHelper::m_workshopCraftResults;
 
 QMutex DBHelper::m_mutex;
 
@@ -197,6 +198,35 @@ float DBHelper::qualityMod( int rank )
 	}
 	m_qualityModCache.insert( rank, modifier );
 	return modifier;
+}
+
+QMap<QString, QMultiMap<QString, QString>> DBHelper::workshopPossibleCraftResults( QString workshopId )
+{
+	if ( m_workshopCraftResults.contains( workshopId ) )
+	{
+		return m_workshopCraftResults.value( workshopId );
+	}
+
+	const auto craftIds = DB::select( "Crafts", "Workshops", workshopId ).toString().split( "|" );
+
+	QMap<QString, QMultiMap<QString, QString>> workshopProduces;
+
+	QString craftID;
+	for ( const auto& craftId : craftIds )
+	{
+		QMultiMap<QString, QString> craftVariants;
+		auto itemSID = DB::select( "ItemID", "Crafts", craftId ).toString();
+		// can this workshop craft an item of that material?
+		auto possibleResultMatTypes = DB::select( "ResultMaterialTypes", "Crafts", craftId ).toString().split( "|" );
+		for ( const auto& materialType : possibleResultMatTypes )
+		{
+			craftVariants.insertMulti( materialType, craftId );
+		}
+		workshopProduces.insert( itemSID, craftVariants );
+	}
+
+	m_workshopCraftResults.insert( workshopId, workshopProduces );
+	return workshopProduces;
 }
 
 QString DBH::itemGroup( QString itemID )

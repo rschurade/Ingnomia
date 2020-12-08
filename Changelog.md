@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+- crash in tile info panel due to wrong thread
+- random crash due to use of GPU in wrong context
 
 ### Added
 
 ### Changed
+- sped up auto-craft job generation
 
 ### Removed
 

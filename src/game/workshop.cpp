@@ -603,37 +603,27 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 	if ( !m_active )
 		return false;
 	//test if workshop is able to build item
-	auto cl = DB::select( "Crafts", "Workshops", type() ).toString().split( "|" );
+	const auto possibleCrafts = DBH::workshopPossibleCraftResults( type() );
+	if ( !possibleCrafts.contains(itemSID) )
+	{
+		return false;
+	}
+
+	const auto& possibleMaterials = possibleCrafts[itemSID];
 
 	QString craftID;
-	for ( auto vci : cl )
+	if ( materialSID != "any" )
 	{
-		if ( DB::select( "ItemID", "Crafts", vci ).toString() == itemSID )
+		QString matType = Util::materialType( materialSID );
+		if ( !possibleMaterials.contains(matType ) )
 		{
-			if ( materialSID != "any" )
-			{
-				// can this workshop craft an item of that material?
-				auto possibleResultMatTypes = DB::select( "ResultMaterialTypes", "Crafts", vci ).toString().split( "|" );
-				QString matType             = Util::materialType( materialSID );
-				for ( auto prmt : possibleResultMatTypes )
-				{
-					if ( prmt == matType )
-					{
-						craftID = vci;
-						break;
-					}
-				}
-				if ( !craftID.isEmpty() )
-				{
-					break;
-				}
-			}
-			else
-			{
-				craftID = vci;
-				break;
-			}
+			return false;
 		}
+		craftID = possibleMaterials.value( matType );
+	}
+	else
+	{
+		craftID = possibleMaterials.first();
 	}
 
 	if ( craftID.isEmpty() )

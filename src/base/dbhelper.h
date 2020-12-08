@@ -48,6 +48,9 @@ public:
 
 	static QString itemGroup( QString itemID );
 
+	// itemSID => [ materialType => craftID ]
+	static QMap<QString, QMultiMap<QString, QString>> workshopPossibleCraftResults( QString workshopId );
+
 private:
 	DBHelper()  = delete;
 	~DBHelper() = delete;
@@ -67,6 +70,7 @@ private:
 	static QMap<int, float> m_qualityModCache;
 	static QMap<QString, QString> m_itemGroupCache;
 
+	static QMap<QString, QMap<QString, QMultiMap<QString, QString>>> m_workshopCraftResults;
 
 	static QMutex m_mutex;
 };
