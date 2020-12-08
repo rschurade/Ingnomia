@@ -203,3 +203,43 @@ void EventConnector::emitInMenu( bool value )
 {
 	emit signalInMenu( value );
 }
+	
+void EventConnector::onStartNewGame()
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->startNewGame();
+}
+
+void EventConnector::onContinueLastGame()
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->continueLastGame();
+}
+
+void EventConnector::onLoadGame( QString folder )
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->loadGame( folder );
+}
+
+void EventConnector::onSaveGame()
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->saveGame();
+}
+
+void EventConnector::onSetShowMainMenu( bool value )
+{
+	auto gm = dynamic_cast<GameManager*>( parent() );
+	gm->setShowMainMenu( value );
+}
+
+void EventConnector::sendResume()
+{
+	emit signalResume();
+}
+	
+void EventConnector::sendLoadGameDone( bool value )
+{
+	emit signalLoadGameDone( value );
+}

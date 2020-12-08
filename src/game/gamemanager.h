@@ -34,10 +34,10 @@ public:
 	GameManager( QObject* parent = nullptr );
 	~GameManager();
 
-	void startNewGame( std::function<void( void )> callback );
+	void startNewGame();
 	void setUpNewGame();
-	void continueLastGame( std::function<void( bool )> callback );
-	void loadGame( QString folder, std::function<void( bool )> callback );
+	void continueLastGame();
+	void loadGame( QString folder );
 	void saveGame();
 
 	void setShowMainMenu( bool value );

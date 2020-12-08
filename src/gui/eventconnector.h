@@ -100,6 +100,9 @@ public:
 	void emitInitView();
 	void emitInMenu( bool value );
 
+	void sendResume();
+	void sendLoadGameDone( bool value );
+
 private:
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;
@@ -137,6 +140,12 @@ public slots:
 	void onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
 	void onUpdateRenderOptions();
 
+	void onStartNewGame();
+	void onContinueLastGame();
+	void onLoadGame( QString folder );
+	void onSaveGame();
+	void onSetShowMainMenu( bool value );
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
@@ -154,4 +163,6 @@ signals:
 	void stopGame();
 	void signalInitView();
 	void signalInMenu( bool value );
+	void signalResume();
+	void signalLoadGameDone( bool value );
 };

@@ -352,6 +352,9 @@ private:
 	Noesis::String m_kingdomInfo2;
 	Noesis::String m_kingdomInfo3;
 
+	bool m_paused = false;
+	GameSpeed m_gameSpeed = GameSpeed::Normal;
+
 	bool m_renderDesignations = true;
 	bool m_renderJobs = true;
 	bool m_wallsLowered = false;

@@ -71,7 +71,7 @@ void GameManager::setShowMainMenu( bool value )
 	m_eventConnector->emitInMenu( value );
 }
 
-void GameManager::startNewGame( std::function<void( void )> callback )
+void GameManager::startNewGame()
 {
 	qDebug() << "GameManger: New game";
 
@@ -82,7 +82,8 @@ void GameManager::startNewGame( std::function<void( void )> callback )
 	
 	// check if folder exists, set new save folder name if yes
 	createNewGame();
-	callback();
+	
+	m_eventConnector->sendResume();
 }
 
 void GameManager::setUpNewGame()
@@ -90,7 +91,7 @@ void GameManager::setUpNewGame()
 	// check if folder exists, set new save folder name if yes
 }
 
-void GameManager::continueLastGame( std::function<void( bool )> callback )
+void GameManager::continueLastGame()
 {
 	//get last save
 	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
@@ -112,13 +113,12 @@ void GameManager::continueLastGame( std::function<void( bool )> callback )
 
 			if ( IO::saveCompatible( folder + gameDir + "/" ) )
 			{
-				loadGame( folder + gameDir + "/", callback );
+				loadGame( folder + gameDir + "/" );
 				return;
 			}
 		}
 	}
-
-	callback( false );
+	m_eventConnector->sendLoadGameDone( false );
 }
 
 void GameManager::init()
@@ -148,7 +148,7 @@ void GameManager::init()
 	}
 }
 
-void GameManager::loadGame( QString folder, std::function<void( bool )> callback )
+void GameManager::loadGame( QString folder )
 {
 	init();
 
@@ -182,12 +182,12 @@ void GameManager::loadGame( QString folder, std::function<void( bool )> callback
 		m_eventConnector->emitInitView();
 		m_eventConnector->emitStartGame();
 
-		callback( true );
+		m_eventConnector->sendLoadGameDone( true );
 	}
 	else
 	{
 		qDebug() << "failed to load";
-		callback( false );
+		m_eventConnector->sendLoadGameDone( false );
 	}
 }
 
@@ -248,6 +248,8 @@ void GameManager::saveGame()
 		m_game->setPaused( true );
 		IO::save();
 		m_game->setPaused( paused );
+
+		m_eventConnector->sendResume();
 	}
 }
 

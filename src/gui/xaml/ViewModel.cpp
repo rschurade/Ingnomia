@@ -214,18 +214,7 @@ void ViewModel::OnNewGame( BaseComponent* )
 	qDebug() << "ViewModel OnNewGame";
 	NS_LOG_INFO( "ViewModel OnNewGame" );
 	SetState( State::Wait );
-	Global::gameManager->startNewGame( std::bind( &ViewModel::OnNewGameFinished, this ) );
-}
-
-void ViewModel::OnNewGameFinished()
-{
-	qDebug() << "new game setup finished";
-	SetState( State::GameRunning );
-	_ingame       = true;
-	_showMainMenu = false;
-	OnPropertyChanged( "ShowMainMenu" );
-	_showGameGUI = true;
-	OnPropertyChanged( "ShowGameGui" );
+	m_proxy->startNewGame();
 }
 
 void ViewModel::OnContinueGame( BaseComponent* param )
@@ -236,13 +225,13 @@ void ViewModel::OnContinueGame( BaseComponent* param )
 	{
 		qDebug() << "ViewModel OnContinueGame last game";
 		SetState( State::Wait );
-		Global::gameManager->continueLastGame( std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
+		m_proxy->continueLastGame();
 	}
 	else
 	{
 		qDebug() << "ViewModel OnContinueGame" << param->ToString().Str();
 		SetState( State::Wait );
-		Global::gameManager->loadGame( param->ToString().Str(), std::bind( &ViewModel::OnContinueGameFinished, this, _1 ) );
+		m_proxy->loadGame( param->ToString().Str() );
 	}
 	NS_LOG_INFO( "ViewModel OnContinueGame" );
 	//SetState( State::Wait );
@@ -254,12 +243,7 @@ void ViewModel::OnContinueGameFinished( bool gameLoaded )
 	if ( gameLoaded )
 	{
 		qDebug() << "load game finished";
-		SetState( State::GameRunning );
-		_showMainMenu = false;
-		_ingame       = true;
-		OnPropertyChanged( "ShowMainMenu" );
-		_showGameGUI = true;
-		OnPropertyChanged( "ShowGameGui" );
+		OnResume( nullptr );
 	}
 	else
 	{
@@ -290,15 +274,7 @@ void ViewModel::OnSaveGame( BaseComponent* )
 	qDebug() << "ViewModel OnSaveGame";
 	NS_LOG_INFO( "ViewModel OnSaveGame" );
 
-	Global::gameManager->saveGame();
-
-	SetState( State::GameRunning );
-	_showMainMenu = false;
-	_ingame       = true;
-	OnPropertyChanged( "ShowMainMenu" );
-	_showGameGUI = true;
-	OnPropertyChanged( "ShowGameGui" );
-	Global::gameManager->setShowMainMenu( false );
+	m_proxy->saveGame();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +294,7 @@ void ViewModel::OnBackToMain( BaseComponent* )
 	OnPropertyChanged( "ShowMainMenu" );
 	_showGameGUI = false;
 	OnPropertyChanged( "ShowGameGui" );
-	Global::gameManager->setShowMainMenu( true );
+	m_proxy->setShowMainMenu( true );
 	SetState( State::Main );
 }
 
@@ -336,7 +312,7 @@ void ViewModel::OnBack( BaseComponent* )
 			_showGameGUI = false;
 			OnPropertyChanged( "ShowGameGui" );
 			SetState( State::Ingame );
-			Global::gameManager->setShowMainMenu( true );
+			m_proxy->setShowMainMenu( true );
 			break;
 		case State::Settings:
 		case State::LoadGame:
@@ -353,7 +329,7 @@ void ViewModel::OnBack( BaseComponent* )
 			_showGameGUI  = false;
 			OnPropertyChanged( "ShowMainMenu" );
 			OnPropertyChanged( "ShowGameGui" );
-			Global::gameManager->setShowMainMenu( true );
+			m_proxy->setShowMainMenu( true );
 			break;
 		case State::Start:
 		case State::Ingame:
@@ -363,7 +339,7 @@ void ViewModel::OnBack( BaseComponent* )
 			OnPropertyChanged( "ShowMainMenu" );
 			_showGameGUI = true;
 			OnPropertyChanged( "ShowGameGui" );
-			Global::gameManager->setShowMainMenu( false );
+			m_proxy->setShowMainMenu( false );
 			SetState( State::GameRunning );
 			break;
 		}
@@ -381,7 +357,7 @@ void ViewModel::OnResume( BaseComponent* )
 	_showGameGUI  = true;
 	OnPropertyChanged( "ShowMainMenu" );
 	OnPropertyChanged( "ShowGameGui" );
-	Global::gameManager->setShowMainMenu( false );
+	m_proxy->setShowMainMenu( false );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -405,12 +381,6 @@ void ViewModel::SetState( State value )
 		_state = value;
 		OnPropertyChanged( "State" );
 	}
-}
-
-void ViewModel::OnPause( BaseComponent* params )
-{
-	qDebug() << "viewmodel on pause";
-	Global::gameManager->setPaused( !Global::gameManager->paused() );
 }
 
 void ViewModel::setUIScale( float value )
