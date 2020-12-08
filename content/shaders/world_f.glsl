@@ -38,7 +38,6 @@
 #define CAT(x, y) CAT_(x, y)
 #define CAT_(x, y) x ## y
 #define UNPACKSPRITE(alias, src) const uint CAT(alias, ID) = src & 0xffff; const uint CAT(alias, Flags) = src >> 16;
-
 layout(location = 0) noperspective in vec2 vTexCoords;
 layout(location = 1) flat in uvec4  block1;
 layout(location = 2) flat in uvec4  block2;

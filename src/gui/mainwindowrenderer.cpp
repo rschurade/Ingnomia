@@ -187,21 +187,12 @@ void MainWindowRenderer::reloadShaders()
 
 void MainWindowRenderer::cleanup()
 {
-	if ( m_worldShader == nullptr )
-	{
-		return;
-	}
 	m_parent->makeCurrent();
-	delete m_worldShader;
-	m_worldShader = nullptr;
-	delete m_worldUpdateShader;
-	m_worldUpdateShader = nullptr;
-	delete m_thoughtBubbleShader;
-	m_thoughtBubbleShader = nullptr;
-	delete m_selectionShader;
-	m_selectionShader = nullptr;
-	delete m_axleShader;
-	m_axleShader = nullptr;
+	m_worldShader.reset();
+	m_worldUpdateShader.reset();
+	m_thoughtBubbleShader.reset();
+	m_selectionShader.reset();
+	m_axleShader.reset();
 
 	glDeleteBuffers( 1, &m_vbo );
 	glDeleteBuffers( 1, &m_vibo );
@@ -268,14 +259,14 @@ QOpenGLShaderProgram* MainWindowRenderer::initShader( QString name )
 	QString vs = copyShaderToString( name + "_v" );
 	QString fs = copyShaderToString( name + "_f" );
 
-	QOpenGLShaderProgram* shader = new QOpenGLShaderProgram;
+	QScopedPointer<QOpenGLShaderProgram> shader(new QOpenGLShaderProgram);
 
 	bool ok = true;
 	ok &= shader->addShaderFromSourceCode( QOpenGLShader::Vertex, vs );
 	ok &= shader->addShaderFromSourceCode( QOpenGLShader::Fragment, fs );
 	if ( !ok )
 	{
-		qDebug() << "failed to add shader source code";
+		qCritical() << "failed to add shader source code" << name;
 		return nullptr;
 	}
 
@@ -283,33 +274,33 @@ QOpenGLShaderProgram* MainWindowRenderer::initShader( QString name )
 
 	if ( !ok )
 	{
-		qDebug() << "failed to link shader";
+		qCritical() << "failed to link shader" << name;
 		return nullptr;
 	}
 
 	ok &= shader->bind();
 	if ( !ok )
 	{
-		qDebug() << "failed to bind shader";
+		qCritical() << "failed to bind shader" << name;
 		return nullptr;
 	}
 
 	shader->release();
 
-	return shader;
+	return shader.take();
 }
 
 QOpenGLShaderProgram* MainWindowRenderer::initComputeShader( QString name )
 {
 	QString cs = copyShaderToString( name + "_c" );
 
-	QOpenGLShaderProgram* shader = new QOpenGLShaderProgram;
+	QScopedPointer<QOpenGLShaderProgram> shader( new QOpenGLShaderProgram );
 
 	bool ok = true;
 	ok &= shader->addShaderFromSourceCode( QOpenGLShader::Compute, cs );
 	if ( !ok )
 	{
-		qDebug() << "failed to add shader source code";
+		qCritical() << "failed to add shader source code";
 		return nullptr;
 	}
 
@@ -317,47 +308,34 @@ QOpenGLShaderProgram* MainWindowRenderer::initComputeShader( QString name )
 
 	if ( !ok )
 	{
-		qDebug() << "failed to link shader";
+		qCritical() << "failed to link shader";
 		return nullptr;
 	}
 
 	ok &= shader->bind();
 	if ( !ok )
 	{
-		qDebug() << "failed to bind shader";
+		qCritical() << "failed to bind shader";
 		return nullptr;
 	}
 
 	shader->release();
 
-	return shader;
+	return shader.take();
 }
 
 bool MainWindowRenderer::initShaders()
 {
-	m_worldShader = initShader( "world" );
-	if ( !m_worldShader )
+	m_worldShader.reset(initShader( "world" ));
+	m_worldUpdateShader.reset(initComputeShader( "worldupdate" ));
+	m_thoughtBubbleShader.reset(initShader( "thoughtbubble" ));
+	m_selectionShader.reset(initShader( "selection" ));
+	m_axleShader.reset(initShader( "axle" ));
+
+	if ( !m_worldShader || !m_worldUpdateShader || !m_thoughtBubbleShader || !m_selectionShader || !m_axleShader )
 	{
-		return false;
-	}
-	m_worldUpdateShader = initComputeShader( "worldupdate" );
-	if ( !m_worldUpdateShader )
-	{
-		return false;
-	}
-	m_thoughtBubbleShader = initShader( "thoughtbubble" );
-	if ( !m_thoughtBubbleShader )
-	{
-		return false;
-	}
-	m_selectionShader = initShader( "selection" );
-	if ( !m_selectionShader )
-	{
-		return false;
-	}
-	m_axleShader = initShader( "axle" );
-	if ( !m_axleShader )
-	{
+		// Can't proceed, and need to know what happened!
+		abort();
 		return false;
 	}
 
@@ -621,7 +599,7 @@ void MainWindowRenderer::paintTiles()
 	DebugScope s( "paint tiles" );
 
 	m_worldShader->bind();
-	setCommonUniforms( m_worldShader );
+	setCommonUniforms( m_worldShader.get() );
 
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
@@ -682,7 +660,7 @@ void MainWindowRenderer::paintSelection()
 	}
 	DebugScope s( "paint selection" );
 	m_selectionShader->bind();
-	setCommonUniforms( m_selectionShader );
+	setCommonUniforms( m_selectionShader.get() );
 
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
@@ -713,7 +691,7 @@ void MainWindowRenderer::paintThoughtBubbles()
 	DebugScope s( "paint thoughts" );
 
 	m_thoughtBubbleShader->bind();
-	setCommonUniforms( m_thoughtBubbleShader );
+	setCommonUniforms( m_thoughtBubbleShader.get() );
 
 	m_thoughtBubbleShader->setUniformValue( "uTexture0", 0 );
 
@@ -736,7 +714,7 @@ void MainWindowRenderer::paintAxles()
 	DebugScope s( "paint axles" );
 
 	m_axleShader->bind();
-	setCommonUniforms( m_axleShader );
+	setCommonUniforms( m_axleShader.get() );
 	m_axleShader->setUniformValue( "uTickNumber", (unsigned int)GameState::tick );
 
 	for ( int i = 0; i < m_texesUsed; ++i )
