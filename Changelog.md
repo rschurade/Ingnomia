@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - crash in tile info panel due to wrong thread
 - random crash due to use of GPU in wrong context
+- crash with auto craft in waste disposal
 
 ### Added
 

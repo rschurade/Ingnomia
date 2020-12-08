@@ -4471,9 +4471,9 @@ INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTim
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneBedFrame',1,NULL,'BoneBedFrame',50.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneBed',1,NULL,'Bed',50.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Shed',1,NULL,'Shed',50.0,NULL,'Wood','Carpentry');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnFishBone',0,NULL,'FishBone',1.0,NULL,NULL,'Smelting');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnStraw',0,NULL,'Straw',1.0,NULL,NULL,'Smelting');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnSeeds',0,NULL,'Seed',1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnFishBone',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnStraw',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnSeeds',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('AlarmBellBase',1,'','AlarmBellBase',30.0,NULL,'Wood','Carpentry');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('AlarmBellBell',1,'','AlarmBellBell',30.0,NULL,'Metal','Blacksmithing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BeeHive',1,'','BeeHive',20.0,NULL,NULL,'Carpentry');
@@ -4840,8 +4840,8 @@ INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","A
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AutomatonCoreMark2',NULL,NULL,4,'Gear',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AutomatonCoreMark2',NULL,NULL,4,'Spring',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('Shed',NULL,NULL,6,'Plank',NULL);
-INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnFishBone',NULL,NULL,1,'FishBone',NULL);
-INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnStraw',NULL,NULL,1,'Straw',NULL);
+INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnFishBone',NULL,NULL,5,'FishBone',NULL);
+INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnStraw',NULL,NULL,5,'Straw',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnSeeds',NULL,NULL,5,'Seed',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AlarmBellBell',NULL,NULL,2,'Bar',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AlarmBellBase',NULL,NULL,2,'Plank',NULL);
