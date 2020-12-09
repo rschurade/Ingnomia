@@ -962,6 +962,7 @@ void GameModel::OnCmdCategory( BaseComponent* param )
 
 void GameModel::setCategory( const char* cats )
 {
+	qDebug() << "GameModel::setCategory" << cats;
 	QString cat( cats );
 	_buildItems->Clear();
 
