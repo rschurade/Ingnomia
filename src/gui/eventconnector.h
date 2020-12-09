@@ -17,21 +17,26 @@
 */
 #pragma once
 
-#include "aggregatoragri.h"
-#include "aggregatorcreatureinfo.h"
-#include "aggregatordebug.h"
-#include "aggregatorinventory.h"
-#include "aggregatorpopulation.h"
-#include "aggregatorrenderer.h"
-#include "aggregatorstockpile.h"
-#include "aggregatortileinfo.h"
-#include "aggregatorworkshop.h"
-#include "aggregatorneighbors.h"
-#include "aggregatormilitary.h"
-#include "aggregatorsettings.h"
-#include "aggregatorloadgame.h"
-
 #include <QObject>
+
+class GameManager;
+
+class AggregatorTileInfo;     
+class AggregatorStockpile;    
+class AggregatorWorkshop;     
+class AggregatorAgri;         
+class AggregatorRenderer;
+class AggregatorPopulation;
+class AggregatorCreatureInfo;
+class AggregatorDebug;
+class AggregatorNeighbors;
+class AggregatorMilitary;   
+class AggregatorSettings;     
+class AggregatorInventory;    
+class AggregatorLoadGame;     
+
+
+
 
 class EventConnector : public QObject
 {
@@ -39,7 +44,7 @@ class EventConnector : public QObject
 
 public:
 	// Private Constructor
-	EventConnector( QObject* parent = 0 );
+	EventConnector( GameManager* parent );
 	~EventConnector();
 
 	AggregatorTileInfo* aggregatorTileInfo()
@@ -107,6 +112,8 @@ public:
 	void sendLoadGameDone( bool value );
 
 private:
+	GameManager* gm = nullptr;
+
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;
 	AggregatorWorkshop* m_wsAggregator = nullptr;
@@ -120,7 +127,7 @@ private:
 	AggregatorSettings* m_settingsAggregator = nullptr;
 	AggregatorInventory* m_inventoryAggregator = nullptr;
 	AggregatorLoadGame* m_loadGameAggregator = nullptr;
-
+	
 public slots:
 	void onExit();
 	void onWindowSize( int w, int h );

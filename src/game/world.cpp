@@ -44,7 +44,7 @@
 #include <random>
 #include <time.h>
 
-World::World()
+World::World( int dimX, int dimY, int dimZ )
 {
 	m_constructionSID2ENUM.insert( "Wall", CID_WALL );
 	m_constructionSID2ENUM.insert( "FancyWall", CID_FANCYWALL );
@@ -83,13 +83,6 @@ void World::init()
 	m_lightMap.init();
 	initWater();
 	initGrassUpdateList();
-}
-
-void World::initLite()
-{
-	m_dimX = Global::dimX;
-	m_dimY = Global::dimY;
-	m_dimZ = Global::dimZ;
 }
 
 void World::initWater()
@@ -136,24 +129,6 @@ void World::initWater()
 			}
 		}
 	}
-}
-
-void World::reset()
-{
-	qDebug() << "World::reset";
-	m_world.clear();
-	m_plants.clear();
-	m_creaturePositions.clear();
-	m_floorConstructions.clear();
-	m_wallConstructions.clear();
-	m_grass.clear();
-	m_grassCandidatePositions.clear();
-	m_regionMap.clear();
-	m_lightMap.init();
-	m_jobSprites.clear();
-	m_water.clear();
-	m_aquifiers.clear();
-	m_deaquifiers.clear();
 }
 
 void World::afterLoad()

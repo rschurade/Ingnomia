@@ -53,8 +53,9 @@
 
 #include <time.h>
 
-Game::Game( QObject* parent) :
-	QObject(parent)
+Game::Game( World* world, QObject* parent ) :
+	m_world( world ),
+	QObject( parent )
 {
 	qDebug() << "init game...";
 
@@ -82,24 +83,23 @@ Game::Game( QObject* parent) :
 	{
 		GameState::techs.insert( t, 1 );
 	}
-
-	qDebug() << "init game done";
-
 	/*
-	int lastlvl = 1;
-	for( int i = 1; i < 10000000; ++i )
-	{
-		int lvl = Util::reverseFib( i );
-		if ( lvl > lastlvl )
-		{
-			qDebug() << lvl << i;
-			lastlvl = lvl;
-		}
-	}
+	m_inventory			= new Inventory( this );
+	m_itemHistory		= new ItemHistory( this );
+	m_jobManager		= new JobManager( this );
+	m_stockpileManager	= new StockpileManager( this );
+	m_farmingManager	= new FarmingManager( this );
+	m_workshopManager	= new WorkshopManager( this );
+	m_roomManager		= new RoomManager( this );
+	m_gnomeManager		= new GnomeManager( this );
+	m_creatureManager	= new CreatureManager( this );
+	m_eventManager		= new EventManager( this );
+	m_mechanismManager	= new MechanismManager( this );
+	m_fluidManager		= new FluidManager( this );
+	m_neighborManager	= new NeighborManager( this );
+	m_militaryManager	= new MilitaryManager( this );
 	*/
-
-	//TechTree tt;
-	//tt.create();
+	qDebug() << "init game done";
 }
 
 
@@ -150,7 +150,7 @@ void Game::loop()
 		sendClock();
 
 		// process grass
-		Global::w().processGrass();
+		m_world->processGrass();
 		// process plants
 		processPlants();
 
@@ -176,7 +176,7 @@ void Game::loop()
 		Global::flm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		Global::nm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
-		Global::w().processWater();
+		m_world->processWater();
 
 		PathFinder::getInstance().findPaths();
 
@@ -189,7 +189,7 @@ void Game::loop()
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	auto updates = Global::w().updatedTiles();
+	auto updates = m_world->updatedTiles();
 	if ( !updates.empty() )
 	{
 		signalUpdateTileInfo( std::move( updates ) );
@@ -358,7 +358,7 @@ QString Game::intToTime( int time )
 void Game::processPlants()
 {
 	QList<Position> toRemove;
-	for ( auto& p : Global::w().plants() )
+	for ( auto& p : m_world->plants() )
 	{
 		switch ( p.onTick( GameState::tick, GameState::dayChanged, GameState::seasonChanged ) )
 		{
@@ -371,7 +371,7 @@ void Game::processPlants()
 	}
 	for ( auto p : toRemove )
 	{
-		Global::w().removePlant( p );
+		m_world->removePlant( p );
 	}
 }
 

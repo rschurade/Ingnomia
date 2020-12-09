@@ -26,7 +26,8 @@
 
 #define DEADLYFLUIDLEVEL 4
 
-PathFinderThread::PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
+PathFinderThread::PathFinderThread( World* world, Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
+	m_world( world ),
 	m_start( start ),
 	m_goals( goals ),
 	m_ignoreNoPass( ignoreNoPass ),
@@ -41,7 +42,7 @@ void PathFinderThread::operator()()
 
 bool PathFinderThread::evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
-	const Tile& tile = Global::w().getTile( next );
+	const Tile& tile = m_world->getTile( next );
 
 	if ( tile.flags & TileFlag::TF_WALKABLE && tile.fluidLevel < DEADLYFLUIDLEVEL )
 	{
@@ -68,14 +69,14 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 
 bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
-	const Tile& rampTopTile = Global::w().getTile( rampPos );
+	const Tile& rampTopTile = m_world->getTile( rampPos );
 
 	if ( !(bool)( rampTopTile.floorType & FT_RAMPTOP ) )
 		return false;
 
 	auto next = rampPos.belowOf();
 
-	const Tile& tile = Global::w().getTile( next );
+	const Tile& tile = m_world->getTile( next );
 
 	if ( tile.flags & TileFlag::TF_WALKABLE && tile.fluidLevel < DEADLYFLUIDLEVEL )
 	{
@@ -197,7 +198,7 @@ void PathFinderThread::findPath()
 				evalPos( current, next, pathField, frontier, goal );
 			}
 
-			Tile& curTile = Global::w().getTile( current );
+			Tile& curTile = m_world->getTile( current );
 
 			if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
 			{

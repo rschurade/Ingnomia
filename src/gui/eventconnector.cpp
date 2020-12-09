@@ -17,11 +17,26 @@
 */
 #include "eventconnector.h"
 
+#include "aggregatoragri.h"
+#include "aggregatorcreatureinfo.h"
+#include "aggregatordebug.h"
+#include "aggregatorinventory.h"
+#include "aggregatorpopulation.h"
+#include "aggregatorrenderer.h"
+#include "aggregatorstockpile.h"
+#include "aggregatortileinfo.h"
+#include "aggregatorworkshop.h"
+#include "aggregatorneighbors.h"
+#include "aggregatormilitary.h"
+#include "aggregatorsettings.h"
+#include "aggregatorloadgame.h"
+
 #include "../base/db.h"
 #include "../base/config.h"
 #include "../base/global.h"
 #include "../base/selection.h"
 #include "../game/gamemanager.h"
+#include "../game/game.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 #include "../game/plant.h"
@@ -29,7 +44,8 @@
 
 #include <QDebug>
 
-EventConnector::EventConnector( QObject* parent ) :
+EventConnector::EventConnector( GameManager* parent ) :
+	gm( parent ),
 	QObject( parent )
 {
 	m_tiAggregator           = new AggregatorTileInfo( this );
@@ -79,13 +95,11 @@ void EventConnector::onViewLevel( int level )
 
 void EventConnector::onSetPause( bool paused )
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->setPaused( paused );
 }
 
 void EventConnector::onSetGameSpeed( GameSpeed speed )
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->setGameSpeed( speed );
 }
 
@@ -101,7 +115,6 @@ void EventConnector::onKeyPress( int key )
 
 void EventConnector::onTogglePause()
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	emit signalUpdatePause( !gm->paused() );
 }
 
@@ -127,9 +140,9 @@ void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 		Global::jm().addJob( "RemovePlant", Position( tileID ), 0 );
 	else if ( cmd == "Harvest" )
 	{
-		if ( Global::w().plants().contains( tileID ) )
+		if ( gm->game() && gm->game()->world() && gm->game()->world()->plants().contains( tileID ) )
 		{
-			Plant& plant = Global::w().plants()[tileID];
+			Plant& plant = gm->game()->world()->plants()[tileID];
 			if ( plant.isTree() )
 			{
 				Global::jm().addJob( "HarvestTree", Position( tileID ), 0 );
@@ -144,28 +157,31 @@ void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 
 void EventConnector::onManageCommand( unsigned int tileID )
 {
-	Tile& tile = Global::w().getTile( tileID );
-
-	TileFlag designation = tile.flags - ~( TileFlag::TF_WORKSHOP + TileFlag::TF_STOCKPILE + TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_ROOM );
-	switch ( designation )
+	if ( gm->game() && gm->game()->world() )
 	{
-		case TileFlag::TF_WORKSHOP:
-			m_wsAggregator->onOpenWorkshopInfoOnTile( tileID );
-			break;
-		case TileFlag::TF_STOCKPILE:
+		Tile& tile = gm->game()->world()->getTile( tileID );
+
+		TileFlag designation = tile.flags - ~( TileFlag::TF_WORKSHOP + TileFlag::TF_STOCKPILE + TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_ROOM );
+		switch ( designation )
 		{
-			m_spAggregator->onOpenStockpileInfoOnTile( tileID );
-		}
-		break;
-		case TileFlag::TF_GROVE:
-		case TileFlag::TF_FARM:
-		case TileFlag::TF_PASTURE:
-		{
-			m_acAggregator->onOpen( designation, tileID );
-		}
-		break;
-		case TileFlag::TF_ROOM:
+			case TileFlag::TF_WORKSHOP:
+				m_wsAggregator->onOpenWorkshopInfoOnTile( tileID );
+				break;
+			case TileFlag::TF_STOCKPILE:
+			{
+				m_spAggregator->onOpenStockpileInfoOnTile( tileID );
+			}
 			break;
+			case TileFlag::TF_GROVE:
+			case TileFlag::TF_FARM:
+			case TileFlag::TF_PASTURE:
+			{
+				m_acAggregator->onOpen( designation, tileID );
+			}
+			break;
+			case TileFlag::TF_ROOM:
+				break;
+		}
 	}
 }
 
@@ -208,31 +224,26 @@ void EventConnector::emitInMenu( bool value )
 	
 void EventConnector::onStartNewGame()
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->startNewGame();
 }
 
 void EventConnector::onContinueLastGame()
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->continueLastGame();
 }
 
 void EventConnector::onLoadGame( QString folder )
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->loadGame( folder );
 }
 
 void EventConnector::onSaveGame()
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->saveGame();
 }
 
 void EventConnector::onSetShowMainMenu( bool value )
 {
-	auto gm = dynamic_cast<GameManager*>( parent() );
 	gm->setShowMainMenu( value );
 }
 

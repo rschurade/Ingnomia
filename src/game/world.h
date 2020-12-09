@@ -112,13 +112,11 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
-	World();
+	World( int dimX, int dimY, int dimZ );
 	~World();
 
 	void init();
-	void initLite();
 	void initWater();
-	void reset();
 	void afterLoad();
 
 	void processGrass();

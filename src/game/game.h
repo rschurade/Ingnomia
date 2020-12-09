@@ -25,16 +25,28 @@
 class Config;
 
 class QTimer;
-class Grass;
-class Gnome;
-class Animal;
+
+class Inventory; 
+class ItemHistory;
+class JobManager;
+class StockpileManager;
+class FarmingManager;
+class WorkshopManager;
+class RoomManager;
+class GnomeManager;
+class CreatureManager;
+class EventManager;
+class MechanismManager;
+class FluidManager;
+class NeighborManager;
+class MilitaryManager;
 
 class Game : public QObject
 {
 	Q_OBJECT
 
 public:
-	Game(QObject* parent = nullptr);
+	Game( World* world, QObject* parent );
 	virtual ~Game();
 
 	void save();
@@ -45,7 +57,13 @@ public:
 	bool paused();
 	void setPaused( bool value );
 
+	World* world() { return m_world; }
+
 private:
+	World* m_world = nullptr;
+	PathFinder* m_pathFinder = nullptr;
+
+
 	QTimer* m_timer = nullptr;
 
 	int m_millisecondsSlow = 50;
@@ -64,6 +82,23 @@ private:
 
 	bool m_paused = true;
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
+
+	Inventory* m_inventory = nullptr;
+	ItemHistory* m_itemHistory = nullptr;
+	JobManager* m_jobManager = nullptr;
+	StockpileManager* m_stockpileManager = nullptr;
+	FarmingManager* m_farmingManager = nullptr;
+	WorkshopManager* m_workshopManager = nullptr;
+	RoomManager* m_roomManager = nullptr;
+	GnomeManager* m_gnomeManager = nullptr;
+	CreatureManager* m_creatureManager = nullptr;
+	EventManager* m_eventManager = nullptr;
+	MechanismManager* m_mechanismManager = nullptr;
+	FluidManager* m_fluidManager = nullptr;
+	NeighborManager* m_neighborManager = nullptr;
+	MilitaryManager* m_militaryManager = nullptr;
+	
+	
 
 public slots:
 	void loop();

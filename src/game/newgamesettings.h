@@ -48,24 +48,9 @@ class NewGameSettings : public QObject
 {
 	Q_OBJECT
 
-private:
-	// Private Constructor
-	NewGameSettings( QObject* parent = 0 );
-	// Stop the compiler generating methods of copy the object
-	NewGameSettings( NewGameSettings const& copy );            // Not Implemented
-	NewGameSettings& operator=( NewGameSettings const& copy ); // Not Implemented
-
 public:
+	NewGameSettings( QObject* parent = 0 );
 	~NewGameSettings();
-
-	static NewGameSettings& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static NewGameSettings instance;
-		return instance;
-	}
 
 	void save();
 

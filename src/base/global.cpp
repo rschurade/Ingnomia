@@ -24,8 +24,6 @@
 #include "../base/logger.h"
 #include "../base/util.h"
 
-#include "../game/gamemanager.h"
-
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
@@ -41,6 +39,7 @@
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
+
 #include "../gfx/spritefactory.h"
 
 //#include "../gui/keybindings.h"
@@ -60,7 +59,6 @@ JobManager Global::m_jobManager;
 StockpileManager Global::m_stockpileManager;
 FarmingManager Global::m_farmingManager;
 WorkshopManager Global::m_workshopManager;
-World Global::m_world;
 SpriteFactory Global::m_spriteFactory;
 RoomManager Global::m_roomManager;
 GnomeManager Global::m_gnomeManager;
@@ -136,7 +134,6 @@ void Global::reset()
 	m_stockpileManager.reset();
 	m_farmingManager.reset();
 	m_workshopManager.reset();
-	m_world.reset();
 	m_gnomeManager.reset();
 	m_roomManager.reset();
 	m_stockpileManager.reset();
@@ -314,11 +311,6 @@ FarmingManager& Global::fm()
 WorkshopManager& Global::wsm()
 {
 	return m_workshopManager;
-}
-
-World& Global::w()
-{
-	return m_world;
 }
 
 SpriteFactory& Global::sf()

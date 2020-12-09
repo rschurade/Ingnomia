@@ -36,6 +36,20 @@
 #include "../gui/mainwindowrenderer.h"
 #include "../gui/strings.h"
 
+#include "../gui/aggregatoragri.h"
+#include "../gui/aggregatorcreatureinfo.h"
+#include "../gui/aggregatordebug.h"
+#include "../gui/aggregatorinventory.h"
+#include "../gui/aggregatorpopulation.h"
+#include "../gui/aggregatorrenderer.h"
+#include "../gui/aggregatorstockpile.h"
+#include "../gui/aggregatortileinfo.h"
+#include "../gui/aggregatorworkshop.h"
+#include "../gui/aggregatorneighbors.h"
+#include "../gui/aggregatormilitary.h"
+#include "../gui/aggregatorsettings.h"
+#include "../gui/aggregatorloadgame.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
@@ -48,6 +62,7 @@ GameManager::GameManager( QObject* parent ) :
 	qRegisterMetaType<GameSpeed>();
 
 	m_eventConnector = new EventConnector( this );
+	m_newGameSettings = new NewGameSettings( this );
 
 	GameState::init();
 
@@ -78,7 +93,7 @@ void GameManager::startNewGame()
 	// create new random kingdom name
 
 	// save current settings for fast create new game
-	NewGameSettings::getInstance().save();
+	m_newGameSettings->save();
 	
 	// check if folder exists, set new save folder name if yes
 	createNewGame();
@@ -150,6 +165,7 @@ void GameManager::init()
 
 void GameManager::loadGame( QString folder )
 {
+	/*
 	init();
 
 	Config::getInstance().set( "NoRender", true );
@@ -190,25 +206,27 @@ void GameManager::loadGame( QString folder )
 		qDebug() << "failed to load";
 		m_eventConnector->sendLoadGameDone( false );
 	}
+	*/
 }
 
 void GameManager::createNewGame()
 {
 	init();
 
-	m_game = new Game();
+	
 
-	World& world = Global::w();
-
-	WorldGenerator wg;
+	WorldGenerator wg( m_newGameSettings, this );
 	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
-	wg.generate();
+	World* world = wg.generate();
 
-	GameState::peaceful = NewGameSettings::getInstance().isPeaceful();
+	m_game = new Game( world, this );
+
+	GameState::peaceful = m_newGameSettings->isPeaceful();
 	Global::nm().reset();
 	Global::mcm().init();
 	Global::mil().init();
-	Global::w().regionMap().initRegions();
+
+	world->regionMap().initRegions();
 	PathFinder::getInstance().init();
 	Util::initAllowedInContainer();
 

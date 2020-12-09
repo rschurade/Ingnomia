@@ -67,7 +67,6 @@ public:
 	static StockpileManager& spm();
 	static FarmingManager& fm();
 	static WorkshopManager& wsm();
-	static World& w();
 	static SpriteFactory& sf();
 	static RoomManager& rm();
 	static GnomeManager& gm();
@@ -130,7 +129,6 @@ private:
 	static FarmingManager m_farmingManager;
 	static WorkshopManager m_workshopManager;
 	static RoomManager m_roomManager;
-	static World m_world;
 	static SpriteFactory m_spriteFactory;
 	static GnomeManager m_gnomeManager;
 	static CreatureManager m_creatureManager;

@@ -30,16 +30,18 @@ struct Tile;
 struct EmbeddedMaterial;
 struct TerrainMaterial;
 struct Position;
+class NewGameSettings;
+class World;
 
 class WorldGenerator : public QObject
 {
 	Q_OBJECT
 
 public:
-	WorldGenerator( QObject* parent = nullptr);
+	WorldGenerator( NewGameSettings* ngs, QObject* parent = nullptr );
 	~WorldGenerator();
 
-	void generate();
+	World* generate();
 
 private:
 	// resize world and fill stone layers
@@ -116,6 +118,9 @@ private:
 	QVector<int> m_matsInLevel;
 
 	bool m_fow = true;
+
+	World* w = nullptr;
+	NewGameSettings* ngs = nullptr;
 signals:
 	void signalStatus( QString msg );
 };

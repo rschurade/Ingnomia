@@ -25,6 +25,7 @@
 
 class Game;
 class EventConnector;
+class NewGameSettings;
 
 class GameManager : public QObject
 {
@@ -50,8 +51,11 @@ public:
 
 	EventConnector* eventConnector();
 
+	Game* game() { return m_game; }
+
 private:
 	EventConnector* m_eventConnector = nullptr;
+	NewGameSettings* m_newGameSettings = nullptr;
 
 	Game* m_game = nullptr;
 	

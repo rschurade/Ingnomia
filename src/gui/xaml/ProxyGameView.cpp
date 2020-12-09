@@ -17,11 +17,13 @@
 */
 #include "ProxyGameView.h"
 
+#include "../aggregatoragri.h"
 #include "../aggregatortileinfo.h"
 #include "../aggregatorneighbors.h"
 #include "../aggregatorpopulation.h"
 #include "../aggregatorcreatureinfo.h"
 #include "../aggregatormilitary.h"
+#include "../aggregatorworkshop.h"
 #include "../eventconnector.h"
 
 #include "ViewModel.h"
