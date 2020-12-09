@@ -27,7 +27,7 @@ class CreatureManager : public QObject
 	Q_OBJECT
 
 public:
-	CreatureManager();
+	CreatureManager( QObject* parent = nullptr );
 	~CreatureManager();
 
 	void reset();

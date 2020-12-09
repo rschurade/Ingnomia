@@ -47,7 +47,8 @@ void NetworkPipe::deserialize( QVariantMap in )
 	type    = (PipeType)in.value( "Type" ).value<unsigned char>();
 }
 
-FluidManager::FluidManager()
+FluidManager::FluidManager( QObject* parent ) :
+	QObject( parent )
 {
 }
 

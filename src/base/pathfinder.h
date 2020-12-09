@@ -49,6 +49,7 @@ class PathFinder : public QObject
 {
 	Q_OBJECT
 
+public:
 	PathFinder( World* world, QObject* parent );
 	~PathFinder();
 

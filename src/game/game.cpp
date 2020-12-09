@@ -83,7 +83,7 @@ Game::Game( World* world, QObject* parent ) :
 	{
 		GameState::techs.insert( t, 1 );
 	}
-	/*
+	
 	m_inventory			= new Inventory( this );
 	m_itemHistory		= new ItemHistory( this );
 	m_jobManager		= new JobManager( this );
@@ -98,7 +98,9 @@ Game::Game( World* world, QObject* parent ) :
 	m_fluidManager		= new FluidManager( this );
 	m_neighborManager	= new NeighborManager( this );
 	m_militaryManager	= new MilitaryManager( this );
-	*/
+
+	m_pathFinder		= new PathFinder( m_world, this );
+
 	qDebug() << "init game done";
 }
 
@@ -156,29 +158,29 @@ void Game::loop()
 
 		// process animals
 
-		Global::cm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_creatureManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
 		// process gnomes
 		QElapsedTimer timer2;
 		timer2.start();
-		Global::gm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_gnomeManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		ms2 = timer2.elapsed();
 		// process jobs
-		Global::jm().onTick();
+		m_jobManager->onTick();
 		// process stockpiles
-		Global::spm().onTick( GameState::tick );
-		Global::fm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::wsm().onTick( GameState::tick );
-		Global::rm().onTick( GameState::tick );
-		Global::ih().onTick( GameState::dayChanged );
-		Global::em().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::mcm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::flm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::nm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_stockpileManager->onTick( GameState::tick );
+		m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_workshopManager->onTick( GameState::tick );
+		m_roomManager->onTick( GameState::tick );
+		m_itemHistory->onTick( GameState::dayChanged );
+		m_eventManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_neighborManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
 		m_world->processWater();
 
-		PathFinder::getInstance().findPaths();
+		m_pathFinder->findPaths();
 
 		++GameState::tick;
 	}
@@ -276,7 +278,8 @@ void Game::sendClock()
 	}
 	if ( GameState::seasonChanged )
 	{
-		Global::sf().forceUpdate();
+		auto gm = dynamic_cast<GameManager*>( parent() );
+		gm->sf()->forceUpdate();
 	}
 
 	QString sunStatus;

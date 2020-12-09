@@ -31,25 +31,7 @@
 
 class EventConnector;
 
-class FarmingManager;
-class Inventory;
-class ItemHistory;
-class StockpileManager;
-class World;
-class WorkshopManager;
-class JobManager;
-class RoomManager;
-class GnomeManager;
-class CreatureManager;
-//class KeyBindings;
-class EventManager;
 class Logger;
-class MechanismManager;
-class FluidManager;
-class NeighborManager;
-class MilitaryManager;
-
-class SpriteFactory;
 
 class Global
 {
@@ -60,22 +42,6 @@ public:
 	static void reset();
 
 	static Logger& logger();
-
-	static Inventory& inv();
-	static ItemHistory& ih();
-	static JobManager& jm();
-	static StockpileManager& spm();
-	static FarmingManager& fm();
-	static WorkshopManager& wsm();
-	static SpriteFactory& sf();
-	static RoomManager& rm();
-	static GnomeManager& gm();
-	static CreatureManager& cm();
-	static EventManager& em();
-	static MechanismManager& mcm();
-	static FluidManager& flm();
-	static NeighborManager& nm();
-	static MilitaryManager& mil();
 
 	static QDomElement behaviorTree( QString id );
 
@@ -122,22 +88,6 @@ public:
 private:
 	static Logger m_logger;
 	
-	static Inventory m_inventory;
-	static ItemHistory m_itemHistory;
-	static JobManager m_jobManager;
-	static StockpileManager m_stockpileManager;
-	static FarmingManager m_farmingManager;
-	static WorkshopManager m_workshopManager;
-	static RoomManager m_roomManager;
-	static SpriteFactory m_spriteFactory;
-	static GnomeManager m_gnomeManager;
-	static CreatureManager m_creatureManager;
-	static EventManager m_eventManager;
-	static MechanismManager m_mechanismManager;
-	static FluidManager m_fluidManager;
-	static NeighborManager m_neighborManager;
-	static MilitaryManager m_militaryManager;
-
 	//static KeyBindings m_keyBindings;
 
 	static QMap<QString, QDomElement> m_behaviorTrees;

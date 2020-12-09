@@ -48,11 +48,12 @@ struct NetworkPipe
 	void deserialize( QVariantMap in );
 };
 
-class FluidManager
+class FluidManager : public QObject
 {
+	Q_OBJECT
 
 public:
-	FluidManager();
+	FluidManager( QObject* parent = nullptr );
 	~FluidManager();
 
 	void reset();

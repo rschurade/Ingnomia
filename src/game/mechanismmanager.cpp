@@ -76,7 +76,8 @@ void MechanismData::deserialize( QVariantMap in )
 	changeInverted  = in.value( "ChangeInverted" ).toBool();
 }
 
-MechanismManager::MechanismManager()
+MechanismManager::MechanismManager( QObject* parent ) :
+	QObject( parent )
 {
 	m_string2Type.insert( "None", MT_NONE );
 	m_string2Type.insert( "Axle", MT_AXLE );

@@ -33,6 +33,7 @@
 
 SpriteFactory::SpriteFactory()
 {
+	init();
 }
 
 SpriteFactory::~SpriteFactory()

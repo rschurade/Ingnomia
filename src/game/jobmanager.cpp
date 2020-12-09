@@ -36,8 +36,9 @@
 #include <QElapsedTimer>
 #include <QVariantMap>
 
-JobManager::JobManager() :
-	m_startIndex( 0 )
+JobManager::JobManager( QObject* parent ) :
+	m_startIndex( 0 ),
+	QObject( parent )
 {
 }
 

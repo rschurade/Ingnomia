@@ -30,7 +30,7 @@ class StockpileManager : public QObject
 	Q_OBJECT
 
 public:
-	StockpileManager();
+	StockpileManager( QObject* parent = nullptr );
 	~StockpileManager();
 
 	void reset();

@@ -27,7 +27,8 @@
 
 #include <QDebug>
 
-RoomManager::RoomManager()
+RoomManager::RoomManager( QObject* parent ) :
+	QObject( parent )
 {
 	m_errorDoor.name = "Error Door";
 }

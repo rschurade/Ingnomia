@@ -41,6 +41,8 @@ class FluidManager;
 class NeighborManager;
 class MilitaryManager;
 
+class PathFinder;
+
 class Game : public QObject
 {
 	Q_OBJECT

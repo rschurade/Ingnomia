@@ -28,18 +28,10 @@
 #include <QQueue>
 #include <QString>
 
-//typedef QMap<unsigned int, Job> JobHash;
-
-//typedef QMap<QString, QMultiMap<int, unsigned int> >JobMap;
-
-//typedef PriorityQueue< unsigned int, unsigned char> JobQueue;
-
-//typedef QHash<unsigned int, unsigned int >JobPositionHash;
-
-//typedef QPair<QString, QString> ItemMaterialPair;
-
-class JobManager
+class JobManager : public QObject
 {
+	Q_OBJECT
+
 private:
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;
@@ -68,7 +60,7 @@ private:
 	void removeFromPositionHash( unsigned int jobID );
 
 public:
-	JobManager();
+	JobManager( QObject* parent = nullptr );
 	~JobManager();
 
 	void onTick();

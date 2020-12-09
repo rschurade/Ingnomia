@@ -80,11 +80,12 @@ struct MechanismNetwork
 	QSet<unsigned int> consumers;
 };
 
-class MechanismManager
+class MechanismManager : public QObject
 {
+	Q_OBJECT
 
 public:
-	MechanismManager();
+	MechanismManager( QObject* parent = nullptr );
 	~MechanismManager();
 
 	void reset();

@@ -52,10 +52,12 @@ public:
 	EventConnector* eventConnector();
 
 	Game* game() { return m_game; }
+	SpriteFactory* sf() { return m_sf; }
 
 private:
 	EventConnector* m_eventConnector = nullptr;
 	NewGameSettings* m_newGameSettings = nullptr;
+	SpriteFactory* m_sf = nullptr;
 
 	Game* m_game = nullptr;
 	

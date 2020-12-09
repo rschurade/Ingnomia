@@ -145,6 +145,10 @@ World* WorldGenerator::generate()
 	GameState::kingdomName = ngs->kingdomName();
 
 	qDebug() << "world generator done";
+
+	w->regionMap().initRegions();
+
+	return w;
 }
 
 void WorldGenerator::initMateralVectors()

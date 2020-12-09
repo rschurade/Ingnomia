@@ -61,6 +61,7 @@ GameManager::GameManager( QObject* parent ) :
 {
 	qRegisterMetaType<GameSpeed>();
 
+	m_sf = new SpriteFactory();
 	m_eventConnector = new EventConnector( this );
 	m_newGameSettings = new NewGameSettings( this );
 
@@ -213,8 +214,6 @@ void GameManager::createNewGame()
 {
 	init();
 
-	
-
 	WorldGenerator wg( m_newGameSettings, this );
 	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
 	World* world = wg.generate();
@@ -222,12 +221,7 @@ void GameManager::createNewGame()
 	m_game = new Game( world, this );
 
 	GameState::peaceful = m_newGameSettings->isPeaceful();
-	Global::nm().reset();
-	Global::mcm().init();
-	Global::mil().init();
 
-	world->regionMap().initRegions();
-	PathFinder::getInstance().init();
 	Util::initAllowedInContainer();
 
 	Config::getInstance().set( "NoRender", false );

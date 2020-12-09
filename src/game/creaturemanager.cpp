@@ -30,7 +30,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-CreatureManager::CreatureManager()
+CreatureManager::CreatureManager( QObject* parent ) :
+	QObject( parent )
 {
 }
 

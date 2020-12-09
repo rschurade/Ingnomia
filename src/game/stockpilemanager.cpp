@@ -25,7 +25,8 @@
 
 #include <QDebug>
 
-StockpileManager::StockpileManager()
+StockpileManager::StockpileManager( QObject* parent ) :
+	QObject( parent )
 {
 }
 

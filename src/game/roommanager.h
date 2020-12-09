@@ -36,10 +36,12 @@ struct Door
 	bool blockMonsters       = true;
 };
 
-class RoomManager
+class RoomManager : public QObject
 {
+	Q_OBJECT
+
 public:
-	RoomManager();
+	RoomManager( QObject* parent = nullptr );
 	~RoomManager();
 
 	void reset();
