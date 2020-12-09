@@ -19,6 +19,8 @@
 
 #include "GameModel.h"
 
+#include "../aggregatorinventory.h"
+
 #include <QObject>
 
 class ProxyGameView : public QObject

@@ -22,7 +22,6 @@
 #include "../aggregatorpopulation.h"
 #include "../aggregatorcreatureinfo.h"
 #include "../aggregatormilitary.h"
-#include "../aggregatorinventory.h"
 #include "../eventconnector.h"
 
 #include "ViewModel.h"

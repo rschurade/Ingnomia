@@ -44,6 +44,8 @@ struct GuiCreatureInfo
 
 	Uniform uniform;
 	Equipment equipment;
+
+	QMap< QString, std::vector<unsigned char> > itemPics;
 };
 Q_DECLARE_METATYPE( GuiCreatureInfo )
 
@@ -59,16 +61,25 @@ public:
 
 private:
 	GuiCreatureInfo m_info;
+	QMap< QString, std::vector<unsigned char> > m_emptyPics;
 
 	unsigned int m_currentID = 0;
+
+	void createItemImg( QString slot, const EquipmentItem& eItem );
+	void createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem );
+	void createEmptyUniformImg( QString spriteID );
 
 public slots:
 	void onRequestCreatureUpdate( unsigned int creatureID );
 	void onRequestProfessionList();
 	void onSetProfession( unsigned int gnomeID, QString profession );
 
+	void onRequestEmptySlotImages();
+
 signals:
 	void signalCreatureUpdate( const GuiCreatureInfo& info );
 	void signalProfessionList( const QStringList& profs );
 	
+	void signalEmptyPics( const QMap< QString, std::vector<unsigned char> >& emptyPics );
+
 };

@@ -18,8 +18,6 @@
 #include "GameModel.h"
 #include "ProxyGameView.h"
 
-
-#include "../eventconnector.h"
 #include "../strings.h"
 
 #include <NsApp/Application.h>

@@ -57,6 +57,8 @@ public:
 	void updateInfo( const GuiCreatureInfo& info );
 	void updateProfessionList( const QStringList& professions );
 
+	void updateEmptySlotImages( const QMap< QString, std::vector<unsigned char> >& pics );
+
 private:
 	CreatureInfoProxy* m_proxy = nullptr;
 	unsigned int m_id = 0;
@@ -108,37 +110,32 @@ private:
 	const Noesis::ImageSource* getBitmapSourceLRing() const { return m_bitmapLRing; };
 	const Noesis::ImageSource* getBitmapSourceRRing() const { return m_bitmapRRing; };
 	
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHead;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapChest;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapArms;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHands;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLegs;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapFeet;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLHeld;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRHeld;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapBack;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapNeck;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRing;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRing;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHead = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapChest = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapArms = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHands = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLegs = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapFeet = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLHeld = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRHeld = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapBack = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapNeck = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRing = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRing = nullptr;
 
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHeadEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapChestEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapArmsEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHandsEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLegsEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapFeetEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLHeldEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRHeldEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapBackEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapNeckEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRingEmpty;
-	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRingEmpty;
-	bool m_emptySlotsInitialized = false;
-
-	Noesis::Ptr<Noesis::BitmapSource> createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem );
-	Noesis::Ptr<Noesis::BitmapSource> createItemImg( const EquipmentItem& eItem );
-	Noesis::Ptr<Noesis::BitmapSource> createEmptyUniformImg( QString spriteID );
-
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHeadEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapChestEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapArmsEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapHandsEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLegsEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapFeetEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLHeldEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRHeldEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapBackEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapNeckEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapLRingEmpty = nullptr;
+	Noesis::Ptr<Noesis::BitmapSource> m_bitmapRRingEmpty = nullptr;
+	bool m_emptyPicsInitialized = false;
 
 	NS_DECLARE_REFLECTION( CreatureInfoModel, NotifyPropertyChangedBase )
 };
