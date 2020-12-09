@@ -37,6 +37,7 @@
 #include <QString>
 
 class ProxyGameView;
+struct GuiBuildItem;
 
 namespace Noesis
 {
@@ -103,6 +104,7 @@ private:
 class NRequiredItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
+	NRequiredItem( QString sid, int amount, const QList<QPair<QString, int>>& mats );
 	NRequiredItem( QString sid, int amount );
 
 	const char* GetName() const;
@@ -126,18 +128,11 @@ private:
 	NS_DECLARE_REFLECTION( NRequiredItem, Noesis::BaseComponent )
 };
 
-enum class BuildItemType
-{
-	Workshop,
-	Item,
-	Terrain
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class BuildItem final : public Noesis::BaseComponent
 {
 public:
-	BuildItem( QString name, QString sid, BuildItemType type, ProxyGameView* proxy );
+	BuildItem( const GuiBuildItem& gbi, ProxyGameView* proxy );
 
 	const char* GetName() const;
 	QString sid() const;
@@ -167,47 +162,6 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-enum class ButtonSelection
-{
-	None,
-	Build,
-	Mine,
-	Agriculture,
-	Designation,
-	Job,
-	Magic
-};
-
-enum class BuildSelection
-{
-	None,
-	Workshop,
-	Wall,
-	Floor,
-	Stairs,
-	Ramps,
-	Containers,
-	Fence,
-	Furniture,
-	Utility
-};
-
-enum class ShownInfo
-{
-	None,
-	TileInfo,
-	Stockpile,
-	Workshop,
-	Agriculture,
-	Population,
-	CreatureInfo,
-	Debug,
-	Neighbors,
-	Military,
-	Inventory
-};
-
-
 struct GuiMessageEvent {
 	unsigned int id;
 	QString title;
@@ -232,6 +186,7 @@ public:
 	void updateGameSpeed( GameSpeed speed );
 	void updateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
+	void updateBuildItems( const QList<GuiBuildItem>& items );
 
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 

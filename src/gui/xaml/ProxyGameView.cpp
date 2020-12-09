@@ -71,9 +71,10 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( this, &ProxyGameView::signalSetRenderOptions, Global::eventConnector, &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
 
+	connect( this, &ProxyGameView::signalRequestBuildItems, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestBuildItems, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalBuildItems, this,  &ProxyGameView::onBuildItems, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestCmdBuild, Global::eventConnector, &EventConnector::onCmdBuild, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetSelectionAction, Global::eventConnector, &EventConnector::onSetSelectionAction, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalSetSelectionItem, Global::eventConnector, &EventConnector::onSetSelectionItem, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalSetSelectionMaterials, Global::eventConnector, &EventConnector::onSetSelectionMaterials, Qt::QueuedConnection );
 }
 
 ProxyGameView::~ProxyGameView()
@@ -260,17 +261,25 @@ void ProxyGameView::onUpdateRenderOptions( bool designation, bool jobs, bool wal
 	}
 }
 
+void ProxyGameView::requestBuildItems( BuildSelection buildSelection, QString category )
+{
+	emit signalRequestBuildItems( buildSelection, category );
+}
+
+void ProxyGameView::onBuildItems( const QList<GuiBuildItem>& items )
+{
+	if( m_parent )
+	{
+		m_parent->updateBuildItems( items );
+	}
+}
+
+void ProxyGameView::requestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
+{
+	emit signalRequestCmdBuild( type, param, item, mats );
+}
+
 void ProxyGameView::setSelectionAction( QString action )
 {
 	emit signalSetSelectionAction( action );
-}
-
-void ProxyGameView::setSelectionItem( QString item )
-{
-	emit signalSetSelectionItem( item );
-}
-
-void ProxyGameView::setSelectionMaterials( QStringList mats )
-{
-	emit signalSetSelectionMaterials( mats );
 }

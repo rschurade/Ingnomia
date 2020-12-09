@@ -154,6 +154,8 @@ public slots:
 	void onSetSelectionItem( QString item );
 	void onSetSelectionMaterials( QStringList mats );
 
+	void onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );

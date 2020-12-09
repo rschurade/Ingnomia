@@ -195,3 +195,52 @@ enum class GameSpeed
 	Fast
 };
 Q_DECLARE_METATYPE( GameSpeed )
+
+enum class ButtonSelection
+{
+	None,
+	Build,
+	Mine,
+	Agriculture,
+	Designation,
+	Job,
+	Magic
+};
+
+enum class BuildSelection
+{
+	None,
+	Workshop,
+	Wall,
+	Floor,
+	Stairs,
+	Ramps,
+	Containers,
+	Fence,
+	Furniture,
+	Utility
+};
+Q_DECLARE_METATYPE( BuildSelection )
+
+enum class ShownInfo
+{
+	None,
+	TileInfo,
+	Stockpile,
+	Workshop,
+	Agriculture,
+	Population,
+	CreatureInfo,
+	Debug,
+	Neighbors,
+	Military,
+	Inventory
+};
+
+enum class BuildItemType
+{
+	Workshop,
+	Item,
+	Terrain
+};
+Q_DECLARE_METATYPE( BuildItemType )

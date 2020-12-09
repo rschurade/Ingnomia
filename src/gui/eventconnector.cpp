@@ -17,6 +17,7 @@
 */
 #include "eventconnector.h"
 
+#include "../base/db.h"
 #include "../base/config.h"
 #include "../base/global.h"
 #include "../base/selection.h"
@@ -268,4 +269,54 @@ void EventConnector::onSetSelectionItem( QString item )
 void EventConnector::onSetSelectionMaterials( QStringList mats )
 {
 	Selection::getInstance().setMaterials( mats );
+}
+
+void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
+{
+	switch ( type )
+	{
+		case BuildItemType::Workshop:
+		{
+			Selection::getInstance().setAction( "BuildWorkshop" );
+		}
+		break;
+		case BuildItemType::Terrain:
+		{
+			QString type = DB::select( "Type", "Constructions", item ).toString();
+			
+			if( !param.isEmpty() )
+			{
+				if( param == "FillHole" )
+				{
+					Selection::getInstance().setAction( param );
+				}
+				else
+				{
+					Selection::getInstance().setAction( param + type );
+				}
+			}
+			else
+			{
+				if( type == "Stairs" && item == "Scaffold" )
+				{
+					Selection::getInstance().setAction( "BuildScaffold" );
+				}
+				else
+				{
+					Selection::getInstance().setAction( "Build" + type );
+				}
+			}
+		}
+		break;
+		case BuildItemType::Item:
+		{
+			Selection::getInstance().setAction( "BuildItem" );
+		}
+		break;
+	}
+
+	Selection::getInstance().setMaterials( mats );
+	Selection::getInstance().setItemID( item );
+
+	emit signalBuild();
 }

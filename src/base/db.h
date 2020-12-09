@@ -47,7 +47,7 @@ public:
 	static QVariantList select2( QString selectCol, QString table, QString whereCol, float whereVal );
 
 	static QVariant select3( QString selectCol, QString table, QString whereCol, QString whereVal, QString whereCol2, QString whereVal2 );
-
+	
 	static QStringList ids( QString table );
 	static QStringList ids( QString table, QString whereCol, QString whereVal );
 	static int numRows( QString table );
@@ -56,6 +56,7 @@ public:
 	static QVariantMap selectRow( QString table, QString whereVal );
 	static QVariantMap selectRow( QString table, int whereVal );
 	static QList<QVariantMap> selectRows( QString table, QString whereCol, QString whereVal );
+	static QList<QVariantMap> selectRows( QString table, QString whereCol, QString whereVal, QString whereCol2, QString whereVal2 );
 	static QList<QVariantMap> selectRows( QString table );
 	static QList<QVariantMap> selectRows( QString table, QString id );
 	static QList<QVariantMap> selectRows( QString table, int rowid );
