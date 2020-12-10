@@ -220,26 +220,24 @@ void GameManager::createNewGame()
 
 	m_game = new Game( m_sf, world, this );
 
+	m_eventConnector->aggregatorAgri()->init();
+
+
 	GameState::peaceful = m_newGameSettings->isPeaceful();
-
 	Util::initAllowedInContainer();
-
 	Config::getInstance().set( "NoRender", false );
-	
 	m_eventConnector->onViewLevel( GameState::viewLevel );
-
 	Config::getInstance().set( "gameRunning", true );
-
 	m_eventConnector->emitInMenu( false );
 
 	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
 	connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
 
 	qRegisterMetaType<QSet<unsigned int>>();
-	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
+	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
 	connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
-	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
-	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
+	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
+	connect( m_game, &Game::signalTimeAndDate,     m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
 
 	//thread1->setPriority( QThread::HighPriority );

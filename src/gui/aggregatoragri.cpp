@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "aggregatoragri.h"
+#include "../game/game.h"
 
 #include "../base/counter.h"
 #include "../base/db.h"
@@ -46,15 +47,11 @@ AggregatorAgri::AggregatorAgri( QObject* parent ) :
 	qRegisterMetaType<GuiGroveInfo>();
 	qRegisterMetaType<QList<GuiPlant>>();
 	qRegisterMetaType<QList<GuiAnimal>>();
-
-
-
-	connect( &Global::fm(), &FarmingManager::signalFarmChanged, this, &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
-	connect( &Global::fm(), &FarmingManager::signalPastureChanged, this, &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
 }
 
-void AggregatorAgri::init()
+void AggregatorAgri::init( Game* game )
 {
+	g = game;
 	m_globalPlantInfo.clear();
 	QStringList keys = DB::ids( "Plants" );
 	keys.sort();
@@ -70,10 +67,10 @@ void AggregatorAgri::init()
 			gp.seedCount     = 0;
 			gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", key ).toString();
 			gp.name          = S::s( "$MaterialName_" + gp.materialID );
-			gp.sprite		 = Util::smallPixmap( Global::sf().createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
+			gp.sprite		 = Util::smallPixmap( g->sf()->createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
 			m_globalPlantInfo.append( gp );
 
-			//QIcon icon = Util::smallPixmap( Global::sf().createSprite( harvestedItemID, { material } ), season, 0 );
+			//QIcon icon = Util::smallPixmap( g->sf()->createSprite( harvestedItemID, { material } ), season, 0 );
 		}
 	}
 
@@ -89,7 +86,7 @@ void AggregatorAgri::init()
 			gp.plantID       = key;
 			gp.seedID        = plantRow.value( "SeedItemID" ).toString();
 			gp.materialID    = plantRow.value( "Material" ).toString();
-			gp.sprite        = Util::smallPixmap( Global::sf().createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
+			gp.sprite        = Util::smallPixmap( g->sf()->createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
 			gp.seedCount     = 0;
 			gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", key ).toString();
 			gp.name          = S::s( "$MaterialName_" + gp.materialID );
@@ -97,7 +94,7 @@ void AggregatorAgri::init()
 
 			m_globalTreeInfo.append( gp );
 
-			//QIcon icon = Util::smallPixmap( Global::sf().createSprite( harvestedItemID, { material } ), GameState::seasonString, 0 );
+			//QIcon icon = Util::smallPixmap( g->sf()->createSprite( harvestedItemID, { material } ), GameState::seasonString, 0 );
 		}
 	}
 
@@ -118,14 +115,13 @@ void AggregatorAgri::init()
 			{
 				if ( sm.value( "ID2" ).toString() == "Adult" )
 				{
-					ga.sprite = Util::smallPixmap( Global::sf().createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
+					ga.sprite = Util::smallPixmap( g->sf()->createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
 					break;
 				}
 			}
 			m_globalAnimalInfo.append( ga );
 		}
 	}
-	m_init = true;
 }
 
 AggregatorAgri::~AggregatorAgri()
@@ -142,10 +138,6 @@ void AggregatorAgri::onCloseWindow()
 
 void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 {
-	if( !m_init)
-	{
-		init();
-	}
 	qDebug() << "AggregatorAgri::onOpen";
 	if ( m_currentTileID != tileID )
 	{
@@ -155,7 +147,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 		{
 			case TileFlag::TF_FARM:
 			{
-				auto farm = Global::fm().getFarmAtPos( Position( tileID ) );
+				auto farm = g->fm()->getFarmAtPos( Position( tileID ) );
 				if ( farm && m_farmInfo.ID != farm->id() )
 				{
 					m_farmInfo.ID    = farm->id();
@@ -167,7 +159,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			}
 			case TileFlag::TF_PASTURE:
 			{
-				auto pasture = Global::fm().getPastureAtPos( Position( tileID ) );
+				auto pasture = g->fm()->getPastureAtPos( Position( tileID ) );
 				if ( pasture && m_pastureInfo.ID != pasture->id() )
 				{
 					m_pastureInfo.ID = pasture->id();
@@ -179,7 +171,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			}
 			case TileFlag::TF_GROVE:
 			{
-				auto grove = Global::fm().getGroveAtPos( Position( tileID ) );
+				auto grove = g->fm()->getGroveAtPos( Position( tileID ) );
 				if ( grove && m_groveInfo.ID != grove->id() )
 				{
 					m_groveInfo.ID   = grove->id();
@@ -231,7 +223,7 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 	//qDebug() << "AggregatorAgri::onUpdateFarm";
 	if ( m_farmInfo.ID == id )
 	{
-		auto farm = Global::fm().getFarm( id );
+		auto farm = g->fm()->getFarm( id );
 		if ( farm )
 		{
 			farm->getInfo( m_farmInfo.numPlots, m_farmInfo.tilled, m_farmInfo.planted, m_farmInfo.cropReady );
@@ -243,8 +235,8 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 			*/
 			m_farmInfo.suspended   = farm->suspended();
 			m_farmInfo.name        = farm->name();
-			m_farmInfo.priority    = Global::fm().farmPriority( id );
-			m_farmInfo.maxPriority = Global::fm().countFarms();
+			m_farmInfo.priority    = g->fm()->farmPriority( id );
+			m_farmInfo.maxPriority = g->fm()->countFarms();
 			m_farmInfo.harvest     = farm->harvest();
 			m_farmInfo.plantType   = farm->plantType();
 
@@ -265,18 +257,18 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 	//qDebug() << "AggregatorAgri::onUpdatePasture";
 	if ( m_pastureInfo.ID == id )
 	{
-		auto past = Global::fm().getPasture( id );
+		auto past = g->fm()->getPasture( id );
 		if ( past )
 		{
 			m_pastureInfo.suspended   = past->suspended();
 			m_pastureInfo.name        = past->name();
-			m_pastureInfo.priority    = Global::fm().pasturePriority( id );
-			m_pastureInfo.maxPriority = Global::fm().countPastures();
+			m_pastureInfo.priority    = g->fm()->pasturePriority( id );
+			m_pastureInfo.maxPriority = g->fm()->countPastures();
 			m_pastureInfo.animalType  = past->animalType();
 			m_pastureInfo.harvest     = past->harvest();
 			m_pastureInfo.harvestHay  = past->harvestHay();
 			m_pastureInfo.hayMax      = past->maxHay();
-			m_pastureInfo.hayCurrent  = m_inv->itemCount( "Hay", "Grass" );
+			m_pastureInfo.hayCurrent  = g->inv()->itemCount( "Hay", "Grass" );
 			m_pastureInfo.foodMax     = past->maxFoodLevel();
 			m_pastureInfo.foodCurrent = past->foodLevel();
 
@@ -297,7 +289,7 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 
 				for( auto food : foods.split( "|" ) )
 				{
-					auto mats = m_inv->materialsForItem( food, 0 );
+					auto mats = g->inv()->materialsForItem( food, 0 );
 
 					for( auto mat : mats )
 					{
@@ -307,7 +299,7 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 						pfi.materialSID = mat;
 						pfi.name = name;
 						pfi.checked = foodSettings.contains( food + "_" + mat );
-						pfi.sprite = Util::smallPixmap( Global::sf().createSprite( food, { mat } ), GameState::seasonString, 0 );
+						pfi.sprite = Util::smallPixmap( g->sf()->createSprite( food, { mat } ), GameState::seasonString, 0 );
 						m_pastureInfo.food.append( pfi );
 					}
 				}
@@ -338,7 +330,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 	//qDebug() << "AggregatorAgri::onUpdateGrove";
 	if ( m_groveInfo.ID == id )
 	{
-		auto grove = Global::fm().getGrove( id );
+		auto grove = g->fm()->getGrove( id );
 		if ( grove )
 		{
 			//grove->getInfo( m_farmInfo.numPlots, m_farmInfo.tilled, m_farmInfo.planted, m_farmInfo.cropReady );
@@ -350,8 +342,8 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 			*/
 			m_groveInfo.suspended   = grove->suspended();
 			m_groveInfo.name        = grove->name();
-			m_groveInfo.priority    = Global::fm().farmPriority( id );
-			m_groveInfo.maxPriority = Global::fm().countFarms();
+			m_groveInfo.priority    = g->fm()->farmPriority( id );
+			m_groveInfo.maxPriority = g->fm()->countFarms();
 
 			auto props             = grove->properties();
 			m_groveInfo.pickFruits = props.pickFruit;
@@ -380,34 +372,34 @@ void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationI
 		{
 			case AgriType::Farm:
 			{
-				auto farm = Global::fm().getFarm( designationID );
+				auto farm = g->fm()->getFarm( designationID );
 				if ( farm )
 				{
 					farm->setName( name );
 					farm->setSuspended( suspended );
-					Global::fm().setFarmPriority( designationID, priority );
+					g->fm()->setFarmPriority( designationID, priority );
 				}
 			}
 			break;
 			case AgriType::Pasture:
 			{
-				auto pasture = Global::fm().getPasture( designationID );
+				auto pasture = g->fm()->getPasture( designationID );
 				if ( pasture )
 				{
 					pasture->setName( name );
 					pasture->setSuspended( suspended );
-					Global::fm().setPasturePriority( designationID, priority );
+					g->fm()->setPasturePriority( designationID, priority );
 				}
 			}
 			break;
 			case AgriType::Grove:
 			{
-				auto grove = Global::fm().getGrove( designationID );
+				auto grove = g->fm()->getGrove( designationID );
 				if ( grove )
 				{
 					grove->setName( name );
 					grove->setSuspended( suspended );
-					Global::fm().setGrovePriority( designationID, priority );
+					g->fm()->setGrovePriority( designationID, priority );
 				}
 				break;
 			}
@@ -425,7 +417,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 		{
 			case AgriType::Farm:
 			{
-				auto farm = Global::fm().getFarm( designationID );
+				auto farm = g->fm()->getFarm( designationID );
 				if ( farm )
 				{
 					farm->setPlantType( productSID );
@@ -435,7 +427,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 			break;
 			case AgriType::Pasture:
 			{
-				auto pasture = Global::fm().getPasture( designationID );
+				auto pasture = g->fm()->getPasture( designationID );
 				if ( pasture )
 				{
 					pasture->setAnimalType( productSID );
@@ -445,7 +437,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 			break;
 			case AgriType::Grove:
 			{
-				auto grove = Global::fm().getGrove( designationID );
+				auto grove = g->fm()->getGrove( designationID );
 				if ( grove )
 				{
 					grove->properties().treeType = productSID;
@@ -467,7 +459,7 @@ void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designatio
 		{
 			case AgriType::Farm:
 			{
-				auto farm = Global::fm().getFarm( designationID );
+				auto farm = g->fm()->getFarm( designationID );
 				if ( farm )
 				{
 					farm->setHarvest( harvest );
@@ -476,7 +468,7 @@ void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designatio
 			break;
 			case AgriType::Pasture:
 			{
-				auto past = Global::fm().getPasture( designationID );
+				auto past = g->fm()->getPasture( designationID );
 				if ( past )
 				{
 					past->setHarvest( harvest );
@@ -494,7 +486,7 @@ void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool pl
 	//qDebug() << "AggregatorAgri::onSetGroveOptions";
 	if ( m_groveInfo.ID == groveID )
 	{
-		auto grove = Global::fm().getGrove( groveID );
+		auto grove = g->fm()->getGrove( groveID );
 		if ( grove )
 		{
 			auto& props     = grove->properties();
@@ -514,7 +506,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 		{
 			case AgriType::Farm:
 			{
-				auto farm = Global::fm().getFarm( designationID );
+				auto farm = g->fm()->getFarm( designationID );
 				if ( farm )
 				{
 					auto plantRow = DB::selectRow( "Plants", m_farmInfo.plantType );
@@ -524,14 +516,14 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.plantID    = m_farmInfo.plantType;
 						gp.seedID     = plantRow.value( "SeedItemID" ).toString();
 						gp.materialID = plantRow.value( "Material" ).toString();
-						gp.seedCount  = m_inv->itemCount( gp.seedID, gp.materialID );
+						gp.seedCount  = g->inv()->itemCount( gp.seedID, gp.materialID );
 
 						gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", m_farmInfo.plantType ).toString();
-						gp.itemCount     = m_inv->itemCount( gp.plantID, gp.materialID );
+						gp.itemCount     = g->inv()->itemCount( gp.plantID, gp.materialID );
 
 						gp.name = S::s( "$MaterialName_" + gp.materialID );
 
-						gp.sprite = Util::smallPixmap( Global::sf().createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
+						gp.sprite = Util::smallPixmap( g->sf()->createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
 					}
 					m_farmInfo.product = gp;
 					emit signalUpdateFarm( m_farmInfo );
@@ -540,7 +532,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 			break;
 			case AgriType::Pasture:
 			{
-				auto pasture = Global::fm().getPasture( designationID );
+				auto pasture = g->fm()->getPasture( designationID );
 				if ( pasture )
 				{
 					auto animalRow = DB::selectRow( "Animals", m_pastureInfo.animalType );
@@ -565,7 +557,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						{
 							if ( sm.value( "ID2" ).toString() == "Adult" )
 							{
-								ga.sprite = Util::smallPixmap( Global::sf().createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
+								ga.sprite = Util::smallPixmap( g->sf()->createAnimalSprite( sm.value( "SpriteID" ).toString() ), GameState::seasonString, 0 );
 								break;
 							}
 						}
@@ -573,7 +565,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						m_pastureInfo.animals.clear();
 						for( const auto& id : pasture->animals() )
 						{
-							auto animal = Global::cm().animal( id );
+							auto animal = g->cm()->animal( id );
 							if( animal )
 							{
 								GuiPastureAnimal pa;
@@ -595,7 +587,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 			break;
 			case AgriType::Grove:
 			{
-				auto grove = Global::fm().getGrove( designationID );
+				auto grove = g->fm()->getGrove( designationID );
 				if ( grove )
 				{
 					auto plantRow = DB::selectRow( "Plants", m_groveInfo.treeType );
@@ -605,14 +597,14 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.plantID    = m_groveInfo.treeType;
 						gp.seedID     = plantRow.value( "SeedItemID" ).toString();
 						gp.materialID = plantRow.value( "Material" ).toString();
-						gp.seedCount  = m_inv->itemCount( gp.seedID, gp.materialID );
+						gp.seedCount  = g->inv()->itemCount( gp.seedID, gp.materialID );
 
 						gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", m_groveInfo.treeType ).toString();
-						gp.itemCount     = m_inv->itemCount( gp.harvestedItem, gp.materialID );
+						gp.itemCount     = g->inv()->itemCount( gp.harvestedItem, gp.materialID );
 
 						gp.name     = S::s( "$MaterialName_" + gp.materialID );
 
-						auto pm = Util::smallPixmap( Global::sf().createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
+						auto pm = Util::smallPixmap( g->sf()->createSprite( plantRow.value( "ToolButtonSprite" ).toString(), { gp.materialID } ), GameState::seasonString, 0 );
 						gp.sprite = pm;
 					}
 					m_groveInfo.product = gp;
@@ -628,7 +620,7 @@ void AggregatorAgri::onSetMaxMale( unsigned int pastureID, int max )
 {
 	if ( m_pastureInfo.ID == pastureID )
 	{
-		auto pasture = Global::fm().getPasture( pastureID );
+		auto pasture = g->fm()->getPasture( pastureID );
 		if ( pasture )
 		{
 			pasture->setMaxMale( max );
@@ -640,7 +632,7 @@ void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 {
 	if ( m_pastureInfo.ID == pastureID )
 	{
-		auto pasture = Global::fm().getPasture( pastureID );
+		auto pasture = g->fm()->getPasture( pastureID );
 		if ( pasture )
 		{
 			pasture->setMaxFemale( max );
@@ -651,7 +643,7 @@ void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 void AggregatorAgri::onSetButchering( unsigned int animalID, bool value )
 {
 	//qDebug() << "AggregatorAgri::onSetButchering" << animalID << value;
-	auto animal = Global::cm().animal( animalID );
+	auto animal = g->cm()->animal( animalID );
 	if( animal )
 	{
 		animal->setToButcher( value );
@@ -672,7 +664,7 @@ void AggregatorAgri::onSetFoodItemChecked( unsigned int pastureID, QString itemS
 {
 	if ( m_pastureInfo.ID == pastureID )
 	{
-		auto pasture = Global::fm().getPasture( pastureID );
+		auto pasture = g->fm()->getPasture( pastureID );
 		if ( pasture )
 		{
 			if( checked )

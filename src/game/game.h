@@ -71,7 +71,7 @@ class Game : public QObject
 	Q_OBJECT
 
 public:
-	Game( SpriteFactory* spriteFactory, World* world, Game* parent );
+	Game( SpriteFactory* spriteFactory, World* world, QObject* parent );
 	virtual ~Game();
 
 	void save();
@@ -83,6 +83,23 @@ public:
 	void setPaused( bool value );
 
 	World* world() { return m_world; }
+
+	Inventory* inv();
+	ItemHistory* ih();
+	JobManager* jm();
+	StockpileManager* spm();
+	FarmingManager* fm();
+	WorkshopManager* wsm();
+	World* w();
+	SpriteFactory* sf();
+	RoomManager* rm();
+	GnomeManager* gm();
+	CreatureManager* cm();
+	EventManager* em();
+	MechanismManager* mcm();
+	FluidManager* flm();
+	NeighborManager* nm();
+	MilitaryManager* mil();
 
 private:
 	World* m_world = nullptr;

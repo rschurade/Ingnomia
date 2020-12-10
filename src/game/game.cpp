@@ -43,9 +43,23 @@
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
+
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
 #include "../gui/aggregatorcreatureinfo.h"
+#include "../gui/aggregatoragri.h"
+#include "../gui/aggregatorcreatureinfo.h"
+#include "../gui/aggregatordebug.h"
+#include "../gui/aggregatorinventory.h"
+#include "../gui/aggregatorpopulation.h"
+#include "../gui/aggregatorrenderer.h"
+#include "../gui/aggregatorstockpile.h"
+#include "../gui/aggregatortileinfo.h"
+#include "../gui/aggregatorworkshop.h"
+#include "../gui/aggregatorneighbors.h"
+#include "../gui/aggregatormilitary.h"
+#include "../gui/aggregatorsettings.h"
+#include "../gui/aggregatorloadgame.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -53,7 +67,7 @@
 
 #include <time.h>
 
-Game::Game( SpriteFactory* spriteFactory, World* world, Game* parent ) :
+Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
 	m_sf( spriteFactory ),
 	m_world( world ),
 	QObject( parent )
@@ -108,6 +122,10 @@ Game::Game( SpriteFactory* spriteFactory, World* world, Game* parent ) :
 	
 	m_neighborManager	= new NeighborManager( this );
 	m_eventManager		= new EventManager( this );
+
+	connect( m_farmingManager, &FarmingManager::signalFarmChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
+	connect( m_farmingManager, &FarmingManager::signalPastureChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
+
 
 	qDebug() << "init game done";
 }
@@ -176,7 +194,7 @@ void Game::loop()
 		// process jobs
 		m_jobManager->onTick();
 		// process stockpiles
-		m_stockpileManager->onTick( GameState::tick );
+		m_spm->onTick( GameState::tick );
 		m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_workshopManager->onTick( GameState::tick );
 		m_roomManager->onTick( GameState::tick );
@@ -448,3 +466,20 @@ void Game::setPaused( bool value )
 {
 	m_paused = value;
 }
+
+Inventory*			Game::inv(){ return m_inv; }
+ItemHistory*		Game::ih(){ return m_inv->itemHistory(); }
+JobManager*			Game::jm(){ return m_jobManager; }
+StockpileManager*	Game::spm(){ return m_spm; }
+FarmingManager*		Game::fm(){ return m_farmingManager; }
+WorkshopManager*	Game::wsm(){ return m_workshopManager; }
+World*				Game::w(){ return m_world; }
+SpriteFactory*		Game::sf(){ return m_sf; }
+RoomManager*		Game::rm(){ return m_roomManager; }
+GnomeManager*		Game::gm(){ return m_gnomeManager; }
+CreatureManager*	Game::cm(){ return m_creatureManager; }
+EventManager*		Game::em(){ return m_eventManager; }
+MechanismManager*	Game::mcm(){ return m_mechanismManager; }
+FluidManager*		Game::flm(){ return m_fluidManager; }
+NeighborManager*	Game::nm(){ return m_neighborManager; }
+MilitaryManager*	Game::mil(){ return m_militaryManager; }
