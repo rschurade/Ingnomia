@@ -17,13 +17,14 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/position.h"
 
 #include <QMap>
 #include <QMutex>
 #include <QVariantMap>
 
+class Game;
 struct Mission;
 
 enum class KingdomType
@@ -80,12 +81,12 @@ struct NeighborKingdom
 	void deserialize( QVariantMap in );
 };
 
-class NeighborManager : public ManagerBase
+class NeighborManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	NeighborManager( QObject* parent = nullptr );
+	NeighborManager( Game* parent );
 	~NeighborManager();
 
 	void reset();
@@ -114,6 +115,8 @@ public:
 	void emissary( Mission* mission );
 
 private:
+	Game* g = nullptr;
+
 	QMutex m_mutex;
 
 	QList<NeighborKingdom> m_kingdoms;

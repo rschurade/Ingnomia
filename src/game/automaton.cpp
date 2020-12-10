@@ -16,6 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "automaton.h"
+#include "gnomemanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/global.h"
@@ -24,8 +26,8 @@
 
 #include <QDebug>
 
-Automaton::Automaton( Position pos, unsigned int automatonItem ) :
-	Gnome( pos, "Automaton", Gender::UNDEFINED ),
+Automaton::Automaton( Position pos, unsigned int automatonItem, GnomeManager* gm ) :
+	Gnome( pos, "Automaton", Gender::UNDEFINED, gm ),
 	m_automatonItem( automatonItem )
 {
 	m_type = CreatureType::AUTOMATON;
@@ -74,7 +76,7 @@ void Automaton::init()
 
 	if ( m_core )
 	{
-		QString itemSID = m_inv->itemSID( m_core );
+		QString itemSID = m_gm->g->m_inv->itemSID( m_core );
 
 		auto row = DB::selectRow( "Automaton_Cores", itemSID );
 		loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
@@ -105,9 +107,9 @@ void Automaton::init()
 
 void Automaton::updateSprite()
 {
-	QString material = m_inv->materialSID( m_automatonItem );
+	QString material = m_gm->g->m_inv->materialSID( m_automatonItem );
 
-	auto components = m_inv->components( m_automatonItem );
+	auto components = m_gm->g->m_inv->components( m_automatonItem );
 	QMap<QString, QString> compMats;
 	for ( auto vcomp : components )
 	{
@@ -132,7 +134,7 @@ void Automaton::updateSprite()
 			compMats.insert( it, ma );
 		}
 	}
-	QString itemSID = m_inv->itemSID( m_automatonItem );
+	QString itemSID = m_gm->g->m_inv->itemSID( m_automatonItem );
 	auto parts      = DB::selectRows( "Creature_Parts", itemSID );
 
 	QVariantMap ordered;
@@ -229,7 +231,7 @@ void Automaton::updateSprite()
 		}
 	}
 
-	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, isDead() )->uID;
+	m_spriteID = m_gm->g->m_sf->setCreatureSprite( m_id, def, defBack, isDead() )->uID;
 
 	m_renderParamsChanged = true;
 }
@@ -288,8 +290,8 @@ void Automaton::installCore( unsigned int itemID )
 	if ( m_core )
 	{
 		//drop existing core
-		m_inv->setInJob( m_core, 0 );
-		m_inv->putDownItem( m_core, m_position );
+		m_gm->g->m_inv->setInJob( m_core, 0 );
+		m_gm->g->m_inv->putDownItem( m_core, m_position );
 		m_core = 0;
 
 		if ( m_behaviorTree )
@@ -308,12 +310,12 @@ void Automaton::installCore( unsigned int itemID )
 	//install core
 	if ( itemID )
 	{
-		QString itemSID = m_inv->itemSID( itemID );
+		QString itemSID = m_gm->g->m_inv->itemSID( itemID );
 		if ( itemSID.startsWith( "AutomatonCore" ) )
 		{
 			m_core = itemID;
-			m_inv->pickUpItem( itemID );
-			m_inv->setInJob( itemID, m_id );
+			m_gm->g->m_inv->pickUpItem( itemID );
+			m_gm->g->m_inv->setInJob( itemID, m_id );
 
 			auto row = DB::selectRow( "Automaton_Cores", itemSID );
 

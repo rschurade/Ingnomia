@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "militarymanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -141,8 +142,8 @@ QVariantMap Squad::serialize()
 	return out;
 }
 
-Squad::Squad( CreatureManager* cm, const QVariantMap& in ) :
-	m_cm( cm )
+Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
+	types( tps )
 {
 	name       = in.value( "Name" ).toString();
 	id         = in.value( "ID" ).toUInt();
@@ -160,7 +161,6 @@ Squad::Squad( CreatureManager* cm, const QVariantMap& in ) :
 			TargetPriority tp { type, (MilAttitude)vm.value( "Attitude" ).toInt() };
 			priorities.append( tp );
 		}
-		auto types = m_cm->types();
 		for( auto type : types )
 		{
 			if( !typeSet.contains( type ) )
@@ -172,7 +172,6 @@ Squad::Squad( CreatureManager* cm, const QVariantMap& in ) :
 	}
 	else
 	{
-		auto types = m_cm->types();
 		for( auto type : types )
 		{
 			TargetPriority tp { type, MilAttitude::_IGNORE };
@@ -181,8 +180,9 @@ Squad::Squad( CreatureManager* cm, const QVariantMap& in ) :
 	}
 }
 
-MilitaryManager::MilitaryManager( QObject* parent ) :
-	ManagerBase( parent )
+MilitaryManager::MilitaryManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 MilitaryManager::~MilitaryManager()
@@ -225,7 +225,7 @@ void MilitaryManager::init()
 		auto sl = mm.value( "Squads" ).toList();
 		for ( auto entry : sl )
 		{
-			Squad squad( m_creatureManager, entry.toMap() );
+			Squad squad( g->m_creatureManager->types(), entry.toMap() );
 			m_squads.insert( squad.id, squad );
 
 			for( auto gnome : squad.gnomes )
@@ -379,9 +379,9 @@ Squad* MilitaryManager::squad( unsigned int id )
 
 unsigned int MilitaryManager::addSquad()
 {
-	Squad squad( m_creatureManager );
+	Squad squad( g->m_creatureManager->types() );
 
-	auto types = m_creatureManager->types();
+	auto types = g->m_creatureManager->types();
 	for( auto type : types )
 	{
 		TargetPriority tp { type, MilAttitude::_IGNORE };

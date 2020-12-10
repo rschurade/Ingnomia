@@ -16,14 +16,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "workshopmanager.h"
+#include "game.h"
 
 #include "../base/gamestate.h"
 
 #include <QDebug>
 #include <QJsonDocument>
 
-WorkshopManager::WorkshopManager( QObject* parent ) :
-	ManagerBase( parent )
+WorkshopManager::WorkshopManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 

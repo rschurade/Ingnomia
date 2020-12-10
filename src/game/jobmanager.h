@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/priorityqueue.h"
 #include "../game/job.h"
 
@@ -29,11 +29,15 @@
 #include <QQueue>
 #include <QString>
 
-class JobManager : public ManagerBase
+class Game;
+
+class JobManager : public QObject
 {
 	Q_OBJECT
 
 private:
+	Game* g = nullptr;
+
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;
 
@@ -61,7 +65,7 @@ private:
 	void removeFromPositionHash( unsigned int jobID );
 
 public:
-	JobManager( QObject* parent = nullptr );
+	JobManager( Game* parent );
 	~JobManager();
 
 	void onTick();

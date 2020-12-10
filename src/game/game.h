@@ -47,10 +47,31 @@ class World;
 
 class Game : public QObject
 {
+	friend class Inventory;
+	friend class SpriteFactory;
+	friend class World;
+
+	friend class JobManager;
+	friend class StockpileManager;
+	friend class FarmingManager;
+	friend class WorkshopManager;
+	friend class RoomManager;
+	friend class GnomeManager;
+	friend class CreatureManager;
+	friend class EventManager;
+	friend class MechanismManager;
+	friend class FluidManager;
+	friend class NeighborManager;
+	friend class MilitaryManager;
+
+	friend class Gnome;
+	friend class GnomeTrader;
+	friend class Automaton;
+
 	Q_OBJECT
 
 public:
-	Game( SpriteFactory* spriteFactory, World* world, QObject* parent );
+	Game( SpriteFactory* spriteFactory, World* world, Game* parent );
 	virtual ~Game();
 
 	void save();
@@ -65,7 +86,7 @@ public:
 
 private:
 	World* m_world = nullptr;
-	PathFinder* m_pathFinder = nullptr;
+	PathFinder* m_pf = nullptr;
 	SpriteFactory* m_sf = nullptr;
 
 	QTimer* m_timer = nullptr;
@@ -87,10 +108,10 @@ private:
 	bool m_paused = true;
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
 
-	Inventory* m_inventory = nullptr;
+	Inventory* m_inv = nullptr;
 	
 	JobManager* m_jobManager = nullptr;
-	StockpileManager* m_stockpileManager = nullptr;
+	StockpileManager* m_spm = nullptr;
 	FarmingManager* m_farmingManager = nullptr;
 	WorkshopManager* m_workshopManager = nullptr;
 	RoomManager* m_roomManager = nullptr;

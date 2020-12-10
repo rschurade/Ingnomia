@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "mechanismmanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -76,8 +77,9 @@ void MechanismData::deserialize( QVariantMap in )
 	changeInverted  = in.value( "ChangeInverted" ).toBool();
 }
 
-MechanismManager::MechanismManager( QObject* parent ) :
-	ManagerBase( parent )
+MechanismManager::MechanismManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 	m_string2Type.insert( "None", MT_NONE );
 	m_string2Type.insert( "Axle", MT_AXLE );
@@ -165,7 +167,7 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 					}
 					else
 					{
-						m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, false );
+						g->m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, false );
 						m_needNetworkUpdate = true;
 					}
 				}
@@ -211,7 +213,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 			{
 				if ( md.changeActive )
 				{
-					if ( m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
+					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
 						Job* job = getSwitchJob( md );
 						m_jobs.insert( job->id(), job );
@@ -220,7 +222,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 				}
 				if ( md.changeInverted )
 				{
-					if ( m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
+					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
 						Job* job = getInvertJob( md );
 						m_jobs.insert( job->id(), job );
@@ -229,7 +231,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 				}
 				if ( md.active && md.fuel < ( md.maxFuel * md.refuelThreshold / 100 ) )
 				{
-					if ( m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
+					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
 						Job* job = getRefuelJob( md );
 						m_jobs.insert( job->id(), job );
@@ -340,7 +342,7 @@ bool MechanismManager::hasGearBox( Position pos )
 	if ( m_floorPositions.contains( pos.toInt() ) )
 	{
 		auto itemID = m_floorPositions[pos.toInt()];
-		return ( m_inv->itemSID( itemID ) == "GearBox" );
+		return ( g->m_inv->itemSID( itemID ) == "GearBox" );
 	}
 	return false;
 }
@@ -363,7 +365,7 @@ QString MechanismManager::mechanismName( Position pos )
 	unsigned itemID = mechanismID( pos );
 	if ( itemID )
 	{
-		return S::s( "$ItemName_" + m_inv->itemSID( itemID ) );
+		return S::s( "$ItemName_" + g->m_inv->itemSID( itemID ) );
 	}
 	return "No mechanism";
 }
@@ -385,7 +387,7 @@ unsigned int MechanismManager::mechanismID( Position pos )
 
 bool MechanismManager::hasGUI( unsigned int itemID )
 {
-	QString itemSID = m_inv->itemSID( itemID );
+	QString itemSID = g->m_inv->itemSID( itemID );
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 	if ( !row.value( "GUI" ).toString().isEmpty() )
 	{
@@ -399,7 +401,7 @@ bool MechanismManager::hasGUI( Position pos )
 	unsigned itemID = mechanismID( pos );
 	if ( itemID )
 	{
-		QString itemSID = m_inv->itemSID( itemID );
+		QString itemSID = g->m_inv->itemSID( itemID );
 		auto row        = DB::selectRow( "Mechanism", itemSID );
 		if ( !row.value( "GUI" ).toString().isEmpty() )
 		{
@@ -411,14 +413,14 @@ bool MechanismManager::hasGUI( Position pos )
 
 QString MechanismManager::gui( unsigned int itemID )
 {
-	QString itemSID = m_inv->itemSID( itemID );
+	QString itemSID = g->m_inv->itemSID( itemID );
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 	return row.value( "GUI" ).toString();
 }
 
 void MechanismManager::installItem( MechanismData md )
 {
-	QString itemSID = m_inv->itemSID( md.itemID );
+	QString itemSID = g->m_inv->itemSID( md.itemID );
 	if ( itemSID == "Axle" )
 	{
 		m_floorPositions.insert( md.pos.toInt(), md.itemID );
@@ -428,7 +430,7 @@ void MechanismManager::installItem( MechanismData md )
 		ad.anim     = false;
 		ad.localRot = md.rot;
 		ad.pos      = md.pos;
-		ad.spriteID = m_inv->spriteID( md.itemID );
+		ad.spriteID = g->m_inv->spriteID( md.itemID );
 
 		m_axleData.insert( md.pos.toInt(), ad );
 	}
@@ -439,7 +441,7 @@ void MechanismManager::installItem( MechanismData md )
 	else if ( itemSID == "SteamEngine" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
-		m_world->setWallSpriteAnim( md.pos, md.active );
+		g->m_world->setWallSpriteAnim( md.pos, md.active );
 	}
 	else if ( itemSID == "Lever" )
 	{
@@ -459,7 +461,7 @@ void MechanismManager::installItem( MechanismData md )
 		ad.localRot   = md.rot;
 		ad.pos        = md.pos;
 		ad.isVertical = true;
-		ad.spriteID   = m_inv->spriteID( md.itemID );
+		ad.spriteID   = g->m_inv->spriteID( md.itemID );
 
 		m_axleData.insert( md.pos.toInt(), ad );
 	}
@@ -473,7 +475,7 @@ void MechanismManager::installItem( MechanismData md )
 
 void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 {
-	QString itemSID = m_inv->itemSID( itemID );
+	QString itemSID = g->m_inv->itemSID( itemID );
 	qDebug() << "installing " << itemSID;
 
 	MechanismData md;
@@ -516,7 +518,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.anim     = false;
 			ad.localRot = rot;
 			ad.pos      = pos;
-			ad.spriteID = m_inv->spriteID( itemID );
+			ad.spriteID = g->m_inv->spriteID( itemID );
 
 			m_axleData.insert( pos.toInt(), ad );
 		}
@@ -584,7 +586,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.localRot   = rot;
 			ad.pos        = pos;
 			ad.isVertical = true;
-			ad.spriteID   = m_inv->spriteID( itemID );
+			ad.spriteID   = g->m_inv->spriteID( itemID );
 
 			m_axleData.insert( pos.toInt(), ad );
 		}
@@ -604,7 +606,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 
 	m_mechanisms.insert( itemID, md );
 
-	m_world->setWallSpriteAnim( md.pos, false );
+	g->m_world->setWallSpriteAnim( md.pos, false );
 
 	m_needNetworkUpdate = true;
 }
@@ -771,7 +773,7 @@ void MechanismManager::refuel( unsigned int itemID, int burnValue )
 
 			if ( newFuel > 0 )
 			{
-				m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, m_mechanisms[itemID].active & ( m_mechanisms[itemID].fuel > 0 ) );
+				g->m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, m_mechanisms[itemID].active & ( m_mechanisms[itemID].fuel > 0 ) );
 			}
 		}
 	}
@@ -865,7 +867,7 @@ void MechanismManager::updateNetWorks()
 
 		if ( ad.isVertical )
 		{
-			m_world->setWallSpriteAnim( ad.pos, ad.anim );
+			g->m_world->setWallSpriteAnim( ad.pos, ad.anim );
 		}
 	}
 
@@ -875,21 +877,21 @@ void MechanismManager::updateNetWorks()
 
 void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 {
-	QString itemSID = m_inv->itemSID( md.itemID );
+	QString itemSID = g->m_inv->itemSID( md.itemID );
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 
 	if ( md.anim )
 	{
-		m_world->setWallSpriteAnim( md.pos, isOn );
+		g->m_world->setWallSpriteAnim( md.pos, isOn );
 	}
 	else
 	{
-		QString itemSID = m_inv->itemSID( md.itemID );
+		QString itemSID = g->m_inv->itemSID( md.itemID );
 		auto row        = DB::selectRow( "Mechanism", itemSID );
 
 		if ( md.anim )
 		{
-			m_world->setWallSpriteAnim( md.pos, isOn );
+			g->m_world->setWallSpriteAnim( md.pos, isOn );
 		}
 		else
 		{
@@ -899,13 +901,13 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 				QString floorSpriteOn = row.value( "FloorSpriteOn" ).toString();
 				if ( !wallSpriteOn.isEmpty() )
 				{
-					m_world->setWallSprite( md.pos, m_sf->createSprite( wallSpriteOn, { m_inv->materialSID( md.itemID ) } )->uID );
-					m_world->addToUpdateList( md.pos );
+					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOn, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->addToUpdateList( md.pos );
 				}
 				if ( !floorSpriteOn.isEmpty() )
 				{
-					m_world->setFloorSprite( md.pos, m_sf->createSprite( floorSpriteOn, { m_inv->materialSID( md.itemID ) } )->uID );
-					m_world->addToUpdateList( md.pos );
+					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOn, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->addToUpdateList( md.pos );
 				}
 			}
 			else
@@ -915,13 +917,13 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 
 				if ( !wallSpriteOff.isEmpty() )
 				{
-					m_world->setWallSprite( md.pos, m_sf->createSprite( wallSpriteOff, { m_inv->materialSID( md.itemID ) } )->uID );
-					m_world->addToUpdateList( md.pos );
+					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOff, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->addToUpdateList( md.pos );
 				}
 				if ( !floorSpriteOff.isEmpty() )
 				{
-					m_world->setFloorSprite( md.pos, m_sf->createSprite( floorSpriteOff, { m_inv->materialSID( md.itemID ) } )->uID );
-					m_world->addToUpdateList( md.pos );
+					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOff, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->addToUpdateList( md.pos );
 				}
 			}
 		}
@@ -946,15 +948,15 @@ void MechanismManager::addEffect( Position pos, QString effect )
 {
 	if ( effect == "Wall" )
 	{
-		m_world->setWalkable( pos, false );
-		Tile& tile    = m_world->getTile( pos );
+		g->m_world->setWalkable( pos, false );
+		Tile& tile    = g->m_world->getTile( pos );
 		tile.wallType = WT_SOLIDWALL;
 
 		// TODO if floor above crush tile inhabitants
 	}
 	else if ( effect == "Floor" )
 	{
-		m_world->setWalkable( pos, true );
+		g->m_world->setWalkable( pos, true );
 	}
 }
 
@@ -962,13 +964,13 @@ void MechanismManager::removeEffect( Position pos, QString effect )
 {
 	if ( effect == "Wall" )
 	{
-		m_world->setWalkable( pos, true );
-		Tile& tile    = m_world->getTile( pos );
+		g->m_world->setWalkable( pos, true );
+		Tile& tile    = g->m_world->getTile( pos );
 		tile.wallType = WT_NOWALL;
 	}
 	else if ( effect == "Floor" )
 	{
-		m_world->setWalkable( pos, false );
+		g->m_world->setWalkable( pos, false );
 	}
 }
 

@@ -15,9 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+#include "gnome.h"
+#include "gnomemanager.h"
+#include "game.h"
+
+
 #include "../base/enums.h"
 #include "../base/global.h"
-#include "gnome.h"
+
 //#include "../base/config.h"
 #include "../base/gamestate.h"
 //#include "../base/util.h"
@@ -154,11 +160,11 @@ BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 
 	for ( auto ci : cil )
 	{
-		if ( m_gm->m_inv->getItemPos( ci ) != inputPos )
+		if ( m_gm->g->m_inv->getItemPos( ci ) != inputPos )
 		{
 			m_itemToPickUp = ci;
-			setCurrentTarget( m_gm->m_inv->getItemPos( ci ) );
-			log( "Item is at " + m_gm->m_inv->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
+			setCurrentTarget( m_gm->g->m_inv->getItemPos( ci ) );
+			log( "Item is at " + m_gm->g->m_inv->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
 			return BT_RESULT::FAILURE;
 		}
 	}
@@ -199,15 +205,15 @@ BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 
 	for ( auto itemID : cil )
 	{
-		if ( !m_gm->m_inv->isPickedUp( itemID ) )
+		if ( !m_gm->g->m_inv->isPickedUp( itemID ) )
 		{
-			pq.put( itemID, m_gm->m_inv->distanceSquare( itemID, m_position ) );
+			pq.put( itemID, m_gm->g->m_inv->distanceSquare( itemID, m_position ) );
 		}
 	}
 	if ( !pq.empty() )
 	{
 		unsigned int itemID = pq.get();
-		setCurrentTarget( m_gm->m_inv->getItemPos( itemID ) );
+		setCurrentTarget( m_gm->g->m_inv->getItemPos( itemID ) );
 		m_itemToPickUp = itemID;
 	}
 
@@ -249,7 +255,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 {
 	if ( m_assignedWorkshop )
 	{
-		auto ws = m_gm->m_workshopManager->workshop( m_assignedWorkshop );
+		auto ws = m_gm->g->m_workshopManager->workshop( m_assignedWorkshop );
 		if ( ws )
 		{
 			QString type = ws->type();
@@ -264,7 +270,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 
 BT_RESULT Gnome::conditionIsCivilian( bool halt )
 {
-	bool roleIsCivilian = m_gm->m_militaryManager->roleIsCivilian( m_roleID);
+	bool roleIsCivilian = m_gm->g->m_militaryManager->roleIsCivilian( m_roleID);
 	if( m_roleID == 0 || roleIsCivilian )
 	{
 		return BT_RESULT::SUCCESS;
@@ -274,18 +280,18 @@ BT_RESULT Gnome::conditionIsCivilian( bool halt )
 
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 {
-	auto squad = m_gm->m_militaryManager->getSquadForGnome( m_id );
+	auto squad = m_gm->g->m_militaryManager->getSquadForGnome( m_id );
 	if( squad )
 	{
 		for( const auto& prio : squad->priorities )
 		{
 			if ( prio.attitude == MilAttitude::HUNT )
 			{
-				const auto& targetSet = m_gm->m_creatureManager->animalsByType( prio.type );
+				const auto& targetSet = m_gm->g->m_creatureManager->animalsByType( prio.type );
 				for ( const auto& targetID : targetSet )
 				{
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
-					if ( m_gm->m_creatureManager->hasPathTo( m_position, targetID ) )
+					if ( m_gm->g->m_creatureManager->hasPathTo( m_position, targetID ) )
 					{
 						return BT_RESULT::SUCCESS;
 					}

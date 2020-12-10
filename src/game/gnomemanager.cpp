@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "gnomemanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -35,8 +36,9 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
-GnomeManager::GnomeManager( QObject* parent ) :
-	ManagerBase( parent )
+GnomeManager::GnomeManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
@@ -79,14 +81,14 @@ bool GnomeManager::contains( unsigned int gnomeID )
 
 void GnomeManager::addGnome( Position pos )
 {
-	GnomeFactory gf;
+	GnomeFactory gf( this );
 	m_gnomes.push_back( gf.createGnome( pos ) );
 	m_gnomesByID.insert( m_gnomes.last()->id(), m_gnomes.last() );
 }
 
 unsigned int GnomeManager::addTrader( Position pos, unsigned int workshopID, QString type )
 {
-	GnomeFactory gf;
+	GnomeFactory gf( this );
 	GnomeTrader* gnome = gf.createGnomeTrader( pos );
 	gnome->setName( "Trader " + gnome->name() );
 	gnome->setMarketStall( workshopID );
@@ -116,7 +118,7 @@ void GnomeManager::addAutomaton( Automaton* a )
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), m_inv->spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
@@ -126,13 +128,13 @@ void GnomeManager::addAutomaton( QVariantMap values )
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), m_inv->spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
 void GnomeManager::addGnome( QVariantMap values )
 {
-	GnomeFactory gf;
+	GnomeFactory gf( this );
 	Gnome* g( gf.createGnome( values ) );
 	m_gnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_gnomes.last() );
@@ -140,7 +142,7 @@ void GnomeManager::addGnome( QVariantMap values )
 
 void GnomeManager::addTrader( QVariantMap values )
 {
-	GnomeFactory gf;
+	GnomeFactory gf( this );
 	GnomeTrader* g( gf.createGnomeTrader( values ) );
 	m_specialGnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_specialGnomes.last() );
@@ -257,7 +259,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					else
 					{
 						m_gnomesByID.remove( dg->id() );
-						m_world->addToUpdateList( dg->getPos() );
+						g->m_world->addToUpdateList( dg->getPos() );
 						delete dg;
 					}
 					m_specialGnomes.removeAt( i );
@@ -275,7 +277,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			if ( dg->expires() < GameState::tick )
 			{
 				m_gnomesByID.remove( dg->id() );
-				m_world->addToUpdateList( dg->getPos() );
+				g->m_world->addToUpdateList( dg->getPos() );
 				m_deadGnomes.removeAt( i );
 				delete dg;
 				break;
@@ -514,7 +516,7 @@ bool GnomeManager::gnomeCanReach( unsigned int gnomeID, Position pos )
 {
 	if ( m_gnomesByID.contains( gnomeID ) )
 	{
-		return m_world->regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
+		return g->m_world->regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
 	}
 	return false;
 }

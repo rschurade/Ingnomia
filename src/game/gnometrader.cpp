@@ -16,6 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "gnometrader.h"
+#include "gnomemanager.h"
+#include "game.h"
 
 #include "../base/behaviortree/bt_tree.h"
 #include "../base/config.h"
@@ -113,7 +115,7 @@ void GnomeTrader::serialize( QVariantMap& out )
 
 void GnomeTrader::init()
 {
-	m_world->insertCreatureAtPosition( m_position, m_id );
+	m_gm->g->m_world->insertCreatureAtPosition( m_position, m_id );
 
 	updateSprite();
 
@@ -194,7 +196,7 @@ BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 	{
 		log( "It's time to leave" );
 
-		auto ws = Global::wsm().workshop( m_marketStall );
+		auto ws = m_gm->g->m_workshopManager->workshop( m_marketStall );
 		ws->assignGnome( 0 );
 
 		return BT_RESULT::SUCCESS;
@@ -205,7 +207,7 @@ BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 BT_RESULT GnomeTrader::actionGetMarketStallPosition( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
-	auto ws = Global::wsm().workshop( m_marketStall );
+	auto ws = m_gm->g->m_workshopManager->workshop( m_marketStall );
 	setCurrentTarget( ws->inputPos() );
 	m_facingAfterMove = ws->rotation();
 	return BT_RESULT::SUCCESS;

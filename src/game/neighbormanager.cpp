@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "neighbormanager.h"
+#include "game.h"
 
 #include "../base/gamestate.h"
 #include "../base/util.h"
@@ -24,8 +25,9 @@
 
 #include <QDebug>
 
-NeighborManager::NeighborManager( QObject* parent ) :
-	ManagerBase( parent )
+NeighborManager::NeighborManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
@@ -153,7 +155,7 @@ void NeighborManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 	{
 		if ( kingdom.type == KingdomType::GOBLIN && GameState::tick >= kingdom.nextRaid )
 		{
-			Global::em().addRaidEvent( kingdom );
+			g->m_eventManager->addRaidEvent( kingdom );
 			kingdom.nextRaid = GameState::tick + Util::ticksPerDayRandomized( 10 ) * Util::daysPerSeason * 4;
 		}
 	}
@@ -305,7 +307,7 @@ void NeighborManager::emissary( Mission* mission )
 					break;
 				case MissionAction::INVITE_TRADER:
 					k.nextTrader = GameState::tick + 2 * Util::ticksPerDayRandomized( 50 );
-					Global::em().addTraderEvent( k );
+					g->m_eventManager->addTraderEvent( k );
 					break;
 				case MissionAction::INVITE_AMBASSADOR:
 					break;

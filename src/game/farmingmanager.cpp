@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "farmingmanager.h"
+#include "game.h"
 
 #include "../base/global.h"
 #include "../base/position.h"
@@ -44,8 +45,9 @@ Beehive::Beehive( QVariantMap& in )
 	harvest = in.value( "Harvest" ).toBool();
 }
 
-FarmingManager::FarmingManager( QObject* parent ) :
-	ManagerBase(parent)
+FarmingManager::FarmingManager( Game* parent ) :
+	g( parent ),
+	QObject(parent)
 {
 }
 
@@ -121,7 +123,7 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 
 		if ( bh.honey >= 1.0 && !bh.hasJob )
 		{
-			m_jobManager->addJob( "Harvest", bh.pos, 0, true );
+			g->m_jobManager->addJob( "Harvest", bh.pos, 0, true );
 		}
 	}
 }
@@ -215,7 +217,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 	{
 		if ( p.second )
 		{
-			m_world->setTileFlag( p.first, TileFlag::TF_GROVE );
+			g->m_world->setTileFlag( p.first, TileFlag::TF_GROVE );
 		}
 	}
 }
@@ -305,7 +307,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 	{
 		if ( p.second )
 		{
-			m_world->setTileFlag( p.first, TileFlag::TF_FARM );
+			g->m_world->setTileFlag( p.first, TileFlag::TF_FARM );
 		}
 	}
 }
@@ -403,7 +405,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 	{
 		if ( p.second )
 		{
-			m_world->setTileFlag( p.first, TileFlag::TF_PASTURE );
+			g->m_world->setTileFlag( p.first, TileFlag::TF_PASTURE );
 		}
 	}
 }
@@ -659,7 +661,7 @@ bool FarmingManager::hasPlantTreeJob( Position pos )
 
 bool FarmingManager::addUtil( Position pos, unsigned int itemID )
 {
-	QString itemSID = m_inv->itemSID( itemID );
+	QString itemSID = g->m_inv->itemSID( itemID );
 
 	if ( itemSID == "Shed" )
 	{

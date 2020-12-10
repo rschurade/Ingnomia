@@ -17,20 +17,26 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../game/automaton.h"
 #include "../game/gnome.h"
 #include "../game/gnometrader.h"
 
 #include <QList>
 
-class GnomeManager : public ManagerBase
+class Game;
+
+class GnomeManager : public QObject
 {
 	friend class Gnome;
+	friend class GnomeTrader;
+	friend class Automaton;
 
 	Q_OBJECT
 
 private:
+	Game* g = nullptr;
+
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;
 	QMap<unsigned int, Gnome*> m_gnomesByID;
@@ -44,7 +50,7 @@ private:
 	QHash<unsigned int, Job*> m_jobs;
 
 public:
-	GnomeManager( QObject* parent = nullptr );
+	GnomeManager( Game* parent );
 	~GnomeManager();
 
 	void init();

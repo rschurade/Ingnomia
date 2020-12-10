@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "eventmanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -86,8 +87,9 @@ Mission::Mission( QVariantMap in )
 	result        = in.value( "Result" ).toMap();
 }
 
-EventManager::EventManager( QObject* parent ) :
-	ManagerBase( parent )
+EventManager::EventManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 	m_string2type.insert( "EventTrader", (int)EventType::TRADER );
 	m_string2type.insert( "EventMigration", (int)EventType::MIGRATION );
@@ -264,7 +266,7 @@ bool EventManager::checkRequirements( Event& event )
 		case EventRequire::FREEMARKETSTALL:
 		{
 			unsigned int marketStall = 0;
-			for ( auto ws : m_workshopManager->workshops() )
+			for ( auto ws : g->m_workshopManager->workshops() )
 			{
 				if ( ws->type() == "MarketStall" )
 				{
@@ -337,7 +339,7 @@ void EventManager::spawnGnome( Position location, int amount )
 {
 	for ( int i = 0; i < amount; ++i )
 	{
-		m_gnomeManager->addGnome( location );
+		g->m_gnomeManager->addGnome( location );
 	}
 }
 
@@ -346,13 +348,13 @@ void EventManager::spawnInvasion( Position location, int amount, QVariantMap dat
 	QString type = data.value( "Species" ).toString();
 	for ( int i = 0; i < amount; ++i )
 	{
-		m_creatureManager->addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
+		g->m_creatureManager->addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
 	}
 }
 
 void EventManager::spawnTrader( Position location, unsigned int marketStall, QVariantMap data )
 {
-	auto ws = m_workshopManager->workshop( marketStall );
+	auto ws = g->m_workshopManager->workshop( marketStall );
 	// spawn trader"
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
 	QString type;
@@ -385,7 +387,7 @@ void EventManager::spawnTrader( Position location, unsigned int marketStall, QVa
 		}
 		break;
 	}
-	unsigned int id = m_gnomeManager->addTrader( location, ws->id(), type );
+	unsigned int id = g->m_gnomeManager->addTrader( location, ws->id(), type );
 	ws->assignGnome( id );
 }
 
@@ -621,12 +623,12 @@ void EventManager::startMission( MissionType type, MissionAction action, unsigne
 	mission.step = MissionStep::LEAVE_MAP;
 	mission.target = targetKingdom;
 	mission.action = action;
-	mission.distance = m_neighborManager->distance( mission.target );
+	mission.distance = g->m_neighborManager->distance( mission.target );
 	mission.gnomes = { gnomeID };
 	mission.startTick = GameState::tick;
 	mission.nextCheckTick = GameState::tick + Util::ticksPerDay;
 
 	addMission( mission );
 
-	m_gnomeManager->setInMission( gnomeID, mission.id );
+	g->m_gnomeManager->setInMission( gnomeID, mission.id );
 }

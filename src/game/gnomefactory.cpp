@@ -75,7 +75,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 		}
 	}
 
-	Gnome* gnome = new Gnome( pos, name, genderm, m_gm );
+	Gnome* gnome = new Gnome( pos, name, gender, m_gm );
 	gnome->init();
 
 	auto attribs = DB::selectRows( "Attributes" );

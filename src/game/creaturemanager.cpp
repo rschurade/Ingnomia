@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "creaturemanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/global.h"
@@ -30,8 +31,9 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-CreatureManager::CreatureManager( QObject* parent ) :
-	ManagerBase( parent )
+CreatureManager::CreatureManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
@@ -92,7 +94,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 				if( creature->type() == CreatureType::ANIMAL )
 				{
 					auto a = dynamic_cast<Animal*>( creature );
-					m_inv->createItem( a->getPos(), "AnimalCorpse", { a->species() } );
+					g->m_inventory->createItem( a->getPos(), "AnimalCorpse", { a->species() } );
 				}
 				toDestroy.append( creature->id() );
 				break;
@@ -206,7 +208,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 
 		if( creature->hasTransparency() )
 		{
-			m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			g->m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -244,7 +246,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 
 		if( creature->hasTransparency() )
 		{
-			m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			g->m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -315,7 +317,7 @@ void CreatureManager::removeCreature( unsigned int id )
 					if ( a->pastureID() )
 					{
 						qDebug() << "remove animal from pasture";
-						auto pasture = m_farmingManager->getPasture( a->pastureID() );
+						auto pasture = g->m_farmingManager->getPasture( a->pastureID() );
 						if ( pasture )
 						{
 							pasture->removeAnimal( a->id() );
@@ -368,7 +370,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 			if ( a && !a->inJob() && !a->isDead() && !a->toDestroy() )
 			{
 				Position targetPos = a->getPos();
-				if ( m_pf->checkConnectedRegions( pos, targetPos ) )
+				if ( g->m_pf->checkConnectedRegions( pos, targetPos ) )
 				{
 					distanceQueue.put( a, pos.distSquare( targetPos ) );
 				}
@@ -450,7 +452,7 @@ bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
 		auto creature = m_creaturesByID[creatureID];
 		if( creature )
 		{
-			return m_world->regionMap().checkConnectedRegions( pos, creature->getPos() );
+			return g->m_world->regionMap().checkConnectedRegions( pos, creature->getPos() );
 		}
 	}
 	return false;

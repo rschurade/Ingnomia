@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 #include "../game/neighbormanager.h"
@@ -26,6 +26,8 @@
 #include <QMutex>
 #include <QObject>
 #include <QVariantMap>
+
+class Game;
 
 enum class EventRequire
 {
@@ -123,12 +125,12 @@ struct Mission
 Q_DECLARE_METATYPE( Mission )
 
 
-class EventManager : public ManagerBase
+class EventManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	EventManager( QObject* parent = nullptr );
+	EventManager( Game* parent );
 	~EventManager();
 
 	void reset();
@@ -149,6 +151,8 @@ public:
 	void startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
 
 private:
+	Game* g = nullptr;
+
 	QMutex m_mutex;
 
 	QMap<QString, int> m_string2type;

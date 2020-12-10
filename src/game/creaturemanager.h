@@ -17,16 +17,17 @@
 */
 #pragma once
 
-#include "managerbase.h"
 #include "../game/animal.h"
 #include "../game/monster.h"
 
-class CreatureManager : public ManagerBase
+class Game;
+
+class CreatureManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	CreatureManager( QObject* parent = nullptr );
+	CreatureManager( Game* parent );
 	~CreatureManager();
 
 	void reset();
@@ -72,6 +73,7 @@ public:
 	bool hasPathTo( Position& pos, unsigned int creatureID );
 
 private:
+	Game* g = nullptr;
 	QList<Creature*> m_creatures;
 	QList<Animal*> m_animals;
 	QList<Monster*> m_monsters;

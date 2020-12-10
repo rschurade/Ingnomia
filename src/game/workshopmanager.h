@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "workshop.h"
 
 #include <QList>
@@ -25,13 +25,14 @@
 #include <QQueue>
 
 class Job;
+class Game;
 
-class WorkshopManager : public ManagerBase
+class WorkshopManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	WorkshopManager( QObject* parent = 0 );
+	WorkshopManager( Game* parent = 0 );
 	~WorkshopManager();
 
 	void reset();
@@ -79,6 +80,8 @@ public:
 	bool craftJobExists( const QString& itemSID, const QString& materialSID );
 
 private:
+	Game* g = nullptr;
+
 	QList<Workshop*> m_workshops;
 	QQueue<unsigned int> m_toDelete;
 

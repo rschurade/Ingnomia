@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "fluidmanager.h"
+#include "game.h"
 
 #include "../base/gamestate.h"
 #include "../base/global.h"
@@ -45,8 +46,9 @@ void NetworkPipe::deserialize( QVariantMap in )
 	type    = (PipeType)in.value( "Type" ).value<unsigned char>();
 }
 
-FluidManager::FluidManager( QObject* parent ) :
-	ManagerBase( parent )
+FluidManager::FluidManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
@@ -121,12 +123,12 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		{
 			NetworkPipe& nw = m_allPipes[outPos.toInt()];
 
-			unsigned char fl = m_world->fluidLevel( nw.pos );
+			unsigned char fl = g->m_world->fluidLevel( nw.pos );
 
 			if ( nw.level > 0 && fl < 10 )
 			{
 				nw.level -= 1;
-				m_world->changeFluidLevel( nw.pos, +1 );
+				g->m_world->changeFluidLevel( nw.pos, +1 );
 			}
 			if ( nw.ins.size() )
 			{
@@ -190,13 +192,13 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 			if ( nw.level < nw.capacity )
 			{
-				if ( m_mechanismManager->hasPower( inPos ) )
+				if ( g->m_mechanismManager->hasPower( inPos ) )
 				{
-					unsigned char bfl = m_world->fluidLevel( inPos.belowOf() );
+					unsigned char bfl = g->m_world->fluidLevel( inPos.belowOf() );
 					if ( bfl > 0 )
 					{
 						nw.level += 1;
-						m_world->changeFluidLevel( inPos.belowOf(), -1 );
+						g->m_world->changeFluidLevel( inPos.belowOf(), -1 );
 					}
 				}
 			}

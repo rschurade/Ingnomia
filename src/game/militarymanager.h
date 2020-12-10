@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/gamestate.h"
 
 #include <QMutex>
@@ -25,6 +25,8 @@
 #include <QRandomGenerator>
 #include <QSet>
 #include <QVariantMap>
+
+class Game;
 
 enum class UniformItemQuality : unsigned char
 {
@@ -93,16 +95,16 @@ struct Squad
 {
 	QString name = "new squad";
 	quint32 id   = GameState::createID();
-	CreatureManager* m_cm = nullptr;
+	QList<QString> types;
 
 	QList<unsigned int> gnomes;
 
 	QVariantMap serialize();
-	Squad( CreatureManager* cm, const QVariantMap& in );
+	Squad( QList<QString> tps, const QVariantMap& in );
 
 	QList<TargetPriority> priorities;
 
-	Squad( CreatureManager* cm ) : m_cm( cm ) {};
+	Squad( QList<QString> tps ) : types( tps ) {};
 };
 Q_DECLARE_METATYPE( Squad )
 
@@ -112,12 +114,12 @@ Q_DECLARE_METATYPE( Squad )
 
 
 
-class MilitaryManager : public ManagerBase
+class MilitaryManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	MilitaryManager( QObject* parent = nullptr);
+	MilitaryManager( Game* parent );
 	~MilitaryManager();
 
 	void reset();
@@ -156,6 +158,8 @@ public:
 	bool roleIsCivilian( unsigned int roleID );
 
 private:
+	Game* g = nullptr;
+
 	QMutex m_mutex;
 
 	int m_startIndex = 0;

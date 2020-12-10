@@ -19,12 +19,12 @@
 
 #include "../game/gnome.h"
 
+class GnomeManager;
+
 class Automaton : public Gnome
 {
-	friend class GnomeWidget;
-
 public:
-	Automaton( Position pos, unsigned int automatonItem );
+	Automaton( Position pos, unsigned int automatonItem, GnomeManager* gm );
 	Automaton( QVariantMap& in );
 	~Automaton();
 

@@ -38,7 +38,7 @@
 
 JobManager::JobManager( QObject* parent ) :
 	m_startIndex( 0 ),
-	ManagerBase( parent )
+	QObject( parent )
 {
 }
 

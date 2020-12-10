@@ -17,10 +17,12 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/position.h"
 #include "../base/tile.h"
 #include "../game/job.h"
+
+class Game;
 
 enum MechanismType
 {
@@ -81,12 +83,12 @@ struct MechanismNetwork
 	QSet<unsigned int> consumers;
 };
 
-class MechanismManager : public ManagerBase
+class MechanismManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	MechanismManager( QObject* parent = nullptr );
+	MechanismManager( Game* parent );
 	~MechanismManager();
 
 	void reset();
@@ -140,6 +142,7 @@ public:
 	void updateCreaturesAtPos( Position pos, int numCreatures );
 
 private:
+	Game* g = nullptr;
 	QMutex m_mutex;
 
 	Job* getSwitchJob( MechanismData& md );

@@ -17,11 +17,13 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/position.h"
 #include "../game/job.h"
 
 #include <QSet>
+
+class Game;
 
 enum PipeType : unsigned char
 {
@@ -49,12 +51,12 @@ struct NetworkPipe
 	void deserialize( QVariantMap in );
 };
 
-class FluidManager : public ManagerBase
+class FluidManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	FluidManager( QObject* parent );
+	FluidManager( Game* parent );
 	~FluidManager();
 
 	void reset();
@@ -82,6 +84,8 @@ public:
 	bool hasJobID( unsigned int jobID );
 
 private:
+	Game* g = nullptr;
+
 	quint64 m_lastTick = 0;
 
 	QList<Position> m_inputs;

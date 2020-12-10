@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "stockpilemanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/global.h"
@@ -25,8 +26,9 @@
 
 #include <QDebug>
 
-StockpileManager::StockpileManager( QObject* parent ) :
-	ManagerBase( parent )
+StockpileManager::StockpileManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 

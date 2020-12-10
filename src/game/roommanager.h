@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "../base/position.h"
 #include "../game/room.h"
 
@@ -25,6 +25,7 @@
 
 class Job;
 class Room;
+class Game;
 
 struct Door
 {
@@ -37,12 +38,12 @@ struct Door
 	bool blockMonsters       = true;
 };
 
-class RoomManager : public ManagerBase
+class RoomManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	RoomManager( QObject* parent = nullptr );
+	RoomManager( Game* parent );
 	~RoomManager();
 
 	void reset();
@@ -98,6 +99,8 @@ public:
 	bool cancelAlarmJob( unsigned int roomID );
 
 private:
+	Game* g = nullptr;
+
 	QMap<unsigned int, Room> m_rooms;
 	QHash<unsigned int, unsigned int> m_allRoomTiles;
 

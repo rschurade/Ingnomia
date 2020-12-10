@@ -17,13 +17,14 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 #include "farm.h"
 #include "grove.h"
 #include "pasture.h"
 
 #include <QHash>
 
+class Game;
 class Inventory;
 class Job;
 class JobManager;
@@ -42,12 +43,12 @@ struct Beehive
 	Beehive( QVariantMap& in );
 };
 
-class FarmingManager : public ManagerBase
+class FarmingManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	FarmingManager( QObject* parent );
+	FarmingManager( Game* parent );
 	~FarmingManager();
 
 	bool load( QVariantMap vm );
@@ -138,6 +139,8 @@ public:
 	void emitUpdateSignalGrove( unsigned int id );
 
 private:
+	Game* g = nullptr;
+
 	QMutex m_mutex;
 
 	void onTickGrove( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );

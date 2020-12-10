@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include "managerbase.h"
+
 
 #include "../base/priorityqueue.h"
 #include "../game/item.h"
@@ -35,13 +35,14 @@ class ItemHistory;
 class Octree;
 class StockpileManager;
 class World;
+class Game;
 
-class Inventory : public ManagerBase
+class Inventory : public QObject
 {
 	Q_OBJECT
 
 public:
-	Inventory( QObject* parent );
+	Inventory( Game* parent );
 	~Inventory();
 
 	void saveFilter();
@@ -201,6 +202,8 @@ public:
 	ItemHistory* itemHistory() { return m_itemHistory; }
 
 private:
+	Game* g = nullptr;
+
 	ItemHistory* m_itemHistory = nullptr;
 
 	int m_dimX;
