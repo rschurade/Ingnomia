@@ -82,8 +82,7 @@ void FarmProperties::serialize( QVariantMap& out )
 }
 
 Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
-	g( game ),
-	WorldObject()
+	WorldObject( game )
 {
 	m_name = "Farm";
 
@@ -113,8 +112,7 @@ Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
 }
 
 Farm::Farm( QVariantMap vals, Game* game ) :
-	g( game ),
-	WorldObject( vals ),
+	WorldObject( vals, game ),
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();

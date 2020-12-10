@@ -144,8 +144,6 @@ public:
 	Position firstPos();
 
 private:
-	QPointer<Game> g = nullptr;
-
 	PastureProperties m_properties;
 
 	QMap<unsigned int, PastureField> m_fields;

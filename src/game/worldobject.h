@@ -23,12 +23,14 @@
 #include <QString>
 #include <QVariantMap>
 
+class Game;
+
 class WorldObject
 {
 
 public:
-	WorldObject();
-	WorldObject( QVariantMap vals );
+	WorldObject( Game* game );
+	WorldObject( QVariantMap vals, Game* game );
 	virtual ~WorldObject();
 
 	void serialize( QVariantMap& out );
@@ -70,6 +72,7 @@ public:
 	}
 
 protected:
+	QPointer<Game> g = nullptr;
 	unsigned int m_id = 0;
 	QString m_name    = "";
 	bool m_active     = true;

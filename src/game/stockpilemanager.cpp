@@ -91,7 +91,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 	}
 	else
 	{
-		Stockpile* sp = new Stockpile( fields );
+		Stockpile* sp = new Stockpile( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
@@ -110,7 +110,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 
 void StockpileManager::load( QVariantMap vals )
 {
-	Stockpile* sp = new Stockpile( vals );
+	Stockpile* sp = new Stockpile( vals, g );
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();

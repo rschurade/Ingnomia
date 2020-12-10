@@ -111,8 +111,6 @@ public:
 	int countTiles();
 
 private:
-	QPointer<Game> g = nullptr;
-
 	FarmProperties m_properties;
 
 	QMap<unsigned int, FarmField*> m_fields;

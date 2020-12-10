@@ -31,6 +31,8 @@
 #include <QThread>
 #include <QtGlobal>
 
+class Game;
+
 struct InventoryField
 {
 	Position pos;
@@ -66,9 +68,9 @@ class Stockpile : public WorldObject
 {
 
 public:
-	Stockpile();
-	Stockpile( QList<QPair<Position, bool>> tiles );
-	Stockpile( QVariantMap vals );
+	Stockpile( Game* game );
+	Stockpile( QList<QPair<Position, bool>> tiles, Game* game );
+	Stockpile( QVariantMap vals, Game* game );
 	~Stockpile();
 
 	QVariant serialize();

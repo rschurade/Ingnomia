@@ -75,8 +75,7 @@ void PastureProperties::serialize( QVariantMap& out )
 }
 
 Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
-	g( game ),
-	WorldObject()
+	WorldObject( game )
 {
 	m_name = "Pasture";
 
@@ -100,8 +99,7 @@ Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
 }
 
 Pasture::Pasture( QVariantMap vals, Game* game ) :
-	g( game ),
-	WorldObject( vals ),
+	WorldObject( vals, game ),
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();
@@ -325,7 +323,7 @@ unsigned int Pasture::getJob( unsigned int gnomeID, QString skillID )
 	if ( !m_active )
 		return 0;
 
-	if ( Global::gm().gnomeCanReach( gnomeID, m_properties.firstPos ) )
+	if ( g->gm()->gnomeCanReach( gnomeID, m_properties.firstPos ) )
 	{
 
 		Job* job = nullptr;
@@ -433,13 +431,13 @@ Job* Pasture::createJob( QString skillID )
 					for ( auto foodString : m_properties.foodSettings )
 					{
 						auto fsl = foodString.split( "_" );
-						if ( m_inv->itemCount( fsl[0], fsl[1] ) > 0 )
+						if ( g->inv()->itemCount( fsl[0], fsl[1] ) > 0 )
 						{
 							for ( auto& field : m_fields )
 							{
 								if ( field.util && !field.hasJob )
 								{
-									if ( m_inv->itemSID( field.util ) == "Trough" )
+									if ( g->inv()->itemSID( field.util ) == "Trough" )
 									{
 										job = new Job();
 
@@ -578,7 +576,7 @@ Job* Pasture::createJob( QString skillID )
 		{
 			if ( m_properties.harvestHay && GameState::season != 3 )
 			{
-				if ( m_inv->itemCount( "Hay", "any" ) < (unsigned int)m_properties.maxHay )
+				if ( g->inv()->itemCount( "Hay", "any" ) < (unsigned int)m_properties.maxHay )
 				{
 					for ( auto& field : m_fields )
 					{
@@ -767,7 +765,7 @@ bool Pasture::addUtil( Position pos, unsigned int itemID )
 			pf.util = itemID;
 
 			//if item is trough
-			if ( m_inv->itemSID( itemID ) == "Trough" )
+			if ( g->inv()->itemSID( itemID ) == "Trough" )
 			{
 				m_properties.maxTroughCapacity += 20;
 			}
@@ -791,7 +789,7 @@ bool Pasture::removeUtil( Position pos )
 			pf.util = 0;
 
 			//if item is trough
-			if ( m_inv->itemSID( itemID ) == "Trough" )
+			if ( g->inv()->itemSID( itemID ) == "Trough" )
 			{
 				m_properties.maxTroughCapacity -= 20;
 			}
@@ -832,7 +830,7 @@ Position Pasture::findShed()
 	{
 		if ( field.util )
 		{
-			if ( m_inv->itemSID( field.util ) == "Shed" )
+			if ( g->inv()->itemSID( field.util ) == "Shed" )
 			{
 				return field.pos;
 			}

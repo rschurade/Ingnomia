@@ -91,8 +91,6 @@ public:
 	bool hasPlantTreeJob( Position pos );
 
 private:
-	QPointer<Game> g = nullptr;
-
 	GroveProperties m_properties;
 
 	QMap<unsigned int, GroveField*> m_fields;

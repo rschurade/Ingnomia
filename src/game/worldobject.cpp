@@ -19,7 +19,8 @@
 
 #include "../base/gamestate.h"
 
-WorldObject::WorldObject()
+WorldObject::WorldObject( Game* game ) :
+	g( game )
 {
 	m_id = GameState::createID();
 }
@@ -28,7 +29,8 @@ WorldObject::~WorldObject()
 {
 }
 
-WorldObject::WorldObject( QVariantMap vals )
+WorldObject::WorldObject( QVariantMap vals, Game* game ) :
+	g( game )
 {
 	m_id             = vals.value( "ID" ).toUInt();
 	m_lastUpdateTick = vals.value( "LastUpdate" ).value<quint64>();

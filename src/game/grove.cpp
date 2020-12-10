@@ -30,9 +30,6 @@
 
 #include <QDebug>
 
-Grove::Grove()
-{
-}
 Grove::~Grove()
 {
 }
@@ -85,8 +82,7 @@ void GroveProperties::serialize( QVariantMap& out )
 }
 
 Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
-	g( game ),
-	WorldObject()
+	WorldObject( game )
 {
 	m_name = "Grove";
 
@@ -107,8 +103,7 @@ Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
 }
 
 Grove::Grove( QVariantMap vals, Game* game ) :
-	g( game ),
-	WorldObject( vals ),
+	WorldObject( vals, game ),
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();
