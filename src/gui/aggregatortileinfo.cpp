@@ -23,6 +23,7 @@
 #include "../base/dbhelper.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/gnomemanager.h"
@@ -43,6 +44,11 @@ AggregatorTileInfo::AggregatorTileInfo( QObject* parent ) :
 
 AggregatorTileInfo::~AggregatorTileInfo()
 {
+}
+
+void AggregatorTileInfo::init( Game* game )
+{
+	g = game;
 }
 
 void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
@@ -70,13 +76,12 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 	{
 		Position pos( tileID );
 		m_tileInfo.tileID      = tileID;
-		m_tileInfo.numGnomes   = Global::gm().gnomesAtPosition( pos ).size();
-		m_tileInfo.numAnimals  = Global::cm().animalsAtPosition( pos ).size();
-		m_tileInfo.numMonsters = Global::cm().monstersAtPosition( pos ).size();
-		m_tileInfo.numItems    = m_inv->countItemsAtPos( pos );
+		m_tileInfo.numGnomes   = g->gm()->gnomesAtPosition( pos ).size();
+		m_tileInfo.numAnimals  = g->cm()->animalsAtPosition( pos ).size();
+		m_tileInfo.numMonsters = g->cm()->monstersAtPosition( pos ).size();
+		m_tileInfo.numItems    = g->inv()->countItemsAtPos( pos );
 
-		World& world = Global::w();
-		Tile& tile   = world.getTile( pos );
+		Tile& tile   = g->w()->getTile( pos );
 
 		m_tileInfo.flags = tile.flags;
 
@@ -110,9 +115,9 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			m_tileInfo.floor = "Floor: " + S::s( "$MaterialName_" + floorSID ) + " " + S::s( "$GroupName_" + fType ).toLower();
 		}
 
-		if ( world.plants().contains( pos.toInt() ) )
+		if ( g->w()->plants().contains( pos.toInt() ) )
 		{
-			Plant& plant                  = world.plants()[pos.toInt()];
+			Plant& plant                  = g->w()->plants()[pos.toInt()];
 			m_tileInfo.plant              = "Plant: " + plant.getDesignation();
 			m_tileInfo.plantIsTree        = plant.isTree();
 			m_tileInfo.plantIsHarvestable = plant.harvestable();
@@ -130,12 +135,12 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		{
 			PositionEntry pe;
 
-			m_inv->getObjectsAtPosition( pos, pe );
+			g->inv()->getObjectsAtPosition( pos, pe );
 
 			Counter<QString> counter;
 			for ( auto item : pe )
 			{
-				counter.add( S::s( "$MaterialName_" + m_inv->materialSID( item ) ) + " " + S::s( "$ItemName_" + m_inv->itemSID( item ) ) );
+				counter.add( S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) ) );
 			}
 			for ( auto key : counter.keys() )
 			{
@@ -149,7 +154,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		{
 			if ( m_tileInfo.numGnomes )
 			{
-				for ( auto gnome : Global::gm().gnomesAtPosition( pos ) )
+				for ( auto gnome : g->gm()->gnomesAtPosition( pos ) )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Gnome: " + gnome->name();
@@ -159,7 +164,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 			if ( m_tileInfo.numAnimals )
 			{
-				for ( auto animal : Global::cm().animalsAtPosition( pos ) )
+				for ( auto animal : g->cm()->animalsAtPosition( pos ) )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Animal: " + S::s( "$CreatureName_" + animal->name() );
@@ -169,7 +174,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 			if ( m_tileInfo.numMonsters )
 			{
-				for ( auto monster : Global::cm().monstersAtPosition( pos ) )
+				for ( auto monster : g->cm()->monstersAtPosition( pos ) )
 				{
 					GuiTICreatureInfo gct;
 					gct.text = "Monster: " + S::s( "$CreatureName_" + monster->name() );
@@ -179,7 +184,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 		}
 		// wrap job into a sub-object?
-		auto job                         = Global::jm().getJobAtPos( pos );
+		auto job                         = g->jm()->getJobAtPos( pos );
 		m_tileInfo.jobName               = "";
 		m_tileInfo.jobWorker             = "";
 		m_tileInfo.jobPriority           = "";
@@ -190,7 +195,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		if ( job )
 		{
 			m_tileInfo.jobName = job->type();
-			auto gnome         = Global::gm().gnome( job->workedBy() );
+			auto gnome         = g->gm()->gnome( job->workedBy() );
 			if ( gnome )
 			{
 				m_tileInfo.jobWorker = gnome->name();
@@ -230,7 +235,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		{
 			case TileFlag::TF_WORKSHOP:
 			{
-				auto ws = Global::wsm().workshopAt( pos );
+				auto ws = g->wsm()->workshopAt( pos );
 				if ( ws )
 				{
 					m_tileInfo.designationID   = ws->id();
@@ -240,7 +245,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			break;
 			case TileFlag::TF_STOCKPILE:
 			{
-				auto sp = Global::spm().getStockpileAtPos( pos );
+				auto sp = g->spm()->getStockpileAtPos( pos );
 				if ( sp )
 				{
 					m_tileInfo.designationID   = sp->id();
@@ -250,7 +255,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			break;
 			case TileFlag::TF_GROVE:
 			{
-				auto gr = Global::fm().getGroveAtPos( pos );
+				auto gr = g->fm()->getGroveAtPos( pos );
 				if ( gr )
 				{
 					m_tileInfo.designationID   = gr->id();
@@ -260,7 +265,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			break;
 			case TileFlag::TF_FARM:
 			{
-				auto fa = Global::fm().getFarmAtPos( pos );
+				auto fa = g->fm()->getFarmAtPos( pos );
 				if ( fa )
 				{
 					m_tileInfo.designationID   = fa->id();
@@ -270,7 +275,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			break;
 			case TileFlag::TF_PASTURE:
 			{
-				auto pa = Global::fm().getPastureAtPos( pos );
+				auto pa = g->fm()->getPastureAtPos( pos );
 				if ( pa )
 				{
 					m_tileInfo.designationID   = pa->id();
@@ -280,7 +285,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			break;
 			case TileFlag::TF_ROOM:
 			{
-				auto ro = Global::rm().getRoomAtPos( pos );
+				auto ro = g->rm()->getRoomAtPos( pos );
 				if ( ro )
 				{
 					m_tileInfo.designationID   = ro->id();
@@ -298,14 +303,14 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					int countFree            = beds.size();
 					for ( auto b : beds )
 					{
-						if ( m_inv->isInJob( b ) )
+						if ( g->inv()->isInJob( b ) )
 						{
 							--countFree;
 						}
 					}
 					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( beds.size() );
 
-					for ( auto gnome : Global::gm().gnomes() )
+					for ( auto gnome : g->gm()->gnomes() )
 					{
 						GuiTICreatureInfo gci { gnome->name(), gnome->id() };
 						if ( gnome->ownedRoom() )
@@ -329,14 +334,14 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 {
-	auto sp = Global::spm().getStockpileAtTileID( tileID );
+	auto sp = g->spm()->getStockpileAtTileID( tileID );
 
 	if ( sp )
 	{
 		m_spInfo.stockpileID       = sp->id();
 		m_spInfo.name              = sp->name();
 		m_spInfo.priority          = sp->priority();
-		m_spInfo.maxPriority       = Global::spm().maxPriority();
+		m_spInfo.maxPriority       = g->spm()->maxPriority();
 		m_spInfo.suspended         = !sp->active();
 		m_spInfo.allowPullFromHere = sp->allowsPull();
 		m_spInfo.pullFromOthers    = sp->pullsOthers();
@@ -366,20 +371,20 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 
 void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int gnomeID )
 {
-	auto room = Global::rm().getRoom( designationID );
+	auto room = g->rm()->getRoom( designationID );
 	if ( room )
 	{
 		qDebug() << "room" << designationID << "set owner" << gnomeID;
 		auto oldOwner = room->owner();
 
 		room->setOwner( gnomeID );
-		auto gnome = Global::gm().gnome( gnomeID );
+		auto gnome = g->gm()->gnome( gnomeID );
 		if ( gnome )
 		{
 			gnome->setOwnedRoom( designationID );
 		}
 
-		auto oldGnome = Global::gm().gnome( oldOwner );
+		auto oldGnome = g->gm()->gnome( oldOwner );
 		if ( oldGnome )
 		{
 			oldGnome->setOwnedRoom( 0 );
@@ -393,14 +398,14 @@ void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 	{
 		case 0:
 			// create alarm job
-			if ( Global::rm().createAlarmJob( designationID ) )
+			if ( g->rm()->createAlarmJob( designationID ) )
 			{
 				GameState::alarm = 1;
 			}
 			break;
 		case 1:
 			//cancel alarm job;
-			Global::rm().cancelAlarmJob( designationID );
+			g->rm()->cancelAlarmJob( designationID );
 		case 2:
 			GameState::alarmRoomID = 0;
 			GameState::alarm       = 0;

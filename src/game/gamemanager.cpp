@@ -236,7 +236,7 @@ void GameManager::createNewGame()
 	connect( m_eventConnector->aggregatorDebug(), &AggregatorDebug::signalTriggerEvent, m_game->em(), &EventManager::onDebugEvent );
 	connect( m_game->spm(), &StockpileManager::signalStockpileAdded, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onOpenStockpileInfo, Qt::QueuedConnection );
 	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
-
+	connect( m_game->wsm(), &WorkshopManager::signalJobListChanged, m_eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
 
 	m_eventConnector->aggregatorAgri()->init( m_game );
 	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
@@ -246,6 +246,8 @@ void GameManager::createNewGame()
 	m_eventConnector->aggregatorPopulation()->init( m_game );
 	m_eventConnector->aggregatorRenderer()->init( m_game );
 	m_eventConnector->aggregatorStockpile()->init( m_game );
+	m_eventConnector->aggregatorTileInfo()->init( m_game );
+	m_eventConnector->aggregatorWorkshop()->init( m_game );
 
 
 
