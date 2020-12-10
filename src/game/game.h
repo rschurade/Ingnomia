@@ -71,7 +71,7 @@ class Game : public QObject
 	Q_OBJECT
 
 public:
-	Game( SpriteFactory* spriteFactory, World* world, QObject* parent );
+	Game( SpriteFactory* spriteFactory, QObject* parent );
 	virtual ~Game();
 
 	void save();
@@ -82,6 +82,7 @@ public:
 	bool paused();
 	void setPaused( bool value );
 
+	void generateWorld();
 	World* world() { return m_world; }
 
 	Inventory* inv();

@@ -29,7 +29,6 @@
 #include "../game/militarymanager.h"
 #include "../game/newgamesettings.h"
 #include "../game/world.h"
-#include "../game/worldgenerator.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindow.h"
@@ -225,11 +224,7 @@ void GameManager::createNewGame()
 {
 	init();
 
-	WorldGenerator wg( m_newGameSettings, this );
-	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
-	World* world = wg.generate();
-
-	m_game = new Game( m_sf, world, this );
+	m_game = new Game( m_sf, this );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );

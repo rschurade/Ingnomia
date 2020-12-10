@@ -47,6 +47,8 @@
 #include "../game/plant.h"
 #include "../game/techtree.h"
 #include "../game/world.h"
+#include "../game/worldgenerator.h"
+
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
 #include "../gui/aggregatorcreatureinfo.h"
@@ -57,9 +59,8 @@
 
 #include <time.h>
 
-Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
+Game::Game( SpriteFactory* spriteFactory, QObject* parent ) :
 	m_sf( spriteFactory ),
-	m_world( world ),
 	QObject( parent )
 {
 	qDebug() << "init game...";
@@ -119,6 +120,13 @@ Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
 
 Game::~Game()
 {
+}
+
+void Game::generateWorld()
+{
+	WorldGenerator wg( m_newGameSettings, this );
+	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
+	World* world = wg.generate();	
 }
 
 void Game::start()

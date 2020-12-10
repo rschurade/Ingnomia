@@ -32,18 +32,20 @@ struct TerrainMaterial;
 struct Position;
 class NewGameSettings;
 class World;
+class Game;
 
 class WorldGenerator : public QObject
 {
 	Q_OBJECT
 
 public:
-	WorldGenerator( NewGameSettings* ngs, QObject* parent = nullptr );
+	WorldGenerator( NewGameSettings* ngs, Game* parent );
 	~WorldGenerator();
 
 	World* generate();
 
 private:
+	QPointer<Game> g = nullptr;
 	// resize world and fill stone layers
 	void setStoneLayers();
 	// set metal ores and gems
