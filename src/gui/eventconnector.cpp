@@ -131,13 +131,13 @@ void EventConnector::onBuild()
 void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 {
 	if ( cmd == "Mine" )
-		Global::jm().addJob( "Mine", Position( tileID ), 0 );
+		g->jm()->addJob( "Mine", Position( tileID ), 0 );
 	else if ( cmd == "Remove" )
-		Global::jm().addJob( "RemoveFloor", Position( tileID ), 0 );
+		g->jm()->addJob( "RemoveFloor", Position( tileID ), 0 );
 	else if ( cmd == "Fell" )
-		Global::jm().addJob( "FellTree", Position( tileID ), 0 );
+		g->jm()->addJob( "FellTree", Position( tileID ), 0 );
 	else if ( cmd == "Destroy" )
-		Global::jm().addJob( "RemovePlant", Position( tileID ), 0 );
+		g->jm()->addJob( "RemovePlant", Position( tileID ), 0 );
 	else if ( cmd == "Harvest" )
 	{
 		if ( gm->game() && gm->game()->world() && gm->game()->world()->plants().contains( tileID ) )
@@ -145,11 +145,11 @@ void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 			Plant& plant = gm->game()->world()->plants()[tileID];
 			if ( plant.isTree() )
 			{
-				Global::jm().addJob( "HarvestTree", Position( tileID ), 0 );
+				g->jm()->addJob( "HarvestTree", Position( tileID ), 0 );
 			}
 			else
 			{
-				Global::jm().addJob( "Harvest", Position( tileID ), 0 );
+				g->jm()->addJob( "Harvest", Position( tileID ), 0 );
 			}
 		}
 	}

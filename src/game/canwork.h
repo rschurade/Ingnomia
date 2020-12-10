@@ -24,8 +24,8 @@
 class CanWork : public Creature
 {
 public:
-	CanWork( Position& pos, QString name, Gender gender, QString species );
-	CanWork( QVariantMap in );
+	CanWork( Position& pos, QString name, Gender gender, QString species, Game* game );
+	CanWork( QVariantMap in, Game* game );
 	~CanWork() {};
 
 	virtual void serialize( QVariantMap& out );

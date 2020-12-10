@@ -33,6 +33,7 @@
 #include "../game/fluidmanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/mechanismmanager.h"
+#include "../game/militarymanager.h"
 #include "../game/roommanager.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
@@ -48,6 +49,7 @@
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
+#include "../gui/aggregatorcreatureinfo.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -467,3 +469,4 @@ MechanismManager*	Game::mcm(){ return m_mechanismManager; }
 FluidManager*		Game::flm(){ return m_fluidManager; }
 NeighborManager*	Game::nm(){ return m_neighborManager; }
 MilitaryManager*	Game::mil(){ return m_militaryManager; }
+PathFinder*			Game::pf(){ return m_pf; }

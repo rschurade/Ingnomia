@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "creature.h"
+#include "../game/game.h"
 
 #include "../base/behaviortree/bt_factory.h"
 #include "../base/gamestate.h"
@@ -32,7 +33,8 @@
 
 #include <QDebug>
 
-Creature::Creature( const Position& pos, QString name, Gender gender, QString species ) :
+Creature::Creature( const Position& pos, QString name, Gender gender, QString species, Game* game ) :
+	g( game ),
 	Object( pos ),
 	m_name( name ),
 	m_gender( gender ),
@@ -44,7 +46,8 @@ Creature::Creature( const Position& pos, QString name, Gender gender, QString sp
 {
 }
 
-Creature::Creature( QVariantMap in ) :
+Creature::Creature( QVariantMap in, Game* game ) :
+	g( game ),
 	Object( in ),
 	m_attributes( in.value( "Attributes" ).toMap() ),
 	m_skills( in.value( "Skills" ).toMap() ),
@@ -350,9 +353,9 @@ void Creature::setSkillLevel( QString id, int level )
 void Creature::forceMove( Position& to )
 {
 	//qDebug() << name() << " force move from " << m_position.toString() << " to " << to.toString();
-	m_world->removeCreatureFromPosition( m_position, m_id );
+	g->w()->removeCreatureFromPosition( m_position, m_id );
 	m_position = to;
-	m_world->insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 }
 
 void Creature::randomMove()
@@ -378,7 +381,7 @@ void Creature::randomMove()
 					case 0:
 					{
 						testPos = m_position.westOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = 2;
@@ -388,7 +391,7 @@ void Creature::randomMove()
 					case 1:
 					{
 						testPos = m_position.eastOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = 0;
@@ -398,7 +401,7 @@ void Creature::randomMove()
 					case 2:
 					{
 						testPos = m_position.northOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = 3;
@@ -408,7 +411,7 @@ void Creature::randomMove()
 					case 3:
 					{
 						testPos = m_position.southOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = 1;
@@ -418,7 +421,7 @@ void Creature::randomMove()
 					case 4:
 					{
 						testPos = m_position.aboveOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = m_facing;
@@ -428,7 +431,7 @@ void Creature::randomMove()
 					case 5:
 					{
 						testPos = m_position.belowOf();
-						if ( ( m_world->getTileFlag( testPos ) & TileFlag::TF_WATER ) || m_world->fluidLevel( testPos ) > 6 )
+						if ( ( g->w()->getTileFlag( testPos ) & TileFlag::TF_WATER ) || g->w()->fluidLevel( testPos ) > 6 )
 						{
 							newPos    = testPos;
 							newFacing = m_facing;
@@ -445,12 +448,12 @@ void Creature::randomMove()
 			}
 			else
 			{
-				auto neighbors = m_world->connectedNeighbors( m_position );
+				auto neighbors = g->w()->connectedNeighbors( m_position );
 				if ( neighbors.size() > 0 )
 				{
 					int dir   = rand() % neighbors.size();
 					newPos    = neighbors[dir];
-					if ( !m_world->isWalkableGnome( newPos ) )
+					if ( !g->w()->isWalkableGnome( newPos ) )
 					{
 						return;
 					}
@@ -483,20 +486,20 @@ void Creature::randomMove()
 				{
 					case CreatureType::GNOME:
 					case CreatureType::GNOME_TRADER:
-						if ( Global::cm().monstersAtPosition( newPos ).size() )
+						if ( g->cm()->monstersAtPosition( newPos ).size() )
 						{
 							return;
 						}
-						if ( m_world->getTileFlag( newPos ) & TileFlag::TF_NOPASS )
+						if ( g->w()->getTileFlag( newPos ) & TileFlag::TF_NOPASS )
 						{
 							return;
 						}
 						break;
 					case CreatureType::ANIMAL:
 					{
-						if ( Global::rm().isDoor( newPos.toInt() ) )
+						if ( g->rm()->isDoor( newPos.toInt() ) )
 						{
-							if ( Global::rm().blockAnimals( newPos.toInt() ) )
+							if ( g->rm()->blockAnimals( newPos.toInt() ) )
 							{
 								return;
 							}
@@ -504,7 +507,7 @@ void Creature::randomMove()
 					}
 					break;
 					case CreatureType::MONSTER:
-						if ( Global::gm().gnomesAtPosition( newPos ).size() )
+						if ( g->gm()->gnomesAtPosition( newPos ).size() )
 						{
 							return;
 						}
@@ -537,7 +540,7 @@ bool Creature::moveOnPath()
 			m_currentPath.pop_back();
 
 			// check if we can move onto the next position
-			if ( !m_world->isWalkableGnome( p ) )
+			if ( !g->w()->isWalkableGnome( p ) )
 			{
 				m_currentPath.clear();
 				if ( Global::debugMode )
@@ -545,7 +548,7 @@ bool Creature::moveOnPath()
 				return false;
 			}
 
-			Door* door = Global::rm().getDoor( p.toInt() );
+			Door* door = g->rm()->getDoor( p.toInt() );
 			if ( door )
 			{
 				switch ( m_type )
@@ -585,7 +588,7 @@ bool Creature::moveOnPath()
 			{
 				case CreatureType::GNOME:
 				case CreatureType::GNOME_TRADER:
-					if ( Global::cm().monstersAtPosition( p ).size() )
+					if ( g->cm()->monstersAtPosition( p ).size() )
 					{
 						m_currentPath.clear();
 						if ( Global::debugMode )
@@ -596,7 +599,7 @@ bool Creature::moveOnPath()
 				case CreatureType::ANIMAL:
 					break;
 				case CreatureType::MONSTER:
-					if ( Global::gm().gnomesAtPosition( p ).size() )
+					if ( g->gm()->gnomesAtPosition( p ).size() )
 					{
 						m_currentPath.clear();
 						if ( Global::debugMode )
@@ -715,15 +718,15 @@ void Creature::move( Position oldPos )
 {
 	if ( m_position != oldPos )
 	{
-		m_world->removeCreatureFromPosition( oldPos, m_id );
-		m_world->insertCreatureAtPosition( m_position, m_id );
+		g->w()->removeCreatureFromPosition( oldPos, m_id );
+		g->w()->insertCreatureAtPosition( m_position, m_id );
 
 		if( m_hasTransparency )
 		{
-			m_world->setTileFlag( m_position, TileFlag::TF_TRANSPARENT );
+			g->w()->setTileFlag( m_position, TileFlag::TF_TRANSPARENT );
 			// check if no other creatures with transparency on tile
 			bool transp = false;
-			for( auto c : Global::cm().creaturesAtPosition( oldPos ) )
+			for( auto c : g->cm()->creaturesAtPosition( oldPos ) )
 			{
 				if( c->hasTransparency() )
 				{
@@ -733,7 +736,7 @@ void Creature::move( Position oldPos )
 			}
 			if( !transp )
 			{
-				m_world->clearTileFlag( oldPos, TileFlag::TF_TRANSPARENT );
+				g->w()->clearTileFlag( oldPos, TileFlag::TF_TRANSPARENT );
 			}
 		}
 
@@ -782,7 +785,7 @@ BT_RESULT Creature::actionRandomMove( bool halt )
 
 	if ( m_lightIntensity && m_position != oldPos )
 	{
-		m_world->moveLight( m_id, m_position, m_lightIntensity );
+		g->w()->moveLight( m_id, m_position, m_lightIntensity );
 	}
 
 	m_currentAction = "random move";
@@ -915,8 +918,8 @@ BT_RESULT Creature::conditionIsInCombat( bool halt )
 {
 	if ( m_currentAttackTarget )
 	{
-		const Creature* creature = Global::cm().creature( m_currentAttackTarget );
-		if ( !creature || creature->isDead() || !Global::cm().hasPathTo( m_position, m_currentAttackTarget ) )
+		const Creature* creature = g->cm()->creature( m_currentAttackTarget );
+		if ( !creature || creature->isDead() || !g->cm()->hasPathTo( m_position, m_currentAttackTarget ) )
 		{
 			m_currentAttackTarget = 0;
 		}
@@ -951,7 +954,7 @@ BT_RESULT Creature::actionGetExitPosition( bool halt )
 	}
 	if ( m_mission )
 	{
-		auto mission = Global::em().getMission( m_mission );
+		auto mission = g->em()->getMission( m_mission );
 		if ( mission )
 		{
 			if ( mission->leavePos != Position( 0, 0, 0 ) )
@@ -993,7 +996,7 @@ BT_RESULT Creature::actionLeaveMap( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
 
-	m_world->removeCreatureFromPosition( m_position, m_id );
+	g->w()->removeCreatureFromPosition( m_position, m_id );
 	m_goneOffMap = true;
 	return BT_RESULT::SUCCESS;
 }
@@ -1002,7 +1005,7 @@ BT_RESULT Creature::actionEnterMap( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
 
-	m_world->insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 	m_goneOffMap = false;
 
 	m_mission     = 0;
@@ -1054,27 +1057,25 @@ void Creature::die()
 
 void Creature::dropInventory()
 {
-	Inventory &inv = Global::inv();
 	for ( const unsigned int it : inventoryItems() )
 	{
-		inv.putDownItem( it, m_position );
+		g->inv()->putDownItem( it, m_position );
 	}
 	m_inventoryItems.clear();
 }
 
 void Creature::dropEquipment()
 {
-	Inventory& inv = Global::inv();
 	for ( const unsigned int it : m_equipment.wornItems() )
 	{
-		inv.putDownItem( it, m_position );
+		g->inv()->putDownItem( it, m_position );
 	}
 	m_equipment.clearAllItems();
 }
 
 void Creature::addClaimedItem( unsigned int item, unsigned int job )
 {
-	m_inv->setInJob( item, job );
+	g->inv()->setInJob( item, job );
 	m_claimedItems.append( item );
 }
 
@@ -1085,15 +1086,14 @@ void Creature::removeClaimedItem( unsigned int item )
 
 void Creature::unclaimAll()
 {
-	auto& inv = Global::inv();
 	if ( !m_claimedItems.empty() )
 	{
 		for ( auto item : m_claimedItems )
 		{
-			inv.setInJob( item, 0 );
-			if ( inv.isPickedUp( item ) )
+			g->inv()->setInJob( item, 0 );
+			if ( g->inv()->isPickedUp( item ) )
 			{
-				inv.putDownItem( item, m_position );
+				g->inv()->putDownItem( item, m_position );
 			}
 		}
 	}
@@ -1107,10 +1107,10 @@ void Creature::clearClaimedItems()
 
 Creature* Creature::resolveTarget( unsigned int creatureId )
 {
-	Creature* creature = Global::cm().creature( m_currentAttackTarget );
+	Creature* creature = g->cm()->creature( m_currentAttackTarget );
 	if ( !creature )
 	{
-		creature = Global::gm().gnome( m_currentAttackTarget );
+		creature = g->gm()->gnome( m_currentAttackTarget );
 	}
 	return creature;
 }
@@ -1167,7 +1167,7 @@ BT_RESULT Creature::conditionAlarm( bool halt )
 
 BT_RESULT Creature::conditionIsInSafeRoom( bool halt )
 {
-	auto room = Global::rm().getRoomAtPos( m_position );
+	auto room = g->rm()->getRoomAtPos( m_position );
 	if ( room )
 	{
 		if ( room->id() == GameState::alarmRoomID )
@@ -1180,7 +1180,7 @@ BT_RESULT Creature::conditionIsInSafeRoom( bool halt )
 
 BT_RESULT Creature::actionGetSafeRoomPosition( bool halt )
 {
-	auto room = Global::rm().getRoom( GameState::alarmRoomID );
+	auto room = g->rm()->getRoom( GameState::alarmRoomID );
 	if ( room )
 	{
 		auto pos = room->randomTilePos();

@@ -24,8 +24,8 @@ class GnomeManager;
 class Automaton : public Gnome
 {
 public:
-	Automaton( Position pos, unsigned int automatonItem, GnomeManager* gm );
-	Automaton( QVariantMap& in );
+	Automaton( Position pos, unsigned int automatonItem, Game* game );
+	Automaton( QVariantMap& in, Game* game );
 	~Automaton();
 
 	virtual void init();

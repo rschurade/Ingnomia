@@ -85,16 +85,16 @@ void TraderDefinition::serialize( QVariantMap& out )
 
 
 
-GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, GnomeManager* gm ) :
-	Gnome( pos, name, gender, gm )
+GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, Game* game ) :
+	Gnome( pos, name, gender, game )
 {
 	m_type = CreatureType::GNOME_TRADER;
 
 	m_leavesOnTick = GameState::tick + Util::ticksPerDayRandomized( 5 );
 }
 
-GnomeTrader::GnomeTrader( QVariantMap& in ) :
-	Gnome( in ),
+GnomeTrader::GnomeTrader( QVariantMap& in, Game* game ) :
+	Gnome( in, game ),
 	m_leavesOnTick( in.value( "LeavesOnTick" ).value<quint64>() ),
 	m_marketStall( in.value( "MarketStall" ).toUInt() )
 {
@@ -115,7 +115,7 @@ void GnomeTrader::serialize( QVariantMap& out )
 
 void GnomeTrader::init()
 {
-	m_gm->g->m_world->insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 
 	updateSprite();
 
@@ -196,7 +196,7 @@ BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 	{
 		log( "It's time to leave" );
 
-		auto ws = m_gm->g->m_workshopManager->workshop( m_marketStall );
+		auto ws = g->wsm()->workshop( m_marketStall );
 		ws->assignGnome( 0 );
 
 		return BT_RESULT::SUCCESS;
@@ -207,7 +207,7 @@ BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 BT_RESULT GnomeTrader::actionGetMarketStallPosition( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
-	auto ws = m_gm->g->m_workshopManager->workshop( m_marketStall );
+	auto ws = g->wsm()->workshop( m_marketStall );
 	setCurrentTarget( ws->inputPos() );
 	m_facingAfterMove = ws->rotation();
 	return BT_RESULT::SUCCESS;

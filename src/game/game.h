@@ -100,6 +100,7 @@ public:
 	FluidManager* flm();
 	NeighborManager* nm();
 	MilitaryManager* mil();
+	PathFinder* pf();
 
 private:
 	World* m_world = nullptr;
