@@ -59,7 +59,7 @@ private:
 	NewGameSettings* m_newGameSettings = nullptr;
 	SpriteFactory* m_sf = nullptr;
 
-	Game* m_game = nullptr;
+	QPointer<Game> m_game = nullptr;
 	
 	void init();
 	void createNewGame();

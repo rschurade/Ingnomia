@@ -22,6 +22,7 @@
 #include "../base/global.h"
 #include "../base/util.h"
 
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/militarymanager.h"
@@ -35,6 +36,11 @@ AggregatorCreatureInfo::AggregatorCreatureInfo( QObject* parent ) :
 {
 }
 
+void AggregatorCreatureInfo::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorCreatureInfo::update()
 {
 	if( m_currentID != 0 )
@@ -46,7 +52,7 @@ void AggregatorCreatureInfo::update()
 void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 {
 	m_currentID = id;
-	auto gnome = Global::gm().gnome( id );
+	auto gnome = g->gm()->gnome( id );
 	if( gnome )
 	{
 		m_info.name = gnome->name();
@@ -69,7 +75,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 
 		if( gnome->roleID() )
 		{
-			m_info.uniform = Global::mil().uniformCopy( gnome->roleID() );
+			m_info.uniform = g->mil()->uniformCopy( gnome->roleID() );
 			m_info.equipment = gnome->equipment();
 		}
 		m_info.itemPics.clear();
@@ -111,7 +117,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 	}
 	else
 	{
-		auto monster = Global::cm().monster( id );
+		auto monster = g->cm()->monster( id );
 		if( monster )
 		{
 			m_info.name = monster->name();
@@ -136,7 +142,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 		}
 		else
 		{
-			auto animal = Global::cm().animal( id );
+			auto animal = g->cm()->animal( id );
 			if( animal )
 			{
 				m_info.name = animal->name();
@@ -168,12 +174,12 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 
 void AggregatorCreatureInfo::onRequestProfessionList()
 {
-	emit signalProfessionList( Global::gm().professions() );
+	emit signalProfessionList( g->gm()->professions() );
 }
 
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		QString oldProf = gnome->profession();
@@ -202,7 +208,7 @@ void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& e
 		mats.append( "Pine" );
 	}
 
-	auto sprite = Global::sf().createSprite( "UI" + eItem.item, mats );
+	auto sprite = g->sf()->createSprite( "UI" + eItem.item, mats );
 	if( sprite )
 	{
 		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
@@ -223,7 +229,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 	QStringList mats;
 	mats.append( eItem.material );
 
-	auto sprite = Global::sf().createSprite( "UI" + uItem.type + slot, mats );
+	auto sprite = g->sf()->createSprite( "UI" + uItem.type + slot, mats );
 	if( sprite )
 	{
 		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
@@ -240,7 +246,7 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 	QStringList mats; 
 	mats.append( "any" );
 	
-	auto sprite = Global::sf().createSprite( spriteID, mats );
+	auto sprite = g->sf()->createSprite( spriteID, mats );
 	if( sprite )
 	{
 		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );

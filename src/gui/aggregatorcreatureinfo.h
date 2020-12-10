@@ -24,6 +24,8 @@
 #include "../game/gnome.h"
 #include "../game/militarymanager.h"
 
+class Game;
+
 struct GuiCreatureInfo
 {
 	QString name;
@@ -57,9 +59,13 @@ class AggregatorCreatureInfo : public QObject
 public:
 	AggregatorCreatureInfo( QObject* parent = nullptr );
 
+	void init( Game* game );
+
 	void update();
 
 private:
+	QPointer<Game> g = nullptr;
+
 	GuiCreatureInfo m_info;
 	QMap< QString, std::vector<unsigned char> > m_emptyPics;
 

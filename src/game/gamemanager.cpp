@@ -36,6 +36,17 @@
 #include "../gui/mainwindowrenderer.h"
 #include "../gui/strings.h"
 
+#include "../game/inventory.h"
+#include "../game/creaturemanager.h"
+#include "../game/eventmanager.h"
+#include "../game/farmingmanager.h"
+#include "../game/fluidmanager.h"
+#include "../game/gnomemanager.h"
+#include "../game/mechanismmanager.h"
+#include "../game/roommanager.h"
+#include "../game/stockpilemanager.h"
+#include "../game/workshopmanager.h"
+
 #include "../gui/aggregatoragri.h"
 #include "../gui/aggregatorcreatureinfo.h"
 #include "../gui/aggregatordebug.h"
@@ -220,7 +231,13 @@ void GameManager::createNewGame()
 
 	m_game = new Game( m_sf, world, this );
 
-	m_eventConnector->aggregatorAgri()->init();
+	connect( m_game->fm(), &FarmingManager::signalFarmChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
+	connect( m_game->fm(), &FarmingManager::signalPastureChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalTriggerEvent, m_game->em(), &EventManager::onDebugEvent );
+
+	m_eventConnector->aggregatorAgri()->init( m_game );
+	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
+	m_eventConnector->aggregatorInventory()->init( m_game );
 
 
 	GameState::peaceful = m_newGameSettings->isPeaceful();

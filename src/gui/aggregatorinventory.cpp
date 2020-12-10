@@ -20,6 +20,7 @@
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
 #include "../gui/strings.h"
 
@@ -54,10 +55,15 @@ AggregatorInventory::~AggregatorInventory()
 {
 }
 
+void AggregatorInventory::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorInventory::onRequestCategories()
 {
 	m_categories.clear();
-	for ( const auto& cat : m_inv->categories() )
+	for ( const auto& cat : g->inv()->categories() )
 	{
 		/*
 		int catTotal = 0;
@@ -91,7 +97,7 @@ void AggregatorInventory::onRequestGroups( QString category )
 {
 	m_groups.clear();
 
-	for ( const auto& group : m_inv->groups( category ) )
+	for ( const auto& group : g->inv()->groups( category ) )
 	{
 		/*
 		int total = 0;
@@ -116,13 +122,13 @@ void AggregatorInventory::onRequestItems( QString category, QString group )
 {
 	m_items.clear();
 
-	for ( const auto& item : m_inv->items( category, group ) )
+	for ( const auto& item : g->inv()->items( category, group ) )
 	{
-		for ( const auto& mat : m_inv->materials( category, group, item ) )
+		for ( const auto& mat : g->inv()->materials( category, group, item ) )
 		{
 			QString iName = S::s( "$ItemName_" + item );
 			QString mName = S::s( "$MaterialName_" + mat );
-			auto result   = m_inv->itemCountDetailed( item, mat );
+			auto result   = g->inv()->itemCountDetailed( item, mat );
 
 			m_items.append( { iName, mName, result.total, result.inJob, result.inStockpile, result.equipped, result.constructed, result.loose, result.totalValue } );
 		}
@@ -281,7 +287,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 
 void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 {
-	auto mats = m_inv->materialCountsForItem( gbri.itemID );
+	auto mats = g->inv()->materialCountsForItem( gbri.itemID );
 
 	gbri.availableMats.append( { "any", mats["any"] } );
 	for ( auto key : mats.keys() )

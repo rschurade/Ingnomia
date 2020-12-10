@@ -25,41 +25,29 @@
 #include "../base/pathfinder.h"
 #include "../base/util.h"
 #include "../game/animal.h"
+
+#include "../game/inventory.h"
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/fluidmanager.h"
-#include "../game/gamemanager.h"
-#include "../game/gnome.h"
 #include "../game/gnomemanager.h"
-#include "../game/inventory.h"
-#include "../game/itemhistory.h"
 #include "../game/mechanismmanager.h"
-#include "../game/object.h"
-#include "../game/plant.h"
 #include "../game/roommanager.h"
 #include "../game/stockpilemanager.h"
-#include "../game/techtree.h"
 #include "../game/workshopmanager.h"
-#include "../game/world.h"
 #include "../gfx/spritefactory.h"
 
+#include "../game/gamemanager.h"
+#include "../game/gnome.h"
+
+#include "../game/itemhistory.h"
+#include "../game/object.h"
+#include "../game/plant.h"
+#include "../game/techtree.h"
+#include "../game/world.h"
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
-#include "../gui/aggregatorcreatureinfo.h"
-#include "../gui/aggregatoragri.h"
-#include "../gui/aggregatorcreatureinfo.h"
-#include "../gui/aggregatordebug.h"
-#include "../gui/aggregatorinventory.h"
-#include "../gui/aggregatorpopulation.h"
-#include "../gui/aggregatorrenderer.h"
-#include "../gui/aggregatorstockpile.h"
-#include "../gui/aggregatortileinfo.h"
-#include "../gui/aggregatorworkshop.h"
-#include "../gui/aggregatorneighbors.h"
-#include "../gui/aggregatormilitary.h"
-#include "../gui/aggregatorsettings.h"
-#include "../gui/aggregatorloadgame.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -122,10 +110,6 @@ Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
 	
 	m_neighborManager	= new NeighborManager( this );
 	m_eventManager		= new EventManager( this );
-
-	connect( m_farmingManager, &FarmingManager::signalFarmChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
-	connect( m_farmingManager, &FarmingManager::signalPastureChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
-
 
 	qDebug() << "init game done";
 }

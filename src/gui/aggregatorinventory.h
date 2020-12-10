@@ -22,6 +22,8 @@
 #include <QObject>
 #include <QList>
 
+class Game;
+
 struct GuiInventoryItem
 {
 	QString item;
@@ -82,7 +84,10 @@ public:
 	AggregatorInventory( QObject* parent = nullptr );
 	~AggregatorInventory();
 
+    void init( Game* game );
+
 private:
+    QPointer<Game> g = nullptr;
     QList<GuiInventoryCategory> m_categories;
     QList<GuiInventoryGroup> m_groups;
     QList<GuiInventoryItem> m_items;
