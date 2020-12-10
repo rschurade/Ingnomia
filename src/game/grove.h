@@ -27,6 +27,7 @@
 #include <QVariantMap>
 
 class Job;
+class Game;
 
 struct GroveField
 {
@@ -69,9 +70,9 @@ class Grove : public WorldObject
 	friend class AggregatorAgri;
 
 public:
-	Grove();
-	Grove( QList<QPair<Position, bool>> tiles );
-	Grove( QVariantMap vals );
+	Grove() = delete;
+	Grove( QList<QPair<Position, bool>> tiles, Game* game );
+	Grove( QVariantMap vals, Game* game );
 	~Grove();
 
 	QVariant serialize();
@@ -90,6 +91,8 @@ public:
 	bool hasPlantTreeJob( Position pos );
 
 private:
+	QPointer<Game> g = nullptr;
+
 	GroveProperties m_properties;
 
 	QMap<unsigned int, GroveField*> m_fields;

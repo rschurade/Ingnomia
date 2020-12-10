@@ -27,6 +27,7 @@
 #include <QVariantMap>
 
 class Job;
+class Game;
 
 struct FarmField
 {
@@ -74,9 +75,9 @@ class Farm : public WorldObject
 	friend class AggregatorAgri;
 
 public:
-	Farm();
-	Farm( QList<QPair<Position, bool>> tiles );
-	Farm( QVariantMap vals );
+	Farm() = delete;
+	Farm( QList<QPair<Position, bool>> tiles, Game* game );
+	Farm( QVariantMap vals, Game* game );
 	~Farm();
 
 	QVariant serialize();
@@ -110,6 +111,8 @@ public:
 	int countTiles();
 
 private:
+	QPointer<Game> g = nullptr;
+
 	FarmProperties m_properties;
 
 	QMap<unsigned int, FarmField*> m_fields;

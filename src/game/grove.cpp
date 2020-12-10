@@ -21,6 +21,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
@@ -83,7 +84,8 @@ void GroveProperties::serialize( QVariantMap& out )
 	out.insert( "JobPriorities", jpl );
 }
 
-Grove::Grove( QList<QPair<Position, bool>> tiles ) :
+Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
+	g( game ),
 	WorldObject()
 {
 	m_name = "Grove";
@@ -104,7 +106,8 @@ Grove::Grove( QList<QPair<Position, bool>> tiles ) :
 	}
 }
 
-Grove::Grove( QVariantMap vals ) :
+Grove::Grove( QVariantMap vals, Game* game ) :
+	g( game ),
 	WorldObject( vals ),
 	m_properties( vals )
 {
@@ -170,7 +173,7 @@ void Grove::updateAutoForester()
 {
 	if ( m_properties.autoPick )
 	{
-		unsigned int count = m_inv->itemCount( "Fruit", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "Fruit", m_properties.treeType );
 		unsigned int min   = m_properties.autoPickMin;
 		unsigned int max   = m_properties.autoPickMax;
 		if ( count < min )
@@ -184,7 +187,7 @@ void Grove::updateAutoForester()
 	}
 	if ( m_properties.autoFell )
 	{
-		unsigned int count = m_inv->itemCount( "RawWood", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "RawWood", m_properties.treeType );
 		unsigned int min   = m_properties.autoFellMin;
 		unsigned int max   = m_properties.autoFellMax;
 		if ( count < min )
@@ -311,12 +314,12 @@ Job* Grove::getPlantJob()
 	for ( auto gf : m_fields )
 	{
 		// tile is empty, we plant something
-		if ( !gf->hasJob && m_properties.plant && !m_world->plants().contains( gf->pos.toInt() ) && m_world->noTree( gf->pos, 2, 2 ) && m_world->isWalkable( gf->pos ) )
+		if ( !gf->hasJob && m_properties.plant && !g->w()->plants().contains( gf->pos.toInt() ) && g->w()->noTree( gf->pos, 2, 2 ) && g->w()->isWalkable( gf->pos ) )
 		{
 			QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
 			QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
 
-			if ( m_inv->itemCount( seedID, mat ) > 0 )
+			if ( g->inv()->itemCount( seedID, mat ) > 0 )
 			{
 				Job* job = new Job();
 				job->setType( "PlantTree" );
@@ -343,9 +346,9 @@ Job* Grove::getPickJob()
 	Job* job = new Job();
 	for ( auto gf : m_fields )
 	{
-		if ( !gf->hasJob && m_world->plants().contains( gf->pos.toInt() ) )
+		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& tree = m_world->plants()[gf->pos.toInt()];
+			Plant& tree = g->w()->plants()[gf->pos.toInt()];
 			if ( !tree.isTree() )
 			{
 				continue;
@@ -353,22 +356,22 @@ Job* Grove::getPickJob()
 			if ( m_properties.pickFruit && tree.harvestable() )
 			{
 				bool hasWorkPos = false;
-				if ( m_world->isWalkable( gf->pos.northOf() ) )
+				if ( g->w()->isWalkable( gf->pos.northOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.northOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.eastOf() ) )
+				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.eastOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.southOf() ) )
+				if ( g->w()->isWalkable( gf->pos.southOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.southOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.westOf() ) )
+				if ( g->w()->isWalkable( gf->pos.westOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.westOf() );
 					hasWorkPos = true;
@@ -397,9 +400,9 @@ Job* Grove::getFellJob()
 	Job* job = new Job();
 	for ( auto gf : m_fields )
 	{
-		if ( !gf->hasJob && m_world->plants().contains( gf->pos.toInt() ) )
+		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& tree = m_world->plants()[gf->pos.toInt()];
+			Plant& tree = g->w()->plants()[gf->pos.toInt()];
 			if ( !tree.isTree() )
 			{
 				continue;
@@ -413,22 +416,22 @@ Job* Grove::getFellJob()
 			if ( m_properties.fell && tree.matureWood() )
 			{
 				bool hasWorkPos = false;
-				if ( m_world->isWalkable( gf->pos.northOf() ) )
+				if ( g->w()->isWalkable( gf->pos.northOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.northOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.eastOf() ) )
+				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.eastOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.southOf() ) )
+				if ( g->w()->isWalkable( gf->pos.southOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.southOf() );
 					hasWorkPos = true;
 				}
-				if ( m_world->isWalkable( gf->pos.westOf() ) )
+				if ( g->w()->isWalkable( gf->pos.westOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.westOf() );
 					hasWorkPos = true;
@@ -458,7 +461,7 @@ bool Grove::removeTile( Position& pos )
 
 	m_fields.remove( pos.toInt() );
 
-	m_world->clearTileFlag( pos, TileFlag::TF_GROVE );
+	g->w()->clearTileFlag( pos, TileFlag::TF_GROVE );
 	delete gf;
 	// if last tile deleted return true
 	return m_fields.empty();

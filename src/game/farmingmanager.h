@@ -139,7 +139,7 @@ public:
 	void emitUpdateSignalGrove( unsigned int id );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g = nullptr;
 
 	QMutex m_mutex;
 

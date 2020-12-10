@@ -60,7 +60,7 @@ bool FarmingManager::load( QVariantMap vm )
 	QString type = vm.value( "Type" ).toString();
 	if ( type == "farm" )
 	{
-		Farm fa( vm );
+		Farm fa( vm, g );
 		m_farms.insert( fa.id(), fa );
 		for ( auto f : vm.value( "Fields" ).toList() )
 		{
@@ -71,7 +71,7 @@ bool FarmingManager::load( QVariantMap vm )
 	}
 	if ( type == "grove" )
 	{
-		Grove gr( vm );
+		Grove gr( vm, g );
 		m_groves.insert( gr.id(), gr );
 		for ( auto f : vm.value( "Fields" ).toList() )
 		{
@@ -83,7 +83,7 @@ bool FarmingManager::load( QVariantMap vm )
 	}
 	if ( type == "pasture" )
 	{
-		Pasture pa( vm );
+		Pasture pa( vm, g );
 		m_pastures.insert( pa.id(), pa );
 		for ( auto f : vm.value( "Fields" ).toList() )
 		{
@@ -201,7 +201,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 	}
 	else
 	{
-		Grove gr( fields );
+		Grove gr( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
@@ -290,7 +290,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 	}
 	else
 	{
-		Farm fa( fields );
+		Farm fa( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
@@ -389,7 +389,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 	}
 	else
 	{
-		Pasture pa( fields );
+		Pasture pa( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )

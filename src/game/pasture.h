@@ -28,6 +28,7 @@
 #include <QVariantMap>
 
 class Job;
+class Game;
 
 struct PastureField
 {
@@ -71,8 +72,8 @@ class Pasture : public WorldObject
 	friend class AggregatorAgri;
 
 public:
-	Pasture( QList<QPair<Position, bool>> tiles );
-	Pasture( QVariantMap vals );
+	Pasture( QList<QPair<Position, bool>> tiles, Game* game );
+	Pasture( QVariantMap vals, Game* game );
 	//Pasture( const Pasture& other );
 	~Pasture();
 
@@ -143,6 +144,8 @@ public:
 	Position firstPos();
 
 private:
+	QPointer<Game> g = nullptr;
+
 	PastureProperties m_properties;
 
 	QMap<unsigned int, PastureField> m_fields;

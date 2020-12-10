@@ -22,6 +22,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
@@ -73,7 +74,8 @@ void PastureProperties::serialize( QVariantMap& out )
 	out.insert( "Food", QStringList( foodSettings.values() ) );
 }
 
-Pasture::Pasture( QList<QPair<Position, bool>> tiles ) :
+Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
+	g( game ),
 	WorldObject()
 {
 	m_name = "Pasture";
@@ -97,7 +99,8 @@ Pasture::Pasture( QList<QPair<Position, bool>> tiles ) :
 	}
 }
 
-Pasture::Pasture( QVariantMap vals ) :
+Pasture::Pasture( QVariantMap vals, Game* game ) :
+	g( game ),
 	WorldObject( vals ),
 	m_properties( vals )
 {
@@ -214,7 +217,7 @@ void Pasture::onTick( quint64 tick )
 {
 	for ( auto field : m_fields )
 	{
-		Tile& tile = m_world->getTile( field.pos );
+		Tile& tile = g->w()->getTile( field.pos );
 		if( GameState::season != 3 )
 		{
 			if ( tile.flags & TileFlag::TF_GRASS )
@@ -235,7 +238,7 @@ void Pasture::onTick( quint64 tick )
 	int countFemale = 0;
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal )
 		{
 			if ( animal->gender() == Gender::MALE )
@@ -249,7 +252,7 @@ void Pasture::onTick( quint64 tick )
 		}
 	}
 
-	for ( auto& a : Global::cm().animals() )
+	for ( auto& a : g->cm()->animals() )
 	{
 		if ( a->species() == m_properties.animalType && a->isTame() && a->pastureID() == 0 && !a->toDestroy() && !a->isDead() )
 		{
@@ -284,7 +287,7 @@ void Pasture::addAnimal( unsigned int animalID )
 	int countFemale = 0;
 	for ( auto id : m_animals )
 	{
-		if ( Global::cm().animal( id )->gender() == Gender::MALE )
+		if ( g->cm()->animal( id )->gender() == Gender::MALE )
 		{
 			++countMale;
 		}
@@ -294,7 +297,7 @@ void Pasture::addAnimal( unsigned int animalID )
 		}
 	}
 
-	auto a = Global::cm().animal( animalID );
+	auto a = g->cm()->animal( animalID );
 
 	if ( a && a->species() == m_properties.animalType && a->isTame() && a->pastureID() == 0 && !a->toDestroy() && !a->isDead() )
 	{
@@ -363,7 +366,7 @@ bool Pasture::finishJob( unsigned int jobID )
 		}
 		m_animalsInJob.remove( job->animal() );
 
-		auto animal = Global::cm().animal( job->animal() );
+		auto animal = g->cm()->animal( job->animal() );
 		if ( animal )
 		{
 			animal->setInJob( 0 );
@@ -387,7 +390,7 @@ bool Pasture::giveBackJob( unsigned int jobID )
 		m_jobsOut.remove( jobID );
 		m_animalsInJob.remove( job->animal() );
 
-		auto animal = Global::cm().animal( job->animal() );
+		auto animal = g->cm()->animal( job->animal() );
 		if ( animal )
 		{
 			animal->setInJob( 0 );
@@ -494,7 +497,7 @@ Job* Pasture::createJob( QString skillID )
 					int countFemale = 0;
 					for ( auto id : m_animals )
 					{
-						if ( Global::cm().animal( id )->gender() == Gender::MALE )
+						if ( g->cm()->animal( id )->gender() == Gender::MALE )
 						{
 							++countMale;
 						}
@@ -515,7 +518,7 @@ Job* Pasture::createJob( QString skillID )
 						--random;
 					}
 
-					auto animals = Global::cm().animalsByDistance( fieldPos, m_properties.animalType );
+					auto animals = g->cm()->animalsByDistance( fieldPos, m_properties.animalType );
 					Animal* a    = nullptr;
 					while ( !animals.empty() )
 					{
@@ -579,7 +582,7 @@ Job* Pasture::createJob( QString skillID )
 				{
 					for ( auto& field : m_fields )
 					{
-						if ( !field.hasJob && m_world->hasMaxGrass( field.pos ) )
+						if ( !field.hasJob && g->w()->hasMaxGrass( field.pos ) )
 						{
 							job = new Job();
 
@@ -605,11 +608,11 @@ Animal* Pasture::checkAnimalOutsidePasture()
 {
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		int posID      = animal->getPos().toInt();
 		if ( !m_fields.contains( posID ) && !m_animalsInJob.contains( id ) && !animal->inJob() )
 		{
-			if ( m_world->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
+			if ( g->w()->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
 			{
 				return animal;
 			}
@@ -623,10 +626,10 @@ Animal* Pasture::checkAnimalHarvestReady()
 {
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal && animal->numProduce() > 0 && !m_animalsInJob.contains( id ) )
 		{
-			if ( m_world->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
+			if ( g->w()->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
 			{
 				return animal;
 			}
@@ -642,7 +645,7 @@ bool Pasture::removeTile( Position& pos )
 
 	m_fields.remove( pos.toInt() );
 
-	m_world->clearTileFlag( pos, TileFlag::TF_PASTURE );
+	g->w()->clearTileFlag( pos, TileFlag::TF_PASTURE );
 
 	if ( m_fields.size() )
 	{
@@ -667,7 +670,7 @@ bool Pasture::removeTile( Position& pos )
 	while ( m_animals.size() && m_properties.max < m_animals.size() )
 	{
 		auto id        = m_animals.takeLast();
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal )
 		{
 			animal->setPastureID( 0 );
@@ -686,7 +689,7 @@ void Pasture::getInfo( int& numPlots, int& numMale, int& numFemale )
 
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if( animal )
 		{
 			if ( animal->gender() == Gender::MALE )
@@ -708,7 +711,7 @@ void Pasture::setInJob( unsigned int animalID )
 
 void Pasture::removeAnimal( unsigned int animalID )
 {
-	Animal* animal = Global::cm().animal( animalID );
+	Animal* animal = g->cm()->animal( animalID );
 	if ( animal )
 	{
 		animal->setFollowID( 0 );
@@ -728,7 +731,7 @@ void Pasture::removeAllAnimals()
 {
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal )
 		{
 			animal->setFollowID( 0 );
@@ -896,7 +899,7 @@ void Pasture::setAnimalType( QString type )
 	{
 		for ( auto id : m_animals )
 		{
-			Animal* animal = Global::cm().animal( id );
+			Animal* animal = g->cm()->animal( id );
 			if ( animal )
 			{
 				animal->setPastureID( 0 );
@@ -984,7 +987,7 @@ void Pasture::setMaxMale( int max )
 	QList<unsigned int> newAnimals;
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal )
 		{
 			if ( animal->gender() == Gender::MALE )
@@ -1016,7 +1019,7 @@ void Pasture::setMaxFemale( int max )
 	QList<unsigned int> newAnimals;
 	for ( auto id : m_animals )
 	{
-		Animal* animal = Global::cm().animal( id );
+		Animal* animal = g->cm()->animal( id );
 		if ( animal )
 		{
 			if ( animal->gender() == Gender::FEMALE )
