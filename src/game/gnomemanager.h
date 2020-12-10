@@ -26,6 +26,10 @@
 
 class GnomeManager : public ManagerBase
 {
+	friend class Gnome;
+
+	Q_OBJECT
+
 private:
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;

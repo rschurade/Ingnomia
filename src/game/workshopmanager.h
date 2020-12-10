@@ -28,6 +28,8 @@ class Job;
 
 class WorkshopManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	WorkshopManager( QObject* parent = 0 );
 	~WorkshopManager();

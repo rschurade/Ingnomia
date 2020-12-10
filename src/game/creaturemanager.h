@@ -23,6 +23,7 @@
 
 class CreatureManager : public ManagerBase
 {
+	Q_OBJECT
 
 public:
 	CreatureManager( QObject* parent = nullptr );

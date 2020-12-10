@@ -83,8 +83,8 @@ void TraderDefinition::serialize( QVariantMap& out )
 
 
 
-GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender ) :
-	Gnome( pos, name, gender )
+GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, GnomeManager* gm ) :
+	Gnome( pos, name, gender, gm )
 {
 	m_type = CreatureType::GNOME_TRADER;
 

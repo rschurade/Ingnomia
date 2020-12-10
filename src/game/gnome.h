@@ -27,13 +27,12 @@
 #include <unordered_map>
 
 struct Uniform;
+class GnomeManager;
 
 class Gnome : public CanWork
 {
-	friend class GnomeWidget;
-
 public:
-	Gnome( Position& pos, QString name, Gender gender );
+	Gnome( Position& pos, QString name, Gender gender, GnomeManager* gm );
 	Gnome( QVariantMap& in );
 	~Gnome();
 
@@ -108,6 +107,8 @@ public:
 	bool equipItem();
 
 protected:
+	GnomeManager* m_gm = nullptr;
+
 	float m_gainFromSleep = 0.035f;
 
 	QString m_profession = "Gnomad";

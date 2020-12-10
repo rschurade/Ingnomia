@@ -28,6 +28,8 @@ class Inventory;
 
 class StockpileManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	StockpileManager( QObject* parent );
 	~StockpileManager();

@@ -82,6 +82,8 @@ struct NeighborKingdom
 
 class NeighborManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	NeighborManager( QObject* parent = nullptr );
 	~NeighborManager();

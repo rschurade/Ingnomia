@@ -114,6 +114,8 @@ Q_DECLARE_METATYPE( Squad )
 
 class MilitaryManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	MilitaryManager( QObject* parent = nullptr);
 	~MilitaryManager();

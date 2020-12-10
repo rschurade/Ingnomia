@@ -31,6 +31,8 @@
 
 class JobManager : public ManagerBase
 {
+	Q_OBJECT
+
 private:
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;

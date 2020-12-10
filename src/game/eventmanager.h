@@ -125,6 +125,8 @@ Q_DECLARE_METATYPE( Mission )
 
 class EventManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	EventManager( QObject* parent = nullptr );
 	~EventManager();

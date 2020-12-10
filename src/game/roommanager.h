@@ -39,6 +39,8 @@ struct Door
 
 class RoomManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	RoomManager( QObject* parent = nullptr );
 	~RoomManager();

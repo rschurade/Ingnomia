@@ -38,6 +38,8 @@ class World;
 
 class Inventory : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	Inventory( QObject* parent );
 	~Inventory();
@@ -195,6 +197,8 @@ public:
 	QString itemGroup( unsigned int itemID );
 
 	QList<QString> allMats( unsigned int itemID );
+
+	ItemHistory* itemHistory() { return m_itemHistory; }
 
 private:
 	ItemHistory* m_itemHistory = nullptr;

@@ -51,6 +51,8 @@ struct NetworkPipe
 
 class FluidManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	FluidManager( QObject* parent );
 	~FluidManager();

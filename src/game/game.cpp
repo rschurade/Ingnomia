@@ -136,6 +136,18 @@ Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
 	m_creatureManager->setPathFinder( m_pathFinder );
 
 	m_gnomeManager->setWorld( world );
+	m_gnomeManager->setInventory( m_inventory );
+	m_gnomeManager->setSpriteFactory( m_sf );
+	m_gnomeManager->setWorkshopManager( m_workshopManager );
+	m_gnomeManager->setMilitaryManager( m_militaryManager );
+	m_gnomeManager->setCreaturemanager( m_creatureManager );
+	m_gnomeManager->setRoomManager( m_roomManager );
+	m_gnomeManager->setPathFinder( m_pathFinder );
+	m_gnomeManager->setStockpileManager( m_stockpileManager );
+	m_gnomeManager->setJobManager( m_jobManager );
+	m_gnomeManager->setFarmingManager( m_farmingManager );
+	m_gnomeManager->setEventManager( m_eventManager );
+	m_gnomeManager->setNeighborManager( m_neighborManager );
 
 	m_militaryManager->setInventory( m_inventory );
 	m_militaryManager->setCreaturemanager( m_creatureManager );

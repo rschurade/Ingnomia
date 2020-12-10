@@ -43,7 +43,7 @@ struct TraderDefinition {
 class GnomeTrader : public Gnome
 {
 public:
-	GnomeTrader( Position& pos, QString name, Gender gender );
+	GnomeTrader( Position& pos, QString name, Gender gender, GnomeManager* gm );
 	GnomeTrader( QVariantMap& in );
 	~GnomeTrader();
 

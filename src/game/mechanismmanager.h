@@ -83,6 +83,8 @@ struct MechanismNetwork
 
 class MechanismManager : public ManagerBase
 {
+	Q_OBJECT
+
 public:
 	MechanismManager( QObject* parent = nullptr );
 	~MechanismManager();

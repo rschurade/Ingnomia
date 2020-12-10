@@ -31,7 +31,8 @@
 #include <QElapsedTimer>
 #include <QPainter>
 
-GnomeFactory::GnomeFactory()
+GnomeFactory::GnomeFactory( GnomeManager* gm ) :
+	m_gm( gm )
 {
 }
 GnomeFactory::~GnomeFactory()
@@ -64,7 +65,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 		foundName = true;
 		name      = vnl.value( rand() % vnl.size() ).value( "ID" ).toString();
 		name.replace( 0, 1, name[0].toUpper() );
-		for ( auto& g : Global::gm().gnomes() )
+		for ( auto& g : m_gm->gnomes() )
 		{
 			if ( g->name() == name )
 			{
@@ -74,7 +75,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 		}
 	}
 
-	Gnome* gnome = new Gnome( pos, name, gender );
+	Gnome* gnome = new Gnome( pos, name, genderm, m_gm );
 	gnome->init();
 
 	auto attribs = DB::selectRows( "Attributes" );
@@ -134,7 +135,7 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 		foundName = true;
 		name      = vnl.value( rand() % vnl.size() ).value( "ID" ).toString();
 		name.replace( 0, 1, name[0].toUpper() );
-		for ( auto& g : Global::gm().gnomes() )
+		for ( auto& g : m_gm->gnomes() )
 		{
 			if ( g->name() == name )
 			{
@@ -144,7 +145,7 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 		}
 	}
 
-	GnomeTrader* gnome = new GnomeTrader( pos, name, gender );
+	GnomeTrader* gnome = new GnomeTrader( pos, name, gender, m_gm );
 	gnome->init();
 	auto attribs = DB::selectRows( "Attributes" );
 
