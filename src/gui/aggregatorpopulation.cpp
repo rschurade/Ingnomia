@@ -21,6 +21,7 @@
 #include "../base/db.h"
 #include "../base/dbhelper.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../gui/strings.h"
@@ -48,17 +49,22 @@ AggregatorPopulation::AggregatorPopulation( QObject* parent ) :
 	}
 }
 
+void AggregatorPopulation::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorPopulation::onRequestPopulationUpdate()
 {
 	qDebug() << "AggregatorPopulation::onRequestPopulationUpdate()" << m_sortMode;
 
-	emit signalProfessionList( Global::gm().professions() );
+	emit signalProfessionList( g->gm()->professions() );
 
 	m_populationInfo.gnomes.clear();
 
 	//for( int i = 0; i < 100; ++i )
 	{
-		for( auto gnome : Global::gm().gnomes() )
+		for( auto gnome : g->gm()->gnomes() )
 		{
 			GuiGnomeInfo ggi;
 
@@ -91,10 +97,10 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 	else
 	{
 		std::sort( m_populationInfo.gnomes.begin(), m_populationInfo.gnomes.end(), [=]( const GuiGnomeInfo& lhs, const GuiGnomeInfo& rhs ){ 
-			auto lg = Global::gm().gnome( lhs.id );
+			auto lg = g->gm()->gnome( lhs.id );
 			if( lg )
 			{
-				auto rg = Global::gm().gnome( rhs.id );
+				auto rg = g->gm()->gnome( rhs.id );
 				if( rg )
 				{
 					if( m_revertSort )
@@ -116,7 +122,7 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 
 void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 	
@@ -142,7 +148,7 @@ void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 
 void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, QString skillID, bool value )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		gnome->setSkillActive( skillID, value );
@@ -151,7 +157,7 @@ void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, QString skill
 
 void AggregatorPopulation::onSetAllSkills( unsigned int gnomeID, bool value )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		for( const auto& skill : m_skillIds )
@@ -164,7 +170,7 @@ void AggregatorPopulation::onSetAllSkills( unsigned int gnomeID, bool value )
 	
 void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
 {
-	for( auto gnome : Global::gm().gnomes() )
+	for( auto gnome : g->gm()->gnomes() )
 	{
 		gnome->setSkillActive( skillID, value );
 	}
@@ -173,7 +179,7 @@ void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
 
 void AggregatorPopulation::onSetProfession( unsigned int gnomeID, QString profession )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		QString oldProf = gnome->profession();
@@ -202,7 +208,7 @@ void AggregatorPopulation::onSortGnomes( QString mode )
 void AggregatorPopulation::onRequestSchedules()
 {
 	m_scheduleInfo.schedules.clear();
-	for( auto gnome : Global::gm().gnomes() )
+	for( auto gnome : g->gm()->gnomes() )
 	{
 		GuiGnomeScheduleInfo ggs;
 		ggs.id = gnome->id();
@@ -217,7 +223,7 @@ void AggregatorPopulation::onRequestSchedules()
 	
 void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, ScheduleActivity activity )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		gnome->setSchedule( hour, activity );
@@ -233,7 +239,7 @@ void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, Schedu
 
 void AggregatorPopulation::onSetAllHours( unsigned int gnomeID, ScheduleActivity activity )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		for( int i = 0; i < 24; ++i )
@@ -252,7 +258,7 @@ void AggregatorPopulation::onSetAllHours( unsigned int gnomeID, ScheduleActivity
 	
 void AggregatorPopulation::onSetHourForAll( int hour, ScheduleActivity activity )
 {
-	for( auto gnome : Global::gm().gnomes() )
+	for( auto gnome : g->gm()->gnomes() )
 	{
 		gnome->setSchedule( hour, activity );
 	}
@@ -261,14 +267,14 @@ void AggregatorPopulation::onSetHourForAll( int hour, ScheduleActivity activity 
 
 void AggregatorPopulation::onRequestProfessions()
 {
-	emit signalProfessionList( Global::gm().professions() );
+	emit signalProfessionList( g->gm()->professions() );
 }
 	
 void AggregatorPopulation::onRequestSkills( QString profession )
 {
 	m_profSkills.clear();
 
-	auto skillIDs = Global::gm().professionSkills( profession );
+	auto skillIDs = g->gm()->professionSkills( profession );
 	for( auto skillID : skillIDs )
 	{
 		GuiSkillInfo gsi;
@@ -283,18 +289,18 @@ void AggregatorPopulation::onRequestSkills( QString profession )
 
 void AggregatorPopulation::onUpdateProfession( QString name, QString newName, QStringList skills )
 {
-	Global::gm().modifyProfession( name, newName, skills );
+	g->gm()->modifyProfession( name, newName, skills );
 }
 
 void AggregatorPopulation::onDeleteProfession( QString name )
 {
-	Global::gm().removeProfession( name );
-	emit signalProfessionList( Global::gm().professions() );
+	g->gm()->removeProfession( name );
+	emit signalProfessionList( g->gm()->professions() );
 }
 	
 void AggregatorPopulation::onNewProfession()
 {
-	QString name = Global::gm().addProfession();
-	emit signalProfessionList( Global::gm().professions() );
+	QString name = g->gm()->addProfession();
+	emit signalProfessionList( g->gm()->professions() );
 	emit signalSelectEditProfession( name );
 }

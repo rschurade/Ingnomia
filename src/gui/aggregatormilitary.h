@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+class Game;
+
 struct GuiSquadGnome
 {
 	unsigned int id = 0;
@@ -90,7 +92,11 @@ public:
 	AggregatorMilitary( QObject* parent = nullptr );
 	~AggregatorMilitary();
 
+	void init( Game* game );
+
 private:
+	QPointer<Game> g = nullptr;
+
 	QList<GuiSquad> m_squads;
 	QList<GuiTargetPriority> m_tmpPriorities;
 	QList<GuiMilRole> m_roles;

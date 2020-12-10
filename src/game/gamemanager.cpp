@@ -231,13 +231,22 @@ void GameManager::createNewGame()
 
 	m_game = new Game( m_sf, world, this );
 
-	connect( m_game->fm(), &FarmingManager::signalFarmChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
-	connect( m_game->fm(), &FarmingManager::signalPastureChanged, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalTriggerEvent, m_game->em(), &EventManager::onDebugEvent );
+	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
+	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
+	connect( m_eventConnector->aggregatorDebug(), &AggregatorDebug::signalTriggerEvent, m_game->em(), &EventManager::onDebugEvent );
+	connect( m_game->spm(), &StockpileManager::signalStockpileAdded, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onOpenStockpileInfo, Qt::QueuedConnection );
+	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
+
 
 	m_eventConnector->aggregatorAgri()->init( m_game );
 	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
 	m_eventConnector->aggregatorInventory()->init( m_game );
+	m_eventConnector->aggregatorMilitary()->init( m_game );
+	m_eventConnector->aggregatorNeighbors()->init( m_game );
+	m_eventConnector->aggregatorPopulation()->init( m_game );
+	m_eventConnector->aggregatorRenderer()->init( m_game );
+	m_eventConnector->aggregatorStockpile()->init( m_game );
+
 
 
 	GameState::peaceful = m_newGameSettings->isPeaceful();

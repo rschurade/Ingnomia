@@ -18,6 +18,7 @@
 #include "aggregatorrenderer.h"
 
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/creature.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
@@ -32,6 +33,11 @@ AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 	qRegisterMetaType<TileDataUpdateInfo>();
 	qRegisterMetaType<ThoughtBubbleInfo>();
 	qRegisterMetaType<AxleDataInfo>();
+}
+
+void AggregatorRenderer::init( Game* game )
+{
+	g = game;
 }
 
 TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const

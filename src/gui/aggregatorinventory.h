@@ -88,6 +88,7 @@ public:
 
 private:
     QPointer<Game> g = nullptr;
+
     QList<GuiInventoryCategory> m_categories;
     QList<GuiInventoryGroup> m_groups;
     QList<GuiInventoryItem> m_items;
