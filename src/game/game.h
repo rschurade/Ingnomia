@@ -23,6 +23,7 @@
 #include "../base/enums.h"
 
 class Config;
+class NewGameSettings;
 
 class QTimer;
 
@@ -82,7 +83,7 @@ public:
 	bool paused();
 	void setPaused( bool value );
 
-	void generateWorld();
+	void generateWorld( NewGameSettings* ngs );
 	World* world() { return m_world; }
 
 	Inventory* inv();

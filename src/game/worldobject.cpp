@@ -18,6 +18,7 @@
 #include "worldobject.h"
 
 #include "../base/gamestate.h"
+#include "../game/game.h"
 
 WorldObject::WorldObject( Game* game ) :
 	g( game )

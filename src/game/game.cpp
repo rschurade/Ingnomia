@@ -34,6 +34,7 @@
 #include "../game/gnomemanager.h"
 #include "../game/mechanismmanager.h"
 #include "../game/militarymanager.h"
+#include "../game/newgamesettings.h"
 #include "../game/roommanager.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
@@ -122,10 +123,10 @@ Game::~Game()
 {
 }
 
-void Game::generateWorld()
+void Game::generateWorld( NewGameSettings* ngs )
 {
-	WorldGenerator wg( m_newGameSettings, this );
-	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
+	WorldGenerator wg( ngs, this );
+	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
 	World* world = wg.generate();	
 }
 

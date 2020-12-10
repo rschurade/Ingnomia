@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/animal.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
@@ -127,15 +128,15 @@ Creature* World::firstCreatureAtPos( unsigned int posID, quint8& rotation )
 	if ( m_creaturePositions.contains( posID ) )
 	{
 		unsigned int ID = m_creaturePositions[posID].first();
-		Animal* a       = Global::cm().animal( ID );
+		Animal* a       = g->cm()->animal( ID );
 		if ( a )
 		{
 			return a;
 		}
-		Gnome* g = Global::gm().gnome( ID );
-		if ( g )
+		Gnome* gn = g->gm()->gnome( ID );
+		if ( gn )
 		{
-			return g;
+			return gn;
 		}
 	}
 	return 0;
@@ -213,14 +214,14 @@ bool World::noTree( const Position pos, const int xRange, const int yRange )
 				unsigned int jobID = m_jobSprites[testPosID].value( "Wall" ).toMap().value( "JobID" ).toUInt();
 				if ( jobID )
 				{
-					auto job = Global::jm().getJob( jobID );
+					auto job = g->jm()->getJob( jobID );
 					if ( job && job->type() == "PlantTree" )
 					{
 						return false;
 					}
 				}
 			}
-			if ( Global::fm().hasPlantTreeJob( Position( x, y, pos.z ) ) )
+			if ( g->fm()->hasPlantTreeJob( Position( x, y, pos.z ) ) )
 			{
 				return false;
 			}

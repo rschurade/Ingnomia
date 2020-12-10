@@ -225,6 +225,7 @@ void GameManager::createNewGame()
 	init();
 
 	m_game = new Game( m_sf, this );
+	m_game->generateWorld( m_newGameSettings );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );

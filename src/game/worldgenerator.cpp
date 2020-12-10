@@ -59,7 +59,7 @@ World* WorldGenerator::generate()
 	Global::dimY = ngs->worldSize();
 	Global::dimZ = ngs->zLevels();
 
-	w = new World( m_dimX, m_dimY, m_dimZ );
+	w = new World( m_dimX, m_dimY, m_dimZ, g );
 
 	qDebug() << "creating world with size" << m_dimX << m_dimY << m_dimZ;
 

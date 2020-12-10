@@ -34,6 +34,7 @@
 class Plant;
 class Animal;
 class Creature;
+class Game;
 
 struct Position;
 class Sprite;
@@ -70,6 +71,8 @@ enum CONSTR_ITEM_ID
 class World
 {
 private:
+	QPointer<Game> g = nullptr;
+
 	LightMap m_lightMap;
 	RegionMap m_regionMap;
 
@@ -112,7 +115,7 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
-	World( int dimX, int dimY, int dimZ );
+	World( int dimX, int dimY, int dimZ, Game* game );
 	~World();
 
 	void init();

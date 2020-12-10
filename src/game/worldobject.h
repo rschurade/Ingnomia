@@ -19,6 +19,7 @@
 
 #include <QMutex>
 #include <QPoint>
+#include <QPointer>
 #include <QSize>
 #include <QString>
 #include <QVariantMap>
