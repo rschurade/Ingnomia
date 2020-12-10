@@ -160,11 +160,11 @@ BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 
 	for ( auto ci : cil )
 	{
-		if ( m_gm->g->m_inv->getItemPos( ci ) != inputPos )
+		if ( g->inv()->getItemPos( ci ) != inputPos )
 		{
 			m_itemToPickUp = ci;
-			setCurrentTarget( m_gm->g->m_inv->getItemPos( ci ) );
-			log( "Item is at " + m_gm->g->m_inv->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
+			setCurrentTarget( g->inv()->getItemPos( ci ) );
+			log( "Item is at " + g->inv()->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
 			return BT_RESULT::FAILURE;
 		}
 	}
@@ -205,15 +205,15 @@ BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 
 	for ( auto itemID : cil )
 	{
-		if ( !m_gm->g->m_inv->isPickedUp( itemID ) )
+		if ( !g->inv()->isPickedUp( itemID ) )
 		{
-			pq.put( itemID, m_gm->g->m_inv->distanceSquare( itemID, m_position ) );
+			pq.put( itemID, g->inv()->distanceSquare( itemID, m_position ) );
 		}
 	}
 	if ( !pq.empty() )
 	{
 		unsigned int itemID = pq.get();
-		setCurrentTarget( m_gm->g->m_inv->getItemPos( itemID ) );
+		setCurrentTarget( g->inv()->getItemPos( itemID ) );
 		m_itemToPickUp = itemID;
 	}
 
@@ -255,7 +255,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 {
 	if ( m_assignedWorkshop )
 	{
-		auto ws = m_gm->g->m_workshopManager->workshop( m_assignedWorkshop );
+		auto ws = g->wsm()->workshop( m_assignedWorkshop );
 		if ( ws )
 		{
 			QString type = ws->type();
@@ -270,7 +270,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 
 BT_RESULT Gnome::conditionIsCivilian( bool halt )
 {
-	bool roleIsCivilian = m_gm->g->m_militaryManager->roleIsCivilian( m_roleID);
+	bool roleIsCivilian = g->mil()->roleIsCivilian( m_roleID);
 	if( m_roleID == 0 || roleIsCivilian )
 	{
 		return BT_RESULT::SUCCESS;
@@ -280,14 +280,14 @@ BT_RESULT Gnome::conditionIsCivilian( bool halt )
 
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 {
-	auto squad = m_gm->g->m_militaryManager->getSquadForGnome( m_id );
+	auto squad = g->mil()->getSquadForGnome( m_id );
 	if( squad )
 	{
 		for( const auto& prio : squad->priorities )
 		{
 			if ( prio.attitude == MilAttitude::HUNT )
 			{
-				const auto& targetSet = m_gm->g->m_creatureManager->animalsByType( prio.type );
+				const auto& targetSet = g->cm()->animalsByType( prio.type );
 				for ( const auto& targetID : targetSet )
 				{
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost

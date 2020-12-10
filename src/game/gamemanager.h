@@ -26,6 +26,7 @@
 class Game;
 class EventConnector;
 class NewGameSettings;
+class SpriteFactory;
 
 class GameManager : public QObject
 {
