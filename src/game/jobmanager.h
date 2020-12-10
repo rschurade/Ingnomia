@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/priorityqueue.h"
 #include "../game/job.h"
 
@@ -28,10 +29,8 @@
 #include <QQueue>
 #include <QString>
 
-class JobManager : public QObject
+class JobManager : public ManagerBase
 {
-	Q_OBJECT
-
 private:
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;

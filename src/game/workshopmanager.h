@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "workshop.h"
 
 #include <QList>
@@ -25,10 +26,8 @@
 
 class Job;
 
-class WorkshopManager : public QObject
+class WorkshopManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	WorkshopManager( QObject* parent = 0 );
 	~WorkshopManager();

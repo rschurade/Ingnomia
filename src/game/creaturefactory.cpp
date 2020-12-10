@@ -54,7 +54,7 @@ Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 	int y = qMax( 2, ( rand() % dimy ) - 2 );
 
 	Position pos( x, y, dimZ - 2 );
-	Global::w().getFloorLevelBelow( pos, false );
+	m_world->getFloorLevelBelow( pos, false );
 
 	Animal* animal = new Animal( type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true );
 
@@ -95,7 +95,7 @@ Monster* CreatureFactory::createRandomMonster( QStringList allowedMonsters )
 	int y = qMax( 2, ( rand() % dimy ) - 2 );
 
 	Position pos( x, y, dimZ - 2 );
-	Global::w().getFloorLevelBelow( pos, false );
+	m_world->getFloorLevelBelow( pos, false );
 
 	Monster* monster = new Monster( type, 1, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE );
 	

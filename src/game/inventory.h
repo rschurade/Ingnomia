@@ -17,6 +17,8 @@
 */
 #pragma once
 
+#include "managerbase.h"
+
 #include "../base/priorityqueue.h"
 #include "../game/item.h"
 
@@ -29,17 +31,16 @@
 typedef QSet<unsigned int> PositionEntry;
 typedef QHash<unsigned int, PositionEntry> PositionHash;
 
+class ItemHistory;
 class Octree;
+class StockpileManager;
+class World;
 
-class Inventory : public QObject
+class Inventory : public ManagerBase
 {
-	Q_OBJECT
-
 public:
-	Inventory( QObject* parent = nullptr );
+	Inventory( QObject* parent );
 	~Inventory();
-
-	void reset();
 
 	void saveFilter();
 	void loadFilter();
@@ -196,6 +197,8 @@ public:
 	QList<QString> allMats( unsigned int itemID );
 
 private:
+	ItemHistory* m_itemHistory = nullptr;
+
 	int m_dimX;
 	int m_dimY;
 	int m_dimZ;

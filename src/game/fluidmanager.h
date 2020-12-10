@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/position.h"
 #include "../game/job.h"
 
@@ -48,12 +49,10 @@ struct NetworkPipe
 	void deserialize( QVariantMap in );
 };
 
-class FluidManager : public QObject
+class FluidManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
-	FluidManager( QObject* parent = nullptr );
+	FluidManager( QObject* parent );
 	~FluidManager();
 
 	void reset();

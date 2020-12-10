@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #pragma once
-
+#include "managerbase.h"
 #include "../base/position.h"
 #include "../game/stockpile.h"
 
@@ -24,13 +24,12 @@
 
 class Job;
 class Stockpile;
+class Inventory;
 
-class StockpileManager : public QObject
+class StockpileManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
-	StockpileManager( QObject* parent = nullptr );
+	StockpileManager( QObject* parent );
 	~StockpileManager();
 
 	void reset();

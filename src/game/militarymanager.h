@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/gamestate.h"
 
 #include <QMutex>
@@ -92,15 +93,16 @@ struct Squad
 {
 	QString name = "new squad";
 	quint32 id   = GameState::createID();
+	CreatureManager* m_cm = nullptr;
 
 	QList<unsigned int> gnomes;
 
 	QVariantMap serialize();
-	Squad( const QVariantMap& in );
+	Squad( CreatureManager* cm, const QVariantMap& in );
 
 	QList<TargetPriority> priorities;
 
-	Squad() {};
+	Squad( CreatureManager* cm ) : m_cm( cm ) {};
 };
 Q_DECLARE_METATYPE( Squad )
 
@@ -110,10 +112,8 @@ Q_DECLARE_METATYPE( Squad )
 
 
 
-class MilitaryManager : public QObject
+class MilitaryManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	MilitaryManager( QObject* parent = nullptr);
 	~MilitaryManager();

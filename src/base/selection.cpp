@@ -642,7 +642,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 		{
 			if ( p.second )
 			{
-				Global::w().removeDesignation( p.first );
+				m_world->removeDesignation( p.first );
 			}
 		}
 		return;
@@ -748,7 +748,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 			{
 				if ( p.second )
 				{
-					Global::w().construct( m_item, p.first, 0, Util::variantList2UInt( vUMats ), p.first );
+					m_world->construct( m_item, p.first, 0, Util::variantList2UInt( vUMats ), p.first );
 				}
 			}
 		}

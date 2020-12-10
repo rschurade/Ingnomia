@@ -17,13 +17,17 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "farm.h"
 #include "grove.h"
 #include "pasture.h"
 
 #include <QHash>
 
+class Inventory;
 class Job;
+class JobManager;
+class World;
 
 struct Beehive
 {
@@ -38,15 +42,13 @@ struct Beehive
 	Beehive( QVariantMap& in );
 };
 
-class FarmingManager : public QObject
+class FarmingManager : public ManagerBase
 {
 	Q_OBJECT
 
 public:
-	FarmingManager( QObject* parent = nullptr );
+	FarmingManager( QObject* parent );
 	~FarmingManager();
-
-	void reset();
 
 	bool load( QVariantMap vm );
 

@@ -36,7 +36,7 @@
 #include <QStandardPaths>
 
 GnomeManager::GnomeManager( QObject* parent ) :
-	QObject(parent)
+	ManagerBase( parent )
 {
 }
 
@@ -114,7 +114,7 @@ void GnomeManager::addAutomaton( Automaton* a )
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), Global::inv().spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
@@ -124,7 +124,7 @@ void GnomeManager::addAutomaton( QVariantMap values )
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), Global::inv().spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
@@ -253,7 +253,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					else
 					{
 						m_gnomesByID.remove( dg->id() );
-						Global::w().addToUpdateList( dg->getPos() );
+						m_world->addToUpdateList( dg->getPos() );
 						delete dg;
 					}
 					m_specialGnomes.removeAt( i );
@@ -271,7 +271,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			if ( dg->expires() < GameState::tick )
 			{
 				m_gnomesByID.remove( dg->id() );
-				Global::w().addToUpdateList( dg->getPos() );
+				m_world->addToUpdateList( dg->getPos() );
 				m_deadGnomes.removeAt( i );
 				delete dg;
 				break;
@@ -510,7 +510,7 @@ bool GnomeManager::gnomeCanReach( unsigned int gnomeID, Position pos )
 {
 	if ( m_gnomesByID.contains( gnomeID ) )
 	{
-		return Global::w().regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
+		return m_world->regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
 	}
 	return false;
 }
@@ -529,7 +529,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					// remove core
 					if ( a->uninstallFlag() )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getUninstallJob( a );
 							m_jobs.insert( job->id(), job );
@@ -538,7 +538,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					}
 					else if ( a->getRefuelFlag() && a->getFuelLevel() <= 0 )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getRefuelJob( a );
 							m_jobs.insert( job->id(), job );
@@ -551,7 +551,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					// no core but core type is set, install core
 					if ( !a->coreType().isEmpty() )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getInstallJob( a );
 							m_jobs.insert( job->id(), job );

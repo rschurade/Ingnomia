@@ -57,21 +57,21 @@ AggregatorInventory::~AggregatorInventory()
 void AggregatorInventory::onRequestCategories()
 {
 	m_categories.clear();
-	for ( const auto& cat : Global::inv().categories() )
+	for ( const auto& cat : m_inv->categories() )
 	{
 		/*
 		int catTotal = 0;
-		for ( const auto& group : Global::inv().groups( cat ) )
+		for ( const auto& group : m_inv->groups( cat ) )
 		{
 			int groupTotal = 0;
-			for ( const auto& item : Global::inv().items( cat, group ) )
+			for ( const auto& item : m_inv->items( cat, group ) )
 			{
-				for ( const auto& mat : Global::inv().materials( cat, group, item ) )
+				for ( const auto& mat : m_inv->materials( cat, group, item ) )
 				{
 					QString iName = S::s( "$ItemName_" + item );
 					QString mName = S::s( "$MaterialName_" + mat );
-					int total     = Global::inv().itemCount( item, mat );
-					int inSP      = Global::inv().itemCountInStockpile( item, mat );
+					int total     = m_inv->itemCount( item, mat );
+					int inSP      = m_inv->itemCountInStockpile( item, mat );
 					groupTotal += total;
 				}
 			}
@@ -91,15 +91,15 @@ void AggregatorInventory::onRequestGroups( QString category )
 {
 	m_groups.clear();
 
-	for ( const auto& group : Global::inv().groups( category ) )
+	for ( const auto& group : m_inv->groups( category ) )
 	{
 		/*
 		int total = 0;
-		for ( const auto& item : Global::inv().items( category, group ) )
+		for ( const auto& item : m_inv->items( category, group ) )
 		{
-			for ( const auto& mat : Global::inv().materials( category, group, item ) )
+			for ( const auto& mat : m_inv->materials( category, group, item ) )
 			{
-				total += Global::inv().itemCount( item, mat );
+				total += m_inv->itemCount( item, mat );
 			}
 		}
 		if( total )
@@ -116,13 +116,13 @@ void AggregatorInventory::onRequestItems( QString category, QString group )
 {
 	m_items.clear();
 
-	for ( const auto& item : Global::inv().items( category, group ) )
+	for ( const auto& item : m_inv->items( category, group ) )
 	{
-		for ( const auto& mat : Global::inv().materials( category, group, item ) )
+		for ( const auto& mat : m_inv->materials( category, group, item ) )
 		{
 			QString iName = S::s( "$ItemName_" + item );
 			QString mName = S::s( "$MaterialName_" + mat );
-			auto result   = Global::inv().itemCountDetailed( item, mat );
+			auto result   = m_inv->itemCountDetailed( item, mat );
 
 			m_items.append( { iName, mName, result.total, result.inJob, result.inStockpile, result.equipped, result.constructed, result.loose, result.totalValue } );
 		}
@@ -281,7 +281,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 
 void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 {
-	auto mats = Global::inv().materialCountsForItem( gbri.itemID );
+	auto mats = m_inv->materialCountsForItem( gbri.itemID );
 
 	gbri.availableMats.append( { "any", mats["any"] } );
 	for ( auto key : mats.keys() )

@@ -391,7 +391,7 @@ void World::updatePipeSprite( Position pos )
 	QString suffix = "Rot";
 
 	unsigned int itemUID = constr.value( "Item" ).toUInt();
-	QString itemSID      = Global::inv().itemSID( itemUID );
+	QString itemSID      = m_inv->itemSID( itemUID );
 
 	if ( itemSID.startsWith( "Pump" ) )
 	{
@@ -452,14 +452,14 @@ void World::expelTileItems( Position pos, Position& to )
 	Tile& tile = getTile( pos );
 	//do we even have to move anything?
 	PositionEntry pe;
-	if ( Global::inv().getObjectsAtPosition( pos, pe ) )
+	if ( m_inv->getObjectsAtPosition( pos, pe ) )
 	{
 		//check if tile is now blocked for items and creatures
 		if ( tile.wallType & WallType::WT_MOVEBLOCKING || !isWalkable( pos ) )
 		{
 			for ( auto i : pe )
 			{
-				Global::inv().moveItemToPos( i, to );
+				m_inv->moveItemToPos( i, to );
 			}
 		}
 	}
@@ -506,7 +506,7 @@ void World::plant( Position pos, unsigned int baseItem )
 	QStringList plants = DB::ids( "Plants", "Type", "Plant" );
 	for ( auto plant : plants )
 	{
-		if ( DB::select( "Material", "Plants", plant ).toString() == Global::inv().materialSID( baseItem ) )
+		if ( DB::select( "Material", "Plants", plant ).toString() == m_inv->materialSID( baseItem ) )
 		{
 			Plant plant_( pos, plant );
 			m_plants.insert( pos.toInt(), plant_ );
@@ -1283,7 +1283,7 @@ unsigned short World::removeFloor( Position pos, Position extractTo )
 	clearTileFlag( pos, TileFlag::TF_WALKABLE );
 	m_regionMap.updatePosition( pos );
 	removeGrass( pos );
-	//Global::inv().gravity( pos );
+	//m_inv->gravity( pos );
 
 	if ( tile.flags & TileFlag::TF_SUNLIGHT )
 	{
@@ -1291,11 +1291,11 @@ unsigned short World::removeFloor( Position pos, Position extractTo )
 	}
 
 	PositionEntry pe;
-	if ( Global::inv().getObjectsAtPosition( pos, pe ) )
+	if ( m_inv->getObjectsAtPosition( pos, pe ) )
 	{
 		for ( auto i : pe )
 		{
-			Global::inv().moveItemToPos( i, extractTo );
+			m_inv->moveItemToPos( i, extractTo );
 		}
 	}
 

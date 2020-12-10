@@ -441,7 +441,7 @@ void MainWindowRenderer::initWorld()
 
 	glGenBuffers( 1, &m_tileBo );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileBo );
-	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * Global::w().world().size(), nullptr, GL_DYNAMIC_DRAW );
+	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * m_world->world().size(), nullptr, GL_DYNAMIC_DRAW );
 	const uint8_t zero = 0;
 	glClearBufferData( GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, &zero );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, 0 ); // unbind
@@ -1178,7 +1178,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.y = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
 
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y += 1;
@@ -1189,7 +1189,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y -= 1;
@@ -1199,7 +1199,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y -= 1;
@@ -1209,7 +1209,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, selX - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y += 1;

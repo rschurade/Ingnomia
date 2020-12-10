@@ -36,7 +36,7 @@ AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 
 TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 {
-	const auto& tile = Global::w().world()[tileID];
+	const auto& tile = m_world->world()[tileID];
 	TileData td;
 	if ( tile.floorSpriteUID )
 	{
@@ -59,9 +59,9 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 		td.itemSpriteUID = tile.itemSpriteUID;
 	}
 
-	if ( Global::w().hasJob( Position( tileID ) ) )
+	if ( m_world->hasJob( Position( tileID ) ) )
 	{
-		QVariantMap job      = Global::w().jobSprite( Position( tileID ) );
+		QVariantMap job      = m_world->jobSprite( Position( tileID ) );
 		QVariantMap floorJob = job.value( "Floor" ).toMap();
 		QVariantMap wallJob  = job.value( "Wall" ).toMap();
 
@@ -225,7 +225,7 @@ void AggregatorRenderer::onAllTileInfo()
 	constexpr size_t batchSize = 1 << 16;
 	TileDataUpdateInfo tileUpdates;
 	tileUpdates.updates.reserve( batchSize );
-	const unsigned int worldSize = (unsigned int)Global::w().world().size();
+	const unsigned int worldSize = (unsigned int)m_world->world().size();
 	for ( unsigned int tileUID = 0; tileUID < worldSize; ++tileUID )
 	{
 		auto update = aggregateTile( tileUID );

@@ -153,11 +153,11 @@ BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 
 	for ( auto ci : cil )
 	{
-		if ( Global::inv().getItemPos( ci ) != inputPos )
+		if ( m_inv->getItemPos( ci ) != inputPos )
 		{
 			m_itemToPickUp = ci;
-			setCurrentTarget( Global::inv().getItemPos( ci ) );
-			log( "Item is at " + Global::inv().getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
+			setCurrentTarget( m_inv->getItemPos( ci ) );
+			log( "Item is at " + m_inv->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
 			return BT_RESULT::FAILURE;
 		}
 	}

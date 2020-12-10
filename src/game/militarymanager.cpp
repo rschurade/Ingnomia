@@ -24,7 +24,6 @@
 #include "../base/util.h"
 #include "../game/gnome.h"
 #include "../game/creaturemanager.h"
-#include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 
 #include <QDebug>
@@ -142,7 +141,8 @@ QVariantMap Squad::serialize()
 	return out;
 }
 
-Squad::Squad( const QVariantMap& in )
+Squad::Squad( CreatureManager* cm, const QVariantMap& in ) :
+	m_cm( cm )
 {
 	name       = in.value( "Name" ).toString();
 	id         = in.value( "ID" ).toUInt();
@@ -160,7 +160,7 @@ Squad::Squad( const QVariantMap& in )
 			TargetPriority tp { type, (MilAttitude)vm.value( "Attitude" ).toInt() };
 			priorities.append( tp );
 		}
-		auto types = Global::cm().types();
+		auto types = m_cm->types();
 		for( auto type : types )
 		{
 			if( !typeSet.contains( type ) )
@@ -172,7 +172,7 @@ Squad::Squad( const QVariantMap& in )
 	}
 	else
 	{
-		auto types = Global::cm().types();
+		auto types = m_cm->types();
 		for( auto type : types )
 		{
 			TargetPriority tp { type, MilAttitude::_IGNORE };
@@ -182,7 +182,7 @@ Squad::Squad( const QVariantMap& in )
 }
 
 MilitaryManager::MilitaryManager( QObject* parent ) :
-	QObject(parent)
+	ManagerBase( parent )
 {
 }
 MilitaryManager::~MilitaryManager()
@@ -225,7 +225,7 @@ void MilitaryManager::init()
 		auto sl = mm.value( "Squads" ).toList();
 		for ( auto entry : sl )
 		{
-			Squad squad( entry.toMap() );
+			Squad squad( m_creatureManager, entry.toMap() );
 			m_squads.insert( squad.id, squad );
 
 			for( auto gnome : squad.gnomes )
@@ -379,9 +379,9 @@ Squad* MilitaryManager::squad( unsigned int id )
 
 unsigned int MilitaryManager::addSquad()
 {
-	Squad squad;
+	Squad squad( m_creatureManager );
 
-	auto types = Global::cm().types();
+	auto types = m_creatureManager->types();
 	for( auto type : types )
 	{
 		TargetPriority tp { type, MilAttitude::_IGNORE };

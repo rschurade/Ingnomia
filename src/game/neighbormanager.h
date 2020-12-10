@@ -17,11 +17,11 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/position.h"
 
 #include <QMap>
 #include <QMutex>
-#include <QObject>
 #include <QVariantMap>
 
 struct Mission;
@@ -80,10 +80,8 @@ struct NeighborKingdom
 	void deserialize( QVariantMap in );
 };
 
-class NeighborManager : public QObject
+class NeighborManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	NeighborManager( QObject* parent = nullptr );
 	~NeighborManager();

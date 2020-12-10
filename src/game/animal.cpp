@@ -168,7 +168,7 @@ void Animal::checkInJob()
 
 void Animal::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_world->insertCreatureAtPosition( m_position, m_id );
 
 	m_anatomy.init( "Animal" );
 
@@ -380,7 +380,7 @@ CreatureTickResult Animal::onTick( quint64 tickNumber, bool seasonChanged, bool 
 {
 	processCooldowns( tickNumber );
 
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( m_world->fluidLevel( m_position ) );
 
 	if ( m_anatomy.statusChanged() )
 	{
@@ -449,12 +449,12 @@ void Animal::move( Position oldPos )
 			for ( auto row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
-				Global::w().setWallSprite( oldPos + offset, 0 );
+				m_world->setWallSprite( oldPos + offset, 0 );
 			}
 			for ( auto row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
-				Global::w().setWallSprite( m_position + offset, Global::sf().createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
+				m_world->setWallSprite( m_position + offset, Global::sf().createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
 			}
 		}
 	}
@@ -593,7 +593,7 @@ BT_RESULT Animal::actionLayEgg( bool halt )
 			{
 				if ( collectEggs )
 				{
-					Global::inv().createItem( m_position, "Egg", { m_species } );
+					m_inv->createItem( m_position, "Egg", { m_species } );
 				}
 				else
 				{
@@ -646,7 +646,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 			QString produce = def.value( "ItemID" ).toString();
 			for ( int i = 0; i < def.value( "Amount" ).toInt(); ++i )
 			{
-				Global::inv().createItem( m_position, def.value( "ItemID" ).toString(), { m_species } );
+				m_inv->createItem( m_position, def.value( "ItemID" ).toString(), { m_species } );
 			}
 		}
 		else
@@ -819,7 +819,7 @@ BT_RESULT Animal::actionGraze( bool halt )
 	{
 		if ( m_stateMap.contains( "Grazing" ) )
 		{
-			Tile& tile = Global::w().getTile( m_position );
+			Tile& tile = m_world->getTile( m_position );
 
 			if ( GameState::season != 3 )
 			{
@@ -832,7 +832,7 @@ BT_RESULT Animal::actionGraze( bool halt )
 
 					m_hunger += m_foodValue;
 
-					Global::w().addToUpdateList( m_position );
+					m_world->addToUpdateList( m_position );
 					return BT_RESULT::SUCCESS;
 				}
 			}
@@ -877,7 +877,7 @@ BT_RESULT Animal::actionFindPrey( bool halt )
 			auto distances          = PriorityQueue<Position, int>();
 			for ( auto neigh : neighbs )
 			{
-				if ( Global::w().isWalkable( neigh ) && PathFinder::getInstance().checkConnectedRegions( neigh, m_position ) )
+				if ( m_world->isWalkable( neigh ) && PathFinder::getInstance().checkConnectedRegions( neigh, m_position ) )
 				{
 					distances.put( neigh, m_position.distSquare( neigh ) );
 				}
@@ -904,9 +904,9 @@ BT_RESULT Animal::actionKillPrey( bool halt )
 	{
 		if ( prey->kill( true ) )
 		{
-			m_corpseToEat = Global::inv().createItem( prey->getPos(), "AnimalCorpse", { prey->species() } );
+			m_corpseToEat = m_inv->createItem( prey->getPos(), "AnimalCorpse", { prey->species() } );
 			m_currentPrey = 0;
-			Global::inv().setInJob( m_corpseToEat, m_id );
+			m_inv->setInJob( m_corpseToEat, m_id );
 
 			return BT_RESULT::SUCCESS;
 		}
@@ -927,9 +927,9 @@ BT_RESULT Animal::actionEatPrey( bool halt )
 		m_hunger += 0.5;
 		if ( m_hunger >= 100 )
 		{
-			Global::inv().createItem( Position( Global::inv().getItemPos( m_corpseToEat ) ), "Bone", Global::inv().materialSID( m_corpseToEat ) + "Bone" );
+			m_inv->createItem( Position( m_inv->getItemPos( m_corpseToEat ) ), "Bone", m_inv->materialSID( m_corpseToEat ) + "Bone" );
 
-			Global::inv().destroyObject( m_corpseToEat );
+			m_inv->destroyObject( m_corpseToEat );
 			m_corpseToEat = 0;
 			return BT_RESULT::SUCCESS;
 		}
@@ -1029,9 +1029,9 @@ BT_RESULT Animal::actionFindRetreat( bool halt )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	m_world->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( m_world->fluidLevel( pos ) == 0 )
 	{
 		if ( PathFinder::getInstance().checkConnectedRegions( pos, m_position ) )
 		{

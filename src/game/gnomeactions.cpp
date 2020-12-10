@@ -137,7 +137,7 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 			unsigned int bedID = beds.first();
 
 			addClaimedItem( bedID, m_id );
-			setCurrentTarget( Global::inv().getItemPos( bedID ).toString() );
+			setCurrentTarget( m_inv->getItemPos( bedID ).toString() );
 
 			return BT_RESULT::SUCCESS;
 		}
@@ -157,7 +157,7 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 		{
 			for ( auto bedID : beds )
 			{
-				if ( !Global::inv().isInJob( bedID ) )
+				if ( !m_inv->isInJob( bedID ) )
 				{
 					if ( m_job )
 					{
@@ -165,7 +165,7 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 					}
 
 					addClaimedItem( bedID, m_id );
-					setCurrentTarget( Global::inv().getItemPos( bedID ).toString() );
+					setCurrentTarget( m_inv->getItemPos( bedID ).toString() );
 
 					return BT_RESULT::SUCCESS;
 				}
@@ -232,7 +232,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 
 		if ( m_lightIntensity && m_position != oldPos )
 		{
-			Global::w().moveLight( m_id, m_position, m_lightIntensity );
+			m_world->moveLight( m_id, m_position, m_lightIntensity );
 		}
 
 		return BT_RESULT::RUNNING;
@@ -265,7 +265,7 @@ BT_RESULT Gnome::actionFindFood( bool halt )
 	if ( Global::debugMode )
 		log( "actionFindFood" );
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
-	auto itemID = Global::inv().getFoodItem( m_position );
+	auto itemID = m_inv->getFoodItem( m_position );
 	//m_log.append( "Looking for food." );
 
 	if ( itemID )
@@ -278,7 +278,7 @@ BT_RESULT Gnome::actionFindFood( bool halt )
 
 		addClaimedItem( itemID, m_id );
 		m_itemToPickUp = itemID;
-		setCurrentTarget( Global::inv().getItemPos( itemID ).toString() );
+		setCurrentTarget( m_inv->getItemPos( itemID ).toString() );
 		//m_log.append( "Found food." );
 		return BT_RESULT::SUCCESS;
 	}
@@ -291,7 +291,7 @@ BT_RESULT Gnome::actionFindDrink( bool halt )
 	if ( Global::debugMode )
 		log( "actionFindDrink" );
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
-	auto itemID = Global::inv().getDrinkItem( m_position );
+	auto itemID = m_inv->getDrinkItem( m_position );
 	//m_log.append( "Looking for something to drink." );
 	if ( itemID )
 	{
@@ -303,7 +303,7 @@ BT_RESULT Gnome::actionFindDrink( bool halt )
 
 		addClaimedItem( itemID, m_id );
 		m_itemToPickUp = itemID;
-		setCurrentTarget( Global::inv().getItemPos( itemID ).toString() );
+		setCurrentTarget( m_inv->getItemPos( itemID ).toString() );
 		//m_log.append( "Found drinks." );
 		return BT_RESULT::SUCCESS;
 	}
@@ -331,9 +331,9 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 			{
 				for ( auto chairID : chairs )
 				{
-					if ( !Global::inv().isInJob( chairID ) )
+					if ( !m_inv->isInJob( chairID ) )
 					{
-						int curDist = m_position.distSquare( Global::inv().getItemPos( chairID ), 5 );
+						int curDist = m_position.distSquare( m_inv->getItemPos( chairID ), 5 );
 						if ( curDist < dist )
 						{
 							dist           = curDist;
@@ -348,7 +348,7 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 	if ( closestChairID != 0 )
 	{
 		addClaimedItem( closestChairID, m_id );
-		setCurrentTarget( Global::inv().getItemPos( closestChairID ) );
+		setCurrentTarget( m_inv->getItemPos( closestChairID ) );
 
 		//m_log.append( "Found a dining room." );
 		return BT_RESULT::SUCCESS;
@@ -486,28 +486,28 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 		return BT_RESULT::FAILURE;
 	}
 
-	if ( m_position != Global::inv().getItemPos( m_itemToPickUp ) )
+	if ( m_position != m_inv->getItemPos( m_itemToPickUp ) )
 	{
 		log( "Cannot pick up item that is not here" );
 		return BT_RESULT::FAILURE;
 	}
 
-	Global::inv().pickUpItem( m_itemToPickUp );
+	m_inv->pickUpItem( m_itemToPickUp );
 
 	if ( m_btBlackBoard.contains( "ClaimedInventoryItem" ) )
 	{
 		if ( m_itemToPickUp == m_btBlackBoard.value( "ClaimedInventoryItem" ).toUInt() )
 		{
 			m_inventoryItems.append( m_itemToPickUp );
-			if ( Global::inv().itemSID( m_itemToPickUp ) == "Bandage" )
+			if ( m_inv->itemSID( m_itemToPickUp ) == "Bandage" )
 			{
 				m_carriedBandages += 1;
 			}
-			else if ( Global::inv().nutritionalValue( m_itemToPickUp ) > 0 )
+			else if ( m_inv->nutritionalValue( m_itemToPickUp ) > 0 )
 			{
 				++m_carriedFood;
 			}
-			else if ( Global::inv().drinkValue( m_itemToPickUp ) > 0 )
+			else if ( m_inv->drinkValue( m_itemToPickUp ) > 0 )
 			{
 				++m_carriedDrinks;
 			}
@@ -523,17 +523,17 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 		m_carriedItems.append( m_itemToPickUp );
 	}
 
-	if ( Global::inv().isInStockpile( m_itemToPickUp ) )
+	if ( m_inv->isInStockpile( m_itemToPickUp ) )
 	{
-		Global::spm().removeItem( m_job->stockpile(), Global::inv().getItemPos( m_itemToPickUp ), m_itemToPickUp );
+		Global::spm().removeItem( m_job->stockpile(), m_inv->getItemPos( m_itemToPickUp ), m_itemToPickUp );
 	}
-	if ( Global::inv().isInContainer( m_itemToPickUp ) )
+	if ( m_inv->isInContainer( m_itemToPickUp ) )
 	{
-		Global::inv().removeItemFromContainer( m_itemToPickUp );
+		m_inv->removeItemFromContainer( m_itemToPickUp );
 	}
 
 	m_itemToPickUp = 0;
-	log( "Picked up an item. " + Global::inv().materialSID( m_itemToPickUp ) + " " + Global::inv().itemSID( m_itemToPickUp ) );
+	log( "Picked up an item. " + m_inv->materialSID( m_itemToPickUp ) + " " + m_inv->itemSID( m_itemToPickUp ) );
 	return BT_RESULT::SUCCESS;
 }
 
@@ -595,8 +595,8 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 			for ( auto s : m_job->possibleWorkPositions() )
 			{
 				Position ss( s );
-				int hasJob = Global::w().hasJob( ss );
-				m_workPositionQueue.put( ss, ( 5 - Global::w().walkableNeighbors( s ) ) * 100 + m_position.distSquare( ss ) + hasJob * 10 );
+				int hasJob = m_world->hasJob( ss );
+				m_workPositionQueue.put( ss, ( 5 - m_world->walkableNeighbors( s ) ) * 100 + m_position.distSquare( ss ) + hasJob * 10 );
 			}
 		}
 		else
@@ -604,7 +604,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 			for ( auto s : m_job->possibleWorkPositions() )
 			{
 				Position ss( s );
-				int hasJob = Global::w().hasJob( ss );
+				int hasJob = m_world->hasJob( ss );
 				//qDebug() << m_job->id() << "[" << ss.toString() << "]" ;
 				m_workPositionQueue.put( ss, m_position.distSquare( ss ) + hasJob * 10 );
 			}
@@ -741,10 +741,10 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 							for ( auto spf : sp->getFields() )
 							{
 								// if exists get item from that position
-								item = Global::inv().getItemAtPos( spf->pos, true, itemSID, mat );
+								item = m_inv->getItemAtPos( spf->pos, true, itemSID, mat );
 								if ( item )
 								{
-									Global::inv().moveItemToPos( item, m_job->posItemInput() );
+									m_inv->moveItemToPos( item, m_job->posItemInput() );
 									sp->setInfiNotFull( spf->pos );
 									addClaimedItem( item, m_job->id() );
 									++claimed;
@@ -765,10 +765,10 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 						for ( auto spf : sp->getFields() )
 						{
 							// if exists get item from that position
-							item = Global::inv().getItemAtPos( spf->pos, true, itemSID, "any" );
+							item = m_inv->getItemAtPos( spf->pos, true, itemSID, "any" );
 							if ( item )
 							{
-								Global::inv().moveItemToPos( item, m_job->posItemInput() );
+								m_inv->moveItemToPos( item, m_job->posItemInput() );
 								sp->setInfiNotFull( spf->pos );
 								addClaimedItem( item, m_job->id() );
 								++claimed;
@@ -786,10 +786,10 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 						for ( auto spf : sp->getFields() )
 						{
 							// if exists get item from that position
-							item = Global::inv().getItemAtPos( spf->pos, true, itemSID, "any" );
+							item = m_inv->getItemAtPos( spf->pos, true, itemSID, "any" );
 							if ( item && restriction.contains( inv.materialSID( item ) ) )
 							{
-								Global::inv().moveItemToPos( item, m_job->posItemInput() );
+								m_inv->moveItemToPos( item, m_job->posItemInput() );
 								sp->setInfiNotFull( spf->pos );
 								addClaimedItem( item, m_job->id() );
 								++claimed;
@@ -821,10 +821,10 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 				for ( auto spf : sp->getFields() )
 				{
 					// if exists get item from that position
-					item = Global::inv().getItemAtPos( spf->pos, true, itemSID, materialSID );
+					item = m_inv->getItemAtPos( spf->pos, true, itemSID, materialSID );
 					if ( item )
 					{
-						Global::inv().moveItemToPos( item, m_job->posItemInput() );
+						m_inv->moveItemToPos( item, m_job->posItemInput() );
 						sp->setInfiNotFull( spf->pos );
 						addClaimedItem( item, m_job->id() );
 						++claimed;
@@ -1053,7 +1053,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 
 	if ( equippedItem )
 	{
-		if ( Global::inv().itemSID( equippedItem ) == rt.type && equippedToolLevel >= rt.level )
+		if ( m_inv->itemSID( equippedItem ) == rt.type && equippedToolLevel >= rt.level )
 		{
 			// gnome already has the required tool equipped
 			setCurrentTarget( m_position );
@@ -1063,8 +1063,8 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		{
 			// wrong tool equipped,
 			// drop tool
-			Global::inv().putDownItem( equippedItem, m_position );
-			Global::inv().setInJob( equippedItem, 0 );
+			m_inv->putDownItem( equippedItem, m_position );
+			m_inv->setInJob( equippedItem, 0 );
 			m_equipment.rightHandHeld.itemID = 0;
 			m_equipment.rightHandHeld.item.clear();
 			m_equipment.rightHandHeld.materialID = 0;
@@ -1074,7 +1074,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		}
 	}
 	//no item equipped
-	QMap<QString, int> mc = Global::inv().materialCountsForItem( rt.type );
+	QMap<QString, int> mc = m_inv->materialCountsForItem( rt.type );
 	QStringList keys      = mc.keys();
 
 	Inventory& inv = Global::inv();
@@ -1135,14 +1135,14 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 	unsigned int claimedTool = m_btBlackBoard.value( "ClaimedTool" ).toUInt();
 	if ( claimedTool )
 	{
-		if ( m_position == Global::inv().getItemPos( claimedTool ) )
+		if ( m_position == m_inv->getItemPos( claimedTool ) )
 		{
-			Global::inv().pickUpItem( claimedTool );
-			Global::inv().setConstructedOrEquipped( claimedTool, true );
+			m_inv->pickUpItem( claimedTool );
+			m_inv->setConstructedOrEquipped( claimedTool, true );
 			m_equipment.rightHandHeld.itemID     = claimedTool;
-			m_equipment.rightHandHeld.item       = Global::inv().itemSID( claimedTool );
-			m_equipment.rightHandHeld.materialID = Global::inv().materialUID( claimedTool );
-			m_equipment.rightHandHeld.material   = Global::inv().materialSID( claimedTool );
+			m_equipment.rightHandHeld.item       = m_inv->itemSID( claimedTool );
+			m_equipment.rightHandHeld.materialID = m_inv->materialUID( claimedTool );
+			m_equipment.rightHandHeld.material   = m_inv->materialSID( claimedTool );
 
 			m_btBlackBoard.remove( "ClaimedTool" );
 
@@ -1258,9 +1258,9 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 			log( "Drop item:" + wiMat + " " + wiSID + " looking for:" + material + " " + item );
 			//drop current item
 			dropped = true;
-			Global::inv().putDownItem( wornItem, m_position );
-			Global::inv().setInJob( wornItem, 0 );
-			Global::inv().setConstructedOrEquipped( wornItem, false );
+			m_inv->putDownItem( wornItem, m_position );
+			m_inv->setInJob( wornItem, 0 );
+			m_inv->setConstructedOrEquipped( wornItem, false );
 
 			if ( item == "none" || item.isEmpty() )
 			{
@@ -1275,11 +1275,11 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 
 	if ( !item.isEmpty() )
 	{
-		auto itemToGet = Global::inv().getClosestItem( m_position, true, item, material );
+		auto itemToGet = m_inv->getClosestItem( m_position, true, item, material );
 
 		if ( itemToGet )
 		{
-			auto pos = Global::inv().getItemPos( itemToGet );
+			auto pos = m_inv->getItemPos( itemToGet );
 			
 			m_btBlackBoard.insert( "ClaimedUniformItem", itemToGet );
 			m_btBlackBoard.insert( "ClaimedUniformItemSlot", slot );
@@ -1294,7 +1294,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 				m_job        = jm.getJob( m_jobID );
 				if( m_job )
 				{
-					Global::inv().setInJob( itemToGet, m_jobID );
+					m_inv->setInJob( itemToGet, m_jobID );
 					//no change to jobsprite
 					jm.setJobBeingWorked( m_jobID, true );
 					m_job->setIsWorked( true );
@@ -1406,8 +1406,8 @@ BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 						{
 							for ( auto item : m_inventoryItems )
 							{
-								Global::inv().setInJob( item, 0 );
-								Global::inv().putDownItem( item, m_position );
+								m_inv->setInJob( item, 0 );
+								m_inv->putDownItem( item, m_position );
 							}
 							m_inventoryItems.clear();
 							m_carriedDrinks   = 0;
@@ -1491,7 +1491,7 @@ BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 BT_RESULT Gnome::actionUniformCleanUp( bool halt )
 {
 	auto item = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
-	Global::inv().setInJob( item, 0 );
+	m_inv->setInJob( item, 0 );
 	m_btBlackBoard.remove( "ClaimedUniformItem" );
 	m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
 
@@ -1505,19 +1505,19 @@ BT_RESULT Gnome::actionCheckBandages( bool halt )
 		unsigned int itemToGet = 0;
 		if ( m_carryBandages && m_carriedBandages < 3 )
 		{
-			itemToGet = Global::inv().getClosestItem( m_position, true, "Bandage", "any" );
+			itemToGet = m_inv->getClosestItem( m_position, true, "Bandage", "any" );
 		}
 		else if ( m_carryFood && m_carriedFood < 3 )
 		{
-			itemToGet = Global::inv().getFoodItem( m_position );
+			itemToGet = m_inv->getFoodItem( m_position );
 			if ( itemToGet )
 			{
-				if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+				if ( m_position.distSquare( m_inv->getItemPos( itemToGet ) ) > 10 )
 				{
 					if ( m_carryDrinks && m_carriedDrinks < 3 )
 					{
-						itemToGet = Global::inv().getDrinkItem( m_position );
-						if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+						itemToGet = m_inv->getDrinkItem( m_position );
+						if ( m_position.distSquare( m_inv->getItemPos( itemToGet ) ) > 10 )
 						{
 							itemToGet = 0;
 						}
@@ -1527,16 +1527,16 @@ BT_RESULT Gnome::actionCheckBandages( bool halt )
 		}
 		else if ( m_carryDrinks && m_carriedDrinks < 3 )
 		{
-			itemToGet = Global::inv().getDrinkItem( m_position );
-			if ( m_position.distSquare( Global::inv().getItemPos( itemToGet ) ) > 10 )
+			itemToGet = m_inv->getDrinkItem( m_position );
+			if ( m_position.distSquare( m_inv->getItemPos( itemToGet ) ) > 10 )
 			{
 				itemToGet = 0;
 			}
 		}
 		if ( itemToGet )
 		{
-			auto pos = Global::inv().getItemPos( itemToGet );
-			Global::inv().setInJob( itemToGet, m_id );
+			auto pos = m_inv->getItemPos( itemToGet );
+			m_inv->setInJob( itemToGet, m_id );
 			m_itemToPickUp = itemToGet;
 			m_btBlackBoard.insert( "ClaimedInventoryItem", itemToGet );
 			setCurrentTarget( pos );
@@ -1586,7 +1586,7 @@ BT_RESULT Gnome::actionDropItem( bool halt )
 			inv.putDownItem( carriedItem, m_position );
 			if ( m_job->stockpile() != 0 )
 			{
-				log( "Put " + Global::inv().materialSID( carriedItem ) + " " + Global::inv().itemSID( carriedItem ) + " into stockpile at " + m_position.toString() );
+				log( "Put " + m_inv->materialSID( carriedItem ) + " " + m_inv->itemSID( carriedItem ) + " into stockpile at " + m_position.toString() );
 				Global::spm().insertItem( m_job->stockpile(), m_position, carriedItem );
 			}
 			//m_job->removeClaimedItem2( item );
@@ -1622,7 +1622,7 @@ BT_RESULT Gnome::actionDropAllItems( bool halt )
 			inv.putDownItem( item, m_position );
 			if ( m_job->stockpile() != 0 )
 			{
-				log( "Put " + Global::inv().materialSID( item ) + " " + Global::inv().itemSID( item ) + " into stockpile at " + m_position.toString() );
+				log( "Put " + m_inv->materialSID( item ) + " " + m_inv->itemSID( item ) + " into stockpile at " + m_position.toString() );
 				Global::spm().insertItem( m_job->stockpile(), m_position, item );
 			}
 		}
@@ -1882,11 +1882,11 @@ BT_RESULT Gnome::actionButcherAnimal( bool halt )
 			{
 				if ( itemID == "Bone" || itemID == "Skull" )
 				{
-					Global::inv().createItem( m_job->posItemOutput(), itemID, { a->species() + "Bone" } );
+					m_inv->createItem( m_job->posItemOutput(), itemID, { a->species() + "Bone" } );
 				}
 				else
 				{
-					Global::inv().createItem( m_job->posItemOutput(), itemID, { a->species() } );
+					m_inv->createItem( m_job->posItemOutput(), itemID, { a->species() } );
 				}
 			}
 		}
@@ -1948,8 +1948,8 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 
 		for ( auto item : claimedItems() )
 		{
-			Global::inv().pickUpItem( item );
-			Global::inv().destroyObject( item );
+			m_inv->pickUpItem( item );
+			m_inv->destroyObject( item );
 		}
 		clearClaimedItems();
 
@@ -2020,7 +2020,7 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 
 		for ( int i = 0; i < amount; ++i )
 		{
-			Global::inv().createItem( m_position, itemID, { type } );
+			m_inv->createItem( m_position, itemID, { type } );
 		}
 		a->harvest();
 
@@ -2509,7 +2509,7 @@ BT_RESULT Gnome::actionLeaveForMission( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
 
-	Global::w().removeCreatureFromPosition( m_position, m_id );
+	m_world->removeCreatureFromPosition( m_position, m_id );
 	m_goneOffMap = true;
 
 	Mission* mission = Global::em().getMission( m_mission );
@@ -2547,7 +2547,7 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 		qDebug() << "Returning from mission but mission doesn't exist anymore";
 	}
 
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_world->insertCreatureAtPosition( m_position, m_id );
 	m_goneOffMap = false;
 
 	m_mission       = 0;
@@ -2567,18 +2567,18 @@ bool Gnome::equipItem()
 
 	QStringList conc;
 
-	if ( m_position == Global::inv().getItemPos( itemID ) )
+	if ( m_position == m_inv->getItemPos( itemID ) )
 	{
-		Global::inv().pickUpItem( itemID );
-		Global::inv().setInJob( itemID, 0 );
-		Global::inv().setConstructedOrEquipped( itemID, true );
+		m_inv->pickUpItem( itemID );
+		m_inv->setInJob( itemID, 0 );
+		m_inv->setConstructedOrEquipped( itemID, true );
 
 		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
 		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
 
-		QString itemSID          = Global::inv().itemSID( itemID );
-		unsigned int materialUID = Global::inv().materialUID( itemID );
-		QString materialSID      = Global::inv().materialSID( itemID );
+		QString itemSID          = m_inv->itemSID( itemID );
+		unsigned int materialUID = m_inv->materialUID( itemID );
+		QString materialSID      = m_inv->materialSID( itemID );
 
 		auto part = Global::creaturePartLookUp.value( slot );
 
@@ -2586,9 +2586,9 @@ bool Gnome::equipItem()
 		if ( itemSlot.itemID )
 		{
 			qWarning() << "Trying to equip into occupied slot!";
-			Global::inv().putDownItem( itemSlot.itemID, m_position );
-			Global::inv().setInJob( itemSlot.itemID, 0 );
-			Global::inv().setConstructedOrEquipped( itemSlot.itemID, false );
+			m_inv->putDownItem( itemSlot.itemID, m_position );
+			m_inv->setInJob( itemSlot.itemID, 0 );
+			m_inv->setConstructedOrEquipped( itemSlot.itemID, false );
 		}
 		itemSlot.itemID = itemID;
 		itemSlot.item   = itemSID;
@@ -2597,12 +2597,12 @@ bool Gnome::equipItem()
 		if (part == CP_LEFT_HAND_HELD)
 		{
 			equipHand( itemID, "Left" );
-			itemSlot.allMats = Global::inv().allMats( itemID );
+			itemSlot.allMats = m_inv->allMats( itemID );
 		}
 		else if (part == CP_RIGHT_HAND_HELD )
 		{
 			equipHand( itemID, "Right" );
-			itemSlot.allMats = Global::inv().allMats( itemID );
+			itemSlot.allMats = m_inv->allMats( itemID );
 		}
 
 		updateSprite();

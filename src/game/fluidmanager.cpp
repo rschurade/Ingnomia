@@ -20,8 +20,6 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/gnomemanager.h"
-#include "../game/inventory.h"
 #include "../game/mechanismmanager.h"
 #include "../game/world.h"
 #include "../gui/strings.h"
@@ -48,7 +46,7 @@ void NetworkPipe::deserialize( QVariantMap in )
 }
 
 FluidManager::FluidManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 }
 
@@ -112,8 +110,6 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	bool needUpdate = false;
 	QMutexLocker lock( &m_mutex );
 
-	World& world = Global::w();
-
 	QQueue<Position> workQueue;
 
 	// for all outputs
@@ -125,12 +121,12 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		{
 			NetworkPipe& nw = m_allPipes[outPos.toInt()];
 
-			unsigned char fl = world.fluidLevel( nw.pos );
+			unsigned char fl = m_world->fluidLevel( nw.pos );
 
 			if ( nw.level > 0 && fl < 10 )
 			{
 				nw.level -= 1;
-				world.changeFluidLevel( nw.pos, +1 );
+				m_world->changeFluidLevel( nw.pos, +1 );
 			}
 			if ( nw.ins.size() )
 			{
@@ -194,13 +190,13 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 			if ( nw.level < nw.capacity )
 			{
-				if ( Global::mcm().hasPower( inPos ) )
+				if ( m_mechanismManager->hasPower( inPos ) )
 				{
-					unsigned char bfl = world.fluidLevel( inPos.belowOf() );
+					unsigned char bfl = m_world->fluidLevel( inPos.belowOf() );
 					if ( bfl > 0 )
 					{
 						nw.level += 1;
-						world.changeFluidLevel( inPos.belowOf(), -1 );
+						m_world->changeFluidLevel( inPos.belowOf(), -1 );
 					}
 				}
 			}

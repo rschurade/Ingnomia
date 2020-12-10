@@ -21,15 +21,18 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/creaturemanager.h"
-#include "../game/farmingmanager.h"
-#include "../game/gnomemanager.h"
+
 #include "../game/inventory.h"
+#include "../game/stockpilemanager.h"
+#include "../game/farmingmanager.h"
+#include "../game/creaturemanager.h"
+#include "../game/gnomemanager.h"
+
+#include "../game/workshopmanager.h"
+
 #include "../game/job.h"
 #include "../game/pasture.h"
 #include "../game/stockpile.h"
-#include "../game/stockpilemanager.h"
-#include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gui/strings.h"
 
@@ -382,7 +385,7 @@ void Workshop::onTick( quint64 tick )
 					}
 				}
 
-				int existing = Global::inv().itemCountWithInJob( cj.itemSID, materialID );
+				int existing = m_inv->itemCountWithInJob( cj.itemSID, materialID );
 				if ( existing >= cj.numItemsToCraft )
 				{
 					cj.paused = true;
@@ -481,7 +484,7 @@ void Workshop::checkAutoGenerate( CraftJob cj )
 	//int numToBuild = jm.value( "CraftNumberValue" ).toInt();
 	for ( auto ri : reqItems )
 	{
-		int avail = Global::inv().itemCount( ri.itemSID, ri.materialSID );
+		int avail = m_inv->itemCount( ri.itemSID, ri.materialSID );
 		if ( avail >= ri.amount )
 		{
 			continue;
@@ -789,11 +792,11 @@ Job* Workshop::createButcherJob()
 	if ( m_properties.butcherCorpses )
 	{
 		QString itemID = "";
-		if ( Global::inv().itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
+		if ( m_inv->itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
 		{
 			itemID = "AnimalCorpse";
 		}
-		else if ( Global::inv().itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
+		else if ( m_inv->itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
 		{
 			itemID = "GoblinCorpse";
 		}
@@ -851,16 +854,16 @@ Job* Workshop::createFisherJob()
 {
 	Position pos   = m_properties.posIn;
 	int waterLevel = 0;
-	waterLevel += Global::w().fluidLevel( pos );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, 1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, 1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, 1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos );
+	waterLevel += m_world->fluidLevel( pos + Position( 0, -1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( 1, -1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( -1, -1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( 0, 0, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( 1, 0, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( -1, 0, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( 0, 1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( 1, 1, -1 ) );
+	waterLevel += m_world->fluidLevel( pos + Position( -1, 1, -1 ) );
 
 	if ( waterLevel > 40 )
 	{
@@ -879,7 +882,7 @@ Job* Workshop::createFisherJob()
 
 Job* Workshop::createFishButcherJob()
 {
-	if ( Global::inv().itemCount( "Fish", "any" ) == 0 )
+	if ( m_inv->itemCount( "Fish", "any" ) == 0 )
 	{
 		return nullptr;
 	}
@@ -1226,7 +1229,7 @@ unsigned int Workshop::getPossibleStockpile()
 
 	for ( const auto& candidate : candidates )
 	{
-		if ( Global::w().getTileFlag( candidate ) & TileFlag::TF_STOCKPILE )
+		if ( m_world->getTileFlag( candidate ) & TileFlag::TF_STOCKPILE )
 		{
 			spPos       = candidate;
 			isStockpile = true;
@@ -1271,29 +1274,29 @@ bool Workshop::outputTileFree()
 	Position pos = outputPos();
 	//TODO make number configurable
 
-	bool isFree = Global::inv().countItemsAtPos( pos ) < 40;
+	bool isFree = m_inv->countItemsAtPos( pos ) < 40;
 
 	if ( !isFree )
 	{
-		bool alreadySet = Global::w().getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = m_world->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
 
 		if ( !alreadySet )
 		{
 			for ( auto pos : m_tiles )
 			{
-				Global::w().setTileFlag( pos, TileFlag::TF_BLOCKED );
+				m_world->setTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
 		}
 	}
 	else
 	{
-		bool alreadySet = Global::w().getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = m_world->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
 
 		if ( alreadySet )
 		{
 			for ( auto pos : m_tiles )
 			{
-				Global::w().clearTileFlag( pos, TileFlag::TF_BLOCKED );
+				m_world->clearTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
 		}
 	}
@@ -1354,8 +1357,8 @@ void Workshop::setSourceItems( QVariantList items )
 {
 	for ( auto item : items )
 	{
-		Global::inv().pickUpItem( item.toUInt() );
-		Global::inv().setConstructedOrEquipped( item.toUInt(), true );
+		m_inv->pickUpItem( item.toUInt() );
+		m_inv->setConstructedOrEquipped( item.toUInt(), true );
 	}
 	m_properties.sourceItems = items;
 }

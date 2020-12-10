@@ -214,7 +214,7 @@ void Pasture::onTick( quint64 tick )
 {
 	for ( auto field : m_fields )
 	{
-		Tile& tile = Global::w().getTile( field.pos );
+		Tile& tile = m_world->getTile( field.pos );
 		if( GameState::season != 3 )
 		{
 			if ( tile.flags & TileFlag::TF_GRASS )
@@ -430,13 +430,13 @@ Job* Pasture::createJob( QString skillID )
 					for ( auto foodString : m_properties.foodSettings )
 					{
 						auto fsl = foodString.split( "_" );
-						if ( Global::inv().itemCount( fsl[0], fsl[1] ) > 0 )
+						if ( m_inv->itemCount( fsl[0], fsl[1] ) > 0 )
 						{
 							for ( auto& field : m_fields )
 							{
 								if ( field.util && !field.hasJob )
 								{
-									if ( Global::inv().itemSID( field.util ) == "Trough" )
+									if ( m_inv->itemSID( field.util ) == "Trough" )
 									{
 										job = new Job();
 
@@ -575,11 +575,11 @@ Job* Pasture::createJob( QString skillID )
 		{
 			if ( m_properties.harvestHay && GameState::season != 3 )
 			{
-				if ( Global::inv().itemCount( "Hay", "any" ) < (unsigned int)m_properties.maxHay )
+				if ( m_inv->itemCount( "Hay", "any" ) < (unsigned int)m_properties.maxHay )
 				{
 					for ( auto& field : m_fields )
 					{
-						if ( !field.hasJob && Global::w().hasMaxGrass( field.pos ) )
+						if ( !field.hasJob && m_world->hasMaxGrass( field.pos ) )
 						{
 							job = new Job();
 
@@ -609,7 +609,7 @@ Animal* Pasture::checkAnimalOutsidePasture()
 		int posID      = animal->getPos().toInt();
 		if ( !m_fields.contains( posID ) && !m_animalsInJob.contains( id ) && !animal->inJob() )
 		{
-			if ( Global::w().regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
+			if ( m_world->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
 			{
 				return animal;
 			}
@@ -626,7 +626,7 @@ Animal* Pasture::checkAnimalHarvestReady()
 		Animal* animal = Global::cm().animal( id );
 		if ( animal && animal->numProduce() > 0 && !m_animalsInJob.contains( id ) )
 		{
-			if ( Global::w().regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
+			if ( m_world->regionMap().checkConnectedRegions( m_fields.first().pos, animal->getPos() ) )
 			{
 				return animal;
 			}
@@ -642,7 +642,7 @@ bool Pasture::removeTile( Position& pos )
 
 	m_fields.remove( pos.toInt() );
 
-	Global::w().clearTileFlag( pos, TileFlag::TF_PASTURE );
+	m_world->clearTileFlag( pos, TileFlag::TF_PASTURE );
 
 	if ( m_fields.size() )
 	{
@@ -764,7 +764,7 @@ bool Pasture::addUtil( Position pos, unsigned int itemID )
 			pf.util = itemID;
 
 			//if item is trough
-			if ( Global::inv().itemSID( itemID ) == "Trough" )
+			if ( m_inv->itemSID( itemID ) == "Trough" )
 			{
 				m_properties.maxTroughCapacity += 20;
 			}
@@ -788,7 +788,7 @@ bool Pasture::removeUtil( Position pos )
 			pf.util = 0;
 
 			//if item is trough
-			if ( Global::inv().itemSID( itemID ) == "Trough" )
+			if ( m_inv->itemSID( itemID ) == "Trough" )
 			{
 				m_properties.maxTroughCapacity -= 20;
 			}
@@ -829,7 +829,7 @@ Position Pasture::findShed()
 	{
 		if ( field.util )
 		{
-			if ( Global::inv().itemSID( field.util ) == "Shed" )
+			if ( m_inv->itemSID( field.util ) == "Shed" )
 			{
 				return field.pos;
 			}

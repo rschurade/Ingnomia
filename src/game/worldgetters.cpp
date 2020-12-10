@@ -525,7 +525,7 @@ QList<Position> World::connectedNeighbors( Position pos )
 		}
 	}
 
-	Tile& curTile = Global::w().getTile( pos );
+	Tile& curTile = m_world->getTile( pos );
 
 	if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
 	{

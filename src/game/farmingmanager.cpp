@@ -45,23 +45,12 @@ Beehive::Beehive( QVariantMap& in )
 }
 
 FarmingManager::FarmingManager( QObject* parent ) :
-	QObject(parent)
+	ManagerBase(parent)
 {
 }
 
 FarmingManager::~FarmingManager()
 {
-}
-
-void FarmingManager::reset()
-{
-	m_groves.clear();
-	m_allGroveTiles.clear();
-	m_farms.clear();
-	m_allFarmTiles.clear();
-	m_pastures.clear();
-	m_allPastureTiles.clear();
-	m_beehives.clear();
 }
 
 bool FarmingManager::load( QVariantMap vm )
@@ -132,7 +121,7 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 
 		if ( bh.honey >= 1.0 && !bh.hasJob )
 		{
-			Global::jm().addJob( "Harvest", bh.pos, 0, true );
+			m_jobManager->addJob( "Harvest", bh.pos, 0, true );
 		}
 	}
 }
@@ -222,12 +211,11 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 		m_lastAdded = 0;
 	}
 
-	World& world = Global::w();
 	for ( auto p : fields )
 	{
 		if ( p.second )
 		{
-			world.setTileFlag( p.first, TileFlag::TF_GROVE );
+			m_world->setTileFlag( p.first, TileFlag::TF_GROVE );
 		}
 	}
 }
@@ -317,7 +305,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 	{
 		if ( p.second )
 		{
-			Global::w().setTileFlag( p.first, TileFlag::TF_FARM );
+			m_world->setTileFlag( p.first, TileFlag::TF_FARM );
 		}
 	}
 }
@@ -415,7 +403,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 	{
 		if ( p.second )
 		{
-			Global::w().setTileFlag( p.first, TileFlag::TF_PASTURE );
+			m_world->setTileFlag( p.first, TileFlag::TF_PASTURE );
 		}
 	}
 }
@@ -671,7 +659,7 @@ bool FarmingManager::hasPlantTreeJob( Position pos )
 
 bool FarmingManager::addUtil( Position pos, unsigned int itemID )
 {
-	QString itemSID = Global::inv().itemSID( itemID );
+	QString itemSID = m_inv->itemSID( itemID );
 
 	if ( itemSID == "Shed" )
 	{

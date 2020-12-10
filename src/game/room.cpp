@@ -62,7 +62,7 @@ void Room::addTile( Position& pos )
 
 	m_fields.insert( pos.toInt(), rt );
 
-	Global::w().setTileFlag( rt->pos, TileFlag::TF_ROOM );
+	m_world->setTileFlag( rt->pos, TileFlag::TF_ROOM );
 }
 
 Room::Room( QVariantMap vals )
@@ -134,19 +134,19 @@ bool Room::removeTile( Position& pos )
 	}
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
-	Global::w().clearTileFlag( pos, TileFlag::TF_ROOM );
+	m_world->clearTileFlag( pos, TileFlag::TF_ROOM );
 	delete rt;
 
 	if ( itemID )
 	{
-		if ( Global::inv().itemSID( itemID ) == "AlarmBell" )
+		if ( m_inv->itemSID( itemID ) == "AlarmBell" )
 		{
 			bool found = false;
 			for ( auto& f : m_fields )
 			{
 				if ( f->furnitureID )
 				{
-					if ( Global::inv().itemSID( f->furnitureID ) == "AlarmBell" )
+					if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
 					{
 						found = true;
 						break;
@@ -168,10 +168,10 @@ void Room::addFurniture( unsigned int itemUID, Position pos )
 		m_fields[pos.toInt()]->furnitureID = itemUID;
 		if ( itemUID )
 		{
-			Global::inv().setConstructedOrEquipped( itemUID, true );
-			Global::inv().setItemPos( itemUID, pos );
+			m_inv->setConstructedOrEquipped( itemUID, true );
+			m_inv->setItemPos( itemUID, pos );
 		}
-		if ( Global::inv().itemSID( itemUID ) == "AlarmBell" )
+		if ( m_inv->itemSID( itemUID ) == "AlarmBell" )
 		{
 			m_hasAlarmBell = true;
 		}
@@ -188,13 +188,13 @@ void Room::removeFurniture( const Position& pos )
 		rt->furnitureID     = 0;
 		if ( itemID )
 		{
-			if ( Global::inv().itemSID( itemID ) == "AlarmBell" )
+			if ( m_inv->itemSID( itemID ) == "AlarmBell" )
 			{
 				for ( auto& f : m_fields )
 				{
 					if ( f->furnitureID )
 					{
-						if ( Global::inv().itemSID( f->furnitureID ) == "AlarmBell" )
+						if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
 						{
 							return;
 						}
@@ -213,7 +213,7 @@ bool Room::checkRoofed()
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
-		Tile& _tile  = Global::w().getTile( pos );
+		Tile& _tile  = m_world->getTile( pos );
 		if ( !( (bool)( _tile.floorType & FloorType::FT_SOLIDFLOOR ) ) )
 		{
 			roofed = false;
@@ -284,7 +284,7 @@ QList<unsigned int> Room::beds()
 	QList<unsigned int> beds;
 	for ( auto field : m_fields )
 	{
-		if ( Global::inv().isInGroup( "Furniture", "Beds", field->furnitureID ) )
+		if ( m_inv->isInGroup( "Furniture", "Beds", field->furnitureID ) )
 		{
 			beds.append( field->furnitureID );
 		}
@@ -297,7 +297,7 @@ QList<unsigned int> Room::chairs()
 	QList<unsigned int> chairs;
 	for ( auto field : m_fields )
 	{
-		if ( Global::inv().isInGroup( "Furniture", "Chairs", field->furnitureID ) )
+		if ( m_inv->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
 		{
 			chairs.append( field->furnitureID );
 		}
@@ -321,7 +321,7 @@ Position Room::firstBellPos()
 	{
 		if ( f->furnitureID )
 		{
-			if ( Global::inv().itemSID( f->furnitureID ) == "AlarmBell" )
+			if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
 			{
 				return f->pos;
 			}
@@ -337,7 +337,7 @@ QList<Position> Room::allBellPos()
 	{
 		if ( f->furnitureID )
 		{
-			if ( Global::inv().itemSID( f->furnitureID ) == "AlarmBell" )
+			if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
 			{
 				out.append( f->pos );
 			}

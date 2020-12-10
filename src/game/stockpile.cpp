@@ -63,7 +63,7 @@ void Stockpile::addTile( Position& pos )
 
 	m_fields.insert( pos.toInt(), infi );
 
-	Global::w().setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
+	m_world->setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
 }
 
 Stockpile::Stockpile( QVariantMap vals ) :
@@ -109,7 +109,7 @@ Stockpile::Stockpile( QVariantMap vals ) :
 
 		if ( infi->containerID )
 		{
-			infi->requireSame = Global::inv().requireSame( infi->containerID );
+			infi->requireSame = m_inv->requireSame( infi->containerID );
 		}
 
 		m_fields.insert( infi->pos.toInt(), infi );
@@ -316,8 +316,8 @@ unsigned int Stockpile::getJob()
 	{
 		++itemsChecked;
 		unsigned int item   = m_possibleItems.takeFirst();
-		QString itemSID     = Global::inv().itemSID( item );
-		QString materialSID = Global::inv().materialSID( item );
+		QString itemSID     = m_inv->itemSID( item );
+		QString materialSID = m_inv->materialSID( item );
 		bool suspended      = false;
 
 		if ( m_limitWithmaterial )
@@ -335,7 +335,7 @@ unsigned int Stockpile::getJob()
 			}
 		}
 
-		if ( !suspended && !inv.isInJob( item ) && inv.isInStockpile( item ) != m_id && Global::w().regionMap().checkConnectedRegions( m_fields.first()->pos, inv.getItemPos( item ) ) )
+		if ( !suspended && !inv.isInJob( item ) && inv.isInStockpile( item ) != m_id && m_world->regionMap().checkConnectedRegions( m_fields.first()->pos, inv.getItemPos( item ) ) )
 		{
 			m_isFull = true;
 			//loop over all stockpile fields
@@ -534,7 +534,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 							break;
 						}
 
-						if ( !inv.isInJob( nextItem ) && inv.isInStockpile( nextItem ) != m_id && Global::w().regionMap().checkConnectedRegions( infi->pos, inv.getItemPos( nextItem ) ) )
+						if ( !inv.isInJob( nextItem ) && inv.isInStockpile( nextItem ) != m_id && m_world->regionMap().checkConnectedRegions( infi->pos, inv.getItemPos( nextItem ) ) )
 						{
 							job->addItemToHaul( nextItem );
 							infi->reservedItems.insert( nextItem );
@@ -713,7 +713,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 		Job* job = m_jobsOut[jobID];
 		for ( auto itemID : job->itemsToHaul() )
 		{
-			Global::inv().setInJob( itemID, 0 );
+			m_inv->setInJob( itemID, 0 );
 			Position pos = job->pos();
 			if ( m_fields.contains( pos.toInt() ) )
 			{
@@ -721,8 +721,8 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 				m_fields[pos.toInt()]->isFull = false;
 				m_isFull                      = false;
 			}
-			QString itemSID     = Global::inv().itemSID( itemID );
-			QString materialSID = Global::inv().materialSID( itemID );
+			QString itemSID     = m_inv->itemSID( itemID );
+			QString materialSID = m_inv->materialSID( itemID );
 			if ( m_limitWithmaterial )
 			{
 				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[itemSID + materialSID].activateThreshold )
@@ -824,13 +824,13 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 		{
 			field->isFull = false;
 			m_isFull      = false;
-			Global::inv().setInStockpile( item, 0 );
+			m_inv->setInStockpile( item, 0 );
 			if ( field->items.empty() && !field->containerID )
 			{
 				field->stackSize = 1;
 			}
-			QString itemSID     = Global::inv().itemSID( item );
-			QString materialSID = Global::inv().materialSID( item );
+			QString itemSID     = m_inv->itemSID( item );
+			QString materialSID = m_inv->materialSID( item );
 
 			if ( m_limitWithmaterial )
 			{
@@ -988,7 +988,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 
 bool Stockpile::allowedInStockpile( unsigned int itemID )
 {
-	return m_filter.getActiveSimple().contains( Global::inv().combinedID( itemID ) );
+	return m_filter.getActiveSimple().contains( m_inv->combinedID( itemID ) );
 }
 
 Job& Stockpile::getJob( unsigned int jobID )
@@ -1008,7 +1008,7 @@ bool Stockpile::removeTile( Position& pos )
 	// unconstruct container on tile
 	if ( infi->containerID != 0 )
 	{
-		Global::w().deconstruct( infi->pos, infi->pos, false );
+		m_world->deconstruct( infi->pos, infi->pos, false );
 		//inv.setConstructed( infi->containerID, false );
 	}
 
@@ -1027,7 +1027,7 @@ bool Stockpile::removeTile( Position& pos )
 	infi->reservedItems.clear();
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
-	Global::w().clearTileFlag( pos, TileFlag::TF_STOCKPILE );
+	m_world->clearTileFlag( pos, TileFlag::TF_STOCKPILE );
 	delete infi;
 	// if last tile deleted return true
 	if ( m_fields.empty() )

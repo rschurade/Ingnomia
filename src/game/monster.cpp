@@ -67,7 +67,7 @@ Monster::~Monster()
 
 void Monster::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_world->insertCreatureAtPosition( m_position, m_id );
 
 	initTaskMap();
 	loadBehaviorTree( m_btName );
@@ -187,7 +187,7 @@ CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool
 {
 	processCooldowns( tickNumber );
 
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( m_world->fluidLevel( m_position ) );
 
 	if ( m_anatomy.statusChanged() )
 	{
@@ -329,7 +329,7 @@ BT_RESULT Monster::actionGetTarget( bool halt )
 			if ( creature && !creature->isDead() )
 			{
 				auto otherPos = creature->getPos();
-				if ( Global::w().regionMap().checkConnectedRegions( myPos, otherPos ) )
+				if ( m_world->regionMap().checkConnectedRegions( myPos, otherPos ) )
 				{
 					const unsigned int dist = myPos.distSquare( otherPos );
 					if ( dist < minDistance )

@@ -23,7 +23,7 @@
 #include <QJsonDocument>
 
 WorkshopManager::WorkshopManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 }
 

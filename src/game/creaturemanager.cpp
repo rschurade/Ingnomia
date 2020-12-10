@@ -31,7 +31,7 @@
 #include <QElapsedTimer>
 
 CreatureManager::CreatureManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 }
 
@@ -41,6 +41,7 @@ CreatureManager::~CreatureManager()
 
 void CreatureManager::reset()
 {
+	/*
 	m_creatures.clear();
 	m_creaturesByID.clear();
 
@@ -62,7 +63,7 @@ void CreatureManager::reset()
 			m_countPerType.insert( animal, 0 );
 		}
 	}
-
+	*/
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
@@ -91,7 +92,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 				if( creature->type() == CreatureType::ANIMAL )
 				{
 					auto a = dynamic_cast<Animal*>( creature );
-					Global::inv().createItem( a->getPos(), "AnimalCorpse", { a->species() } );
+					m_inv->createItem( a->getPos(), "AnimalCorpse", { a->species() } );
 				}
 				toDestroy.append( creature->id() );
 				break;
@@ -205,7 +206,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 
 		if( creature->hasTransparency() )
 		{
-			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -243,7 +244,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 
 		if( creature->hasTransparency() )
 		{
-			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -314,7 +315,7 @@ void CreatureManager::removeCreature( unsigned int id )
 					if ( a->pastureID() )
 					{
 						qDebug() << "remove animal from pasture";
-						auto pasture = Global::fm().getPasture( a->pastureID() );
+						auto pasture = m_farmingManager->getPasture( a->pastureID() );
 						if ( pasture )
 						{
 							pasture->removeAnimal( a->id() );
@@ -367,7 +368,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 			if ( a && !a->inJob() && !a->isDead() && !a->toDestroy() )
 			{
 				Position targetPos = a->getPos();
-				if ( PathFinder::getInstance().checkConnectedRegions( pos, targetPos ) )
+				if ( m_pf->checkConnectedRegions( pos, targetPos ) )
 				{
 					distanceQueue.put( a, pos.distSquare( targetPos ) );
 				}
@@ -449,7 +450,7 @@ bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
 		auto creature = m_creaturesByID[creatureID];
 		if( creature )
 		{
-			return Global::w().regionMap().checkConnectedRegions( pos, creature->getPos() );
+			return m_world->regionMap().checkConnectedRegions( pos, creature->getPos() );
 		}
 	}
 	return false;

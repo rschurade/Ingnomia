@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 #include "../game/neighbormanager.h"
@@ -122,10 +123,8 @@ struct Mission
 Q_DECLARE_METATYPE( Mission )
 
 
-class EventManager : public QObject
+class EventManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	EventManager( QObject* parent = nullptr );
 	~EventManager();

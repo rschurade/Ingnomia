@@ -238,7 +238,7 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 			/*
 			for( auto& gp : m_globalPlantInfo )
 			{
-				gp.seedCount = Global::inv().itemCount( gp.seedID, gp.materialID );
+				gp.seedCount = m_inv->itemCount( gp.seedID, gp.materialID );
 			}
 			*/
 			m_farmInfo.suspended   = farm->suspended();
@@ -276,7 +276,7 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 			m_pastureInfo.harvest     = past->harvest();
 			m_pastureInfo.harvestHay  = past->harvestHay();
 			m_pastureInfo.hayMax      = past->maxHay();
-			m_pastureInfo.hayCurrent  = Global::inv().itemCount( "Hay", "Grass" );
+			m_pastureInfo.hayCurrent  = m_inv->itemCount( "Hay", "Grass" );
 			m_pastureInfo.foodMax     = past->maxFoodLevel();
 			m_pastureInfo.foodCurrent = past->foodLevel();
 
@@ -297,7 +297,7 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 
 				for( auto food : foods.split( "|" ) )
 				{
-					auto mats = Global::inv().materialsForItem( food, 0 );
+					auto mats = m_inv->materialsForItem( food, 0 );
 
 					for( auto mat : mats )
 					{
@@ -345,7 +345,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 			/*
 			for( auto& gp : m_globalPlantInfo )
 			{
-				gp.seedCount = Global::inv().itemCount( gp.seedID, gp.materialID );
+				gp.seedCount = m_inv->itemCount( gp.seedID, gp.materialID );
 			}
 			*/
 			m_groveInfo.suspended   = grove->suspended();
@@ -524,10 +524,10 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.plantID    = m_farmInfo.plantType;
 						gp.seedID     = plantRow.value( "SeedItemID" ).toString();
 						gp.materialID = plantRow.value( "Material" ).toString();
-						gp.seedCount  = Global::inv().itemCount( gp.seedID, gp.materialID );
+						gp.seedCount  = m_inv->itemCount( gp.seedID, gp.materialID );
 
 						gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", m_farmInfo.plantType ).toString();
-						gp.itemCount     = Global::inv().itemCount( gp.plantID, gp.materialID );
+						gp.itemCount     = m_inv->itemCount( gp.plantID, gp.materialID );
 
 						gp.name = S::s( "$MaterialName_" + gp.materialID );
 
@@ -605,10 +605,10 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.plantID    = m_groveInfo.treeType;
 						gp.seedID     = plantRow.value( "SeedItemID" ).toString();
 						gp.materialID = plantRow.value( "Material" ).toString();
-						gp.seedCount  = Global::inv().itemCount( gp.seedID, gp.materialID );
+						gp.seedCount  = m_inv->itemCount( gp.seedID, gp.materialID );
 
 						gp.harvestedItem = DB::select( "ItemID", "Plants_OnHarvest_HarvestedItem", m_groveInfo.treeType ).toString();
-						gp.itemCount     = Global::inv().itemCount( gp.harvestedItem, gp.materialID );
+						gp.itemCount     = m_inv->itemCount( gp.harvestedItem, gp.materialID );
 
 						gp.name     = S::s( "$MaterialName_" + gp.materialID );
 

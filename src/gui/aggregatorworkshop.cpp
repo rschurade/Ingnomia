@@ -36,7 +36,7 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
 	materials.clear();
 
-	auto mats = Global::inv().materialCountsForItem( sid );
+	auto mats = m_inv->materialCountsForItem( sid );
 
 	auto allowedMats = Util::possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
 	if ( !allowedMats.isEmpty() )
@@ -550,7 +550,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					QList<unsigned int> allItemsToSell;
 					for( auto& item : m_playerStock )
 					{
-						auto sellItems = Global::inv().tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
+						auto sellItems = m_inv->tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
 
 						if( sellItems.size() >= item.reserved )
 						{
@@ -569,14 +569,14 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					int currentValue = 0;
 					for( auto itemID : allItemsToSell )
 					{
-						currentValue += Global::inv().value( itemID );
+						currentValue += m_inv->value( itemID );
 					}
 					if( currentValue >= m_traderOfferValue )
 					{
 						for( auto itemID : allItemsToSell )
 						{
-							Global::inv().pickUpItem( itemID );
-							Global::inv().destroyObject( itemID );
+							m_inv->pickUpItem( itemID );
+							m_inv->destroyObject( itemID );
 						}
 						updatePlayerStock( workshopID );
 
@@ -596,7 +596,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							{
 								for( int i = 0; i < item.reserved; ++i )
 								{
-									Global::inv().createItem( workshop->outputPos(), item.itemSID, item.materialSID );
+									m_inv->createItem( workshop->outputPos(), item.itemSID, item.materialSID );
 								}
 							}
 							item.amount = qMax( 0, item.amount - item.reserved );

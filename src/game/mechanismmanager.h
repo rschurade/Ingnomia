@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/position.h"
 #include "../base/tile.h"
 #include "../game/job.h"
@@ -80,10 +81,8 @@ struct MechanismNetwork
 	QSet<unsigned int> consumers;
 };
 
-class MechanismManager : public QObject
+class MechanismManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	MechanismManager( QObject* parent = nullptr );
 	~MechanismManager();

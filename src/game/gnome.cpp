@@ -123,15 +123,15 @@ Gnome::Gnome( QVariantMap& in ) :
 	// TODO update carried counts from inventory
 	for ( auto item : m_inventoryItems )
 	{
-		if ( Global::inv().itemSID( item ) == "Bandage" )
+		if ( m_inv->itemSID( item ) == "Bandage" )
 		{
 			++m_carriedBandages;
 		}
-		else if ( Global::inv().nutritionalValue( item ) > 0 )
+		else if ( m_inv->nutritionalValue( item ) > 0 )
 		{
 			++m_carriedFood;
 		}
-		else if ( Global::inv().drinkValue( item ) > 0 )
+		else if ( m_inv->drinkValue( item ) > 0 )
 		{
 			++m_carriedDrinks;
 		}
@@ -193,7 +193,7 @@ Gnome::~Gnome()
 
 void Gnome::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_world->insertCreatureAtPosition( m_position, m_id );
 
 	updateSprite();
 	initTaskMap();
@@ -328,7 +328,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.head.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.head.itemID );
+						bs += m_inv->itemGroup( m_equipment.head.itemID );
 						bs += "HeadArmor";
 						hairConcealed = true;
 						pm.insert( "Material", m_equipment.head.material );
@@ -338,7 +338,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.chest.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.chest.itemID );
+						bs += m_inv->itemGroup( m_equipment.chest.itemID );
 						bs += "ChestArmor";
 						pm.insert( "Material", m_equipment.chest.material );
 					}
@@ -347,7 +347,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
+						bs += m_inv->itemGroup( m_equipment.arm.itemID );
 						bs += "LeftArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -356,7 +356,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
+						bs += m_inv->itemGroup( m_equipment.arm.itemID );
 						bs += "RightArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -365,7 +365,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
+						bs += m_inv->itemGroup( m_equipment.hand.itemID );
 						bs += "LeftHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -374,7 +374,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
+						bs += m_inv->itemGroup( m_equipment.hand.itemID );
 						bs += "RightHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -383,7 +383,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
+						bs += m_inv->itemGroup( m_equipment.foot.itemID );
 						bs += "LeftFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -392,7 +392,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
+						bs += m_inv->itemGroup( m_equipment.foot.itemID );
 						bs += "RightFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -708,7 +708,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::NOFLOOR;
 	}
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( m_world->fluidLevel( m_position ) );
 	if ( m_anatomy.statusChanged() )
 	{
 		auto status = m_anatomy.status();
@@ -742,10 +742,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().itemSID( item ) == "Bandage" )
+				if ( m_inv->itemSID( item ) == "Bandage" )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					m_inv->setInJob( item, 0 );
+					m_inv->putDownItem( item, m_position );
 					--m_carriedBandages;
 				}
 				else
@@ -768,10 +768,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().nutritionalValue( item ) > 0 )
+				if ( m_inv->nutritionalValue( item ) > 0 )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					m_inv->setInJob( item, 0 );
+					m_inv->putDownItem( item, m_position );
 					--m_carriedFood;
 				}
 				else
@@ -794,10 +794,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().drinkValue( item ) > 0 )
+				if ( m_inv->drinkValue( item ) > 0 )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					m_inv->setInJob( item, 0 );
+					m_inv->putDownItem( item, m_position );
 					--m_carriedDrinks;
 				}
 				else
@@ -881,7 +881,7 @@ void Gnome::die()
 
 bool Gnome::checkFloor()
 {
-	FloorType ft = Global::w().floorType( m_position );
+	FloorType ft = m_world->floorType( m_position );
 	if ( ft == FloorType::FT_NOFLOOR )
 	{
 		if ( m_job )
@@ -891,7 +891,7 @@ bool Gnome::checkFloor()
 
 		Position oneDown( m_position.x, m_position.y, m_position.z - 1 );
 		forceMove( oneDown );
-		Global::w().discover( oneDown );
+		m_world->discover( oneDown );
 		return true;
 	}
 	return false;

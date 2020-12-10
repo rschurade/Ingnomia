@@ -42,13 +42,15 @@ class NeighborManager;
 class MilitaryManager;
 
 class PathFinder;
+class SpriteFactory;
+class World;
 
 class Game : public QObject
 {
 	Q_OBJECT
 
 public:
-	Game( World* world, QObject* parent );
+	Game( SpriteFactory* spriteFactory, World* world, QObject* parent );
 	virtual ~Game();
 
 	void save();
@@ -64,7 +66,7 @@ public:
 private:
 	World* m_world = nullptr;
 	PathFinder* m_pathFinder = nullptr;
-
+	SpriteFactory* m_sf = nullptr;
 
 	QTimer* m_timer = nullptr;
 
@@ -86,7 +88,7 @@ private:
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
 
 	Inventory* m_inventory = nullptr;
-	ItemHistory* m_itemHistory = nullptr;
+	
 	JobManager* m_jobManager = nullptr;
 	StockpileManager* m_stockpileManager = nullptr;
 	FarmingManager* m_farmingManager = nullptr;

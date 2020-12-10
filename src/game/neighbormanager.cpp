@@ -25,7 +25,7 @@
 #include <QDebug>
 
 NeighborManager::NeighborManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 }
 

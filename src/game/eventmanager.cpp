@@ -28,7 +28,6 @@
 #include "../game/gnomemanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
-#include "../game/world.h"
 
 #include <QDebug>
 
@@ -88,7 +87,7 @@ Mission::Mission( QVariantMap in )
 }
 
 EventManager::EventManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 	m_string2type.insert( "EventTrader", (int)EventType::TRADER );
 	m_string2type.insert( "EventMigration", (int)EventType::MIGRATION );
@@ -265,7 +264,7 @@ bool EventManager::checkRequirements( Event& event )
 		case EventRequire::FREEMARKETSTALL:
 		{
 			unsigned int marketStall = 0;
-			for ( auto ws : Global::wsm().workshops() )
+			for ( auto ws : m_workshopManager->workshops() )
 			{
 				if ( ws->type() == "MarketStall" )
 				{
@@ -338,7 +337,7 @@ void EventManager::spawnGnome( Position location, int amount )
 {
 	for ( int i = 0; i < amount; ++i )
 	{
-		Global::gm().addGnome( location );
+		m_gnomeManager->addGnome( location );
 	}
 }
 
@@ -347,13 +346,13 @@ void EventManager::spawnInvasion( Position location, int amount, QVariantMap dat
 	QString type = data.value( "Species" ).toString();
 	for ( int i = 0; i < amount; ++i )
 	{
-		Global::cm().addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
+		m_creatureManager->addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
 	}
 }
 
 void EventManager::spawnTrader( Position location, unsigned int marketStall, QVariantMap data )
 {
-	auto ws = Global::wsm().workshop( marketStall );
+	auto ws = m_workshopManager->workshop( marketStall );
 	// spawn trader"
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
 	QString type;
@@ -386,7 +385,7 @@ void EventManager::spawnTrader( Position location, unsigned int marketStall, QVa
 		}
 		break;
 	}
-	unsigned int id = Global::gm().addTrader( location, ws->id(), type );
+	unsigned int id = m_gnomeManager->addTrader( location, ws->id(), type );
 	ws->assignGnome( id );
 }
 
@@ -622,12 +621,12 @@ void EventManager::startMission( MissionType type, MissionAction action, unsigne
 	mission.step = MissionStep::LEAVE_MAP;
 	mission.target = targetKingdom;
 	mission.action = action;
-	mission.distance = Global::nm().distance( mission.target );
+	mission.distance = m_neighborManager->distance( mission.target );
 	mission.gnomes = { gnomeID };
 	mission.startTick = GameState::tick;
 	mission.nextCheckTick = GameState::tick + Util::ticksPerDay;
 
-	Global::em().addMission( mission );
+	addMission( mission );
 
-	Global::gm().setInMission( gnomeID, mission.id );
+	m_gnomeManager->setInMission( gnomeID, mission.id );
 }

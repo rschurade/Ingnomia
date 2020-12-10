@@ -36,9 +36,9 @@
 #include <QJsonValue>
 
 Inventory::Inventory( QObject* parent ) :
-	QObject(parent)
+	ManagerBase( parent )
 {
-	//init();
+	m_itemHistory = new ItemHistory( this );
 }
 
 Inventory::~Inventory()
@@ -125,37 +125,6 @@ void Inventory::init()
 	}
 }
 
-void Inventory::reset()
-{
-	m_items.clear();
-	m_positionHash.clear();
-	m_hash.clear();
-	m_foodItems.clear();
-	m_drinkItems.clear();
-
-	m_categoriesSorted.clear();
-	m_groupsSorted.clear();
-	m_itemsSorted.clear();
-
-	m_materialsInTypes.clear();
-	m_foodItemLookup.clear();
-	m_drinkItemLookup.clear();
-
-	for ( auto item : m_octrees.keys() )
-	{
-		for ( auto material : m_octrees[item].keys() )
-		{
-			delete m_octrees[item][material];
-		}
-	}
-
-	m_octrees.clear();
-
-	m_wealth = 0;
-
-	init();
-}
-
 void Inventory::saveFilter()
 {
 	QVariantList filter;
@@ -213,7 +182,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 	QMutexLocker ml( &m_mutex );
 
 	Item obj( pos, itemSID, materialSID );
-	Sprite* sprite = Global::sf().createSprite( itemSID, { materialSID } );
+	Sprite* sprite = m_sf->createSprite( itemSID, { materialSID } );
 	if ( sprite )
 	{
 		obj.setSpriteID( sprite->uID );
@@ -275,7 +244,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 		}
 
 		// create combined sprite
-		Sprite* sprite = Global::sf().createSprite( itemSID, materialSIDs );
+		Sprite* sprite = m_sf->createSprite( itemSID, materialSIDs );
 		if ( sprite )
 		{
 			obj.setSpriteID( sprite->uID );
@@ -315,7 +284,7 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	Sprite* sprite = nullptr;
 	if ( obj.components().isEmpty() )
 	{
-		sprite = Global::sf().createSprite( baseItem, { material } );
+		sprite = m_sf->createSprite( baseItem, { material } );
 	}
 	else
 	{
@@ -325,7 +294,7 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 			materialSIDs.push_back( DBH::materialSID( comp.materialUID ) );
 		}
 		// create combined sprite
-		sprite = Global::sf().createSprite( baseItem, materialSIDs );
+		sprite = m_sf->createSprite( baseItem, materialSIDs );
 	}
 	if ( sprite )
 	{
@@ -381,7 +350,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 		if ( !item->isConstructedOrEquipped() && !item->isInContainer() )
 		{
-			Global::w().setItemSprite( item->getPos(), object.spriteID() );
+			m_world->setItemSprite( item->getPos(), object.spriteID() );
 		}
 
 		if ( item->isConstructedOrEquipped() || item->isInStockpile() )
@@ -410,7 +379,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		Config::getInstance().set( "updateItemFilter", true );
 	}
 
-	Global::ih().plusItem( itemID, materialID );
+	m_itemHistory->plusItem( itemID, materialID );
 
 	m_itemsChanged = true;
 
@@ -454,7 +423,7 @@ void Inventory::destroyObject( unsigned int id )
 			// finally remove object
 			m_items.remove( id );
 
-			Global::ih().minusItem( itemSID, materialSID );
+			m_itemHistory->minusItem( itemSID, materialSID );
 		}
 
 		//DB::destroyItem( id );
@@ -554,7 +523,7 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 
 		if ( item && ( allowInStockpile || !item->isInStockpile() ) && !item->isInJob() && !item->isConstructedOrEquipped() )
 		{
-			if ( Global::w().regionMap().checkConnectedRegions( pos, item->getPos() ) && Global::w().fluidLevel( item->getPos() ) < 6 )
+			if ( m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && m_world->fluidLevel( item->getPos() ) < 6 )
 			{
 				++thisCount;
 			}
@@ -648,7 +617,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 
 		if ( item && ( allowInStockpile || !item->isInStockpile() ) && !item->isInJob() && !item->isConstructedOrEquipped() )
 		{
-			if ( Global::w().regionMap().checkConnectedRegions( pos, item->getPos() ) && Global::w().fluidLevel( item->getPos() ) < 6 )
+			if ( m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && m_world->fluidLevel( item->getPos() ) < 6 )
 			{
 				out.append( itemID );
 				if ( out.size() == count )
@@ -744,7 +713,7 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 				else
 				{
 					// item is in stockpile so we need to check if we can pull from stockpiles and if the source stockpile allows it
-					if ( allowInStockpile && Global::spm().hasPriority( stockpileID, item->isInStockpile() ) && Global::spm().allowsPull( item->isInStockpile() ) )
+					if ( allowInStockpile && m_spm->hasPriority( stockpileID, item->isInStockpile() ) && m_spm->allowsPull( item->isInStockpile() ) )
 					{
 						out.append( itemID );
 					}
@@ -854,7 +823,7 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 		unsigned int stockpileID = item->isInStockpile();
 		if ( stockpileID )
 		{
-			Global::spm().removeItem( stockpileID, item->getPos(), id );
+			m_spm->removeItem( stockpileID, item->getPos(), id );
 			item->setInStockpile( 0 );
 			removeFromWealth( item );
 		}
@@ -905,11 +874,11 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 		auto nextItem           = getItem( nextItemID );
 		if ( nextItem )
 		{
-			Global::w().setItemSprite( pos, nextItem->spriteID() );
+			m_world->setItemSprite( pos, nextItem->spriteID() );
 		}
 		else
 		{
-			Global::w().setItemSprite( pos, 0 );
+			m_world->setItemSprite( pos, 0 );
 		}
 		return id;
 	}
@@ -971,11 +940,11 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 		auto nextItem           = getItem( nextItemID );
 		if ( nextItem )
 		{
-			Global::w().setItemSprite( newPos, nextItem->spriteID() );
+			m_world->setItemSprite( newPos, nextItem->spriteID() );
 		}
 		else
 		{
-			Global::w().setItemSprite( newPos, 0 );
+			m_world->setItemSprite( newPos, 0 );
 		}
 		return id;
 	}
@@ -1507,11 +1476,11 @@ void Inventory::putItemInContainer( unsigned int id, unsigned int containerID )
 		auto nextItem           = getItem( nextItemID );
 		if ( nextItem )
 		{
-			Global::w().setItemSprite( container->getPos(), nextItem->spriteID() );
+			m_world->setItemSprite( container->getPos(), nextItem->spriteID() );
 		}
 		else
 		{
-			Global::w().setItemSprite( container->getPos(), 0 );
+			m_world->setItemSprite( container->getPos(), 0 );
 		}
 	}
 }
@@ -1530,7 +1499,7 @@ void Inventory::removeItemFromContainer( unsigned int id )
 			container->removeItem( id );
 			if ( container->isConstructedOrEquipped() )
 			{
-				Global::spm().setInfiNotFull( container->getPos() );
+				m_spm->setInfiNotFull( container->getPos() );
 			}
 		}
 	}
@@ -1794,12 +1763,12 @@ bool Inventory::isSameTypeAndMaterial( unsigned int id, unsigned int id2 )
 
 void Inventory::gravity( Position pos )
 {
-	if ( !Global::w().isSolidFloor( pos ) )
+	if ( !m_world->isSolidFloor( pos ) )
 	{
 		if ( m_positionHash.contains( pos.toInt() ) )
 		{
 			Position newPos = pos;
-			Global::w().getFloorLevelBelow( newPos, false );
+			m_world->getFloorLevelBelow( newPos, false );
 			if( newPos == pos )
 			{
 				return;

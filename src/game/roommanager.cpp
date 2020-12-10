@@ -28,7 +28,7 @@
 #include <QDebug>
 
 RoomManager::RoomManager( QObject* parent ) :
-	QObject( parent )
+	ManagerBase( parent )
 {
 	m_errorDoor.name = "Error Door";
 }
@@ -107,8 +107,8 @@ void RoomManager::addNoPass( Position firstClick, QList<QPair<Position, bool>> f
 	{
 		if ( p.second )
 		{
-			Global::w().setTileFlag( p.first, TileFlag::TF_NOPASS );
-			Global::w().regionMap().updatePosition( p.first );
+			m_world->setTileFlag( p.first, TileFlag::TF_NOPASS );
+			m_world->regionMap().updatePosition( p.first );
 		}
 	}
 }
@@ -121,7 +121,7 @@ void RoomManager::load( QVariantMap vals )
 		auto sfm = sf.toMap();
 		m_allRoomTiles.insert( Position( sfm.value( "Pos" ) ).toInt(), sp.id() );
 		auto furID = sfm.value( "FurID" ).toUInt();
-		if ( Global::inv().itemSID( furID ) == "AlarmBell" )
+		if ( m_inv->itemSID( furID ) == "AlarmBell" )
 		{
 			sp.setHasAlarmBell( true );
 		}
@@ -226,15 +226,15 @@ void RoomManager::loadDoor( QVariantMap vm )
 	door.blockMonsters = vm.value( "BlockMonsters" ).toBool();
 	m_doors.insert( door.pos.toInt(), door );
 
-	Global::w().getTile( door.pos ).wallSpriteUID = Global::inv().spriteID( door.itemUID );
-	unsigned int nextItem                         = Global::inv().getFirstObjectAtPosition( door.pos );
+	m_world->getTile( door.pos ).wallSpriteUID = m_inv->spriteID( door.itemUID );
+	unsigned int nextItem                         = m_inv->getFirstObjectAtPosition( door.pos );
 	if ( nextItem )
 	{
-		Global::w().setItemSprite( door.pos, Global::inv().spriteID( nextItem ) );
+		m_world->setItemSprite( door.pos, m_inv->spriteID( nextItem ) );
 	}
 	else
 	{
-		Global::w().setItemSprite( door.pos, 0 );
+		m_world->setItemSprite( door.pos, 0 );
 	}
 }
 
@@ -364,7 +364,7 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 				return false;
 			}
 
-			if ( Global::jm().addJob( "SoundAlarm", pos, 0 ) )
+			if ( m_jobManager->addJob( "SoundAlarm", pos, 0 ) )
 			{
 				return true;
 			}
@@ -389,7 +389,7 @@ bool RoomManager::cancelAlarmJob( unsigned int roomID )
 
 			for ( auto pos : posList )
 			{
-				Global::jm().cancelJob( pos );
+				m_jobManager->cancelJob( pos );
 			}
 		}
 	}

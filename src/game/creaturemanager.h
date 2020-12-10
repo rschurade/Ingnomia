@@ -17,14 +17,12 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../game/animal.h"
 #include "../game/monster.h"
 
-#include <QObject>
-
-class CreatureManager : public QObject
+class CreatureManager : public ManagerBase
 {
-	Q_OBJECT
 
 public:
 	CreatureManager( QObject* parent = nullptr );

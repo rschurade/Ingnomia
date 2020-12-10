@@ -53,12 +53,16 @@
 
 #include <time.h>
 
-Game::Game( World* world, QObject* parent ) :
+Game::Game( SpriteFactory* spriteFactory, World* world, QObject* parent ) :
+	m_sf( spriteFactory ),
 	m_world( world ),
 	QObject( parent )
 {
 	qDebug() << "init game...";
 
+	m_pathFinder		= new PathFinder( m_world, this );
+
+	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
 
 	m_millisecondsSlow = DB::select( "Value_", "Time", "MillisecondsSlow" ).toInt();
@@ -83,23 +87,73 @@ Game::Game( World* world, QObject* parent ) :
 	{
 		GameState::techs.insert( t, 1 );
 	}
+#pragma endregion
+	
 	
 	m_inventory			= new Inventory( this );
-	m_itemHistory		= new ItemHistory( this );
-	m_jobManager		= new JobManager( this );
+	
 	m_stockpileManager	= new StockpileManager( this );
 	m_farmingManager	= new FarmingManager( this );
 	m_workshopManager	= new WorkshopManager( this );
 	m_roomManager		= new RoomManager( this );
-	m_gnomeManager		= new GnomeManager( this );
+
+	m_jobManager		= new JobManager( this );
+	
 	m_creatureManager	= new CreatureManager( this );
-	m_eventManager		= new EventManager( this );
-	m_mechanismManager	= new MechanismManager( this );
-	m_fluidManager		= new FluidManager( this );
-	m_neighborManager	= new NeighborManager( this );
+	m_gnomeManager		= new GnomeManager( this );
 	m_militaryManager	= new MilitaryManager( this );
 
-	m_pathFinder		= new PathFinder( m_world, this );
+	m_mechanismManager	= new MechanismManager( this );
+	m_fluidManager		= new FluidManager( this );
+	
+	m_neighborManager	= new NeighborManager( this );
+	m_eventManager		= new EventManager( this );
+
+	m_inventory->setStockpileManager( m_stockpileManager );
+	m_stockpileManager->setInventory( m_inventory );
+
+	m_farmingManager->setWorld( world );
+	m_farmingManager->setInventory( m_inventory );
+	m_farmingManager->setJobManager( m_jobManager );
+
+	//m_workshopManager->
+
+	m_roomManager->setWorld( world );
+	m_roomManager->setInventory( m_inventory );
+	m_roomManager->setJobManager( m_jobManager );
+
+	m_jobManager->setInventory( m_inventory );
+	m_jobManager->setFarmingManager( m_farmingManager );
+	m_jobManager->setWorkshopManager( m_workshopManager );
+	m_jobManager->setMechanismManager( m_mechanismManager );
+	m_jobManager->setGnomeManager( m_gnomeManager );
+	m_jobManager->setStockpileManager( m_stockpileManager );
+	m_jobManager->setSpriteFactory( m_sf );
+
+	m_creatureManager->setWorld( world );
+	m_creatureManager->setInventory( m_inventory );
+	m_creatureManager->setFarmingManager( m_farmingManager );
+	m_creatureManager->setPathFinder( m_pathFinder );
+
+	m_gnomeManager->setWorld( world );
+
+	m_militaryManager->setInventory( m_inventory );
+	m_militaryManager->setCreaturemanager( m_creatureManager );
+
+	m_mechanismManager->setWorld( world );
+	m_mechanismManager->setInventory( m_inventory );
+	m_mechanismManager->setGnomeManager( m_gnomeManager );
+	m_mechanismManager->setSpriteFactory( m_sf );
+
+	m_fluidManager->setWorld( world );
+	m_fluidManager->setMechanismManager( m_mechanismManager );
+
+	m_neighborManager->setEventManager( m_eventManager );
+
+	m_eventManager->setCreaturemanager( m_creatureManager );
+	m_eventManager->setGnomeManager( m_gnomeManager );
+	m_eventManager->setWorkshopManager( m_workshopManager );
+	m_eventManager->setNeighborManager( m_neighborManager );
 
 	qDebug() << "init game done";
 }
@@ -172,7 +226,7 @@ void Game::loop()
 		m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_workshopManager->onTick( GameState::tick );
 		m_roomManager->onTick( GameState::tick );
-		m_itemHistory->onTick( GameState::dayChanged );
+		m_inventory->itemHistory()->onTick( GameState::dayChanged );
 		m_eventManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );

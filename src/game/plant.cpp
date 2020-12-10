@@ -252,7 +252,7 @@ OnTickReturn Plant::liveOneTick( bool dayChanged, bool seasonChanged )
 		switch ( m_growLight )
 		{
 			case GrowLight::SUN:
-				if ( GameState::daylight && Global::w().hasSunlight( m_position ) )
+				if ( GameState::daylight && m_world->hasSunlight( m_position ) )
 					--m_ticksToNextState;
 				break;
 			case GrowLight::DARK:
@@ -312,7 +312,7 @@ void Plant::updateState()
 		if ( !m_isMulti )
 		{
 			m_sprite = Global::sf().createSprite( spriteID, { DB::select( "Material", "Plants", m_plantID ).toString() } );
-			Global::w().setWallSprite( m_position, m_sprite->uID );
+			m_world->setWallSprite( m_position, m_sprite->uID );
 		}
 		else
 		{
@@ -385,7 +385,7 @@ bool Plant::fell()
 				int randVal = ( rand() % random ) + 1;
 				for ( int i = 0; i < randVal; ++i )
 				{
-					Global::inv().createItem( m_position, itemID, materialID );
+					m_inv->createItem( m_position, itemID, materialID );
 				}
 				continue;
 			}
@@ -416,18 +416,18 @@ bool Plant::fell()
 
 							if ( newPos.x == 0 || newPos.x == Global::dimX - 1 || newPos.y == 0 || newPos.y == Global::dimX - 1 )
 							{
-								Global::inv().createItem( m_position, itemID, materialID );
+								m_inv->createItem( m_position, itemID, materialID );
 							}
 							else
 							{
 								world.getFloorLevelBelow( newPos, false );
-								Global::inv().createItem( newPos, itemID, materialID );
+								m_inv->createItem( newPos, itemID, materialID );
 							}
 						}
 					}
 					else
 					{
-						Global::inv().createItem( m_position, itemID, materialID );
+						m_inv->createItem( m_position, itemID, materialID );
 					}
 				}
 			}
@@ -454,12 +454,12 @@ bool Plant::harvest( Position& pos )
 				int ra       = rand() % 100;
 				if ( chance * 100 <= ra )
 				{
-					Global::inv().createItem( pos, itemID, materialID );
+					m_inv->createItem( pos, itemID, materialID );
 				}
 			}
 			else
 			{
-				Global::inv().createItem( pos, itemID, materialID );
+				m_inv->createItem( pos, itemID, materialID );
 			}
 		}
 		QString action = row.value( "Action" ).toString();
@@ -509,15 +509,15 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 	SpriteFactory& sf = Global::sf();
 
 	Position extractPos = m_position.eastOf();
-	if ( !Global::w().isWalkable( extractPos ) )
+	if ( !m_world->isWalkable( extractPos ) )
 	{
 		extractPos = m_position.southOf();
 
-		if ( !Global::w().isWalkable( extractPos ) )
+		if ( !m_world->isWalkable( extractPos ) )
 		{
 			extractPos = m_position.westOf();
 
-			if ( !Global::w().isWalkable( extractPos ) )
+			if ( !m_world->isWalkable( extractPos ) )
 			{
 				extractPos = m_position.northOf();
 			}
@@ -565,7 +565,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 
 			Global::gm().forceMoveGnomes( pos, extractPos );
 			Global::cm().forceMoveAnimals( pos, extractPos );
-			Global::w().expelTileItems( pos, extractPos );
+			m_world->expelTileItems( pos, extractPos );
 			if ( m_isTree )
 			{
 				world.setTileFlag( pos, TileFlag::TF_SUNLIGHT );

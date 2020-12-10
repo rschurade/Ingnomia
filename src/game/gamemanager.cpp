@@ -157,7 +157,7 @@ void GameManager::init()
 		abort();
 	}
 
-	if ( !Global::sf().init() )
+	if ( !m_sf->init() )
 	{
 		qDebug() << "Failed to init SpriteFactory.";
 		abort();
@@ -218,7 +218,7 @@ void GameManager::createNewGame()
 	connect( &wg, &WorldGenerator::signalStatus, this, &GameManager::onGeneratorMessage );
 	World* world = wg.generate();
 
-	m_game = new Game( world, this );
+	m_game = new Game( m_sf, world, this );
 
 	GameState::peaceful = m_newGameSettings->isPeaceful();
 
@@ -238,9 +238,7 @@ void GameManager::createNewGame()
 	qRegisterMetaType<QSet<unsigned int>>();
 	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
 	connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
-
 	connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
-
 	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
 

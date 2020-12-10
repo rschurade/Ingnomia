@@ -38,7 +38,7 @@
 
 JobManager::JobManager( QObject* parent ) :
 	m_startIndex( 0 ),
-	QObject( parent )
+	ManagerBase( parent )
 {
 }
 
@@ -124,7 +124,6 @@ void JobManager::onTick()
 	QElapsedTimer timer;
 	timer.start();
 
-	Inventory& inv     = Global::inv();
 	unsigned int jobID = 0;
 
 	QMutexLocker lock( &m_mutex );
@@ -179,7 +178,7 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 		bool found = false;
 		for ( auto pos : job.possibleWorkPositions() )
 		{
-			if ( Global::inv().checkReachableItems( pos, true, rim.count, rim.itemSID, rim.materialSID ) )
+			if ( m_inv->checkReachableItems( pos, true, rim.count, rim.itemSID, rim.materialSID ) )
 			{
 				found         = true;
 				rim.available = true;
@@ -195,7 +194,7 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 			if( Global::craftable.contains( rim.itemSID ) )
 			{
 				// create craft job
-				Global::wsm().autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
+				m_workshopManager->autoGenCraftJob( rim.itemSID, rim.materialSID, rim.count );
 			}
 		}
 	}
@@ -216,7 +215,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 		{
 			Position offset( spos );
 			Position testPos( pos + offset );
-			if ( Global::w().isWalkableGnome( testPos ) )
+			if ( m_world->isWalkableGnome( testPos ) )
 			{
 				job.addPossibleWorkPosition( testPos );
 			}
@@ -240,7 +239,7 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 		return true;
 	}
 
-	QMap<QString, int> mc = Global::inv().materialCountsForItem( rt.type, false );
+	QMap<QString, int> mc = m_inv->materialCountsForItem( rt.type, false );
 	QStringList keys      = mc.keys();
 
 	for ( auto key : keys )
@@ -319,7 +318,7 @@ void JobManager::addLoadedJob( QVariant vals )
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
 {
 	//qDebug() << "jobManager() addJob simple" << type << pos.toString();
-	if ( Global::w().hasJob( pos ) )
+	if ( m_world->hasJob( pos ) )
 	{
 		return 0;
 	}
@@ -427,11 +426,11 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 					// not used right now
 				}
 				//qDebug() << "require item " << itemID << materials[cID];
-				int itemCount = Global::inv().itemCount( itemID, materials[cID] );
+				int itemCount = m_inv->itemCount( itemID, materials[cID] );
 				if ( itemCount - amount < 0 )
 				{
 					//qDebug() << "require " << amount << " items " << itemID << materials[cID] << " there are " << itemCount << " in the world";
-					Global::wsm().autoGenCraftJob( itemID, materials[cID], amount - itemCount );
+					m_workshopManager->autoGenCraftJob( itemID, materials[cID], amount - itemCount );
 				}
 
 				job.addRequiredItem( amount, itemID, materials[cID], comp.value( "MaterialTypes" ).toStringList() );
@@ -504,7 +503,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		{
 			case SK_Hauling:
 			{
-				jobID = Global::spm().getJob();
+				jobID = m_spm->getJob();
 				{
 					if ( jobID )
 					{
@@ -518,7 +517,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 			case SK_Horticulture:
 			case SK_Woodcutting:
 			{
-				jobID = Global::fm().getJob( gnomeID, { skillID } );
+				jobID = m_farmingManager->getJob( gnomeID, { skillID } );
 				{
 					if ( jobID )
 					{
@@ -529,12 +528,12 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 			break;
 			case SK_Machining:
 			{
-				jobID = Global::gm().getJob( gnomeID, skillID );
+				jobID = m_gnomeManager->getJob( gnomeID, skillID );
 				if ( jobID )
 				{
 					return jobID;
 				}
-				jobID = Global::mcm().getJob( gnomeID, skillID );
+				jobID = m_mechanismManager->getJob( gnomeID, skillID );
 				if ( jobID )
 				{
 					return jobID;
@@ -544,7 +543,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		}
 		QElapsedTimer et;
 		et.start();
-		jobID = Global::wsm().getJob( gnomeID, skillID );
+		jobID = m_workshopManager->getJob( gnomeID, skillID );
 		if ( jobID )
 		{
 			return jobID;
@@ -563,7 +562,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		}
 
 		auto possibleJobIDs   = m_jobIDs.value( skillID ); //  DB::select2( "ID", "Jobs", "SkillID", skillID );
-		unsigned int regionID = Global::w().regionMap().regionID( gnomePos );
+		unsigned int regionID = m_world->regionMap().regionID( gnomePos );
 		for ( int prio = 9; prio >= 0; --prio )
 		{
 			for ( auto jobID : possibleJobIDs )
@@ -578,7 +577,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 						int walkableNeighbors = 0;
 						for ( int i = 0; i < jobs.size(); ++i )
 						{
-							walkableNeighbors = Global::w().walkableNeighbors( m_jobList[jobs[i]].pos() );
+							walkableNeighbors = m_world->walkableNeighbors( m_jobList[jobs[i]].pos() );
 							pq.put( jobs[i], walkableNeighbors );
 						}
 						while ( !pq.empty() )
@@ -676,25 +675,25 @@ Job* JobManager::getJob( unsigned int jobID )
 	{
 		return &m_jobList[jobID];
 	}
-	if ( Global::spm().hasJobID( jobID ) )
+	if ( m_spm->hasJobID( jobID ) )
 	{
-		return &Global::spm().getJob( jobID );
+		return &m_spm->getJob( jobID );
 	}
-	if ( Global::wsm().hasJobID( jobID ) )
+	if ( m_workshopManager->hasJobID( jobID ) )
 	{
-		return Global::wsm().getJob( jobID );
+		return m_workshopManager->getJob( jobID );
 	}
-	if ( Global::fm().hasJobID( jobID ) )
+	if ( m_farmingManager->hasJobID( jobID ) )
 	{
-		return Global::fm().getJob( jobID );
+		return m_farmingManager->getJob( jobID );
 	}
-	if ( Global::gm().hasJobID( jobID ) )
+	if ( m_gnomeManager->hasJobID( jobID ) )
 	{
-		return Global::gm().getJob( jobID );
+		return m_gnomeManager->getJob( jobID );
 	}
-	if ( Global::mcm().hasJobID( jobID ) )
+	if ( m_mechanismManager->hasJobID( jobID ) )
 	{
-		return Global::mcm().getJob( jobID );
+		return m_mechanismManager->getJob( jobID );
 	}
 	return nullptr;
 }
@@ -759,7 +758,7 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 		for ( auto offset : wpl )
 		{
 			Position testPos( pos + offset );
-			if ( Global::w().isWalkable( testPos ) )
+			if ( m_world->isWalkable( testPos ) )
 			{
 				if ( regionID == 0 )
 				{
@@ -767,8 +766,8 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 				}
 				else
 				{
-					unsigned int workRegionID = Global::w().regionMap().regionID( testPos );
-					if ( Global::w().regionMap().checkConnectedRegions( regionID, workRegionID ) )
+					unsigned int workRegionID = m_world->regionMap().regionID( testPos );
+					if ( m_world->regionMap().checkConnectedRegions( regionID, workRegionID ) )
 					{
 						job.addPossibleWorkPosition( testPos );
 					}
@@ -823,26 +822,26 @@ void JobManager::finishJob( unsigned int jobID )
 		}
 		m_jobList.remove( jobID );
 	}
-	if ( Global::wsm().finishJob( jobID ) )
+	if ( m_workshopManager->finishJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::spm().finishJob( jobID ) )
+	if ( m_spm->finishJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::fm().finishJob( jobID ) )
+	if ( m_farmingManager->finishJob( jobID ) )
 	{
 		return;
 	}
-	if ( Global::gm().finishJob( jobID ) )
+	if ( m_gnomeManager->finishJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::mcm().finishJob( jobID ) )
+	if ( m_mechanismManager->finishJob( jobID ) )
 	{
 		return;
 	}
@@ -910,7 +909,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 					{
 						cm.insert( "SpriteID", cm.value( "SpriteIDOverride" ).toString() );
 					}
-					Sprite* sprite  = Global::sf().createSprite( cm["SpriteID"].toString(), { mat } );
+					Sprite* sprite  = m_sf->createSprite( cm["SpriteID"].toString(), { mat } );
 					sprite->opacity = 0.5;
 
 					bool isFloor = false;
@@ -933,11 +932,11 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 					{
 						if ( remove )
 						{
-							Global::w().clearJobSprite( job.pos() + offset, true );
+							m_world->clearJobSprite( job.pos() + offset, true );
 						}
 						else
 						{
-							Global::w().setJobSprite( job.pos() + offset, spriteUID, rotation, isFloor, jobID, busy );
+							m_world->setJobSprite( job.pos() + offset, spriteUID, rotation, isFloor, jobID, busy );
 						}
 					}
 					else
@@ -952,25 +951,25 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 							rot = 3;
 						if ( remove )
 						{
-							Global::w().clearJobSprite( job.pos() + offset, false );
+							m_world->clearJobSprite( job.pos() + offset, false );
 						}
 						else
 						{
-							Global::w().setJobSprite( job.pos() + offset, spriteUID, ( rotation + rot ) % 4, isFloor, jobID, busy );
+							m_world->setJobSprite( job.pos() + offset, spriteUID, ( rotation + rot ) % 4, isFloor, jobID, busy );
 						}
 					}
 				}
 				else
 				{
-					Sprite* sprite  = Global::sf().createSprite( "SolidSelectionFloor", { "None" } );
+					Sprite* sprite  = m_sf->createSprite( "SolidSelectionFloor", { "None" } );
 					sprite->opacity = 0.5;
 					if ( remove )
 					{
-						Global::w().clearJobSprite( job.pos() + offset, true );
+						m_world->clearJobSprite( job.pos() + offset, true );
 					}
 					else
 					{
-						Global::w().setJobSprite( job.pos() + offset, sprite->uID, rotation, true, jobID, busy );
+						m_world->setJobSprite( job.pos() + offset, sprite->uID, rotation, true, jobID, busy );
 					}
 				}
 			}
@@ -988,7 +987,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 					if ( !entry.value( "SpriteID" ).toString().isEmpty() )
 					{
 						QString spriteID = entry["SpriteID"].toString();
-						Sprite* sprite   = Global::sf().createSprite( spriteID, { "None" } );
+						Sprite* sprite   = m_sf->createSprite( spriteID, { "None" } );
 						sprite->opacity  = 0.5;
 						Position offset( 0, 0, 0 );
 						if ( entry.contains( "Offset" ) )
@@ -1012,11 +1011,11 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 						*/
 						if ( remove )
 						{
-							Global::w().clearJobSprite( job.pos() + offset, floor );
+							m_world->clearJobSprite( job.pos() + offset, floor );
 						}
 						else
 						{
-							Global::w().setJobSprite( job.pos() + offset, spriteUID, rotation, floor, jobID, busy );
+							m_world->setJobSprite( job.pos() + offset, spriteUID, rotation, floor, jobID, busy );
 						}
 					}
 				}
@@ -1054,26 +1053,26 @@ void JobManager::giveBackJob( unsigned int jobID )
 		//lock.unlock();
 		return;
 	}
-	if ( Global::wsm().giveBackJob( jobID ) )
+	if ( m_workshopManager->giveBackJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::spm().giveBackJob( jobID ) )
+	if ( m_spm->giveBackJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::fm().giveBackJob( jobID ) )
+	if ( m_farmingManager->giveBackJob( jobID ) )
 	{
 		return;
 	}
-	if ( Global::gm().giveBackJob( jobID ) )
+	if ( m_gnomeManager->giveBackJob( jobID ) )
 	{
 		return;
 	}
 
-	if ( Global::mcm().giveBackJob( jobID ) )
+	if ( m_mechanismManager->giveBackJob( jobID ) )
 	{
 		return;
 	}
@@ -1088,7 +1087,7 @@ void JobManager::cancelJob( const Position& pos )
 	}
 	else
 	{
-		jobID = Global::w().jobSprite( pos ).value( "JobID" ).toUInt();
+		jobID = m_world->jobSprite( pos ).value( "JobID" ).toUInt();
 	}
 
 	if ( jobID != 0 )
@@ -1137,7 +1136,7 @@ void JobManager::raisePrio( Position& pos )
 	}
 	else
 	{
-		jobID = Global::w().jobSprite( pos ).value( "JobID" ).toUInt();
+		jobID = m_world->jobSprite( pos ).value( "JobID" ).toUInt();
 	}
 
 	if ( jobID != 0 )
@@ -1165,7 +1164,7 @@ void JobManager::lowerPrio( Position& pos )
 	}
 	else
 	{
-		jobID = Global::w().jobSprite( pos ).value( "JobID" ).toUInt();
+		jobID = m_world->jobSprite( pos ).value( "JobID" ).toUInt();
 	}
 
 	if ( jobID != 0 )

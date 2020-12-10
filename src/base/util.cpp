@@ -125,7 +125,7 @@ int Util::requiredToolLevel( QString jobID, Position pos )
 int Util::requiredToolLevelByWallMaterial( Position pos )
 {
 	int level                   = 0;
-	unsigned short wallMaterial = Global::w().getTile( pos ).wallMaterial;
+	unsigned short wallMaterial = m_world->getTile( pos ).wallMaterial;
 	QString wallMatSID          = DBH::materialSID( wallMaterial );
 
 	QString wallMatType = Util::materialType( wallMatSID );
@@ -143,7 +143,7 @@ int Util::requiredToolLevelByWallMaterial( Position pos )
 int Util::requiredToolLevelByFloorMaterial( Position pos )
 {
 	int level                    = 0;
-	unsigned short floorMaterial = Global::w().getTile( pos ).floorMaterial;
+	unsigned short floorMaterial = m_world->getTile( pos ).floorMaterial;
 
 	QString floorMatSID = DBH::materialSID( floorMaterial );
 
@@ -163,7 +163,7 @@ int Util::requiredToolLevelByFloorMaterial( Position pos )
 int Util::toolLevel( unsigned int itemUID )
 {
 	int level        = 0;
-	QString material = Global::inv().materialSID( itemUID );
+	QString material = m_inv->materialSID( itemUID );
 
 	QString materialType = Util::materialType( material );
 
@@ -493,31 +493,31 @@ unsigned int Util::createRawMaterialItem( Position pos, unsigned int materialID 
 
 	if ( type == "Soil" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return m_inv->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Sand" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return m_inv->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Clay" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return m_inv->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Stone" )
 	{
-		return Global::inv().createItem( pos, "RawStone", materialSID );
+		return m_inv->createItem( pos, "RawStone", materialSID );
 	}
 	else if ( type == "Coal" )
 	{
-		return Global::inv().createItem( pos, "RawCoal", materialSID );
+		return m_inv->createItem( pos, "RawCoal", materialSID );
 	}
 	else if ( type == "Metal" )
 	{
-		return Global::inv().createItem( pos, "RawOre", materialSID );
+		return m_inv->createItem( pos, "RawOre", materialSID );
 	}
 	else if ( type == "Gem" )
 	{
-		return Global::inv().createItem( pos, "RawGem", materialSID );
+		return m_inv->createItem( pos, "RawGem", materialSID );
 	}
 	return 0;
 }
@@ -562,9 +562,9 @@ Position Util::reachableBorderPos( Position fromPos, bool& found )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	m_world->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( m_world->fluidLevel( pos ) == 0 )
 	{
 		if ( PathFinder::getInstance().checkConnectedRegions( pos, fromPos ) )
 		{
@@ -598,9 +598,9 @@ Position Util::borderPos( bool& found )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	m_world->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( m_world->fluidLevel( pos ) == 0 )
 	{
 		found = true;
 		return pos;

@@ -74,7 +74,7 @@ void Automaton::init()
 
 	if ( m_core )
 	{
-		QString itemSID = Global::inv().itemSID( m_core );
+		QString itemSID = m_inv->itemSID( m_core );
 
 		auto row = DB::selectRow( "Automaton_Cores", itemSID );
 		loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
@@ -105,9 +105,9 @@ void Automaton::init()
 
 void Automaton::updateSprite()
 {
-	QString material = Global::inv().materialSID( m_automatonItem );
+	QString material = m_inv->materialSID( m_automatonItem );
 
-	auto components = Global::inv().components( m_automatonItem );
+	auto components = m_inv->components( m_automatonItem );
 	QMap<QString, QString> compMats;
 	for ( auto vcomp : components )
 	{
@@ -132,7 +132,7 @@ void Automaton::updateSprite()
 			compMats.insert( it, ma );
 		}
 	}
-	QString itemSID = Global::inv().itemSID( m_automatonItem );
+	QString itemSID = m_inv->itemSID( m_automatonItem );
 	auto parts      = DB::selectRows( "Creature_Parts", itemSID );
 
 	QVariantMap ordered;
@@ -288,8 +288,8 @@ void Automaton::installCore( unsigned int itemID )
 	if ( m_core )
 	{
 		//drop existing core
-		Global::inv().setInJob( m_core, 0 );
-		Global::inv().putDownItem( m_core, m_position );
+		m_inv->setInJob( m_core, 0 );
+		m_inv->putDownItem( m_core, m_position );
 		m_core = 0;
 
 		if ( m_behaviorTree )
@@ -308,12 +308,12 @@ void Automaton::installCore( unsigned int itemID )
 	//install core
 	if ( itemID )
 	{
-		QString itemSID = Global::inv().itemSID( itemID );
+		QString itemSID = m_inv->itemSID( itemID );
 		if ( itemSID.startsWith( "AutomatonCore" ) )
 		{
 			m_core = itemID;
-			Global::inv().pickUpItem( itemID );
-			Global::inv().setInJob( itemID, m_id );
+			m_inv->pickUpItem( itemID );
+			m_inv->setInJob( itemID, m_id );
 
 			auto row = DB::selectRow( "Automaton_Cores", itemSID );
 

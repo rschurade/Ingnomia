@@ -192,7 +192,7 @@ void Farm::updateAutoFarmer()
 {
 	QString seedMaterialID = DB::select( "Material", "Plants", m_properties.plantType ).toString();
 
-	unsigned int countSeed = Global::inv().itemCount( m_properties.seedItem, seedMaterialID );
+	unsigned int countSeed = m_inv->itemCount( m_properties.seedItem, seedMaterialID );
 
 	auto hl = DB::selectRows( "Plants_OnHarvest_HarvestedItem", m_properties.plantType );
 
@@ -213,7 +213,7 @@ void Farm::updateAutoFarmer()
 	unsigned int countItem2 = 0;
 	if ( !item1ID.isEmpty() )
 	{
-		countItem1 = Global::inv().itemCount( item1ID, material1ID );
+		countItem1 = m_inv->itemCount( item1ID, material1ID );
 	}
 
 	for ( auto hi : hl )
@@ -227,14 +227,14 @@ void Farm::updateAutoFarmer()
 	}
 	if ( !item2ID.isEmpty() )
 	{
-		countItem2 = Global::inv().itemCount( item2ID, material2ID );
+		countItem2 = m_inv->itemCount( item2ID, material2ID );
 	}
 	bool harvestOn  = false;
 	bool harvestOff = false;
 
 	if ( m_properties.autoHarvestSeed )
 	{
-		unsigned int count = Global::inv().itemCount( m_properties.seedItem, seedMaterialID );
+		unsigned int count = m_inv->itemCount( m_properties.seedItem, seedMaterialID );
 		unsigned int min   = m_properties.autoHarvestSeedMin;
 		unsigned int max   = m_properties.autoHarvestSeedMax;
 		if ( count < min )
@@ -248,7 +248,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem1 && !item1ID.isEmpty() )
 	{
-		unsigned int count = Global::inv().itemCount( item1ID, material1ID );
+		unsigned int count = m_inv->itemCount( item1ID, material1ID );
 		unsigned int min   = m_properties.autoHarvestItem1Min;
 		unsigned int max   = m_properties.autoHarvestItem1Max;
 		if ( count < min )
@@ -262,7 +262,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem2 && !item2ID.isEmpty() )
 	{
-		unsigned int count = Global::inv().itemCount( item2ID, material2ID );
+		unsigned int count = m_inv->itemCount( item2ID, material2ID );
 		unsigned int min   = m_properties.autoHarvestItem2Min;
 		unsigned int max   = m_properties.autoHarvestItem2Max;
 		if ( count < min )
@@ -386,8 +386,8 @@ Job* Farm::getTillJob()
 	}
 	for ( auto gf : m_fields )
 	{
-		Tile& tile = Global::w().getTile( gf->pos );
-		if ( !gf->hasJob && !Global::w().plants().contains( gf->pos.toInt() ) && !( tile.flags & TileFlag::TF_TILLED ) )
+		Tile& tile = m_world->getTile( gf->pos );
+		if ( !gf->hasJob && !m_world->plants().contains( gf->pos.toInt() ) && !( tile.flags & TileFlag::TF_TILLED ) )
 		{
 			Job* job = new Job;
 			job->setType( "Till" );
@@ -425,9 +425,9 @@ Job* Farm::getPlantJob()
 
 	for ( auto gf : m_fields )
 	{
-		Tile& tile = Global::w().getTile( gf->pos );
+		Tile& tile = m_world->getTile( gf->pos );
 		// tile is empty, we plant something
-		if ( !gf->hasJob && !Global::w().plants().contains( gf->pos.toInt() ) && ( tile.flags & TileFlag::TF_TILLED ) )
+		if ( !gf->hasJob && !m_world->plants().contains( gf->pos.toInt() ) && ( tile.flags & TileFlag::TF_TILLED ) )
 		{
 			Job* job = new Job;
 			job->setType( "PlantFarm" );
@@ -456,9 +456,9 @@ Job* Farm::getHarvestJob()
 	{
 		for ( auto gf : m_fields )
 		{
-			if ( !gf->hasJob && Global::w().plants().contains( gf->pos.toInt() ) )
+			if ( !gf->hasJob && m_world->plants().contains( gf->pos.toInt() ) )
 			{
-				Plant& plant = Global::w().plants()[gf->pos.toInt()];
+				Plant& plant = m_world->plants()[gf->pos.toInt()];
 				if ( !plant.isPlant() )
 				{
 					continue;
@@ -486,7 +486,7 @@ bool Farm::removeTile( Position& pos )
 
 	m_fields.remove( pos.toInt() );
 
-	Global::w().clearTileFlag( pos, TileFlag::TF_FARM );
+	m_world->clearTileFlag( pos, TileFlag::TF_FARM );
 	delete ff;
 
 	if ( m_fields.size() )
@@ -515,14 +515,14 @@ void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 	for ( auto gf : m_fields )
 	{
 
-		Tile& tile = Global::w().getTile( gf->pos );
+		Tile& tile = m_world->getTile( gf->pos );
 		if ( tile.flags & TileFlag::TF_TILLED )
 		{
 			++tilled;
 		}
-		if ( Global::w().plants().contains( gf->pos.toInt() ) )
+		if ( m_world->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& plant = Global::w().plants()[gf->pos.toInt()];
+			Plant& plant = m_world->plants()[gf->pos.toInt()];
 
 			if ( plant.isPlant() )
 			{

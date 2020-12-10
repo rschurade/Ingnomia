@@ -17,16 +17,15 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../game/automaton.h"
 #include "../game/gnome.h"
 #include "../game/gnometrader.h"
 
 #include <QList>
 
-class GnomeManager : public QObject
+class GnomeManager : public ManagerBase
 {
-	Q_OBJECT
-
 private:
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;

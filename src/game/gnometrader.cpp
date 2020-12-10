@@ -113,7 +113,7 @@ void GnomeTrader::serialize( QVariantMap& out )
 
 void GnomeTrader::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	m_world->insertCreatureAtPosition( m_position, m_id );
 
 	updateSprite();
 

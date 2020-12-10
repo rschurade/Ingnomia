@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "managerbase.h"
 #include "../base/position.h"
 #include "../game/room.h"
 
@@ -36,10 +37,8 @@ struct Door
 	bool blockMonsters       = true;
 };
 
-class RoomManager : public QObject
+class RoomManager : public ManagerBase
 {
-	Q_OBJECT
-
 public:
 	RoomManager( QObject* parent = nullptr );
 	~RoomManager();

@@ -73,7 +73,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		m_tileInfo.numGnomes   = Global::gm().gnomesAtPosition( pos ).size();
 		m_tileInfo.numAnimals  = Global::cm().animalsAtPosition( pos ).size();
 		m_tileInfo.numMonsters = Global::cm().monstersAtPosition( pos ).size();
-		m_tileInfo.numItems    = Global::inv().countItemsAtPos( pos );
+		m_tileInfo.numItems    = m_inv->countItemsAtPos( pos );
 
 		World& world = Global::w();
 		Tile& tile   = world.getTile( pos );
@@ -130,12 +130,12 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		{
 			PositionEntry pe;
 
-			Global::inv().getObjectsAtPosition( pos, pe );
+			m_inv->getObjectsAtPosition( pos, pe );
 
 			Counter<QString> counter;
 			for ( auto item : pe )
 			{
-				counter.add( S::s( "$MaterialName_" + Global::inv().materialSID( item ) ) + " " + S::s( "$ItemName_" + Global::inv().itemSID( item ) ) );
+				counter.add( S::s( "$MaterialName_" + m_inv->materialSID( item ) ) + " " + S::s( "$ItemName_" + m_inv->itemSID( item ) ) );
 			}
 			for ( auto key : counter.keys() )
 			{
@@ -298,7 +298,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					int countFree            = beds.size();
 					for ( auto b : beds )
 					{
-						if ( Global::inv().isInJob( b ) )
+						if ( m_inv->isInJob( b ) )
 						{
 							--countFree;
 						}
