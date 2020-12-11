@@ -138,7 +138,7 @@ void AggregatorAgri::onCloseWindow()
 
 void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 {
-	qDebug() << "AggregatorAgri::onOpen";
+	if( !g ) return;
 	if ( m_currentTileID != tileID )
 	{
 		m_currentTileID = tileID;
@@ -220,6 +220,7 @@ void AggregatorAgri::onUpdate( unsigned int designationID )
 
 void AggregatorAgri::onUpdateFarm( unsigned int id )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onUpdateFarm";
 	if ( m_farmInfo.ID == id )
 	{
@@ -254,6 +255,7 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 
 void AggregatorAgri::onUpdatePasture( unsigned int id )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onUpdatePasture";
 	if ( m_pastureInfo.ID == id )
 	{
@@ -327,6 +329,7 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 
 void AggregatorAgri::onUpdateGrove( unsigned int id )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onUpdateGrove";
 	if ( m_groveInfo.ID == id )
 	{
@@ -365,6 +368,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 
 void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationID, QString name, int priority, bool suspended )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onSetBasicOptions";
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
@@ -409,6 +413,7 @@ void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationI
 
 void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QString productSID )
 {
+	if( !g ) return;
 	//collect info
 	//qDebug() << "AggregatorAgri::onSelectProduct";
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
@@ -452,6 +457,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 
 void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designationID, bool harvest, bool harvestHay, bool tame )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onSetHarvestOptions";
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
@@ -483,6 +489,7 @@ void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designatio
 
 void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool plant, bool fell )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onSetGroveOptions";
 	if ( m_groveInfo.ID == groveID )
 	{
@@ -499,6 +506,7 @@ void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool pl
 
 void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designationID )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onRequestProductInfo";
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
@@ -618,6 +626,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 
 void AggregatorAgri::onSetMaxMale( unsigned int pastureID, int max )
 {
+	if( !g ) return;
 	if ( m_pastureInfo.ID == pastureID )
 	{
 		auto pasture = g->fm()->getPasture( pastureID );
@@ -630,6 +639,7 @@ void AggregatorAgri::onSetMaxMale( unsigned int pastureID, int max )
 	
 void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 {
+	if( !g ) return;
 	if ( m_pastureInfo.ID == pastureID )
 	{
 		auto pasture = g->fm()->getPasture( pastureID );
@@ -642,6 +652,7 @@ void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 
 void AggregatorAgri::onSetButchering( unsigned int animalID, bool value )
 {
+	if( !g ) return;
 	//qDebug() << "AggregatorAgri::onSetButchering" << animalID << value;
 	auto animal = g->cm()->animal( animalID );
 	if( animal )
@@ -662,6 +673,7 @@ void AggregatorAgri::onRequestPastureFoodInfo( unsigned int pastureID )
 
 void AggregatorAgri::onSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked )
 {
+	if( !g ) return;
 	if ( m_pastureInfo.ID == pastureID )
 	{
 		auto pasture = g->fm()->getPasture( pastureID );

@@ -53,6 +53,7 @@ void AggregatorTileInfo::init( Game* game )
 
 void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 {
+	if( !g ) return;
 	if ( m_currentTileID != tileID )
 	{
 		m_currentTileID = tileID;
@@ -64,6 +65,7 @@ void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 
 void AggregatorTileInfo::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
 {
+	if( !g ) return;
 	if ( changeSet.contains( m_currentTileID ) )
 	{
 		onUpdateTileInfo( m_currentTileID );
@@ -72,6 +74,7 @@ void AggregatorTileInfo::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 
 void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 {
+	if( !g ) return;
 	if ( m_currentTileID == tileID )
 	{
 		Position pos( tileID );
@@ -334,6 +337,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 {
+	if( !g ) return;
 	auto sp = g->spm()->getStockpileAtTileID( tileID );
 
 	if ( sp )
@@ -371,6 +375,7 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 
 void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int gnomeID )
 {
+	if( !g ) return;
 	auto room = g->rm()->getRoom( designationID );
 	if ( room )
 	{
@@ -394,6 +399,7 @@ void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int 
 
 void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 {
+	if( !g ) return;
 	switch ( GameState::alarm )
 	{
 		case 0:

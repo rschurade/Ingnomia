@@ -42,6 +42,7 @@ void AggregatorRenderer::init( Game* game )
 
 TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 {
+	if( !g ) return TileDataUpdate();
 	const auto& tile = g->w()->world()[tileID];
 	TileData td;
 	if ( tile.floorSpriteUID )
@@ -97,6 +98,7 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 
 QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 {
+	if( !g ) return QHash<unsigned int, unsigned int>();
 	QHash<unsigned int, unsigned int> creatures;
 
 	Sprite* sprite    = nullptr;
@@ -221,6 +223,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 
 void AggregatorRenderer::onAllTileInfo()
 {
+	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
 	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
@@ -260,6 +263,7 @@ void AggregatorRenderer::onAllTileInfo()
 
 void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
 {
+	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
 	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
@@ -304,6 +308,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 
 void AggregatorRenderer::onThoughtBubbleUpdate()
 {
+	if( !g ) return;
 	ThoughtBubbleInfo info;
 	for ( const auto& gn : g->gm()->gnomes() )
 	{
@@ -327,6 +332,7 @@ void AggregatorRenderer::onThoughtBubbleUpdate()
 
 void AggregatorRenderer::onAxleDataUpdate()
 {
+	if( !g ) return;
 	AxleDataInfo data;
 	data.data = g->mcm()->axleData();
 	emit signalAxleData( data );
@@ -334,5 +340,6 @@ void AggregatorRenderer::onAxleDataUpdate()
 
 void AggregatorRenderer::onWorldParametersChanged()
 {
+	if( !g ) return;
 	emit signalWorldParametersChanged();
 }

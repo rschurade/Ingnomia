@@ -81,6 +81,7 @@ void Filter::clear()
 
 void Filter::update()
 {
+	return;
 	if( !Global::eventConnector && !Global::eventConnector->game() ) return;
 
 	auto inv = Global::eventConnector->game()->inv();

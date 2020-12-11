@@ -51,6 +51,7 @@ void AggregatorCreatureInfo::update()
 
 void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 {
+	if( !g ) return;
 	m_currentID = id;
 	auto gnome = g->gm()->gnome( id );
 	if( gnome )
@@ -174,11 +175,13 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 
 void AggregatorCreatureInfo::onRequestProfessionList()
 {
+	if( !g ) return;
 	emit signalProfessionList( g->gm()->professions() );
 }
 
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
 {
+	if( !g ) return;
 	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
@@ -193,6 +196,7 @@ void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString prof
 
 void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& eItem )
 {
+	if( !g ) return;
 	if( eItem.itemID == 0 )
 	{
 		return;
@@ -222,6 +226,7 @@ void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& e
 
 void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem )
 {
+	if( !g ) return;
 	if( uItem.item.isEmpty() || eItem.itemID == 0 )
 	{
 		return; 
@@ -243,6 +248,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 
 void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 {
+	if( !g ) return;
 	QStringList mats; 
 	mats.append( "any" );
 	
@@ -261,6 +267,7 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 
 void AggregatorCreatureInfo::onRequestEmptySlotImages()
 {
+	if( !g ) return;
 	m_emptyPics.clear();
 
 	createEmptyUniformImg( "UIEmptySlotHead" );

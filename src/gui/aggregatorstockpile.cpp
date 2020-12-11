@@ -44,6 +44,7 @@ void AggregatorStockpile::init( Game* game )
 
 void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 {
+	if( !g ) return;
 	Position pos( tileID );
 	auto sp = g->spm()->getStockpileAtPos( pos );
 	if ( sp )
@@ -55,12 +56,14 @@ void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 
 void AggregatorStockpile::onOpenStockpileInfo( unsigned int stockpileID )
 {
+	if( !g ) return;
 	emit signalOpenStockpileWindow( stockpileID );
 	onUpdateStockpileInfo( stockpileID );
 }
 
 void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 {
+	if( !g ) return;
 	if ( aggregate( stockpileID ) )
 	{
 		emit signalUpdateInfo( m_info );
@@ -69,6 +72,7 @@ void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 
 bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 {
+	if( !g ) return false;
 	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{
@@ -107,6 +111,7 @@ bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 
 void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 {
+	if( !g ) return;
 	if ( m_info.stockpileID == stockpileID )
 	{
 		m_contentDirty = true;
@@ -115,6 +120,7 @@ void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 
 void AggregatorStockpile::onUpdateAfterTick()
 {
+	if( !g ) return;
 	if ( m_info.stockpileID && m_contentDirty )
 	{
 		auto sp       = g->spm()->getStockpile( m_info.stockpileID );
@@ -142,6 +148,7 @@ void AggregatorStockpile::onUpdateAfterTick()
 
 void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString name, int priority, bool suspended, bool pull, bool allowPull )
 {
+	if( !g ) return;
 	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{
@@ -156,6 +163,7 @@ void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString n
 
 void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
+	if( !g ) return;
 	//qDebug() << "set active:" << stockpileID << active << category << group << item << material;
 	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )

@@ -338,3 +338,8 @@ void GameManager::setPaused( bool value )
 		}
 	}
 }
+
+Game* GameManager::game()
+{ 
+	return m_game; 
+}

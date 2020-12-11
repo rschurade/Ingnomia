@@ -40,6 +40,7 @@ void AggregatorNeighbors::init( Game* game )
 
 void AggregatorNeighbors::onRequestNeighborsUpdate()
 {
+	if( !g ) return;
 	m_neighborsInfo.clear();
 
 	for( const auto& kingdom : g->nm()->kingdoms() )
@@ -179,11 +180,13 @@ void AggregatorNeighbors::onRequestNeighborsUpdate()
 
 void AggregatorNeighbors::onRequestMissions()
 {
+	if( !g ) return;
 	emit signalMissions( g->em()->missions() );
 }
 
 void AggregatorNeighbors::onRequestAvailableGnomes()
 {
+	if( !g ) return;
 	m_availableGnomes.clear();
 
 	for( auto gnome : g->gm()->gnomes() )
@@ -199,6 +202,7 @@ void AggregatorNeighbors::onRequestAvailableGnomes()
 
 void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID )
 {
+	if( !g ) return;
 	g->em()->startMission( type, action, targetKingdom, gnomeID );
 
 	emit signalMissions( g->em()->missions() );
@@ -206,5 +210,6 @@ void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action
 
 void AggregatorNeighbors::onUpdateMission( const Mission& mission )
 {
+	if( !g ) return;
 	emit signalUpdateMission( mission );
 }

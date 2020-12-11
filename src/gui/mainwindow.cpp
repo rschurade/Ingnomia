@@ -226,9 +226,12 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
-				Global::sel->rotate();
-				Global::sel->updateSelection( m_cursorPos, false, false );
-				redraw();
+				if( Global::sel )
+				{
+					Global::sel->rotate();
+					Global::sel->updateSelection( m_cursorPos, false, false );
+					redraw();
+				}
 				break;
 			case Qt::Key_Comma:
 				m_renderer->rotate( 1 );
@@ -376,7 +379,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	m_mouseX  = gp.x();
 	m_mouseY  = gp.y();
 
-	if ( Global::sel->hasAction() )
+	if ( Global::sel && Global::sel->hasAction() )
 	{
 		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
 		Global::sel->updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
@@ -459,24 +462,27 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
-					if ( Global::sel->hasAction() )
+					if( Global::sel )
 					{
-						if ( Global::sel->leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
+						m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+						if ( Global::sel->hasAction() )
 						{
-							// open info windows after creating something
+							if ( Global::sel->leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
+							{
+								// open info windows after creating something
+							}
+							redraw();
 						}
-						redraw();
-					}
-					else
-					{
-						//open tile info or do other game related stuff
-						if ( m_cursorPos.x < 0 || m_cursorPos.y < 0 || m_cursorPos.x > Global::dimX - 1 || m_cursorPos.y > Global::dimX - 1 || m_cursorPos.z < 0 || m_cursorPos.z > Global::dimZ - 1 )
+						else
 						{
-							//return;
+							//open tile info or do other game related stuff
+							if ( m_cursorPos.x < 0 || m_cursorPos.y < 0 || m_cursorPos.x > Global::dimX - 1 || m_cursorPos.y > Global::dimX - 1 || m_cursorPos.z < 0 || m_cursorPos.z > Global::dimZ - 1 )
+							{
+								//return;
+							}
+							unsigned int tileID = m_cursorPos.toInt();
+							emit signalSelectTile( tileID );
 						}
-						unsigned int tileID = m_cursorPos.toInt();
-						emit signalSelectTile( tileID );
 					}
 				}
 			}
@@ -498,7 +504,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			}
 			else
 			{
-				if ( Global::sel->hasAction() )
+				if ( Global::sel && Global::sel->hasAction() )
 				{
 					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
 					Global::sel->rightClick( m_cursorPos );
@@ -574,7 +580,7 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Global::sel->hasAction() )
+	if ( Global::sel && Global::sel->hasAction() )
 	{
 		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
 		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
@@ -592,7 +598,7 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Global::sel->hasAction() )
+	if ( Global::sel && Global::sel->hasAction() )
 	{
 		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
 		Global::sel->updateSelection( m_cursorPos, shift, ctrl );

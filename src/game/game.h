@@ -73,6 +73,8 @@ class Game : public QObject
 
 public:
 	Game( SpriteFactory* spriteFactory, QObject* parent );
+	Game( const Game& other ) = delete;
+	Game( Game&& other ) = delete;
 	virtual ~Game();
 
 	void save();

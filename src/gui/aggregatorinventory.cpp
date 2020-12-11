@@ -62,6 +62,7 @@ void AggregatorInventory::init( Game* game )
 
 void AggregatorInventory::onRequestCategories()
 {
+	if( !g ) return;
 	m_categories.clear();
 	for ( const auto& cat : g->inv()->categories() )
 	{
@@ -95,6 +96,7 @@ void AggregatorInventory::onRequestCategories()
 
 void AggregatorInventory::onRequestGroups( QString category )
 {
+	if( !g ) return;
 	m_groups.clear();
 
 	for ( const auto& group : g->inv()->groups( category ) )
@@ -120,6 +122,7 @@ void AggregatorInventory::onRequestGroups( QString category )
 
 void AggregatorInventory::onRequestItems( QString category, QString group )
 {
+	if( !g ) return;
 	m_items.clear();
 
 	for ( const auto& item : g->inv()->items( category, group ) )
@@ -147,6 +150,7 @@ void AggregatorInventory::onRequestItems( QString category, QString group )
 
 void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QString category )
 {
+	if( !g ) return;
 	m_buildItems.clear();
 	if ( m_buildSelection2String.contains( buildSelection ) )
 	{
@@ -197,6 +201,7 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 
 void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection )
 {
+	if( !g ) return;
 	auto type = m_buildSelection2buildItem.value( selection );
 	switch ( type )
 	{
@@ -287,6 +292,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 
 void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 {
+	if( !g ) return;
 	auto mats = g->inv()->materialCountsForItem( gbri.itemID );
 
 	gbri.availableMats.append( { "any", mats["any"] } );

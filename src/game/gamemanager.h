@@ -34,6 +34,8 @@ class GameManager : public QObject
 
 public:
 	GameManager( QObject* parent = nullptr );
+	GameManager( const GameManager& other ) = delete;
+	GameManager( GameManager&& other ) = delete;
 	~GameManager();
 
 	void startNewGame();
@@ -52,14 +54,14 @@ public:
 
 	EventConnector* eventConnector();
 
-	Game* game() { return m_game; }
+	Game* game();
 	SpriteFactory* sf() { return m_sf; }
 
 private:
 	EventConnector* m_eventConnector = nullptr;
 	SpriteFactory* m_sf = nullptr;
 
-	Game* m_game = nullptr;
+	QPointer<Game> m_game = nullptr;
 	
 	void init();
 	void createNewGame();
