@@ -41,6 +41,7 @@ Inventory::Inventory( Game* parent ) :
 	QObject( parent )
 {
 	m_itemHistory = new ItemHistory( this );
+	init();
 }
 
 Inventory::~Inventory()

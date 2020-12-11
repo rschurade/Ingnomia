@@ -66,26 +66,6 @@ void AggregatorInventory::onRequestCategories()
 	m_categories.clear();
 	for ( const auto& cat : g->inv()->categories() )
 	{
-		/*
-		int catTotal = 0;
-		for ( const auto& group : m_inv->groups( cat ) )
-		{
-			int groupTotal = 0;
-			for ( const auto& item : m_inv->items( cat, group ) )
-			{
-				for ( const auto& mat : m_inv->materials( cat, group, item ) )
-				{
-					QString iName = S::s( "$ItemName_" + item );
-					QString mName = S::s( "$MaterialName_" + mat );
-					int total     = m_inv->itemCount( item, mat );
-					int inSP      = m_inv->itemCountInStockpile( item, mat );
-					groupTotal += total;
-				}
-			}
-			catTotal += groupTotal;
-		}
-		if( catTotal > 0 )
-		*/
 		{
 			m_categories.append( { cat, S::s( "$CategoryName_" + cat ) } );
 		}
@@ -101,17 +81,6 @@ void AggregatorInventory::onRequestGroups( QString category )
 
 	for ( const auto& group : g->inv()->groups( category ) )
 	{
-		/*
-		int total = 0;
-		for ( const auto& item : m_inv->items( category, group ) )
-		{
-			for ( const auto& mat : m_inv->materials( category, group, item ) )
-			{
-				total += m_inv->itemCount( item, mat );
-			}
-		}
-		if( total )
-		*/
 		{
 			m_groups.append( { group, S::s( "$GroupName_" + group ) } );
 		}
