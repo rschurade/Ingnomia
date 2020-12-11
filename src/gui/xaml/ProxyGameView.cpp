@@ -63,8 +63,8 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( this, &ProxyGameView::signalRequestMilitaryUpdate, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestMilitary, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalRequestInventoryUpdate, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
 
-	connect( &Global::em(), &EventManager::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalEventAnswer, &Global::em(), &EventManager::onAnswer, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalEventAnswer, Global::eventConnector, &EventConnector::onAnswer, Qt::QueuedConnection );
 
 	connect( this, &ProxyGameView::signalSetPaused, Global::eventConnector, &EventConnector::onSetPause, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetGameSpeed, Global::eventConnector, &EventConnector::onSetGameSpeed, Qt::QueuedConnection );

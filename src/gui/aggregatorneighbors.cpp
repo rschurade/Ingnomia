@@ -203,3 +203,8 @@ void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action
 
 	emit signalMissions( g->em()->missions() );
 }
+
+void AggregatorNeighbors::onUpdateMission( const Mission& mission )
+{
+	emit signalUpdateMission( mission );
+}

@@ -175,7 +175,6 @@ private:
 	QList<Mission> m_missions;
 
 signals:
-	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	void signalCenterCamera( QString pos, int zOffset );
 	void signalUpdateMission( const Mission& mission );
 

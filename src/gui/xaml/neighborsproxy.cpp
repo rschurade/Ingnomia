@@ -32,7 +32,7 @@ NeighborsProxy::NeighborsProxy( QObject* parent ) :
 	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalAvailableGnomes, this, &NeighborsProxy::onAvailableGnomes, Qt::QueuedConnection );
 	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalMissions, this, &NeighborsProxy::onMissions, Qt::QueuedConnection );
 
-	connect( Global::eventConnector->eventManager(), &EventManager::signalUpdateMission, this, &NeighborsProxy::onUpdateMission, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalUpdateMission, this, &NeighborsProxy::onUpdateMission, Qt::QueuedConnection );
 }
 
 void NeighborsProxy::setParent( IngnomiaGUI::NeighborsModel* parent )

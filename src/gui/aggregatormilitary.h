@@ -131,6 +131,8 @@ public slots:
 
 	void onSetArmorType( unsigned int roleID, QString slot, QString type, QString material );
 
+	void onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude );
+
 signals:
 	void signalSquads( const QList<GuiSquad>& squads );
 	void signalPriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities );

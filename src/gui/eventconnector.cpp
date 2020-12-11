@@ -336,3 +336,13 @@ void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item
 
 	emit signalBuild();
 }
+
+void EventConnector::onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno )
+{
+	emit signalEvent( id, title, msg, pause, yesno );
+}
+
+void EventConnector::onAnswer( unsigned int id, bool answer )
+{
+	g->em()->onAnswer( id, answer );
+}

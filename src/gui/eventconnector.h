@@ -167,6 +167,9 @@ public slots:
 
 	void onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
 
+	void onAnswer( unsigned int id, bool answer );
+	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
@@ -186,4 +189,6 @@ signals:
 	void signalInMenu( bool value );
 	void signalResume();
 	void signalLoadGameDone( bool value );
+
+	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 };

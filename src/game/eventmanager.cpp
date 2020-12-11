@@ -30,6 +30,8 @@
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
 
+#include "../gui/eventconnector.h"
+
 #include <QDebug>
 
 QVariantMap Event::serialize()
@@ -180,7 +182,7 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 				int amount = em.value( "Amount" ).toInt();
 				msg.replace( "$Num", QString::number( amount ) );
 				QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
-				emit signalEvent( 0, title, msg, true, false );
+				Global::eventConnector->onEvent( 0, title, msg, true, false );
 			}
 			executeEvent( event );
 			it = m_eventList.erase( it );
@@ -242,7 +244,7 @@ bool EventManager::checkRequirements( Event& event )
 			{
 				msg.replace( "$Num", QString::number( num ) );
 
-				emit signalEvent( event.id, im.value( "Title" ).toString(), msg, im.value( "Pause" ).toBool(), true );
+				Global::eventConnector->onEvent( event.id, im.value( "Title" ).toString(), msg, im.value( "Pause" ).toBool(), true );
 			}
 
 			QMutexLocker lock( &m_mutex );
@@ -408,7 +410,7 @@ void EventManager::onAnswer( unsigned int id, bool answer )
 					{
 						QString msg   = eventMap.value( "Expires" ).toMap().value( "Message" ).toString();
 						QString title = eventMap.value( "Expires" ).toMap().value( "Title" ).toString();
-						emit signalEvent( 0, title, msg, false, false );
+						Global::eventConnector->onEvent( 0, title, msg, false, false );
 						m_eventList.removeAt( i );
 						return;
 					}
@@ -509,7 +511,7 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 			QString title = em.value( "OnFailure" ).toMap().value( "Title" ).toString();
 			if ( !msg.isEmpty() )
 			{
-				emit signalEvent( GameState::createID(), title, msg, false, false );
+				Global::eventConnector->onEvent( GameState::createID(), title, msg, false, false );
 			}
 		}
 		m_eventList.removeLast();
@@ -524,7 +526,7 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 			int amount = em.value( "Amount" ).toInt();
 			msg.replace( "$Num", QString::number( amount ) );
 			QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
-			emit signalEvent( 0, title, msg, true, false );
+			Global::eventConnector->onEvent( 0, title, msg, true, false );
 		}
 		executeEvent( e );
 		m_eventList.removeLast();

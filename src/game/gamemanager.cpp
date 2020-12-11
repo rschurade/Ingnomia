@@ -242,6 +242,8 @@ void GameManager::createNewGame()
 	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
 	connect( m_game->wsm(), &WorkshopManager::signalJobListChanged, m_eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
 
+	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
+
 	m_eventConnector->aggregatorAgri()->init( m_game );
 	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
 	m_eventConnector->aggregatorInventory()->init( m_game );

@@ -677,7 +677,7 @@ void MainWindowRenderer::paintTiles()
 void MainWindowRenderer::paintSelection()
 {
 	// TODO this is a workaround until some transparency solution is implemented
-	auto action = Selection::getInstance().action();
+	auto action = Global::sel->action();
 	if( action == "DigStairsDown" || action == "DigRampDown" )
 	{
 		glDisable( GL_DEPTH_TEST );
@@ -881,42 +881,42 @@ void MainWindowRenderer::updateTextures()
 
 void MainWindowRenderer::updateSelection()
 {
-	if ( Selection::getInstance().changed() )
+	if ( Global::sel->changed() )
 	{
 		DebugScope s( "update selection" );
 
 		SpriteFactory& sf = Global::sf();
 
-		QString action = Selection::getInstance().action();
+		QString action = Global::sel->action();
 		m_selectionData.clear();
 		if ( !action.isEmpty() )
 		{
-			bool isFloor = Selection::getInstance().isFloor();
+			bool isFloor = Global::sel->isFloor();
 
-			QList<QPair<Position, bool>> selection = Selection::getInstance().getSelection();
+			QList<QPair<Position, bool>> selection = Global::sel->getSelection();
 
 			QList<QPair<Sprite*, QPair<Position, unsigned char>>> sprites;
 			QList<QPair<Sprite*, QPair<Position, unsigned char>>> spritesInv;
 
-			int rotation = Selection::getInstance().rotation();
+			int rotation = Global::sel->rotation();
 
 			QList<QVariantMap> spriteIDs;
 
 			if ( action == "BuildWall" || action == "BuildFancyWall" || action == "BuildFloor" || action == "BuildFancyFloor" || action == "BuildRamp" || action == "BuildRampCorner" || action == "BuildStairs" )
 			{
-				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Selection::getInstance().itemID() );
+				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Global::sel->itemID() );
 			}
 			else if ( action == "BuildWorkshop" )
 			{
-				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Selection::getInstance().itemID() );
+				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Global::sel->itemID() );
 			}
 			else if ( action == "BuildItem" )
 			{
 				QVariantMap sprite;
-				sprite.insert( "SpriteID", DBH::spriteID( Selection::getInstance().itemID() ) );
+				sprite.insert( "SpriteID", DBH::spriteID( Global::sel->itemID() ) );
 				sprite.insert( "Offset", "0 0 0" );
 				sprite.insert( "Type", "Furniture" );
-				sprite.insert( "Material", Selection::getInstance().material() );
+				sprite.insert( "Material", Global::sel->material() );
 				spriteIDs.push_back( sprite );
 			}
 			else

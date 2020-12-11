@@ -33,7 +33,7 @@ MilitaryProxy::MilitaryProxy( QObject* parent ) :
 	connect( this, &MilitaryProxy::signalRemoveGnomeFromSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveGnomeFromSquad, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalMoveGnomeLeft, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeLeft, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalMoveGnomeRight, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeRight, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetAttitude, &Global::mil(), &MilitaryManager::onSetAttitude, Qt::QueuedConnection );
+	connect( this, &MilitaryProxy::signalSetAttitude, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetAttitude, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalMovePrioUp, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioUp, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalMovePrioDown, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioDown, Qt::QueuedConnection );
 	connect( this, &MilitaryProxy::signalRequestRoles, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestRoles, Qt::QueuedConnection );

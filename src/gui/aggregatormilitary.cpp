@@ -286,3 +286,8 @@ void AggregatorMilitary::onSetRoleCivilian( unsigned int roleID, bool value )
 {
 	g->mil()->setRoleCivilian( roleID, value );
 }
+
+void AggregatorMilitary::onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude )
+{
+	g->mil()->onSetAttitude( squadID, type, attitude );
+}
