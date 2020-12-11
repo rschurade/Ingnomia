@@ -47,6 +47,9 @@
 
 World::World( int dimX, int dimY, int dimZ, Game* game ) :
 	g( game ),
+	m_dimX( dimX ),
+	m_dimY( dimY ),
+	m_dimZ( dimZ ),
 	m_regionMap( this )
 {
 	m_constructionSID2ENUM.insert( "Wall", CID_WALL );
@@ -1366,11 +1369,17 @@ void World::createRamp( int x, int y, int z )
 	Tile& tileAbove = m_world[x + y * m_dimX + ( z + 1 ) * m_dimX * m_dimY];
 	Tile& tile      = m_world[x + y * m_dimX + offset];
 	if ( tileAbove.floorType == FloorType::FT_SOLIDFLOOR )
+	{
 		return;
+	}
 	if ( tileBelow.wallType == WallType::WT_NOWALL )
+	{
 		return;
+	}
 	if ( tile.floorType != FloorType::FT_SOLIDFLOOR )
+	{
 		return;
+	}
 	//if( tile.wallType != WallType::WT_NOWALL ) return;
 	if ( ( tileBelow.wallType & WallType::WT_ROUGH ) && ( tile.wallType == WallType::WT_NOWALL ) && ( tile.floorType == FloorType::FT_NOFLOOR ) )
 	{
@@ -1433,7 +1442,7 @@ void World::createRamp( int x, int y, int z )
 
 	tileAbove.floorType     = FloorType::FT_RAMPTOP;
 	tileAbove.floorMaterial = key;
-
+	
 	setRampSprites( tile, tileAbove, sum, north, east, south, west, matSID );
 }
 

@@ -1017,10 +1017,6 @@ void WorldGenerator::createRamps()
 
 void WorldGenerator::createRamp( int z )
 {
-	TerrainMaterial mat;
-
-	auto& world = w->world();
-
 	for ( int y = 1; y < m_dimY - 1; ++y )
 	{
 		for ( int x = 1; x < m_dimX - 1; ++x )
@@ -1609,6 +1605,7 @@ std::vector<Position> WorldGenerator::riverWorm( Position pos, int dir, int num,
 void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 {
 	int size = ngs->riverSize();
+	int sandRowID = DBH::materialUID( "Sand" );
 	for ( int x = pos.x - size; x < pos.x + size + 1; ++x )
 	{
 		for ( int y = pos.y - size; y < pos.y + size + 1; ++y )
@@ -1656,6 +1653,8 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 					tile.floorMaterial  = 0;
 					tile.floorSpriteUID = 0;
 				}
+				setSandFloor( x, y, sandRowID );
+
 			}
 		}
 	}
