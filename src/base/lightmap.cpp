@@ -136,11 +136,11 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 {
 	if ( m_lightMap.contains( posID ) )
 	{
-		auto maps = m_lightMap[posID];
+		const auto& maps = m_lightMap[posID];
 		int light = 0;
-		for ( auto key : maps.keys() )
+		for ( const auto& value : maps )
 		{
-			light += maps[key];
+			light += value;
 		}
 		return qMin( 255, light );
 	}
