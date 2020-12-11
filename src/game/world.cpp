@@ -46,7 +46,8 @@
 #include <time.h>
 
 World::World( int dimX, int dimY, int dimZ, Game* game ) :
-	g( game )
+	g( game ),
+	m_regionMap( this )
 {
 	m_constructionSID2ENUM.insert( "Wall", CID_WALL );
 	m_constructionSID2ENUM.insert( "FancyWall", CID_FANCYWALL );
