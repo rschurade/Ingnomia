@@ -36,7 +36,10 @@
 
 #include "../base/db.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
+
+#include "../gui/eventconnector.h"
 
 #pragma region Filter
 Filter::Filter()
@@ -78,7 +81,9 @@ void Filter::clear()
 
 void Filter::update()
 {
-	Inventory& inv = Global::inv();
+	if( !Global::eventConnector->game() ) return;
+
+	auto inv = Global::eventConnector->game()->inv();
 
 	QStringList keys = DB::ids( "ItemGrouping" );
 
@@ -89,20 +94,20 @@ void Filter::update()
 			m_categories.insert( category, FilterCategory() );
 		}
 	}
-	for ( auto category : inv.categories() )
+	for ( auto category : inv->categories() )
 	{
-		for ( auto group : inv.groups( category ) )
+		for ( auto group : inv->groups( category ) )
 		{
 			m_categories[category].addGroup( group );
 		}
 	}
-	for ( auto category : inv.categories() )
+	for ( auto category : inv->categories() )
 	{
-		for ( auto group : inv.groups( category ) )
+		for ( auto group : inv->groups( category ) )
 		{
-			for ( auto item : inv.items( category, group ) )
+			for ( auto item : inv->items( category, group ) )
 			{
-				for ( auto material : inv.materials( category, group, item ) )
+				for ( auto material : inv->materials( category, group, item ) )
 				{
 					addItem( category, group, item, material );
 				}

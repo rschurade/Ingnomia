@@ -113,6 +113,7 @@ public:
 	void sendResume();
 	void sendLoadGameDone( bool value );
 
+	Game* game();
 private:
 	GameManager* gm = nullptr;
 	QPointer<Game> g = nullptr;

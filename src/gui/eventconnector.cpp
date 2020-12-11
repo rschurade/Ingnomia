@@ -346,3 +346,8 @@ void EventConnector::onAnswer( unsigned int id, bool answer )
 {
 	g->em()->onAnswer( id, answer );
 }
+
+Game* EventConnector::game()
+{
+	return g;
+}
