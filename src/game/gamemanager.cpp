@@ -188,7 +188,12 @@ void GameManager::loadGame( QString folder )
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
 	if ( io.load( folder ) )
 	{
+		Global::util = new Util( m_game );
+		m_eventConnector->setGamePtr( m_game );
+		Global::sel = new Selection( m_game );
+
 		postCreationInit();
+		m_eventConnector->sendLoadGameDone( true );
 	}
 	else
 	{
