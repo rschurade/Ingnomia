@@ -253,18 +253,18 @@ void Game::sendClock()
 	GameState::dayChanged    = false;
 	GameState::seasonChanged = false;
 
-	if ( GameState::tick % Util::ticksPerMinute == 0 )
+	if ( GameState::tick % Global::util->ticksPerMinute == 0 )
 	{
 		++GameState::minute;
 		GameState::minuteChanged = true;
 	}
-	if ( GameState::minute == Util::minutesPerHour )
+	if ( GameState::minute == Global::util->minutesPerHour )
 	{
 		GameState::minute = 0;
 		++GameState::hour;
 		GameState::hourChanged = true;
 	}
-	if ( GameState::hour == Util::hoursPerDay )
+	if ( GameState::hour == Global::util->hoursPerDay )
 	{
 		GameState::hour = 0;
 		++GameState::day;
@@ -283,7 +283,7 @@ void Game::sendClock()
 			//qDebug() << "Now it's " << nextSeason;
 			GameState::seasonString = nextSeason;
 
-			Util::daysPerSeason = DB::select( "NumDays", "Seasons", nextSeason ).toInt();
+			Global::util->daysPerSeason = DB::select( "NumDays", "Seasons", nextSeason ).toInt();
 
 			int numSeasonsPerYear = DB::numRows( "Seasons" );
 			if ( GameState::season == numSeasonsPerYear )
@@ -304,7 +304,7 @@ void Game::sendClock()
 	}
 
 	QString sunStatus;
-	int currentTimeInt = GameState::hour * Util::minutesPerHour + GameState::minute;
+	int currentTimeInt = GameState::hour * Global::util->minutesPerHour + GameState::minute;
 	if ( currentTimeInt < GameState::sunrise )
 	{
 		//time between midnight and sunrise
@@ -361,13 +361,13 @@ void Game::calcDaylight()
 int Game::timeToInt( QString time )
 {
 	QStringList tl = time.split( ":" );
-	return tl[0].toInt() * Util::minutesPerHour + tl[1].toInt();
+	return tl[0].toInt() * Global::util->minutesPerHour + tl[1].toInt();
 }
 
 QString Game::intToTime( int time )
 {
-	int hour    = time / Util::minutesPerHour;
-	int minute  = time - ( hour * Util::minutesPerHour );
+	int hour    = time / Global::util->minutesPerHour;
+	int minute  = time - ( hour * Global::util->minutesPerHour );
 	QString out = "";
 	if ( hour < 10 )
 		out += "0";

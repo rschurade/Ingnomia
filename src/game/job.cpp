@@ -69,8 +69,8 @@ Job::Job( QVariantMap in )
 	m_posItemOutput         = in.value( "PositionItemOutput" );
 	m_toolPosition          = in.value( "ToolPosition" );
 	m_workPosition          = in.value( "WorkPosition" );
-	m_possibleWorkPositions = Util::variantList2Position( in.value( "PossibleWorkPositions" ).toList() );
-	m_origWorkPosOffsets    = Util::variantList2Position( in.value( "OriginalWorkPositions" ).toList() );
+	m_possibleWorkPositions = Global::util->variantList2Position( in.value( "PossibleWorkPositions" ).toList() );
+	m_origWorkPosOffsets    = Global::util->variantList2Position( in.value( "OriginalWorkPositions" ).toList() );
 
 	m_amount             = in.value( "Amount" ).toInt();
 	m_item               = in.value( "Item" ).toString();
@@ -84,7 +84,7 @@ Job::Job( QVariantMap in )
 	m_automaton = in.value( "Automaton" ).toUInt();
 	m_mechanism = in.value( "Mechanism" ).toUInt();
 
-	m_itemsToHaul = Util::variantList2UInt( in.value( "ItemsToHaul" ).toList() );
+	m_itemsToHaul = Global::util->variantList2UInt( in.value( "ItemsToHaul" ).toList() );
 	m_spell       = in.value( "Spell" ).toString();
 }
 
@@ -129,8 +129,8 @@ QVariant Job::serialize() const
 	out.insert( "PositionItemOutput", m_posItemOutput.toString() );
 	out.insert( "ToolPosition", m_toolPosition.toString() );
 	out.insert( "WorkPosition", m_workPosition.toString() );
-	out.insert( "PossibleWorkPositions", Util::positionList2Variant( m_possibleWorkPositions ) );
-	out.insert( "OriginalWorkPositions", Util::positionList2Variant( m_origWorkPosOffsets ) );
+	out.insert( "PossibleWorkPositions", Global::util->positionList2Variant( m_possibleWorkPositions ) );
+	out.insert( "OriginalWorkPositions", Global::util->positionList2Variant( m_origWorkPosOffsets ) );
 
 	out.insert( "Amount", m_amount );
 	out.insert( "Item", m_item );
@@ -143,7 +143,7 @@ QVariant Job::serialize() const
 	out.insert( "Automaton", m_automaton );
 	out.insert( "Mechanism", m_mechanism );
 
-	out.insert( "ItemsToHaul", Util::uintList2Variant( m_itemsToHaul ) );
+	out.insert( "ItemsToHaul", Global::util->uintList2Variant( m_itemsToHaul ) );
 	out.insert( "Spell", m_spell );
 
 	return out;

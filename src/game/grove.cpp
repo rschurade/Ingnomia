@@ -318,7 +318,7 @@ Job* Grove::getPlantJob()
 			{
 				Job* job = new Job();
 				job->setType( "PlantTree" );
-				job->setRequiredSkill( Util::requiredSkill( "PlantTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "PlantTree" ) );
 				job->setPos( gf->pos );
 				job->addPossibleWorkPosition( gf->pos );
 				job->setItem( m_properties.treeType );
@@ -377,7 +377,7 @@ Job* Grove::getPickJob()
 				}
 
 				job->setType( "HarvestTree" );
-				job->setRequiredSkill( Util::requiredSkill( "HarvestTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "HarvestTree" ) );
 				job->setPos( gf->pos );
 
 				job->setNoJobSprite( true );
@@ -437,7 +437,7 @@ Job* Grove::getFellJob()
 				}
 
 				job->setType( "FellTree" );
-				job->setRequiredSkill( Util::requiredSkill( "FellTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "FellTree" ) );
 				job->setPos( gf->pos );
 				job->setRequiredTool( "FellingAxe", 1 );
 				job->setNoJobSprite( true );

@@ -81,14 +81,14 @@ bool GnomeManager::contains( unsigned int gnomeID )
 
 void GnomeManager::addGnome( Position pos )
 {
-	GnomeFactory gf( this );
+	GnomeFactory gf( g );
 	m_gnomes.push_back( gf.createGnome( pos ) );
 	m_gnomesByID.insert( m_gnomes.last()->id(), m_gnomes.last() );
 }
 
 unsigned int GnomeManager::addTrader( Position pos, unsigned int workshopID, QString type )
 {
-	GnomeFactory gf( this );
+	GnomeFactory gf( g );
 	GnomeTrader* gnome = gf.createGnomeTrader( pos );
 	gnome->setName( "Trader " + gnome->name() );
 	gnome->setMarketStall( workshopID );
@@ -124,7 +124,7 @@ void GnomeManager::addAutomaton( Automaton* a )
 
 void GnomeManager::addAutomaton( QVariantMap values )
 {
-	Automaton* a = new Automaton( values );
+	Automaton* a = new Automaton( values, g );
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
@@ -134,7 +134,7 @@ void GnomeManager::addAutomaton( QVariantMap values )
 
 void GnomeManager::addGnome( QVariantMap values )
 {
-	GnomeFactory gf( this );
+	GnomeFactory gf( g );
 	Gnome* g( gf.createGnome( values ) );
 	m_gnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_gnomes.last() );
@@ -142,7 +142,7 @@ void GnomeManager::addGnome( QVariantMap values )
 
 void GnomeManager::addTrader( QVariantMap values )
 {
-	GnomeFactory gf( this );
+	GnomeFactory gf( g );
 	GnomeTrader* g( gf.createGnomeTrader( values ) );
 	m_specialGnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_specialGnomes.last() );

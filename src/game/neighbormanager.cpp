@@ -142,7 +142,7 @@ void NeighborManager::addRandomKingdom( KingdomType type )
 			break;
 		case KingdomType::GOBLIN:
 			nk.attitude = -( rand() % 60 + 40 );
-			nk.nextRaid = GameState::tick + 60 * Util::ticksPerDayRandomized( 10 );
+			nk.nextRaid = GameState::tick + 60 * Global::util->ticksPerDayRandomized( 10 );
 			break;
 	}
 
@@ -156,7 +156,7 @@ void NeighborManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 		if ( kingdom.type == KingdomType::GOBLIN && GameState::tick >= kingdom.nextRaid )
 		{
 			g->m_eventManager->addRaidEvent( kingdom );
-			kingdom.nextRaid = GameState::tick + Util::ticksPerDayRandomized( 10 ) * Util::daysPerSeason * 4;
+			kingdom.nextRaid = GameState::tick + Global::util->ticksPerDayRandomized( 10 ) * Global::util->daysPerSeason * 4;
 		}
 	}
 }
@@ -247,7 +247,7 @@ void NeighborManager::sabotage( Mission* mission )
 				int delay = qMax( 2, rand() % 6 );
 				mission->result.insert( "Delay", delay );
 
-				k.nextRaid += delay * Util::ticksPerDay;
+				k.nextRaid += delay * Global::util->ticksPerDay;
 				k.attitude -= 20;
 			}
 			else
@@ -306,7 +306,7 @@ void NeighborManager::emissary( Mission* mission )
 					k.attitude -= 20;
 					break;
 				case MissionAction::INVITE_TRADER:
-					k.nextTrader = GameState::tick + 2 * Util::ticksPerDayRandomized( 50 );
+					k.nextTrader = GameState::tick + 2 * Global::util->ticksPerDayRandomized( 50 );
 					g->m_eventManager->addTraderEvent( k );
 					break;
 				case MissionAction::INVITE_AMBASSADOR:

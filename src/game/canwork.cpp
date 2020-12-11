@@ -87,7 +87,7 @@ CanWork::CanWork( QVariantMap in, Game* game ) :
 
 		if ( in.contains( "EffectedTiles" ) )
 		{
-			m_effectedTiles = Util::variantList2Position( in.value( "EffectedTiles" ).toList() );
+			m_effectedTiles = Global::util->variantList2Position( in.value( "EffectedTiles" ).toList() );
 		}
 
 		m_animal          = in.value( "Animal" ).toUInt();
@@ -360,7 +360,7 @@ int CanWork::getDurationTicks( QVariant value, Job* job )
 		value = DB::select( "ProductionTime", "Crafts", job->craftID() );
 	}
 
-	int ticks = value.toInt() * Util::ticksPerMinute;
+	int ticks = value.toInt() * Global::util->ticksPerMinute;
 	//if( Global::debugMode ) qDebug() << m_name << "getDurationTicks: " << job->type() << ticks;
 	return ticks;
 }
@@ -848,7 +848,7 @@ bool CanWork::constructDugStairs()
 	auto wallMat = g->w()->wallMaterial( pos );
 	removeWall();
 
-	auto item = Util::createRawMaterialItem( pos, wallMat );
+	auto item = Global::util->createRawMaterialItem( pos, wallMat );
 	if ( item )
 	{
 		addClaimedItem( item, m_job->id() );
@@ -889,7 +889,7 @@ bool CanWork::constructDugRamp()
 	auto wallMat = g->w()->wallMaterial( pos );
 	removeWall(); // offset 0 0 -1
 
-	auto item = Util::createRawMaterialItem( pos, wallMat );
+	auto item = Global::util->createRawMaterialItem( pos, wallMat );
 	if ( item )
 	{
 		addClaimedItem( item, m_job->id() );
@@ -1047,7 +1047,7 @@ bool CanWork::harvest()
 		if ( plant.harvestable() )
 		{
 			m_repeatJob      = true;
-			m_taskFinishTick = GameState::tick + m_currentTask.value( "Duration" ).toInt() * Util::ticksPerMinute;
+			m_taskFinishTick = GameState::tick + m_currentTask.value( "Duration" ).toInt() * Global::util->ticksPerMinute;
 			return true;
 		}
 	}
@@ -1176,7 +1176,7 @@ bool CanWork::craft()
 						auto item = claimedItems().first();
 
 						auto sourceMaterial = g->inv()->materialSID( item );
-						auto material       = Util::randomMetalSliver( sourceMaterial );
+						auto material       = Global::util->randomMetalSliver( sourceMaterial );
 						unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), material );
 						g->inv()->setMadeBy( itemID, id() );
 					}
@@ -1230,7 +1230,7 @@ bool CanWork::craft()
 				QString sourceMaterial = g->inv()->materialSID( sourceItem );
 				QString dyeMaterial    = g->inv()->materialSID( dyeItem );
 
-				QString targetMaterial = Util::addDyeMaterial( sourceMaterial, dyeMaterial );
+				QString targetMaterial = Global::util->addDyeMaterial( sourceMaterial, dyeMaterial );
 
 				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), targetMaterial );
 				g->inv()->setMadeBy( itemID, id() );
@@ -1460,7 +1460,7 @@ bool CanWork::finishSpell()
 				}
 				else if ( sEffect == "PlantGrowth" )
 				{
-					g->w()->plants()[pos.toInt()].speedUpGrowth( Util::ticksPerDay * getSkillLevel( m_job->requiredSkill() ) );
+					g->w()->plants()[pos.toInt()].speedUpGrowth( Global::util->ticksPerDay * getSkillLevel( m_job->requiredSkill() ) );
 				}
 			}
 		}

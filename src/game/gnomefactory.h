@@ -22,12 +22,12 @@
 
 #include <QString>
 
-class GnomeManager;
+class Game;
 
 class GnomeFactory
 {
 public:
-	GnomeFactory( GnomeManager* gm );
+	GnomeFactory( Game* gm );
 	~GnomeFactory();
 
 	bool init();
@@ -38,5 +38,5 @@ public:
 	GnomeTrader* createGnomeTrader( QVariantMap values );
 
 private:
-    GnomeManager* m_gm = nullptr;
+    QPointer<Game> g = nullptr;
 };

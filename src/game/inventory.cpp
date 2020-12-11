@@ -90,7 +90,7 @@ void Inventory::init()
 				m_itemsSorted[categoryID][groupID].push_back( itemID );
 				m_hash[itemID];
 
-				for ( auto materialID : Util::possibleMaterialsForItem( itemID ) )
+				for ( auto materialID : Global::util->possibleMaterialsForItem( itemID ) )
 				{
 					m_hash[itemID].insert( materialID, QHash<unsigned int, Item*>() );
 				}
@@ -259,7 +259,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 
 unsigned int Inventory::createItem( Position pos, QString itemSID, QVariantList components )
 {
-	return createItem( pos, itemSID, Util::variantList2UInt( components ) );
+	return createItem( pos, itemSID, Global::util->variantList2UInt( components ) );
 }
 
 unsigned int Inventory::createItem( const QVariantMap& values )

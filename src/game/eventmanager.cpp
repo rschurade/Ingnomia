@@ -62,7 +62,7 @@ QVariantMap Mission::serialize()
 	out.insert( "Step", (int)step );
 	out.insert( "Target", target );
 	out.insert( "Distance", distance );
-	out.insert( "Gnomes", Util::uintList2Variant( gnomes ) );
+	out.insert( "Gnomes", Global::util->uintList2Variant( gnomes ) );
 	out.insert( "StartTick", startTick );
 	out.insert( "NextCheckTick", nextCheckTick );
 
@@ -80,7 +80,7 @@ Mission::Mission( QVariantMap in )
 	step          = (MissionStep)in.value( "Step" ).toInt();
 	target        = in.value( "Target" ).toUInt();
 	distance      = in.value( "Distance" ).toUInt();
-	gnomes        = Util::variantList2UInt( in.value( "Gnomes" ).toList() );
+	gnomes        = Global::util->variantList2UInt( in.value( "Gnomes" ).toList() );
 	startTick     = in.value( "StartTick" ).value<quint64>();
 	nextCheckTick = in.value( "NextCheckTick" ).value<quint64>();
 	leavePos      = Position( in.value( "LeavePos" ) );
@@ -164,7 +164,7 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	{
 		auto ev = createEvent( "EventMigration" );
 		srand( std::chrono::system_clock::now().time_since_epoch().count() );
-		ev.tick = GameState::tick + Util::ticksPerDayRandomized( 50 );
+		ev.tick = GameState::tick + Global::util->ticksPerDayRandomized( 50 );
 		m_eventList.append( ev );
 	}
 
@@ -254,7 +254,7 @@ bool EventManager::checkRequirements( Event& event )
 				QString unit   = expireMap.value( "Unit" ).toString();
 				if ( unit == "Day" )
 				{
-					data.insert( "ExpireTick", GameState::tick + val * Util::ticksPerDay );
+					data.insert( "ExpireTick", GameState::tick + val * Global::util->ticksPerDay );
 				}
 				else if ( unit == "Ticks" )
 				{
@@ -442,7 +442,7 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 		bool found = false;
 		while ( tries < 20 )
 		{
-			location = Util::borderPos( found );
+			location = Global::util->borderPos( found );
 			if ( found )
 			{
 				break;
@@ -535,7 +535,7 @@ QList<Mission>& EventManager::missions()
 {
 	for( auto& mission : m_missions )
 	{
-		mission.time = ( GameState::tick - mission.startTick ) / ( Util::ticksPerMinute * 60 );
+		mission.time = ( GameState::tick - mission.startTick ) / ( Global::util->ticksPerMinute * 60 );
 	}
 
 	return m_missions;
@@ -552,7 +552,7 @@ Mission* EventManager::getMission( unsigned int id )
 	{
 		if ( mission.id == id )
 		{
-			mission.time = ( GameState::tick - mission.startTick ) / ( Util::ticksPerMinute * 60 );
+			mission.time = ( GameState::tick - mission.startTick ) / ( Global::util->ticksPerMinute * 60 );
 			return &mission;
 		}
 	}
@@ -574,7 +574,7 @@ void EventManager::finishMission( unsigned int id )
 void EventManager::addTraderEvent( NeighborKingdom kingdom )
 {
 	quint64 leaveTick = kingdom.nextTrader;
-	quint64 tick      = leaveTick + kingdom.distance * Util::ticksPerMinute * Util::minutesPerHour;
+	quint64 tick      = leaveTick + kingdom.distance * Global::util->ticksPerMinute * Global::util->minutesPerHour;
 
 	auto e = createEvent( "EventTrader" );
 	e.tick = tick;
@@ -597,7 +597,7 @@ void EventManager::addRaidEvent( NeighborKingdom kingdom )
 	}
 
 	quint64 leaveTick = GameState::tick;
-	quint64 tick      = leaveTick + kingdom.distance * Util::ticksPerMinute * Util::minutesPerHour;
+	quint64 tick      = leaveTick + kingdom.distance * Global::util->ticksPerMinute * Global::util->minutesPerHour;
 
 	auto e = createEvent( "EventInvasion" );
 	e.tick = tick;
@@ -626,7 +626,7 @@ void EventManager::startMission( MissionType type, MissionAction action, unsigne
 	mission.distance = g->m_neighborManager->distance( mission.target );
 	mission.gnomes = { gnomeID };
 	mission.startTick = GameState::tick;
-	mission.nextCheckTick = GameState::tick + Util::ticksPerDay;
+	mission.nextCheckTick = GameState::tick + Global::util->ticksPerDay;
 
 	addMission( mission );
 

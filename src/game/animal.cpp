@@ -323,7 +323,7 @@ void Animal::setState( int state )
 	int days = m_stateMap.value( "DaysToNextState" ).toInt();
 	if ( days )
 	{
-		m_stateChangeTick = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		m_stateChangeTick = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 	}
 	else
 	{
@@ -570,7 +570,7 @@ BT_RESULT Animal::actionLayEgg( bool halt )
 		QVariantMap def = m_stateMap.value( "EggLayer" ).toMap();
 		//first visit;
 		int days        = def.value( "DaysBetween" ).toInt();
-		quint64 nextLay = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextLay = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_birthTick     = nextLay;
 		return BT_RESULT::FAILURE;
 	}
@@ -633,7 +633,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 		//first visit;
 		QVariantMap def  = m_stateMap.value( "Producer" ).toMap();
 		int days         = def.value( "DaysBetween" ).toInt();
-		quint64 nextProd = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextProd = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_produceTick    = nextProd;
 		return BT_RESULT::FAILURE;
 	}
@@ -661,7 +661,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 			//qDebug() << m_name << def.value( "ItemID" ).toString() <<producedAmount;
 		}
 		int days         = def.value( "DaysBetween" ).toInt();
-		quint64 nextProd = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextProd = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_produceTick    = nextProd;
 		return BT_RESULT::SUCCESS;
 	}
@@ -679,7 +679,7 @@ BT_RESULT Animal::actionTryHaveSex( bool halt )
 			if ( m_pastureID )
 			{
 				//last sex longer than 24 hours ago
-				if ( m_lastSex + Util::ticksPerDay < GameState::tick )
+				if ( m_lastSex + Global::util->ticksPerDay < GameState::tick )
 				{
 					// non pregnant female on pasture
 					Pasture* pasture = g->fm()->getPasture( m_pastureID );
@@ -732,7 +732,7 @@ void Animal::setPregnant( bool pregnant )
 	if ( pregnant )
 	{
 		int days      = DB::select( "GestationDays", "Animals", m_species ).toInt();
-		quint64 ticks = Util::ticksPerDayRandomized( 5 ) * days;
+		quint64 ticks = Global::util->ticksPerDayRandomized( 5 ) * days;
 		m_birthTick   = GameState::tick + ticks;
 	}
 	else
@@ -874,7 +874,7 @@ BT_RESULT Animal::actionFindPrey( bool halt )
 		Animal* prey = g->cm()->getClosestAnimal( m_position, sPrey );
 		if ( prey )
 		{
-			QList<Position> neighbs = Util::neighbors8( prey->getPos() );
+			QList<Position> neighbs = Global::util->neighbors8( prey->getPos() );
 			auto distances          = PriorityQueue<Position, int>();
 			for ( auto neigh : neighbs )
 			{

@@ -51,7 +51,7 @@ bool World::constructWorkshop( QString constructionSID, Position pos, int rotati
 	//qDebug() << "world::constructWorkshop() " << constructionSID << pos.toString() << rotation;
 	QVariantMap con = DB::selectRow( "Workshops", constructionSID );
 
-	constructWorkshop( con, pos, rotation, Util::uintList2Variant( itemUIDs ), extractTo );
+	constructWorkshop( con, pos, rotation, Global::util->uintList2Variant( itemUIDs ), extractTo );
 	return true;
 }
 
@@ -626,7 +626,7 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 	QVariantList positions;
 	QString type;
 	/*
-	if( Util::materialType( materialSIDs.first() ) == "Soil" || Util::materialType( materialSIDs.first() ) == "Stone" )
+	if( Global::util->materialType( materialSIDs.first() ) == "Soil" || Global::util->materialType( materialSIDs.first() ) == "Stone" )
 	{
 		createRamp( pos, materialSIDs.first() );
 		updateCoords.append( pos );
@@ -652,7 +652,7 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 			if ( type == "RampBottom" )
 			{
 				tile.wallSpriteUID = spriteUID;
-				if ( Util::materialType( materialSIDs.first() ) == "Soil" || Util::materialType( materialSIDs.first() ) == "Stone" )
+				if ( Global::util->materialType( materialSIDs.first() ) == "Soil" || Global::util->materialType( materialSIDs.first() ) == "Stone" )
 				{
 					tile.wallType = ( WallType )( WallType::WT_RAMP );
 				}
@@ -669,7 +669,7 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 			if ( type == "RampTop" )
 			{
 				tile.floorSpriteUID = spriteUID;
-				if ( Util::materialType( materialSIDs.first() ) == "Soil" || Util::materialType( materialSIDs.first() ) == "Stone" )
+				if ( Global::util->materialType( materialSIDs.first() ) == "Soil" || Global::util->materialType( materialSIDs.first() ) == "Stone" )
 				{
 					tile.floorType = ( FloorType )( FloorType::FT_RAMPTOP );
 				}
@@ -694,7 +694,7 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 		}
 	}
 
-	if ( !( Util::materialType( materialSIDs.first() ) == "Soil" || Util::materialType( materialSIDs.first() ) == "Stone" ) )
+	if ( !( Global::util->materialType( materialSIDs.first() ) == "Soil" || Global::util->materialType( materialSIDs.first() ) == "Stone" ) )
 	{
 		QVariantMap constr;
 		constr.insert( "Pos", pos.toString() );
@@ -962,7 +962,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	if ( g->inv()->itemSID( itemID ) != itemSID )
 	{
 		//qDebug() << "create item from components before installing";
-		auto vItems = Util::uintList2Variant( items );
+		auto vItems = Global::util->uintList2Variant( items );
 		itemID      = g->inv()->createItem( pos, itemSID, vItems );
 		constr.insert( "Items", vItems );
 		constr.insert( "FromParts", true );

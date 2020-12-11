@@ -938,7 +938,7 @@ void MainWindowRenderer::updateSelection()
 					}
 
 					// TODO repair rot
-					unsigned char localRot = Util::rotString2Char( entry.value( "WallRotation" ).toString() );
+					unsigned char localRot = Global::util->rotString2Char( entry.value( "WallRotation" ).toString() );
 
 					Sprite* addSpriteValid = nullptr;
 

@@ -21,12 +21,14 @@
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/world.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
 
-CreatureFactory::CreatureFactory()
+CreatureFactory::CreatureFactory( Game* game ) :
+	g( game )
 {
 }
 CreatureFactory::~CreatureFactory()
@@ -54,9 +56,9 @@ Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 	int y = qMax( 2, ( rand() % dimy ) - 2 );
 
 	Position pos( x, y, dimZ - 2 );
-	m_world->getFloorLevelBelow( pos, false );
+	g->w()->getFloorLevelBelow( pos, false );
 
-	Animal* animal = new Animal( type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true );
+	Animal* animal = new Animal( type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, g );
 
 	animal->init();
 	return animal;
@@ -64,7 +66,7 @@ Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 
 Animal* CreatureFactory::createAnimal( QString type, Position pos, Gender gender, bool adult, bool tame )
 {
-	Animal* animal = new Animal( type, pos, gender, adult );
+	Animal* animal = new Animal( type, pos, gender, adult, g );
 	animal->init();
 	animal->setTame( tame );
 	return animal;
@@ -72,7 +74,7 @@ Animal* CreatureFactory::createAnimal( QString type, Position pos, Gender gender
 
 Animal* CreatureFactory::createAnimal( QVariantMap values )
 {
-	Animal* animal = new Animal( values );
+	Animal* animal = new Animal( values, g );
 	animal->init();
 	return animal;
 }
@@ -107,7 +109,7 @@ Monster* CreatureFactory::createRandomMonster( QStringList allowedMonsters )
 
 Monster* CreatureFactory::createMonster( QString type, int level, Position pos, Gender gender )
 {
-	Monster* monster = new Monster( type, level, pos, gender );
+	Monster* monster = new Monster( type, level, pos, gender, g );
 
 	monster->init();
 
@@ -139,7 +141,7 @@ Monster* CreatureFactory::createMonster( QString type, int level, Position pos, 
 
 Monster* CreatureFactory::createMonster( QVariantMap values )
 {
-	Monster* monster = new Monster( values );
+	Monster* monster = new Monster( values, g );
 	monster->init();
 	return monster;
 }

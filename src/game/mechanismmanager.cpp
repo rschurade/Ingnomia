@@ -47,7 +47,7 @@ QVariantMap MechanismData::serialize()
 	out.insert( "Fuel", fuel );
 	out.insert( "MaxFuel", maxFuel );
 	out.insert( "RFThreshold", refuelThreshold );
-	out.insert( "ConnectsTo", Util::positionList2Variant( connectsTo ) );
+	out.insert( "ConnectsTo", Global::util->positionList2Variant( connectsTo ) );
 	out.insert( "JobID", jobID );
 	out.insert( "IsInvertable", isInvertable );
 	out.insert( "Inverted", inverted );
@@ -70,7 +70,7 @@ void MechanismData::deserialize( QVariantMap in )
 	fuel            = in.value( "Fuel" ).toInt();
 	maxFuel         = in.value( "MaxFuel" ).toInt();
 	refuelThreshold = in.value( "RFThreshold" ).toInt();
-	connectsTo      = Util::variantList2Position( in.value( "ConnectsTo" ).toList() );
+	connectsTo      = Global::util->variantList2Position( in.value( "ConnectsTo" ).toList() );
 	jobID           = in.value( "JobID" ).toUInt();
 	isInvertable    = in.value( "IsInvertable" ).toBool();
 	inverted        = in.value( "Inverted" ).toBool();

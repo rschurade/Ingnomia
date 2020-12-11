@@ -388,7 +388,7 @@ Job* Farm::getTillJob()
 		{
 			Job* job = new Job;
 			job->setType( "Till" );
-			job->setRequiredSkill( Util::requiredSkill( "Till" ) );
+			job->setRequiredSkill( Global::util->requiredSkill( "Till" ) );
 			job->setPos( gf->pos );
 			job->addPossibleWorkPosition( gf->pos );
 			job->setNoJobSprite( true );
@@ -427,7 +427,7 @@ Job* Farm::getPlantJob()
 		{
 			Job* job = new Job;
 			job->setType( "PlantFarm" );
-			job->setRequiredSkill( Util::requiredSkill( "PlantFarm" ) );
+			job->setRequiredSkill( Global::util->requiredSkill( "PlantFarm" ) );
 			job->setPos( gf->pos );
 			job->addPossibleWorkPosition( gf->pos );
 			job->setItem( "Plant" );
@@ -463,7 +463,7 @@ Job* Farm::getHarvestJob()
 				{
 					Job* job = new Job;
 					job->setType( "Harvest" );
-					job->setRequiredSkill( Util::requiredSkill( "Harvest" ) );
+					job->setRequiredSkill( Global::util->requiredSkill( "Harvest" ) );
 					job->setPos( gf->pos );
 					job->addPossibleWorkPosition( gf->pos );
 					job->setNoJobSprite( true );

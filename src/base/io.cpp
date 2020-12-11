@@ -692,7 +692,7 @@ QJsonArray IO::jsonArraySprites()
 		QVariantMap vm;
 		vm.insert( "ItemSID", sc.itemSID );
 		vm.insert( "MaterialSIDs", sc.materialSIDs.join( '_' ) );
-		vm.insert( "Random", Util::mapJoin( sc.random ) );
+		vm.insert( "Random", Global::util->mapJoin( sc.random ) );
 		vm.insert( "UID", sc.uID );
 		if ( sc.creatureID )
 		{
@@ -715,7 +715,7 @@ bool IO::loadSprites( QJsonDocument& jd )
 		SpriteCreation sc;
 		sc.itemSID      = em.value( "ItemSID" ).toString();
 		sc.materialSIDs = em.value( "MaterialSIDs" ).toString().split( "_" );
-		sc.random       = Util::mapSplit( em.value( "Random" ).toString() );
+		sc.random       = Global::util->mapSplit( em.value( "Random" ).toString() );
 		sc.uID          = em.value( "UID" ).toUInt();
 		sc.creatureID   = em.value( "CreatureID" ).toUInt();
 		scl.push_back( sc );

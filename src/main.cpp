@@ -199,7 +199,6 @@ int main( int argc, char* argv[] )
 	QSurfaceFormat::setDefaultFormat( defaultFormat );
 
 	GameManager* gm = new GameManager;
-	Global::eventConnector = gm->eventConnector();
 	QThread gameThread;
 	gameThread.start();
 	gm->moveToThread( &gameThread );

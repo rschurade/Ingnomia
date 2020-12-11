@@ -30,7 +30,7 @@
 #include <QtGlobal>
 
 class EventConnector;
-
+class Util;
 class Logger;
 
 class Global
@@ -84,6 +84,7 @@ public:
 	static QSet<QString> craftable;
 
 	static EventConnector* eventConnector;
+	static Util* util;
 
 private:
 	static Logger m_logger;

@@ -127,7 +127,7 @@ QVariantMap Squad::serialize()
 	QVariantMap out;
 	out.insert( "Name", name );
 	out.insert( "ID", id );
-	out.insert( "Gnomes", Util::uintList2Variant( gnomes ) );
+	out.insert( "Gnomes", Global::util->uintList2Variant( gnomes ) );
 
 	QVariantList vl;
 	for( auto prio : priorities )
@@ -147,7 +147,7 @@ Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 {
 	name       = in.value( "Name" ).toString();
 	id         = in.value( "ID" ).toUInt();
-	gnomes     = Util::variantList2UInt( in.value( "Gnomes" ).toList() );
+	gnomes     = Global::util->variantList2UInt( in.value( "Gnomes" ).toList() );
 
 	if( in.contains( "Priorities" ) )
 	{

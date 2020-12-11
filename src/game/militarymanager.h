@@ -105,6 +105,7 @@ struct Squad
 	QList<TargetPriority> priorities;
 
 	Squad( QList<QString> tps ) : types( tps ) {};
+	Squad() {};
 };
 Q_DECLARE_METATYPE( Squad )
 

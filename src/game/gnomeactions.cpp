@@ -87,7 +87,7 @@ BT_RESULT Gnome::actionSleep( bool halt )
 
 	if ( thoughtBubble() != "Sleeping" )
 	{
-		m_gainFromSleep = ( DB::select( "GainFromSleep", "Needs", "Sleep" ).toFloat() / Util::ticksPerMinute );
+		m_gainFromSleep = ( DB::select( "GainFromSleep", "Needs", "Sleep" ).toFloat() / Global::util->ticksPerMinute );
 		setThoughtBubble( "Sleeping" );
 		m_log.append( "Going to sleep." );
 	}
@@ -378,7 +378,7 @@ BT_RESULT Gnome::actionEat( bool halt )
 	{
 		//m_log.append( "Starting to eat." );
 		m_currentAction  = "eating";
-		m_taskFinishTick = GameState::tick + Util::ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+		m_taskFinishTick = GameState::tick + Global::util->ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
 	}
 
 	if ( GameState::tick < m_taskFinishTick )
@@ -434,7 +434,7 @@ BT_RESULT Gnome::actionDrink( bool halt )
 	{
 		//m_log.append( "Starting to drink." );
 		m_currentAction  = "drinking";
-		m_taskFinishTick = GameState::tick + Util::ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+		m_taskFinishTick = GameState::tick + Global::util->ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
 	}
 
 	if ( GameState::tick < m_taskFinishTick )
@@ -1044,7 +1044,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 	}
 
 	unsigned int equippedItem = m_equipment.rightHandHeld.itemID;
-	int equippedToolLevel     = Util::toolLevel( equippedItem );
+	int equippedToolLevel     = Global::util->toolLevel( equippedItem );
 
 	if ( equippedItem )
 	{
@@ -1076,7 +1076,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 	{
 		if ( mc[key] > 0 )
 		{
-			int tl = Util::toolLevel( key );
+			int tl = Global::util->toolLevel( key );
 			if ( tl >= rt.level )
 			{
 				// there are a number of tools of the required level in the world
@@ -1118,7 +1118,7 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 
 	if ( m_equipment.rightHandHeld.itemID )
 	{
-		int equippedToolLevel = Util::toolLevel( m_equipment.rightHandHeld.itemID );
+		int equippedToolLevel = Global::util->toolLevel( m_equipment.rightHandHeld.itemID );
 		if ( m_equipment.rightHandHeld.item == m_job->requiredTool().type && equippedToolLevel >= m_job->requiredTool().level )
 		{
 			g->jm()->setJobBeingWorked( m_jobID, true );
@@ -1668,7 +1668,7 @@ BT_RESULT Gnome::actionWork( bool halt )
 			m_currentTask = m_taskList.takeFirst();
 
 			QString skillID = m_job->requiredSkill();
-			float current   = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+			float current   = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
 
 			ticks                = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
@@ -1712,7 +1712,7 @@ BT_RESULT Gnome::actionWork( bool halt )
 			m_currentTask = m_taskList.takeFirst();
 
 			QString skillID = m_job->requiredSkill();
-			float current   = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+			float current   = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
 			if ( ticks > 0 )
 			{
@@ -1830,7 +1830,7 @@ BT_RESULT Gnome::actionButcherAnimal( bool halt )
 		m_currentAction = "butcher animal";
 
 		QString skillID      = m_job->requiredSkill();
-		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 		m_totalDurationTicks = 50; //TODO get that number from DB
 		m_taskFinishTick     = GameState::tick + 50;
 	}
@@ -1918,7 +1918,7 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 		m_currentAction = "dye animal";
 
 		QString skillID      = m_job->requiredSkill();
-		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 		m_totalDurationTicks = 50; //TODO get that number from DB
 		m_taskFinishTick     = GameState::tick + 50;
 	}
@@ -1982,7 +1982,7 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 		m_currentAction = "harvest animal";
 
 		QString skillID      = m_job->requiredSkill();
-		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 		m_totalDurationTicks = 100;
 		m_taskFinishTick     = GameState::tick + 100;
 	}
@@ -2005,7 +2005,7 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 
 		if ( !dye.isEmpty() )
 		{
-			type = Util::addDyeMaterial( type, dye );
+			type = Global::util->addDyeMaterial( type, dye );
 		}
 
 		for ( int i = 0; i < amount; ++i )
@@ -2050,7 +2050,7 @@ BT_RESULT Gnome::actionTameAnimal( bool halt )
 		m_currentAction = "tame animal";
 
 		QString skillID      = m_job->requiredSkill();
-		float current        = Util::reverseFib( m_skills.value( skillID ).toUInt() );
+		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
 		m_totalDurationTicks = 100;
 		m_taskFinishTick     = GameState::tick + 100;
 	}
@@ -2211,7 +2211,7 @@ BT_RESULT Gnome::actionTrain( bool halt )
 	else if ( m_trainCounter < 0 )
 	{
 		// starting training;
-		m_trainCounter = Util::ticksPerMinute * 15;
+		m_trainCounter = Global::util->ticksPerMinute * 15;
 	}
 	m_trainCounter  = qMax( 0, m_trainCounter - 1 );
 	m_thoughtBubble = "Combat";
@@ -2256,7 +2256,7 @@ BT_RESULT Gnome::actionSuperviseTraining( bool halt )
 	else if ( m_trainCounter < 0 )
 	{
 		// starting training;
-		m_trainCounter = Util::ticksPerMinute * 15;
+		m_trainCounter = Global::util->ticksPerMinute * 15;
 	}
 	m_trainCounter  = qMax( 0, m_trainCounter - 1 );
 	m_thoughtBubble = "Combat";
@@ -2389,7 +2389,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 			{
 				case MissionStep::TRAVEL:
 				{
-					int hours = ( GameState::tick - mission->startTick ) / ( Util::ticksPerMinute * Util::minutesPerHour );
+					int hours = ( GameState::tick - mission->startTick ) / ( Global::util->ticksPerMinute * Global::util->minutesPerHour );
 
 					switch ( mission->type )
 					{
@@ -2436,7 +2436,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 						break;
 					}
 
-					mission->nextCheckTick = GameState::tick + Util::ticksPerDay;
+					mission->nextCheckTick = GameState::tick + Global::util->ticksPerDay;
 					m_nextCheckTick        = mission->nextCheckTick;
 					return BT_RESULT::RUNNING;
 				}
@@ -2460,7 +2460,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 							g->nm()->sabotage( mission );
 							break;
 					}
-					mission->nextCheckTick = GameState::tick + mission->distance * Util::ticksPerMinute * Util::minutesPerHour;
+					mission->nextCheckTick = GameState::tick + mission->distance * Global::util->ticksPerMinute * Global::util->minutesPerHour;
 					m_nextCheckTick        = mission->nextCheckTick;
 					mission->step          = MissionStep::RETURN;
 					return BT_RESULT::RUNNING;
@@ -2527,7 +2527,7 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 		m_position = mission->leavePos;
 
 		mission->step = MissionStep::RETURNED;
-		mission->result.insert( "TotalTime", ( GameState::tick - mission->startTick ) / ( Util::ticksPerMinute * Util::minutesPerHour ) );
+		mission->result.insert( "TotalTime", ( GameState::tick - mission->startTick ) / ( Global::util->ticksPerMinute * Global::util->minutesPerHour ) );
 
 		qDebug() << "Returning from mission at " << m_position.toString();
 	}

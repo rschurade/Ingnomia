@@ -218,7 +218,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Util::createWorkshopImage( gbi.id, mats );
+			QPixmap pm = Global::util->createWorkshopImage( gbi.id, mats );
 			Util::createBufferForNoesisImage( pm, gbi.buffer );
 			gbi.iconWidth = pm.width();
 			gbi.iconHeight = pm.height();
@@ -240,7 +240,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Util::createConstructionImage( gbi.id, mats );
+			QPixmap pm = Global::util->createConstructionImage( gbi.id, mats );
 
 			Util::createBufferForNoesisImage( pm, gbi.buffer );
 			gbi.iconWidth = pm.width();
@@ -276,7 +276,7 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Util::createItemImage( gbi.id, mats );
+			QPixmap pm = Global::util->createItemImage( gbi.id, mats );
 			Util::createBufferForNoesisImage( pm, gbi.buffer );
 			gbi.iconWidth = pm.width();
 			gbi.iconHeight = pm.height();

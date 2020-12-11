@@ -273,7 +273,7 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 			{
 				if ( infi->items.size() == 0 || !infi->requireSame )
 				{
-					for ( const auto& itemSID : Util::itemsAllowedInContainer( infi->containerID ) )
+					for ( const auto& itemSID : Global::util->itemsAllowedInContainer( infi->containerID ) )
 					{
 						freeSlots.insert( { itemSID, "Any" } );
 					}
@@ -356,7 +356,7 @@ unsigned int Stockpile::getJob()
 						if ( infi->items.size() + infi->reservedItems.size() == 0 )
 						{
 							//container is empty
-							if ( Util::itemAllowedInContainer( item, infi->containerID ) )
+							if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
 							{
 								return createJob( item, infi );
 							}
@@ -391,7 +391,7 @@ unsigned int Stockpile::getJob()
 								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) &&
 									 infi->capacity > infi->items.size() + infi->reservedItems.size() )
 								{
-									if ( Util::itemAllowedInContainer( item, infi->containerID ) )
+									if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
 									{
 										return createJob( item, infi );
 									}
@@ -497,8 +497,8 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 		if ( itemCount > 1 )
 		{
 			// carry container exists?
-			QString carryContainer = Util::carryContainerForItem( itemSID );
-			freeSpace              = qMin( freeSpace, Util::capacity( carryContainer ) );
+			QString carryContainer = Global::util->carryContainerForItem( itemSID );
+			freeSpace              = qMin( freeSpace, Global::util->capacity( carryContainer ) );
 
 			if ( !carryContainer.isEmpty() )
 			{
@@ -646,7 +646,7 @@ unsigned int Stockpile::getCleanUpJob()
 						{
 							for ( auto oi : infi2->items )
 							{
-								if ( Util::itemAllowedInContainer( oi, infi->containerID ) && !g->inv()->isInJob( oi ) )
+								if ( Global::util->itemAllowedInContainer( oi, infi->containerID ) && !g->inv()->isInJob( oi ) )
 								{
 									return createJob( oi, infi );
 								}
@@ -766,7 +766,7 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 
 		if ( field->containerID )
 		{
-			if ( Util::itemAllowedInContainer( item, field->containerID ) )
+			if ( Global::util->itemAllowedInContainer( item, field->containerID ) )
 			{
 				g->inv()->putItemInContainer( item, field->containerID );
 			}
@@ -923,7 +923,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 			auto items = m_fields[pos.toInt()]->items;
 			for ( auto item : items )
 			{
-				if ( Util::itemAllowedInContainer( item, containerID ) && g->inv()->itemsInContainer( containerID ).size() < g->inv()->capacity( containerID ) )
+				if ( Global::util->itemAllowedInContainer( item, containerID ) && g->inv()->itemsInContainer( containerID ).size() < g->inv()->capacity( containerID ) )
 				{
 					// if an item is already in the container and the container requires same
 					if ( field->requireSame && g->inv()->itemsInContainer( containerID ).size() )

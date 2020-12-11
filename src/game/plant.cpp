@@ -282,7 +282,7 @@ void Plant::setGrowTime()
 	if ( m_state < sl.size() - 1 )
 	{
 		QVariantMap sm     = sl[m_state];
-		int ticks          = sm["GrowTime"].toFloat() * Util::ticksPerDay;
+		int ticks          = sm["GrowTime"].toFloat() * Global::util->ticksPerDay;
 		int dev            = ticks * 0.05;
 		int rand           = ( QRandomGenerator::global()->generate() % dev ) - ( dev / 2 );
 		m_ticksToNextState = ticks + rand;
@@ -558,7 +558,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 				//world.removeFloor( pos, extractPos );
 			}
 
-			world.setWallSprite( pos, sprite->uID, Util::rotString2Char( vm.value( "Rotation" ).toString() ) );
+			world.setWallSprite( pos, sprite->uID, Global::util->rotString2Char( vm.value( "Rotation" ).toString() ) );
 			world.clearTileFlag( pos, TileFlag::TF_WALKABLE );
 			world.setTileFlag( pos, TileFlag::TF_OCCUPIED );
 			world.setTileFlag( pos, TileFlag::TF_OVERSIZE );

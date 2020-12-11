@@ -145,15 +145,15 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	}
 	if ( in.contains( "ClaimedItems" ) )
 	{
-		m_claimedItems = Util::variantList2UInt( in.value( "ClaimedItems" ).toList() );
+		m_claimedItems = Global::util->variantList2UInt( in.value( "ClaimedItems" ).toList() );
 	}
 	if ( in.contains( "CarriedItems" ) )
 	{
-		m_carriedItems = Util::variantList2UInt( in.value( "CarriedItems" ).toList() );
+		m_carriedItems = Global::util->variantList2UInt( in.value( "CarriedItems" ).toList() );
 	}
 	if ( in.contains( "InventoryItems" ) )
 	{
-		m_inventoryItems = Util::variantList2UInt( in.value( "InventoryItems" ).toList() );
+		m_inventoryItems = Global::util->variantList2UInt( in.value( "InventoryItems" ).toList() );
 	}
 }
 
@@ -235,15 +235,15 @@ void Creature::serialize( QVariantMap& out ) const
 
 	if ( m_claimedItems.size() )
 	{
-		out.insert( "ClaimedItems", Util::uintList2Variant( m_claimedItems ) );
+		out.insert( "ClaimedItems", Global::util->uintList2Variant( m_claimedItems ) );
 	}
 	if ( m_carriedItems.size() )
 	{
-		out.insert( "CarriedItems", Util::uintList2Variant( m_carriedItems ) );
+		out.insert( "CarriedItems", Global::util->uintList2Variant( m_carriedItems ) );
 	}
 	if ( m_inventoryItems.size() )
 	{
-		out.insert( "InventoryItems", Util::uintList2Variant( m_inventoryItems ) );
+		out.insert( "InventoryItems", Global::util->uintList2Variant( m_inventoryItems ) );
 	}
 
 	//combat variables
@@ -331,7 +331,7 @@ int Creature::getSkillLevel( QString id ) const
 {
 	if ( m_skills.contains( id ) )
 	{
-		return Util::reverseFib( m_skills.value( id ).toInt() );
+		return Global::util->reverseFib( m_skills.value( id ).toInt() );
 	}
 	return -1;
 }
@@ -965,7 +965,7 @@ BT_RESULT Creature::actionGetExitPosition( bool halt )
 			else
 			{
 				bool found        = false;
-				Position leavePos = Util::reachableBorderPos( m_position, found );
+				Position leavePos = Global::util->reachableBorderPos( m_position, found );
 				if ( found )
 				{
 					mission->leavePos = leavePos;
@@ -982,7 +982,7 @@ BT_RESULT Creature::actionGetExitPosition( bool halt )
 	else
 	{
 		bool found        = false;
-		Position leavePos = Util::reachableBorderPos( m_position, found );
+		Position leavePos = Global::util->reachableBorderPos( m_position, found );
 		if ( found )
 		{
 			setCurrentTarget( leavePos );

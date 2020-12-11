@@ -90,7 +90,7 @@ GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, Game* game
 {
 	m_type = CreatureType::GNOME_TRADER;
 
-	m_leavesOnTick = GameState::tick + Util::ticksPerDayRandomized( 5 );
+	m_leavesOnTick = GameState::tick + Global::util->ticksPerDayRandomized( 5 );
 }
 
 GnomeTrader::GnomeTrader( QVariantMap& in, Game* game ) :

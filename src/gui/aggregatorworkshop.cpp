@@ -39,7 +39,7 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 
 	auto mats = g->inv()->materialCountsForItem( sid );
 
-	auto allowedMats = Util::possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
+	auto allowedMats = Global::util->possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
 	if ( !allowedMats.isEmpty() )
 	{
 		for ( auto mat : allowedMats )

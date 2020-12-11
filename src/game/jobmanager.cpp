@@ -332,8 +332,8 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	job.setNoJobSprite( noJobSprite );
 
 	job.setMayTrap( DB::select( "MayTrapGnome", "Jobs", type ).toBool() );
-	job.setRequiredSkill( Util::requiredSkill( type ) );
-	job.setRequiredTool( Util::requiredTool( type ), Util::requiredToolLevel( type, pos ) );
+	job.setRequiredSkill( Global::util->requiredSkill( type ) );
+	job.setRequiredTool( Global::util->requiredTool( type ), Global::util->requiredToolLevel( type, pos ) );
 
 	QString wps = DB::select( "WorkPosition", "Jobs", job.type() ).toString();
 	job.setOrigWorkPosOffsets( wps );
@@ -373,7 +373,7 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 
 	Job job;
 	job.setType( type );
-	job.setRequiredSkill( Util::requiredSkill( type ) );
+	job.setRequiredSkill( Global::util->requiredSkill( type ) );
 	job.setPos( pos );
 	job.setItem( item );
 	job.setMaterial( materials.first() );

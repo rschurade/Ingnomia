@@ -748,7 +748,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 			{
 				if ( p.second )
 				{
-					m_world->construct( m_item, p.first, 0, Util::variantList2UInt( vUMats ), p.first );
+					m_world->construct( m_item, p.first, 0, Global::util->variantList2UInt( vUMats ), p.first );
 				}
 			}
 		}

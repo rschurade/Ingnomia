@@ -617,7 +617,7 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 	QString craftID;
 	if ( materialSID != "any" )
 	{
-		QString matType = Util::materialType( materialSID );
+		QString matType = Global::util->materialType( materialSID );
 		if ( !possibleMaterials.contains(matType ) )
 		{
 			return false;
@@ -721,7 +721,7 @@ Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 	job->setPosItemInput( m_properties.posIn );
 	job->setPosItemOutput( m_properties.posOut );
 
-	job->setDescription( Util::itemName( cj.itemSID ) );
+	job->setDescription( Global::util->itemName( cj.itemSID ) );
 	job->setCraftID( cj.craftID );
 
 	for ( auto ri : cj.requiredItems )

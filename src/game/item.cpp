@@ -445,7 +445,7 @@ void Item::setColor( QString color )
 		{
 			m_extraData = new ItemExtraData;
 		}
-		m_extraData->color = Util::string2Color( color );
+		m_extraData->color = Global::util->string2Color( color );
 	}
 }
 

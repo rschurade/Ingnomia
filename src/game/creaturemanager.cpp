@@ -180,13 +180,14 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 	QMutexLocker l( &m_mutex );
 
 	Creature* creature = nullptr;
+	CreatureFactory cf( g );
 	switch ( ct )
 	{
 		case CreatureType::ANIMAL:
-			creature = CreatureFactory::getInstance().createAnimal( type, pos, gender, adult, tame );
+			creature = cf.createAnimal( type, pos, gender, adult, tame );
 			break;
 		case CreatureType::MONSTER:
-			creature = CreatureFactory::getInstance().createMonster( type, level, pos, gender );
+			creature = cf.createMonster( type, level, pos, gender );
 			break;
 	}
 
@@ -219,13 +220,14 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 {
 	Creature* creature = nullptr;
+	CreatureFactory cf( g );
 	switch ( ct )
 	{
 		case CreatureType::ANIMAL:
-			creature = CreatureFactory::getInstance().createAnimal( vals );
+			creature = cf.createAnimal( vals );
 			break;
 		case CreatureType::MONSTER:
-			creature = CreatureFactory::getInstance().createMonster( vals );
+			creature = cf.createMonster( vals );
 			break;
 	}
 	if( creature )

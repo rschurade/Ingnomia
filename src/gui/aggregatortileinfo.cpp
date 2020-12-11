@@ -356,7 +356,7 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 			int count = sp->count( entry.first, entry.second );
 			if ( count > 0 )
 			{
-				//QIcon icon( Util::smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
+				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
 				ItemsSummary is;
 				is.itemName     = S::s( "$ItemName_" + entry.first );
 				is.materialName = S::s( "$MaterialName_" + entry.second );

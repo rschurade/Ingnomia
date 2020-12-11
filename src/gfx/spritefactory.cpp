@@ -72,12 +72,12 @@ bool SpriteFactory::init()
 
 	for ( auto color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
 	{
-		m_colors.push_back( Util::string2QColor( color.toString() ) );
+		m_colors.push_back( Global::util->string2QColor( color.toString() ) );
 	}
 
 	for ( auto color : DB::selectRows( "HairColors" ) )
 	{
-		m_hairColors.push_back( Util::string2QColor( color.value( "Color" ).toString() ) );
+		m_hairColors.push_back( Global::util->string2QColor( color.value( "Color" ).toString() ) );
 	}
 
 	bool loaded = true;
@@ -1375,7 +1375,7 @@ QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material
 	}
 
 	QPixmap pm = m_baseSprites[baseSprite];
-	tintPixmap( pm, Util::string2QColor( DBH::materialColor( material ) ) );
+	tintPixmap( pm, Global::util->string2QColor( DBH::materialColor( material ) ) );
 	return pm;
 }
 

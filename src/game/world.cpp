@@ -1143,7 +1143,7 @@ QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& w
 
 	QString ncd = QString::number( pos.toInt() );
 	ncd += ";";
-	ncd += Util::tile2String( tile );
+	ncd += Global::util->tile2String( tile );
 
 	return { materialInt, embeddedInt };
 }
@@ -1178,7 +1178,7 @@ QPair<unsigned short, unsigned short> World::removeWall( Position pos, Position&
 
 	QString ncd = QString::number( pos.toInt() );
 	ncd += ";";
-	ncd += Util::tile2String( tile );
+	ncd += Global::util->tile2String( tile );
 
 	return { materialInt, embeddedInt };
 }

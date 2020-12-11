@@ -291,7 +291,7 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 				for ( const auto& targetID : targetSet )
 				{
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
-					if ( m_gm->g->m_creatureManager->hasPathTo( m_position, targetID ) )
+					if ( g->cm()->hasPathTo( m_position, targetID ) )
 					{
 						return BT_RESULT::SUCCESS;
 					}

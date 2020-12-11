@@ -73,6 +73,9 @@ GameManager::GameManager( QObject* parent ) :
 
 	m_sf = new SpriteFactory();
 	m_eventConnector = new EventConnector( this );
+	Global::eventConnector = m_eventConnector;
+	Global::util = new Util;
+	
 	m_newGameSettings = new NewGameSettings( this );
 
 	GameState::init();
@@ -248,7 +251,7 @@ void GameManager::createNewGame()
 
 
 	GameState::peaceful = m_newGameSettings->isPeaceful();
-	Util::initAllowedInContainer();
+	Global::util->initAllowedInContainer();
 	Config::getInstance().set( "NoRender", false );
 	m_eventConnector->onViewLevel( GameState::viewLevel );
 	Config::getInstance().set( "gameRunning", true );

@@ -723,8 +723,8 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 
 	if ( isDead() )
 	{
-		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
-		m_expires    = GameState::tick + Util::ticksPerDay * 2;
+		qDebug() << m_name << " expires " << GameState::tick + Global::util->ticksPerDay;
+		m_expires    = GameState::tick + Global::util->ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
 	}

@@ -51,6 +51,7 @@
 #include <QStandardPaths>
 
 EventConnector* Global::eventConnector = nullptr;
+Util* Global::util = nullptr;
 
 Logger Global::m_logger;
 
@@ -100,12 +101,6 @@ void Global::reset()
 	qDebug() << "*** Global reset";
 
 	DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
-	Util::ticksPerMinute = DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
-	Util::minutesPerHour = DB::select( "Value_", "Time", "MinutesPerHour" ).toInt();
-	Util::hoursPerDay    = DB::select( "Value_", "Time", "HoursPerDay" ).toInt();
-	Util::ticksPerDay    = Util::ticksPerMinute * Util::minutesPerHour * Util::hoursPerDay;
-
-	Util::daysPerSeason = DB::select( "NumDays", "Seasons", 1 ).toInt();
 
 	GameState::stockOverlay.clear();
 	GameState::squads.clear();
