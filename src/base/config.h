@@ -28,29 +28,14 @@
 class Config
 {
 private:
-	// Private Constructor
-	Config();
-	// Stop the compiler generating methods of copy the object
-	Config( Config const& copy );            // Not Implemented
-	Config& operator=( Config const& copy ); // Not Implemented
-
 	QVariantMap m_settings;
-
+	bool m_valid = false;
 	QMutex m_mutex;
 
 public:
+	Config();
 	~Config();
 
-	static Config& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static Config instance;
-		return instance;
-	}
-
-	bool init();
 	QVariant get( QString key );
 	void set( QString key, QVariant value );
 
@@ -61,6 +46,11 @@ public:
 	void setObject( QVariantMap obj )
 	{
 		m_settings = obj;
+	}
+
+	bool valid()
+	{
+		return m_valid;
 	}
 };
 

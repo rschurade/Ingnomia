@@ -826,7 +826,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	if ( elapsed > 100 )
 	{
 		qDebug() << m_name << "just needed" << elapsed << "ms for bt tick";
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 	}
 #else
 	if ( m_behaviorTree )

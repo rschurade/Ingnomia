@@ -184,7 +184,7 @@ void GameManager::loadGame( QString folder )
 	/*
 	init();
 
-	Config::getInstance().set( "NoRender", true );
+	Global::cfg->set( "NoRender", true );
 
 	IO io;
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
@@ -205,9 +205,9 @@ void GameManager::loadGame( QString folder )
 		m_game->sendTime();
 		m_eventConnector->onViewLevel( GameState::viewLevel );
 
-		Config::getInstance().set( "NoRender", false );
+		Global::cfg->set( "NoRender", false );
 
-		Config::getInstance().set( "gameRunning", true );
+		Global::cfg->set( "gameRunning", true );
 
 		m_eventConnector->emitInMenu( false );
 
@@ -258,9 +258,9 @@ void GameManager::createNewGame()
 	
 	GameState::peaceful = Global::newGameSettings->isPeaceful();
 	Global::util->initAllowedInContainer();
-	Config::getInstance().set( "NoRender", false );
+	Global::cfg->set( "NoRender", false );
 	m_eventConnector->onViewLevel( GameState::viewLevel );
-	Config::getInstance().set( "gameRunning", true );
+	Global::cfg->set( "gameRunning", true );
 	m_eventConnector->emitInMenu( false );
 
 	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );

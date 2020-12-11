@@ -54,6 +54,7 @@ EventConnector* Global::eventConnector = nullptr;
 Util* Global::util = nullptr;
 Selection* Global::sel = nullptr;
 NewGameSettings* Global::newGameSettings = nullptr;
+Config* Global::cfg = nullptr;
 
 Logger Global::m_logger;
 
@@ -102,12 +103,10 @@ void Global::reset()
 {
 	qDebug() << "*** Global reset";
 
-	DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
-
 	GameState::stockOverlay.clear();
 	GameState::squads.clear();
 
-	Global::xpMod = Config::getInstance().get( "XpMod" ).toDouble();
+	Global::xpMod = Global::cfg->get( "XpMod" ).toDouble();
 
 	m_logger.reset();
 
@@ -137,7 +136,7 @@ void Global::reset()
 
 	Global::dirtUID = DBH::materialUID( "Dirt" );
 
-	Config::getInstance().set( "renderCreatures", true );
+	Global::cfg->set( "renderCreatures", true );
 
 	creaturePartLookUp.insert( "Head", CP_HEAD );
 	creaturePartLookUp.insert( "Torso", CP_TORSO );
@@ -267,7 +266,7 @@ bool Global::loadBehaviorTrees()
 
 		QDomDocument xml;
 		// Load xml file as raw data
-		QFile f( Config::getInstance().get( "dataPath" ).toString() + "/ai/" + xmlName );
+		QFile f( Global::cfg->get( "dataPath" ).toString() + "/ai/" + xmlName );
 		if ( !f.open( QIODevice::ReadOnly ) )
 		{
 			// Error while loading file

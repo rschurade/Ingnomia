@@ -556,7 +556,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 	if ( elapsed > 100 )
 	{
 		qDebug() << m_name << "JobManager just needed" << elapsed << "ms for getJob";
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 	}
 #else
 	QElapsedTimer et;

@@ -88,7 +88,7 @@ bool SpriteFactory::init()
 		if ( !m_pixmapSources.contains( tilesheet ) )
 		{
 			QPixmap pm;
-			loaded = pm.load( Config::getInstance().get( "dataPath" ).toString() + "/tilesheet/" + tilesheet );
+			loaded = pm.load( Global::cfg->get( "dataPath" ).toString() + "/tilesheet/" + tilesheet );
 			if ( !loaded )
 			{
 				loaded = pm.load( tilesheet );
@@ -1186,7 +1186,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 			if ( m_pixelData.size() < tex + 1 )
 			{
-				int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+				int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 				int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 				for ( int i = 0; i < 32; ++i )
@@ -1230,7 +1230,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 		if ( m_pixelData.size() < tex + 1 )
 		{
-			int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+			int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 			int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 			for ( int i = 0; i < 32; ++i )

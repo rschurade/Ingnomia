@@ -64,7 +64,7 @@ World* WorldGenerator::generateTopology()
 	qDebug() << "creating world with size" << m_dimX << m_dimY << m_dimZ;
 
 	m_groundLevel = ngs->ground();
-	m_fow         = Config::getInstance().get( "fow" ).toBool();
+	m_fow         = Global::cfg->get( "fow" ).toBool();
 
 	auto& world = w->world();
 	world.resize( m_dimX * m_dimY * m_dimZ, Tile() );

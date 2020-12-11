@@ -39,7 +39,7 @@ void DB::init()
 {
 	QMutexLocker lock( &DB::m_mutex );
 
-	QFile file( Config::getInstance().get( "dataPath" ).toString() + "/db/" + "ingnomia.db.sql" );
+	QFile file( Global::cfg->get( "dataPath" ).toString() + "/db/" + "ingnomia.db.sql" );
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString sql = file.readAll();
     file.close();

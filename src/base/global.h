@@ -34,6 +34,7 @@ class Util;
 class Logger;
 class Selection;
 class NewGameSettings;
+class Config;
 
 class Global
 {
@@ -89,6 +90,7 @@ public:
 	static Util* util;
 	static Selection* sel;
 	static NewGameSettings* newGameSettings;
+	static Config* cfg;
 
 private:
 	static Logger m_logger;

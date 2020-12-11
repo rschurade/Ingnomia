@@ -28,14 +28,6 @@
 
 Config::Config()
 {
-}
-
-Config::~Config()
-{
-}
-
-bool Config::init()
-{
 	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
@@ -47,7 +39,7 @@ bool Config::init()
 	{
 		if( !IO::loadOriginalConfig( jd ) )
 		{
-			return false;
+			return;
 		}
 	}
 	
@@ -55,7 +47,7 @@ bool Config::init()
 
 	if( m_settings.keys().size() == 0 )
 	{
-		return false;
+		return;
 	}
 
 
@@ -89,7 +81,12 @@ bool Config::init()
 	}
 	m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
 
-	return ok;
+	m_valid = true;
+
+}
+
+Config::~Config()
+{
 }
 
 QVariant Config::get( QString key )

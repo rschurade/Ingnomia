@@ -137,9 +137,9 @@ void Game::start()
 
 	if ( GameState::tick == 0 && !GameState::initialSave )
 	{
-		Config::getInstance().set( "DaysToNextAutoSave", 0 );
+		Global::cfg->set( "DaysToNextAutoSave", 0 );
 		autoSave();
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 		emit signalPause( true );
 	}
 
@@ -402,45 +402,45 @@ void Game::processPlants()
 
 void Game::autoSave()
 {
-	int daysToNext = Config::getInstance().get( "DaysToNextAutoSave" ).toInt();
+	int daysToNext = Global::cfg->get( "DaysToNextAutoSave" ).toInt();
 
 	if ( daysToNext == 0 )
 	{
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 		emit signalStartAutoSave();
 		emit signalPause( true );
 		IO io( this, this );
 		io.save( true );
 		emit signalEndAutoSave();
 
-		if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )
+		if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 		{
 			emit signalPause( false );
-			Config::getInstance().set( "Pause", false );
+			Global::cfg->set( "Pause", false );
 		}
 
-		Config::getInstance().set( "DaysToNextAutoSave", Config::getInstance().get( "AutoSaveInterval" ).toInt() - 1 );
+		Global::cfg->set( "DaysToNextAutoSave", Global::cfg->get( "AutoSaveInterval" ).toInt() - 1 );
 	}
 	else
 	{
 		--daysToNext;
-		Config::getInstance().set( "DaysToNextAutoSave", daysToNext );
+		Global::cfg->set( "DaysToNextAutoSave", daysToNext );
 	}
 }
 
 void Game::save()
 {
-	Config::getInstance().set( "Pause", true );
+	Global::cfg->set( "Pause", true );
 	emit signalStartAutoSave();
 	emit signalPause( true );
 	IO io( this, this );
 	io.save( true );
 	emit signalEndAutoSave();
 
-	if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )
+	if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 	{
 		emit signalPause( false );
-		Config::getInstance().set( "Pause", false );
+		Global::cfg->set( "Pause", false );
 	}
 }
 

@@ -96,7 +96,7 @@ bool IO::saveConfig()
 {
 	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/";
 
-	QVariantMap cm   = Config::getInstance().object();
+	QVariantMap cm   = Global::cfg->object();
 	QJsonDocument jd = QJsonDocument::fromVariant( cm );
 
 	IO::saveFile( folder + "config.json", jd );
@@ -482,7 +482,7 @@ QJsonArray IO::jsonArrayConfig()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayConfig";
 	QJsonArray ja;
-	ja.append( QJsonValue::fromVariant( Config::getInstance().object() ) );
+	ja.append( QJsonValue::fromVariant( Global::cfg->object() ) );
 
 	return ja;
 }
@@ -502,7 +502,7 @@ QJsonArray IO::jsonArrayGame()
 {
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayGame";
-	GameState::version = Config::getInstance().get( "CurrentVersion" ).toString();
+	GameState::version = Global::cfg->get( "CurrentVersion" ).toString();
 
 	GameState::initialSave = true;
 

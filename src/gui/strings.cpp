@@ -38,7 +38,7 @@ Strings::~Strings()
 
 bool Strings::init()
 {
-	m_language = Config::getInstance().get( "language" ).toString();
+	m_language = Global::cfg->get( "language" ).toString();
 	m_table.clear();
 	//for( auto row : DB::selectRows( "Translation_" + m_language ) )
 	for ( auto row : DB::selectRows( "Translation" ) )

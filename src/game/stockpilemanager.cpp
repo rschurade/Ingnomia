@@ -45,14 +45,14 @@ void StockpileManager::reset()
 
 void StockpileManager::onTick( quint64 tick )
 {
-	if ( Config::getInstance().get( "updateItemFilter" ).toBool() )
+	if ( Global::cfg->get( "updateItemFilter" ).toBool() )
 	{
 		for ( auto&& sp : m_stockpiles )
 		{
 			sp->updateFilter();
 		}
 	}
-	Config::getInstance().set( "updateItemFilter", false );
+	Global::cfg->set( "updateItemFilter", false );
 
 	for ( auto&& sp : m_stockpiles )
 	{

@@ -172,7 +172,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		if ( elapsed > 100 )
 		{
 			qDebug() << g->name() << "just needed" << elapsed << "ms for tick";
-			Config::getInstance().set( "Pause", true );
+			Global::cfg->set( "Pause", true );
 			return;
 		}
 #else
@@ -410,7 +410,7 @@ void GnomeManager::loadProfessions()
 	if ( !IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( Config::getInstance().get( "dataPath" ).toString() + "/JSON/profs.json", sd ) )
+		if ( IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/profs.json", sd ) )
 		{
 			IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd );
 		}

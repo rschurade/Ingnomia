@@ -118,10 +118,10 @@ MainWindow::~MainWindow()
 
 	if( !m_isFullScreen )
 	{
-		Config::getInstance().set( "WindowWidth", this->width() );
-		Config::getInstance().set( "WindowHeight", this->height() );
-		Config::getInstance().set( "WindowPosX", this->position().x() );
-		Config::getInstance().set( "WindowPosY", this->position().y() );
+		Global::cfg->set( "WindowWidth", this->width() );
+		Global::cfg->set( "WindowHeight", this->height() );
+		Global::cfg->set( "WindowPosX", this->position().x() );
+		Global::cfg->set( "WindowPosY", this->position().y() );
 	}
 	
 	IO::saveConfig();
@@ -145,13 +145,13 @@ void MainWindow::toggleFullScreen()
 	if ( m_isFullScreen )
 	{
 		w->showFullScreen();
-		Config::getInstance().set( "fullscreen", true );
+		Global::cfg->set( "fullscreen", true );
 	}
 	else
 	{
 		// Reset from fullscreen:
 		w->showNormal();
-		Config::getInstance().set( "fullscreen", false );
+		Global::cfg->set( "fullscreen", false );
 	}
 	m_renderer->onRenderParamsChanged();
 }
@@ -160,7 +160,7 @@ void MainWindow::onFullScreen( bool value )
 {
 	QOpenGLWindow* w = this;
 	m_isFullScreen = value;
-	Config::getInstance().set( "fullscreen", value );
+	Global::cfg->set( "fullscreen", value );
 	if ( value )
 	{
 		w->showFullScreen();
@@ -327,7 +327,7 @@ void MainWindow::keyboardMove()
 
 	if( m_renderer && (x || y) )
 	{
-		const float keyboardMoveSpeed = (Config::getInstance().get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
+		const float keyboardMoveSpeed = (Global::cfg->get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
 
 		float moveX = -x * keyboardMoveSpeed * elapsedTime;
 		float moveY = -y * keyboardMoveSpeed * elapsedTime;
@@ -390,8 +390,6 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 
 void MainWindow::onInitViewAfterLoad()
 {
-	Config& config = Config::getInstance();
-
 	m_renderer->setScale( 1.0 );
 	m_moveX = GameState::moveX;
 	m_moveY = GameState::moveY;
@@ -532,7 +530,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		}
 		else
 		{
-			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Config::getInstance().get( "toggleMouseWheel" ).toBool() ) 
+			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() ) 
 			{
 				// Scale the view / do the zoom
 				auto delta = wEvent->delta();
@@ -729,8 +727,8 @@ void MainWindow::resizeGL( int w, int h )
 
 	if( !m_isFullScreen )
 	{
-		Config::getInstance().set( "WindowWidth", w );
-		Config::getInstance().set( "WindowHeight", h );
+		Global::cfg->set( "WindowWidth", w );
+		Global::cfg->set( "WindowHeight", h );
 	}
 
 	if ( m_view )
@@ -780,7 +778,7 @@ MainWindowRenderer* MainWindow::renderer()
 
 void MainWindow::installResourceProviders()
 {
-	const std::string contentPath = Config::getInstance().get( "dataPath" ).toString().toStdString() + "/xaml/";
+	const std::string contentPath = Global::cfg->get( "dataPath" ).toString().toStdString() + "/xaml/";
 	Noesis::GUI::SetXamlProvider( Noesis::MakePtr<NoesisApp::LocalXamlProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetTextureProvider( Noesis::MakePtr<NoesisApp::LocalTextureProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetFontProvider( Noesis::MakePtr<NoesisApp::LocalFontProvider>( contentPath.c_str() ) );

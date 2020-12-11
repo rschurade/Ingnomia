@@ -254,7 +254,7 @@ void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 
 QString MainWindowRenderer::copyShaderToString( QString name )
 {
-	QFile file( Config::getInstance().get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
+	QFile file( Global::cfg->get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
 	file.open( QIODevice::ReadOnly );
 	QTextStream in( &file );
 	QString code( "" );
@@ -416,7 +416,7 @@ void MainWindowRenderer::initTextures()
 
 	m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-	int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+	int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 
 	for ( int i = 0; i < 32; ++i )
 	{
@@ -464,14 +464,14 @@ void MainWindowRenderer::updateRenderParams()
 {
 	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_width * m_width + m_height * m_height ) / 12 ) / m_scale ) );
 
-	m_renderDepth = Config::getInstance().get( "renderDepth" ).toInt();
+	m_renderDepth = Global::cfg->get( "renderDepth" ).toInt();
 
 	m_viewLevel = GameState::viewLevel;
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
 
-	m_lightMin = Config::getInstance().get( "lightMin" ).toFloat();
+	m_lightMin = Global::cfg->get( "lightMin" ).toFloat();
 	if ( m_lightMin < 0.01 )
 		m_lightMin = 0.3f;
 
@@ -582,7 +582,7 @@ void MainWindowRenderer::paintWorld()
 
 	//glFinish();
 
-	bool pause = Config::getInstance().get( "Pause" ).toBool();
+	bool pause = Global::cfg->get( "Pause" ).toBool();
 
 	if ( pause != m_pause )
 	{
@@ -868,7 +868,7 @@ void MainWindowRenderer::updateTextures()
 
 		m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-		int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+		int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{

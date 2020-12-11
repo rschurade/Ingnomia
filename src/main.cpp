@@ -149,7 +149,9 @@ int main( int argc, char* argv[] )
 	QCoreApplication::setApplicationName( PROJECT_NAME );
 	QCoreApplication::setApplicationVersion( PROJECT_VERSION );
 
-	if ( !Config::getInstance().init() )
+	Global::cfg = new Config;
+
+	if ( !Global::cfg->valid() )
 	{
 		qDebug() << "Failed to init Config.";
 		abort();
@@ -163,7 +165,7 @@ int main( int argc, char* argv[] )
 		abort();
 	}
 
-	Config::getInstance().set( "CurrentVersion", PROJECT_VERSION );
+	Global::cfg->set( "CurrentVersion", PROJECT_VERSION );
 
 	QStringList args = a.arguments();
 
@@ -182,8 +184,8 @@ int main( int argc, char* argv[] )
 		}
 	}
 
-	int width  = qMax( 1200, Config::getInstance().get( "WindowWidth" ).toInt() );
-	int height = qMax( 675, Config::getInstance().get( "WindowHeight" ).toInt() );
+	int width  = qMax( 1200, Global::cfg->get( "WindowWidth" ).toInt() );
+	int height = qMax( 675, Global::cfg->get( "WindowHeight" ).toInt() );
 
 	auto defaultFormat = QSurfaceFormat::defaultFormat();
 	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
@@ -209,9 +211,9 @@ int main( int argc, char* argv[] )
 	
 	w.setIcon( QIcon( QCoreApplication::applicationDirPath() + "/content/icon.png" ) );
 	w.resize( width, height );
-	w.setPosition( Config::getInstance().get( "WindowPosX" ).toInt(), Config::getInstance().get( "WindowPosY" ).toInt() );
+	w.setPosition( Global::cfg->get( "WindowPosX" ).toInt(), Global::cfg->get( "WindowPosY" ).toInt() );
 	w.show();
-	if( Config::getInstance().get( "fullscreen" ).toBool() )
+	if( Global::cfg->get( "fullscreen" ).toBool() )
 	{
 		w.onFullScreen( true );
 	}
