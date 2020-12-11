@@ -127,7 +127,8 @@ void Game::generateWorld( NewGameSettings* ngs )
 {
 	WorldGenerator wg( ngs, this );
 	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
-	World* world = wg.generate();	
+	m_world = wg.generateTopology();	
+	wg.addLife();
 }
 
 void Game::start()

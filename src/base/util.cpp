@@ -36,7 +36,8 @@
 #include <QJsonDocument>
 #include <QPainter>
 
-Util::Util()
+Util::Util( Game* game ) :
+	g( game )
 {
 }
 

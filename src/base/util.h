@@ -37,7 +37,7 @@ struct Tile;
 class Util
 {
 public:
-	Util();
+	Util( Game* game );
 	~Util();
 
 	QStringList seedItems( QString plantType, QString material = "any" );

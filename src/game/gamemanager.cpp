@@ -76,7 +76,7 @@ GameManager::GameManager( QObject* parent ) :
 	m_sf = new SpriteFactory();
 	m_eventConnector = new EventConnector( this );
 	Global::eventConnector = m_eventConnector;
-	Global::util = new Util;
+	Global::util = new Util( nullptr );
 
 	Global::newGameSettings = new NewGameSettings( this );
 
@@ -231,7 +231,8 @@ void GameManager::createNewGame()
 
 	m_game = new Game( m_sf, this );
 	m_game->generateWorld( Global::newGameSettings );
-
+	
+	Global::util = new Util( m_game );
 	m_eventConnector->setGamePtr( m_game );
 	Global::sel = new Selection( m_game );
 

@@ -116,8 +116,8 @@ public:
 	Game* game();
 private:
 	GameManager* gm = nullptr;
-	QPointer<Game> g = nullptr;
-
+	QPointer<Game> g;
+	
 
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;

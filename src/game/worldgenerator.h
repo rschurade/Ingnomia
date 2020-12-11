@@ -42,7 +42,8 @@ public:
 	WorldGenerator( NewGameSettings* ngs, Game* parent );
 	~WorldGenerator();
 
-	World* generate();
+	World* generateTopology();
+	void addLife();
 
 private:
 	QPointer<Game> g = nullptr;

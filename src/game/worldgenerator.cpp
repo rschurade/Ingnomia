@@ -50,7 +50,7 @@ WorldGenerator::~WorldGenerator()
 {
 }
 
-World* WorldGenerator::generate()
+World* WorldGenerator::generateTopology()
 {
 	m_dimX       = ngs->worldSize();
 	m_dimY       = ngs->worldSize();
@@ -129,7 +129,12 @@ World* WorldGenerator::generate()
 	w->init();
 
 	discoverAll();
+	qDebug() << "world generator - topology - done";
+	return w;
+}
 
+void WorldGenerator::addLife()
+{
 	// add plants and trees
 	emit signalStatus( "Add plants and trees." );
 	addPlantsAndTrees();
@@ -144,11 +149,9 @@ World* WorldGenerator::generate()
 
 	GameState::kingdomName = ngs->kingdomName();
 
-	qDebug() << "world generator done";
+	qDebug() << "world generator - life - done";
 
 	w->regionMap().initRegions();
-
-	return w;
 }
 
 void WorldGenerator::initMateralVectors()
