@@ -472,7 +472,7 @@ void WorldGenerator::addPlantsAndTrees()
 						int ra = rand() % plants.size();
 						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noTree( pos, 0, 0 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 						{
-							Plant plant( pos, plants[ra], true );
+							Plant plant( pos, plants[ra], true, g );
 							w->plants().insert( plant.getPos().toInt(), plant );
 						}
 					}

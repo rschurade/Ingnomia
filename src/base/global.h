@@ -32,6 +32,8 @@
 class EventConnector;
 class Util;
 class Logger;
+class Selection;
+class NewGameSettings;
 
 class Global
 {
@@ -85,6 +87,8 @@ public:
 
 	static EventConnector* eventConnector;
 	static Util* util;
+	static Selection* sel;
+	static NewGameSettings* newGameSettings;
 
 private:
 	static Logger m_logger;

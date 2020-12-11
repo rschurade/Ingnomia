@@ -408,7 +408,8 @@ void Game::autoSave()
 		Config::getInstance().set( "Pause", true );
 		emit signalStartAutoSave();
 		emit signalPause( true );
-		IO::save( true );
+		IO io( this, this );
+		io.save( true );
 		emit signalEndAutoSave();
 
 		if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )
@@ -431,7 +432,8 @@ void Game::save()
 	Config::getInstance().set( "Pause", true );
 	emit signalStartAutoSave();
 	emit signalPause( true );
-	IO::save( true );
+	IO io( this, this );
+	io.save( true );
 	emit signalEndAutoSave();
 
 	if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )

@@ -52,6 +52,8 @@
 
 EventConnector* Global::eventConnector = nullptr;
 Util* Global::util = nullptr;
+Selection* Global::sel = nullptr;
+NewGameSettings* Global::newGameSettings = nullptr;
 
 Logger Global::m_logger;
 

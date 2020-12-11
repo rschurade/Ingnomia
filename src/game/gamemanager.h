@@ -57,7 +57,6 @@ public:
 
 private:
 	EventConnector* m_eventConnector = nullptr;
-	NewGameSettings* m_newGameSettings = nullptr;
 	SpriteFactory* m_sf = nullptr;
 
 	QPointer<Game> m_game = nullptr;

@@ -36,7 +36,7 @@ class AggregatorInventory;
 class AggregatorLoadGame;     
 
 
-
+class Game;
 
 class EventConnector : public QObject
 {
@@ -46,6 +46,8 @@ public:
 	// Private Constructor
 	EventConnector( GameManager* parent );
 	~EventConnector();
+
+	void setGamePtr( Game* game );
 
 	AggregatorTileInfo* aggregatorTileInfo()
 	{
@@ -113,6 +115,8 @@ public:
 
 private:
 	GameManager* gm = nullptr;
+	QPointer<Game> g = nullptr;
+
 
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;

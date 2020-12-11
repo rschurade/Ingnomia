@@ -25,6 +25,8 @@
 #include <QString>
 #include <QVariantMap>
 
+class Game;
+
 enum enumReqs
 {
 	SEL_NONE,
@@ -61,11 +63,7 @@ enum enumReqs
 class Selection
 {
 private:
-	// Private Constructor
-	Selection();
-	// Stop the compiler generating methods of copy the object
-	Selection( Selection const& copy );            // Not Implemented
-	Selection& operator=( Selection const& copy ); // Not Implemented
+	QPointer<Game> g = nullptr;
 
 	int m_rotation;
 	Position m_firstClick;
@@ -91,16 +89,8 @@ private:
 	bool m_changed = false;
 
 public:
+	Selection( Game* game );
 	~Selection();
-
-	static Selection& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static Selection instance;
-		return instance;
-	}
 
 	QVariantMap serialize();
 

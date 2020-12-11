@@ -63,6 +63,11 @@ EventConnector::EventConnector( GameManager* parent ) :
 	m_loadGameAggregator	 = new AggregatorLoadGame( this );
 }
 
+void EventConnector::setGamePtr( Game* game )
+{
+	g = game;
+}
+
 EventConnector::~EventConnector()
 {
 }
@@ -269,17 +274,17 @@ void EventConnector::emitGameSpeed( GameSpeed speed )
 
 void EventConnector::onSetSelectionAction( QString action )
 {
-	Selection::getInstance().setAction( action );
+	Global::sel->setAction( action );
 }
 	
 void EventConnector::onSetSelectionItem( QString item )
 {
-	Selection::getInstance().setItemID( item );
+	Global::sel->setItemID( item );
 }
 
 void EventConnector::onSetSelectionMaterials( QStringList mats )
 {
-	Selection::getInstance().setMaterials( mats );
+	Global::sel->setMaterials( mats );
 }
 
 void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
@@ -288,7 +293,7 @@ void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item
 	{
 		case BuildItemType::Workshop:
 		{
-			Selection::getInstance().setAction( "BuildWorkshop" );
+			Global::sel->setAction( "BuildWorkshop" );
 		}
 		break;
 		case BuildItemType::Terrain:
@@ -299,35 +304,35 @@ void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item
 			{
 				if( param == "FillHole" )
 				{
-					Selection::getInstance().setAction( param );
+					Global::sel->setAction( param );
 				}
 				else
 				{
-					Selection::getInstance().setAction( param + type );
+					Global::sel->setAction( param + type );
 				}
 			}
 			else
 			{
 				if( type == "Stairs" && item == "Scaffold" )
 				{
-					Selection::getInstance().setAction( "BuildScaffold" );
+					Global::sel->setAction( "BuildScaffold" );
 				}
 				else
 				{
-					Selection::getInstance().setAction( "Build" + type );
+					Global::sel->setAction( "Build" + type );
 				}
 			}
 		}
 		break;
 		case BuildItemType::Item:
 		{
-			Selection::getInstance().setAction( "BuildItem" );
+			Global::sel->setAction( "BuildItem" );
 		}
 		break;
 	}
 
-	Selection::getInstance().setMaterials( mats );
-	Selection::getInstance().setItemID( item );
+	Global::sel->setMaterials( mats );
+	Global::sel->setItemID( item );
 
 	emit signalBuild();
 }

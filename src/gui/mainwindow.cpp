@@ -226,8 +226,8 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
-				Selection::getInstance().rotate();
-				Selection::getInstance().updateSelection( m_cursorPos, false, false );
+				Global::sel->rotate();
+				Global::sel->updateSelection( m_cursorPos, false, false );
 				redraw();
 				break;
 			case Qt::Key_Comma:
@@ -376,11 +376,11 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	m_mouseX  = gp.x();
 	m_mouseY  = gp.y();
 
-	if ( Selection::getInstance().hasAction() )
+	if ( Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-		Selection::getInstance().updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
-		Selection::getInstance().setControlActive( event->modifiers() & Qt::ControlModifier );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+		Global::sel->updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+		Global::sel->setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
 	}
 }
@@ -459,10 +459,10 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-					if ( Selection::getInstance().hasAction() )
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+					if ( Global::sel->hasAction() )
 					{
-						if ( Selection::getInstance().leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
+						if ( Global::sel->leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
 						{
 							// open info windows after creating something
 						}
@@ -498,11 +498,11 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			}
 			else
 			{
-				if ( Selection::getInstance().hasAction() )
+				if ( Global::sel->hasAction() )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-					Selection::getInstance().rightClick( m_cursorPos );
-					m_selectedAction = Selection::getInstance().action();
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+					Global::sel->rightClick( m_cursorPos );
+					m_selectedAction = Global::sel->action();
 					redraw();
 				}
 				m_rightDown = false;
@@ -574,11 +574,11 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Selection::getInstance().hasAction() )
+	if ( Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
-		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
-		Selection::getInstance().setControlActive( ctrl );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
+		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
+		Global::sel->setControlActive( ctrl );
 		redraw();
 	}
 }
@@ -592,11 +592,11 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Selection::getInstance().hasAction() )
+	if ( Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
-		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
-		Selection::getInstance().setControlActive( ctrl );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
+		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
+		Global::sel->setControlActive( ctrl );
 		redraw();
 	}
 }

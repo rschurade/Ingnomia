@@ -24,6 +24,8 @@
 #include "../base/io.h"
 #include "../base/pathfinder.h"
 #include "../base/util.h"
+#include "../base/selection.h"
+
 #include "../game/game.h"
 #include "../game/mechanismmanager.h"
 #include "../game/militarymanager.h"
@@ -75,8 +77,8 @@ GameManager::GameManager( QObject* parent ) :
 	m_eventConnector = new EventConnector( this );
 	Global::eventConnector = m_eventConnector;
 	Global::util = new Util;
-	
-	m_newGameSettings = new NewGameSettings( this );
+
+	Global::newGameSettings = new NewGameSettings( this );
 
 	GameState::init();
 
@@ -107,7 +109,7 @@ void GameManager::startNewGame()
 	// create new random kingdom name
 
 	// save current settings for fast create new game
-	m_newGameSettings->save();
+	Global::newGameSettings->save();
 	
 	// check if folder exists, set new save folder name if yes
 	createNewGame();
@@ -228,7 +230,10 @@ void GameManager::createNewGame()
 	init();
 
 	m_game = new Game( m_sf, this );
-	m_game->generateWorld( m_newGameSettings );
+	m_game->generateWorld( Global::newGameSettings );
+
+	m_eventConnector->setGamePtr( m_game );
+	Global::sel = new Selection( m_game );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
@@ -250,7 +255,7 @@ void GameManager::createNewGame()
 
 
 
-	GameState::peaceful = m_newGameSettings->isPeaceful();
+	GameState::peaceful = Global::newGameSettings->isPeaceful();
 	Global::util->initAllowedInContainer();
 	Config::getInstance().set( "NoRender", false );
 	m_eventConnector->onViewLevel( GameState::viewLevel );
@@ -283,7 +288,8 @@ void GameManager::saveGame()
 	{
 		bool paused = m_game->paused();
 		m_game->setPaused( true );
-		IO::save();
+		IO io( m_game, this );
+		io.save();
 		m_game->setPaused( paused );
 
 		m_eventConnector->sendResume();
