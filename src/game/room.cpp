@@ -29,6 +29,10 @@
 #include <QElapsedTimer>
 #include <QString>
 
+Room::Room() :
+	WorldObject( nullptr )
+{
+}
 
 Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )

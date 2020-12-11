@@ -485,7 +485,7 @@ void World::expelTileInhabitants( Position pos, Position& to )
 
 void World::plantTree( Position pos, QString type, bool fullyGrown )
 {
-	Plant plant_( pos, type, fullyGrown );
+	Plant plant_( pos, type, fullyGrown, g );
 	m_plants.insert( pos.toInt(), plant_ );
 
 	QMutexLocker lock( &m_mutex );
@@ -495,7 +495,7 @@ void World::plantTree( Position pos, QString type, bool fullyGrown )
 
 void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 {
-	Plant plant_( pos, type, fullyGrown );
+	Plant plant_( pos, type, fullyGrown, g );
 	m_plants.insert( pos.toInt(), plant_ );
 
 	QMutexLocker lock( &m_mutex );
@@ -510,7 +510,7 @@ void World::plant( Position pos, unsigned int baseItem )
 	{
 		if ( DB::select( "Material", "Plants", plant ).toString() == g->inv()->materialSID( baseItem ) )
 		{
-			Plant plant_( pos, plant );
+			Plant plant_( pos, plant, false, g );
 			m_plants.insert( pos.toInt(), plant_ );
 			QMutexLocker lock( &m_mutex );
 			getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;

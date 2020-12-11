@@ -49,6 +49,7 @@ class Job;
 class Room : public WorldObject
 {
 public:
+	Room();
 	Room( QList<QPair<Position, bool>> tiles, Game* game );
 	Room( QVariantMap vals, Game* game );
 	~Room();
