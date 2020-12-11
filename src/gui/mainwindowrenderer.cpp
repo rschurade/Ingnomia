@@ -17,6 +17,8 @@
 */
 #include "mainwindowrenderer.h"
 
+#include "../game/game.h" //TODO only temporary
+
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -409,12 +411,10 @@ void MainWindowRenderer::initTextures()
 	GLint max_layers;
 	glGetIntegerv( GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers );
 
-	SpriteFactory& sf = Global::sf();
-
 	qDebug() << "max array size: " << max_layers;
-	qDebug() << "used " << sf.size() << " sprites";
+	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
 
-	m_texesUsed = sf.texesUsed();
+	m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
 	int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
 
@@ -425,7 +425,7 @@ void MainWindowRenderer::initTextures()
 
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
-		uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
+		uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
 	}
 
 
@@ -441,7 +441,7 @@ void MainWindowRenderer::initWorld()
 
 	glGenBuffers( 1, &m_tileBo );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileBo );
-	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * m_world->world().size(), nullptr, GL_DYNAMIC_DRAW );
+	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * Global::eventConnector->game()->w()->world().size(), nullptr, GL_DYNAMIC_DRAW );
 	const uint8_t zero = 0;
 	glClearBufferData( GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, &zero );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, 0 ); // unbind
@@ -862,19 +862,17 @@ void MainWindowRenderer::uploadTileData( const QVector<TileDataUpdate>& tileData
 
 void MainWindowRenderer::updateTextures()
 {
-	SpriteFactory& sf = Global::sf();
-
-	if ( Global::sf().textureAdded() || Global::sf().creatureTextureAdded() )
+	if ( Global::eventConnector->game()->sf()->textureAdded() || Global::eventConnector->game()->sf()->creatureTextureAdded() )
 	{
 		DebugScope s( "update textures" );
 
-		m_texesUsed = sf.texesUsed();
+		m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
 		int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
-			uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
+			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
 		}
 	}
 }
@@ -884,8 +882,6 @@ void MainWindowRenderer::updateSelection()
 	if ( Global::sel->changed() )
 	{
 		DebugScope s( "update selection" );
-
-		SpriteFactory& sf = Global::sf();
 
 		QString action = Global::sel->action();
 		m_selectionData.clear();
@@ -950,11 +946,11 @@ void MainWindowRenderer::updateSelection()
 
 					if ( entry.contains( "Material" ) )
 					{
-						addSpriteValid = sf.createSprite( entry["SpriteID"].toString(), mats );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), mats );
 					}
 					else
 					{
-						addSpriteValid = sf.createSprite( entry["SpriteID"].toString(), { "None" } );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), { "None" } );
 					}
 					Position offset( 0, 0, 0 );
 					if ( entry.contains( "Offset" ) )
@@ -1017,8 +1013,8 @@ void MainWindowRenderer::updateSelection()
 							offset.y = -1 * rotX;
 							break;
 					}
-					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( sf.createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
-					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( sf.createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
 				}
 			}
 			unsigned int tileID = 0;
@@ -1105,7 +1101,6 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 
 	int dimZ = Global::dimZ;
 
-	World& world     = Global::w();
 	bool zFloorFound = false;
 
 	int origViewLevel = viewLevel;
@@ -1178,7 +1173,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.y = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
 
-				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y += 1;
@@ -1189,7 +1184,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y -= 1;
@@ -1199,7 +1194,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y -= 1;
@@ -1209,7 +1204,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, selX - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && m_world->getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y += 1;
@@ -1217,10 +1212,10 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				break;
 		}
 
-		const Tile& tile = world.getTile( cursorPos );
+		const Tile& tile = Global::eventConnector->game()->w()->getTile( cursorPos );
 		if ( cursorPos.z > 0 )
 		{
-			Tile& tileBelow = world.getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
+			Tile& tileBelow = Global::eventConnector->game()->w()->getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
 			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
 			{
 				zFloorFound = true;

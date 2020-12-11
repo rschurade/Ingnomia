@@ -17,7 +17,6 @@
 */
 #pragma once
 
-#include "../base/filter.h"
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
