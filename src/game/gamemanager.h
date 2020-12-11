@@ -66,6 +66,8 @@ private:
 	void init();
 	void createNewGame();
 
+	void postCreationInit();
+	
 signals:
 
 public slots:

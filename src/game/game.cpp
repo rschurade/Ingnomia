@@ -94,8 +94,6 @@ Game::Game( SpriteFactory* spriteFactory, QObject* parent ) :
 		GameState::techs.insert( t, 1 );
 	}
 #pragma endregion
-	
-	
 	m_inv   			= new Inventory( this );
 	
 	m_spm				= new StockpileManager( this );
@@ -129,6 +127,11 @@ void Game::generateWorld( NewGameSettings* ngs )
 	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
 	m_world = wg.generateTopology();	
 	wg.addLife();
+}
+
+void Game::setWorld( int dimX, int dimY, int dimZ )
+{
+	m_world = new World( dimX, dimY, dimZ, this );
 }
 
 void Game::start()

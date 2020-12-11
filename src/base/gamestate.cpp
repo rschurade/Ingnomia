@@ -101,7 +101,6 @@ int GameState::viewLevel = 100;
 bool GameState::init()
 {
 	nextID = 1000000;
-
 	return true;
 }
 

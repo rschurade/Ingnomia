@@ -98,6 +98,7 @@ Plant::Plant( Position& pos, QString ID, bool fullyGrown, Game* game ) :
 }
 
 Plant::Plant( QVariant values, Game* game ) :
+	g( game ),
 	Object( Position() )
 {
 	QVariantMap in = values.toMap();

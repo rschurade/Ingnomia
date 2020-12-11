@@ -154,7 +154,6 @@ void GameManager::continueLastGame()
 
 void GameManager::init()
 {
-	// Temporarily stop thread, so we can safely destroy the game
 	if ( m_game )
 	{
 		delete m_game;
@@ -181,48 +180,21 @@ void GameManager::init()
 
 void GameManager::loadGame( QString folder )
 {
-	/*
 	init();
 
-	Global::cfg->set( "NoRender", true );
-
-	IO io;
+	m_game = new Game( m_sf, this );
+	
+	IO io( m_game, this) ;
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
 	if ( io.load( folder ) )
 	{
-		m_game = new Game();
-		connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
-		connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
-
-		qRegisterMetaType<QSet<unsigned int>>();
-		connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
-		connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
-
-		connect( m_game, &Game::signalUpdateTileInfo, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
-
-		connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
-		connect( m_game, &Game::signalKingdomInfo, m_eventConnector, &EventConnector::onKingdomInfo );
-		m_game->sendTime();
-		m_eventConnector->onViewLevel( GameState::viewLevel );
-
-		Global::cfg->set( "NoRender", false );
-
-		Global::cfg->set( "gameRunning", true );
-
-		m_eventConnector->emitInMenu( false );
-
-		m_eventConnector->emitInitView();
-		m_eventConnector->emitStartGame();
-
-		m_eventConnector->emitPause( m_game->paused() );
-		m_eventConnector->sendLoadGameDone( true );
+		postCreationInit();
 	}
 	else
 	{
 		qDebug() << "failed to load";
 		m_eventConnector->sendLoadGameDone( false );
 	}
-	*/
 }
 
 void GameManager::createNewGame()
@@ -236,6 +208,14 @@ void GameManager::createNewGame()
 	m_eventConnector->setGamePtr( m_game );
 	Global::sel = new Selection( m_game );
 
+	GameState::peaceful = Global::newGameSettings->isPeaceful();
+
+	postCreationInit();
+}
+
+
+void GameManager::postCreationInit()
+{
 	m_eventConnector->aggregatorAgri()->init( m_game );
 	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
 	m_eventConnector->aggregatorInventory()->init( m_game );
@@ -256,7 +236,6 @@ void GameManager::createNewGame()
 
 	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
 	
-	GameState::peaceful = Global::newGameSettings->isPeaceful();
 	Global::util->initAllowedInContainer();
 	Global::cfg->set( "NoRender", false );
 	m_eventConnector->onViewLevel( GameState::viewLevel );
@@ -273,7 +252,6 @@ void GameManager::createNewGame()
 	connect( m_game, &Game::signalTimeAndDate,     m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
 
-	//thread1->setPriority( QThread::HighPriority );
 	m_eventConnector->emitPause( m_game->paused() );
 	m_eventConnector->emitStartGame();
 }

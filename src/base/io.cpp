@@ -316,7 +316,7 @@ bool IO::load( QString folder )
 
 	loadFile( folder + "sprites.json", jd );
 	IO::loadSprites( jd );
-	emit signalStatus( "Start loading g->w()->.." );
+	emit signalStatus( "Start loading world.." );
 	if ( !IO::loadWorld( folder ) )
 	{
 		return false;
@@ -550,7 +550,7 @@ bool IO::saveWorld( QString folder )
 {
 	if ( Global::debugMode )
 		qDebug() << "saveWorld";
-	QFile worldFile( folder + "g->w()->dat" );
+	QFile worldFile( folder + "world.dat" );
 	if ( worldFile.open( QIODevice::WriteOnly ) )
 	{
 		QDataStream out( &worldFile );
@@ -585,7 +585,7 @@ bool IO::saveWorld( QString folder )
 
 bool IO::loadWorld( QString folder )
 {
-	QFile worldFile( folder + "g->w()->dat" );
+	QFile worldFile( folder + "world.dat" );
 	if ( worldFile.open( QIODevice::ReadOnly ) )
 	{
 		QDataStream in( &worldFile );
@@ -604,6 +604,7 @@ void IO::loadWorld( QDataStream& in )
 	unsigned short dimY = Global::dimY;
 	unsigned short dimZ = Global::dimZ;
 
+	g->setWorld( dimX, dimY, dimZ );
 	std::vector<Tile>& world = g->w()->world();
 	world.clear();
 	world.reserve( dimX * dimY * dimZ );

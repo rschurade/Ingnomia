@@ -86,6 +86,7 @@ public:
 	void setPaused( bool value );
 
 	void generateWorld( NewGameSettings* ngs );
+	void setWorld( int dimX, int dimY, int dimZ );
 	World* world();
 
 	Inventory* inv();
