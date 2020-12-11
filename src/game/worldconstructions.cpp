@@ -139,8 +139,8 @@ bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVarian
 		if ( tile.wallType & WallType::WT_ROUGH )
 		{
 			auto mats = mineWall( pos, extractTo );
-			Util::createRawMaterialItem( extractTo, mats.first );
-			Util::createRawMaterialItem( extractTo, mats.second );
+			Global::util->createRawMaterialItem( extractTo, mats.first );
+			Global::util->createRawMaterialItem( extractTo, mats.second );
 		}
 		if ( m_wallConstructions.contains( pos.toInt() ) )
 		{
@@ -218,7 +218,7 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 		{
 			auto mat = floorMaterial( constrPos );
 			//auto mats = removeFloor( pos, extractTo );
-			Util::createRawMaterialItem( extractTo, mat );
+			Global::util->createRawMaterialItem( extractTo, mat );
 		}
 		if ( m_floorConstructions.contains( pos.toInt() ) )
 		{

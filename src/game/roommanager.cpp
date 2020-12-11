@@ -72,7 +72,7 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 	}
 	else
 	{
-		Room sp( fields );
+		Room sp( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
@@ -117,7 +117,7 @@ void RoomManager::addNoPass( Position firstClick, QList<QPair<Position, bool>> f
 
 void RoomManager::load( QVariantMap vals )
 {
-	Room sp( vals );
+	Room sp( vals, g );
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();

@@ -215,7 +215,7 @@ void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& e
 
 		std::vector<unsigned char> buffer;
 
-		Util::createBufferForNoesisImage( pm, buffer );
+		Global::util->createBufferForNoesisImage( pm, buffer );
 		m_info.itemPics.insert( slot, buffer );
 	}
 }
@@ -236,7 +236,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 
 		std::vector<unsigned char> buffer;
 
-		Util::createBufferForNoesisImage( pm, buffer );
+		Global::util->createBufferForNoesisImage( pm, buffer );
 		m_info.itemPics.insert( slot, buffer );
 	}
 }
@@ -253,7 +253,7 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 
 		std::vector<unsigned char> buffer;
 
-		Util::createBufferForNoesisImage( pm, buffer );
+		Global::util->createBufferForNoesisImage( pm, buffer );
 
 		m_emptyPics.insert( spriteID, buffer );
 	}

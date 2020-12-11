@@ -115,13 +115,11 @@ class Workshop : public WorldObject
 	friend class WorkshopManager;
 
 public:
-	Workshop();
-	Workshop( QVariantMap values );
+	Workshop( QString type, Position& pos, int rotation, Game* game );
+	Workshop( QVariantMap values, Game* game );
 	~Workshop();
 
 	QVariant serialize();
-
-	void init( QString type, Position& pos, int rotation );
 
 	void onTick( quint64 tick );
 

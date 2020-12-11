@@ -311,7 +311,7 @@ bool IO::load( QString folder )
 	Global::mil().init();
 
 	PathFinder::getInstance().init();
-	Util::initAllowedInContainer();
+	Global::util->initAllowedInContainer();
 
 	loadFile( folder + "sprites.json", jd );
 	IO::loadSprites( jd );

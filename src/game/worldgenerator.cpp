@@ -66,8 +66,6 @@ World* WorldGenerator::generate()
 	m_groundLevel = ngs->ground();
 	m_fow         = Config::getInstance().get( "fow" ).toBool();
 
-	CreatureFactory::getInstance().init();
-
 	auto& world = w->world();
 	world.resize( m_dimX * m_dimY * m_dimZ, Tile() );
 

@@ -23,16 +23,15 @@
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
 #include "../game/world.h"
+#include "../game/game.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QString>
 
-Room::Room()
-{
-}
 
-Room::Room( QList<QPair<Position, bool>> tiles )
+Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
+	WorldObject( game )
 {
 	m_id = GameState::createID();
 
@@ -62,10 +61,11 @@ void Room::addTile( Position& pos )
 
 	m_fields.insert( pos.toInt(), rt );
 
-	m_world->setTileFlag( rt->pos, TileFlag::TF_ROOM );
+	g->w()->setTileFlag( rt->pos, TileFlag::TF_ROOM );
 }
 
-Room::Room( QVariantMap vals )
+Room::Room( QVariantMap vals, Game* game ) :
+	WorldObject( game )
 {
 	m_id             = vals.value( "ID" ).toUInt();
 	m_owner          = vals.value( "Owner" ).toUInt();
@@ -124,29 +124,28 @@ void Room::onTick( quint64 tick )
 bool Room::removeTile( Position& pos )
 {
 	RoomTile* rt   = m_fields.value( pos.toInt() );
-	Inventory& inv = Global::inv();
 	// unconstruct furniture on tile
 	unsigned int itemID = 0;
 	if ( rt->furnitureID != 0 )
 	{
 		itemID = rt->furnitureID;
-		inv.setConstructedOrEquipped( rt->furnitureID, false );
+		g->inv()->setConstructedOrEquipped( rt->furnitureID, false );
 	}
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
-	m_world->clearTileFlag( pos, TileFlag::TF_ROOM );
+	g->w()->clearTileFlag( pos, TileFlag::TF_ROOM );
 	delete rt;
 
 	if ( itemID )
 	{
-		if ( m_inv->itemSID( itemID ) == "AlarmBell" )
+		if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 		{
 			bool found = false;
 			for ( auto& f : m_fields )
 			{
 				if ( f->furnitureID )
 				{
-					if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
+					if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
 					{
 						found = true;
 						break;
@@ -168,10 +167,10 @@ void Room::addFurniture( unsigned int itemUID, Position pos )
 		m_fields[pos.toInt()]->furnitureID = itemUID;
 		if ( itemUID )
 		{
-			m_inv->setConstructedOrEquipped( itemUID, true );
-			m_inv->setItemPos( itemUID, pos );
+			g->inv()->setConstructedOrEquipped( itemUID, true );
+			g->inv()->setItemPos( itemUID, pos );
 		}
-		if ( m_inv->itemSID( itemUID ) == "AlarmBell" )
+		if ( g->inv()->itemSID( itemUID ) == "AlarmBell" )
 		{
 			m_hasAlarmBell = true;
 		}
@@ -188,13 +187,13 @@ void Room::removeFurniture( const Position& pos )
 		rt->furnitureID     = 0;
 		if ( itemID )
 		{
-			if ( m_inv->itemSID( itemID ) == "AlarmBell" )
+			if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 			{
 				for ( auto& f : m_fields )
 				{
 					if ( f->furnitureID )
 					{
-						if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
+						if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
 						{
 							return;
 						}
@@ -213,7 +212,7 @@ bool Room::checkRoofed()
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
-		Tile& _tile  = m_world->getTile( pos );
+		Tile& _tile  = g->w()->getTile( pos );
 		if ( !( (bool)( _tile.floorType & FloorType::FT_SOLIDFLOOR ) ) )
 		{
 			roofed = false;
@@ -227,8 +226,6 @@ bool Room::checkRoofed()
 bool Room::checkEnclosed()
 {
 	bool enclosed = true;
-	World& world  = Global::w();
-
 	for ( auto tile : m_fields )
 	{
 		Position posi = tile->pos;
@@ -236,7 +233,7 @@ bool Room::checkEnclosed()
 		Position pos( posi.x, posi.y - 1, posi.z );
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
-			Tile& tn = world.getTile( pos );
+			Tile& tn = g->w()->getTile( pos );
 			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
@@ -246,7 +243,7 @@ bool Room::checkEnclosed()
 		pos = Position( posi.x, posi.y + 1, posi.z );
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
-			Tile& tn = world.getTile( pos );
+			Tile& tn = g->w()->getTile( pos );
 			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
@@ -256,7 +253,7 @@ bool Room::checkEnclosed()
 		pos = Position( posi.x - 1, posi.y, posi.z );
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
-			Tile& tn = world.getTile( pos );
+			Tile& tn = g->w()->getTile( pos );
 			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
@@ -266,7 +263,7 @@ bool Room::checkEnclosed()
 		pos = Position( posi.x + 1, posi.y, posi.z );
 		if ( !m_fields.contains( pos.toInt() ) )
 		{
-			Tile& tn = world.getTile( pos );
+			Tile& tn = g->w()->getTile( pos );
 			if ( !( (bool)( tn.wallType & WT_SOLIDWALL ) || (bool)( tn.flags & TileFlag::TF_DOOR ) ) )
 			{
 				enclosed = false;
@@ -284,7 +281,7 @@ QList<unsigned int> Room::beds()
 	QList<unsigned int> beds;
 	for ( auto field : m_fields )
 	{
-		if ( m_inv->isInGroup( "Furniture", "Beds", field->furnitureID ) )
+		if ( g->inv()->isInGroup( "Furniture", "Beds", field->furnitureID ) )
 		{
 			beds.append( field->furnitureID );
 		}
@@ -297,7 +294,7 @@ QList<unsigned int> Room::chairs()
 	QList<unsigned int> chairs;
 	for ( auto field : m_fields )
 	{
-		if ( m_inv->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
+		if ( g->inv()->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
 		{
 			chairs.append( field->furnitureID );
 		}
@@ -321,7 +318,7 @@ Position Room::firstBellPos()
 	{
 		if ( f->furnitureID )
 		{
-			if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
+			if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
 			{
 				return f->pos;
 			}
@@ -337,7 +334,7 @@ QList<Position> Room::allBellPos()
 	{
 		if ( f->furnitureID )
 		{
-			if ( m_inv->itemSID( f->furnitureID ) == "AlarmBell" )
+			if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
 			{
 				out.append( f->pos );
 			}

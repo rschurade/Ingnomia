@@ -31,8 +31,6 @@ public:
 	CreatureFactory( Game* game );
 	~CreatureFactory();
 
-	bool init();
-
 	Animal* createRandomAnimal( QStringList allowedAnimals );
 	Animal* createAnimal( QString type, Position pos, Gender gender, bool adult, bool tame );
 	Animal* createAnimal( QVariantMap values );
@@ -44,5 +42,5 @@ public:
 private:
     QPointer<Game> g = nullptr;
 
-    int m_numWoodLice;
+    int m_numWoodLice = 0;
 };

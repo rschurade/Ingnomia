@@ -21,6 +21,8 @@
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
+#include "../game/worldobject.h"
+
 #include <QHash>
 #include <QList>
 #include <QMap>
@@ -44,12 +46,11 @@ struct RoomTile
 
 class Job;
 
-class Room
+class Room : public WorldObject
 {
 public:
-	Room();
-	Room( QList<QPair<Position, bool>> tiles );
-	Room( QVariantMap vals );
+	Room( QList<QPair<Position, bool>> tiles, Game* game );
+	Room( QVariantMap vals, Game* game );
 	~Room();
 
 	QVariant serialize();
@@ -60,24 +61,6 @@ public:
 	}
 
 	void onTick( quint64 tick );
-
-	QString name()
-	{
-		return m_name;
-	}
-	void setName( QString name )
-	{
-		m_name = name;
-	}
-
-	unsigned int id()
-	{
-		return m_id;
-	}
-	void setId( unsigned int id )
-	{
-		m_id = id;
-	}
 
 	// return true if last tile was removed
 	bool removeTile( Position& pos );
@@ -130,16 +113,12 @@ public:
 private:
 	quint64 m_lastUpdateTick = 0;
 
-	unsigned int m_id    = 0;
 	unsigned int m_owner = 0;
-	bool m_active        = true;
 	bool m_roofed        = false;
 	bool m_enclosed      = false;
 	bool m_hasAlarmBell  = false;
 
 	QMap<unsigned int, RoomTile*> m_fields;
-
-	QString m_name = "Room";
 
 	RoomType m_type = RoomType::NotSet;
 };

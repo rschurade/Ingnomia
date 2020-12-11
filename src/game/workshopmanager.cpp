@@ -73,8 +73,7 @@ void WorkshopManager::onTick( quint64 tick )
 
 Workshop* WorkshopManager::addWorkshop( QString type, Position& pos, int rotation )
 {
-	Workshop* w = new Workshop();
-	w->init( type, pos, rotation );
+	Workshop* w = new Workshop( type, pos, rotation, g );
 	m_workshops.push_back( w );
 
 	return m_workshops.last();
@@ -83,7 +82,7 @@ Workshop* WorkshopManager::addWorkshop( QString type, Position& pos, int rotatio
 void WorkshopManager::addWorkshop( QVariantMap vals )
 {
 	QMutexLocker lock( &m_mutex );
-	Workshop* w = new Workshop( vals );
+	Workshop* w = new Workshop( vals, g );
 	m_workshops.push_back( w );
 }
 

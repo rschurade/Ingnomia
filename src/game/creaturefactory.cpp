@@ -35,12 +35,6 @@ CreatureFactory::~CreatureFactory()
 {
 }
 
-bool CreatureFactory::init()
-{
-	m_numWoodLice = 0;
-	return true;
-}
-
 Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 {
 	int dimx = Global::dimX;

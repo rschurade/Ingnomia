@@ -620,8 +620,8 @@ bool CanWork::mineWall()
 
 	auto mats = g->w()->mineWall( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, mats.first );
-	Util::createRawMaterialItem( pos, mats.second );
+	Global::util->createRawMaterialItem( pos, mats.first );
+	Global::util->createRawMaterialItem( pos, mats.second );
 
 	return true;
 }
@@ -668,8 +668,8 @@ bool CanWork::digHole()
 	g->w()->removeFloor( pos, m_position );
 	auto mats = g->w()->mineWall( pos + offset, m_position );
 
-	Util::createRawMaterialItem( m_position, mats.first );
-	Util::createRawMaterialItem( m_position, mats.second );
+	Global::util->createRawMaterialItem( m_position, mats.first );
+	Global::util->createRawMaterialItem( m_position, mats.second );
 
 	Position rp( m_job->pos() + offset );
 	g->w()->createRamp( rp.x, rp.y, rp.z );
@@ -711,8 +711,8 @@ bool CanWork::explorativeMineWall()
 
 	auto mats = g->w()->mineWall( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, mats.first );
-	Util::createRawMaterialItem( pos, mats.second );
+	Global::util->createRawMaterialItem( pos, mats.first );
+	Global::util->createRawMaterialItem( pos, mats.second );
 
 	if ( mats.second )
 	{
@@ -746,7 +746,7 @@ bool CanWork::removeRamp()
 
 	unsigned short materialInt = g->w()->removeRamp( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, materialInt );
+	Global::util->createRawMaterialItem( pos, materialInt );
 
 	return true;
 }
