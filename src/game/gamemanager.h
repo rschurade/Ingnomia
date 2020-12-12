@@ -43,6 +43,7 @@ public:
 	void saveGame();
 
 	void setShowMainMenu( bool value );
+	void endCurrentGame();
 
 	GameSpeed gameSpeed();
 	void setGameSpeed( GameSpeed speed );

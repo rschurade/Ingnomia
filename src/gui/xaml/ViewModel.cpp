@@ -295,6 +295,7 @@ void ViewModel::OnBackToMain( BaseComponent* )
 	_showGameGUI = false;
 	OnPropertyChanged( "ShowGameGui" );
 	m_proxy->setShowMainMenu( true );
+	m_proxy->endGame();
 	SetState( State::Main );
 }
 

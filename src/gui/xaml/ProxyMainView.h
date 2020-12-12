@@ -40,6 +40,8 @@ public:
 	void saveGame();
 	void setShowMainMenu( bool value );
 
+	void endGame();
+
 private:
 	IngnomiaGUI::ViewModel* m_parent = nullptr;
 
@@ -61,4 +63,5 @@ signals:
 	void signalLoadGame( QString param );
 	void signalSaveGame();
 	void signalSetShowMainMenu( bool value );
+	void signalEndGame();
 };

@@ -252,6 +252,11 @@ void EventConnector::onSetShowMainMenu( bool value )
 	gm->setShowMainMenu( value );
 }
 
+void EventConnector::onEndGame()
+{
+	gm->endCurrentGame();
+}
+
 void EventConnector::sendResume()
 {
 	emit signalResume();

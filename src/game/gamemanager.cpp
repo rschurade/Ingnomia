@@ -101,6 +101,16 @@ void GameManager::setShowMainMenu( bool value )
 	m_eventConnector->emitInMenu( value );
 }
 
+void GameManager::endCurrentGame()
+{
+	m_eventConnector->emitStopGame();
+
+	if ( m_game )
+	{
+		delete m_game;
+	}
+}
+
 void GameManager::startNewGame()
 {
 	qDebug() << "GameManger: New game";

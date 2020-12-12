@@ -161,6 +161,7 @@ public slots:
 	void onLoadGame( QString folder );
 	void onSaveGame();
 	void onSetShowMainMenu( bool value );
+	void onEndGame();
 
 	void onSetSelectionAction( QString action );
 	void onSetSelectionItem( QString item );

@@ -41,6 +41,7 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 	connect( this, &ProxyMainView::signalLoadGame, Global::eventConnector, &EventConnector::onLoadGame, Qt::QueuedConnection );
 	connect( this, &ProxyMainView::signalSaveGame, Global::eventConnector, &EventConnector::onSaveGame, Qt::QueuedConnection );
 	connect( this, &ProxyMainView::signalSetShowMainMenu, Global::eventConnector, &EventConnector::onSetShowMainMenu, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalEndGame, Global::eventConnector, &EventConnector::onEndGame, Qt::QueuedConnection );
 
 	connect( Global::eventConnector, &EventConnector::signalResume, this, &ProxyMainView::onResume, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalLoadGameDone, this, &ProxyMainView::onLoadGameDone, Qt::QueuedConnection );
@@ -128,4 +129,9 @@ void ProxyMainView::onLoadGameDone( bool value )
 	{
 		m_parent->OnContinueGameFinished( value );
 	}
+}
+
+void ProxyMainView::endGame()
+{
+	emit signalEndGame();
 }
