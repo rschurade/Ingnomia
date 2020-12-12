@@ -75,6 +75,7 @@ public:
 	Game( SpriteFactory* spriteFactory, QObject* parent );
 	Game( const Game& other ) = delete;
 	Game( Game&& other ) = delete;
+	Game() = delete;
 	virtual ~Game();
 
 	void save();
