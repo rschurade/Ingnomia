@@ -25,7 +25,7 @@ class Game;
 class CreatureManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( CreatureManager )
 public:
 	CreatureManager( Game* parent );
 	~CreatureManager();
@@ -71,7 +71,7 @@ public:
 	bool hasPathTo( Position& pos, unsigned int creatureID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 	QList<Creature*> m_creatures;
 	QList<Animal*> m_animals;
 	QList<Monster*> m_monsters;

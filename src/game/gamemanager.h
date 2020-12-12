@@ -31,11 +31,9 @@ class SpriteFactory;
 class GameManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( GameManager )
 public:
 	GameManager( QObject* parent = nullptr );
-	GameManager( const GameManager& other ) = delete;
-	GameManager( GameManager&& other ) = delete;
 	~GameManager();
 
 	void startNewGame();
@@ -57,10 +55,10 @@ public:
 	Game* game();
 	
 private:
-	EventConnector* m_eventConnector = nullptr;
+	QPointer<EventConnector> m_eventConnector;
 	//SpriteFactory* m_sf = nullptr;
 
-	QPointer<Game> m_game = nullptr;
+	QPointer<Game> m_game;
 	
 	void init();
 	void createNewGame();

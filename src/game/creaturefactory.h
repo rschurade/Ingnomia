@@ -27,6 +27,7 @@ class Game;
 
 class CreatureFactory
 {
+	Q_DISABLE_COPY_MOVE( CreatureFactory )
 public:
 	CreatureFactory( Game* game );
 	~CreatureFactory();
@@ -40,7 +41,7 @@ public:
 	Monster* createMonster( QVariantMap values );
 
 private:
-    QPointer<Game> g = nullptr;
+    QPointer<Game> g;
 
     int m_numWoodLice = 0;
 };

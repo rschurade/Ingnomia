@@ -18,16 +18,16 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <QObject>
-
 #include "../base/enums.h"
+
+#include <QObject>
 
 class Config;
 class NewGameSettings;
 
 class QTimer;
 
-class Inventory; 
+class Inventory;
 class ItemHistory;
 class JobManager;
 class StockpileManager;
@@ -70,11 +70,9 @@ class Game : public QObject
 	friend class Automaton;
 
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( Game )
 public:
 	Game( QObject* parent );
-	Game( const Game& other ) = delete;
-	Game( Game&& other ) = delete;
 	Game() = delete;
 	virtual ~Game();
 
@@ -109,11 +107,12 @@ public:
 	PathFinder* pf();
 
 private:
-	World* m_world = nullptr;
-	PathFinder* m_pf = nullptr;
+	World* m_world      = nullptr;
 	SpriteFactory* m_sf = nullptr;
 
-	QTimer* m_timer = nullptr;
+	QPointer<PathFinder> m_pf;
+
+	QPointer<QTimer> m_timer;
 
 	int m_millisecondsSlow = 50;
 	int m_millisecondsFast = 5;
@@ -129,25 +128,23 @@ private:
 
 	void autoSave();
 
-	bool m_paused = true;
+	bool m_paused         = true;
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
 
-	Inventory* m_inv = nullptr;
-	
-	JobManager* m_jobManager = nullptr;
-	StockpileManager* m_spm = nullptr;
-	FarmingManager* m_farmingManager = nullptr;
-	WorkshopManager* m_workshopManager = nullptr;
-	RoomManager* m_roomManager = nullptr;
-	GnomeManager* m_gnomeManager = nullptr;
-	CreatureManager* m_creatureManager = nullptr;
-	EventManager* m_eventManager = nullptr;
-	MechanismManager* m_mechanismManager = nullptr;
-	FluidManager* m_fluidManager = nullptr;
-	NeighborManager* m_neighborManager = nullptr;
-	MilitaryManager* m_militaryManager = nullptr;
-	
-	
+	QPointer<Inventory> m_inv;
+
+	QPointer<JobManager> m_jobManager;
+	QPointer<StockpileManager> m_spm;
+	QPointer<FarmingManager> m_farmingManager;
+	QPointer<WorkshopManager> m_workshopManager;
+	QPointer<RoomManager> m_roomManager;
+	QPointer<GnomeManager> m_gnomeManager;
+	QPointer<CreatureManager> m_creatureManager;
+	QPointer<EventManager> m_eventManager;
+	QPointer<MechanismManager> m_mechanismManager;
+	QPointer<FluidManager> m_fluidManager;
+	QPointer<NeighborManager> m_neighborManager;
+	QPointer<MilitaryManager> m_militaryManager;
 
 public slots:
 	void loop();

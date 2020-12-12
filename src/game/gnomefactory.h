@@ -26,6 +26,7 @@ class Game;
 
 class GnomeFactory
 {
+	Q_DISABLE_COPY_MOVE( GnomeFactory )
 public:
 	GnomeFactory( Game* gm );
 	~GnomeFactory();
@@ -38,5 +39,5 @@ public:
 	GnomeTrader* createGnomeTrader( QVariantMap values );
 
 private:
-    QPointer<Game> g = nullptr;
+    QPointer<Game> g;
 };

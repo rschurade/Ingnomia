@@ -70,6 +70,7 @@ enum CONSTR_ITEM_ID
 
 class World
 {
+	Q_DISABLE_COPY_MOVE( World )
 private:
 	QPointer<Game> g;
 
@@ -115,9 +116,6 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
-	World()               = delete;
-	World( const World& ) = delete;
-	World( World&& )      = delete;
 	World( int dimX, int dimY, int dimZ, Game* game );
 	~World();
 

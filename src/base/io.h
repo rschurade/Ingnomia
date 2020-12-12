@@ -26,7 +26,7 @@ class IO : public QObject
 	Q_OBJECT
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 public:
 	IO( Game* g, QObject* parent );

@@ -104,7 +104,7 @@ public:
 	void setGrowsThisSeason();
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	QString m_plantID;
 

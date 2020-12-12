@@ -95,7 +95,7 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	QList<GuiSquad> m_squads;
 	QList<GuiTargetPriority> m_tmpPriorities;

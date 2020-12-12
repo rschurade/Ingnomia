@@ -34,9 +34,9 @@ class Game;
 class JobManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( JobManager )
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;
@@ -65,6 +65,7 @@ private:
 	void removeFromPositionHash( unsigned int jobID );
 
 public:
+	JobManager() = delete;
 	JobManager( Game* parent );
 	~JobManager();
 

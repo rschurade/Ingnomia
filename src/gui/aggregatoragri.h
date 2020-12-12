@@ -167,7 +167,7 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	bool m_AgriDirty             = false;
 	unsigned int m_currentTileID = 0;

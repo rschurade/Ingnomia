@@ -87,7 +87,7 @@ public:
     void init( Game* game );
 
 private:
-    QPointer<Game> g = nullptr;
+    QPointer<Game> g;
 
     QList<GuiInventoryCategory> m_categories;
     QList<GuiInventoryGroup> m_groups;

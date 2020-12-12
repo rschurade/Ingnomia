@@ -30,7 +30,7 @@ class Game;
 class StockpileManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( StockpileManager )
 public:
 	StockpileManager( Game* parent );
 	~StockpileManager();
@@ -90,7 +90,7 @@ public:
 	QString name( unsigned int id );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMap<unsigned int, Stockpile*> m_stockpiles;
 	QList<unsigned int> m_stockpilesOrdered;

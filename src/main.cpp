@@ -230,7 +230,6 @@ int main( int argc, char* argv[] )
 INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
 {
 	return main( 0, nullptr );
-	return 0;
 }
 
 extern "C"

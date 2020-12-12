@@ -128,7 +128,7 @@ Q_DECLARE_METATYPE( Mission )
 class EventManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( EventManager )
 public:
 	EventManager( Game* parent );
 	~EventManager();
@@ -149,7 +149,7 @@ public:
 	void startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMutex m_mutex;
 

@@ -1967,3 +1967,8 @@ QList<QString> Inventory::allMats( unsigned int itemID )
 	}
 	return QStringList();
 }
+
+ItemHistory* Inventory::itemHistory()
+{
+	return m_itemHistory;
+}

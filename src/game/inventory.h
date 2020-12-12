@@ -40,8 +40,9 @@ class Game;
 class Inventory : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( Inventory )
 public:
+	Inventory() = delete;
 	Inventory( Game* parent );
 	~Inventory();
 
@@ -199,12 +200,12 @@ public:
 
 	QList<QString> allMats( unsigned int itemID );
 
-	ItemHistory* itemHistory() { return m_itemHistory; }
+	ItemHistory* itemHistory();
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
-	ItemHistory* m_itemHistory = nullptr;
+	QPointer<ItemHistory> m_itemHistory;
 
 	int m_dimX;
 	int m_dimY;

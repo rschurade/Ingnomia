@@ -33,7 +33,7 @@ struct GuiWorkshopMaterial
 
 struct GuiWorkshopComponent
 {
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 	QString sid;
 	int amount;
 	bool requireSame;
@@ -46,7 +46,7 @@ struct GuiWorkshopComponent
 
 struct GuiWorkshopProduct
 {
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 	QString sid;
 
 	void updateComponents();
@@ -102,7 +102,7 @@ public:
 	void init( Game* game );
 
 private:
-    QPointer<Game> g = nullptr;
+    QPointer<Game> g;
 
 	bool m_infoDirty    = false;
 	bool m_contentDirty = false;

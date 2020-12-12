@@ -63,7 +63,7 @@ enum enumReqs
 class Selection
 {
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	int m_rotation;
 	Position m_firstClick;

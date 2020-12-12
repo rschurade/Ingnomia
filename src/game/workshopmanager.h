@@ -30,7 +30,7 @@ class Game;
 class WorkshopManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( WorkshopManager )
 public:
 	WorkshopManager( Game* parent = 0 );
 	~WorkshopManager();
@@ -78,7 +78,7 @@ public:
 	bool craftJobExists( const QString& itemSID, const QString& materialSID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QList<Workshop*> m_workshops;
 	QQueue<unsigned int> m_toDelete;

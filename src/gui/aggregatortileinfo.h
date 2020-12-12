@@ -98,7 +98,7 @@ public:
 	void init( Game* game );
 
 private:
-    QPointer<Game> g = nullptr;
+    QPointer<Game> g;
 
 	unsigned int m_currentTileID = 0;
 	bool m_tileInfoDirty         = false;

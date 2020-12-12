@@ -133,5 +133,5 @@ public:
 	QStringList possibleMaterials( QString allowedMaterials, QString allowedMaterialTypes );
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 };

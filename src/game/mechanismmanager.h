@@ -86,8 +86,9 @@ struct MechanismNetwork
 class MechanismManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( MechanismManager )
 public:
+	MechanismManager() = delete;
 	MechanismManager( Game* parent );
 	~MechanismManager();
 
@@ -139,7 +140,7 @@ public:
 	void updateCreaturesAtPos( Position pos, int numCreatures );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 	QMutex m_mutex;
 
 	Job* getSwitchJob( MechanismData& md );

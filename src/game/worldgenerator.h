@@ -46,7 +46,7 @@ public:
 	void addLife();
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 	// resize world and fill stone layers
 	void setStoneLayers();
 	// set metal ores and gems

@@ -84,7 +84,7 @@ struct NeighborKingdom
 class NeighborManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( NeighborManager )
 public:
 	NeighborManager( Game* parent );
 	~NeighborManager();
@@ -113,7 +113,7 @@ public:
 	void emissary( Mission* mission );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMutex m_mutex;
 

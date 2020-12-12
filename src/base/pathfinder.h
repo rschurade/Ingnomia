@@ -48,7 +48,7 @@ enum class PathFinderResult
 class PathFinder : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( PathFinder )
 public:
 	PathFinder( World* world, QObject* parent );
 	~PathFinder();

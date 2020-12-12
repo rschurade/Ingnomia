@@ -73,7 +73,7 @@ public:
 	}
 
 protected:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 	unsigned int m_id = 0;
 	QString m_name    = "";
 	bool m_active     = true;

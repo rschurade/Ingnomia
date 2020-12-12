@@ -118,8 +118,9 @@ Q_DECLARE_METATYPE( Squad )
 class MilitaryManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( MilitaryManager )
 public:
+	MilitaryManager() = delete;
 	MilitaryManager( Game* parent );
 	~MilitaryManager();
 
@@ -158,7 +159,7 @@ public:
 	bool roleIsCivilian( unsigned int roleID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMutex m_mutex;
 

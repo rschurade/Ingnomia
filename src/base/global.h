@@ -94,7 +94,7 @@ public:
 
 private:
 	static Logger m_logger;
-	
+
 	//static KeyBindings m_keyBindings;
 
 	static QMap<QString, QDomElement> m_behaviorTrees;

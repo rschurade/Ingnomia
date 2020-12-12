@@ -103,7 +103,7 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	QHash<unsigned int, unsigned int> collectCreatures();
 	TileDataUpdate aggregateTile( unsigned int tileID ) const;

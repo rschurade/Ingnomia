@@ -33,9 +33,9 @@ class GnomeManager : public QObject
 	friend class Automaton;
 
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( GnomeManager )
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;

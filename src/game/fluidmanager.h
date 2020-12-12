@@ -54,7 +54,7 @@ struct NetworkPipe
 class FluidManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( FluidManager )
 public:
 	FluidManager( Game* parent );
 	~FluidManager();
@@ -81,7 +81,7 @@ public:
 	bool hasJobID( unsigned int jobID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	quint64 m_lastTick = 0;
 

@@ -64,7 +64,7 @@ public:
 	void update();
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	GuiCreatureInfo m_info;
 	QMap< QString, std::vector<unsigned char> > m_emptyPics;

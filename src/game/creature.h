@@ -279,7 +279,7 @@ public:
 	bool hasTransparency() { return m_hasTransparency; }
 
 protected:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	virtual void loadBehaviorTree( QString id ) final;
 	virtual void initTaskMap() = 0;

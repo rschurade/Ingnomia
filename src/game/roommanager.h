@@ -41,7 +41,7 @@ struct Door
 class RoomManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( RoomManager )
 public:
 	RoomManager( Game* parent );
 	~RoomManager();
@@ -97,7 +97,7 @@ public:
 	bool cancelAlarmJob( unsigned int roomID );
 
 private:
-	Game* g = nullptr;
+	QPointer<Game> g;
 
 	QMap<unsigned int, Room> m_rooms;
 	QHash<unsigned int, unsigned int> m_allRoomTiles;

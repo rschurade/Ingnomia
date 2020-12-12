@@ -46,7 +46,7 @@ struct Beehive
 class FarmingManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( FarmingManager )
 public:
 	FarmingManager( Game* parent );
 	~FarmingManager();
@@ -139,7 +139,7 @@ public:
 	void emitUpdateSignalGrove( unsigned int id );
 
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	QMutex m_mutex;
 
