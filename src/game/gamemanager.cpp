@@ -73,7 +73,6 @@ GameManager::GameManager( QObject* parent ) :
 {
 	qRegisterMetaType<GameSpeed>();
 
-	m_sf = new SpriteFactory();
 	m_eventConnector = new EventConnector( this );
 	Global::eventConnector = m_eventConnector;
 	Global::util = new Util( nullptr );
@@ -170,19 +169,13 @@ void GameManager::init()
 		qDebug() << "Failed to init translation.";
 		abort();
 	}
-
-	if ( !m_sf->init() )
-	{
-		qDebug() << "Failed to init SpriteFactory.";
-		abort();
-	}
 }
 
 void GameManager::loadGame( QString folder )
 {
 	init();
-
-	m_game = new Game( m_sf, this );
+	
+	m_game = new Game( this );
 	
 	IO io( m_game, this) ;
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
@@ -205,8 +198,8 @@ void GameManager::loadGame( QString folder )
 void GameManager::createNewGame()
 {
 	init();
-
-	m_game = new Game( m_sf, this );
+	auto sf = new SpriteFactory();
+	m_game = new Game( this );
 	m_game->generateWorld( Global::newGameSettings );
 	
 	Global::util = new Util( m_game );

@@ -60,11 +60,13 @@
 
 #include <time.h>
 
-Game::Game( SpriteFactory* spriteFactory, QObject* parent ) :
-	m_sf( spriteFactory ),
+Game::Game( QObject* parent ) :
 	QObject( parent )
 {
 	qDebug() << "init game...";
+
+	m_sf = new SpriteFactory();
+	
 	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
 
@@ -116,6 +118,9 @@ Game::Game( SpriteFactory* spriteFactory, QObject* parent ) :
 
 Game::~Game()
 {
+	delete m_pf;
+	delete m_world;
+	delete m_sf;
 }
 
 void Game::generateWorld( NewGameSettings* ngs )
@@ -304,7 +309,7 @@ void Game::sendClock()
 	if ( GameState::seasonChanged )
 	{
 		auto gm = dynamic_cast<GameManager*>( parent() );
-		gm->sf()->forceUpdate();
+		m_sf->forceUpdate();
 	}
 
 	QString sunStatus;

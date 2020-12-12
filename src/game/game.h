@@ -72,7 +72,7 @@ class Game : public QObject
 	Q_OBJECT
 
 public:
-	Game( SpriteFactory* spriteFactory, QObject* parent );
+	Game( QObject* parent );
 	Game( const Game& other ) = delete;
 	Game( Game&& other ) = delete;
 	Game() = delete;

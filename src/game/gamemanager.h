@@ -55,11 +55,10 @@ public:
 	EventConnector* eventConnector();
 
 	Game* game();
-	SpriteFactory* sf() { return m_sf; }
-
+	
 private:
 	EventConnector* m_eventConnector = nullptr;
-	SpriteFactory* m_sf = nullptr;
+	//SpriteFactory* m_sf = nullptr;
 
 	QPointer<Game> m_game = nullptr;
 	
