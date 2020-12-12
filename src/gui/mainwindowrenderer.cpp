@@ -125,7 +125,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 		// Only want to handle these from dedicated graphic debugger
 		if ( type == GL_DEBUG_TYPE_PUSH_GROUP || type == GL_DEBUG_TYPE_POP_GROUP )
 			return;
-		qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
+		//qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
 	};
 	glEnable( GL_DEBUG_OUTPUT );
 	f->glDebugMessageCallback( logHandler, nullptr );

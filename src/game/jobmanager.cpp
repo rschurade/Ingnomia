@@ -42,26 +42,10 @@ JobManager::JobManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-}
-
-JobManager::~JobManager()
-{
-}
-
-void JobManager::reset()
-{
-	m_jobList.clear();
-	m_jobsPerType.clear();
-	m_jobPositions.clear();
-	m_returnedJobQueue.clear();
-	m_skillToInt.clear();
-
 	for ( auto job : DB::ids( "Jobs" ) )
 	{
 		m_jobsPerType.insert( job, QMultiMap<int, unsigned int>() );
 	}
-
-	m_jobIDs.clear();
 
 	m_skillToInt.insert( "Mining", SK_Mining );
 	m_skillToInt.insert( "Masonry", SK_Masonry );
@@ -121,6 +105,10 @@ void JobManager::reset()
 	}
 }
 
+JobManager::~JobManager()
+{
+}
+
 void JobManager::onTick()
 {
 	QElapsedTimer timer;
@@ -145,6 +133,7 @@ void JobManager::onTick()
 		{
 			if ( requiredItemsAvail( jobID ) )
 			{
+				qDebug() << job.type() << job.priority() << job.id();
 				m_jobsPerType[job.type()].insert( job.priority(), job.id() );
 			}
 			else
@@ -622,7 +611,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 									{
 										if ( isReachable( j.id(), 0 ) )
 										{
-											//qDebug() << "getJob " <<  j->id();
+											//qDebug() << "getJob " <<  j.id();
 											return j.id();
 										}
 									}

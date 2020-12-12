@@ -6872,7 +6872,7 @@ INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('Orang
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('OakTree','RawWood','Oak',0.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('OakTree','Oak','Oak',3.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','RawWood','WillowWood',0.0);
-INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','RawWood','WillowSeed',2.0);
+INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','Seed','WillowSeed',2.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('BirchTree','RawWood','Birch',0.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('BirchTree','Seed','Birch',3.0);
 INSERT INTO "Plants_OnHarvest" ("ID","Action") VALUES ('Strawberry','StateOneBack');

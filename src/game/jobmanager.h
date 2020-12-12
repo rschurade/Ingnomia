@@ -70,8 +70,6 @@ public:
 
 	void onTick();
 
-	void reset();
-
 	QString jobManagerInfo();
 
 	//Job* getJob( QVariantList& profs, Position& pos );

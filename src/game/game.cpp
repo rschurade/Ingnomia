@@ -65,9 +65,6 @@ Game::Game( SpriteFactory* spriteFactory, QObject* parent ) :
 	QObject( parent )
 {
 	qDebug() << "init game...";
-
-	m_pf		= new PathFinder( m_world, this );
-
 	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
 
@@ -127,11 +124,14 @@ void Game::generateWorld( NewGameSettings* ngs )
 	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
 	m_world = wg.generateTopology();	
 	wg.addLife();
+
+	m_pf = new PathFinder( m_world, this );
 }
 
 void Game::setWorld( int dimX, int dimY, int dimZ )
 {
 	m_world = new World( dimX, dimY, dimZ, this );
+	m_pf	= new PathFinder( m_world, this );
 }
 
 void Game::start()
