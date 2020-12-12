@@ -71,7 +71,7 @@ enum CONSTR_ITEM_ID
 class World
 {
 private:
-	QPointer<Game> g = nullptr;
+	QPointer<Game> g;
 
 	LightMap m_lightMap;
 	RegionMap m_regionMap;
@@ -115,7 +115,7 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
-	World() = delete;
+	World()               = delete;
 	World( const World& ) = delete;
 	World( World&& )      = delete;
 	World( int dimX, int dimY, int dimZ, Game* game );
@@ -287,7 +287,6 @@ public:
 	Tile& getTile( const Position pos );
 	Tile& getTile( const unsigned int id );
 
-	
 	bool noTree( const Position pos, const int xRange, const int yRange );
 	bool noShroom( const Position pos, const int xRange, const int yRange );
 
