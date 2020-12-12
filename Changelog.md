@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+
+### Added
+
+### Changed
+
+### Removed
+
+## [0.8.3]
+
+### Fixed
 - crash in tile info panel due to wrong thread
 - random crash due to use of GPU in wrong context
 - crash with auto craft in waste disposal
@@ -12,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - sped up auto-craft job generation
+- include log file in crash dumps
 
 ### Removed
 

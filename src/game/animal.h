@@ -149,6 +149,7 @@ private:
 
 	bool m_isProducer = false;
 	bool m_isEggLayer = false;
+	bool m_isGrazer   = false;
 
 	bool m_isEgg   = false;
 	bool m_isYoung = false;

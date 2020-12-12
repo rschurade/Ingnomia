@@ -48,11 +48,11 @@ public:
 
 protected:
 	QOpenGLVertexArrayObject m_vao;
-	QOpenGLShaderProgram* m_worldShader         = nullptr;
-	QOpenGLShaderProgram* m_worldUpdateShader   = nullptr;
-	QOpenGLShaderProgram* m_thoughtBubbleShader = nullptr;
-	QOpenGLShaderProgram* m_selectionShader     = nullptr;
-	QOpenGLShaderProgram* m_axleShader          = nullptr;
+	QScopedPointer<QOpenGLShaderProgram> m_worldShader;
+	QScopedPointer<QOpenGLShaderProgram> m_worldUpdateShader;
+	QScopedPointer<QOpenGLShaderProgram> m_thoughtBubbleShader;
+	QScopedPointer<QOpenGLShaderProgram> m_selectionShader;
+	QScopedPointer<QOpenGLShaderProgram> m_axleShader;
 
 	GLuint m_textures[32] = { 0 };
 	GLuint m_tileBo       = 0;

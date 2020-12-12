@@ -45,7 +45,7 @@ Animal::Animal( QString species, Position& pos, Gender gender, bool adult, Game*
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_btName   = avm.value( "BehaviorTree" ).toString();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	
+
 	m_isMulti = avm.value( "IsMulti" ).toBool();
 
 	int hungerRand = ( rand() % 20 ) - 10;
@@ -91,7 +91,7 @@ Animal::Animal( QVariantMap in, Game* game ) :
 
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	
+
 	m_hunger = qMax( -10.f, in.value( "Hunger" ).toFloat() );
 
 	QVariantMap m_stateMap;
@@ -232,8 +232,8 @@ void Animal::updateSprite()
 		}
 		if ( sprite )
 		{
-			m_hasTransparency  = sprite->hasTransp;
-			m_spriteID = sprite->uID;
+			m_hasTransparency = sprite->hasTransp;
+			m_spriteID        = sprite->uID;
 		}
 		else
 		{
@@ -363,6 +363,14 @@ void Animal::setState( int state )
 			{
 				return true;
 			}
+		}
+		return false;
+	}();
+
+	m_isGrazer = [this]() {
+		if ( m_stateMap.contains( "Grazing" ) )
+		{
+			return true;
 		}
 		return false;
 	}();
@@ -818,47 +826,30 @@ BT_RESULT Animal::actionGraze( bool halt )
 {
 	if ( m_hunger < 80 )
 	{
-		if ( m_stateMap.contains( "Grazing" ) )
+		Tile& tile = g->w()->getTile( m_position );
+		if ( m_isGrazer )
 		{
-			Tile& tile = g->w()->getTile( m_position );
-
-			if ( GameState::season != 3 )
+			if ( tile.flags & TileFlag::TF_GRASS && tile.vegetationLevel > 10 )
 			{
-				if ( tile.flags & TileFlag::TF_GRASS && tile.vegetationLevel > 10 )
+				if ( tile.flags & TileFlag::TF_PASTURE )
 				{
-					if ( tile.flags & TileFlag::TF_PASTURE )
-					{
-						tile.vegetationLevel = qMax( 10, tile.vegetationLevel - 1 );
-					}
-
-					m_hunger += m_foodValue;
-
-					g->w()->addToUpdateList( m_position );
-					return BT_RESULT::SUCCESS;
+					tile.vegetationLevel = qMax( 10, tile.vegetationLevel - 1 );
 				}
-			}
-			if ( tile.flags & TileFlag::TF_PASTURE )
-			{
-				auto pasture = g->fm()->getPasture( m_pastureID );
-				if ( pasture )
-				{
-					if ( pasture->eatFromTrough() )
-					{
-						m_hunger += m_foodValue * 5;
-						return BT_RESULT::SUCCESS;
-					}
-				}
+
+				m_hunger += m_foodValue;
+
+				g->w()->addToUpdateList( m_position );
+				return BT_RESULT::SUCCESS;
 			}
 		}
-		else
+		if ( m_pastureID && (bool)( tile.flags & TileFlag::TF_PASTURE ) )
 		{
-			auto pasture = g->fm()->getPasture( m_pastureID );
-			if ( pasture )
+			auto pasture =  g->fm()->getPastureAtPos( m_position );
+			if ( pasture && pasture->id() == m_pastureID )
 			{
 				if ( pasture->eatFromTrough() )
 				{
-					m_hunger += 20;
-
+					m_hunger += m_foodValue * 5;
 					return BT_RESULT::SUCCESS;
 				}
 			}
@@ -1169,7 +1160,7 @@ BT_RESULT Animal::actionAttackTarget( bool halt )
 	{
 		creature = g->cm()->creature( m_currentAttackTarget );
 	}
-	
+
 	if ( creature && !creature->isDead() )
 	{
 		m_facing = getFacing( m_position, creature->getPos() );
@@ -1305,7 +1296,7 @@ bool Animal::toButcher()
 {
 	return m_toButcher;
 }
-	
+
 void Animal::setToButcher( bool value )
 {
 	m_toButcher = value;
