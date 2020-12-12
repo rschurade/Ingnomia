@@ -31,6 +31,10 @@ WorkshopManager::WorkshopManager( Game* parent ) :
 
 WorkshopManager::~WorkshopManager()
 {
+	for ( const auto& ws : m_workshops )
+	{
+		delete ws;
+	}
 }
 
 void WorkshopManager::onTick( quint64 tick )
