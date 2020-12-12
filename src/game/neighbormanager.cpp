@@ -29,6 +29,27 @@ NeighborManager::NeighborManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
+	m_kingdoms.clear();
+
+	if ( GameState::peaceful )
+	{
+		for ( int i = 0; i < 10; ++i )
+		{
+			addRandomKingdom( KingdomType::GNOME );
+		}
+	}
+	else
+	{
+		for ( int i = 0; i < 5; ++i )
+		{
+			addRandomKingdom( KingdomType::GNOME );
+		}
+
+		for ( int i = 0; i < 5; ++i )
+		{
+			addRandomKingdom( KingdomType::GOBLIN );
+		}
+	}
 }
 
 NeighborManager::~NeighborManager()
@@ -91,31 +112,6 @@ void NeighborManager::deserialize( QVariantList in )
 		NeighborKingdom nk;
 		nk.deserialize( vk.toMap() );
 		m_kingdoms.append( nk );
-	}
-}
-
-void NeighborManager::reset()
-{
-	m_kingdoms.clear();
-
-	if ( GameState::peaceful )
-	{
-		for ( int i = 0; i < 10; ++i )
-		{
-			addRandomKingdom( KingdomType::GNOME );
-		}
-	}
-	else
-	{
-		for ( int i = 0; i < 5; ++i )
-		{
-			addRandomKingdom( KingdomType::GNOME );
-		}
-
-		for ( int i = 0; i < 5; ++i )
-		{
-			addRandomKingdom( KingdomType::GOBLIN );
-		}
 	}
 }
 

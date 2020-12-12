@@ -89,8 +89,6 @@ public:
 	NeighborManager( Game* parent );
 	~NeighborManager();
 
-	void reset();
-
 	void addRandomKingdom( KingdomType type );
 
 	QVariantList serialize();
