@@ -293,11 +293,7 @@ void Automaton::installCore( unsigned int itemID )
 		g->inv()->putDownItem( m_core, m_position );
 		m_core = 0;
 
-		if ( m_behaviorTree )
-		{
-			delete m_behaviorTree;
-		}
-		m_behaviorTree = nullptr;
+		m_behaviorTree.reset();
 
 		m_skills.clear();
 		m_skillActive.clear();

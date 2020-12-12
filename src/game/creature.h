@@ -392,7 +392,7 @@ protected:
 	QList<AggroEntry> m_aggroList;
 
 	QString m_btName        = "";
-	BT_Node* m_behaviorTree = nullptr;
+	QScopedPointer<BT_Node> m_behaviorTree;
 
 	BT_RESULT conditionIsMale( bool halt );
 	BT_RESULT conditionIsFemale( bool halt );

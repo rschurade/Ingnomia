@@ -35,9 +35,9 @@ public:
 	static BT_Node* load( const QString id, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
 
 private:
-	static BT_Node* createBTNode( QDomElement treeElement, BT_Node* parent, QDomElement& documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* createBTNode( QDomElement treeElement, BT_Node* parent, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
 
-	static BT_Node* getTree( QString treeID, QDomElement documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* getTree( QString treeID, QDomElement documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
 
-	static void getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static void getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
 };

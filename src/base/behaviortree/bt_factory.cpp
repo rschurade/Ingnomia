@@ -22,14 +22,34 @@
 
 #include <QDebug>
 
+namespace
+{
+class BT_NodeDummy final : public BT_Node
+{
+public:
+	BT_NodeDummy( QString name, QVariantMap& blackboard ) :
+		BT_Node( name, blackboard )
+	{
+	}
+	~BT_NodeDummy()
+	{
+	}
+
+	BT_Node* takeChild()
+	{
+		auto child = m_children.back();
+		m_children.pop_back();
+		return child;
+	}
+};
+}
+
 BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement root = Global::behaviorTree( id );
 	QString mainTree = root.attribute( "main_tree_to_execute" );
 
-	QMap<QString, BT_Node*> subTrees;
-
-	BT_Node* behaviorTree = getTree( mainTree, root, subTrees, actions, blackboard );
+	BT_Node* behaviorTree = getTree( mainTree, root, actions, blackboard );
 	if ( !behaviorTree )
 	{
 		qDebug() << "Fatal error. Failed to load behavior tree";
@@ -39,7 +59,7 @@ BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RES
 	return behaviorTree;
 }
 
-BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = documentRoot.firstChildElement();
 	while ( !treeElement.isNull() )
@@ -53,16 +73,18 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QMap<QSt
 			{
 				QDomElement treeRoot = treeElement.firstChildElement();
 
-				BT_Node* dummy = new BT_Node( "dummy", blackboard );
+				BT_NodeDummy dummy( "dummy", blackboard );
 
-				BT_Node* rootNode = createBTNode( treeRoot, dummy, documentRoot, subTrees, actions, blackboard );
+				createBTNode( treeRoot, &dummy, documentRoot, actions, blackboard );
+
+				BT_Node* rootNode = dummy.takeChild();
+
 				if ( !rootNode )
 				{
 					qCritical() << "failed to create root node for behavior tree " << treeID;
 				}
-				delete dummy;
 
-				getNodes( rootNode, treeRoot, documentRoot, subTrees, actions, blackboard );
+				getNodes( rootNode, treeRoot, documentRoot, actions, blackboard );
 				return rootNode;
 			}
 		}
@@ -72,23 +94,23 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QMap<QSt
 	return nullptr;
 }
 
-void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = root.firstChildElement();
 	while ( !treeElement.isNull() )
 	{
-		BT_Node* node = createBTNode( treeElement, parent, documentRoot, subTrees, actions, blackboard );
+		BT_Node* node = createBTNode( treeElement, parent, documentRoot, actions, blackboard );
 
 		if ( treeElement.hasChildNodes() )
 		{
-			getNodes( node, treeElement, documentRoot, subTrees, actions, blackboard );
+			getNodes( node, treeElement, documentRoot, actions, blackboard );
 		}
 
 		treeElement = treeElement.nextSiblingElement();
 	}
 }
 
-BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, QMap<QString, BT_Node*>& subTrees, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QString nodeName = domElement.nodeName();
 	BT_Node* bn      = nullptr;
@@ -154,17 +176,7 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 	{
 		QString subtreeID = domElement.attribute( "ID" );
 		//qDebug() << "request subtree: " << subtreeID;
-		if ( subTrees.contains( subtreeID ) )
-		{
-			bn = subTrees[subtreeID];
-		}
-		else
-		{
-			bn = getTree( subtreeID, documentRoot, subTrees, actions, blackboard );
-			// inserting it even when it fails, so we don't have to search the whole xml document again
-			// that shouldn't be happening anyway, as Groot does a sanity check on save
-			subTrees.insert( subtreeID, bn );
-		}
+		bn = getTree( subtreeID, documentRoot, actions, blackboard );
 		if ( bn )
 		{
 			//qDebug() << "found subtree";
