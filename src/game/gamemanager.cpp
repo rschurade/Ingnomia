@@ -221,6 +221,8 @@ void GameManager::createNewGame()
 
 void GameManager::postCreationInit()
 {
+	m_game->mil()->init();
+
 	m_eventConnector->aggregatorAgri()->init( m_game );
 	m_eventConnector->aggregatorCreatureInfo()->init( m_game );
 	m_eventConnector->aggregatorInventory()->init( m_game );

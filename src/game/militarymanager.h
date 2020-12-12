@@ -123,6 +123,8 @@ public:
 	MilitaryManager( Game* parent );
 	~MilitaryManager();
 
+	void init();
+
 	void onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
 	QVariantMap serialize();

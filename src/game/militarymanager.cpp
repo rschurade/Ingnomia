@@ -184,6 +184,13 @@ MilitaryManager::MilitaryManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
+}
+MilitaryManager::~MilitaryManager()
+{
+}
+
+void MilitaryManager::init()
+{
 	//load from file
 	QJsonDocument jd;
 	IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/military.json", jd );
@@ -224,9 +231,6 @@ MilitaryManager::MilitaryManager( Game* parent ) :
 	{
 		addSquad();
 	}
-}
-MilitaryManager::~MilitaryManager()
-{
 }
 
 void MilitaryManager::save()
