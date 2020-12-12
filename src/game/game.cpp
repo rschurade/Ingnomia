@@ -65,7 +65,7 @@ Game::Game( QObject* parent ) :
 {
 	qDebug() << "init game...";
 
-	m_sf = new SpriteFactory();
+	m_sf.reset( new SpriteFactory() );
 	
 	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
@@ -118,25 +118,22 @@ Game::Game( QObject* parent ) :
 
 Game::~Game()
 {
-	delete m_pf;
-	delete m_world;
-	delete m_sf;
 }
 
 void Game::generateWorld( NewGameSettings* ngs )
 {
 	WorldGenerator wg( ngs, this );
 	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
-	m_world = wg.generateTopology();	
+	m_world.reset( wg.generateTopology() );	
 	wg.addLife();
 
-	m_pf = new PathFinder( m_world, this );
+	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
 void Game::setWorld( int dimX, int dimY, int dimZ )
 {
-	m_world = new World( dimX, dimY, dimZ, this );
-	m_pf	= new PathFinder( m_world, this );
+	m_world.reset( new World( dimX, dimY, dimZ, this ) );
+	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
 void Game::start()
@@ -479,8 +476,8 @@ JobManager*			Game::jm(){ return m_jobManager; }
 StockpileManager*	Game::spm(){ return m_spm; }
 FarmingManager*		Game::fm(){ return m_farmingManager; }
 WorkshopManager*	Game::wsm(){ return m_workshopManager; }
-World*				Game::w(){ return m_world; }
-SpriteFactory*		Game::sf(){ return m_sf; }
+World*				Game::w(){ return m_world.get(); }
+SpriteFactory*		Game::sf(){ return m_sf.get(); }
 RoomManager*		Game::rm(){ return m_roomManager; }
 GnomeManager*		Game::gm(){ return m_gnomeManager; }
 CreatureManager*	Game::cm(){ return m_creatureManager; }
@@ -489,5 +486,5 @@ MechanismManager*	Game::mcm(){ return m_mechanismManager; }
 FluidManager*		Game::flm(){ return m_fluidManager; }
 NeighborManager*	Game::nm(){ return m_neighborManager; }
 MilitaryManager*	Game::mil(){ return m_militaryManager; }
-PathFinder*			Game::pf(){ return m_pf; }
-World*				Game::world() { return m_world; }
+PathFinder*			Game::pf(){ return m_pf.get(); }
+World*				Game::world() { return m_world.get(); }

@@ -208,7 +208,6 @@ void GameManager::loadGame( QString folder )
 void GameManager::createNewGame()
 {
 	init();
-	auto sf = new SpriteFactory();
 	m_game = new Game( this );
 	m_game->generateWorld( Global::newGameSettings );
 	

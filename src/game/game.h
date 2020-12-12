@@ -107,10 +107,9 @@ public:
 	PathFinder* pf();
 
 private:
-	World* m_world      = nullptr;
-	SpriteFactory* m_sf = nullptr;
-
-	QPointer<PathFinder> m_pf;
+	QScopedPointer<World> m_world;
+	QScopedPointer<SpriteFactory> m_sf;
+	QScopedPointer<PathFinder> m_pf;
 
 	QPointer<QTimer> m_timer;
 
