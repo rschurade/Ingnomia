@@ -28,6 +28,7 @@
 
 Config::Config()
 {
+	QMutexLocker lock( &m_mutex );
 	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
@@ -91,6 +92,7 @@ Config::~Config()
 
 QVariant Config::get( QString key )
 {
+	QMutexLocker lock( &m_mutex );
 	if ( m_settings.contains( key ) )
 	{
 		QVariant out = m_settings[key];
@@ -104,7 +106,13 @@ QVariant Config::get( QString key )
 
 void Config::set( QString key, QVariant value )
 {
-	m_settings[key] = value;
+	QMutexLocker lock( &m_mutex );
+	const auto oldValue = m_settings[key];
+	if (oldValue != value)
+	{
+		m_settings[key] = value;
+		IO::saveConfig();
 
-	IO::saveConfig();
+		qDebug() << "Update config" << key << "=" << value << "(was" << oldValue << ")";
+	}
 }
