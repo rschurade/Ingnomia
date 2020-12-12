@@ -194,7 +194,7 @@ Pasture::~Pasture()
 {
 }
 
-void Pasture::addTile( Position& pos )
+void Pasture::addTile( const Position & pos )
 {
 	PastureField grofi;
 	grofi.pos = pos;
