@@ -39,6 +39,10 @@ CreatureManager::CreatureManager( Game* parent ) :
 
 CreatureManager::~CreatureManager()
 {
+	for ( const auto& c : m_creatures )
+	{
+		delete c;
+	}
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
