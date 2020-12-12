@@ -154,15 +154,15 @@ void GameManager::continueLastGame()
 
 void GameManager::init()
 {
+	m_eventConnector->emitStopGame();
+
 	if ( m_game )
 	{
 		delete m_game;
 	}
 	// reset everything and initialize components;
 	Global::reset();
-
-	m_eventConnector->emitStopGame();
-
+	
 	GameState::init();
 
 	if ( !S::gi().init() )
@@ -244,9 +244,7 @@ void GameManager::postCreationInit()
 	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
 	
 	Global::util->initAllowedInContainer();
-	Global::cfg->set( "NoRender", false );
 	m_eventConnector->onViewLevel( GameState::viewLevel );
-	Global::cfg->set( "gameRunning", true );
 	m_eventConnector->emitInMenu( false );
 
 	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
