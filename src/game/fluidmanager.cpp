@@ -56,19 +56,6 @@ FluidManager::~FluidManager()
 {
 }
 
-void FluidManager::reset()
-{
-	m_inputs.clear();
-	m_allPipes.clear();
-	m_outputs.clear();
-}
-
-void FluidManager::init()
-{
-	reset();
-	m_lastTick = GameState::tick;
-}
-
 void FluidManager::loadPipes( QVariantList data )
 {
 	for ( auto vdata : data )

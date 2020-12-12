@@ -133,8 +133,6 @@ public:
 	EventManager( Game* parent );
 	~EventManager();
 
-	void reset();
-
 	QVariantMap serialize();
 	void deserialize( QVariantMap in );
 

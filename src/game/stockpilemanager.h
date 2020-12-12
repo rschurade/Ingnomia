@@ -35,8 +35,6 @@ public:
 	StockpileManager( Game* parent );
 	~StockpileManager();
 
-	void reset();
-
 	void onTick( quint64 tick );
 
 	void addStockpile( Position& firstClick, QList<QPair<Position, bool>> fields );

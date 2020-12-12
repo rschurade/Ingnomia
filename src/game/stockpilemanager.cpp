@@ -36,13 +36,6 @@ StockpileManager::~StockpileManager()
 {
 }
 
-void StockpileManager::reset()
-{
-	m_stockpiles.clear();
-	m_allStockpileTiles.clear();
-	m_stockpilesOrdered.clear();
-}
-
 void StockpileManager::onTick( quint64 tick )
 {
 	if ( Global::cfg->get( "updateItemFilter" ).toBool() )

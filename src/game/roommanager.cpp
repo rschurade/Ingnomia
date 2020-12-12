@@ -39,13 +39,6 @@ RoomManager::~RoomManager()
 {
 }
 
-void RoomManager::reset()
-{
-	m_rooms.clear();
-	m_allRoomTiles.clear();
-	m_doors.clear();
-}
-
 void RoomManager::onTick( quint64 tick )
 {
 	for ( auto&& room : m_rooms )

@@ -33,11 +33,6 @@ WorkshopManager::~WorkshopManager()
 {
 }
 
-void WorkshopManager::reset()
-{
-	m_workshops.clear();
-}
-
 void WorkshopManager::onTick( quint64 tick )
 {
 	if ( !m_toDelete.isEmpty() )

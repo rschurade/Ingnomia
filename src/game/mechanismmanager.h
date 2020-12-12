@@ -91,9 +91,6 @@ public:
 	MechanismManager( Game* parent );
 	~MechanismManager();
 
-	void reset();
-	void init();
-
 	QHash<unsigned int, MechanismData>& mechanisms()
 	{
 		return m_mechanisms;

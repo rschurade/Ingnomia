@@ -40,31 +40,11 @@ GnomeManager::GnomeManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
+	loadProfessions();
 }
 
 GnomeManager::~GnomeManager()
 {
-}
-
-void GnomeManager::init()
-{
-	clear();
-	loadProfessions();
-}
-
-void GnomeManager::reset()
-{
-	clear();
-	loadProfessions();
-}
-
-void GnomeManager::clear()
-{
-	m_gnomes.clear();
-	m_specialGnomes.clear();
-	m_gnomesByID.clear();
-	m_automatons.clear();
-	m_startIndex = 0;
 }
 
 bool GnomeManager::contains( unsigned int gnomeID )

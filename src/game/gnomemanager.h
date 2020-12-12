@@ -53,10 +53,6 @@ public:
 	GnomeManager( Game* parent );
 	~GnomeManager();
 
-	void init();
-	void reset();
-	void clear();
-
 	void loadProfessions();
 	void saveProfessions();
 	QStringList professions();

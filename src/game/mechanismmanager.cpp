@@ -96,23 +96,6 @@ MechanismManager::~MechanismManager()
 {
 }
 
-void MechanismManager::reset()
-{
-	m_mechanisms.clear();
-
-	m_floorPositions.clear();
-	m_wallPositions.clear();
-
-	m_axleData.clear();
-
-	m_networks.clear();
-}
-
-void MechanismManager::init()
-{
-	m_lastTick = GameState::tick;
-}
-
 void MechanismManager::loadMechanisms( QVariantList data )
 {
 	for ( auto vdata : data )

@@ -35,8 +35,6 @@ public:
 	WorkshopManager( Game* parent = 0 );
 	~WorkshopManager();
 
-	void reset();
-
 	void onTick( quint64 tick );
 	Workshop* addWorkshop( QString type, Position& pos, int rotation );
 	void addWorkshop( QVariantMap vals );

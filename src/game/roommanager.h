@@ -46,8 +46,6 @@ public:
 	RoomManager( Game* parent );
 	~RoomManager();
 
-	void reset();
-
 	void onTick( quint64 tick );
 
 	void addRoom( Position firstClick, QList<QPair<Position, bool>> fields, RoomType type );

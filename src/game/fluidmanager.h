@@ -59,9 +59,6 @@ public:
 	FluidManager( Game* parent );
 	~FluidManager();
 
-	void reset();
-	void init();
-
 	QHash<unsigned int, NetworkPipe>& pipes()
 	{
 		return m_allPipes;

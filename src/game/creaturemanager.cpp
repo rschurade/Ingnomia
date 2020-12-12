@@ -41,33 +41,6 @@ CreatureManager::~CreatureManager()
 {
 }
 
-void CreatureManager::reset()
-{
-	/*
-	m_creatures.clear();
-	m_creaturesByID.clear();
-
-	m_countPerType.clear();
-	m_creaturesPerType.clear();
-
-	// add monster entries for monsters that aren't typically on the map so they can appear in the squad priority list
-	auto monsters = DB::ids( "Monsters" );
-	for( auto monster : monsters )
-	{
-		m_countPerType.insert( monster, 0 );
-	}
-
-	auto animals = DB::ids( "Animals" );
-	for ( auto animal : animals )
-	{
-		if ( NewGameSettings::getInstance().isChecked( animal ) )
-		{
-			m_countPerType.insert( animal, 0 );
-		}
-	}
-	*/
-}
-
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	QElapsedTimer timer;
