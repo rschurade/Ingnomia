@@ -241,8 +241,6 @@ bool EventManager::checkRequirements( Event& event )
 				Global::eventConnector->onEvent( event.id, im.value( "Title" ).toString(), msg, im.value( "Pause" ).toBool(), true );
 			}
 
-			QMutexLocker lock( &m_mutex );
-
 			if ( data.contains( "Expires" ) )
 			{
 				auto expireMap = data.value( "Expires" ).toMap();

@@ -40,14 +40,14 @@ void StockpileManager::onTick( quint64 tick )
 {
 	if ( Global::cfg->get( "updateItemFilter" ).toBool() )
 	{
-		for ( auto&& sp : m_stockpiles )
+		for ( auto& sp : m_stockpiles )
 		{
 			sp->updateFilter();
 		}
 	}
 	Global::cfg->set( "updateItemFilter", false );
 
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->countFields() == 0 && !sp->stillHasJobs() )
 		{
@@ -56,7 +56,7 @@ void StockpileManager::onTick( quint64 tick )
 		}
 	}
 
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->onTick( tick ) )
 		{
@@ -246,7 +246,7 @@ unsigned int StockpileManager::getJob()
 
 bool StockpileManager::finishJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->finishJob( jobID ) )
 		{
@@ -258,7 +258,7 @@ bool StockpileManager::finishJob( unsigned int jobID )
 
 bool StockpileManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->giveBackJob( jobID ) )
 		{
@@ -274,7 +274,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 
 Job& StockpileManager::getJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{
@@ -283,9 +283,9 @@ Job& StockpileManager::getJob( unsigned int jobID )
 	}
 }
 
-bool StockpileManager::hasJobID( unsigned int jobID )
+bool StockpileManager::hasJobID( unsigned int jobID ) const
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{

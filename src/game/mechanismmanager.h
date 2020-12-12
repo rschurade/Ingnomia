@@ -105,7 +105,7 @@ public:
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	bool hasMechanism( Position pos );
 	bool hasGearBox( Position pos );
@@ -141,7 +141,6 @@ public:
 
 private:
 	QPointer<Game> g;
-	QMutex m_mutex;
 
 	Job* getSwitchJob( MechanismData& md );
 	Job* getInvertJob( MechanismData& md );

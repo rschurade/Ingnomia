@@ -49,7 +49,7 @@ GnomeManager::~GnomeManager()
 
 bool GnomeManager::contains( unsigned int gnomeID )
 {
-	for( auto gnome : m_gnomes )
+	for( const auto& gnome : m_gnomes )
 	{
 		if( gnome->id() == gnomeID )
 		{
@@ -268,7 +268,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 void GnomeManager::forceMoveGnomes( Position from, Position to )
 {
-	for ( auto&& g : m_gnomes )
+	for ( auto& g : m_gnomes )
 	{
 		// check gnome position
 		if ( g->getPos().toInt() == from.toInt() )
@@ -626,7 +626,7 @@ Job* GnomeManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool GnomeManager::hasJobID( unsigned int jobID )
+bool GnomeManager::hasJobID( unsigned int jobID ) const
 {
 	return m_jobs.contains( jobID );
 }

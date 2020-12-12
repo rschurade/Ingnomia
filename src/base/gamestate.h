@@ -22,7 +22,6 @@
 #include "../base/position.h"
 
 #include <QHash>
-#include <QMutex>
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>

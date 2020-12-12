@@ -25,7 +25,6 @@
 #include <QHash>
 #include <QList>
 #include <QMap>
-#include <QMutex>
 #include <QQueue>
 #include <QString>
 
@@ -50,8 +49,6 @@ private:
 	QMap<QString, QStringList> m_jobIDs;
 
 	int m_startIndex;
-
-	QMutex m_mutex;
 
 	bool workPositionWalkable( unsigned int jobID );
 	bool isReachable( unsigned int jobID, unsigned int regionID );

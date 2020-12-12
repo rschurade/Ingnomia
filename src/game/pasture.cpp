@@ -400,7 +400,7 @@ bool Pasture::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Pasture::getJob( unsigned int jobID )
+Job* Pasture::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -409,7 +409,7 @@ Job* Pasture::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Pasture::hasJobID( unsigned int jobID )
+bool Pasture::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }

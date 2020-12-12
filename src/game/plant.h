@@ -45,7 +45,7 @@ public:
 	Plant( QVariant values, Game* game );
 	~Plant();
 
-	virtual QVariant serialize();
+	virtual QVariant serialize() const;
 
 	OnTickReturn onTick( quint64 tickNumber, bool dayChanged, bool seasonChanged );
 

@@ -54,13 +54,11 @@ bool World::hasJob( int x, int y, int z )
 
 bool World::hasJob( unsigned int tileID )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.contains( tileID );
 }
 
 QVariantMap World::jobSprite( Position pos )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.value( pos.toInt() );
 }
 
@@ -71,7 +69,6 @@ QVariantMap World::jobSprite( int x, int y, int z )
 
 QVariantMap World::jobSprite( unsigned int tileID )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.value( tileID );
 }
 
@@ -117,14 +114,12 @@ bool World::creatureAtPos( Position pos )
 
 bool World::creatureAtPos( unsigned int posID )
 {
-	QMutexLocker lock( &m_mutex );
 	bool ret = m_creaturePositions.contains( posID );
 	return ret;
 }
 
 Creature* World::firstCreatureAtPos( unsigned int posID, quint8& rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_creaturePositions.contains( posID ) )
 	{
 		unsigned int ID = m_creaturePositions[posID].first();

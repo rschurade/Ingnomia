@@ -238,7 +238,7 @@ void Global::reset()
 
 	craftable.clear();
 	auto rows = DB::selectRows( "Crafts" );
-	for( auto row : rows )
+	for( const auto& row : rows )
 	{
 		craftable.insert( row.value( "ItemID" ).toString() );
 	}

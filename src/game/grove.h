@@ -82,13 +82,13 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int job );
 	bool giveBackJob( unsigned int job );
-	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	Job* getJob( unsigned int jobID ) const;
+	bool hasJobID( unsigned int jobID ) const;
 
-	bool removeTile( Position& pos );
+	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
 
-	bool hasPlantTreeJob( Position pos );
+	bool hasPlantTreeJob( Position pos ) const;
 
 private:
 	GroveProperties m_properties;

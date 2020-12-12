@@ -35,7 +35,7 @@ TraderDefinition::TraderDefinition( QVariantMap& in )
 	id = in.value( "ID" ).toString();
 
 	auto vItems = in.value( "Items" ).toList();
-	for( auto vItem : vItems )
+	for( const auto& vItem : vItems )
 	{
 		auto vin = vItem.toMap();
 		int amount = 1;
@@ -63,7 +63,7 @@ void TraderDefinition::serialize( QVariantMap& out )
 
 	tdOut.insert( "ID", id );
 	QVariantList outItems;
-	for( auto item : items )
+	for( const auto& item : items )
 	{
 		QVariantMap vItem;
 		vItem.insert( "Type", item.type );

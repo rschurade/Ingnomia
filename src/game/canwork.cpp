@@ -230,7 +230,7 @@ void CanWork::setAllSkillsActive( bool active )
 			m_job->setAborted( true );
 		}
 	}
-	for ( auto&& p : m_skillActive )
+	for ( auto& p : m_skillActive )
 	{
 		p = active;
 	}

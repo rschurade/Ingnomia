@@ -25,7 +25,6 @@
 #include <QHash>
 #include <QList>
 #include <QMap>
-#include <QMutex>
 #include <QString>
 
 typedef QSet<unsigned int> PositionEntry;
@@ -216,8 +215,6 @@ private:
 	PositionHash m_positionHash;
 	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
-
-	QMutex m_mutex;
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;

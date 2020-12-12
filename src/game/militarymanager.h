@@ -20,7 +20,6 @@
 
 #include "../base/gamestate.h"
 
-#include <QMutex>
 #include <QObject>
 #include <QRandomGenerator>
 #include <QSet>
@@ -160,8 +159,6 @@ public:
 
 private:
 	QPointer<Game> g;
-
-	QMutex m_mutex;
 
 	int m_startIndex = 0;
 

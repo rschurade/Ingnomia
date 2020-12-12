@@ -116,16 +116,13 @@ void JobManager::onTick()
 
 	unsigned int jobID = 0;
 
-	QMutexLocker lock( &m_mutex );
 	int queueSize = m_returnedJobQueue.size();
 
 	QQueue<unsigned int> skippedJobs;
 
 	while ( !m_returnedJobQueue.empty() )
 	{
-		//QMutexLocker lock( &m_mutex );
 		jobID = m_returnedJobQueue.dequeue();
-		//lock.unlock();
 		--queueSize;
 		Job& job = m_jobList[jobID];
 
@@ -143,9 +140,7 @@ void JobManager::onTick()
 		}
 		else
 		{
-			//QMutexLocker lock( &m_mutex );
 			skippedJobs.enqueue( jobID );
-			//lock.unlock();
 		}
 
 		if ( timer.elapsed() > 3 )
@@ -299,7 +294,6 @@ void JobManager::addLoadedJob( QVariant vals )
 	}
 	else
 	{
-		QMutexLocker lock( &m_mutex );
 		m_returnedJobQueue.enqueue( job.id() );
 	}
 
@@ -313,7 +307,6 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	{
 		return 0;
 	}
-	QMutexLocker lock( &m_mutex );
 	Job job;
 	job.setType( type );
 	job.setPos( pos );
@@ -337,7 +330,6 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	}
 	else
 	{
-		QMutexLocker lock( &m_mutex );
 		m_returnedJobQueue.enqueue( job.id() );
 	}
 #else
@@ -443,7 +435,6 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 
 	insertIntoPositionHash( job.id() );
 
-	QMutexLocker lock( &m_mutex );
 	m_returnedJobQueue.enqueue( job.id() );
 
 	if ( !noJobSprite )
@@ -482,8 +473,6 @@ void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 
 unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Position& gnomePos )
 {
-	QMutexLocker lock( &m_mutex );
-
 	for ( auto skillID : skills )
 	{
 		unsigned int jobID = 0;
@@ -1099,7 +1088,6 @@ void JobManager::cancelJob( const Position& pos )
 
 			setJobSprites( jobID, false, true );
 
-			QMutexLocker lock( &m_mutex );
 			removeFromPositionHash( jobID );
 			for ( auto& type : m_jobsPerType )
 			{

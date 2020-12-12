@@ -862,7 +862,7 @@ QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 
 	while ( i < keys.size() && amount > 0 )
 	{
-		auto plant = plants[keys[i]];
+		const auto& plant = plants[keys[i]];
 
 		QJsonValue jv = QJsonValue::fromVariant( plant.serialize() );
 		ja.append( jv );

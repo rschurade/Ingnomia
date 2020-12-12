@@ -19,7 +19,6 @@
 
 #include <QDebug>
 #include <QMap>
-#include <QMutex>
 #include <QString>
 
 class FilterItem

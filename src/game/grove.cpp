@@ -277,7 +277,7 @@ bool Grove::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Grove::getJob( unsigned int jobID )
+Job* Grove::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -286,12 +286,12 @@ Job* Grove::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Grove::hasJobID( unsigned int jobID )
+bool Grove::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }
 
-bool Grove::hasPlantTreeJob( Position pos )
+bool Grove::hasPlantTreeJob( Position pos ) const
 {
 	for ( auto job : m_jobsOut )
 	{
@@ -450,7 +450,7 @@ Job* Grove::getFellJob()
 	return nullptr;
 }
 
-bool Grove::removeTile( Position& pos )
+bool Grove::removeTile( const Position & pos )
 {
 	GroveField* gf = m_fields.value( pos.toInt() );
 

@@ -130,8 +130,6 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 		updateNetWorks();
 	}
 
-	QMutexLocker lock( &m_mutex );
-
 	for ( auto& network : m_networks )
 	{
 		network.produce = 0;
@@ -298,7 +296,7 @@ Job* MechanismManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool MechanismManager::hasJobID( unsigned int jobID )
+bool MechanismManager::hasJobID( unsigned int jobID ) const
 {
 	return m_jobs.contains( jobID );
 }
@@ -772,7 +770,6 @@ void MechanismManager::setRefuelThreshold( unsigned int itemID, int percent )
 
 void MechanismManager::updateNetWorks()
 {
-	QMutexLocker lock( &m_mutex );
 	QQueue<MechanismData> workQueue;
 	m_networks.clear();
 

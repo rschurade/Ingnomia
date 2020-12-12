@@ -985,7 +985,7 @@ Job& Stockpile::getJob( unsigned int jobID )
 	return *m_jobsOut[jobID];
 }
 
-bool Stockpile::hasJobID( unsigned int jobID )
+bool Stockpile::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }

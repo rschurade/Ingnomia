@@ -361,7 +361,7 @@ bool Farm::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Farm::getJob( unsigned int jobID )
+Job* Farm::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -370,7 +370,7 @@ Job* Farm::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Farm::hasJobID( unsigned int jobID )
+bool Farm::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }

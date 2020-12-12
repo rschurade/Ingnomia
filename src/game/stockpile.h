@@ -25,7 +25,6 @@
 #include <QHash>
 #include <QList>
 #include <QMap>
-#include <QMutex>
 #include <QPair>
 #include <QSize>
 #include <QThread>
@@ -109,7 +108,7 @@ public:
 	bool giveBackJob( unsigned int jobID );
 
 	Job& getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	// return true if last tile was removed
 	bool removeTile( Position& pos );

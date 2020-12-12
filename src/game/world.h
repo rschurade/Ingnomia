@@ -77,7 +77,6 @@ private:
 	LightMap m_lightMap;
 	RegionMap m_regionMap;
 
-	QMutex m_mutex;
 	QMutex m_updateMutex;
 
 	int m_dimX = 1;

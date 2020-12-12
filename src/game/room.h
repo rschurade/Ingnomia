@@ -63,8 +63,8 @@ public:
 	void onTick( quint64 tick );
 
 	// return true if last tile was removed
-	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	bool removeTile( const Position & pos );
+	void addTile( const Position & pos );
 
 	void setType( RoomType type )
 	{

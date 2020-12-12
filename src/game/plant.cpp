@@ -146,7 +146,7 @@ Plant::~Plant()
 {
 }
 
-QVariant Plant::serialize()
+QVariant Plant::serialize() const
 {
 	QVariantMap out;
 

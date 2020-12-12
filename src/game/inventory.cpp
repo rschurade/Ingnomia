@@ -182,8 +182,6 @@ bool Inventory::itemExists( unsigned int itemID )
 unsigned int Inventory::createItem( Position pos, QString itemSID, QString materialSID )
 {
 	//qDebug() << "create item " << pos.toString() << baseItem << material;
-	QMutexLocker ml( &m_mutex );
-
 	Item obj( pos, itemSID, materialSID );
 	Sprite* sprite = g->m_sf->createSprite( itemSID, { materialSID } );
 	if ( sprite )
@@ -198,13 +196,10 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigned int> components )
 {
 	//qDebug() << "create item " << pos.toString() << itemSID << components;
-	QMutexLocker ml( &m_mutex );
-
 	QVariantList compList = DB::select2( "ItemID", "Items_Components", "ID", itemSID );
 
 	if ( compList.isEmpty() )
 	{ // item has no components, we use the first material
-		ml.unlock();
 		if ( components.size() )
 		{
 			auto item = getItem( components.first() );
@@ -275,7 +270,6 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 		qDebug() << "missing materialSID" << values.value( "ID" ).toUInt() << "at" << values.value( "Position" ).toString();
 		return 0;
 	}
-	QMutexLocker lock( &m_mutex );
 	//Item obj( pos, baseItem, material );
 	Item obj( values );
 
@@ -391,7 +385,6 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 void Inventory::destroyObject( unsigned int id )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_items.contains( id ) )
 	{
 		Item* item = getItem( id );
@@ -436,7 +429,6 @@ void Inventory::destroyObject( unsigned int id )
 
 unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 {
-	//QMutexLocker lock( &m_mutex );
 	if ( m_positionHash.contains( pos.toInt() ) )
 	{
 		if ( !m_positionHash[pos.toInt()].empty() )
@@ -460,7 +452,6 @@ unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 
 bool Inventory::getObjectsAtPosition( const Position& pos, PositionEntry& pe )
 {
-	//QMutexLocker lock( &m_mutex );
 	if ( m_positionHash.contains( pos.toInt() ) && !m_positionHash[pos.toInt()].empty() )
 	{
 		pe = m_positionHash[pos.toInt()];
@@ -816,7 +807,6 @@ void Inventory::moveItemToPos( unsigned int id, const Position& newPos )
 
 unsigned int Inventory::pickUpItem( unsigned int id )
 {
-	QMutexLocker lock( &m_mutex );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -890,7 +880,6 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 
 unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 {
-	QMutexLocker lock( &m_mutex );
 	// insert at new pos in position hash
 	Item* item = getItem( id );
 	if ( item )
@@ -1069,7 +1058,6 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 
 unsigned int Inventory::itemCount( QString itemID, QString materialID )
 {
-	QMutexLocker lock( &m_mutex );
 	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + materialID + "\"" );
 
 	unsigned int result = 0;
@@ -1812,7 +1800,7 @@ bool Inventory::itemTradeAvailable( unsigned int itemUID )
 	auto item = getItem( itemUID );
 	if ( item )
 	{
-		return !item->isConstructedOrEquipped() & (bool)item->isInStockpile() & !(bool)item->isInJob();
+		return !item->isConstructedOrEquipped() && (bool)item->isInStockpile() && !(bool)item->isInJob();
 	}
 	return false;
 }

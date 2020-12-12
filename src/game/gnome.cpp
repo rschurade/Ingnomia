@@ -164,7 +164,7 @@ void Gnome::serialize( QVariantMap& out )
 	
 
 	QVariantList vSchedule;
-	for( auto sa : m_schedule )
+	for( const auto& sa : m_schedule )
 	{
 		switch ( sa )
 		{

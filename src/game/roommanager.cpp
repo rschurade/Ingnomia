@@ -41,7 +41,7 @@ RoomManager::~RoomManager()
 
 void RoomManager::onTick( quint64 tick )
 {
-	for ( auto&& room : m_rooms )
+	for ( auto& room : m_rooms )
 	{
 		room.onTick( tick );
 	}

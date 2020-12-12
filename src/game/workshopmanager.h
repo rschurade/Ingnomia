@@ -48,7 +48,7 @@ public:
 	bool giveBackJob( unsigned jobID );
 
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	QList<Workshop*>& workshops()
 	{
@@ -82,8 +82,6 @@ private:
 
 	QList<Workshop*> m_workshops;
 	QQueue<unsigned int> m_toDelete;
-
-	QMutex m_mutex;
 
 signals:
 	void signalJobListChanged( unsigned int workshopID );

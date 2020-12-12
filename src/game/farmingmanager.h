@@ -98,7 +98,7 @@ public:
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	QList<Grove>& allGroves()
 	{
@@ -108,7 +108,7 @@ public:
 	{
 		return m_farms;
 	}
-	QList<Pasture> allPastures()
+	QList<Pasture>& allPastures()
 	{
 		return m_pastures;
 	}
@@ -140,8 +140,6 @@ public:
 
 private:
 	QPointer<Game> g;
-
-	QMutex m_mutex;
 
 	void onTickGrove( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 	void onTickFarm( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );

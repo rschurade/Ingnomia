@@ -150,7 +150,7 @@ void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool da
 		}
 	}
 
-	for ( auto&& fa : m_farms )
+	for ( auto& fa : m_farms )
 	{
 		fa.onTick( tickNumber );
 	}
@@ -172,7 +172,7 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 
 	if ( minuteChanged )
 	{
-		for ( auto&& pa : m_pastures )
+		for ( auto& pa : m_pastures )
 		{
 			pa.onTick( tickNumber );
 		}
@@ -236,7 +236,7 @@ void FarmingManager::removeGrove( unsigned int id )
 
 Grove* FarmingManager::getGroveAtPos( Position pos )
 {
-	for ( auto&& g : m_groves )
+	for ( auto& g : m_groves )
 	{
 		if ( g.id() == m_allGroveTiles[pos.toInt()] )
 		{
@@ -248,7 +248,7 @@ Grove* FarmingManager::getGroveAtPos( Position pos )
 
 Grove* FarmingManager::getGrove( unsigned int id )
 {
-	for ( auto&& g : m_groves )
+	for ( auto& g : m_groves )
 	{
 		if ( g.id() == id )
 		{
@@ -326,7 +326,7 @@ void FarmingManager::removeFarm( unsigned int id )
 
 Farm* FarmingManager::getFarmAtPos( Position pos )
 {
-	for ( auto&& f : m_farms )
+	for ( auto& f : m_farms )
 	{
 		if ( f.id() == m_allFarmTiles[pos.toInt()] )
 		{
@@ -338,7 +338,7 @@ Farm* FarmingManager::getFarmAtPos( Position pos )
 
 Farm* FarmingManager::getFarm( unsigned int id )
 {
-	for ( auto&& f : m_farms )
+	for ( auto& f : m_farms )
 	{
 		if ( f.id() == id )
 		{
@@ -437,7 +437,7 @@ Pasture* FarmingManager::getPastureAtPos( Position pos )
 
 Pasture* FarmingManager::getPasture( unsigned int id )
 {
-	for ( auto&& pa : m_pastures )
+	for ( auto& pa : m_pastures )
 	{
 		if ( pa.id() == id )
 		{
@@ -468,7 +468,7 @@ Pasture* FarmingManager::getLastAddedPasture()
 
 unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 {
-	for ( auto&& g : m_groves )
+	for ( auto& g : m_groves )
 	{
 		unsigned int job = g.getJob( gnomeID, skillID );
 		if ( job )
@@ -476,7 +476,7 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 			return job;
 		}
 	}
-	for ( auto&& f : m_farms )
+	for ( auto& f : m_farms )
 	{
 		unsigned int job = f.getJob( gnomeID, skillID );
 		if ( job )
@@ -484,7 +484,7 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 			return job;
 		}
 	}
-	for ( auto&& pa : m_pastures )
+	for ( auto& pa : m_pastures )
 	{
 		unsigned int job = pa.getJob( gnomeID, skillID );
 		if ( job )
@@ -497,14 +497,14 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 
 bool FarmingManager::finishJob( unsigned int jobID )
 {
-	for ( auto&& g : m_groves )
+	for ( auto& g : m_groves )
 	{
 		if ( g.finishJob( jobID ) )
 		{
 			return true;
 		}
 	}
-	for ( auto&& f : m_farms )
+	for ( auto& f : m_farms )
 	{
 		if ( f.finishJob( jobID ) )
 		{
@@ -512,7 +512,7 @@ bool FarmingManager::finishJob( unsigned int jobID )
 			return true;
 		}
 	}
-	for ( auto&& pa : m_pastures )
+	for ( auto& pa : m_pastures )
 	{
 		if ( pa.finishJob( jobID ) )
 		{
@@ -525,14 +525,14 @@ bool FarmingManager::finishJob( unsigned int jobID )
 
 bool FarmingManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto&& g : m_groves )
+	for ( auto& g : m_groves )
 	{
 		if ( g.giveBackJob( jobID ) )
 		{
 			return true;
 		}
 	}
-	for ( auto&& f : m_farms )
+	for ( auto& f : m_farms )
 	{
 		if ( f.giveBackJob( jobID ) )
 		{
@@ -540,7 +540,7 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 			return true;
 		}
 	}
-	for ( auto&& pa : m_pastures )
+	for ( auto& pa : m_pastures )
 	{
 		if ( pa.giveBackJob( jobID ) )
 		{
@@ -553,21 +553,21 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 
 Job* FarmingManager::getJob( unsigned int jobID )
 {
-	for ( auto&& g : m_groves )
+	for ( const auto& g : m_groves )
 	{
 		if ( g.hasJobID( jobID ) )
 		{
 			return g.getJob( jobID );
 		}
 	}
-	for ( auto&& f : m_farms )
+	for ( const auto& f : m_farms )
 	{
 		if ( f.hasJobID( jobID ) )
 		{
 			return f.getJob( jobID );
 		}
 	}
-	for ( auto&& pa : m_pastures )
+	for ( const auto& pa : m_pastures )
 	{
 		if ( pa.hasJobID( jobID ) )
 		{
@@ -577,23 +577,23 @@ Job* FarmingManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool FarmingManager::hasJobID( unsigned int jobID )
+bool FarmingManager::hasJobID( unsigned int jobID ) const
 {
-	for ( auto&& g : m_groves )
+	for ( const auto& g : m_groves )
 	{
 		if ( g.hasJobID( jobID ) )
 		{
 			return true;
 		}
 	}
-	for ( auto&& f : m_farms )
+	for ( const auto& f : m_farms )
 	{
 		if ( f.hasJobID( jobID ) )
 		{
 			return true;
 		}
 	}
-	for ( auto&& pa : m_pastures )
+	for ( const auto& pa : m_pastures )
 	{
 		if ( pa.hasJobID( jobID ) )
 		{
@@ -740,7 +740,6 @@ unsigned int FarmingManager::util( Position pos )
 
 int FarmingManager::farmPriority( unsigned int id )
 {
-	QMutexLocker lock( &m_mutex );
 	for ( int i = 0; i < m_farms.size(); ++i )
 	{
 		if ( m_farms[i].id() == id )
@@ -758,13 +757,11 @@ int FarmingManager::countFarms()
 
 void FarmingManager::setFarmPriority( unsigned int id, int prio )
 {
-	QMutexLocker lock( &m_mutex );
 	for ( int i = 0; i < m_farms.size(); ++i )
 	{
 		if ( m_farms[i].id() == id )
 		{
-			Farm f = m_farms.takeAt( i );
-			m_farms.insert( prio, f );
+			m_farms.move( i, prio );
 			break;
 		}
 	}
@@ -772,7 +769,6 @@ void FarmingManager::setFarmPriority( unsigned int id, int prio )
 
 int FarmingManager::grovePriority( unsigned int id )
 {
-	QMutexLocker lock( &m_mutex );
 	for ( int i = 0; i < m_groves.size(); ++i )
 	{
 		if ( m_groves[i].id() == id )
@@ -790,13 +786,11 @@ int FarmingManager::countGroves()
 
 void FarmingManager::setGrovePriority( unsigned int id, int prio )
 {
-	QMutexLocker lock( &m_mutex );
 	for ( int i = 0; i < m_groves.size(); ++i )
 	{
 		if ( m_groves[i].id() == id )
 		{
-			Grove g = m_groves.takeAt( i );
-			m_groves.insert( prio, g );
+			m_groves.move( i, prio );
 			break;
 		}
 	}
@@ -804,7 +798,6 @@ void FarmingManager::setGrovePriority( unsigned int id, int prio )
 
 int FarmingManager::pasturePriority( unsigned int id )
 {
-	QMutexLocker lock( &m_mutex );
 	for ( int i = 0; i < m_pastures.size(); ++i )
 	{
 		if ( m_pastures[i].id() == id )
@@ -822,14 +815,11 @@ int FarmingManager::countPastures()
 
 void FarmingManager::setPasturePriority( unsigned int id, int prio )
 {
-	QMutexLocker lock( &m_mutex );
-
 	for ( int i = 0; i < m_pastures.size(); ++i )
 	{
 		if ( m_pastures[i].id() == id )
 		{
-			Pasture pa = m_pastures.takeAt( i );
-			m_pastures.insert( prio, pa );
+			m_pastures.move( i, prio );
 			break;
 		}
 	}

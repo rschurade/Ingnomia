@@ -164,7 +164,6 @@ void World::setFloorSprite( Position pos, unsigned int spriteUID )
 
 void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
@@ -173,7 +172,6 @@ void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z,
 
 void World::setWallSprite( Position pos, unsigned int spriteUID, unsigned char rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	unsigned int UID           = pos.toInt();
 	m_world[UID].wallSpriteUID = spriteUID;
 	m_world[UID].wallRotation  = rotation;
@@ -187,7 +185,6 @@ void World::setWallSprite( unsigned int tileID, unsigned int spriteUID )
 
 void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	unsigned int UID           = Position( x, y, z ).toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
@@ -196,7 +193,6 @@ void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z,
 
 void World::setItemSprite( Position pos, unsigned int spriteUID, unsigned char rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	unsigned int UID           = pos.toInt();
 	m_world[UID].itemSpriteUID = spriteUID;
 	//m_world[UID].wallRotation = rotation;
@@ -240,7 +236,6 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 	s.insert( "JobID", jobID );
 	s.insert( "SpriteUID", spriteUID );
 
-	QMutexLocker lock( &m_mutex );
 	if ( !m_jobSprites.contains( pos.toInt() ) )
 	{
 		QVariantMap entry;
@@ -260,8 +255,6 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 
 void World::clearJobSprite( Position pos, bool floor )
 {
-	QMutexLocker lock( &m_mutex );
-
 	if ( m_jobSprites.contains( pos.toInt() ) )
 	{
 		if ( floor )
@@ -492,7 +485,6 @@ void World::plantTree( Position pos, QString type, bool fullyGrown )
 	Plant plant_( pos, type, fullyGrown, g );
 	m_plants.insert( pos.toInt(), plant_ );
 
-	QMutexLocker lock( &m_mutex );
 	getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 	addToUpdateList( pos );
 }
@@ -502,7 +494,6 @@ void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 	Plant plant_( pos, type, fullyGrown, g );
 	m_plants.insert( pos.toInt(), plant_ );
 
-	QMutexLocker lock( &m_mutex );
 	getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 	addToUpdateList( pos );
 }
@@ -516,7 +507,6 @@ void World::plant( Position pos, unsigned int baseItem )
 		{
 			Plant plant_( pos, plant, false, g );
 			m_plants.insert( pos.toInt(), plant_ );
-			QMutexLocker lock( &m_mutex );
 			getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 			return;
 		}
@@ -532,7 +522,6 @@ void World::addPlant( Plant plant )
 
 void World::removePlant( Position pos )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_plants.contains( pos.toInt() ) )
 	{
 		getTile( pos ).wallType      = WallType::WT_NOWALL;
@@ -563,7 +552,6 @@ bool World::reduceOneGrowLevel( Position pos )
 
 void World::removeCreatureFromPosition( Position pos, unsigned int creatureID )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_creaturePositions.contains( pos.toInt() ) )
 	{
 		if ( m_creaturePositions[pos.toInt()].size() == 1 )
@@ -583,7 +571,6 @@ void World::removeCreatureFromPosition( Position pos, unsigned int creatureID )
 
 void World::insertCreatureAtPosition( Position pos, unsigned int creatureID )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_creaturePositions.contains( pos.toInt() ) )
 	{
 		m_creaturePositions[pos.toInt()].push_back( creatureID );

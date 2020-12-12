@@ -97,7 +97,6 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	m_lastTick = tickNumber;
 
 	bool needUpdate = false;
-	QMutexLocker lock( &m_mutex );
 
 	QQueue<Position> workQueue;
 
@@ -343,7 +342,7 @@ Job* FluidManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool FluidManager::hasJobID( unsigned int jobID )
+bool FluidManager::hasJobID( unsigned int jobID ) const
 {
 	return false;
 }

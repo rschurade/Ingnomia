@@ -78,7 +78,7 @@ public:
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 private:
 	QPointer<Game> g;
@@ -89,6 +89,4 @@ private:
 	QList<Position> m_outputs;
 
 	QHash<unsigned int, NetworkPipe> m_allPipes;
-
-	QMutex m_mutex;
 };

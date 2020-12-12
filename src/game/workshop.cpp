@@ -676,7 +676,7 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 {
 	if( materialSID == "any" )
 	{
-		for( auto cj : m_jobList )
+		for( const auto& cj : m_jobList )
 		{
 			if( cj.itemSID == itemSID )
 			{
@@ -686,13 +686,13 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 	}
 	else
 	{
-		for( auto cj : m_jobList )
+		for( const auto& cj : m_jobList )
 		{
 			if( cj.itemSID == itemSID )
 			{
 				if( cj.requiredItems.size() )
 				{
-					auto reqItem = cj.requiredItems.first();
+					const auto& reqItem = cj.requiredItems.first();
 					if( reqItem.materialSID == materialSID )
 					{
 						return true;
@@ -1159,7 +1159,7 @@ Job* Workshop::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Workshop::hasJobID( unsigned int jobID )
+bool Workshop::hasJobID( unsigned int jobID ) const
 {
 	if ( m_job )
 	{

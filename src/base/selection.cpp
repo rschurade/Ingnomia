@@ -822,7 +822,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 	{
 		if ( !m_selection.empty() )
 		{
-			auto&& p = m_selection.first();
+			auto& p = m_selection.first();
 			if ( p.second )
 			{
 				if ( m_materials.empty() )

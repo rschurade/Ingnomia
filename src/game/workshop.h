@@ -267,7 +267,7 @@ private:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	WorkshopProperties m_properties;
 

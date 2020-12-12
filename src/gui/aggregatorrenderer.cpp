@@ -164,9 +164,9 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 		}
 	}
 
-	auto& creatureList = g->cm()->creatures();
+	const auto& creatureList = g->cm()->creatures();
 
-	for( auto creature : creatureList )
+	for( const auto& creature : creatureList )
 	{
 		switch( creature->type() )
 		{

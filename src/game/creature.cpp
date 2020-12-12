@@ -726,7 +726,7 @@ void Creature::move( Position oldPos )
 			g->w()->setTileFlag( m_position, TileFlag::TF_TRANSPARENT );
 			// check if no other creatures with transparency on tile
 			bool transp = false;
-			for( auto c : g->cm()->creaturesAtPosition( oldPos ) )
+			for( const auto& c : g->cm()->creaturesAtPosition( oldPos ) )
 			{
 				if( c->hasTransparency() )
 				{

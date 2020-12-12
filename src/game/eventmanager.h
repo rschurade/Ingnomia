@@ -23,7 +23,6 @@
 #include "../game/neighbormanager.h"
 
 #include <QMap>
-#include <QMutex>
 #include <QObject>
 #include <QVariantMap>
 
@@ -150,8 +149,6 @@ public:
 
 private:
 	QPointer<Game> g;
-
-	QMutex m_mutex;
 
 	QMap<QString, int> m_string2type;
 	QMap<QString, int> m_reqMap;

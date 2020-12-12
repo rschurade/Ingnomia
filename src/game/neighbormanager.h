@@ -21,7 +21,6 @@
 #include "../base/position.h"
 
 #include <QMap>
-#include <QMutex>
 #include <QVariantMap>
 
 class Game;
@@ -114,8 +113,6 @@ public:
 
 private:
 	QPointer<Game> g;
-
-	QMutex m_mutex;
 
 	QList<NeighborKingdom> m_kingdoms;
 

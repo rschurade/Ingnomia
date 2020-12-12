@@ -81,8 +81,6 @@ private:
 	QMap<QString, unsigned int> m_countPerType;
 	QMap<QString, QList<unsigned int>> m_creaturesPerType;
 
-	QMutex m_mutex;
-
 	int m_startIndex = 0;
 
 	bool m_dirty = true;

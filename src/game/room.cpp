@@ -58,7 +58,7 @@ Room::~Room()
 {
 }
 
-void Room::addTile( Position& pos )
+void Room::addTile( const Position & pos )
 {
 	RoomTile* rt = new RoomTile;
 	rt->pos      = pos;
@@ -125,7 +125,7 @@ void Room::onTick( quint64 tick )
 	}
 }
 
-bool Room::removeTile( Position& pos )
+bool Room::removeTile( const Position & pos )
 {
 	RoomTile* rt   = m_fields.value( pos.toInt() );
 	// unconstruct furniture on tile

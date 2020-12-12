@@ -17,7 +17,6 @@
 */
 #pragma once
 
-#include <QMutex>
 #include <QPoint>
 #include <QPointer>
 #include <QSize>
@@ -28,7 +27,6 @@ class Game;
 
 class WorldObject
 {
-
 public:
 	WorldObject( Game* game );
 	WorldObject( QVariantMap vals, Game* game );

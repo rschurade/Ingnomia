@@ -295,7 +295,7 @@ QString Util::mapJoin( QMap<int, int> data, QString seperator )
 	QString out;
 	if ( !data.isEmpty() )
 	{
-		for ( auto&& rp : data.toStdMap() )
+		for ( const auto& rp : data.toStdMap() )
 		{
 			out += QString::number( rp.first );
 			out += seperator;

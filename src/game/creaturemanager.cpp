@@ -150,8 +150,6 @@ int CreatureManager::countWildAnimals()
 
 unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Position pos, Gender gender, bool adult, bool tame, int level )
 {
-	QMutexLocker l( &m_mutex );
-
 	Creature* creature = nullptr;
 	CreatureFactory cf( g );
 	switch ( ct )
@@ -266,13 +264,11 @@ Monster* CreatureManager::monster( unsigned int id )
 
 int CreatureManager::count()
 {
-	QMutexLocker l( &m_mutex );
 	return m_creatures.size();
 }
 
 int CreatureManager::count( QString type )
 {
-	QMutexLocker l( &m_mutex );
 	return m_countPerType.value( type );
 }
 
@@ -302,7 +298,6 @@ void CreatureManager::removeCreature( unsigned int id )
 			}
 			break;
 		}
-		QMutexLocker l( &m_mutex );
 
 		auto& perTypeList = m_creaturesPerType[creature->species()];
 		perTypeList.removeAll( id );
@@ -362,7 +357,7 @@ QList<unsigned int> CreatureManager::animalsByType( QString type )
 
 void CreatureManager::forceMoveAnimals( Position& from, Position& to )
 {
-	for ( auto&& a : m_creatures )
+	for ( auto& a : m_creatures )
 	{
 		// check gnome position
 		if ( a->getPos().toInt() == from.toInt() )
@@ -406,7 +401,7 @@ void CreatureManager::updateLists()
 	m_animals.clear();
 	m_monsters.clear();
 
-	for( auto c : m_creatures )
+	for( const auto& c : m_creatures )
 	{
 		if( c->isAnimal() )
 		{
