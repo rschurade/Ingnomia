@@ -462,7 +462,7 @@ bool Grove::removeTile( Position& pos )
 	return m_fields.empty();
 }
 
-void Grove::addTile( Position& pos )
+void Grove::addTile( const Position & pos )
 {
 	GroveField* grofi = new GroveField;
 	grofi->pos        = pos;

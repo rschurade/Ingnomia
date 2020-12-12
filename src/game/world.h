@@ -115,6 +115,9 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
+	World() = delete;
+	World( const World& ) = delete;
+	World( World&& )      = delete;
 	World( int dimX, int dimY, int dimZ, Game* game );
 	~World();
 

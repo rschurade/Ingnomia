@@ -100,7 +100,7 @@ public:
 	bool hasJobID( unsigned int jobID );
 
 	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	void addTile( const Position & pos );
 
 	void getInfo( int& numPlots, int& tilled, int& planted, int& ready );
 

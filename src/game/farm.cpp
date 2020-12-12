@@ -171,7 +171,7 @@ Farm::~Farm()
 {
 }
 
-void Farm::addTile( Position& pos )
+void Farm::addTile( const Position & pos )
 {
 	FarmField* grofi = new FarmField;
 	grofi->pos       = pos;

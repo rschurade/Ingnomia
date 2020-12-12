@@ -86,7 +86,7 @@ public:
 	bool hasJobID( unsigned int jobID );
 
 	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	void addTile( const Position & pos );
 
 	bool hasPlantTreeJob( Position pos );
 
