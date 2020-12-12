@@ -34,6 +34,10 @@ StockpileManager::StockpileManager( Game* parent ) :
 
 StockpileManager::~StockpileManager()
 {
+	for ( const auto& sp : m_stockpiles )
+	{
+		delete sp;
+	}
 }
 
 void StockpileManager::onTick( quint64 tick )
