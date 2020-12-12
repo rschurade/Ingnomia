@@ -37,7 +37,7 @@ Grove::~Grove()
 GroveProperties::GroveProperties( QVariantMap& in )
 {
 	auto vjpl = in.value( "JobPriorities" ).toList();
-	for ( auto vjp : vjpl )
+	for ( const auto& vjp : vjpl )
 	{
 		jobPriorities.append( vjp.value<quint8>() );
 	}
@@ -91,7 +91,7 @@ Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
 	m_properties.jobPriorities.push_back( GroveJobs::PickFruit );
 	m_properties.jobPriorities.push_back( GroveJobs::FellTree );
 
-	for ( auto p : tiles )
+	for ( const auto& p : tiles )
 	{
 		if ( p.second )
 		{
@@ -107,7 +107,7 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();
-	for ( auto vf : vfl )
+	for ( const auto& vf : vfl )
 	{
 		auto vfm          = vf.toMap();
 		GroveField* grofi = new GroveField;
@@ -118,7 +118,7 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 	}
 
 	QVariantList vjl = vals.value( "Jobs" ).toList();
-	for ( auto vj : vjl )
+	for ( const auto& vj : vjl )
 	{
 		Job* job = new Job( vj.toMap() );
 		m_jobsOut.insert( job->id(), job );

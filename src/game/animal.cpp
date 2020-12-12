@@ -208,7 +208,7 @@ void Animal::updateSprite()
 				break;
 		}
 		auto rows = DB::selectRows( "Creature_Layouts", spriteName );
-		for ( auto row : rows )
+		for ( const auto& row : rows )
 		{
 			auto spriteSID = row.value( "Sprite" ).toString();
 			Sprite* sprite = g->sf()->createAnimalSprite( spriteSID );
@@ -333,7 +333,7 @@ void Animal::setState( int state )
 	QString behaviorID = m_species + m_stateMap.value( "ID2" ).toString();
 
 	auto behaviorList = DB::selectRows( "Animals_States_Behavior", behaviorID );
-	for ( auto vBehavior : behaviorList )
+	for ( const auto& vBehavior : behaviorList )
 	{
 		QString behavior = vBehavior.value( "ID2" ).toString();
 		m_stateMap.insert( behavior, vBehavior );
@@ -447,12 +447,12 @@ void Animal::move( Position oldPos )
 		if ( m_position != oldPos )
 		{
 			auto rows = DB::selectRows( "Creature_Layouts", m_species );
-			for ( auto row : rows )
+			for ( const auto& row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
 				g->w()->setWallSprite( oldPos + offset, 0 );
 			}
-			for ( auto row : rows )
+			for ( const auto& row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
 				g->w()->setWallSprite( m_position + offset, g->sf()->createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
@@ -869,14 +869,14 @@ BT_RESULT Animal::actionGraze( bool halt )
 
 BT_RESULT Animal::actionFindPrey( bool halt )
 {
-	for ( auto sPrey : m_preyList )
+	for ( const auto& sPrey : m_preyList )
 	{
 		Animal* prey = g->cm()->getClosestAnimal( m_position, sPrey );
 		if ( prey )
 		{
 			QList<Position> neighbs = Global::util->neighbors8( prey->getPos() );
 			auto distances          = PriorityQueue<Position, int>();
-			for ( auto neigh : neighbs )
+			for ( const auto& neigh : neighbs )
 			{
 				if ( g->w()->isWalkable( neigh ) && g->pf()->checkConnectedRegions( neigh, m_position ) )
 				{

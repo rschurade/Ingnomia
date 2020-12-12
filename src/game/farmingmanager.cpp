@@ -62,7 +62,7 @@ bool FarmingManager::load( QVariantMap vm )
 	{
 		Farm fa( vm, g );
 		m_farms.insert( fa.id(), fa );
-		for ( auto f : vm.value( "Fields" ).toList() )
+		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
 			m_allFarmTiles.insert( Position( fm.value( "Pos" ).toString() ).toInt(), fa.id() );
@@ -73,7 +73,7 @@ bool FarmingManager::load( QVariantMap vm )
 	{
 		Grove gr( vm, g );
 		m_groves.insert( gr.id(), gr );
-		for ( auto f : vm.value( "Fields" ).toList() )
+		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
 			m_allGroveTiles.insert( Position( fm.value( "Pos" ).toString() ).toInt(), gr.id() );
@@ -85,7 +85,7 @@ bool FarmingManager::load( QVariantMap vm )
 	{
 		Pasture pa( vm, g );
 		m_pastures.insert( pa.id(), pa );
-		for ( auto f : vm.value( "Fields" ).toList() )
+		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
 			m_allPastureTiles.insert( Position( fm.value( "Pos" ).toString() ).toInt(), pa.id() );
@@ -188,7 +188,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 		Grove* gr = getGroveAtPos( firstClick );
 		if ( gr )
 		{
-			for ( auto p : fields )
+			for ( const auto& p : fields )
 			{
 				if ( p.second && !m_allGroveTiles.contains( p.first.toInt() ) )
 				{
@@ -202,7 +202,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 	else
 	{
 		Grove gr( fields, g );
-		for ( auto p : fields )
+		for ( const auto& p : fields )
 		{
 			if ( p.second )
 			{
@@ -213,7 +213,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 		m_lastAdded = 0;
 	}
 
-	for ( auto p : fields )
+	for ( const auto& p : fields )
 	{
 		if ( p.second )
 		{
@@ -276,7 +276,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 		Farm* fa = getFarmAtPos( firstClick );
 		if ( fa )
 		{
-			for ( auto p : fields )
+			for ( const auto& p : fields )
 			{
 				if ( p.second && !m_allFarmTiles.contains( p.first.toInt() ) )
 				{
@@ -291,7 +291,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 	else
 	{
 		Farm fa( fields, g );
-		for ( auto p : fields )
+		for ( const auto& p : fields )
 		{
 			if ( p.second )
 			{
@@ -303,7 +303,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 		emit signalFarmChanged( fa.id() );
 	}
 
-	for ( auto p : fields )
+	for ( const auto& p : fields )
 	{
 		if ( p.second )
 		{
@@ -376,7 +376,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 		Pasture* pa = getPastureAtPos( firstClick );
 		if ( pa )
 		{
-			for ( auto p : fields )
+			for ( const auto& p : fields )
 			{
 				if ( p.second && !m_allPastureTiles.contains( p.first.toInt() ) )
 				{
@@ -390,7 +390,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 	else
 	{
 		Pasture pa( fields, g );
-		for ( auto p : fields )
+		for ( const auto& p : fields )
 		{
 			if ( p.second )
 			{
@@ -401,7 +401,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 		m_lastAdded = pa.id();
 	}
 
-	for ( auto p : fields )
+	for ( const auto& p : fields )
 	{
 		if ( p.second )
 		{
@@ -851,7 +851,7 @@ unsigned int FarmingManager::beehiveID( Position pos )
 
 Beehive FarmingManager::beehive( unsigned int id )
 {
-	for ( auto bh : m_beehives )
+	for ( const auto& bh : m_beehives )
 	{
 		if ( bh.id == id )
 		{

@@ -50,7 +50,7 @@ QStringList Util::seedItems( QString plantType, QString material )
 	QStringList out;
 
 	QList<QString> ids = DB::ids( "Plants", "Type", plantType );
-	for ( auto id : ids )
+	for ( const auto& id : ids )
 	{
 		QString mat = DB::select( "Material", "Plants", id ).toString();
 		if ( mat == material || material == "any" )
@@ -205,7 +205,7 @@ void Util::initAllowedInContainer()
 {
 	Global::allowedInContainer.clear();
 
-	for ( auto itemSID : DB::ids( "Items" ) )
+	for ( const auto& itemSID : DB::ids( "Items" ) )
 	{
 		auto containerSID = DB::select( "AllowedContainers", "Items", itemSID ).toString();
 
@@ -654,7 +654,7 @@ QString Util::randomMetalSliver( QString sourceMaterial )
 
 	QStringList metals = { "Copper", "Tin", "Malachite", "Iron", "Lead", "Silver", "Gold", "Platinum" };
 	int sum            = 0;
-	for ( auto metal : metals )
+	for ( const auto& metal : metals )
 	{
 		sum += row.value( metal ).toInt();
 		if ( ra < sum )
@@ -721,7 +721,7 @@ QVariantList Util::uintList2Variant( const QList<unsigned int>& list )
 QList<unsigned int> Util::variantList2UInt( const QVariantList& vlist )
 {
 	QList<unsigned int> out;
-	for ( auto vui : vlist )
+	for ( const auto& vui : vlist )
 	{
 		out.append( vui.toUInt() );
 	}
@@ -731,7 +731,7 @@ QList<unsigned int> Util::variantList2UInt( const QVariantList& vlist )
 QVariantList Util::positionList2Variant( const QList<Position>& list )
 {
 	QVariantList out;
-	for ( auto pos : list )
+	for ( const auto& pos : list )
 	{
 		out.append( pos.toString() );
 	}
@@ -741,7 +741,7 @@ QVariantList Util::positionList2Variant( const QList<Position>& list )
 QList<Position> Util::variantList2Position( const QVariantList& vlist )
 {
 	QList<Position> out;
-	for ( auto vpos : vlist )
+	for ( const auto& vpos : vlist )
 	{
 		out.append( Position( vpos ) );
 	}
@@ -751,7 +751,7 @@ QList<Position> Util::variantList2Position( const QVariantList& vlist )
 QVariantList Util::pairList2Variant( const QList<QPair<QString, QString>>& plist )
 {
 	QVariantList out;
-	for ( auto pair : plist )
+	for ( const auto& pair : plist )
 	{
 		out.append( pair.first );
 		out.append( pair.second );
@@ -814,7 +814,7 @@ QString Util::addDyeMaterial( QString sourceMaterial, QString dyeMaterial )
 void Util::debugVM( QVariantMap vm, QString name )
 {
 	qDebug() << name;
-	for ( auto key : vm.keys() )
+	for ( const auto& key : vm.keys() )
 	{
 		qDebug() << key << ":" << vm.value( key ).toString();
 	}
@@ -1009,16 +1009,16 @@ QStringList Util::possibleMaterials( QString allowedMaterials, QString allowedMa
 
 	if ( !allowedMaterials.isEmpty() )
 	{
-		for ( auto mat : allowedMaterials.split( "|" ) )
+		for ( const auto& mat : allowedMaterials.split( "|" ) )
 		{
 			out.append( mat );
 		}
 	}
 	if ( !allowedMaterialTypes.isEmpty() )
 	{
-		for ( auto type : allowedMaterialTypes.split( "|" ) )
+		for ( const auto& type : allowedMaterialTypes.split( "|" ) )
 		{
-			for ( auto mat : DB::ids( "Materials", "Type", type ) )
+			for ( const auto& mat : DB::ids( "Materials", "Type", type ) )
 			{
 				out.append( mat );
 			}
