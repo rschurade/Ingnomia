@@ -308,7 +308,6 @@ bool IO::load( QString folder )
 	loadFile( folder + "game.json", jd );
 	IO::loadGame( jd );
 
-	g->pf()->init();
 	Global::util->initAllowedInContainer();
 
 	loadFile( folder + "sprites.json", jd );

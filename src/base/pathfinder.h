@@ -72,9 +72,6 @@ private:
 	World* m_world = nullptr;
 
 public:
-	
-	void init();
-
 	PathFinderResult getPath( unsigned int id, Position start, Position goal, bool ignoreNoPass, std::vector<Position>& path );
 
 	void cancelRequest( unsigned int id );

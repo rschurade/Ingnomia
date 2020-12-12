@@ -36,11 +36,6 @@ PathFinder::~PathFinder()
 	m_jobs.clear();
 }
 
-void PathFinder::init()
-{
-	m_jobs.clear();
-}
-
 void PathFinder::cancelRequest( unsigned int id )
 {
 	//TODO implement
