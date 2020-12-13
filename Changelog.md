@@ -21,20 +21,6 @@ All notable changes to this project will be documented in this file.
 ## [0.8.3]
 
 ### Fixed
-- large refactor of code base to fix some crashes and memory leaks
-
-### Added
-- Willow trees
-- Info display for selected command and selection size
-
-### Changed
-- Rivers now have sand floor, preventing grass and plants spawning there
-
-### Removed
-
-## [0.8.3]
-
-### Fixed
 - crash in tile info panel due to wrong thread
 - random crash due to use of GPU in wrong context
 - crash with auto craft in waste disposal
