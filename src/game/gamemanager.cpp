@@ -189,13 +189,13 @@ void GameManager::loadGame( QString folder )
 	init();
 	
 	m_game = new Game( this );
-	
+	m_eventConnector->setGamePtr( m_game );
+
 	IO io( m_game, this) ;
 	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
 	if ( io.load( folder ) )
 	{
 		Global::util = new Util( m_game );
-		m_eventConnector->setGamePtr( m_game );
 		Global::sel = new Selection( m_game );
 
 		postCreationInit();
@@ -212,10 +212,10 @@ void GameManager::createNewGame()
 {
 	init();
 	m_game = new Game( this );
+	m_eventConnector->setGamePtr( m_game );
 	m_game->generateWorld( Global::newGameSettings );
 	
 	Global::util = new Util( m_game );
-	m_eventConnector->setGamePtr( m_game );
 	Global::sel = new Selection( m_game );
 
 	GameState::peaceful = Global::newGameSettings->isPeaceful();
