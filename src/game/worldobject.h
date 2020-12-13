@@ -27,12 +27,13 @@ class Game;
 
 class WorldObject
 {
+	Q_DISABLE_COPY_MOVE( WorldObject )
 public:
 	WorldObject( Game* game );
 	WorldObject( QVariantMap vals, Game* game );
 	virtual ~WorldObject();
 
-	void serialize( QVariantMap& out );
+	void serialize( QVariantMap& out ) const;
 
 	QString name()
 	{

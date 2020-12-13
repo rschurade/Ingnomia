@@ -734,9 +734,9 @@ Job* Workshop::createButcherJob()
 {
 	for ( auto& pasture : g->fm()->allPastures() )
 	{
-		if ( g->pf()->checkConnectedRegions( pasture.firstPos(), m_properties.pos ) )
+		if ( g->pf()->checkConnectedRegions( pasture->firstPos(), m_properties.pos ) )
 		{
-			for ( const auto& animalID : pasture.animals() )
+			for ( const auto& animalID : pasture->animals() )
 			{
 				auto animal = g->cm()->animal( animalID );
 				if ( animal )

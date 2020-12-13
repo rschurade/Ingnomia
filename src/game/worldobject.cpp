@@ -44,7 +44,7 @@ WorldObject::WorldObject( QVariantMap vals, Game* game ) :
 	}
 }
 
-void WorldObject::serialize( QVariantMap& out )
+void WorldObject::serialize( QVariantMap& out ) const
 {
 	out.insert( "ID", m_id );
 	out.insert( "Name", m_name );

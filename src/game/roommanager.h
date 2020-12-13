@@ -43,6 +43,7 @@ class RoomManager : public QObject
 	Q_OBJECT
 	Q_DISABLE_COPY_MOVE( RoomManager )
 public:
+	RoomManager() = delete;
 	RoomManager( Game* parent );
 	~RoomManager();
 
@@ -58,26 +59,15 @@ public:
 	void removeRoom( unsigned int id );
 	void removeTile( Position pos );
 
-	bool isRoom( Position pos )
-	{
-		return m_allRoomTiles.contains( pos.toInt() );
-	}
+	bool isRoom( Position pos ) const;
 	bool isDining( Position pos );
 	bool allowBell( Position pos );
 
 	Room* getRoomAtPos( Position pos );
 	Room* getRoom( unsigned int id );
 
-	QMap<unsigned int, Room>& allRooms()
-	{
-		return m_rooms;
-	}
-	QMap<unsigned int, Door>& allDoors()
-	{
-		return m_doors;
-	}
-
-	Room* getLastAddedRoom();
+	const QHash<unsigned int, Room*>& allRooms();
+	const QHash<Position, Door>& allDoors();
 
 	QList<unsigned int> getDorms();
 	QList<unsigned int> getDinings();
@@ -99,12 +89,10 @@ public:
 private:
 	QPointer<Game> g;
 
-	QMap<unsigned int, Room> m_rooms;
-	QHash<unsigned int, unsigned int> m_allRoomTiles;
+	QHash<unsigned int, Room*> m_rooms;
+	QHash<Position, unsigned int> m_allRoomTiles;
 
-	QMap<unsigned int, Door> m_doors;
+	QHash<Position, Door> m_doors;
 
 	Door m_errorDoor;
-
-	unsigned int m_lastAdded = 0;
 };

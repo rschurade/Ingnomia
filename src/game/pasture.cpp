@@ -53,7 +53,7 @@ PastureProperties::PastureProperties( QVariantMap& in )
 	animalSize = DB::select( "PastureSize", "Animals", animalType ).toInt();
 }
 
-void PastureProperties::serialize( QVariantMap& out )
+void PastureProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "pasture" );
 	out.insert( "AnimalType", animalType );
@@ -150,7 +150,7 @@ Pasture::Pasture( const Pasture& other )
 }
 */
 
-QVariant Pasture::serialize()
+QVariant Pasture::serialize() const
 {
 	QVariantMap out;
 	WorldObject::serialize( out );
@@ -212,6 +212,8 @@ void Pasture::addTile( const Position & pos )
 	{
 		m_properties.max = 0;
 	}
+
+	g->w()->setTileFlag( pos, TileFlag::TF_PASTURE );
 }
 
 // farming manager calls this on hour changed
@@ -641,7 +643,7 @@ Animal* Pasture::checkAnimalHarvestReady()
 	return nullptr;
 }
 
-bool Pasture::removeTile( Position& pos )
+bool Pasture::removeTile( const Position & pos )
 {
 	PastureField ff = m_fields.value( pos.toInt() );
 

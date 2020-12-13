@@ -318,7 +318,7 @@ bool IO::load( QString folder )
 		return false;
 	}
 	g->w()->afterLoad();
-	emit signalStatus( "Loading g->w()->..done" );
+	emit signalStatus( "Loading world done" );
 	IO::loadItems( folder );
 	emit signalStatus( "Loading items done" );
 	loadFile( folder + "floorconstructions.json", jd );
@@ -1089,25 +1089,25 @@ QJsonArray IO::jsonArrayFarms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFarms";
 	QJsonArray ja;
-	for ( auto farm : g->fm()->allFarms() )
+	for ( const auto& farm : g->fm()->allFarms() )
 	{
-		QJsonValue jv = QJsonValue::fromVariant( farm.serialize() );
+		QJsonValue jv = QJsonValue::fromVariant( farm->serialize() );
 		ja.append( jv );
 	}
-	for ( auto grove : g->fm()->allGroves() )
+	for ( const auto& grove : g->fm()->allGroves() )
 	{
-		QJsonValue jv = QJsonValue::fromVariant( grove.serialize() );
+		QJsonValue jv = QJsonValue::fromVariant( grove->serialize() );
 		ja.append( jv );
 	}
-	for ( auto pasture : g->fm()->allPastures() )
+	for ( const auto& pasture : g->fm()->allPastures() )
 	{
-		QJsonValue jv = QJsonValue::fromVariant( pasture.serialize() );
+		QJsonValue jv = QJsonValue::fromVariant( pasture->serialize() );
 		ja.append( jv );
 	}
-	for ( auto beehive : g->fm()->allBeeHives() )
+	for ( const auto& beehive : g->fm()->allBeeHives() )
 	{
 		QVariantMap vm;
-		beehive.serialize( vm );
+		beehive->serialize( vm );
 		QJsonValue jv = QJsonValue::fromVariant( vm );
 		ja.append( jv );
 	}
@@ -1120,9 +1120,9 @@ QJsonArray IO::jsonArrayRooms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayRooms";
 	QJsonArray ja;
-	for ( auto room : g->rm()->allRooms() )
+	for ( const auto& room : g->rm()->allRooms() )
 	{
-		QJsonValue jv = QJsonValue::fromVariant( room.serialize() );
+		QJsonValue jv = QJsonValue::fromVariant( room->serialize() );
 		ja.append( jv );
 	}
 
@@ -1134,7 +1134,7 @@ QJsonArray IO::jsonArrayDoors()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayDoors";
 	QJsonArray ja;
-	for ( auto door : g->rm()->allDoors() )
+	for ( const auto& door : g->rm()->allDoors() )
 	{
 		QVariantMap out;
 

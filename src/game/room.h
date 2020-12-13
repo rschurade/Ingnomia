@@ -47,13 +47,14 @@ class Job;
 
 class Room : public WorldObject
 {
+	Q_DISABLE_COPY_MOVE( Room )
 public:
 	Room();
 	Room( QList<QPair<Position, bool>> tiles, Game* game );
 	Room( QVariantMap vals, Game* game );
 	~Room();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
 	QMap<unsigned int, RoomTile*>& getFields()
 	{
@@ -70,7 +71,7 @@ public:
 	{
 		m_type = type;
 	};
-	RoomType type()
+	RoomType type() const
 	{
 		return m_type;
 	}
@@ -81,11 +82,11 @@ public:
 	bool checkRoofed();
 	bool checkEnclosed();
 
-	bool roofed()
+	bool roofed() const
 	{
 		return m_roofed;
 	}
-	bool enclosed()
+	bool enclosed() const
 	{
 		return m_enclosed;
 	}
@@ -94,7 +95,7 @@ public:
 	{
 		m_owner = id;
 	}
-	unsigned int owner()
+	unsigned int owner() const
 	{
 		return m_owner;
 	}
@@ -102,13 +103,13 @@ public:
 	QList<unsigned int> beds();
 	QList<unsigned int> chairs();
 
-	bool hasAlarmBell();
+	bool hasAlarmBell() const;
 	void setHasAlarmBell( bool value );
 
-	Position firstBellPos();
-	QList<Position> allBellPos();
+	Position firstBellPos() const;
+	QList<Position> allBellPos() const;
 
-	Position randomTilePos();
+	Position randomTilePos() const;
 
 private:
 	quint64 m_lastUpdateTick = 0;

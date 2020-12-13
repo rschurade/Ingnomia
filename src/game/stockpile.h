@@ -65,7 +65,7 @@ class Job;
 
 class Stockpile : public WorldObject
 {
-
+	Q_DISABLE_COPY_MOVE( Stockpile )
 public:
 	Stockpile( Game* game );
 	Stockpile( QList<QPair<Position, bool>> tiles, Game* game );

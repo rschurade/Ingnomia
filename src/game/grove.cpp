@@ -64,7 +64,7 @@ GroveProperties::GroveProperties( QVariantMap& in )
 	autoFellMax = in.value( "AutoFellMax" ).toInt();
 }
 
-void GroveProperties::serialize( QVariantMap& out )
+void GroveProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "grove" );
 
@@ -133,7 +133,7 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 	}
 }
 
-QVariant Grove::serialize()
+QVariant Grove::serialize() const
 {
 	QVariantMap out;
 	WorldObject::serialize( out );
@@ -475,4 +475,6 @@ void Grove::addTile( const Position & pos )
 	GroveField* grofi = new GroveField;
 	grofi->pos        = pos;
 	m_fields.insert( pos.toInt(), grofi );
+
+	g->w()->setTileFlag( pos, TileFlag::TF_GROVE );
 }

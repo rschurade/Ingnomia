@@ -92,7 +92,7 @@ Room::Room( QVariantMap vals, Game* game ) :
 	}
 }
 
-QVariant Room::serialize()
+QVariant Room::serialize() const
 {
 	QVariantMap out;
 
@@ -310,7 +310,7 @@ QList<unsigned int> Room::chairs()
 	return chairs;
 }
 
-bool Room::hasAlarmBell()
+bool Room::hasAlarmBell() const
 {
 	return m_hasAlarmBell;
 }
@@ -320,9 +320,9 @@ void Room::setHasAlarmBell( bool value )
 	m_hasAlarmBell = value;
 }
 
-Position Room::firstBellPos()
+Position Room::firstBellPos() const
 {
-	for ( auto& f : m_fields )
+	for ( const auto& f : m_fields )
 	{
 		if ( f->furnitureID )
 		{
@@ -335,10 +335,10 @@ Position Room::firstBellPos()
 	return Position();
 }
 
-QList<Position> Room::allBellPos()
+QList<Position> Room::allBellPos() const
 {
 	QList<Position> out;
-	for ( auto& f : m_fields )
+	for ( const auto& f : m_fields )
 	{
 		if ( f->furnitureID )
 		{
@@ -351,7 +351,7 @@ QList<Position> Room::allBellPos()
 	return out;
 }
 
-Position Room::randomTilePos()
+Position Room::randomTilePos() const
 {
 	if ( m_fields.size() )
 	{

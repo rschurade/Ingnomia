@@ -55,7 +55,7 @@ FarmProperties::FarmProperties( QVariantMap& in )
 	autoHarvestItem2Max = in.value( "AutoHarvestItem2Max" ).toUInt();
 }
 
-void FarmProperties::serialize( QVariantMap& out )
+void FarmProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "farm" );
 	out.insert( "PlantType", plantType );
@@ -141,14 +141,14 @@ Farm::Farm( QVariantMap vals, Game* game ) :
 	}
 }
 
-QVariant Farm::serialize()
+QVariant Farm::serialize() const
 {
 	QVariantMap out;
 	WorldObject::serialize( out );
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( auto field : m_fields )
+	for ( const auto& field : m_fields )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
@@ -158,7 +158,7 @@ QVariant Farm::serialize()
 	out.insert( "Fields", tiles );
 
 	QVariantList jobs;
-	for ( auto job : m_jobsOut )
+	for ( const auto& job : m_jobsOut )
 	{
 		jobs.append( job->serialize() );
 	}
@@ -184,6 +184,8 @@ void Farm::addTile( const Position & pos )
 	FarmField* grofi = new FarmField;
 	grofi->pos       = pos;
 	m_fields.insert( pos.toInt(), grofi );
+
+	g->w()->setTileFlag( pos, TileFlag::TF_FARM );
 }
 
 void Farm::onTick( quint64 tick )
@@ -484,7 +486,7 @@ Job* Farm::getHarvestJob()
 	return nullptr;
 }
 
-bool Farm::removeTile( Position& pos )
+bool Farm::removeTile( const Position & pos )
 {
 	FarmField* ff = m_fields.value( pos.toInt() );
 

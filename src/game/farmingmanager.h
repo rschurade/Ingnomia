@@ -38,9 +38,12 @@ struct Beehive
 	bool harvest = true;
 	bool hasJob  = false;
 
-	void serialize( QVariantMap& out );
-	Beehive() {};
+	void serialize( QVariantMap& out ) const;
+	Beehive();
 	Beehive( QVariantMap& in );
+	~Beehive();
+private:
+	Q_DISABLE_COPY_MOVE( Beehive )
 };
 
 class FarmingManager : public QObject
@@ -59,11 +62,7 @@ public:
 	void removeGrove( unsigned int id );
 	Grove* getGroveAtPos( Position pos );
 	Grove* getGrove( unsigned int id );
-	Grove* getLastAddedGrove();
-	bool isGrove( Position pos )
-	{
-		return m_allGroveTiles.contains( pos.toInt() );
-	}
+	bool isGrove( Position pos ) const;
 	int grovePriority( unsigned int id );
 	int countGroves();
 	void setGrovePriority( unsigned int id, int prio );
@@ -72,11 +71,7 @@ public:
 	void removeFarm( unsigned int id );
 	Farm* getFarmAtPos( Position pos );
 	Farm* getFarm( unsigned int id );
-	Farm* getLastAddedFarm();
-	bool isFarm( Position pos )
-	{
-		return m_allFarmTiles.contains( pos.toInt() );
-	}
+	bool isFarm( Position pos ) const;
 	int farmPriority( unsigned int id );
 	int countFarms();
 	void setFarmPriority( unsigned int id, int prio );
@@ -85,11 +80,7 @@ public:
 	void removePasture( unsigned int id );
 	Pasture* getPastureAtPos( Position pos );
 	Pasture* getPasture( unsigned int id );
-	Pasture* getLastAddedPasture();
-	bool isPasture( Position pos )
-	{
-		return m_allPastureTiles.contains( pos.toInt() );
-	}
+	bool isPasture( Position pos ) const;
 	int pasturePriority( unsigned int id );
 	int countPastures();
 	void setPasturePriority( unsigned int id, int prio );
@@ -100,22 +91,10 @@ public:
 	Job* getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
-	QList<Grove>& allGroves()
-	{
-		return m_groves;
-	}
-	QList<Farm>& allFarms()
-	{
-		return m_farms;
-	}
-	QList<Pasture>& allPastures()
-	{
-		return m_pastures;
-	}
-	QHash<unsigned int, Beehive>& allBeeHives()
-	{
-		return m_beehives;
-	}
+	const QHash<unsigned int, Grove*>& allGroves();
+	const QHash<unsigned int, Farm*>& allFarms();
+	const QHash<unsigned int, Pasture*>& allPastures();
+	const QHash<unsigned int, Beehive*>& allBeeHives();
 
 	void removeTile( Position pos, bool includeFarm, bool includePasture, bool includeGrove );
 
@@ -129,8 +108,8 @@ public:
 	bool hasPlantTreeJob( Position pos );
 
 	bool isBeehive( Position pos );
-	unsigned int beehiveID( Position pos );
-	Beehive beehive( unsigned int id );
+	Beehive* getBeehiveAtPos( Position pos );
+	Beehive* getBeehive( unsigned int id );
 	void setBeehiveHarvest( unsigned int id, bool harvest );
 	bool harvestBeehive( Position pos );
 
@@ -146,18 +125,17 @@ private:
 	void onTickPasture( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 	void onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
-	QList<Grove> m_groves;
-	QHash<unsigned int, unsigned int> m_allGroveTiles;
+	QHash<unsigned int, Grove*> m_groves;
+	QHash<Position, unsigned int> m_allGroveTiles;
 
-	QList<Farm> m_farms;
-	QHash<unsigned int, unsigned int> m_allFarmTiles;
+	QHash<unsigned int, Farm*> m_farms;
+	QHash<Position, unsigned int> m_allFarmTiles;
 
-	QList<Pasture> m_pastures;
-	QHash<unsigned int, unsigned int> m_allPastureTiles;
+	QHash<unsigned int, Pasture*> m_pastures;
+	QHash<Position, unsigned int> m_allPastureTiles;
 
-	QHash<unsigned int, Beehive> m_beehives;
-
-	unsigned int m_lastAdded = 0;
+	QHash<unsigned int, Beehive*> m_beehives;
+	QHash<Position, unsigned int> m_allBeehiveTiles;
 
 signals:
 	void signalFarmChanged( unsigned int id );

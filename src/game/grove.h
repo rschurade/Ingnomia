@@ -60,7 +60,7 @@ struct GroveProperties
 	unsigned int autoFellMin = 0;
 	unsigned int autoFellMax = 0;
 
-	void serialize( QVariantMap& out );
+	void serialize( QVariantMap& out ) const;
 	GroveProperties() {};
 	GroveProperties( QVariantMap& in );
 };
@@ -68,14 +68,14 @@ struct GroveProperties
 class Grove : public WorldObject
 {
 	friend class AggregatorAgri;
-
+	Q_DISABLE_COPY_MOVE( Grove )
 public:
 	Grove() = delete;
 	Grove( QList<QPair<Position, bool>> tiles, Game* game );
 	Grove( QVariantMap vals, Game* game );
 	~Grove();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
 	void onTick( quint64 tick );
 
