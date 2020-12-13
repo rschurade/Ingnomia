@@ -143,11 +143,11 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 				prefix = "$ItemName_";
 				break;
 			case BuildSelection::Furniture:
-				rows = DB::selectRows( "Items", "Category", "Furniture" );
+				rows = DB::selectRows( "Items", "Category", "Furniture", "ItemGroup", category );
 				prefix = "$ItemName_";
 				break;
 			case BuildSelection::Utility:
-				rows = DB::selectRows( "Items", "Category", "Utility" );
+				rows = DB::selectRows( "Items", "Category", "Utility", "ItemGroup", category );
 				prefix = "$ItemName_";
 				break;
 		}
