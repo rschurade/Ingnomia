@@ -109,6 +109,8 @@ void GameManager::endCurrentGame()
 	if ( m_game )
 	{
 		delete m_game;
+		Global::sel = nullptr;
+		Global::util = new Util( nullptr );
 	}
 }
 
