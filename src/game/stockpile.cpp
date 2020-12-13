@@ -52,6 +52,14 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Stockpile::~Stockpile()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 void Stockpile::addTile( Position& pos )

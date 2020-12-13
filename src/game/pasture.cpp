@@ -192,6 +192,10 @@ QVariant Pasture::serialize()
 
 Pasture::~Pasture()
 {
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 void Pasture::addTile( const Position & pos )
