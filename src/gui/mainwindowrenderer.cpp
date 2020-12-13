@@ -769,6 +769,9 @@ void MainWindowRenderer::rotate( int direction )
 
 void MainWindowRenderer::move( float x, float y )
 {
+	if ( !Global::dimX )
+		return;
+
 	m_moveX += x / m_scale;
 	m_moveY += y / m_scale;
 
