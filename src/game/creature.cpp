@@ -155,6 +155,10 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	{
 		m_inventoryItems = Global::util->variantList2UInt( in.value( "InventoryItems" ).toList() );
 	}
+	if( m_lightIntensity )
+	{
+		g->w()->addLight( m_id, m_position, m_lightIntensity );
+	}
 }
 
 void Creature::serialize( QVariantMap& out ) const

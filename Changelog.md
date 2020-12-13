@@ -6,8 +6,11 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 ### Added
+- Willow trees
 
 ### Changed
+- Rivers now have sand floor, preventing grass and plants spawning there-
+- 
 
 ### Removed
 
