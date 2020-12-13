@@ -1,7 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.8.4]
+
+### Fixed
+- large refactor of code base to fix some crashes and memory leaks
+- behavior tree instantiation 
+
+### Added
+- Willow trees
+- Info display for selected command and selection size
+
+### Changed
+- Rivers now have sand floor, preventing grass and plants spawning there
+- speed up light updates
+- speed up animal ai  for grazing
+
+### Removed
+
+## [0.8.3]
 
 ### Fixed
 - large refactor of code base to fix some crashes and memory leaks
