@@ -4499,9 +4499,9 @@ INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTim
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneBedFrame',1,NULL,'BoneBedFrame',50.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneBed',1,NULL,'Bed',50.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Shed',1,NULL,'Shed',50.0,NULL,'Wood','Carpentry');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnFishBone',0,NULL,'FishBone',1.0,NULL,NULL,'Smelting');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnStraw',0,NULL,'Straw',1.0,NULL,NULL,'Smelting');
-INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnSeeds',0,NULL,'Seed',1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnFishBone',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnStraw',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnSeeds',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('AlarmBellBase',1,'','AlarmBellBase',30.0,NULL,'Wood','Carpentry');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('AlarmBellBell',1,'','AlarmBellBell',30.0,NULL,'Metal','Blacksmithing');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BeeHive',1,'','BeeHive',20.0,NULL,NULL,'Carpentry');
