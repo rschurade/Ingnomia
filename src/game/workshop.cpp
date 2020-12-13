@@ -276,6 +276,11 @@ Workshop::~Workshop()
 		delete m_job;
 		m_job = nullptr;
 	}
+	if ( m_fishingJob )
+	{
+		delete m_fishingJob;
+		m_fishingJob = nullptr;
+	}
 }
 
 Workshop::Workshop( QVariantMap vals, Game* game ) :

@@ -115,6 +115,7 @@ class Workshop : public WorldObject
 	friend class WorkshopManager;
 	Q_DISABLE_COPY_MOVE( Workshop )
 public:
+	Workshop() = delete;
 	Workshop( QString type, Position& pos, int rotation, Game* game );
 	Workshop( QVariantMap values, Game* game );
 	~Workshop();
