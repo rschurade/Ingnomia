@@ -356,7 +356,7 @@ WorkshopModel::WorkshopModel()
 	{
 		m_prios->Add( MakePtr<WsPriority>( ( QString( "Priority " ) + QString::number( i + 1 ) ).toStdString().c_str() ) );
 	}
-	m_selectedPrio = m_prios->Get( 0 );
+	SetSelectedPriority( m_prios->Get( 0 ) );
 
 	m_products = *new ObservableCollection<WsProduct>();
 	m_jobs     = *new ObservableCollection<WsCraftJob>();
@@ -377,31 +377,21 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	m_workshopID        = info.workshopID;
 	m_gui               = info.gui;
 
-	m_name = info.name.toStdString().c_str();
-	OnPropertyChanged( "Name" );
-
-	m_suspended = info.suspended;
-	OnPropertyChanged( "Suspended" );
-
-	m_connectStockpile = info.linkStockpile;
-	OnPropertyChanged( "LinkStockpile" );
+	SetName( info.name.toStdString().c_str() );
+	SetSuspended( info.suspended );
+	SetLinkStockpile( info.linkStockpile );
 
 	m_prios->Clear();
 	for ( int i = 0; i < info.maxPriority; ++i )
 	{
 		m_prios->Add( MakePtr<WsPriority>( ( QString( "Priority " ) + QString::number( i + 1 ) ).toStdString().c_str() ) );
 	}
-	m_selectedPrio = m_prios->Get( qMin( qMax( 0, info.priority ), m_prios->Count() ) );
-	OnPropertyChanged( "Priorities" );
-	OnPropertyChanged( "SelectedPrio" );
+	SetSelectedPriority( m_prios->Get( qMin( qMax( 0, info.priority ), m_prios->Count() ) ) );
 
 	if ( m_gui.isEmpty() )
 	{
-		m_acceptGenerated = info.acceptGenerated;
-		OnPropertyChanged( "AcceptGenerated" );
-
-		m_autoCraftMissing = info.autoCraftMissing;
-		OnPropertyChanged( "AutoCraft" );
+		SetAcceptGenerated( info.acceptGenerated );
+		SetAutoCraftMissing( info.autoCraftMissing );
 
 		m_products->Clear();
 		for ( auto gwp : info.products )
@@ -420,11 +410,8 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	}
 	else if ( m_gui == "Butcher" )
 	{
-		m_butcherCorpses = info.butcherCorpses;
-		OnPropertyChanged( "ButcherCorpses" );
-
-		m_butcherExcess = info.butcherExcess;
-		OnPropertyChanged( "ButcherExcess" );
+		SetButcherCorpses( info.butcherCorpses );
+		SetButcherExcess( info.butcherExcess );
 	}
 	else if ( m_gui == "Trader" )
 	{
@@ -434,6 +421,9 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 		m_selectedPlayerOffer = nullptr;
 		m_proxy->requestAllTradeItems( m_workshopID );
 	}
+
+	OnPropertyChanged( "Priorities" );
+	OnPropertyChanged( "SelectedPrio" );
 
 	OnPropertyChanged( "NormalGui" );
 	OnPropertyChanged( "ButcherGui" );
