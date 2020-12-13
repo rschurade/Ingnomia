@@ -271,6 +271,11 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 
 Workshop::~Workshop()
 {
+	if ( m_job )
+	{
+		delete m_job;
+		m_job = nullptr;
+	}
 }
 
 Workshop::Workshop( QVariantMap vals, Game* game ) :
