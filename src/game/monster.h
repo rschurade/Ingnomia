@@ -24,8 +24,8 @@ class Monster : public Creature
 	friend class MonsterWidget;
 
 public:
-	Monster( QString species, int level, Position& pos, Gender gender );
-	Monster( QVariantMap in );
+	Monster( QString species, int level, Position& pos, Gender gender, Game* game );
+	Monster( QVariantMap in, Game* game );
 	~Monster();
 
 	virtual void init();

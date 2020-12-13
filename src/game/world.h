@@ -34,6 +34,7 @@
 class Plant;
 class Animal;
 class Creature;
+class Game;
 
 struct Position;
 class Sprite;
@@ -69,11 +70,13 @@ enum CONSTR_ITEM_ID
 
 class World
 {
+	Q_DISABLE_COPY_MOVE( World )
 private:
+	QPointer<Game> g;
+
 	LightMap m_lightMap;
 	RegionMap m_regionMap;
 
-	QMutex m_mutex;
 	QMutex m_updateMutex;
 
 	int m_dimX = 1;
@@ -112,13 +115,11 @@ private:
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
 
 public:
-	World();
+	World( int dimX, int dimY, int dimZ, Game* game );
 	~World();
 
 	void init();
-	void initLite();
 	void initWater();
-	void reset();
 	void afterLoad();
 
 	void processGrass();
@@ -283,7 +284,6 @@ public:
 	Tile& getTile( const Position pos );
 	Tile& getTile( const unsigned int id );
 
-	
 	bool noTree( const Position pos, const int xRange, const int yRange );
 	bool noShroom( const Position pos, const int xRange, const int yRange );
 

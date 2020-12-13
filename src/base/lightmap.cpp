@@ -54,7 +54,7 @@ void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& worl
 	QQueue<QPair<Position, int>> wq;
 	QSet<unsigned int> visited;
 	wq.enqueue( QPair<Position, int>( pos, 0 ) );
-	int decay = Config::getInstance().get( "lightDecay" ).toInt();
+	int decay = Global::cfg->get( "lightDecay" ).toInt();
 
 	int range = intensity / decay;
 
@@ -136,11 +136,11 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 {
 	if ( m_lightMap.contains( posID ) )
 	{
-		auto maps = m_lightMap[posID];
+		const auto& maps = m_lightMap[posID];
 		int light = 0;
-		for ( auto key : maps.keys() )
+		for ( const auto& value : maps )
 		{
-			light += maps[key];
+			light += value;
 		}
 		return qMin( 255, light );
 	}

@@ -150,4 +150,7 @@ signals:
 
 	void signalKeyPress( int key );
 	void signalUpdateRenderOptions();
+	void signalTogglePause();
+
+	void signalUpdateCursorPos( const QString pos );
 };

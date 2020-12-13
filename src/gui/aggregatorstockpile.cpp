@@ -21,6 +21,7 @@
 #include "../base/db.h"
 #include "../base/dbhelper.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
 #include "../game/stockpilemanager.h"
 #include "../game/world.h"
@@ -30,19 +31,22 @@ AggregatorStockpile::AggregatorStockpile( QObject* parent ) :
 	QObject(parent)
 {
 	qRegisterMetaType<GuiStockpileInfo>();
-
-	connect( &Global::spm(), &StockpileManager::signalStockpileAdded, this, &AggregatorStockpile::onOpenStockpileInfo, Qt::QueuedConnection );
-	connect( &Global::spm(), &StockpileManager::signalStockpileContentChanged, this, &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
 }
 
 AggregatorStockpile::~AggregatorStockpile()
 {
 }
 
+void AggregatorStockpile::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 {
+	if( !g ) return;
 	Position pos( tileID );
-	auto sp = Global::spm().getStockpileAtPos( pos );
+	auto sp = g->spm()->getStockpileAtPos( pos );
 	if ( sp )
 	{
 		emit signalOpenStockpileWindow( sp->id() );
@@ -52,12 +56,14 @@ void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 
 void AggregatorStockpile::onOpenStockpileInfo( unsigned int stockpileID )
 {
+	if( !g ) return;
 	emit signalOpenStockpileWindow( stockpileID );
 	onUpdateStockpileInfo( stockpileID );
 }
 
 void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 {
+	if( !g ) return;
 	if ( aggregate( stockpileID ) )
 	{
 		emit signalUpdateInfo( m_info );
@@ -66,13 +72,14 @@ void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 
 bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 {
-	auto sp = Global::spm().getStockpile( stockpileID );
+	if( !g ) return false;
+	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{
 		m_info.stockpileID       = stockpileID;
 		m_info.name              = sp->name();
 		m_info.priority          = sp->priority();
-		m_info.maxPriority       = Global::spm().maxPriority();
+		m_info.maxPriority       = g->spm()->maxPriority();
 		m_info.suspended         = !sp->active();
 		m_info.allowPullFromHere = sp->allowsPull();
 		m_info.pullFromOthers    = sp->pullsOthers();
@@ -87,7 +94,7 @@ bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 			int count = sp->count( entry.first, entry.second );
 			//if( count > 0 )
 			{
-				//QIcon icon( Util::smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
+				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
 				ItemsSummary is;
 				is.itemName     = S::s( "$ItemName_" + entry.first );
 				is.materialName = S::s( "$MaterialName_" + entry.second );
@@ -104,6 +111,7 @@ bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 
 void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 {
+	if( !g ) return;
 	if ( m_info.stockpileID == stockpileID )
 	{
 		m_contentDirty = true;
@@ -112,9 +120,10 @@ void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 
 void AggregatorStockpile::onUpdateAfterTick()
 {
+	if( !g ) return;
 	if ( m_info.stockpileID && m_contentDirty )
 	{
-		auto sp       = Global::spm().getStockpile( m_info.stockpileID );
+		auto sp       = g->spm()->getStockpile( m_info.stockpileID );
 		m_info.filter = sp->filter();
 		m_info.summary.clear();
 		auto active = m_info.filter.getActive();
@@ -123,7 +132,7 @@ void AggregatorStockpile::onUpdateAfterTick()
 			int count = sp->count( entry.first, entry.second );
 			//if( count > 0 )
 			{
-				//QIcon icon( Util::smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
+				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
 				ItemsSummary is;
 				is.itemName     = S::s( "$ItemName_" + entry.first );
 				is.materialName = S::s( "$MaterialName_" + entry.second );
@@ -139,12 +148,13 @@ void AggregatorStockpile::onUpdateAfterTick()
 
 void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString name, int priority, bool suspended, bool pull, bool allowPull )
 {
-	auto sp = Global::spm().getStockpile( stockpileID );
+	if( !g ) return;
+	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{
 		//qDebug() << stockpileID << name << priority << suspended << pull << allowPull;
 		sp->setName( name );
-		Global::spm().setPriority( stockpileID, priority );
+		g->spm()->setPriority( stockpileID, priority );
 		sp->setActive( !suspended );
 		sp->setAllowPull( allowPull );
 		sp->setPullOthers( pull );
@@ -153,8 +163,9 @@ void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString n
 
 void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
+	if( !g ) return;
 	//qDebug() << "set active:" << stockpileID << active << category << group << item << material;
-	auto sp = Global::spm().getStockpile( stockpileID );
+	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{
 		auto filter = sp->pFilter();

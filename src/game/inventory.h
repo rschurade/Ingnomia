@@ -17,29 +17,33 @@
 */
 #pragma once
 
+
+
 #include "../base/priorityqueue.h"
 #include "../game/item.h"
 
 #include <QHash>
 #include <QList>
 #include <QMap>
-#include <QMutex>
 #include <QString>
 
 typedef QSet<unsigned int> PositionEntry;
 typedef QHash<unsigned int, PositionEntry> PositionHash;
 
+class ItemHistory;
 class Octree;
+class StockpileManager;
+class World;
+class Game;
 
 class Inventory : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( Inventory )
 public:
-	Inventory( QObject* parent = nullptr );
+	Inventory() = delete;
+	Inventory( Game* parent );
 	~Inventory();
-
-	void reset();
 
 	void saveFilter();
 	void loadFilter();
@@ -195,7 +199,13 @@ public:
 
 	QList<QString> allMats( unsigned int itemID );
 
+	ItemHistory* itemHistory();
+
 private:
+	QPointer<Game> g;
+
+	QPointer<ItemHistory> m_itemHistory;
+
 	int m_dimX;
 	int m_dimY;
 	int m_dimZ;
@@ -205,8 +215,6 @@ private:
 	PositionHash m_positionHash;
 	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
-
-	QMutex m_mutex;
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;

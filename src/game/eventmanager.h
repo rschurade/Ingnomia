@@ -17,14 +17,16 @@
 */
 #pragma once
 
+
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 #include "../game/neighbormanager.h"
 
 #include <QMap>
-#include <QMutex>
 #include <QObject>
 #include <QVariantMap>
+
+class Game;
 
 enum class EventRequire
 {
@@ -125,12 +127,10 @@ Q_DECLARE_METATYPE( Mission )
 class EventManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( EventManager )
 public:
-	EventManager( QObject* parent = nullptr );
+	EventManager( Game* parent );
 	~EventManager();
-
-	void reset();
 
 	QVariantMap serialize();
 	void deserialize( QVariantMap in );
@@ -148,7 +148,7 @@ public:
 	void startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
 
 private:
-	QMutex m_mutex;
+	QPointer<Game> g;
 
 	QMap<QString, int> m_string2type;
 	QMap<QString, int> m_reqMap;
@@ -170,7 +170,6 @@ private:
 	QList<Mission> m_missions;
 
 signals:
-	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	void signalCenterCamera( QString pos, int zOffset );
 	void signalUpdateMission( const Mission& mission );
 

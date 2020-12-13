@@ -22,17 +22,18 @@
 #include "../base/logger.h"
 #include "../base/priorityqueue.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
-#include "world.h"
+#include "../game/world.h"
 
 #include <QDebug>
 
-Monster::Monster( QString species, int level, Position& pos, Gender gender ) :
-	Creature( pos, species, gender, species )
+Monster::Monster( QString species, int level, Position& pos, Gender gender, Game* game ) :
+	Creature( pos, species, gender, species, game )
 {
 	m_type    = CreatureType::MONSTER;
 
@@ -45,8 +46,8 @@ Monster::Monster( QString species, int level, Position& pos, Gender gender ) :
 	m_anatomy.init( "Humanoid" );
 }
 
-Monster::Monster( QVariantMap in ) :
-	Creature( in ),
+Monster::Monster( QVariantMap in, Game* game ) :
+	Creature( in, game ),
 	m_level( in.value( "Level" ).toInt() )
 {
 	m_type = CreatureType::MONSTER;
@@ -67,7 +68,7 @@ Monster::~Monster()
 
 void Monster::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 
 	initTaskMap();
 	loadBehaviorTree( m_btName );
@@ -139,7 +140,7 @@ void Monster::updateSprite()
 		defBack.append( pm );
 	}
 
-	m_spriteID = Global::sf().setCreatureSprite( m_id, def, defBack, isDead() )->uID;
+	m_spriteID = g->sf()->setCreatureSprite( m_id, def, defBack, isDead() )->uID;
 }
 
 void Monster::updateMoveSpeed()
@@ -172,7 +173,7 @@ void Monster::generateAggroList()
 {
 	m_aggroList.clear();
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
-	for ( auto& g : Global::gm().gnomes() )
+	for ( auto& g : g->gm()->gnomes() )
 	{
 		if ( !g->isOnMission() )
 		{
@@ -187,7 +188,7 @@ CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool
 {
 	processCooldowns( tickNumber );
 
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( g->w()->fluidLevel( m_position ) );
 
 	if ( m_anatomy.statusChanged() )
 	{
@@ -282,7 +283,7 @@ BT_RESULT Monster::actionMove( bool halt )
 		return BT_RESULT::SUCCESS;
 	}
 
-	PathFinderResult pfr = PathFinder::getInstance().getPath( m_id, m_position, targetPos, m_ignoreNoPass, m_currentPath );
+	PathFinderResult pfr = g->pf()->getPath( m_id, m_position, targetPos, m_ignoreNoPass, m_currentPath );
 	switch ( pfr )
 	{
 		case PathFinderResult::NoConnection:
@@ -296,7 +297,7 @@ BT_RESULT Monster::actionMove( bool halt )
 
 BT_RESULT Monster::actionAttackTarget( bool halt )
 {
-	Creature* creature = Global::gm().gnome( m_currentAttackTarget );
+	Creature* creature = g->gm()->gnome( m_currentAttackTarget );
 	if ( creature && !creature->isDead() )
 	{
 		m_facing = getFacing( m_position, creature->getPos() );
@@ -325,11 +326,11 @@ BT_RESULT Monster::actionGetTarget( bool halt )
 		const Creature* selectedTarget = nullptr;
 		for ( auto it = m_aggroList.begin(); it != m_aggroList.end(); )
 		{
-			const Creature* creature = Global::gm().gnome( it->id );
+			const Creature* creature = g->gm()->gnome( it->id );
 			if ( creature && !creature->isDead() )
 			{
 				auto otherPos = creature->getPos();
-				if ( Global::w().regionMap().checkConnectedRegions( myPos, otherPos ) )
+				if ( g->w()->regionMap().checkConnectedRegions( myPos, otherPos ) )
 				{
 					const unsigned int dist = myPos.distSquare( otherPos );
 					if ( dist < minDistance )

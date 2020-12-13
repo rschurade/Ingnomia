@@ -26,7 +26,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QQueue>
-RegionMap::RegionMap()
+RegionMap::RegionMap( World* parent ) :
+	m_world( parent )
 {
 }
 
@@ -72,12 +73,10 @@ void RegionMap::initRegions()
 	m_dimY = Global::dimY;
 	m_dimZ = Global::dimZ;
 
-	World& world = Global::w();
-
 	m_regions.clear();
 	m_regions.emplace_back( 0 );
 	m_regionMap.clear();
-	m_regionMap.resize( world.world().size() );
+	m_regionMap.resize( m_world->world().size() );
 	for ( auto i = 0; i < m_regionMap.size(); ++i )
 		m_regionMap[i] = 0;
 
@@ -90,7 +89,7 @@ void RegionMap::initRegions()
 		{
 			for ( int x = 1; x < m_dimX - 1; ++x )
 			{
-				Tile& tile = world.getTile( x, y, z );
+				Tile& tile = m_world->getTile( x, y, z );
 				if ( ( tile.flags & TileFlag::TF_WALKABLE && !( tile.flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[index( x, y, z )] == 0 ) )
 				{
 					////qDebug() << "found new tile without region";
@@ -111,7 +110,7 @@ void RegionMap::initRegions()
 		{
 			for ( int x = 1; x < m_dimX - 1; ++x )
 			{
-				Tile& tile = world.getTile( x, y, z );
+				Tile& tile = m_world->getTile( x, y, z );
 
 				if ( tile.wallType & WallType::WT_STAIR || tile.wallType & WallType::WT_SCAFFOLD || tile.wallType & WallType::WT_RAMP )
 				{
@@ -137,8 +136,6 @@ void RegionMap::initRegions()
 
 void RegionMap::mergeRegions( const Position& pos, unsigned int oldRegionID, unsigned int newRegionID )
 {
-	World& world = Global::w();
-
 	floodFill( oldRegionID, newRegionID, pos.x, pos.y, pos.z );
 
 	Region& oldRegion = m_regions[oldRegionID];
@@ -172,8 +169,6 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 
 	Region& fromRegion = m_regions[fromRegionID];
 	Region& intoRegion = m_regions[intoRegionID];
-
-	World& world = Global::w();
 
 	auto oldConSetTo = fromRegion.connectionSetTo();
 
@@ -212,7 +207,7 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 		for ( auto connectionPos : connectionsTo )
 		{
 			Position curPos( connectionPos );
-			Tile& tile = world.getTile( curPos );
+			Tile& tile = m_world->getTile( curPos );
 
 			if ( tile.wallType & WallType::WT_STAIR || tile.wallType & WallType::WT_SCAFFOLD || tile.wallType & WallType::WT_RAMP )
 			{
@@ -242,7 +237,6 @@ unsigned int RegionMap::index( const Position& pos )
 
 void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y_, int z_ )
 {
-	World& world = Global::w();
 	QElapsedTimer timer;
 	timer.start();
 	QQueue<Position> floodQueue;
@@ -252,7 +246,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 	while ( !floodQueue.isEmpty() )
 	{
 		Position p0 = floodQueue.dequeue();
-		Global::w().addToUpdateList( p0 );
+		m_world->addToUpdateList( p0 );
 		//qDebug() << "continue with " << p0.toString();
 		unsigned int currentIndex = index( p0.x, p0.y, p0.z );
 
@@ -260,12 +254,12 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 		bool nextLineAdded = false;
 		for ( int x = p0.x; x < m_dimX - 1; ++x )
 		{
-			if ( world.getTile( currentIndex ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex ).flags & TileFlag::TF_NOPASS ) )
+			if ( m_world->getTile( currentIndex ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex ).flags & TileFlag::TF_NOPASS ) )
 			{
 				m_regionMap[currentIndex] = newID;
-				Global::w().addToUpdateList( Position( x, p0.y, p0.z ) );
+				m_world->addToUpdateList( Position( x, p0.y, p0.z ) );
 
-				if ( ( world.getTile( currentIndex - m_dimX ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex - m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex - m_dimX] == oldID ) )
+				if ( ( m_world->getTile( currentIndex - m_dimX ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex - m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex - m_dimX] == oldID ) )
 				{
 					if ( !prevLineAdded )
 					{
@@ -280,7 +274,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 				{
 					prevLineAdded = false;
 				}
-				if ( ( world.getTile( currentIndex + m_dimX ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex + m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex + m_dimX] == oldID ) )
+				if ( ( m_world->getTile( currentIndex + m_dimX ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex + m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex + m_dimX] == oldID ) )
 				{
 					if ( !nextLineAdded )
 					{
@@ -309,12 +303,12 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 		nextLineAdded = false;
 		for ( int x = p0.x; x > 0; --x )
 		{
-			if ( world.getTile( currentIndex ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex ).flags & TileFlag::TF_NOPASS ) )
+			if ( m_world->getTile( currentIndex ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex ).flags & TileFlag::TF_NOPASS ) )
 			{
 				m_regionMap[currentIndex] = newID;
-				Global::w().addToUpdateList( Position( x, p0.y, p0.z ) );
+				m_world->addToUpdateList( Position( x, p0.y, p0.z ) );
 
-				if ( ( world.getTile( currentIndex - m_dimX ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex - m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex - m_dimX] == oldID ) )
+				if ( ( m_world->getTile( currentIndex - m_dimX ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex - m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex - m_dimX] == oldID ) )
 				{
 					if ( !prevLineAdded )
 					{
@@ -328,7 +322,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 				{
 					prevLineAdded = false;
 				}
-				if ( ( world.getTile( currentIndex + m_dimX ).flags & TileFlag::TF_WALKABLE && !( world.getTile( currentIndex + m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex + m_dimX] == oldID ) )
+				if ( ( m_world->getTile( currentIndex + m_dimX ).flags & TileFlag::TF_WALKABLE && !( m_world->getTile( currentIndex + m_dimX ).flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[currentIndex + m_dimX] == oldID ) )
 				{
 					if ( !nextLineAdded )
 					{
@@ -359,7 +353,7 @@ void RegionMap::updatePosition( const Position& pos )
 	if ( m_initialized )
 	{
 		//qDebug() << "update position " << pos.toString();
-		if ( Global::w().isWalkableGnome( pos ) )
+		if ( m_world->isWalkableGnome( pos ) )
 		{
 			updatePositionSetWalkable( pos );
 		}
@@ -448,7 +442,7 @@ void RegionMap::updateConnectedRegions( const Position& pos )
 
 		unsigned int currentIndex = index( pos );
 
-		Tile& tile = Global::w().getTile( pos );
+		Tile& tile = m_world->getTile( pos );
 
 		if ( (bool)( tile.wallType & ( WallType::WT_STAIR | WallType::WT_SCAFFOLD | WallType::WT_RAMP ) ) )
 		{
@@ -817,7 +811,7 @@ std::vector<Position> RegionMap::connectedNeighborsUp( const Position& pos )
 {
 	std::vector<Position> out;
 
-	Tile& tile = Global::w().getTile( pos );
+	Tile& tile = m_world->getTile( pos );
 
 	if ( (bool)( tile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
 	{
@@ -827,22 +821,22 @@ std::vector<Position> RegionMap::connectedNeighborsUp( const Position& pos )
 	{
 		auto above = pos.aboveOf();
 
-		Tile& nt = Global::w().getTile( above.northOf() );
+		Tile& nt = m_world->getTile( above.northOf() );
 		if ( nt.flags & TileFlag::TF_WALKABLE )
 		{
 			out.push_back( above.northOf() );
 		}
-		Tile& et = Global::w().getTile( above.eastOf() );
+		Tile& et = m_world->getTile( above.eastOf() );
 		if ( et.flags & TileFlag::TF_WALKABLE )
 		{
 			out.push_back( above.eastOf() );
 		}
-		Tile& st = Global::w().getTile( above.southOf() );
+		Tile& st = m_world->getTile( above.southOf() );
 		if ( st.flags & TileFlag::TF_WALKABLE )
 		{
 			out.push_back( above.southOf() );
 		}
-		Tile& wt = Global::w().getTile( above.westOf() );
+		Tile& wt = m_world->getTile( above.westOf() );
 		if ( wt.flags & TileFlag::TF_WALKABLE )
 		{
 			out.push_back( above.westOf() );

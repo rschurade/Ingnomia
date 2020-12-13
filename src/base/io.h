@@ -19,21 +19,26 @@
 
 #include <QObject>
 
+class Game;
+
 class IO : public QObject
 {
 	Q_OBJECT
 
+private:
+	QPointer<Game> g;
+
 public:
-	IO( QObject* parent = nullptr );
+	IO( Game* g, QObject* parent );
 	~IO();
 
 	static bool createFolders();
 	static bool saveConfig();
 	static bool loadOriginalConfig( QJsonDocument& jd );
 
-	static bool saveGameExists();
+	bool saveGameExists();
 
-	static QString save( bool autosave = false );
+	QString save( bool autosave = false );
 	bool load( QString folder );
 
 	void sanitize();
@@ -47,65 +52,65 @@ public:
 	static bool saveFile( QString url, const QJsonObject& jo );
 	static bool loadFile( QString url, QJsonDocument& ja );
 
-	static bool saveWorld( QString folder );
-	static bool loadWorld( QString folder );
-	static void loadWorld( QDataStream& in );
+	bool saveWorld( QString folder );
+	bool loadWorld( QString folder );
+	void loadWorld( QDataStream& in );
 
-	static QJsonArray jsonArraySprites();
-	static QJsonArray jsonArrayGame();
-	static QJsonArray jsonArrayConfig();
-	static QJsonArray jsonArrayWallConstructions();
-	static QJsonArray jsonArrayFloorConstructions();
-	static QJsonArray jsonArrayGnomes();
+	QJsonArray jsonArraySprites();
+	QJsonArray jsonArrayGame();
+	QJsonArray jsonArrayConfig();
+	QJsonArray jsonArrayWallConstructions();
+	QJsonArray jsonArrayFloorConstructions();
+	QJsonArray jsonArrayGnomes();
 
 
-	static QJsonArray jsonArrayMonsters( int startindex, int amount );
-	static QJsonArray jsonArrayAnimals( int startindex, int amount );
+	QJsonArray jsonArrayMonsters( int startindex, int amount );
+	QJsonArray jsonArrayAnimals( int startindex, int amount );
 	
-	static QJsonArray jsonArrayPlants( int startindex, int amount );
-	static QJsonArray jsonArrayItems( int startindex, int amount );
-	static QJsonArray jsonArrayJobs();
-	static QJsonArray jsonArrayJobSprites();
-	static QJsonArray jsonArrayFarms();
-	static QJsonArray jsonArrayRooms();
-	static QJsonArray jsonArrayDoors();
-	static QJsonArray jsonArrayStockpiles();
-	static QJsonArray jsonArrayWorkshops();
-	static QJsonDocument jsonArrayItemHistory();
-	static QJsonDocument jsonArrayEvents();
-	static QJsonDocument jsonArrayMechanisms();
-	static QJsonDocument jsonArrayPipes();
+	QJsonArray jsonArrayPlants( int startindex, int amount );
+	QJsonArray jsonArrayItems( int startindex, int amount );
+	QJsonArray jsonArrayJobs();
+	QJsonArray jsonArrayJobSprites();
+	QJsonArray jsonArrayFarms();
+	QJsonArray jsonArrayRooms();
+	QJsonArray jsonArrayDoors();
+	QJsonArray jsonArrayStockpiles();
+	QJsonArray jsonArrayWorkshops();
+	QJsonDocument jsonArrayItemHistory();
+	QJsonDocument jsonArrayEvents();
+	QJsonDocument jsonArrayMechanisms();
+	QJsonDocument jsonArrayPipes();
 
-	static bool loadSprites( QJsonDocument& jd );
-	static bool loadGame( QJsonDocument& jd );
-	static bool loadConfig( QJsonDocument& jd );
-	static bool loadFloorConstructions( QJsonDocument& jd );
-	static bool loadWallConstructions( QJsonDocument& jd );
-	static bool loadGnomes( QJsonDocument& jd );
-	static bool loadMonsters( QString folder );
-	static bool loadPlants( QString folder );
-	static bool loadItems( QString folder );
-	static bool loadItemHistory( QJsonDocument& jd );
-	static bool loadJobs( QJsonDocument& jd );
-	static bool loadJobSprites( QJsonDocument& jd );
-	static bool loadFarms( QJsonDocument& jd );
-	static bool loadStockpiles( QJsonDocument& jd );
-	static bool loadAnimals( QString folder );
-	static bool loadWorkshops( QJsonDocument& jd );
-	static bool loadRooms( QJsonDocument& jd );
-	static bool loadDoors( QJsonDocument& jd );
-	static bool loadEvents( QJsonDocument& jd );
-	static bool loadMechanisms( QJsonDocument& jd );
-	static bool loadPipes( QJsonDocument& jd );
+	bool loadSprites( QJsonDocument& jd );
+	bool loadGame( QJsonDocument& jd );
+	bool loadConfig( QJsonDocument& jd );
+	bool loadFloorConstructions( QJsonDocument& jd );
+	bool loadWallConstructions( QJsonDocument& jd );
+	bool loadGnomes( QJsonDocument& jd );
+	bool loadMonsters( QString folder );
+	bool loadPlants( QString folder );
+	bool loadItems( QString folder );
+	bool loadItemHistory( QJsonDocument& jd );
+	bool loadJobs( QJsonDocument& jd );
+	bool loadJobSprites( QJsonDocument& jd );
+	bool loadFarms( QJsonDocument& jd );
+	bool loadStockpiles( QJsonDocument& jd );
+	bool loadAnimals( QString folder );
+	bool loadWorkshops( QJsonDocument& jd );
+	bool loadRooms( QJsonDocument& jd );
+	bool loadDoors( QJsonDocument& jd );
+	bool loadEvents( QJsonDocument& jd );
+	bool loadMechanisms( QJsonDocument& jd );
+	bool loadPipes( QJsonDocument& jd );
 
-	static bool saveItems( QString folder );
-	static bool savePlants( QString folder );
-	static bool saveAnimals( QString folder );
-	static bool saveMonsters( QString folder );
+	bool saveItems( QString folder );
+	bool savePlants( QString folder );
+	bool saveAnimals( QString folder );
+	bool saveMonsters( QString folder );
 
-	static int version;
+	int version = 0;
 
-	static QString getTempFolder();
+	QString getTempFolder();
 
 signals:
 	void signalStatus( QString text );

@@ -22,6 +22,7 @@
 #include "../base/dbhelper.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/gnometrader.h"
@@ -34,11 +35,12 @@
 
 void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
+	if( !g ) return;
 	materials.clear();
 
-	auto mats = Global::inv().materialCountsForItem( sid );
+	auto mats = g->inv()->materialCountsForItem( sid );
 
-	auto allowedMats = Util::possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
+	auto allowedMats = Global::util->possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
 	if ( !allowedMats.isEmpty() )
 	{
 		for ( auto mat : allowedMats )
@@ -63,11 +65,12 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 
 void GuiWorkshopProduct::updateComponents()
 {
+	if( !g ) return;
 	components.clear();
 
 	for ( auto row : DB::selectRows( "Crafts_Components", sid ) )
 	{
-		GuiWorkshopComponent gwp { row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt(), row.value( "RequireSame" ).toBool(), {} };
+		GuiWorkshopComponent gwp { g, row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt(), row.value( "RequireSame" ).toBool(), {} };
 		gwp.updateMaterials( row );
 		components.append( gwp );
 	}
@@ -77,18 +80,22 @@ AggregatorWorkshop::AggregatorWorkshop( QObject* parent ) :
 	QObject(parent)
 {
 	qRegisterMetaType<GuiWorkshopInfo>();
-
-	connect( &Global::wsm(), &WorkshopManager::signalJobListChanged, this, &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
 }
 
 AggregatorWorkshop::~AggregatorWorkshop()
 {
 }
 
+void AggregatorWorkshop::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorWorkshop::onOpenWorkshopInfoOnTile( unsigned int tileID )
 {
+	if( !g ) return;
 	Position pos( tileID );
-	auto ws = Global::wsm().workshopAt( pos );
+	auto ws = g->wsm()->workshopAt( pos );
 	if ( ws )
 	{
 		m_info.workshopID = ws->id();
@@ -99,6 +106,7 @@ void AggregatorWorkshop::onOpenWorkshopInfoOnTile( unsigned int tileID )
 
 void AggregatorWorkshop::onOpenWorkshopInfo( unsigned int workshopID )
 {
+	if( !g ) return;
 	m_info.workshopID = workshopID;
 	emit signalOpenWorkshopWindow( workshopID );
 	onUpdateWorkshopInfo( workshopID );
@@ -106,6 +114,7 @@ void AggregatorWorkshop::onOpenWorkshopInfo( unsigned int workshopID )
 
 void AggregatorWorkshop::onUpdateWorkshopInfo( unsigned int workshopID )
 {
+	if( !g ) return;
 	if ( aggregate( workshopID ) )
 	{
 		emit signalUpdateInfo( m_info );
@@ -114,16 +123,17 @@ void AggregatorWorkshop::onUpdateWorkshopInfo( unsigned int workshopID )
 
 bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 {
+	if( !g ) return false;
 	if ( m_info.workshopID == workshopID )
 	{
-		auto ws = Global::wsm().workshop( workshopID );
+		auto ws = g->wsm()->workshop( workshopID );
 		if ( ws )
 		{
 			qDebug() << workshopID << ws->name();
 
 			m_info.name             = ws->name();
-			m_info.priority         = Global::wsm().priority( workshopID );
-			m_info.maxPriority      = Global::wsm().maxPriority();
+			m_info.priority         = g->wsm()->priority( workshopID );
+			m_info.maxPriority      = g->wsm()->maxPriority();
 			m_info.suspended        = !ws->active();
 			m_info.gui              = ws->gui();
 			m_info.acceptGenerated  = ws->isAcceptingGenerated();
@@ -139,6 +149,7 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 				for ( auto craft : crafts.split( "|" ) )
 				{
 					GuiWorkshopProduct gwp;
+					gwp.g = g;
 					gwp.sid = craft;
 					gwp.updateComponents();
 					m_info.products.append( gwp );
@@ -159,9 +170,10 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 
 bool AggregatorWorkshop::updateCraftList( unsigned int workshopID )
 {
+	if( !g ) return false;
 	if ( m_info.workshopID == workshopID )
 	{
-		auto ws = Global::wsm().workshop( workshopID );
+		auto ws = g->wsm()->workshop( workshopID );
 		if ( ws )
 		{
 			m_info.jobList = ws->jobList();
@@ -175,11 +187,13 @@ bool AggregatorWorkshop::updateCraftList( unsigned int workshopID )
 
 void AggregatorWorkshop::onCraftListChanged( unsigned int workshopID )
 {
+	if( !g ) return;
 	updateCraftList( workshopID );
 }
 
 void AggregatorWorkshop::onUpdateWorkshopContent( unsigned int WorkshopID )
 {
+	if( !g ) return;
 	if ( m_info.workshopID == WorkshopID )
 	{
 		m_contentDirty = true;
@@ -188,9 +202,10 @@ void AggregatorWorkshop::onUpdateWorkshopContent( unsigned int WorkshopID )
 
 void AggregatorWorkshop::onUpdateAfterTick()
 {
+	if( !g ) return;
 	if ( m_info.workshopID && m_contentDirty )
 	{
-		auto sp = Global::wsm().workshop( m_info.workshopID );
+		auto sp = g->wsm()->workshop( m_info.workshopID );
 		emit signalUpdateContent( m_info );
 		m_contentDirty = false;
 	}
@@ -198,12 +213,13 @@ void AggregatorWorkshop::onUpdateAfterTick()
 
 void AggregatorWorkshop::onSetBasicOptions( unsigned int workshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile )
 {
-	auto ws = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
 		//qDebug() << WorkshopID << name << priority << suspended;
 		ws->setName( name );
-		Global::wsm().setPriority( workshopID, priority );
+		g->wsm()->setPriority( workshopID, priority );
 		ws->setActive( !suspended );
 		ws->setAcceptGenerated( acceptGenerated );
 		ws->setAutoCraftMissing( autoCraftMissing );
@@ -213,7 +229,8 @@ void AggregatorWorkshop::onSetBasicOptions( unsigned int workshopID, QString nam
 
 void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butcherCorpses, bool butcherExcess )
 {
-	auto ws = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
 		ws->setButcherCorpses( butcherCorpses );
@@ -223,8 +240,9 @@ void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butc
 
 void AggregatorWorkshop::onCraftItem( unsigned int workshopID, QString craftID, int mode, int number, QStringList mats )
 {
+	if( !g ) return;
 	qDebug() << "onCraftItem" << workshopID << craftID << mode << number << mats;
-	auto ws = Global::wsm().workshop( workshopID );
+	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
 		ws->addJob( craftID, mode, number, mats );
@@ -239,7 +257,8 @@ void AggregatorWorkshop::onCloseWindow()
 
 void AggregatorWorkshop::onCraftJobCommand( unsigned int workshopID, unsigned int craftJobID, QString command )
 {
-	auto ws = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
 		if ( command == "Cancel" )
@@ -259,7 +278,8 @@ void AggregatorWorkshop::onCraftJobCommand( unsigned int workshopID, unsigned in
 
 void AggregatorWorkshop::onCraftJobParams( unsigned int workshopID, unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack )
 {
-	auto ws = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
 		ws->setJobParams( craftJobID, mode, numToCraft, suspended, moveBack );
@@ -268,6 +288,7 @@ void AggregatorWorkshop::onCraftJobParams( unsigned int workshopID, unsigned int
 
 void AggregatorWorkshop::onRequestAllTradeItems( unsigned int workshopID )
 {
+	if( !g ) return;
 	updateTraderStock( workshopID );
 	
 	updatePlayerStock( workshopID );
@@ -275,7 +296,8 @@ void AggregatorWorkshop::onRequestAllTradeItems( unsigned int workshopID )
 
 void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 {
-	auto workshop = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto workshop = g->wsm()->workshop( workshopID );
 
 	if( workshop )
 	{
@@ -287,7 +309,7 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 
 		if( traderID )
 		{
-			GnomeTrader* gt = Global::gm().trader( traderID );
+			GnomeTrader* gt = g->gm()->trader( traderID );
 			if( gt )
 			{
 				auto& items = gt->inventory();
@@ -304,6 +326,7 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 
 void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 {
+	if( !g ) return;
 	m_traderStock.clear();
 
 	for( auto item : source )
@@ -340,30 +363,29 @@ void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 	
 void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 {
+	if( !g ) return;
 	m_playerStock.clear();
 
-	Inventory& inv = Global::inv();
-
-	for( auto category : inv.categories() )
+	for( auto category : g->inv()->categories() )
 	{
-		for( auto group : inv.groups( category ) )
+		for( auto group : g->inv()->groups( category ) )
 		{
-			for( auto item : inv.items( category, group ) )
+			for( auto item : g->inv()->items( category, group ) )
 			{
-				QList<QString> mats = inv.materials( category, group, item );
+				QList<QString> mats = g->inv()->materials( category, group, item );
 				for( auto mat : mats )
 				{
-					int count = inv.itemCountInStockpile( item, mat );
+					int count = g->inv()->itemCountInStockpile( item, mat );
 					if( count > 0 )
 					{
-						QList<unsigned int> itemList = inv.tradeInventory( item, mat );
+						QList<unsigned int> itemList = g->inv()->tradeInventory( item, mat );
 
 						Counter<unsigned int> counter;
 						QMap<unsigned int, unsigned int>values;
 						QMap<int, QList<unsigned int>> vlItems;
 						for( auto itemUID : itemList )
 						{
-							int qual = inv.quality( itemUID );
+							int qual = g->inv()->quality( itemUID );
 							counter.add( qual );
 							vlItems[qual].append( itemUID );
 						}
@@ -381,7 +403,7 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 
 							gti.itemSID = item;
 							gti.materialSIDorGender = mat;
-							gti.value = inv.getTradeValue( item, mat, key );
+							gti.value = g->inv()->getTradeValue( item, mat, key );
 							gti.quality = key; 
 							gti.count = count;
 
@@ -400,7 +422,8 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 
 void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	auto workshop = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto workshop = g->wsm()->workshop( workshopID );
 
 	if( workshop )
 	{
@@ -410,7 +433,7 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 
 		if( traderID )
 		{
-			GnomeTrader* gt = Global::gm().trader( traderID );
+			GnomeTrader* gt = g->gm()->trader( traderID );
 			if( gt )
 			{
 				auto& items = gt->inventory();
@@ -441,7 +464,8 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 	
 void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	auto workshop = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto workshop = g->wsm()->workshop( workshopID );
 
 	if( workshop )
 	{
@@ -451,7 +475,7 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 
 		if( traderID )
 		{
-			GnomeTrader* gt = Global::gm().trader( traderID );
+			GnomeTrader* gt = g->gm()->trader( traderID );
 			if( gt )
 			{
 				auto& items = gt->inventory();
@@ -482,6 +506,7 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 
 void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
+	if( !g ) return;
 	for( auto& item : m_playerStock )
 	{
 		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
@@ -497,6 +522,7 @@ void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString 
 
 void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
+	if( !g ) return;
 	for( auto& item : m_playerStock )
 	{
 		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
@@ -512,6 +538,7 @@ void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString 
 
 void AggregatorWorkshop::updateTraderValue()
 {
+	if( !g ) return;
 	m_traderOfferValue = 0;
 	for( const auto& item : m_traderStock )
 	{
@@ -522,6 +549,7 @@ void AggregatorWorkshop::updateTraderValue()
 	
 void AggregatorWorkshop::updatePlayerValue()
 {
+	if( !g ) return;
 	m_playerOfferValue = 0;
 	for( const auto& item : m_playerStock )
 	{
@@ -532,7 +560,8 @@ void AggregatorWorkshop::updatePlayerValue()
 
 void AggregatorWorkshop::onTrade( unsigned int workshopID )
 {
-	auto workshop = Global::wsm().workshop( workshopID );
+	if( !g ) return;
+	auto workshop = g->wsm()->workshop( workshopID );
 
 	if( workshop )
 	{
@@ -542,7 +571,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 
 		if( traderID )
 		{
-			GnomeTrader* gt = Global::gm().trader( traderID );
+			GnomeTrader* gt = g->gm()->trader( traderID );
 			if( gt )
 			{
 				if( m_playerOfferValue >= m_traderOfferValue )
@@ -550,7 +579,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					QList<unsigned int> allItemsToSell;
 					for( auto& item : m_playerStock )
 					{
-						auto sellItems = Global::inv().tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
+						auto sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
 
 						if( sellItems.size() >= item.reserved )
 						{
@@ -569,14 +598,14 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					int currentValue = 0;
 					for( auto itemID : allItemsToSell )
 					{
-						currentValue += Global::inv().value( itemID );
+						currentValue += g->inv()->value( itemID );
 					}
 					if( currentValue >= m_traderOfferValue )
 					{
 						for( auto itemID : allItemsToSell )
 						{
-							Global::inv().pickUpItem( itemID );
-							Global::inv().destroyObject( itemID );
+							g->inv()->pickUpItem( itemID );
+							g->inv()->destroyObject( itemID );
 						}
 						updatePlayerStock( workshopID );
 
@@ -589,14 +618,14 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 								{
 									Gender gender = item.gender == "Male" ? Gender::MALE : Gender::FEMALE;
 
-									Global::cm().addCreature( CreatureType::ANIMAL, item.itemSID, workshop->outputPos(), gender, true, true );
+									g->cm()->addCreature( CreatureType::ANIMAL, item.itemSID, workshop->outputPos(), gender, true, true );
 								}
 							}
 							else
 							{
 								for( int i = 0; i < item.reserved; ++i )
 								{
-									Global::inv().createItem( workshop->outputPos(), item.itemSID, item.materialSID );
+									g->inv()->createItem( workshop->outputPos(), item.itemSID, item.materialSID );
 								}
 							}
 							item.amount = qMax( 0, item.amount - item.reserved );

@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QVector>
 
+class Game;
+
 struct TileData
 {
 	unsigned int flags  = 0;
@@ -98,7 +100,11 @@ class AggregatorRenderer : public QObject
 public:
 	AggregatorRenderer( QObject* parent = nullptr );
 
+	void init( Game* game );
+
 private:
+	QPointer<Game> g;
+
 	QHash<unsigned int, unsigned int> collectCreatures();
 	TileDataUpdate aggregateTile( unsigned int tileID ) const;
 

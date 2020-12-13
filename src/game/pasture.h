@@ -28,6 +28,7 @@
 #include <QVariantMap>
 
 class Job;
+class Game;
 
 struct PastureField
 {
@@ -61,7 +62,7 @@ struct PastureProperties
 
 	QSet<QString> foodSettings;
 
-	void serialize( QVariantMap& out );
+	void serialize( QVariantMap& out ) const;
 	PastureProperties() {};
 	PastureProperties( QVariantMap& in );
 };
@@ -69,14 +70,14 @@ struct PastureProperties
 class Pasture : public WorldObject
 {
 	friend class AggregatorAgri;
-
+	Q_DISABLE_COPY_MOVE( Pasture )
 public:
-	Pasture( QList<QPair<Position, bool>> tiles );
-	Pasture( QVariantMap vals );
+	Pasture( QList<QPair<Position, bool>> tiles, Game* game );
+	Pasture( QVariantMap vals, Game* game );
 	//Pasture( const Pasture& other );
 	~Pasture();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
 	void onTick( quint64 tick );
 
@@ -85,11 +86,11 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	Job* getJob( unsigned int jobID ) const;
+	bool hasJobID( unsigned int jobID ) const;
 
-	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	bool removeTile( const Position & pos );
+	void addTile( const Position & pos );
 
 	void getInfo( int& numPlots, int& numMale, int& numFemale );
 

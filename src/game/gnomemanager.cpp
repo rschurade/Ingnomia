@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "gnomemanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -35,39 +36,40 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
-GnomeManager::GnomeManager( QObject* parent ) :
-	QObject(parent)
+GnomeManager::GnomeManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
+	loadProfessions();
 }
 
 GnomeManager::~GnomeManager()
 {
-}
-
-void GnomeManager::init()
-{
-	clear();
-	loadProfessions();
-}
-
-void GnomeManager::reset()
-{
-	clear();
-	loadProfessions();
-}
-
-void GnomeManager::clear()
-{
-	m_gnomes.clear();
-	m_specialGnomes.clear();
-	m_gnomesByID.clear();
-	m_automatons.clear();
-	m_startIndex = 0;
+	for ( const auto& gnome : m_gnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_specialGnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_deadGnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_automatons )
+	{
+		delete gnome;
+	}
+	for ( const auto& job : m_jobs )
+	{
+		delete job;
+	}
 }
 
 bool GnomeManager::contains( unsigned int gnomeID )
 {
-	for( auto gnome : m_gnomes )
+	for( const auto& gnome : m_gnomes )
 	{
 		if( gnome->id() == gnomeID )
 		{
@@ -79,13 +81,15 @@ bool GnomeManager::contains( unsigned int gnomeID )
 
 void GnomeManager::addGnome( Position pos )
 {
-	m_gnomes.push_back( GnomeFactory::getInstance().createGnome( pos ) );
+	GnomeFactory gf( g );
+	m_gnomes.push_back( gf.createGnome( pos ) );
 	m_gnomesByID.insert( m_gnomes.last()->id(), m_gnomes.last() );
 }
 
 unsigned int GnomeManager::addTrader( Position pos, unsigned int workshopID, QString type )
 {
-	GnomeTrader* gnome = GnomeFactory::getInstance().createGnomeTrader( pos );
+	GnomeFactory gf( g );
+	GnomeTrader* gnome = gf.createGnomeTrader( pos );
 	gnome->setName( "Trader " + gnome->name() );
 	gnome->setMarketStall( workshopID );
 
@@ -114,30 +118,32 @@ void GnomeManager::addAutomaton( Automaton* a )
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), Global::inv().spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
 void GnomeManager::addAutomaton( QVariantMap values )
 {
-	Automaton* a = new Automaton( values );
+	Automaton* a = new Automaton( values, g );
 	m_automatons.append( a );
 	m_gnomesByID.insert( a->id(), m_automatons.last() );
 
-	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), Global::inv().spriteID( a->automatonItem() ) ) );
+	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
 }
 
 void GnomeManager::addGnome( QVariantMap values )
 {
-	Gnome* g( GnomeFactory::getInstance().createGnome( values ) );
+	GnomeFactory gf( g );
+	Gnome* g( gf.createGnome( values ) );
 	m_gnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_gnomes.last() );
 }
 
 void GnomeManager::addTrader( QVariantMap values )
 {
-	GnomeTrader* g( GnomeFactory::getInstance().createGnomeTrader( values ) );
+	GnomeFactory gf( g );
+	GnomeTrader* g( gf.createGnomeTrader( values ) );
 	m_specialGnomes.push_back( g );
 	m_gnomesByID.insert( g->id(), m_specialGnomes.last() );
 }
@@ -166,7 +172,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		if ( elapsed > 100 )
 		{
 			qDebug() << g->name() << "just needed" << elapsed << "ms for tick";
-			Config::getInstance().set( "Pause", true );
+			Global::cfg->set( "Pause", true );
 			return;
 		}
 #else
@@ -253,7 +259,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					else
 					{
 						m_gnomesByID.remove( dg->id() );
-						Global::w().addToUpdateList( dg->getPos() );
+						g->m_world->addToUpdateList( dg->getPos() );
 						delete dg;
 					}
 					m_specialGnomes.removeAt( i );
@@ -271,7 +277,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			if ( dg->expires() < GameState::tick )
 			{
 				m_gnomesByID.remove( dg->id() );
-				Global::w().addToUpdateList( dg->getPos() );
+				g->m_world->addToUpdateList( dg->getPos() );
 				m_deadGnomes.removeAt( i );
 				delete dg;
 				break;
@@ -282,7 +288,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 void GnomeManager::forceMoveGnomes( Position from, Position to )
 {
-	for ( auto&& g : m_gnomes )
+	for ( auto& g : m_gnomes )
 	{
 		// check gnome position
 		if ( g->getPos().toInt() == from.toInt() )
@@ -404,7 +410,7 @@ void GnomeManager::loadProfessions()
 	if ( !IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( Config::getInstance().get( "dataPath" ).toString() + "/JSON/profs.json", sd ) )
+		if ( IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/profs.json", sd ) )
 		{
 			IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd );
 		}
@@ -510,7 +516,7 @@ bool GnomeManager::gnomeCanReach( unsigned int gnomeID, Position pos )
 {
 	if ( m_gnomesByID.contains( gnomeID ) )
 	{
-		return Global::w().regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
+		return g->m_world->regionMap().checkConnectedRegions( m_gnomesByID[gnomeID]->getPos(), pos );
 	}
 	return false;
 }
@@ -529,7 +535,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					// remove core
 					if ( a->uninstallFlag() )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getUninstallJob( a );
 							m_jobs.insert( job->id(), job );
@@ -538,7 +544,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					}
 					else if ( a->getRefuelFlag() && a->getFuelLevel() <= 0 )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getRefuelJob( a );
 							m_jobs.insert( job->id(), job );
@@ -551,7 +557,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					// no core but core type is set, install core
 					if ( !a->coreType().isEmpty() )
 					{
-						if ( Global::gm().gnomeCanReach( gnomeID, a->getPos() ) )
+						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
 							Job* job = getInstallJob( a );
 							m_jobs.insert( job->id(), job );
@@ -640,7 +646,7 @@ Job* GnomeManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool GnomeManager::hasJobID( unsigned int jobID )
+bool GnomeManager::hasJobID( unsigned int jobID ) const
 {
 	return m_jobs.contains( jobID );
 }

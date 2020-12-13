@@ -22,6 +22,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/pathfinder.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
 #include "../game/object.h"
 #include "../game/world.h"
@@ -35,13 +36,8 @@
 #include <QJsonDocument>
 #include <QPainter>
 
-int Util::ticksPerMinute = 1;
-int Util::minutesPerHour = 1;
-int Util::hoursPerDay    = 1;
-int Util::ticksPerDay    = 1;
-int Util::daysPerSeason  = 1;
-
-Util::Util()
+Util::Util( Game* game ) :
+	g( game )
 {
 }
 
@@ -54,7 +50,7 @@ QStringList Util::seedItems( QString plantType, QString material )
 	QStringList out;
 
 	QList<QString> ids = DB::ids( "Plants", "Type", plantType );
-	for ( auto id : ids )
+	for ( const auto& id : ids )
 	{
 		QString mat = DB::select( "Material", "Plants", id ).toString();
 		if ( mat == material || material == "any" )
@@ -125,7 +121,7 @@ int Util::requiredToolLevel( QString jobID, Position pos )
 int Util::requiredToolLevelByWallMaterial( Position pos )
 {
 	int level                   = 0;
-	unsigned short wallMaterial = Global::w().getTile( pos ).wallMaterial;
+	unsigned short wallMaterial = g->w()->getTile( pos ).wallMaterial;
 	QString wallMatSID          = DBH::materialSID( wallMaterial );
 
 	QString wallMatType = Util::materialType( wallMatSID );
@@ -143,7 +139,7 @@ int Util::requiredToolLevelByWallMaterial( Position pos )
 int Util::requiredToolLevelByFloorMaterial( Position pos )
 {
 	int level                    = 0;
-	unsigned short floorMaterial = Global::w().getTile( pos ).floorMaterial;
+	unsigned short floorMaterial = g->w()->getTile( pos ).floorMaterial;
 
 	QString floorMatSID = DBH::materialSID( floorMaterial );
 
@@ -163,7 +159,7 @@ int Util::requiredToolLevelByFloorMaterial( Position pos )
 int Util::toolLevel( unsigned int itemUID )
 {
 	int level        = 0;
-	QString material = Global::inv().materialSID( itemUID );
+	QString material = g->inv()->materialSID( itemUID );
 
 	QString materialType = Util::materialType( material );
 
@@ -197,21 +193,19 @@ int Util::toolLevel( QString materialSID )
 
 QSet<QString> Util::itemsAllowedInContainer( unsigned int containerID )
 {
-	Inventory& inv = Global::inv();
-	return Global::allowedInContainer.value( inv.itemSID( containerID ) );
+	return Global::allowedInContainer.value( g->inv()->itemSID( containerID ) );
 }
 
 bool Util::itemAllowedInContainer( unsigned int itemID, unsigned int containerID )
 {
-	Inventory& inv = Global::inv();
-	return Global::allowedInContainer.value( inv.itemSID( containerID ) ).contains( inv.itemSID( itemID ) );
+	return Global::allowedInContainer.value( g->inv()->itemSID( containerID ) ).contains( g->inv()->itemSID( itemID ) );
 }
 
 void Util::initAllowedInContainer()
 {
 	Global::allowedInContainer.clear();
 
-	for ( auto itemSID : DB::ids( "Items" ) )
+	for ( const auto& itemSID : DB::ids( "Items" ) )
 	{
 		auto containerSID = DB::select( "AllowedContainers", "Items", itemSID ).toString();
 
@@ -301,7 +295,7 @@ QString Util::mapJoin( QMap<int, int> data, QString seperator )
 	QString out;
 	if ( !data.isEmpty() )
 	{
-		for ( auto&& rp : data.toStdMap() )
+		for ( const auto& rp : data.toStdMap() )
 		{
 			out += QString::number( rp.first );
 			out += seperator;
@@ -493,31 +487,31 @@ unsigned int Util::createRawMaterialItem( Position pos, unsigned int materialID 
 
 	if ( type == "Soil" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return g->inv()->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Sand" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return g->inv()->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Clay" )
 	{
-		return Global::inv().createItem( pos, "RawSoil", materialSID );
+		return g->inv()->createItem( pos, "RawSoil", materialSID );
 	}
 	else if ( type == "Stone" )
 	{
-		return Global::inv().createItem( pos, "RawStone", materialSID );
+		return g->inv()->createItem( pos, "RawStone", materialSID );
 	}
 	else if ( type == "Coal" )
 	{
-		return Global::inv().createItem( pos, "RawCoal", materialSID );
+		return g->inv()->createItem( pos, "RawCoal", materialSID );
 	}
 	else if ( type == "Metal" )
 	{
-		return Global::inv().createItem( pos, "RawOre", materialSID );
+		return g->inv()->createItem( pos, "RawOre", materialSID );
 	}
 	else if ( type == "Gem" )
 	{
-		return Global::inv().createItem( pos, "RawGem", materialSID );
+		return g->inv()->createItem( pos, "RawGem", materialSID );
 	}
 	return 0;
 }
@@ -562,11 +556,11 @@ Position Util::reachableBorderPos( Position fromPos, bool& found )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	g->w()->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( g->w()->fluidLevel( pos ) == 0 )
 	{
-		if ( PathFinder::getInstance().checkConnectedRegions( pos, fromPos ) )
+		if ( g->pf()->checkConnectedRegions( pos, fromPos ) )
 		{
 			found = true;
 			return pos;
@@ -598,9 +592,9 @@ Position Util::borderPos( bool& found )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	g->w()->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( g->w()->fluidLevel( pos ) == 0 )
 	{
 		found = true;
 		return pos;
@@ -660,7 +654,7 @@ QString Util::randomMetalSliver( QString sourceMaterial )
 
 	QStringList metals = { "Copper", "Tin", "Malachite", "Iron", "Lead", "Silver", "Gold", "Platinum" };
 	int sum            = 0;
-	for ( auto metal : metals )
+	for ( const auto& metal : metals )
 	{
 		sum += row.value( metal ).toInt();
 		if ( ra < sum )
@@ -727,7 +721,7 @@ QVariantList Util::uintList2Variant( const QList<unsigned int>& list )
 QList<unsigned int> Util::variantList2UInt( const QVariantList& vlist )
 {
 	QList<unsigned int> out;
-	for ( auto vui : vlist )
+	for ( const auto& vui : vlist )
 	{
 		out.append( vui.toUInt() );
 	}
@@ -737,7 +731,7 @@ QList<unsigned int> Util::variantList2UInt( const QVariantList& vlist )
 QVariantList Util::positionList2Variant( const QList<Position>& list )
 {
 	QVariantList out;
-	for ( auto pos : list )
+	for ( const auto& pos : list )
 	{
 		out.append( pos.toString() );
 	}
@@ -747,7 +741,7 @@ QVariantList Util::positionList2Variant( const QList<Position>& list )
 QList<Position> Util::variantList2Position( const QVariantList& vlist )
 {
 	QList<Position> out;
-	for ( auto vpos : vlist )
+	for ( const auto& vpos : vlist )
 	{
 		out.append( Position( vpos ) );
 	}
@@ -757,7 +751,7 @@ QList<Position> Util::variantList2Position( const QVariantList& vlist )
 QVariantList Util::pairList2Variant( const QList<QPair<QString, QString>>& plist )
 {
 	QVariantList out;
-	for ( auto pair : plist )
+	for ( const auto& pair : plist )
 	{
 		out.append( pair.first );
 		out.append( pair.second );
@@ -820,7 +814,7 @@ QString Util::addDyeMaterial( QString sourceMaterial, QString dyeMaterial )
 void Util::debugVM( QVariantMap vm, QString name )
 {
 	qDebug() << name;
-	for ( auto key : vm.keys() )
+	for ( const auto& key : vm.keys() )
 	{
 		qDebug() << key << ":" << vm.value( key ).toString();
 	}
@@ -832,7 +826,7 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 
 	if ( !iconString.isEmpty() )
 	{
-		const auto path = Config::getInstance().get( "dataPath" ).toString() + "/xaml/buttons/" + iconString;
+		const auto path = Global::cfg->get( "dataPath" ).toString() + "/xaml/buttons/" + iconString;
 		QPixmap pm( path );
 		assert( pm.width() > 0 );
 		return pm;
@@ -840,8 +834,6 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 	QString season = GameState::seasonString;
 
 	auto coms = DB::selectRows( "Workshops_Components", workshopID );
-
-	SpriteFactory& sf = Global::sf();
 
 	QPixmap pm( 100, 100 );
 	pm.fill( QColor( 0, 0, 0, 0 ) );
@@ -880,8 +872,6 @@ QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
 
 	QString season = GameState::seasonString;
 
-	SpriteFactory& sf = Global::sf();
-
 	QPixmap pm( 100, 100 );
 	pm.fill( QColor( 0, 0, 0, 0 ) );
 
@@ -913,8 +903,6 @@ QPixmap Util::createItemImage2( const QString& itemID, const QStringList& mats )
 	
 	QString season = GameState::seasonString;
 
-	SpriteFactory& sf = Global::sf();
-
 	QPixmap pm( 32, 32 );
 	pm.fill( QColor( 0, 0, 0, 0 ) );
 
@@ -922,7 +910,7 @@ QPixmap Util::createItemImage2( const QString& itemID, const QStringList& mats )
 	int x0 = 0;
 	int y0 = 0;
 
-	Sprite* sprite = sf.createSprite( spriteID, mats ) ;
+	Sprite* sprite = g->sf()->createSprite( spriteID, mats ) ;
 	if ( sprite )
 	{
 		//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
@@ -936,8 +924,6 @@ QPixmap Util::createConstructionImage( const QString& constructionID, const QStr
 	auto sprites = DB::selectRows( "Constructions_Sprites", constructionID );
 
 	QString season = GameState::seasonString;
-
-	SpriteFactory& sf = Global::sf();
 
 	QPixmap pm( 100, 100 );
 	pm.fill( QColor( 0, 0, 0, 0 ) );
@@ -999,7 +985,7 @@ Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned
 
 			if ( !cm.value( "SpriteID" ).toString().isEmpty() )
 			{
-				return Global::sf().createSprite( cm.value( "SpriteID" ).toString(), materialIDs );
+				return g->sf()->createSprite( cm.value( "SpriteID" ).toString(), materialIDs );
 			}
 			else
 			{
@@ -1023,16 +1009,16 @@ QStringList Util::possibleMaterials( QString allowedMaterials, QString allowedMa
 
 	if ( !allowedMaterials.isEmpty() )
 	{
-		for ( auto mat : allowedMaterials.split( "|" ) )
+		for ( const auto& mat : allowedMaterials.split( "|" ) )
 		{
 			out.append( mat );
 		}
 	}
 	if ( !allowedMaterialTypes.isEmpty() )
 	{
-		for ( auto type : allowedMaterialTypes.split( "|" ) )
+		for ( const auto& type : allowedMaterialTypes.split( "|" ) )
 		{
-			for ( auto mat : DB::ids( "Materials", "Type", type ) )
+			for ( const auto& mat : DB::ids( "Materials", "Type", type ) )
 			{
 				out.append( mat );
 			}

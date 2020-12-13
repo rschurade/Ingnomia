@@ -25,17 +25,13 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-PathFinder::PathFinder(QObject* parent) :
+PathFinder::PathFinder( World* world, QObject* parent) :
+	m_world( world ),
 	QObject(parent)
 {
 }
 
 PathFinder::~PathFinder()
-{
-	m_jobs.clear();
-}
-
-void PathFinder::init()
 {
 	m_jobs.clear();
 }
@@ -64,7 +60,7 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 	else
 	{
 		// Fast synchronous checks
-		if ( !Global::w().isWalkable( goal ) )
+		if ( !m_world->isWalkableGnome( goal ) )
 		{
 			return PathFinderResult::NoConnection;
 		}
@@ -159,7 +155,7 @@ void PathFinder::findPaths()
 		}
 		tasks.emplace_back(std::async(
 			std::launch::async,
-			PathFinderThread( start, std::move( goals ), ignoreNoPass, std::bind( &PathFinder::onResult, this, _1, _2, _3, _4 ) )
+			PathFinderThread( m_world, start, std::move( goals ), ignoreNoPass, std::bind( &PathFinder::onResult, this, _1, _2, _3, _4 ) )
 		));
 	}
 	for ( auto& task : tasks )
@@ -214,7 +210,7 @@ std::vector<Position> PathFinder::getNaivePath( Position& start, Position& goal 
 	while ( current != start )
 	{
 		bool changed = false;
-		for ( auto neigh : Global::w().connectedNeighbors( current ) )
+		for ( auto neigh : m_world->connectedNeighbors( current ) )
 		{
 			if ( ( neigh.z == current.z ) && ( neigh.distSquare( start ) < current.distSquare( start ) ) )
 			{
@@ -235,5 +231,5 @@ std::vector<Position> PathFinder::getNaivePath( Position& start, Position& goal 
 
 bool PathFinder::checkConnectedRegions( const Position start, const Position goal )
 {
-	return Global::w().regionMap().checkConnectedRegions( start, goal );
+	return m_world->regionMap().checkConnectedRegions( start, goal );
 }

@@ -17,9 +17,12 @@
 */
 #pragma once
 
+
 #include "../base/position.h"
 #include "../base/tile.h"
 #include "../game/job.h"
+
+class Game;
 
 enum MechanismType
 {
@@ -80,15 +83,14 @@ struct MechanismNetwork
 	QSet<unsigned int> consumers;
 };
 
-class MechanismManager
+class MechanismManager : public QObject
 {
-
+	Q_OBJECT
+	Q_DISABLE_COPY_MOVE( MechanismManager )
 public:
-	MechanismManager();
+	MechanismManager() = delete;
+	MechanismManager( Game* parent );
 	~MechanismManager();
-
-	void reset();
-	void init();
 
 	QHash<unsigned int, MechanismData>& mechanisms()
 	{
@@ -103,7 +105,7 @@ public:
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	bool hasMechanism( Position pos );
 	bool hasGearBox( Position pos );
@@ -138,7 +140,7 @@ public:
 	void updateCreaturesAtPos( Position pos, int numCreatures );
 
 private:
-	QMutex m_mutex;
+	QPointer<Game> g;
 
 	Job* getSwitchJob( MechanismData& md );
 	Job* getInvertJob( MechanismData& md );

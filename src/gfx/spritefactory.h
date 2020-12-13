@@ -145,11 +145,13 @@ private:
 
 	QMutex m_mutex;
 
+	bool init();
+
 public:
 	SpriteFactory();
 	~SpriteFactory();
 
-	bool init();
+	
 
 	Sprite* createSprite( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
 	Sprite* createAnimalSprite( const QString spriteSID, const QMap<int, int>& random = QMap<int, int>() );

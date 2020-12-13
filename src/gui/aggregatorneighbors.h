@@ -58,7 +58,11 @@ public:
 	AggregatorNeighbors( QObject* parent = nullptr );
 	~AggregatorNeighbors();
 
+	void init( Game* game );
+
 private:
+	QPointer<Game> g;
+
 	QList<GuiNeighborInfo> m_neighborsInfo;
 	QList<GuiAvailableGnome> m_availableGnomes;
 
@@ -67,9 +71,11 @@ public slots:
 	void onRequestMissions();
 	void onRequestAvailableGnomes();
 	void onStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
-	
+	void onUpdateMission( const Mission& mission );
+
 signals:
 	void signalNeighborsUpdate( const QList<GuiNeighborInfo>& infos );
 	void signalMissions( const QList<Mission>& missions );
 	void signalAvailableGnomes( const QList<GuiAvailableGnome>& gnomes );
+	void signalUpdateMission( const Mission& mission );
 };

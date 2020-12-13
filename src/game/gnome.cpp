@@ -16,6 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "gnome.h"
+#include "../game/gnomemanager.h"
+#include "../game/game.h"
 
 #include "../base/behaviortree/bt_tree.h"
 #include "../base/config.h"
@@ -23,7 +25,6 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/militarymanager.h"
 #include "../game/plant.h"
@@ -41,8 +42,8 @@
 #include <QPainter>
 #include <QThreadPool>
 
-Gnome::Gnome( Position& pos, QString name, Gender gender ) :
-	CanWork( pos, name, gender, "Gnome" )
+Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
+	CanWork( pos, name, gender, "Gnome", game )
 {
 	m_ignoreNoPass = false;
 
@@ -74,8 +75,8 @@ Gnome::Gnome( Position& pos, QString name, Gender gender ) :
 	log( GameState::currentYearAndSeason );
 }
 
-Gnome::Gnome( QVariantMap& in ) :
-	CanWork( in )
+Gnome::Gnome( QVariantMap& in, Game* game ) :
+	CanWork( in, game )
 {
 	m_skillActive     = in.value( "SkillActive" ).toMap();
 	m_skillPriorities = in.value( "SkillPriorities" ).toStringList();
@@ -123,15 +124,15 @@ Gnome::Gnome( QVariantMap& in ) :
 	// TODO update carried counts from inventory
 	for ( auto item : m_inventoryItems )
 	{
-		if ( Global::inv().itemSID( item ) == "Bandage" )
+		if ( g->inv()->itemSID( item ) == "Bandage" )
 		{
 			++m_carriedBandages;
 		}
-		else if ( Global::inv().nutritionalValue( item ) > 0 )
+		else if ( g->inv()->nutritionalValue( item ) > 0 )
 		{
 			++m_carriedFood;
 		}
-		else if ( Global::inv().drinkValue( item ) > 0 )
+		else if ( g->inv()->drinkValue( item ) > 0 )
 		{
 			++m_carriedDrinks;
 		}
@@ -163,7 +164,7 @@ void Gnome::serialize( QVariantMap& out )
 	
 
 	QVariantList vSchedule;
-	for( auto sa : m_schedule )
+	for( const auto& sa : m_schedule )
 	{
 		switch ( sa )
 		{
@@ -193,7 +194,7 @@ Gnome::~Gnome()
 
 void Gnome::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 
 	updateSprite();
 	initTaskMap();
@@ -240,7 +241,7 @@ void Gnome::updateSprite()
 	m_spriteDef     = createSpriteDef( "Gnome", false );
 	m_spriteDefBack = createSpriteDef( "GnomeBack", true );
 
-	Global::sf().setCreatureSprite( m_id, m_spriteDef, m_spriteDefBack, isDead() );
+	g->sf()->setCreatureSprite( m_id, m_spriteDef, m_spriteDefBack, isDead() );
 
 	m_renderParamsChanged = true;
 }
@@ -258,7 +259,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 	Uniform* uniform = nullptr;
 	if ( m_roleID )
 	{
-		uniform = Global::mil().uniform( m_roleID );
+		uniform = g->mil()->uniform( m_roleID );
 	}
 
 	QVariantList def;
@@ -328,7 +329,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.head.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.head.itemID );
+						bs += g->inv()->itemGroup( m_equipment.head.itemID );
 						bs += "HeadArmor";
 						hairConcealed = true;
 						pm.insert( "Material", m_equipment.head.material );
@@ -338,7 +339,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.chest.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.chest.itemID );
+						bs += g->inv()->itemGroup( m_equipment.chest.itemID );
 						bs += "ChestArmor";
 						pm.insert( "Material", m_equipment.chest.material );
 					}
@@ -347,7 +348,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
+						bs += g->inv()->itemGroup( m_equipment.arm.itemID );
 						bs += "LeftArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -356,7 +357,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.arm.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.arm.itemID );
+						bs += g->inv()->itemGroup( m_equipment.arm.itemID );
 						bs += "RightArmArmor";
 						pm.insert( "Material", m_equipment.arm.material );
 					}
@@ -365,7 +366,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
+						bs += g->inv()->itemGroup( m_equipment.hand.itemID );
 						bs += "LeftHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -374,7 +375,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.hand.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.hand.itemID );
+						bs += g->inv()->itemGroup( m_equipment.hand.itemID );
 						bs += "RightHandArmor";
 						pm.insert( "Material", m_equipment.hand.material );
 					}
@@ -383,7 +384,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
+						bs += g->inv()->itemGroup( m_equipment.foot.itemID );
 						bs += "LeftFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -392,7 +393,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 					if ( m_equipment.foot.itemID )
 					{
 						bs = "Gnome";
-						bs += Global::inv().itemGroup( m_equipment.foot.itemID );
+						bs += g->inv()->itemGroup( m_equipment.foot.itemID );
 						bs += "RightFootArmor";
 						pm.insert( "Material", m_equipment.foot.material );
 					}
@@ -681,7 +682,7 @@ void Gnome::selectProfession( QString profession )
 
 		clearAllSkills();
 
-		m_skillPriorities = Global::gm().professionSkills( profession );
+		m_skillPriorities = g->gm()->professionSkills( profession );
 
 		for ( auto skill : m_skillPriorities )
 		{
@@ -708,7 +709,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::NOFLOOR;
 	}
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( g->w()->fluidLevel( m_position ) );
 	if ( m_anatomy.statusChanged() )
 	{
 		auto status = m_anatomy.status();
@@ -722,8 +723,8 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 
 	if ( isDead() )
 	{
-		qDebug() << m_name << " expires " << GameState::tick + Util::ticksPerDay;
-		m_expires    = GameState::tick + Util::ticksPerDay * 2;
+		qDebug() << m_name << " expires " << GameState::tick + Global::util->ticksPerDay;
+		m_expires    = GameState::tick + Global::util->ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
 	}
@@ -742,10 +743,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().itemSID( item ) == "Bandage" )
+				if ( g->inv()->itemSID( item ) == "Bandage" )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					g->inv()->setInJob( item, 0 );
+					g->inv()->putDownItem( item, m_position );
 					--m_carriedBandages;
 				}
 				else
@@ -768,10 +769,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().nutritionalValue( item ) > 0 )
+				if ( g->inv()->nutritionalValue( item ) > 0 )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					g->inv()->setInJob( item, 0 );
+					g->inv()->putDownItem( item, m_position );
 					--m_carriedFood;
 				}
 				else
@@ -794,10 +795,10 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			if ( m_inventoryItems.size() > 0 )
 			{
 				auto item = m_inventoryItems.takeFirst();
-				if ( Global::inv().drinkValue( item ) > 0 )
+				if ( g->inv()->drinkValue( item ) > 0 )
 				{
-					Global::inv().setInJob( item, 0 );
-					Global::inv().putDownItem( item, m_position );
+					g->inv()->setInJob( item, 0 );
+					g->inv()->putDownItem( item, m_position );
 					--m_carriedDrinks;
 				}
 				else
@@ -825,7 +826,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	if ( elapsed > 100 )
 	{
 		qDebug() << m_name << "just needed" << elapsed << "ms for bt tick";
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 	}
 #else
 	if ( m_behaviorTree )
@@ -870,7 +871,7 @@ void Gnome::die()
 {
 	Creature::die();
 	cleanUpJob( false );
-	for ( Workshop* w : Global::wsm().workshops() )
+	for ( Workshop* w : g->wsm()->workshops() )
 	{
 		if ( w->assignedGnome() == id() )
 		{
@@ -881,7 +882,7 @@ void Gnome::die()
 
 bool Gnome::checkFloor()
 {
-	FloorType ft = Global::w().floorType( m_position );
+	FloorType ft = g->w()->floorType( m_position );
 	if ( ft == FloorType::FT_NOFLOOR )
 	{
 		if ( m_job )
@@ -891,7 +892,7 @@ bool Gnome::checkFloor()
 
 		Position oneDown( m_position.x, m_position.y, m_position.z - 1 );
 		forceMove( oneDown );
-		Global::w().discover( oneDown );
+		g->w()->discover( oneDown );
 		return true;
 	}
 	return false;

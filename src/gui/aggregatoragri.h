@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+class Game;
+
 struct GuiAnimal
 {
 	QString name;
@@ -162,10 +164,11 @@ public:
 	AggregatorAgri( QObject* parent = nullptr );
 	~AggregatorAgri();
 
-	void init();
+	void init( Game* game );
 
 private:
-	bool m_init = false;
+	QPointer<Game> g;
+
 	bool m_AgriDirty             = false;
 	unsigned int m_currentTileID = 0;
 	AgriType m_currentType       = AgriType::Farm;

@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+class Game;
 
 struct GuiSkillInfo
 {
@@ -73,7 +74,11 @@ class AggregatorPopulation : public QObject
 public:
 	AggregatorPopulation( QObject* parent = nullptr );
 
+	void init( Game* game );
+
 private:
+	QPointer<Game> g;
+
 	GuiPopulationInfo m_populationInfo;
 
 	GuiScheduleInfo m_scheduleInfo;

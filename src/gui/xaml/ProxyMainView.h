@@ -32,6 +32,15 @@ public:
 	void setParent( IngnomiaGUI::ViewModel* parent );
 
 	void requestLoadScreenUpdate();
+	void requestUIScale();
+
+	void startNewGame();
+	void continueLastGame();
+	void loadGame( QString param );
+	void saveGame();
+	void setShowMainMenu( bool value );
+
+	void endGame();
 
 private:
 	IngnomiaGUI::ViewModel* m_parent = nullptr;
@@ -42,6 +51,17 @@ private slots:
 
 	void onUIScale( float value );
 
+	void onResume();
+	void onLoadGameDone( bool value );
+
 signals:
 	void signalRequestLoadScreenUpdate();
+	void signalRequestUIScale();
+
+	void signalStartNewGame();
+	void signalContinueLastGame();
+	void signalLoadGame( QString param );
+	void signalSaveGame();
+	void signalSetShowMainMenu( bool value );
+	void signalEndGame();
 };

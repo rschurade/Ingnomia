@@ -23,6 +23,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/position.h"
+#include "../game/game.h"
 #include "../game/creaturefactory.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
@@ -38,7 +39,9 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-WorldGenerator::WorldGenerator( QObject* parent ) :
+WorldGenerator::WorldGenerator( NewGameSettings* newGameSettings, Game* parent ) :
+	g( parent ),
+	ngs( newGameSettings ),
 	QObject(parent)
 {
 }
@@ -47,24 +50,23 @@ WorldGenerator::~WorldGenerator()
 {
 }
 
-void WorldGenerator::generate()
+World* WorldGenerator::generateTopology()
 {
-	m_dimX       = NewGameSettings::getInstance().worldSize();
-	m_dimY       = NewGameSettings::getInstance().worldSize();
-	m_dimZ       = NewGameSettings::getInstance().zLevels();
-	Global::dimX = NewGameSettings::getInstance().worldSize();
-	Global::dimY = NewGameSettings::getInstance().worldSize();
-	Global::dimZ = NewGameSettings::getInstance().zLevels();
+	m_dimX       = ngs->worldSize();
+	m_dimY       = ngs->worldSize();
+	m_dimZ       = ngs->zLevels();
+	Global::dimX = ngs->worldSize();
+	Global::dimY = ngs->worldSize();
+	Global::dimZ = ngs->zLevels();
+
+	w = new World( m_dimX, m_dimY, m_dimZ, g );
 
 	qDebug() << "creating world with size" << m_dimX << m_dimY << m_dimZ;
 
-	m_groundLevel = NewGameSettings::getInstance().ground();
-	m_fow         = Config::getInstance().get( "fow" ).toBool();
+	m_groundLevel = ngs->ground();
+	m_fow         = Global::cfg->get( "fow" ).toBool();
 
-	Global::w().initLite();
-	CreatureFactory::getInstance().init();
-
-	auto& world = Global::w().world();
+	auto& world = w->world();
 	world.resize( m_dimX * m_dimY * m_dimZ, Tile() );
 
 	for ( auto& tile : world )
@@ -75,7 +77,7 @@ void WorldGenerator::generate()
 
 	m_mushroomLevel = m_dimZ - 70;
 
-	m_seed = NewGameSettings::getInstance().seed().toInt();
+	m_seed = ngs->seed().toInt();
 	m_random.SetSeed( m_seed );
 	m_random.SetFrequency( (FN_DECIMAL)0.02 );
 	m_random.SetFractalOctaves( 1 );
@@ -92,12 +94,12 @@ void WorldGenerator::generate()
 	emit signalStatus( "Set stone layers." );
 	setStoneLayers();
 
-	if ( NewGameSettings::getInstance().rivers() > 0 )
+	if ( ngs->rivers() > 0 )
 	{
 		createRivers();
 	}
 
-	if ( NewGameSettings::getInstance().oceanSize() > 0 )
+	if ( ngs->oceanSize() > 0 )
 	{
 		emit signalStatus( "Create ocean front." );
 		createOceanFront();
@@ -117,17 +119,22 @@ void WorldGenerator::generate()
 	emit signalStatus( "Create ramps." );
 	createRamps();
 
-	if ( !NewGameSettings::getInstance().isPeaceful() )
+	if ( !ngs->isPeaceful() )
 	{
 		//emit signalStatus( "Place Lairs." );
 		//placeLairs();
 	}
 
 	emit signalStatus( "Init world." );
-	Global::w().init();
+	w->init();
 
 	discoverAll();
+	qDebug() << "world generator - topology - done";
+	return w;
+}
 
+void WorldGenerator::addLife()
+{
 	// add plants and trees
 	emit signalStatus( "Add plants and trees." );
 	addPlantsAndTrees();
@@ -140,9 +147,11 @@ void WorldGenerator::generate()
 
 	int maxVeinLength = m_dimX / 2;
 
-	GameState::kingdomName = NewGameSettings::getInstance().kingdomName();
+	GameState::kingdomName = ngs->kingdomName();
 
-	qDebug() << "world generator done";
+	qDebug() << "world generator - life - done";
+
+	w->regionMap().initRegions();
 }
 
 void WorldGenerator::initMateralVectors()
@@ -230,7 +239,7 @@ void WorldGenerator::setMetalsAndGems()
 	}
 
 	int maxVeinLength = m_dimX / 4;
-	auto& world       = Global::w().world();
+	auto& world       = w->world();
 
 	for ( int z = 0; z < m_groundLevel; ++z )
 	{
@@ -247,7 +256,7 @@ void WorldGenerator::setMetalsAndGems()
 					int rowid = DBH::materialUID( embedded );
 					for ( auto pos : pw )
 					{
-						unsigned short spriteUID = Global::sf().createSprite( embeddeds[embedded].wall, { embedded } )->uID;
+						unsigned short spriteUID = g->sf()->createSprite( embeddeds[embedded].wall, { embedded } )->uID;
 
 						setEmbedded3x3( world, pos, rowid, spriteUID );
 						//clear3x3( world, pos );
@@ -264,8 +273,7 @@ void WorldGenerator::setWater()
 // set sunlight and grass
 void WorldGenerator::initSunLight()
 {
-	auto& world       = Global::w().world();
-	SpriteFactory& sf = Global::sf();
+	auto& world       = w->world();
 
 	int sandRowid = DBH::materialUID( "Sand" );
 	int dirtRowid = DBH::materialUID( "Dirt" );
@@ -275,7 +283,7 @@ void WorldGenerator::initSunLight()
 		for ( int x = 1; x < m_dimX - 1; ++x )
 		{
 			Position pos( x, y, m_dimZ - 1 );
-			Global::w().getFloorLevelBelow( pos, true );
+			w->getFloorLevelBelow( pos, true );
 
 			Tile& tile = world[x + y * m_dimX + pos.z * m_dimX * m_dimY];
 
@@ -285,7 +293,7 @@ void WorldGenerator::initSunLight()
 				tile.wallMaterial  = sandRowid;
 				tile.flags += TileFlag::TF_WALKABLE;
 				tile.flags += TileFlag::TF_SUNLIGHT;
-				tile.floorSpriteUID = Global::sf().createSprite( "RoughFloor", { "Sand" } )->uID;
+				tile.floorSpriteUID = g->sf()->createSprite( "RoughFloor", { "Sand" } )->uID;
 			}
 			else
 			{
@@ -298,12 +306,12 @@ void WorldGenerator::initSunLight()
 				//tile.flags |= TileFlag::TF_GRASS;
 				tile.flags += TileFlag::TF_SUNLIGHT;
 
-				Global::w().createGrass( pos );
+				w->createGrass( pos );
 			}
 		}
 	}
 
-	Global::w().initGrassUpdateList();
+	w->initGrassUpdateList();
 }
 // add plants and trees
 void WorldGenerator::addPlantsAndTrees()
@@ -329,7 +337,7 @@ void WorldGenerator::addPlantsAndTrees()
 
 	for ( auto tree : allTrees )
 	{
-		if ( NewGameSettings::getInstance().isChecked( tree ) )
+		if ( ngs->isChecked( tree ) )
 		{
 			trees.push_back( tree );
 		}
@@ -339,7 +347,7 @@ void WorldGenerator::addPlantsAndTrees()
 	QStringList plants;
 	for ( auto plant : allplants )
 	{
-		if ( DB::select( "AllowInWild", "Plants", plant ).toBool() && NewGameSettings::getInstance().isChecked( plant ) )
+		if ( DB::select( "AllowInWild", "Plants", plant ).toBool() && ngs->isChecked( plant ) )
 		{
 			plants.push_back( plant );
 		}
@@ -348,9 +356,9 @@ void WorldGenerator::addPlantsAndTrees()
 	int x = m_dimX / 2;
 	int y = m_dimY / 2;
 
-	int treeDensity      = NewGameSettings::getInstance().treeDensity();
-	int plantDensity     = NewGameSettings::getInstance().plantDensity();
-	int startingZoneSize = NewGameSettings::getInstance().startZone();
+	int treeDensity      = ngs->treeDensity();
+	int plantDensity     = ngs->plantDensity();
+	int startingZoneSize = ngs->startZone();
 
 	bool shroomRejected = false;
 
@@ -362,15 +370,15 @@ void WorldGenerator::addPlantsAndTrees()
 			for ( int y_ = 3; y_ < m_dimY - 4; ++y_ )
 			{
 				Position pos( x_, y_, m_mushroomLevel + 5 );
-				Global::w().getFloorLevelBelow( pos, false );
+				w->getFloorLevelBelow( pos, false );
 
 				int random = rand();
 				if ( random % treeDensity == 0 || shroomRejected )
 				{
 					int ra = rand() % largeShrooms.size();
-					if ( Global::w().getTile( pos ).wallType == WallType::WT_NOWALL && Global::w().noShroom( pos, 2, 2 ) && !( Global::w().getTileFlag( pos ) & TileFlag::TF_WATER ) )
+					if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noShroom( pos, 2, 2 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 					{
-						Global::w().plantMushroom( pos, largeShrooms[ra], true );
+						w->plantMushroom( pos, largeShrooms[ra], true );
 						shroomRejected = false;
 					}
 					else
@@ -385,15 +393,15 @@ void WorldGenerator::addPlantsAndTrees()
 			for ( int y_ = 3; y_ < m_dimY - 4; ++y_ )
 			{
 				Position pos( x_, y_, m_mushroomLevel + 5 );
-				Global::w().getFloorLevelBelow( pos, false );
+				w->getFloorLevelBelow( pos, false );
 
 				int random = rand();
 				if ( random % treeDensity == 0 || shroomRejected )
 				{
 					int ra = rand() % smallShrooms.size();
-					if ( Global::w().getTile( pos ).wallType == WallType::WT_NOWALL && Global::w().noShroom( pos, 2, 2 ) && !( Global::w().getTileFlag( pos ) & TileFlag::TF_WATER ) )
+					if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noShroom( pos, 2, 2 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 					{
-						Global::w().plantMushroom( pos, smallShrooms[ra], true );
+						w->plantMushroom( pos, smallShrooms[ra], true );
 						shroomRejected = false;
 					}
 					else
@@ -422,7 +430,7 @@ void WorldGenerator::addPlantsAndTrees()
 				}
 
 				Position pos( x_, y_, m_dimZ - 2 );
-				Global::w().getFloorLevelBelow( pos, false );
+				w->getFloorLevelBelow( pos, false );
 
 				int random = rand();
 				if ( random % treeDensity == 0 || treeRejected )
@@ -430,9 +438,9 @@ void WorldGenerator::addPlantsAndTrees()
 					if ( trees.size() )
 					{
 						int ra = rand() % trees.size();
-						if ( Global::w().getTile( pos ).wallType == WallType::WT_NOWALL && Global::w().noTree( pos, 2, 2 ) && !( Global::w().getTileFlag( pos ) & TileFlag::TF_WATER ) )
+						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noTree( pos, 2, 2 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 						{
-							Global::w().plantTree( pos, trees[ra], true );
+							w->plantTree( pos, trees[ra], true );
 							treeRejected = false;
 						}
 						else
@@ -457,7 +465,7 @@ void WorldGenerator::addPlantsAndTrees()
 				}
 
 				Position pos( x_, y_, m_dimZ - 2 );
-				Global::w().getFloorLevelBelow( pos, false );
+				w->getFloorLevelBelow( pos, false );
 
 				int random = rand();
 				if ( random % plantDensity == 0 )
@@ -465,10 +473,10 @@ void WorldGenerator::addPlantsAndTrees()
 					if ( plants.size() )
 					{
 						int ra = rand() % plants.size();
-						if ( Global::w().getTile( pos ).wallType == WallType::WT_NOWALL && Global::w().noTree( pos, 0, 0 ) && !( Global::w().getTileFlag( pos ) & TileFlag::TF_WATER ) )
+						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noTree( pos, 0, 0 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 						{
-							Plant plant( pos, plants[ra], true );
-							Global::w().plants().insert( plant.getPos().toInt(), plant );
+							Plant plant( pos, plants[ra], true, g );
+							w->plants().insert( plant.getPos().toInt(), plant );
 						}
 					}
 				}
@@ -479,14 +487,14 @@ void WorldGenerator::addPlantsAndTrees()
 // add animals
 void WorldGenerator::addAnimals()
 {
-	int numAnimals = NewGameSettings::getInstance().numWildAnimals();
+	int numAnimals = ngs->numWildAnimals();
 	QStringList keys;
 	QStringList waterKeys;
 	QStringList mushroomKeys;
 	auto ids = DB::ids( "Animals" );
 	for ( auto id : ids )
 	{
-		if ( NewGameSettings::getInstance().isChecked( id ) )
+		if ( ngs->isChecked( id ) )
 		{
 			if ( DB::select( "Aquatic", "Animals", id ).toBool() )
 			{
@@ -520,7 +528,7 @@ void WorldGenerator::addAnimals()
 
 	int x_               = m_dimX / 2;
 	int y_               = m_dimY / 2;
-	int startingZoneSize = NewGameSettings::getInstance().startZone();
+	int startingZoneSize = ngs->startZone();
 
 	QMap<QString, int> countPerType;
 
@@ -535,15 +543,15 @@ void WorldGenerator::addAnimals()
 			int y = qMax( 2, ( rand() % m_dimY ) - 2 );
 
 			Position pos( x, y, m_dimZ - 2 );
-			Global::w().getFloorLevelBelow( pos, false );
+			w->getFloorLevelBelow( pos, false );
 
-			if ( !Global::w().isWalkable( pos ) || ( sqrt( ( x_ - x ) * ( x_ - x ) + ( y_ - y ) * ( y_ - y ) ) < startingZoneSize ) )
+			if ( !w->isWalkable( pos ) || ( sqrt( ( x_ - x ) * ( x_ - x ) + ( y_ - y ) * ( y_ - y ) ) < startingZoneSize ) )
 			{
 				continue;
 			}
 			else
 			{
-				if ( ( Global::w().getTileFlag( pos ) & TileFlag::TF_WATER ) || Global::w().fluidLevel( pos ) > 6 )
+				if ( ( w->getTileFlag( pos ) & TileFlag::TF_WATER ) || w->fluidLevel( pos ) > 6 )
 				{
 					if ( numWaterTypes > 0 )
 					{
@@ -551,9 +559,9 @@ void WorldGenerator::addAnimals()
 						QString type   = waterKeys[randomType];
 
 						int count = countPerType.value( type );
-						if ( count < NewGameSettings::getInstance().globalMaxPerType() && count < NewGameSettings::getInstance().maxAnimalsPerType( type ) )
+						if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
 						{
-							Global::cm().addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
+							g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
 							countPerType.insert( type, count + 1 );
 						}
 					}
@@ -565,9 +573,9 @@ void WorldGenerator::addAnimals()
 
 					int count = countPerType.value( type );
 
-					if ( count < NewGameSettings::getInstance().globalMaxPerType() && count < NewGameSettings::getInstance().maxAnimalsPerType( type ) )
+					if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
 					{
-						Global::cm().addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
+						g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
 						countPerType.insert( type, count + 1 );
 					}
 				}
@@ -582,17 +590,17 @@ void WorldGenerator::addAnimals()
 		for ( int y_ = 3; y_ < m_dimY - 3; ++y_ )
 		{
 			Position pos( x_, y_, m_mushroomLevel + 5 );
-			Global::w().getFloorLevelBelow( pos, false );
+			w->getFloorLevelBelow( pos, false );
 
 			int random = rand();
 			if ( random % 100 > 96 )
 			{
-				if ( Global::w().isWalkable( pos ) )
+				if ( w->isWalkable( pos ) )
 				{
 					int randomType = rand() % ( mushroomKeys.size() );
 					QString type   = mushroomKeys[randomType];
 
-					Global::cm().addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
+					g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
 				}
 			}
 		}
@@ -600,14 +608,14 @@ void WorldGenerator::addAnimals()
 	/*
 	for( int i = 0; i < 35000; ++i )
 	{
-		Global::cm().addAnimal( "Badger", Position( 20, 20, 100), Gender::MALE, true, false );
+		g->cm()->addAnimal( "Badger", Position( 20, 20, 100), Gender::MALE, true, false );
 	}
 	*/
 }
 // add gnomes and starting items
 void WorldGenerator::addGnomesAndStartingItems()
 {
-	int num = NewGameSettings::getInstance().numGnomes();
+	int num = ngs->numGnomes();
 
 	QVector<Position> offsets;
 	offsets.push_back( Position( 0, 0, 0 ) );
@@ -639,8 +647,8 @@ void WorldGenerator::addGnomesAndStartingItems()
 				for ( int i = 0; i < 9; ++i )
 				{
 					Position thisPos( checkPos + offsets[i % 9] );
-					Global::w().getFloorLevelBelow( thisPos, false );
-					Tile& tile = Global::w().getTile( thisPos );
+					w->getFloorLevelBelow( thisPos, false );
+					Tile& tile = w->getTile( thisPos );
 					if ( tile.fluidLevel > 0 )
 					{
 						found = false;
@@ -661,35 +669,33 @@ void WorldGenerator::addGnomesAndStartingItems()
 	}
 
 	pos.z = m_dimZ - 2;
-	//Global::w().getFloorLevelBelow( pos, false );
+	//w->getFloorLevelBelow( pos, false );
 	GameState::origin = pos;
 
 	for ( int i = 0; i < num; ++i )
 	{
 		Position thisPos( pos + offsets[i % 6] );
-		Global::w().getFloorLevelBelow( thisPos, false );
-		Global::gm().addGnome( thisPos );
+		w->getFloorLevelBelow( thisPos, false );
+		g->gm()->addGnome( thisPos );
 		GameState::viewLevel = thisPos.z + 5;
 	}
 
-	Inventory& inv = Global::inv();
-
 	int id   = 0;
-	auto sal = NewGameSettings::getInstance().startingAnimals();
+	auto sal = ngs->startingAnimals();
 
 	for ( auto sa : sal )
 	{
 		int amount = sa.amount;
 		Position thisPos( pos + offsets[( id % 3 ) + 6] );
-		Global::w().getFloorLevelBelow( thisPos, false );
+		w->getFloorLevelBelow( thisPos, false );
 
 		for ( int i = 0; i < amount; ++i )
 		{
-			Global::cm().addCreature( CreatureType::ANIMAL, sa.type, thisPos, sa.gender == "Male" ? Gender::MALE : Gender::FEMALE, true, true );
+			g->cm()->addCreature( CreatureType::ANIMAL, sa.type, thisPos, sa.gender == "Male" ? Gender::MALE : Gender::FEMALE, true, true );
 		}
 	}
 
-	auto sil = NewGameSettings::getInstance().startingItems();
+	auto sil = ngs->startingItems();
 	for ( auto si : sil )
 	{
 		if ( !si.mat2.isEmpty() ) //( type == "CombinedItem" )
@@ -697,7 +703,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 			//qDebug() << "create combined item " << entry.value( "ItemID" ).toString() << entry.value( "Components" );
 			int amount = si.amount;
 			Position thisPos( pos + offsets[( id % 3 ) + 6] );
-			Global::w().getFloorLevelBelow( thisPos, false );
+			w->getFloorLevelBelow( thisPos, false );
 
 			QVariantMap row = DB::selectRow( "Items", si.itemSID );
 
@@ -712,14 +718,14 @@ void WorldGenerator::addGnomesAndStartingItems()
 				{
 					QList<unsigned int> newComponents;
 
-					newComponents.append( inv.createItem( pos, itemSID1, si.mat1 ) );
-					newComponents.append( inv.createItem( pos, itemSID2, si.mat2 ) );
+					newComponents.append( g->inv()->createItem( pos, itemSID1, si.mat1 ) );
+					newComponents.append( g->inv()->createItem( pos, itemSID2, si.mat2 ) );
 
-					inv.createItem( thisPos, si.itemSID, newComponents );
+					g->inv()->createItem( thisPos, si.itemSID, newComponents );
 
 					for ( auto vItem : newComponents )
 					{
-						inv.destroyObject( vItem );
+						g->inv()->destroyObject( vItem );
 					}
 				}
 			}
@@ -731,7 +737,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 			int amount        = si.amount;
 			QString container = DB::select( "AllowedContainers", "Items", si.itemSID ).toString();
 			Position thisPos( pos + offsets[( id % 3 ) + 6] );
-			Global::w().getFloorLevelBelow( thisPos, false );
+			w->getFloorLevelBelow( thisPos, false );
 			/*
 			if( !container.isEmpty() )
 			{
@@ -739,13 +745,13 @@ void WorldGenerator::addGnomesAndStartingItems()
 
 				while( amount > 0 )
 				{
-					unsigned int containerUID = inv.createItem( thisPos, container, getRandomMaterial( container ) );
-					//unsigned int containerUID = inv.createItem( thisPos, container, "Birch" );
+					unsigned int containerUID = g->inv()->createItem( thisPos, container, getRandomMaterial( container ) );
+					//unsigned int containerUID = g->inv()->createItem( thisPos, container, "Birch" );
 					for( int i = 0; i < qMin( amount, capacity ); ++i )
 					{
 						
-						unsigned int itemInContainer = inv.createItem( thisPos, entry.value( "ItemID" ).toString(), entry.value( "MaterialID" ).toString() );
-						inv.putItemInContainer( itemInContainer, containerUID );
+						unsigned int itemInContainer = g->inv()->createItem( thisPos, entry.value( "ItemID" ).toString(), entry.value( "MaterialID" ).toString() );
+						g->inv()->putItemInContainer( itemInContainer, containerUID );
 					}
 					amount -= capacity;
 				}
@@ -754,13 +760,13 @@ void WorldGenerator::addGnomesAndStartingItems()
 			{
 				for ( int i = 0; i < amount; ++i )
 				{
-					inv.createItem( thisPos, si.itemSID, si.mat1 );
+					g->inv()->createItem( thisPos, si.itemSID, si.mat1 );
 				}
 			}
 		}
 		++id;
 	}
-	Global::ih().finishStart();
+	g->inv()->itemHistory()->finishStart();
 }
 
 QString WorldGenerator::getRandomMaterial( QString itemSID )
@@ -802,7 +808,7 @@ void WorldGenerator::createHeightMap( int dimX, int dimY )
 	m_heightMap.resize( dimX * dimY * 4 );
 	m_heightMap2.resize( dimX * dimY * 4 );
 
-	float flatness = NewGameSettings::getInstance().flatness();
+	float flatness = ngs->flatness();
 
 	for ( int x = 0; x < dimX * 2; ++x )
 	{
@@ -824,14 +830,12 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 
 	int z = zz + baseLevel;
 
-	auto& world = Global::w().world();
+	auto& world = w->world();
 
 	TerrainMaterial mat;
 
-	SpriteFactory& os = Global::sf();
-
 	unsigned short dirtMat = DBH::materialUID( "Dirt" );
-	auto dirtSprite        = Global::sf().createSprite( "MushroomGrassWithDetail", { "Grass", "None" } )->uID;
+	auto dirtSprite        = g->sf()->createSprite( "MushroomGrassWithDetail", { "Grass", "None" } )->uID;
 
 	for ( int y = 3; y < m_dimY - 3; ++y )
 	{
@@ -866,7 +870,7 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 					}
 					else
 					{
-						tile.floorSpriteUID                                                               = os.createSprite( mat.floor, { mat.key } )->uID;
+						tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor, { mat.key } )->uID;
 						mat.floorSprite                                                                   = tile.floorSpriteUID;
 						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
 					}
@@ -878,10 +882,10 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 					}
 					else
 					{
-						tile.wallSpriteUID                                                                = os.createSprite( mat.wall, { mat.key } )->uID;
+						tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall, { mat.key } )->uID;
 						mat.wallSprite                                                                    = tile.wallSpriteUID;
 						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
-						os.createSprite( mat.shortwall, { mat.key } )->uID;
+						g->sf()->createSprite( mat.shortwall, { mat.key } )->uID;
 					}
 					if ( m_fow )
 					{
@@ -895,7 +899,7 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 					{
 						tile.floorType      = FloorType::FT_SOLIDFLOOR;
 						tile.floorMaterial  = dirtMat;
-						tile.floorSpriteUID = Global::sf().createSprite( "MushroomGrassWithDetail", { "Grass", "None" } )->uID;
+						tile.floorSpriteUID = g->sf()->createSprite( "MushroomGrassWithDetail", { "Grass", "None" } )->uID;
 						tile.flags += TileFlag::TF_WALKABLE;
 						//tile.flags |= TileFlag::TF_GRASS;
 						tile.flags += TileFlag::TF_BIOME_MUSHROOM;
@@ -908,11 +912,10 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 
 void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel )
 {
-	auto& world = Global::w().world();
+	auto& world = w->world();
 
 	TerrainMaterial mat;
 
-	SpriteFactory& os = Global::sf();
 	for ( int y = 0; y < m_dimY; ++y )
 	{
 		for ( int x = 0; x < m_dimX; ++x )
@@ -948,7 +951,7 @@ void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<i
 						}
 						else
 						{
-							tile.floorSpriteUID                                                               = os.createSprite( mat.floor, { mat.key } )->uID;
+							tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor, { mat.key } )->uID;
 							mat.floorSprite                                                                   = tile.floorSpriteUID;
 							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
 						}
@@ -960,10 +963,10 @@ void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<i
 						}
 						else
 						{
-							tile.wallSpriteUID                                                                = os.createSprite( mat.wall, { mat.key } )->uID;
+							tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall, { mat.key } )->uID;
 							mat.wallSprite                                                                    = tile.wallSpriteUID;
 							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
-							os.createSprite( mat.shortwall, { mat.key } )->uID;
+							g->sf()->createSprite( mat.shortwall, { mat.key } )->uID;
 						}
 						if ( m_fow )
 						{
@@ -995,9 +998,9 @@ void WorldGenerator::discoverAll()
 		{
 			for ( int x = 1; x < m_dimX - 1; ++x )
 			{
-				if ( !( Global::w().wallType( Position( x, y, z ) ) & WT_SOLIDWALL ) )
+				if ( !( w->wallType( Position( x, y, z ) ) & WT_SOLIDWALL ) )
 				{
-					Global::w().discover( x, y, z );
+					w->discover( x, y, z );
 				}
 			}
 		}
@@ -1014,15 +1017,11 @@ void WorldGenerator::createRamps()
 
 void WorldGenerator::createRamp( int z )
 {
-	TerrainMaterial mat;
-
-	auto& world = Global::w().world();
-
 	for ( int y = 1; y < m_dimY - 1; ++y )
 	{
 		for ( int x = 1; x < m_dimX - 1; ++x )
 		{
-			Global::w().createRamp( x, y, z );
+			w->createRamp( x, y, z );
 		}
 	}
 }
@@ -1180,7 +1179,7 @@ QString WorldGenerator::getRandomEmbedded( int x, int y, int z, QMap<QString, Em
 	for ( auto key : em.keys() )
 	{
 		auto e = em.value( key );
-		int zz = z - NewGameSettings::getInstance().ground() + m_heightMap[x + y * m_dimX];
+		int zz = z - ngs->ground() + m_heightMap[x + y * m_dimX];
 		if ( zz >= e.lowest && zz <= e.highest )
 		{
 			possibles.push_back( e.key );
@@ -1199,9 +1198,9 @@ void WorldGenerator::createOceanFront()
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
 
-	auto& world = Global::w().world();
+	auto& world = w->world();
 
-	int size = NewGameSettings::getInstance().oceanSize();
+	int size = ngs->oceanSize();
 
 	int edge = rand() % 4;
 
@@ -1330,9 +1329,9 @@ void WorldGenerator::createOceanFront()
 void WorldGenerator::decreaseHeight( int x, int y, int diff )
 {
 	Position pos( x, y, m_dimZ - 1 );
-	Global::w().getFloorLevelBelow( pos, true );
+	w->getFloorLevelBelow( pos, true );
 
-	auto& world = Global::w().world();
+	auto& world = w->world();
 
 	for ( int i = 0; i < diff; ++i )
 	{
@@ -1350,7 +1349,7 @@ void WorldGenerator::decreaseHeight( int x, int y, int diff )
 			tile.floorSpriteUID = 0;
 
 			tile.flags += TileFlag::TF_SUNLIGHT;
-			//Global::w().addWater( Position( x, y, pos.z - i ), 8 );
+			//w->addWater( Position( x, y, pos.z - i ), 8 );
 		}
 	}
 }
@@ -1358,9 +1357,9 @@ void WorldGenerator::decreaseHeight( int x, int y, int diff )
 void WorldGenerator::setSandFloor( int x, int y, int sandRowID )
 {
 	Position pos( x, y, m_dimZ - 1 );
-	Global::w().getFloorLevelBelow( pos, true );
+	w->getFloorLevelBelow( pos, true );
 
-	Tile& tile = Global::w().world()[x + y * m_dimX + ( pos.z + 1 ) * m_dimX * m_dimY];
+	Tile& tile = w->world()[x + y * m_dimX + ( pos.z + 1 ) * m_dimX * m_dimY];
 
 	tile.wallType      = WT_NOWALL;
 	tile.wallMaterial  = 0;
@@ -1369,15 +1368,15 @@ void WorldGenerator::setSandFloor( int x, int y, int sandRowID )
 
 	tile.floorMaterial  = sandRowID;
 	tile.floorType      = FT_SOLIDFLOOR;
-	tile.floorSpriteUID = Global::sf().createSprite( "RoughFloor", { "Sand" } )->uID;
+	tile.floorSpriteUID = g->sf()->createSprite( "RoughFloor", { "Sand" } )->uID;
 
-	Tile& tile2          = Global::w().world()[x + y * m_dimX + ( pos.z ) * m_dimX * m_dimY];
+	Tile& tile2          = w->world()[x + y * m_dimX + ( pos.z ) * m_dimX * m_dimY];
 	tile2.wallType       = ( WallType )( WallType::WT_SOLIDWALL | WallType::WT_ROUGH | WallType::WT_VIEWBLOCKING | WallType::WT_MOVEBLOCKING );
 	tile2.floorMaterial  = sandRowID;
 	tile2.wallMaterial   = sandRowID;
 	tile2.floorType      = FT_SOLIDFLOOR;
-	tile2.wallSpriteUID  = Global::sf().createSprite( "RoughWall", { "Sand" } )->uID;
-	tile2.floorSpriteUID = Global::sf().createSprite( "RoughFloor", { "Sand" } )->uID;
+	tile2.wallSpriteUID  = g->sf()->createSprite( "RoughWall", { "Sand" } )->uID;
+	tile2.floorSpriteUID = g->sf()->createSprite( "RoughFloor", { "Sand" } )->uID;
 }
 
 int WorldGenerator::getLowestZonXLine( int x )
@@ -1386,7 +1385,7 @@ int WorldGenerator::getLowestZonXLine( int x )
 	for ( int y = 1; y < m_dimY - 1; ++y )
 	{
 		Position pos( x, y, m_dimZ - 1 );
-		Global::w().getFloorLevelBelow( pos, false );
+		w->getFloorLevelBelow( pos, false );
 		maxZ = qMin( maxZ, pos.z );
 	}
 	return maxZ;
@@ -1398,7 +1397,7 @@ int WorldGenerator::getLowestZonYLine( int y )
 	for ( int x = 1; x < m_dimX - 1; ++x )
 	{
 		Position pos( x, y, m_dimZ - 1 );
-		Global::w().getFloorLevelBelow( pos, false );
+		w->getFloorLevelBelow( pos, false );
 		maxZ = qMin( maxZ, pos.z );
 	}
 	return maxZ;
@@ -1408,10 +1407,10 @@ void WorldGenerator::fillWater( int x, int y, int z )
 {
 	while ( z > 1 )
 	{
-		Tile& tile = Global::w().world()[x + y * m_dimX + z * m_dimX * m_dimY];
+		Tile& tile = w->world()[x + y * m_dimX + z * m_dimX * m_dimY];
 		if ( !(bool)( tile.wallType & WT_SOLIDWALL ) )
 		{
-			Global::w().addWater( Position( x, y, z ), 10 );
+			w->addWater( Position( x, y, z ), 10 );
 		}
 
 		if ( (bool)( tile.floorType & FT_SOLIDFLOOR ) )
@@ -1425,9 +1424,9 @@ void WorldGenerator::fillWater( int x, int y, int z )
 void WorldGenerator::createRivers()
 {
 	QList<std::vector<Position>> worms;
-	auto& world = Global::w().world();
+	auto& world = w->world();
 
-	for ( int i = 1; i < NewGameSettings::getInstance().rivers() + 1; ++i )
+	for ( int i = 1; i < ngs->rivers() + 1; ++i )
 	{
 		int border = qMax( 0, qMin( int( perlinRandWhiteNoise( i * 10, i * 20 ) * 4 ), 3 ) );
 		int offset = qMax( 10, qMin( int( perlinRandWhiteNoise( i * 15, i * 17 ) * m_dimX ), m_dimX - 10 ) );
@@ -1466,7 +1465,7 @@ void WorldGenerator::createRivers()
 		for ( int i = 0; i < worm.size(); ++i )
 		{
 			auto pos = worm[i];
-			Global::w().getFloorLevelBelow( pos, false );
+			w->getFloorLevelBelow( pos, false );
 
 			if ( pos.z > prevZ )
 			{
@@ -1488,9 +1487,9 @@ void WorldGenerator::createRivers()
 		if ( worm.size() > 1 )
 		{
 			auto apos = worm[0];
-			Global::w().addAquifier( apos.belowOf() );
+			w->addAquifier( apos.belowOf() );
 			auto dpos = worm[worm.size() - 1];
-			Global::w().addDeaquifier( dpos.belowOf() );
+			w->addDeaquifier( dpos.belowOf() );
 		}
 	}
 }
@@ -1605,7 +1604,8 @@ std::vector<Position> WorldGenerator::riverWorm( Position pos, int dir, int num,
 
 void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 {
-	int size = NewGameSettings::getInstance().riverSize();
+	int size = ngs->riverSize();
+	int sandRowID = DBH::materialUID( "Sand" );
 	for ( int x = pos.x - size; x < pos.x + size + 1; ++x )
 	{
 		for ( int y = pos.y - size; y < pos.y + size + 1; ++y )
@@ -1638,8 +1638,8 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 				tile3.wallType      = WallType::WT_NOWALL;
 				tile3.wallMaterial  = 0;
 
-				Global::w().addWater( Position( x, y, pos.z - 1 ), 10 );
-				Global::w().addWater( Position( x, y, pos.z - 2 ), 10 );
+				w->addWater( Position( x, y, pos.z - 1 ), 10 );
+				w->addWater( Position( x, y, pos.z - 2 ), 10 );
 
 				for ( int z = pos.z; z < m_dimZ - 1; ++z )
 				{
@@ -1653,6 +1653,8 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 					tile.floorMaterial  = 0;
 					tile.floorSpriteUID = 0;
 				}
+				setSandFloor( x, y, sandRowID );
+
 			}
 		}
 	}
@@ -1693,7 +1695,7 @@ void WorldGenerator::placeLairs()
 	qDebug() << "lair location " << x << y << z;
 	if ( found )
 	{
-		auto& world = Global::w().world();
+		auto& world = w->world();
 
 		QString def  = row.value( "Layout" ).toString();
 		auto defList = def.split( " " );
@@ -1765,7 +1767,7 @@ void WorldGenerator::placeLairs()
 							tile.flags         = TileFlag::TF_NONE;
 							tile.wallSpriteUID = 0;
 							//tile.wallMaterial = 0;
-							Global::w().createRamp( x + xx, y + yy, z + zz, DBH::materialSID( tile.wallMaterial ) );
+							w->createRamp( x + xx, y + yy, z + zz, DBH::materialSID( tile.wallMaterial ) );
 						}
 						break;
 					}
@@ -1779,14 +1781,14 @@ void WorldGenerator::placeLairs()
 			Gender gender = (Gender)row.value( "Gender" ).toInt();
 			int level     = row.value( "Level" ).toInt();
 
-			Global::cm().addCreature( CreatureType::MONSTER, lairType + row.value( "Type" ).toString(), posZero + Position( row.value( "Offset" ) ), gender, true, false );
+			g->cm()->addCreature( CreatureType::MONSTER, lairType + row.value( "Type" ).toString(), posZero + Position( row.value( "Offset" ) ), gender, true, false );
 		}
 	}
 }
 
 bool WorldGenerator::checkPlacement( int xLoc, int yLoc, int zLoc, int xSize, int ySize, int zSize )
 {
-	auto& world = Global::w().world();
+	auto& world = w->world();
 	for ( int z = zLoc; z < zSize; ++z )
 	{
 		for ( int x = xLoc; x < xSize; ++x )

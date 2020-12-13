@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "creaturemanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/global.h"
@@ -30,38 +31,18 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-CreatureManager::CreatureManager()
+CreatureManager::CreatureManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
 CreatureManager::~CreatureManager()
 {
-}
-
-void CreatureManager::reset()
-{
-	m_creatures.clear();
-	m_creaturesByID.clear();
-
-	m_countPerType.clear();
-	m_creaturesPerType.clear();
-
-	// add monster entries for monsters that aren't typically on the map so they can appear in the squad priority list
-	auto monsters = DB::ids( "Monsters" );
-	for( auto monster : monsters )
+	for ( const auto& c : m_creatures )
 	{
-		m_countPerType.insert( monster, 0 );
+		delete c;
 	}
-
-	auto animals = DB::ids( "Animals" );
-	for ( auto animal : animals )
-	{
-		if ( NewGameSettings::getInstance().isChecked( animal ) )
-		{
-			m_countPerType.insert( animal, 0 );
-		}
-	}
-
 }
 
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
@@ -90,7 +71,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 				if( creature->type() == CreatureType::ANIMAL )
 				{
 					auto a = dynamic_cast<Animal*>( creature );
-					Global::inv().createItem( a->getPos(), "AnimalCorpse", { a->species() } );
+					g->inv()->createItem( a->getPos(), "AnimalCorpse", { a->species() } );
 				}
 				toDestroy.append( creature->id() );
 				break;
@@ -173,16 +154,15 @@ int CreatureManager::countWildAnimals()
 
 unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Position pos, Gender gender, bool adult, bool tame, int level )
 {
-	QMutexLocker l( &m_mutex );
-
 	Creature* creature = nullptr;
+	CreatureFactory cf( g );
 	switch ( ct )
 	{
 		case CreatureType::ANIMAL:
-			creature = CreatureFactory::getInstance().createAnimal( type, pos, gender, adult, tame );
+			creature = cf.createAnimal( type, pos, gender, adult, tame );
 			break;
 		case CreatureType::MONSTER:
-			creature = CreatureFactory::getInstance().createMonster( type, level, pos, gender );
+			creature = cf.createMonster( type, level, pos, gender );
 			break;
 	}
 
@@ -204,7 +184,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 
 		if( creature->hasTransparency() )
 		{
-			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			g->m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -215,13 +195,14 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 {
 	Creature* creature = nullptr;
+	CreatureFactory cf( g );
 	switch ( ct )
 	{
 		case CreatureType::ANIMAL:
-			creature = CreatureFactory::getInstance().createAnimal( vals );
+			creature = cf.createAnimal( vals );
 			break;
 		case CreatureType::MONSTER:
-			creature = CreatureFactory::getInstance().createMonster( vals );
+			creature = cf.createMonster( vals );
 			break;
 	}
 	if( creature )
@@ -242,7 +223,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 
 		if( creature->hasTransparency() )
 		{
-			Global::w().setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
+			g->m_world->setTileFlag( creature->getPos(), TileFlag::TF_TRANSPARENT );
 		}
 
 		return id;
@@ -287,13 +268,11 @@ Monster* CreatureManager::monster( unsigned int id )
 
 int CreatureManager::count()
 {
-	QMutexLocker l( &m_mutex );
 	return m_creatures.size();
 }
 
 int CreatureManager::count( QString type )
 {
-	QMutexLocker l( &m_mutex );
 	return m_countPerType.value( type );
 }
 
@@ -313,7 +292,7 @@ void CreatureManager::removeCreature( unsigned int id )
 					if ( a->pastureID() )
 					{
 						qDebug() << "remove animal from pasture";
-						auto pasture = Global::fm().getPasture( a->pastureID() );
+						auto pasture = g->m_farmingManager->getPasture( a->pastureID() );
 						if ( pasture )
 						{
 							pasture->removeAnimal( a->id() );
@@ -323,7 +302,6 @@ void CreatureManager::removeCreature( unsigned int id )
 			}
 			break;
 		}
-		QMutexLocker l( &m_mutex );
 
 		auto& perTypeList = m_creaturesPerType[creature->species()];
 		perTypeList.removeAll( id );
@@ -366,7 +344,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 			if ( a && !a->inJob() && !a->isDead() && !a->toDestroy() )
 			{
 				Position targetPos = a->getPos();
-				if ( PathFinder::getInstance().checkConnectedRegions( pos, targetPos ) )
+				if ( g->m_pf->checkConnectedRegions( pos, targetPos ) )
 				{
 					distanceQueue.put( a, pos.distSquare( targetPos ) );
 				}
@@ -383,7 +361,7 @@ QList<unsigned int> CreatureManager::animalsByType( QString type )
 
 void CreatureManager::forceMoveAnimals( Position& from, Position& to )
 {
-	for ( auto&& a : m_creatures )
+	for ( auto& a : m_creatures )
 	{
 		// check gnome position
 		if ( a->getPos().toInt() == from.toInt() )
@@ -427,7 +405,7 @@ void CreatureManager::updateLists()
 	m_animals.clear();
 	m_monsters.clear();
 
-	for( auto c : m_creatures )
+	for( const auto& c : m_creatures )
 	{
 		if( c->isAnimal() )
 		{
@@ -448,7 +426,7 @@ bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
 		auto creature = m_creaturesByID[creatureID];
 		if( creature )
 		{
-			return Global::w().regionMap().checkConnectedRegions( pos, creature->getPos() );
+			return g->m_world->regionMap().checkConnectedRegions( pos, creature->getPos() );
 		}
 	}
 	return false;

@@ -24,18 +24,21 @@
 #include <vector>
 #include <unordered_set>
 
+class World;
+
 class PathFinderThread
 {
 public:
 	using Path               = std::vector<Position>;
 	using CompletionCallback = std::function<void(Position, Position, bool ignoreNoPass, Path )>;
 	PathFinderThread()       = delete;
-	PathFinderThread( Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, CompletionCallback callback );
+	PathFinderThread( World* world, Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, CompletionCallback callback );
 
 	void operator()();
 private:
 	void findPath();
 
+	World* m_world = nullptr;
 	const Position m_start;
 	const std::unordered_set<Position> m_goals;
 	const bool m_ignoreNoPass = false;

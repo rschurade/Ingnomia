@@ -27,6 +27,7 @@
 #include <QVariantMap>
 
 class Job;
+class Game;
 
 struct FarmField
 {
@@ -64,7 +65,7 @@ struct FarmProperties
 	unsigned int autoHarvestItem2Min = 0;
 	unsigned int autoHarvestItem2Max = 0;
 
-	void serialize( QVariantMap& out );
+	void serialize( QVariantMap& out ) const;
 	FarmProperties() {};
 	FarmProperties( QVariantMap& in );
 };
@@ -72,14 +73,14 @@ struct FarmProperties
 class Farm : public WorldObject
 {
 	friend class AggregatorAgri;
-
+	Q_DISABLE_COPY_MOVE( Farm )
 public:
-	Farm();
-	Farm( QList<QPair<Position, bool>> tiles );
-	Farm( QVariantMap vals );
+	Farm() = delete;
+	Farm( QList<QPair<Position, bool>> tiles, Game* game );
+	Farm( QVariantMap vals, Game* game );
 	~Farm();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
 	QString plantType()
 	{
@@ -95,11 +96,11 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	Job* getJob( unsigned int jobID ) const;
+	bool hasJobID( unsigned int jobID ) const;
 
-	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	bool removeTile( const Position & pos );
+	void addTile( const Position & pos );
 
 	void getInfo( int& numPlots, int& tilled, int& planted, int& ready );
 

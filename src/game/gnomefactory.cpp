@@ -20,6 +20,7 @@
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/gnome.h"
 #include "../game/gnomemanager.h"
 #include "../game/gnometrader.h"
@@ -31,7 +32,8 @@
 #include <QElapsedTimer>
 #include <QPainter>
 
-GnomeFactory::GnomeFactory()
+GnomeFactory::GnomeFactory( Game* game ) :
+	g( game )
 {
 }
 GnomeFactory::~GnomeFactory()
@@ -64,9 +66,9 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 		foundName = true;
 		name      = vnl.value( rand() % vnl.size() ).value( "ID" ).toString();
 		name.replace( 0, 1, name[0].toUpper() );
-		for ( auto& g : Global::gm().gnomes() )
+		for ( auto& gn : g->gm()->gnomes() )
 		{
-			if ( g->name() == name )
+			if ( gn->name() == name )
 			{
 				foundName = false;
 				break;
@@ -74,7 +76,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 		}
 	}
 
-	Gnome* gnome = new Gnome( pos, name, gender );
+	Gnome* gnome = new Gnome( pos, name, gender, g );
 	gnome->init();
 
 	auto attribs = DB::selectRows( "Attributes" );
@@ -134,9 +136,9 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 		foundName = true;
 		name      = vnl.value( rand() % vnl.size() ).value( "ID" ).toString();
 		name.replace( 0, 1, name[0].toUpper() );
-		for ( auto& g : Global::gm().gnomes() )
+		for ( auto& gn : g->gm()->gnomes() )
 		{
-			if ( g->name() == name )
+			if ( gn->name() == name )
 			{
 				foundName = false;
 				break;
@@ -144,7 +146,7 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 		}
 	}
 
-	GnomeTrader* gnome = new GnomeTrader( pos, name, gender );
+	GnomeTrader* gnome = new GnomeTrader( pos, name, gender, g );
 	gnome->init();
 	auto attribs = DB::selectRows( "Attributes" );
 
@@ -181,14 +183,14 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 
 Gnome* GnomeFactory::createGnome( QVariantMap values )
 {
-	Gnome* gnome = new Gnome( values );
+	Gnome* gnome = new Gnome( values, g );
 	gnome->init();
 	return gnome;
 }
 
 GnomeTrader* GnomeFactory::createGnomeTrader( QVariantMap values )
 {
-	GnomeTrader* gnome = new GnomeTrader( values );
+	GnomeTrader* gnome = new GnomeTrader( values, g );
 	gnome->init();
 	return gnome;
 }

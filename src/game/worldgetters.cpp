@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/animal.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
@@ -53,13 +54,11 @@ bool World::hasJob( int x, int y, int z )
 
 bool World::hasJob( unsigned int tileID )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.contains( tileID );
 }
 
 QVariantMap World::jobSprite( Position pos )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.value( pos.toInt() );
 }
 
@@ -70,7 +69,6 @@ QVariantMap World::jobSprite( int x, int y, int z )
 
 QVariantMap World::jobSprite( unsigned int tileID )
 {
-	QMutexLocker lock( &m_mutex );
 	return m_jobSprites.value( tileID );
 }
 
@@ -116,26 +114,24 @@ bool World::creatureAtPos( Position pos )
 
 bool World::creatureAtPos( unsigned int posID )
 {
-	QMutexLocker lock( &m_mutex );
 	bool ret = m_creaturePositions.contains( posID );
 	return ret;
 }
 
 Creature* World::firstCreatureAtPos( unsigned int posID, quint8& rotation )
 {
-	QMutexLocker lock( &m_mutex );
 	if ( m_creaturePositions.contains( posID ) )
 	{
 		unsigned int ID = m_creaturePositions[posID].first();
-		Animal* a       = Global::cm().animal( ID );
+		Animal* a       = g->cm()->animal( ID );
 		if ( a )
 		{
 			return a;
 		}
-		Gnome* g = Global::gm().gnome( ID );
-		if ( g )
+		Gnome* gn = g->gm()->gnome( ID );
+		if ( gn )
 		{
-			return g;
+			return gn;
 		}
 	}
 	return 0;
@@ -213,14 +209,14 @@ bool World::noTree( const Position pos, const int xRange, const int yRange )
 				unsigned int jobID = m_jobSprites[testPosID].value( "Wall" ).toMap().value( "JobID" ).toUInt();
 				if ( jobID )
 				{
-					auto job = Global::jm().getJob( jobID );
+					auto job = g->jm()->getJob( jobID );
 					if ( job && job->type() == "PlantTree" )
 					{
 						return false;
 					}
 				}
 			}
-			if ( Global::fm().hasPlantTreeJob( Position( x, y, pos.z ) ) )
+			if ( g->fm()->hasPlantTreeJob( Position( x, y, pos.z ) ) )
 			{
 				return false;
 			}
@@ -525,7 +521,7 @@ QList<Position> World::connectedNeighbors( Position pos )
 		}
 	}
 
-	Tile& curTile = Global::w().getTile( pos );
+	Tile& curTile = g->w()->getTile( pos );
 
 	if ( (bool)( curTile.wallType & ( WT_STAIR | WT_SCAFFOLD ) ) )
 	{

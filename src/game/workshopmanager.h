@@ -17,6 +17,7 @@
 */
 #pragma once
 
+
 #include "workshop.h"
 
 #include <QList>
@@ -24,16 +25,15 @@
 #include <QQueue>
 
 class Job;
+class Game;
 
 class WorkshopManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( WorkshopManager )
 public:
-	WorkshopManager( QObject* parent = 0 );
+	WorkshopManager( Game* parent = 0 );
 	~WorkshopManager();
-
-	void reset();
 
 	void onTick( quint64 tick );
 	Workshop* addWorkshop( QString type, Position& pos, int rotation );
@@ -48,7 +48,7 @@ public:
 	bool giveBackJob( unsigned jobID );
 
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	QList<Workshop*>& workshops()
 	{
@@ -78,10 +78,10 @@ public:
 	bool craftJobExists( const QString& itemSID, const QString& materialSID );
 
 private:
+	QPointer<Game> g;
+
 	QList<Workshop*> m_workshops;
 	QQueue<unsigned int> m_toDelete;
-
-	QMutex m_mutex;
 
 signals:
 	void signalJobListChanged( unsigned int workshopID );

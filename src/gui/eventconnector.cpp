@@ -17,8 +17,27 @@
 */
 #include "eventconnector.h"
 
+#include "aggregatoragri.h"
+#include "aggregatorcreatureinfo.h"
+#include "aggregatordebug.h"
+#include "aggregatorinventory.h"
+#include "aggregatorpopulation.h"
+#include "aggregatorrenderer.h"
+#include "aggregatorstockpile.h"
+#include "aggregatortileinfo.h"
+#include "aggregatorworkshop.h"
+#include "aggregatorneighbors.h"
+#include "aggregatormilitary.h"
+#include "aggregatorsettings.h"
+#include "aggregatorloadgame.h"
+#include "aggregatorselection.h"
+
+#include "../base/db.h"
 #include "../base/config.h"
 #include "../base/global.h"
+#include "../base/selection.h"
+#include "../game/gamemanager.h"
+#include "../game/game.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 #include "../game/plant.h"
@@ -26,7 +45,8 @@
 
 #include <QDebug>
 
-EventConnector::EventConnector( QObject* parent ) :
+EventConnector::EventConnector( GameManager* parent ) :
+	gm( parent ),
 	QObject( parent )
 {
 	m_tiAggregator           = new AggregatorTileInfo( this );
@@ -42,6 +62,12 @@ EventConnector::EventConnector( QObject* parent ) :
 	m_settingsAggregator	 = new AggregatorSettings( this );
 	m_inventoryAggregator    = new AggregatorInventory( this );
 	m_loadGameAggregator	 = new AggregatorLoadGame( this );
+	m_selectionAggregator	 = new AggregatorSelection( this );
+}
+
+void EventConnector::setGamePtr( Game* game )
+{
+	g = game;
 }
 
 EventConnector::~EventConnector()
@@ -74,14 +100,14 @@ void EventConnector::onViewLevel( int level )
 	emit signalViewLevel( level );
 }
 
-void EventConnector::onUpdatePause( bool paused )
+void EventConnector::onSetPause( bool paused )
 {
-	emit signalUpdatePause( paused );
+	gm->setPaused( paused );
 }
 
-void EventConnector::onUpdateGameSpeed( GameSpeed speed )
+void EventConnector::onSetGameSpeed( GameSpeed speed )
 {
-	emit signalUpdateGameSpeed( speed );
+	gm->setGameSpeed( speed );
 }
 
 void EventConnector::onKeyPress( int key )
@@ -92,6 +118,11 @@ void EventConnector::onKeyPress( int key )
 			emit signalKeyEsc();
 			break;
 	}
+}
+
+void EventConnector::onTogglePause()
+{
+	emit signalUpdatePause( !gm->paused() );
 }
 
 void EventConnector::onPropagateEscape()
@@ -107,25 +138,25 @@ void EventConnector::onBuild()
 void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 {
 	if ( cmd == "Mine" )
-		Global::jm().addJob( "Mine", Position( tileID ), 0 );
+		g->jm()->addJob( "Mine", Position( tileID ), 0 );
 	else if ( cmd == "Remove" )
-		Global::jm().addJob( "RemoveFloor", Position( tileID ), 0 );
+		g->jm()->addJob( "RemoveFloor", Position( tileID ), 0 );
 	else if ( cmd == "Fell" )
-		Global::jm().addJob( "FellTree", Position( tileID ), 0 );
+		g->jm()->addJob( "FellTree", Position( tileID ), 0 );
 	else if ( cmd == "Destroy" )
-		Global::jm().addJob( "RemovePlant", Position( tileID ), 0 );
+		g->jm()->addJob( "RemovePlant", Position( tileID ), 0 );
 	else if ( cmd == "Harvest" )
 	{
-		if ( Global::w().plants().contains( tileID ) )
+		if ( gm->game() && gm->game()->world() && gm->game()->world()->plants().contains( tileID ) )
 		{
-			Plant& plant = Global::w().plants()[tileID];
+			Plant& plant = gm->game()->world()->plants()[tileID];
 			if ( plant.isTree() )
 			{
-				Global::jm().addJob( "HarvestTree", Position( tileID ), 0 );
+				g->jm()->addJob( "HarvestTree", Position( tileID ), 0 );
 			}
 			else
 			{
-				Global::jm().addJob( "Harvest", Position( tileID ), 0 );
+				g->jm()->addJob( "Harvest", Position( tileID ), 0 );
 			}
 		}
 	}
@@ -133,28 +164,31 @@ void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 
 void EventConnector::onManageCommand( unsigned int tileID )
 {
-	Tile& tile = Global::w().getTile( tileID );
-
-	TileFlag designation = tile.flags - ~( TileFlag::TF_WORKSHOP + TileFlag::TF_STOCKPILE + TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_ROOM );
-	switch ( designation )
+	if ( gm->game() && gm->game()->world() )
 	{
-		case TileFlag::TF_WORKSHOP:
-			m_wsAggregator->onOpenWorkshopInfoOnTile( tileID );
-			break;
-		case TileFlag::TF_STOCKPILE:
+		Tile& tile = gm->game()->world()->getTile( tileID );
+
+		TileFlag designation = tile.flags - ~( TileFlag::TF_WORKSHOP + TileFlag::TF_STOCKPILE + TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_ROOM );
+		switch ( designation )
 		{
-			m_spAggregator->onOpenStockpileInfoOnTile( tileID );
-		}
-		break;
-		case TileFlag::TF_GROVE:
-		case TileFlag::TF_FARM:
-		case TileFlag::TF_PASTURE:
-		{
-			m_acAggregator->onOpen( designation, tileID );
-		}
-		break;
-		case TileFlag::TF_ROOM:
+			case TileFlag::TF_WORKSHOP:
+				m_wsAggregator->onOpenWorkshopInfoOnTile( tileID );
+				break;
+			case TileFlag::TF_STOCKPILE:
+			{
+				m_spAggregator->onOpenStockpileInfoOnTile( tileID );
+			}
 			break;
+			case TileFlag::TF_GROVE:
+			case TileFlag::TF_FARM:
+			case TileFlag::TF_PASTURE:
+			{
+				m_acAggregator->onOpen( designation, tileID );
+			}
+			break;
+			case TileFlag::TF_ROOM:
+				break;
+		}
 	}
 }
 
@@ -173,4 +207,154 @@ void EventConnector::onSetRenderOptions( bool designations, bool jobs, bool wall
 void EventConnector::onUpdateRenderOptions()
 {
 	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
+}
+
+void EventConnector::emitStartGame()
+{
+	emit startGame();
+}
+	
+void EventConnector::emitStopGame()
+{
+	emit stopGame();
+}
+
+void EventConnector::emitInitView()
+{
+	emit signalInitView();
+}
+
+void EventConnector::emitInMenu( bool value )
+{
+	emit signalInMenu( value );
+}
+	
+void EventConnector::onStartNewGame()
+{
+	gm->startNewGame();
+}
+
+void EventConnector::onContinueLastGame()
+{
+	gm->continueLastGame();
+}
+
+void EventConnector::onLoadGame( QString folder )
+{
+	gm->loadGame( folder );
+}
+
+void EventConnector::onSaveGame()
+{
+	gm->saveGame();
+}
+
+void EventConnector::onSetShowMainMenu( bool value )
+{
+	gm->setShowMainMenu( value );
+}
+
+void EventConnector::onEndGame()
+{
+	gm->endCurrentGame();
+}
+
+void EventConnector::sendResume()
+{
+	emit signalResume();
+}
+	
+void EventConnector::sendLoadGameDone( bool value )
+{
+	emit signalLoadGameDone( value );
+}
+
+void EventConnector::emitPause( bool paused )
+{
+	emit signalUpdatePause( paused );
+}
+	
+void EventConnector::emitGameSpeed( GameSpeed speed )
+{
+	emit signalUpdateGameSpeed( speed );
+}
+
+void EventConnector::onSetSelectionAction( QString action )
+{
+	Global::sel->setAction( action );
+}
+	
+void EventConnector::onSetSelectionItem( QString item )
+{
+	Global::sel->setItemID( item );
+}
+
+void EventConnector::onSetSelectionMaterials( QStringList mats )
+{
+	Global::sel->setMaterials( mats );
+}
+
+void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
+{
+	switch ( type )
+	{
+		case BuildItemType::Workshop:
+		{
+			Global::sel->setAction( "BuildWorkshop" );
+		}
+		break;
+		case BuildItemType::Terrain:
+		{
+			QString type = DB::select( "Type", "Constructions", item ).toString();
+			
+			if( !param.isEmpty() )
+			{
+				if( param == "FillHole" )
+				{
+					Global::sel->setAction( param );
+				}
+				else
+				{
+					Global::sel->setAction( param + type );
+				}
+			}
+			else
+			{
+				if( type == "Stairs" && item == "Scaffold" )
+				{
+					Global::sel->setAction( "BuildScaffold" );
+				}
+				else
+				{
+					Global::sel->setAction( "Build" + type );
+				}
+			}
+		}
+		break;
+		case BuildItemType::Item:
+		{
+			Global::sel->setAction( "BuildItem" );
+		}
+		break;
+	}
+
+	Global::sel->setMaterials( mats );
+	Global::sel->setItemID( item );
+
+	emit signalBuild();
+}
+
+void EventConnector::onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno )
+{
+	emit signalEvent( id, title, msg, pause, yesno );
+}
+
+void EventConnector::onAnswer( unsigned int id, bool answer )
+{
+	g->em()->onAnswer( id, answer );
+}
+
+Game* EventConnector::game()
+{
+	return g;
 }

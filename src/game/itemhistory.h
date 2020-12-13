@@ -45,7 +45,7 @@ struct IH_day
 class ItemHistory : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( ItemHistory )
 public:
 	ItemHistory( QObject* parent = nullptr );
 	~ItemHistory();

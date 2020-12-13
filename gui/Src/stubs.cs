@@ -228,7 +228,12 @@ namespace IngnomiaGUI
     public class ColorToBrushConverter
     {
     }
+
     public class ColorToBrushConverterDark
+    {
+    }
+
+    public class SelectionModel
     {
     }
 }

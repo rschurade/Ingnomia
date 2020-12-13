@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "stockpilemanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/global.h"
@@ -25,33 +26,32 @@
 
 #include <QDebug>
 
-StockpileManager::StockpileManager()
+StockpileManager::StockpileManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
 StockpileManager::~StockpileManager()
 {
-}
-
-void StockpileManager::reset()
-{
-	m_stockpiles.clear();
-	m_allStockpileTiles.clear();
-	m_stockpilesOrdered.clear();
+	for ( const auto& sp : m_stockpiles )
+	{
+		delete sp;
+	}
 }
 
 void StockpileManager::onTick( quint64 tick )
 {
-	if ( Config::getInstance().get( "updateItemFilter" ).toBool() )
+	if ( Global::cfg->get( "updateItemFilter" ).toBool() )
 	{
-		for ( auto&& sp : m_stockpiles )
+		for ( auto& sp : m_stockpiles )
 		{
 			sp->updateFilter();
 		}
 	}
-	Config::getInstance().set( "updateItemFilter", false );
+	Global::cfg->set( "updateItemFilter", false );
 
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->countFields() == 0 && !sp->stillHasJobs() )
 		{
@@ -60,7 +60,7 @@ void StockpileManager::onTick( quint64 tick )
 		}
 	}
 
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->onTick( tick ) )
 		{
@@ -88,7 +88,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 	}
 	else
 	{
-		Stockpile* sp = new Stockpile( fields );
+		Stockpile* sp = new Stockpile( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
@@ -107,7 +107,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 
 void StockpileManager::load( QVariantMap vals )
 {
-	Stockpile* sp = new Stockpile( vals );
+	Stockpile* sp = new Stockpile( vals, g );
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();
@@ -250,7 +250,7 @@ unsigned int StockpileManager::getJob()
 
 bool StockpileManager::finishJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->finishJob( jobID ) )
 		{
@@ -262,7 +262,7 @@ bool StockpileManager::finishJob( unsigned int jobID )
 
 bool StockpileManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->giveBackJob( jobID ) )
 		{
@@ -278,7 +278,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 
 Job& StockpileManager::getJob( unsigned int jobID )
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{
@@ -287,9 +287,9 @@ Job& StockpileManager::getJob( unsigned int jobID )
 	}
 }
 
-bool StockpileManager::hasJobID( unsigned int jobID )
+bool StockpileManager::hasJobID( unsigned int jobID ) const
 {
-	for ( auto&& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{

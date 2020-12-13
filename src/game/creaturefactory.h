@@ -23,30 +23,14 @@
 #include <QString>
 #include <QVariantMap>
 
+class Game;
+
 class CreatureFactory
 {
-private:
-	// Private Constructor
-	CreatureFactory();
-	// Stop the compiler generating methods of copy the object
-	CreatureFactory( CreatureFactory const& copy );            // Not Implemented
-	CreatureFactory& operator=( CreatureFactory const& copy ); // Not Implemented
-
-	int m_numWoodLice;
-
+	Q_DISABLE_COPY_MOVE( CreatureFactory )
 public:
+	CreatureFactory( Game* game );
 	~CreatureFactory();
-
-	static CreatureFactory& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static CreatureFactory instance;
-		return instance;
-	}
-
-	bool init();
 
 	Animal* createRandomAnimal( QStringList allowedAnimals );
 	Animal* createAnimal( QString type, Position pos, Gender gender, bool adult, bool tame );
@@ -55,4 +39,9 @@ public:
 	Monster* createRandomMonster( QStringList allowedMonsters );
 	Monster* createMonster( QString type, int level, Position pos, Gender gender );
 	Monster* createMonster( QVariantMap values );
+
+private:
+    QPointer<Game> g;
+
+    int m_numWoodLice = 0;
 };

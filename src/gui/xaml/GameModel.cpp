@@ -16,17 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "GameModel.h"
-
-#include "../../base/config.h"
-#include "../../base/db.h"
-#include "../../base/global.h"
-#include "../../base/selection.h"
-#include "../../base/util.h"
-#include "../../game/gamemanager.h"
-#include "../../game/inventory.h"
-#include "../eventconnector.h"
-#include "../strings.h"
 #include "ProxyGameView.h"
+
+#include "../strings.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>
@@ -38,8 +30,6 @@
 #include <QDebug>
 #include <QImage>
 #include <QPixmap>
-
-#include <functional>
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
@@ -87,93 +77,22 @@ const char* BuildButton::GetImage() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-BuildItem::BuildItem( QString name, QString sid, BuildItemType type )
+BuildItem::BuildItem( const GuiBuildItem& gbi, ProxyGameView* proxy )
 {
-	m_name = name.toStdString().c_str();
-	m_sid  = sid;
-	m_type = type;
+	m_name = gbi.name.toStdString().c_str();
+	m_sid  = gbi.id;
+	m_type = gbi.biType;
+	m_proxy = proxy;
 
 	m_cmdBuild.SetExecuteFunc( MakeDelegate( this, &BuildItem::onCmdBuild ) );
 
 	m_requiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
+	m_bitmapSource = BitmapImage::Create( gbi.iconWidth, gbi.iconHeight, 96, 96, gbi.buffer.data(), gbi.iconWidth * 4, BitmapSource::Format::Format_RGBA8 );
 
-	switch ( type )
+	for( auto ri : gbi.requiredItems )
 	{
-		case BuildItemType::Workshop:
-		{
-			for ( auto row : DB::selectRows( "Workshops_Components", sid ) )
-			{
-				if ( !row.value( "ItemID" ).toString().isEmpty() )
-				{
-					auto item = MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() );
-
-					m_requiredItems->Add( item );
-				}
-			}
-
-			QStringList mats;
-			for ( int i = 0; i < 25; ++i )
-				mats.push_back( "None" );
-
-			QPixmap pm = Util::createWorkshopImage( sid, mats );
-
-			std::vector<unsigned char> buffer;
-
-			Util::createBufferForNoesisImage( pm, buffer );
-
-			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
-		}
-		break;
-		case BuildItemType::Terrain:
-		{
-			for ( auto row : DB::selectRows( "Constructions_Components", sid ) )
-			{
-				m_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
-			}
-
-			QStringList mats;
-			for ( int i = 0; i < 25; ++i )
-				mats.push_back( "None" );
-
-			QPixmap pm = Util::createConstructionImage( sid, mats );
-
-			std::vector<unsigned char> buffer;
-
-			Util::createBufferForNoesisImage( pm, buffer );
-
-			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
-		}
-		break;
-		case BuildItemType::Item:
-		{
-			auto rows = DB::selectRows( "Constructions_Components", sid );
-
-			if( rows.size() )
-			{
-				for ( auto row : rows )
-				{
-					m_requiredItems->Add( MakePtr<NRequiredItem>( row.value( "ItemID" ).toString(), row.value( "Amount" ).toInt() ) );
-				}
-			}
-			else
-			{
-				m_requiredItems->Add( MakePtr<NRequiredItem>( sid, 1 ) );
-			}
-
-
-			QStringList mats;
-			for ( int i = 0; i < 25; ++i )
-				mats.push_back( "None" );
-
-			QPixmap pm = Util::createItemImage( sid, mats );
-
-			std::vector<unsigned char> buffer;
-
-			Util::createBufferForNoesisImage( pm, buffer );
-
-			m_bitmapSource = BitmapImage::Create( pm.width(), pm.height(), 96, 96, buffer.data(), pm.width() * 4, BitmapSource::Format::Format_RGBA8 );
-		}
-		break;
+		auto item = MakePtr<NRequiredItem>( ri.itemID, ri.amount, ri.availableMats );
+		m_requiredItems->Add( item );
 	}
 }
 
@@ -235,58 +154,18 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 		auto mat  = item->GetSelectedMaterial();
 		mats.append( mat->sid() );
 	}
-
-	switch ( m_type )
+	QString qParam;
+	if( param )
 	{
-		case BuildItemType::Workshop:
-		{
-			Selection::getInstance().setAction( "BuildWorkshop" );
-		}
-		break;
-		case BuildItemType::Terrain:
-		{
-			QString type = DB::select( "Type", "Constructions", m_sid ).toString();
-			
-			if( param )
-			{
-				QString qParam = param->ToString().Str();
-				if( qParam == "FillHole" )
-				{
-					Selection::getInstance().setAction( qParam );
-				}
-				else
-				{
-					Selection::getInstance().setAction( qParam + type );
-				}
-			}
-			else
-			{
-				if( type == "Stairs" && m_sid == "Scaffold" )
-				{
-					Selection::getInstance().setAction( "BuildScaffold" );
-				}
-				else
-				{
-					Selection::getInstance().setAction( "Build" + type );
-				}
-			}
-		}
-		break;
-		case BuildItemType::Item:
-		{
-			Selection::getInstance().setAction( "BuildItem" );
-		}
-		break;
+		qParam = param->ToString().Str();
 	}
 
-	Selection::getInstance().setMaterials( mats );
-	Selection::getInstance().setItemID( m_sid );
-	EventConnector::getInstance().onBuild();
+	m_proxy->requestCmdBuild( m_type, qParam, m_sid, mats );
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-NRequiredItem::NRequiredItem( QString sid, int amount )
+NRequiredItem::NRequiredItem( QString sid, int amount, const QList<QPair<QString, int>>& mats )
 {
 	_name   = S::s( "$ItemName_" + sid ).toStdString().c_str();
 	_sid    = sid;
@@ -294,18 +173,20 @@ NRequiredItem::NRequiredItem( QString sid, int amount )
 
 	_availableMaterials = *new Noesis::ObservableCollection<AvailableMaterial>();
 
-	auto mats = Global::inv().materialCountsForItem( sid );
-
-	_availableMaterials->Add( MakePtr<AvailableMaterial>( "any", mats["any"], _sid ) );
-	for ( auto key : mats.keys() )
+	for( auto mat : mats )
 	{
-		if ( key != "any" )
-		{
-			_availableMaterials->Add( MakePtr<AvailableMaterial>( key, mats[key], _sid ) );
-		}
+		_availableMaterials->Add( MakePtr<AvailableMaterial>( mat.first, mat.second, _sid ) );
 	}
 
 	SetSelectedMaterial( _availableMaterials->Get( 0 ) );
+}
+
+NRequiredItem::NRequiredItem( QString sid, int amount )
+{
+	_name   = S::s( "$ItemName_" + sid ).toStdString().c_str();
+	_sid    = sid;
+	_amount = QString::number( amount ).toStdString().c_str();
+	_availableMaterials = *new Noesis::ObservableCollection<AvailableMaterial>();
 }
 
 const char* NRequiredItem::GetName() const
@@ -848,12 +729,14 @@ void GameModel::setGameSpeed( GameSpeed value )
 	}
 	else
 	{
-		if ( GameManager::getInstance().gameSpeed() != value )
+		if ( m_gameSpeed != value )
 		{
 			m_proxy->setGameSpeed( value );
 		}
 		m_proxy->setPaused( false );
 	}
+	m_gameSpeed = value;
+
 	OnPropertyChanged( "Paused" );
 	OnPropertyChanged( "NormalSpeed" );
 	OnPropertyChanged( "FastSpeed" );
@@ -861,7 +744,7 @@ void GameModel::setGameSpeed( GameSpeed value )
 
 bool GameModel::getPaused() const
 {
-	return GameManager::getInstance().paused();
+	return m_paused;
 }
 
 void GameModel::setPaused( bool value )
@@ -870,7 +753,7 @@ void GameModel::setPaused( bool value )
 	{
 		return;
 	}
-
+	m_paused = value;
 	m_proxy->setPaused( value );
 	OnPropertyChanged( "Paused" );
 	OnPropertyChanged( "NormalSpeed" );
@@ -879,7 +762,7 @@ void GameModel::setPaused( bool value )
 
 bool GameModel::getNormalSpeed() const
 {
-	return ( GameManager::getInstance().gameSpeed() == GameSpeed::Normal && !GameManager::getInstance().paused() );
+	return ( m_gameSpeed == GameSpeed::Normal && !m_paused );
 }
 
 void GameModel::setNormalSpeed( bool value )
@@ -892,7 +775,7 @@ void GameModel::setNormalSpeed( bool value )
 
 bool GameModel::getFastSpeed() const
 {
-	return ( GameManager::getInstance().gameSpeed() == GameSpeed::Fast && !GameManager::getInstance().paused() );
+	return ( m_gameSpeed == GameSpeed::Fast && !m_paused );
 }
 
 void GameModel::setFastSpeed( bool value )
@@ -963,118 +846,18 @@ void GameModel::OnCmdCategory( BaseComponent* param )
 
 void GameModel::setCategory( const char* cats )
 {
+	qDebug() << "GameModel::setCategory" << cats;
 	QString cat( cats );
+	m_proxy->requestBuildItems( m_buildSelection, cat );
+}
+
+void GameModel::updateBuildItems( const QList<GuiBuildItem>& items )
+{
 	_buildItems->Clear();
 
-	switch ( m_buildSelection )
+	for( const auto& item : items )
 	{
-		case BuildSelection::Wall:
-		{
-			auto rows = DB::selectRows( "Constructions", "Category", cat );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Type" ).toString() == "Wall" )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Floor:
-		{
-			auto rows = DB::selectRows( "Constructions", "Category", cat );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Type" ).toString() == "Floor" )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Stairs:
-		{
-			auto rows = DB::selectRows( "Constructions", "Category", cat );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Type" ).toString() == "Stairs" )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Ramps:
-		{
-			auto rows = DB::selectRows( "Constructions", "Category", cat );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Type" ).toString() == "Ramp" )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Fence:
-		{
-			auto rows = DB::selectRows( "Constructions", "Category", cat );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Type" ).toString() == "Fence" )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ConstructionName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Terrain ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Workshop:
-		{
-			auto rows = DB::selectRows( "Workshops", "Tab", cat );
-
-			for ( auto row : rows )
-			{
-				_buildItems->Add( MakePtr<BuildItem>( S::s( "$WorkshopName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Workshop ) );
-			}
-			break;
-		}
-		case BuildSelection::Containers:
-		{
-			auto rows = DB::selectRows( "Containers" );
-			for ( auto row : rows )
-			{
-				if ( row.value( "Buildable" ).toBool() )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Furniture:
-		{
-			auto rows = DB::selectRows( "Items", "Category", "Furniture" );
-			for ( auto row : rows )
-			{
-				if ( row.value( "ItemGroup" ).toString() == cat )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
-				}
-			}
-			break;
-		}
-		case BuildSelection::Utility:
-		{
-			qDebug() << cat;
-			auto rows = DB::selectRows( "Items", "Category", "Utility" );
-			for ( auto row : rows )
-			{
-				if ( row.value( "ItemGroup" ).toString() == cat )
-				{
-					_buildItems->Add( MakePtr<BuildItem>( S::s( "$ItemName_" + row.value( "ID" ).toString() ), row.value( "ID" ).toString(), BuildItemType::Item ) );
-				}
-			}
-			break;
-		}
+		_buildItems->Add( MakePtr<BuildItem>( item, m_proxy ) );
 	}
 
 	OnPropertyChanged( "BuildItems" );
@@ -1399,7 +1182,10 @@ const NoesisApp::DelegateCommand* GameModel::GetCmdRightCommandButton() const
 
 void GameModel::OnCmdSimple( BaseComponent* param )
 {
-	Selection::getInstance().setAction( param->ToString().Str() );
+	if( param )
+	{
+		m_proxy->setSelectionAction( param->ToString().Str() );
+	}
 }
 
 void GameModel::onCloseWindowCmd( BaseComponent* param )
@@ -1539,6 +1325,24 @@ void GameModel::eventMessage( unsigned int id, QString title, QString msg, bool 
 	}
 }
 
+const char* GameModel::getShowSelection() const
+{
+	if ( m_showSelection )
+	{
+		return "Visible";
+	}
+	return "Hidden";
+}
+	
+void GameModel::setShowSelection( bool value )
+{
+	if( m_showSelection != value )
+	{
+		m_showSelection = value;
+		OnPropertyChanged( "ShowSelection" );
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -1589,6 +1393,7 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "ShowNeighbors", &GameModel::getShowNeighbors );
 	NsProp( "ShowMilitary", &GameModel::getShowMilitary );
 	NsProp( "ShowInventory", &GameModel::getShowInventory );
+	NsProp( "ShowSelection", &GameModel::getShowSelection );
 	
 	NsProp( "ShowMessage", &GameModel::getShowMessage );
 	NsProp( "ShowMessageButtonOk", &GameModel::getShowMessageButtonOk );

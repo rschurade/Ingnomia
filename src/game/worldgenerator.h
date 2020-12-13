@@ -30,18 +30,23 @@ struct Tile;
 struct EmbeddedMaterial;
 struct TerrainMaterial;
 struct Position;
+class NewGameSettings;
+class World;
+class Game;
 
 class WorldGenerator : public QObject
 {
 	Q_OBJECT
 
 public:
-	WorldGenerator( QObject* parent = nullptr);
+	WorldGenerator( NewGameSettings* ngs, Game* parent );
 	~WorldGenerator();
 
-	void generate();
+	World* generateTopology();
+	void addLife();
 
 private:
+	QPointer<Game> g;
 	// resize world and fill stone layers
 	void setStoneLayers();
 	// set metal ores and gems
@@ -116,6 +121,9 @@ private:
 	QVector<int> m_matsInLevel;
 
 	bool m_fow = true;
+
+	World* w = nullptr;
+	NewGameSettings* ngs = nullptr;
 signals:
 	void signalStatus( QString msg );
 };

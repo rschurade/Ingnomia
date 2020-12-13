@@ -21,15 +21,19 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/creaturemanager.h"
-#include "../game/farmingmanager.h"
-#include "../game/gnomemanager.h"
+
+#include "../game/game.h"
 #include "../game/inventory.h"
+#include "../game/stockpilemanager.h"
+#include "../game/farmingmanager.h"
+#include "../game/creaturemanager.h"
+#include "../game/gnomemanager.h"
+
+#include "../game/workshopmanager.h"
+
 #include "../game/job.h"
 #include "../game/pasture.h"
 #include "../game/stockpile.h"
-#include "../game/stockpilemanager.h"
-#include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gui/strings.h"
 
@@ -186,83 +190,8 @@ void CraftJob::serialize( QVariantMap& out )
 	out.insert( "Suspended", paused );
 }
 
-Workshop::Workshop() :
-	WorldObject()
-{
-}
-
-Workshop::~Workshop()
-{
-}
-
-Workshop::Workshop( QVariantMap vals ) :
-	WorldObject( vals ),
-	m_properties( vals )
-{
-	QVariantList vtl = vals.value( "Tiles" ).toList();
-	for ( auto vt : vtl )
-	{
-		Position pos( vt );
-		m_tiles.insert( pos.toInt(), pos );
-	}
-
-	QVariantList vjl = vals.value( "JobQueue" ).toList();
-	for ( auto vj : vjl )
-	{
-		QVariantMap vjm = vj.toMap();
-		CraftJob cj( vjm );
-		m_jobList.append( cj );
-	}
-
-	if ( vals.contains( "Job" ) )
-	{
-		m_job = new Job( vals.value( "Job" ).toMap() );
-	}
-	if ( vals.contains( "FishingJob" ) )
-	{
-		m_fishingJob = new Job( vals.value( "FishingJob" ).toMap() );
-	}
-	m_spriteComposition = vals.value( "Sprites" ).toList();
-}
-
-QVariant Workshop::serialize()
-{
-	QVariantMap out;
-	WorldObject::serialize( out );
-	m_properties.serialize( out );
-
-	QVariantList tiles;
-	for ( auto tp : m_tiles )
-	{
-		QString ps = tp.toString();
-		tiles.append( ps );
-	}
-	out.insert( "Tiles", tiles );
-
-	QVariantList VLJobQueue;
-	for ( auto cj : m_jobList )
-	{
-		QVariantMap vmj;
-		cj.serialize( vmj );
-		VLJobQueue.append( vmj );
-	}
-	out.insert( "JobQueue", VLJobQueue );
-
-	if ( m_job )
-	{
-		out.insert( "Job", m_job->serialize() );
-	}
-	if ( m_fishingJob )
-	{
-		out.insert( "FishingJob", m_fishingJob->serialize() );
-	}
-
-	out.insert( "Sprites", m_spriteComposition );
-
-	return out;
-}
-
-void Workshop::init( QString type, Position& pos, int rotation )
+Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
+	WorldObject( game )
 {
 	m_properties.type     = type;
 	m_properties.rotation = rotation;
@@ -340,6 +269,82 @@ void Workshop::init( QString type, Position& pos, int rotation )
 	m_properties.noAutoGenerate = noAutoGenerate;
 }
 
+Workshop::~Workshop()
+{
+	if ( m_job )
+	{
+		delete m_job;
+		m_job = nullptr;
+	}
+}
+
+Workshop::Workshop( QVariantMap vals, Game* game ) :
+	WorldObject( vals, game ),
+	m_properties( vals )
+{
+	QVariantList vtl = vals.value( "Tiles" ).toList();
+	for ( auto vt : vtl )
+	{
+		Position pos( vt );
+		m_tiles.insert( pos.toInt(), pos );
+	}
+
+	QVariantList vjl = vals.value( "JobQueue" ).toList();
+	for ( auto vj : vjl )
+	{
+		QVariantMap vjm = vj.toMap();
+		CraftJob cj( vjm );
+		m_jobList.append( cj );
+	}
+
+	if ( vals.contains( "Job" ) )
+	{
+		m_job = new Job( vals.value( "Job" ).toMap() );
+	}
+	if ( vals.contains( "FishingJob" ) )
+	{
+		m_fishingJob = new Job( vals.value( "FishingJob" ).toMap() );
+	}
+	m_spriteComposition = vals.value( "Sprites" ).toList();
+}
+
+QVariant Workshop::serialize()
+{
+	QVariantMap out;
+	WorldObject::serialize( out );
+	m_properties.serialize( out );
+
+	QVariantList tiles;
+	for ( auto tp : m_tiles )
+	{
+		QString ps = tp.toString();
+		tiles.append( ps );
+	}
+	out.insert( "Tiles", tiles );
+
+	QVariantList VLJobQueue;
+	for ( auto cj : m_jobList )
+	{
+		QVariantMap vmj;
+		cj.serialize( vmj );
+		VLJobQueue.append( vmj );
+	}
+	out.insert( "JobQueue", VLJobQueue );
+
+	if ( m_job )
+	{
+		out.insert( "Job", m_job->serialize() );
+	}
+	if ( m_fishingJob )
+	{
+		out.insert( "FishingJob", m_fishingJob->serialize() );
+	}
+
+	out.insert( "Sprites", m_spriteComposition );
+
+	return out;
+}
+
 void Workshop::onTick( quint64 tick )
 {
 	if ( m_properties.toDestroy )
@@ -382,7 +387,7 @@ void Workshop::onTick( quint64 tick )
 					}
 				}
 
-				int existing = Global::inv().itemCountWithInJob( cj.itemSID, materialID );
+				int existing = g->inv()->itemCountWithInJob( cj.itemSID, materialID );
 				if ( existing >= cj.numItemsToCraft )
 				{
 					cj.paused = true;
@@ -481,14 +486,14 @@ void Workshop::checkAutoGenerate( CraftJob cj )
 	//int numToBuild = jm.value( "CraftNumberValue" ).toInt();
 	for ( auto ri : reqItems )
 	{
-		int avail = Global::inv().itemCount( ri.itemSID, ri.materialSID );
+		int avail = g->inv()->itemCount( ri.itemSID, ri.materialSID );
 		if ( avail >= ri.amount )
 		{
 			continue;
 		}
 		else
 		{
-			Global::wsm().autoGenCraftJob( ri.itemSID, ri.materialSID, ri.amount - avail );
+			g->wsm()->autoGenCraftJob( ri.itemSID, ri.materialSID, ri.amount - avail );
 		}
 	}
 }
@@ -614,7 +619,7 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 	QString craftID;
 	if ( materialSID != "any" )
 	{
-		QString matType = Util::materialType( materialSID );
+		QString matType = Global::util->materialType( materialSID );
 		if ( !possibleMaterials.contains(matType ) )
 		{
 			return false;
@@ -676,7 +681,7 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 {
 	if( materialSID == "any" )
 	{
-		for( auto cj : m_jobList )
+		for( const auto& cj : m_jobList )
 		{
 			if( cj.itemSID == itemSID )
 			{
@@ -686,13 +691,13 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 	}
 	else
 	{
-		for( auto cj : m_jobList )
+		for( const auto& cj : m_jobList )
 		{
 			if( cj.itemSID == itemSID )
 			{
 				if( cj.requiredItems.size() )
 				{
-					auto reqItem = cj.requiredItems.first();
+					const auto& reqItem = cj.requiredItems.first();
 					if( reqItem.materialSID == materialSID )
 					{
 						return true;
@@ -718,7 +723,7 @@ Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 	job->setPosItemInput( m_properties.posIn );
 	job->setPosItemOutput( m_properties.posOut );
 
-	job->setDescription( Util::itemName( cj.itemSID ) );
+	job->setDescription( Global::util->itemName( cj.itemSID ) );
 	job->setCraftID( cj.craftID );
 
 	for ( auto ri : cj.requiredItems )
@@ -732,18 +737,18 @@ Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 
 Job* Workshop::createButcherJob()
 {
-	for ( auto& pasture : Global::fm().allPastures() )
+	for ( auto& pasture : g->fm()->allPastures() )
 	{
-		if ( PathFinder::checkConnectedRegions( pasture.firstPos(), m_properties.pos ) )
+		if ( g->pf()->checkConnectedRegions( pasture->firstPos(), m_properties.pos ) )
 		{
-			for ( const auto& animalID : pasture.animals() )
+			for ( const auto& animalID : pasture->animals() )
 			{
-				auto animal = Global::cm().animal( animalID );
+				auto animal = g->cm()->animal( animalID );
 				if ( animal )
 				{
 					if ( animal->toButcher() && !animal->inJob() )
 					{
-						if ( PathFinder::checkConnectedRegions( animal->getPos(), m_properties.pos ) )
+						if ( g->pf()->checkConnectedRegions( animal->getPos(), m_properties.pos ) )
 						{
 							Job* job = new Job();
 							job->setType( "ButcherAnimal" );
@@ -765,11 +770,11 @@ Job* Workshop::createButcherJob()
 
 	if ( m_properties.butcherExcess )
 	{
-		for ( auto& a : Global::cm().animals() )
+		for ( auto& a : g->cm()->animals() )
 		{
 			if ( a->isTame() && a->pastureID() == 0 && a->isAdult() && !a->toDestroy() && !a->isDead() && !a->inJob() )
 			{
-				if ( PathFinder::checkConnectedRegions( a->getPos(), m_properties.pos ) )
+				if ( g->pf()->checkConnectedRegions( a->getPos(), m_properties.pos ) )
 				{
 					Job* job = new Job();
 					job->setType( "ButcherAnimal" );
@@ -789,11 +794,11 @@ Job* Workshop::createButcherJob()
 	if ( m_properties.butcherCorpses )
 	{
 		QString itemID = "";
-		if ( Global::inv().itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
+		if ( g->inv()->itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
 		{
 			itemID = "AnimalCorpse";
 		}
-		else if ( Global::inv().itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
+		else if ( g->inv()->itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
 		{
 			itemID = "GoblinCorpse";
 		}
@@ -823,10 +828,10 @@ Job* Workshop::createDyeSheepJob()
 	for ( auto pair : m_toDye )
 	{
 		unsigned int animalID = pair.first;
-		auto animal           = Global::cm().animal( animalID );
+		auto animal           = g->cm()->animal( animalID );
 		if ( animal && !animal->inJob() )
 		{
-			if ( PathFinder::checkConnectedRegions( animal->getPos(), m_properties.pos ) )
+			if ( g->pf()->checkConnectedRegions( animal->getPos(), m_properties.pos ) )
 			{
 				Job* job = new Job();
 				job->setType( "DyeAnimal" );
@@ -851,16 +856,16 @@ Job* Workshop::createFisherJob()
 {
 	Position pos   = m_properties.posIn;
 	int waterLevel = 0;
-	waterLevel += Global::w().fluidLevel( pos );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, -1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, 0, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 0, 1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( 1, 1, -1 ) );
-	waterLevel += Global::w().fluidLevel( pos + Position( -1, 1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos );
+	waterLevel += g->w()->fluidLevel( pos + Position( 0, -1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( 1, -1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( -1, -1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( 0, 0, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( 1, 0, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( -1, 0, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( 0, 1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( 1, 1, -1 ) );
+	waterLevel += g->w()->fluidLevel( pos + Position( -1, 1, -1 ) );
 
 	if ( waterLevel > 40 )
 	{
@@ -879,7 +884,7 @@ Job* Workshop::createFisherJob()
 
 Job* Workshop::createFishButcherJob()
 {
-	if ( Global::inv().itemCount( "Fish", "any" ) == 0 )
+	if ( g->inv()->itemCount( "Fish", "any" ) == 0 )
 	{
 		return nullptr;
 	}
@@ -905,7 +910,7 @@ unsigned int Workshop::getJob( unsigned int gnomeID, QString skillID )
 	if ( !m_active )
 		return 0;
 
-	if ( Global::gm().gnomeCanReach( gnomeID, m_properties.pos ) )
+	if ( g->gm()->gnomeCanReach( gnomeID, m_properties.pos ) )
 	{
 		if ( m_job )
 		{
@@ -937,7 +942,6 @@ unsigned int Workshop::getJob( unsigned int gnomeID, QString skillID )
 bool Workshop::checkItemsAvailable( Job* job )
 {
 	auto ril       = job->requiredItems();
-	Inventory& inv = Global::inv();
 	for ( int i = 0; i < ril.size(); ++i )
 	{
 		auto ri                 = ril[i];
@@ -955,7 +959,7 @@ bool Workshop::checkItemsAvailable( Job* job )
 
 		if ( requireSame && materialID == "any" )
 		{
-			QList<QString> materials = inv.materialsForItem( itemID, count );
+			QList<QString> materials = g->inv()->materialsForItem( itemID, count );
 			if ( materials.empty() )
 			{
 				return false;
@@ -966,7 +970,7 @@ bool Workshop::checkItemsAvailable( Job* job )
 				bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
 				if ( matAllowed )
 				{
-					items = inv.getClosestItems( m_properties.posIn, true, itemID, mat, count );
+					items = g->inv()->getClosestItems( m_properties.posIn, true, itemID, mat, count );
 					if ( items.size() < count )
 					{
 						continue;
@@ -982,12 +986,12 @@ bool Workshop::checkItemsAvailable( Job* job )
 		}
 		else
 		{
-			items = inv.getClosestItems( m_properties.posIn, true, itemID, materialID, count );
+			items = g->inv()->getClosestItems( m_properties.posIn, true, itemID, materialID, count );
 			if ( items.size() < count )
 			{
 				if( Global::craftable.contains( itemID ) )
 				{
-					Global::wsm().autoGenCraftJob( itemID, materialID, count - items.size() );
+					g->wsm()->autoGenCraftJob( itemID, materialID, count - items.size() );
 				}
 				return false;
 			}
@@ -1124,7 +1128,7 @@ bool Workshop::giveBackJob( unsigned int jobID )
 		{
 			if ( m_job->animal() )
 			{
-				auto animal = Global::cm().animal( m_job->animal() );
+				auto animal = g->cm()->animal( m_job->animal() );
 				if ( animal )
 				{
 					animal->setInJob( 0 );
@@ -1160,7 +1164,7 @@ Job* Workshop::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Workshop::hasJobID( unsigned int jobID )
+bool Workshop::hasJobID( unsigned int jobID ) const
 {
 	if ( m_job )
 	{
@@ -1226,7 +1230,7 @@ unsigned int Workshop::getPossibleStockpile()
 
 	for ( const auto& candidate : candidates )
 	{
-		if ( Global::w().getTileFlag( candidate ) & TileFlag::TF_STOCKPILE )
+		if ( g->w()->getTileFlag( candidate ) & TileFlag::TF_STOCKPILE )
 		{
 			spPos       = candidate;
 			isStockpile = true;
@@ -1236,7 +1240,7 @@ unsigned int Workshop::getPossibleStockpile()
 
 	if ( isStockpile )
 	{
-		Stockpile* sp = Global::spm().getStockpileAtPos( spPos );
+		Stockpile* sp = g->spm()->getStockpileAtPos( spPos );
 		if ( sp && sp->getFields().size() < 10 )
 		{
 			short xMin = Global::dimX;
@@ -1271,29 +1275,29 @@ bool Workshop::outputTileFree()
 	Position pos = outputPos();
 	//TODO make number configurable
 
-	bool isFree = Global::inv().countItemsAtPos( pos ) < 40;
+	bool isFree = g->inv()->countItemsAtPos( pos ) < 40;
 
 	if ( !isFree )
 	{
-		bool alreadySet = Global::w().getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = g->w()->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
 
 		if ( !alreadySet )
 		{
 			for ( auto pos : m_tiles )
 			{
-				Global::w().setTileFlag( pos, TileFlag::TF_BLOCKED );
+				g->w()->setTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
 		}
 	}
 	else
 	{
-		bool alreadySet = Global::w().getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = g->w()->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
 
 		if ( alreadySet )
 		{
 			for ( auto pos : m_tiles )
 			{
-				Global::w().clearTileFlag( pos, TileFlag::TF_BLOCKED );
+				g->w()->clearTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
 		}
 	}
@@ -1354,8 +1358,8 @@ void Workshop::setSourceItems( QVariantList items )
 {
 	for ( auto item : items )
 	{
-		Global::inv().pickUpItem( item.toUInt() );
-		Global::inv().setConstructedOrEquipped( item.toUInt(), true );
+		g->inv()->pickUpItem( item.toUInt() );
+		g->inv()->setConstructedOrEquipped( item.toUInt(), true );
 	}
 	m_properties.sourceItems = items;
 }
@@ -1374,7 +1378,7 @@ void Workshop::checkLinkedStockpile()
 {
 	if ( linkedStockpile() )
 	{
-		Stockpile* sp = Global::spm().getStockpile( linkedStockpile() );
+		Stockpile* sp = g->spm()->getStockpile( linkedStockpile() );
 		if ( sp )
 		{
 			if ( sp->countFields() > 9 )

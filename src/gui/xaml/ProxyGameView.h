@@ -19,6 +19,8 @@
 
 #include "GameModel.h"
 
+#include "../aggregatorinventory.h"
+
 #include <QObject>
 
 class ProxyGameView : public QObject
@@ -50,6 +52,10 @@ public:
 
 	void setRenderOptions( bool designations, bool jobs, bool walls, bool axels );
 
+	void setSelectionAction( QString action );
+
+	void requestBuildItems( BuildSelection buildSelection, QString category );
+	void requestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
 
 private:
 	IngnomiaGUI::GameModel* m_parent = nullptr;
@@ -75,6 +81,8 @@ private slots:
 	void onKeyEscape();
 	void onUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
+	void onBuildItems( const QList<GuiBuildItem>& items );
+
 signals:
 	void signalCloseStockpileWindow();
 	void signalCloseWorkshopWindow();
@@ -90,4 +98,8 @@ signals:
 	void signalSetGameSpeed( GameSpeed speed );
 	void signalSetPaused( bool paused );
 	void signalSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
+
+	void signalRequestBuildItems( BuildSelection buildSelection, QString category );
+	void signalRequestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
+	void signalSetSelectionAction( QString action );
 };

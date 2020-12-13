@@ -17,6 +17,7 @@
 */
 #pragma once
 
+
 #include "../base/position.h"
 #include "../game/room.h"
 
@@ -24,6 +25,7 @@
 
 class Job;
 class Room;
+class Game;
 
 struct Door
 {
@@ -36,13 +38,14 @@ struct Door
 	bool blockMonsters       = true;
 };
 
-class RoomManager
+class RoomManager : public QObject
 {
+	Q_OBJECT
+	Q_DISABLE_COPY_MOVE( RoomManager )
 public:
-	RoomManager();
+	RoomManager() = delete;
+	RoomManager( Game* parent );
 	~RoomManager();
-
-	void reset();
 
 	void onTick( quint64 tick );
 
@@ -56,26 +59,15 @@ public:
 	void removeRoom( unsigned int id );
 	void removeTile( Position pos );
 
-	bool isRoom( Position pos )
-	{
-		return m_allRoomTiles.contains( pos.toInt() );
-	}
+	bool isRoom( Position pos ) const;
 	bool isDining( Position pos );
 	bool allowBell( Position pos );
 
 	Room* getRoomAtPos( Position pos );
 	Room* getRoom( unsigned int id );
 
-	QMap<unsigned int, Room>& allRooms()
-	{
-		return m_rooms;
-	}
-	QMap<unsigned int, Door>& allDoors()
-	{
-		return m_doors;
-	}
-
-	Room* getLastAddedRoom();
+	const QHash<unsigned int, Room*>& allRooms();
+	const QHash<Position, Door>& allDoors();
 
 	QList<unsigned int> getDorms();
 	QList<unsigned int> getDinings();
@@ -95,12 +87,12 @@ public:
 	bool cancelAlarmJob( unsigned int roomID );
 
 private:
-	QMap<unsigned int, Room> m_rooms;
-	QHash<unsigned int, unsigned int> m_allRoomTiles;
+	QPointer<Game> g;
 
-	QMap<unsigned int, Door> m_doors;
+	QHash<unsigned int, Room*> m_rooms;
+	QHash<Position, unsigned int> m_allRoomTiles;
+
+	QHash<Position, Door> m_doors;
 
 	Door m_errorDoor;
-
-	unsigned int m_lastAdded = 0;
 };

@@ -23,6 +23,7 @@
 #include "../base/io.h"
 #include "../base/logger.h"
 #include "../base/util.h"
+
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
@@ -38,6 +39,7 @@
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
+
 #include "../gfx/spritefactory.h"
 
 //#include "../gui/keybindings.h"
@@ -48,23 +50,13 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
+EventConnector* Global::eventConnector = nullptr;
+Util* Global::util = nullptr;
+Selection* Global::sel = nullptr;
+NewGameSettings* Global::newGameSettings = nullptr;
+Config* Global::cfg = nullptr;
+
 Logger Global::m_logger;
-Inventory Global::m_inventory;
-ItemHistory Global::m_itemHistory;
-JobManager Global::m_jobManager;
-StockpileManager Global::m_stockpileManager;
-FarmingManager Global::m_farmingManager;
-WorkshopManager Global::m_workshopManager;
-World Global::m_world;
-SpriteFactory Global::m_spriteFactory;
-RoomManager Global::m_roomManager;
-GnomeManager Global::m_gnomeManager;
-CreatureManager Global::m_creatureManager;
-EventManager Global::m_eventManager;
-MechanismManager Global::m_mechanismManager;
-FluidManager Global::m_fluidManager;
-NeighborManager Global::m_neighborManager;
-MilitaryManager Global::m_militaryManager;
 
 //KeyBindings Global::m_keyBindings;
 
@@ -111,36 +103,12 @@ void Global::reset()
 {
 	qDebug() << "*** Global reset";
 
-	DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
-	Util::ticksPerMinute = DB::select( "Value_", "Time", "TicksPerMinute" ).toInt();
-	Util::minutesPerHour = DB::select( "Value_", "Time", "MinutesPerHour" ).toInt();
-	Util::hoursPerDay    = DB::select( "Value_", "Time", "HoursPerDay" ).toInt();
-	Util::ticksPerDay    = Util::ticksPerMinute * Util::minutesPerHour * Util::hoursPerDay;
-
-	Util::daysPerSeason = DB::select( "NumDays", "Seasons", 1 ).toInt();
-
 	GameState::stockOverlay.clear();
 	GameState::squads.clear();
 
-	Global::xpMod = Config::getInstance().get( "XpMod" ).toDouble();
+	Global::xpMod = Global::cfg->get( "XpMod" ).toDouble();
 
 	m_logger.reset();
-	m_inventory.reset();
-	m_itemHistory.reset();
-	m_jobManager.reset();
-	m_stockpileManager.reset();
-	m_farmingManager.reset();
-	m_workshopManager.reset();
-	m_world.reset();
-	m_gnomeManager.reset();
-	m_roomManager.reset();
-	m_stockpileManager.reset();
-	m_creatureManager.reset();
-	m_eventManager.reset();
-	m_mechanismManager.reset();
-	m_fluidManager.reset();
-	m_neighborManager.reset();
-	m_militaryManager.reset();
 
 	wallsLowered = false;
 	showAxles    = false;
@@ -168,7 +136,7 @@ void Global::reset()
 
 	Global::dirtUID = DBH::materialUID( "Dirt" );
 
-	Config::getInstance().set( "renderCreatures", true );
+	Global::cfg->set( "renderCreatures", true );
 
 	creaturePartLookUp.insert( "Head", CP_HEAD );
 	creaturePartLookUp.insert( "Torso", CP_TORSO );
@@ -270,7 +238,7 @@ void Global::reset()
 
 	craftable.clear();
 	auto rows = DB::selectRows( "Crafts" );
-	for( auto row : rows )
+	for( const auto& row : rows )
 	{
 		craftable.insert( row.value( "ItemID" ).toString() );
 	}
@@ -279,86 +247,6 @@ void Global::reset()
 Logger& Global::logger()
 {
 	return m_logger;
-}
-
-Inventory& Global::inv()
-{
-	return m_inventory;
-}
-
-ItemHistory& Global::ih()
-{
-	return m_itemHistory;
-}
-
-JobManager& Global::jm()
-{
-	return m_jobManager;
-}
-
-StockpileManager& Global::spm()
-{
-	return m_stockpileManager;
-}
-
-FarmingManager& Global::fm()
-{
-	return m_farmingManager;
-}
-
-WorkshopManager& Global::wsm()
-{
-	return m_workshopManager;
-}
-
-World& Global::w()
-{
-	return m_world;
-}
-
-SpriteFactory& Global::sf()
-{
-	return m_spriteFactory;
-}
-
-RoomManager& Global::rm()
-{
-	return m_roomManager;
-}
-
-GnomeManager& Global::gm()
-{
-	return m_gnomeManager;
-}
-
-CreatureManager& Global::cm()
-{
-	return m_creatureManager;
-}
-
-EventManager& Global::em()
-{
-	return m_eventManager;
-}
-
-MechanismManager& Global::mcm()
-{
-	return m_mechanismManager;
-}
-
-FluidManager& Global::flm()
-{
-	return m_fluidManager;
-}
-
-NeighborManager& Global::nm()
-{
-	return m_neighborManager;
-}
-
-MilitaryManager& Global::mil()
-{
-	return m_militaryManager;
 }
 
 /*
@@ -378,7 +266,7 @@ bool Global::loadBehaviorTrees()
 
 		QDomDocument xml;
 		// Load xml file as raw data
-		QFile f( Config::getInstance().get( "dataPath" ).toString() + "/ai/" + xmlName );
+		QFile f( Global::cfg->get( "dataPath" ).toString() + "/ai/" + xmlName );
 		if ( !f.open( QIODevice::ReadOnly ) )
 		{
 			// Error while loading file

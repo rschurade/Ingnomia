@@ -113,15 +113,13 @@ struct WorkshopProperties
 class Workshop : public WorldObject
 {
 	friend class WorkshopManager;
-
+	Q_DISABLE_COPY_MOVE( Workshop )
 public:
-	Workshop();
-	Workshop( QVariantMap values );
+	Workshop( QString type, Position& pos, int rotation, Game* game );
+	Workshop( QVariantMap values, Game* game );
 	~Workshop();
 
 	QVariant serialize();
-
-	void init( QString type, Position& pos, int rotation );
 
 	void onTick( quint64 tick );
 
@@ -269,7 +267,7 @@ private:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	WorkshopProperties m_properties;
 

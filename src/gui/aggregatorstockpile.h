@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+class Game;
+
 struct ItemsSummary
 {
 	QString itemName;
@@ -56,7 +58,11 @@ public:
 	AggregatorStockpile( QObject* parent = nullptr );
 	~AggregatorStockpile();
 
+	void init( Game* game );
+
 private:
+	QPointer<Game> g;
+
 	bool m_infoDirty    = false;
 	bool m_contentDirty = false;
 

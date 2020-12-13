@@ -25,24 +25,31 @@
 #include "../base/pathfinder.h"
 #include "../base/util.h"
 #include "../game/animal.h"
+
+#include "../game/inventory.h"
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/fluidmanager.h"
-#include "../game/gamemanager.h"
-#include "../game/gnome.h"
 #include "../game/gnomemanager.h"
-#include "../game/inventory.h"
-#include "../game/itemhistory.h"
 #include "../game/mechanismmanager.h"
-#include "../game/object.h"
-#include "../game/plant.h"
+#include "../game/militarymanager.h"
+#include "../game/newgamesettings.h"
 #include "../game/roommanager.h"
 #include "../game/stockpilemanager.h"
-#include "../game/techtree.h"
 #include "../game/workshopmanager.h"
-#include "../game/world.h"
 #include "../gfx/spritefactory.h"
+
+#include "../game/gamemanager.h"
+#include "../game/gnome.h"
+
+#include "../game/itemhistory.h"
+#include "../game/object.h"
+#include "../game/plant.h"
+#include "../game/techtree.h"
+#include "../game/world.h"
+#include "../game/worldgenerator.h"
+
 #include "../gui/eventconnector.h"
 #include "../gui/strings.h"
 #include "../gui/aggregatorcreatureinfo.h"
@@ -53,11 +60,14 @@
 
 #include <time.h>
 
-Game::Game( QObject* parent) :
-	QObject(parent)
+Game::Game( QObject* parent ) :
+	QObject( parent )
 {
 	qDebug() << "init game...";
 
+	m_sf.reset( new SpriteFactory() );
+	
+	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
 
 	m_millisecondsSlow = DB::select( "Value_", "Time", "MillisecondsSlow" ).toInt();
@@ -82,31 +92,48 @@ Game::Game( QObject* parent) :
 	{
 		GameState::techs.insert( t, 1 );
 	}
+#pragma endregion
+	m_inv   			= new Inventory( this );
+	
+	m_spm				= new StockpileManager( this );
+	m_farmingManager	= new FarmingManager( this );
+	m_workshopManager	= new WorkshopManager( this );
+	m_roomManager		= new RoomManager( this );
+
+	m_jobManager		= new JobManager( this );
+	
+	m_creatureManager	= new CreatureManager( this );
+	m_gnomeManager		= new GnomeManager( this );
+	m_militaryManager	= new MilitaryManager( this );
+
+	m_mechanismManager	= new MechanismManager( this );
+	m_fluidManager		= new FluidManager( this );
+	
+	m_neighborManager	= new NeighborManager( this );
+	m_eventManager		= new EventManager( this );
 
 	qDebug() << "init game done";
-
-	m_speed = (int)GameSpeed::Normal;
-
-	/*
-	int lastlvl = 1;
-	for( int i = 1; i < 10000000; ++i )
-	{
-		int lvl = Util::reverseFib( i );
-		if ( lvl > lastlvl )
-		{
-			qDebug() << lvl << i;
-			lastlvl = lvl;
-		}
-	}
-	*/
-
-	//TechTree tt;
-	//tt.create();
 }
 
 
 Game::~Game()
 {
+}
+
+void Game::generateWorld( NewGameSettings* ngs )
+{
+	WorldGenerator wg( ngs, this );
+	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
+	m_world.reset( wg.generateTopology() );	
+	wg.addLife();
+
+	m_pf.reset( new PathFinder( m_world.get(), this ) );
+}
+
+void Game::setWorld( int dimX, int dimY, int dimZ )
+{
+	m_world.reset( new World( dimX, dimY, dimZ, this ) );
+	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
 void Game::start()
@@ -115,9 +142,9 @@ void Game::start()
 
 	if ( GameState::tick == 0 && !GameState::initialSave )
 	{
-		Config::getInstance().set( "DaysToNextAutoSave", 0 );
+		Global::cfg->set( "DaysToNextAutoSave", 0 );
 		autoSave();
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 		emit signalPause( true );
 	}
 
@@ -142,47 +169,45 @@ void Game::stop()
 
 void Game::loop()
 {
-	bool pause = GameManager::getInstance().paused();
-
 	emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
 
 	QElapsedTimer timer;
 	timer.start();
 	int ms2 = 0;
-	if ( !pause )
+	if ( !m_paused )
 	{
 		sendClock();
 
 		// process grass
-		Global::w().processGrass();
+		m_world->processGrass();
 		// process plants
 		processPlants();
 
 		// process animals
 
-		Global::cm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_creatureManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
 		// process gnomes
 		QElapsedTimer timer2;
 		timer2.start();
-		Global::gm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_gnomeManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		ms2 = timer2.elapsed();
 		// process jobs
-		Global::jm().onTick();
+		m_jobManager->onTick();
 		// process stockpiles
-		Global::spm().onTick( GameState::tick );
-		Global::fm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::wsm().onTick( GameState::tick );
-		Global::rm().onTick( GameState::tick );
-		Global::ih().onTick( GameState::dayChanged );
-		Global::em().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::mcm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::flm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		Global::nm().onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_spm->onTick( GameState::tick );
+		m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_workshopManager->onTick( GameState::tick );
+		m_roomManager->onTick( GameState::tick );
+		m_inv->itemHistory()->onTick( GameState::dayChanged );
+		m_eventManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		m_neighborManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
-		Global::w().processWater();
+		m_world->processWater();
 
-		PathFinder::getInstance().findPaths();
+		m_pf->findPaths();
 
 		++GameState::tick;
 	}
@@ -193,14 +218,14 @@ void Game::loop()
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	auto updates = Global::w().updatedTiles();
+	auto updates = m_world->updatedTiles();
 	if ( !updates.empty() )
 	{
 		signalUpdateTileInfo( std::move( updates ) );
 	}
 	emit signalUpdateStockpile();
 
-	EventConnector::getInstance().aggregatorCreatureInfo()->update();
+	Global::eventConnector->aggregatorCreatureInfo()->update();
 
 	int ms        = timer.elapsed();
 	m_maxLoopTime = qMax( ms2, m_maxLoopTime );
@@ -216,18 +241,14 @@ void Game::loop()
 
 	emit signalKingdomInfo( GameState::kingdomName, "", "", "" );
 
-	if ( (int)GameManager::getInstance().gameSpeed() != (int)m_speed )
+	switch( m_gameSpeed )
 	{
-		m_timer->stop();
-		m_speed = (int)GameManager::getInstance().gameSpeed();
-		if ( m_speed == (int)GameSpeed::Normal )
-		{
+		case GameSpeed::Normal:
 			m_timer->start( m_millisecondsSlow );
-		}
-		else
-		{
+			break;
+		case GameSpeed::Fast:
 			m_timer->start( m_millisecondsFast );
-		}
+			break;
 	}
 }
 
@@ -238,18 +259,18 @@ void Game::sendClock()
 	GameState::dayChanged    = false;
 	GameState::seasonChanged = false;
 
-	if ( GameState::tick % Util::ticksPerMinute == 0 )
+	if ( GameState::tick % Global::util->ticksPerMinute == 0 )
 	{
 		++GameState::minute;
 		GameState::minuteChanged = true;
 	}
-	if ( GameState::minute == Util::minutesPerHour )
+	if ( GameState::minute == Global::util->minutesPerHour )
 	{
 		GameState::minute = 0;
 		++GameState::hour;
 		GameState::hourChanged = true;
 	}
-	if ( GameState::hour == Util::hoursPerDay )
+	if ( GameState::hour == Global::util->hoursPerDay )
 	{
 		GameState::hour = 0;
 		++GameState::day;
@@ -268,7 +289,7 @@ void Game::sendClock()
 			//qDebug() << "Now it's " << nextSeason;
 			GameState::seasonString = nextSeason;
 
-			Util::daysPerSeason = DB::select( "NumDays", "Seasons", nextSeason ).toInt();
+			Global::util->daysPerSeason = DB::select( "NumDays", "Seasons", nextSeason ).toInt();
 
 			int numSeasonsPerYear = DB::numRows( "Seasons" );
 			if ( GameState::season == numSeasonsPerYear )
@@ -284,11 +305,12 @@ void Game::sendClock()
 	}
 	if ( GameState::seasonChanged )
 	{
-		Global::sf().forceUpdate();
+		auto gm = dynamic_cast<GameManager*>( parent() );
+		m_sf->forceUpdate();
 	}
 
 	QString sunStatus;
-	int currentTimeInt = GameState::hour * Util::minutesPerHour + GameState::minute;
+	int currentTimeInt = GameState::hour * Global::util->minutesPerHour + GameState::minute;
 	if ( currentTimeInt < GameState::sunrise )
 	{
 		//time between midnight and sunrise
@@ -345,13 +367,13 @@ void Game::calcDaylight()
 int Game::timeToInt( QString time )
 {
 	QStringList tl = time.split( ":" );
-	return tl[0].toInt() * Util::minutesPerHour + tl[1].toInt();
+	return tl[0].toInt() * Global::util->minutesPerHour + tl[1].toInt();
 }
 
 QString Game::intToTime( int time )
 {
-	int hour    = time / Util::minutesPerHour;
-	int minute  = time - ( hour * Util::minutesPerHour );
+	int hour    = time / Global::util->minutesPerHour;
+	int minute  = time - ( hour * Global::util->minutesPerHour );
 	QString out = "";
 	if ( hour < 10 )
 		out += "0";
@@ -366,7 +388,7 @@ QString Game::intToTime( int time )
 void Game::processPlants()
 {
 	QList<Position> toRemove;
-	for ( auto& p : Global::w().plants() )
+	for ( auto& p : m_world->plants() )
 	{
 		switch ( p.onTick( GameState::tick, GameState::dayChanged, GameState::seasonChanged ) )
 		{
@@ -379,48 +401,90 @@ void Game::processPlants()
 	}
 	for ( auto p : toRemove )
 	{
-		Global::w().removePlant( p );
+		m_world->removePlant( p );
 	}
 }
 
 void Game::autoSave()
 {
-	int daysToNext = Config::getInstance().get( "DaysToNextAutoSave" ).toInt();
+	int daysToNext = Global::cfg->get( "DaysToNextAutoSave" ).toInt();
 
 	if ( daysToNext == 0 )
 	{
-		Config::getInstance().set( "Pause", true );
+		Global::cfg->set( "Pause", true );
 		emit signalStartAutoSave();
 		emit signalPause( true );
-		IO::save( true );
+		IO io( this, this );
+		io.save( true );
 		emit signalEndAutoSave();
 
-		if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )
+		if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 		{
 			emit signalPause( false );
-			Config::getInstance().set( "Pause", false );
+			Global::cfg->set( "Pause", false );
 		}
 
-		Config::getInstance().set( "DaysToNextAutoSave", Config::getInstance().get( "AutoSaveInterval" ).toInt() - 1 );
+		Global::cfg->set( "DaysToNextAutoSave", Global::cfg->get( "AutoSaveInterval" ).toInt() - 1 );
 	}
 	else
 	{
 		--daysToNext;
-		Config::getInstance().set( "DaysToNextAutoSave", daysToNext );
+		Global::cfg->set( "DaysToNextAutoSave", daysToNext );
 	}
 }
 
 void Game::save()
 {
-	Config::getInstance().set( "Pause", true );
+	Global::cfg->set( "Pause", true );
 	emit signalStartAutoSave();
 	emit signalPause( true );
-	IO::save( true );
+	IO io( this, this );
+	io.save( true );
 	emit signalEndAutoSave();
 
-	if ( Config::getInstance().get( "AutoSaveContinue" ).toBool() )
+	if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 	{
 		emit signalPause( false );
-		Config::getInstance().set( "Pause", false );
+		Global::cfg->set( "Pause", false );
 	}
 }
+
+	
+GameSpeed Game::gameSpeed()
+{
+	return m_gameSpeed;
+}
+
+void Game::setGameSpeed( GameSpeed speed )
+{
+	m_gameSpeed = speed;
+}
+
+bool Game::paused()
+{
+	return m_paused;
+}
+
+void Game::setPaused( bool value )
+{
+	m_paused = value;
+}
+
+Inventory*			Game::inv(){ return m_inv; }
+ItemHistory*		Game::ih(){ return m_inv->itemHistory(); }
+JobManager*			Game::jm(){ return m_jobManager; }
+StockpileManager*	Game::spm(){ return m_spm; }
+FarmingManager*		Game::fm(){ return m_farmingManager; }
+WorkshopManager*	Game::wsm(){ return m_workshopManager; }
+World*				Game::w(){ return m_world.get(); }
+SpriteFactory*		Game::sf(){ return m_sf.get(); }
+RoomManager*		Game::rm(){ return m_roomManager; }
+GnomeManager*		Game::gm(){ return m_gnomeManager; }
+CreatureManager*	Game::cm(){ return m_creatureManager; }
+EventManager*		Game::em(){ return m_eventManager; }
+MechanismManager*	Game::mcm(){ return m_mechanismManager; }
+FluidManager*		Game::flm(){ return m_fluidManager; }
+NeighborManager*	Game::nm(){ return m_neighborManager; }
+MilitaryManager*	Game::mil(){ return m_militaryManager; }
+PathFinder*			Game::pf(){ return m_pf.get(); }
+World*				Game::world() { return m_world.get(); }

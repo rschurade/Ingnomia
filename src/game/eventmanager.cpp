@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "eventmanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -28,7 +29,8 @@
 #include "../game/gnomemanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
-#include "../game/world.h"
+
+#include "../gui/eventconnector.h"
 
 #include <QDebug>
 
@@ -62,7 +64,7 @@ QVariantMap Mission::serialize()
 	out.insert( "Step", (int)step );
 	out.insert( "Target", target );
 	out.insert( "Distance", distance );
-	out.insert( "Gnomes", Util::uintList2Variant( gnomes ) );
+	out.insert( "Gnomes", Global::util->uintList2Variant( gnomes ) );
 	out.insert( "StartTick", startTick );
 	out.insert( "NextCheckTick", nextCheckTick );
 
@@ -80,14 +82,15 @@ Mission::Mission( QVariantMap in )
 	step          = (MissionStep)in.value( "Step" ).toInt();
 	target        = in.value( "Target" ).toUInt();
 	distance      = in.value( "Distance" ).toUInt();
-	gnomes        = Util::variantList2UInt( in.value( "Gnomes" ).toList() );
+	gnomes        = Global::util->variantList2UInt( in.value( "Gnomes" ).toList() );
 	startTick     = in.value( "StartTick" ).value<quint64>();
 	nextCheckTick = in.value( "NextCheckTick" ).value<quint64>();
 	leavePos      = Position( in.value( "LeavePos" ) );
 	result        = in.value( "Result" ).toMap();
 }
 
-EventManager::EventManager( QObject* parent ) :
+EventManager::EventManager( Game* parent ) :
+	g( parent ),
 	QObject( parent )
 {
 	m_string2type.insert( "EventTrader", (int)EventType::TRADER );
@@ -143,12 +146,6 @@ void EventManager::deserialize( QVariantMap in )
 	}
 }
 
-void EventManager::reset()
-{
-	m_eventList.clear();
-	m_missions.clear();
-}
-
 void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	if ( hourChanged )
@@ -163,7 +160,7 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	{
 		auto ev = createEvent( "EventMigration" );
 		srand( std::chrono::system_clock::now().time_since_epoch().count() );
-		ev.tick = GameState::tick + Util::ticksPerDayRandomized( 50 );
+		ev.tick = GameState::tick + Global::util->ticksPerDayRandomized( 50 );
 		m_eventList.append( ev );
 	}
 
@@ -179,7 +176,7 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 				int amount = em.value( "Amount" ).toInt();
 				msg.replace( "$Num", QString::number( amount ) );
 				QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
-				emit signalEvent( 0, title, msg, true, false );
+				Global::eventConnector->onEvent( 0, title, msg, true, false );
 			}
 			executeEvent( event );
 			it = m_eventList.erase( it );
@@ -241,10 +238,8 @@ bool EventManager::checkRequirements( Event& event )
 			{
 				msg.replace( "$Num", QString::number( num ) );
 
-				emit signalEvent( event.id, im.value( "Title" ).toString(), msg, im.value( "Pause" ).toBool(), true );
+				Global::eventConnector->onEvent( event.id, im.value( "Title" ).toString(), msg, im.value( "Pause" ).toBool(), true );
 			}
-
-			QMutexLocker lock( &m_mutex );
 
 			if ( data.contains( "Expires" ) )
 			{
@@ -253,7 +248,7 @@ bool EventManager::checkRequirements( Event& event )
 				QString unit   = expireMap.value( "Unit" ).toString();
 				if ( unit == "Day" )
 				{
-					data.insert( "ExpireTick", GameState::tick + val * Util::ticksPerDay );
+					data.insert( "ExpireTick", GameState::tick + val * Global::util->ticksPerDay );
 				}
 				else if ( unit == "Ticks" )
 				{
@@ -265,7 +260,7 @@ bool EventManager::checkRequirements( Event& event )
 		case EventRequire::FREEMARKETSTALL:
 		{
 			unsigned int marketStall = 0;
-			for ( auto ws : Global::wsm().workshops() )
+			for ( auto ws : g->m_workshopManager->workshops() )
 			{
 				if ( ws->type() == "MarketStall" )
 				{
@@ -338,7 +333,7 @@ void EventManager::spawnGnome( Position location, int amount )
 {
 	for ( int i = 0; i < amount; ++i )
 	{
-		Global::gm().addGnome( location );
+		g->m_gnomeManager->addGnome( location );
 	}
 }
 
@@ -347,13 +342,13 @@ void EventManager::spawnInvasion( Position location, int amount, QVariantMap dat
 	QString type = data.value( "Species" ).toString();
 	for ( int i = 0; i < amount; ++i )
 	{
-		Global::cm().addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
+		g->m_creatureManager->addCreature( CreatureType::MONSTER, type, location, Gender::MALE, true, false, 1 );
 	}
 }
 
 void EventManager::spawnTrader( Position location, unsigned int marketStall, QVariantMap data )
 {
-	auto ws = Global::wsm().workshop( marketStall );
+	auto ws = g->m_workshopManager->workshop( marketStall );
 	// spawn trader"
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
 	QString type;
@@ -386,7 +381,7 @@ void EventManager::spawnTrader( Position location, unsigned int marketStall, QVa
 		}
 		break;
 	}
-	unsigned int id = Global::gm().addTrader( location, ws->id(), type );
+	unsigned int id = g->m_gnomeManager->addTrader( location, ws->id(), type );
 	ws->assignGnome( id );
 }
 
@@ -407,7 +402,7 @@ void EventManager::onAnswer( unsigned int id, bool answer )
 					{
 						QString msg   = eventMap.value( "Expires" ).toMap().value( "Message" ).toString();
 						QString title = eventMap.value( "Expires" ).toMap().value( "Title" ).toString();
-						emit signalEvent( 0, title, msg, false, false );
+						Global::eventConnector->onEvent( 0, title, msg, false, false );
 						m_eventList.removeAt( i );
 						return;
 					}
@@ -441,7 +436,7 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 		bool found = false;
 		while ( tries < 20 )
 		{
-			location = Util::borderPos( found );
+			location = Global::util->borderPos( found );
 			if ( found )
 			{
 				break;
@@ -508,7 +503,7 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 			QString title = em.value( "OnFailure" ).toMap().value( "Title" ).toString();
 			if ( !msg.isEmpty() )
 			{
-				emit signalEvent( GameState::createID(), title, msg, false, false );
+				Global::eventConnector->onEvent( GameState::createID(), title, msg, false, false );
 			}
 		}
 		m_eventList.removeLast();
@@ -523,7 +518,7 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 			int amount = em.value( "Amount" ).toInt();
 			msg.replace( "$Num", QString::number( amount ) );
 			QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
-			emit signalEvent( 0, title, msg, true, false );
+			Global::eventConnector->onEvent( 0, title, msg, true, false );
 		}
 		executeEvent( e );
 		m_eventList.removeLast();
@@ -534,7 +529,7 @@ QList<Mission>& EventManager::missions()
 {
 	for( auto& mission : m_missions )
 	{
-		mission.time = ( GameState::tick - mission.startTick ) / ( Util::ticksPerMinute * 60 );
+		mission.time = ( GameState::tick - mission.startTick ) / ( Global::util->ticksPerMinute * 60 );
 	}
 
 	return m_missions;
@@ -551,7 +546,7 @@ Mission* EventManager::getMission( unsigned int id )
 	{
 		if ( mission.id == id )
 		{
-			mission.time = ( GameState::tick - mission.startTick ) / ( Util::ticksPerMinute * 60 );
+			mission.time = ( GameState::tick - mission.startTick ) / ( Global::util->ticksPerMinute * 60 );
 			return &mission;
 		}
 	}
@@ -573,7 +568,7 @@ void EventManager::finishMission( unsigned int id )
 void EventManager::addTraderEvent( NeighborKingdom kingdom )
 {
 	quint64 leaveTick = kingdom.nextTrader;
-	quint64 tick      = leaveTick + kingdom.distance * Util::ticksPerMinute * Util::minutesPerHour;
+	quint64 tick      = leaveTick + kingdom.distance * Global::util->ticksPerMinute * Global::util->minutesPerHour;
 
 	auto e = createEvent( "EventTrader" );
 	e.tick = tick;
@@ -596,7 +591,7 @@ void EventManager::addRaidEvent( NeighborKingdom kingdom )
 	}
 
 	quint64 leaveTick = GameState::tick;
-	quint64 tick      = leaveTick + kingdom.distance * Util::ticksPerMinute * Util::minutesPerHour;
+	quint64 tick      = leaveTick + kingdom.distance * Global::util->ticksPerMinute * Global::util->minutesPerHour;
 
 	auto e = createEvent( "EventInvasion" );
 	e.tick = tick;
@@ -622,12 +617,12 @@ void EventManager::startMission( MissionType type, MissionAction action, unsigne
 	mission.step = MissionStep::LEAVE_MAP;
 	mission.target = targetKingdom;
 	mission.action = action;
-	mission.distance = Global::nm().distance( mission.target );
+	mission.distance = g->m_neighborManager->distance( mission.target );
 	mission.gnomes = { gnomeID };
 	mission.startTick = GameState::tick;
-	mission.nextCheckTick = GameState::tick + Util::ticksPerDay;
+	mission.nextCheckTick = GameState::tick + Global::util->ticksPerDay;
 
-	Global::em().addMission( mission );
+	addMission( mission );
 
-	Global::gm().setInMission( gnomeID, mission.id );
+	g->m_gnomeManager->setInMission( gnomeID, mission.id );
 }

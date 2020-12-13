@@ -19,15 +19,11 @@
 #include "mainwindow.h"
 
 #include "../base/config.h"
-#include "../base/global.h"
 #include "../base/io.h"
 #include "../base/selection.h"
-#include "../base/tile.h"
-#include "../game/gamemanager.h"
-#include "../game/world.h"
 #include "../gui/eventconnector.h"
-#include "../gui/aggregatordebug.h"
-#include "../gui/aggregatorsettings.h"
+#include "../gui/aggregatorselection.h"
+
 #include "license.h"
 #include "mainwindowrenderer.h"
 #include "xaml/GameGui.xaml.h"
@@ -57,6 +53,9 @@
 #include "xaml/debugmodel.h"
 #include "xaml/inventory.xaml.h"
 #include "xaml/inventorymodel.h"
+#include "xaml/selection.xaml.h"
+#include "xaml/selectionmodel.h"
+
 
 #include "xaml/military.xaml.h"
 #include "xaml/militarymodel.h"
@@ -100,18 +99,20 @@ MainWindow::MainWindow( QWidget* parent ) :
 	QOpenGLWindow()
 {
 	qDebug() << "Create main window.";
-	connect( &EventConnector::getInstance(), &EventConnector::signalExit, this, &MainWindow::onExit );
-	connect( this, &MainWindow::signalWindowSize, &EventConnector::getInstance(), &EventConnector::onWindowSize );
-	connect( this, &MainWindow::signalViewLevel, &EventConnector::getInstance(), &EventConnector::onViewLevel );
-	connect( this, &MainWindow::signalSelectTile, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
-	connect( this, &MainWindow::signalKeyPress, &EventConnector::getInstance(), &EventConnector::onKeyPress );
-	connect( this, &MainWindow::signalUpdateRenderOptions, &EventConnector::getInstance(), &EventConnector::onUpdateRenderOptions );
+	connect( Global::eventConnector, &EventConnector::signalExit, this, &MainWindow::onExit );
+	connect( this, &MainWindow::signalWindowSize, Global::eventConnector, &EventConnector::onWindowSize );
+	connect( this, &MainWindow::signalViewLevel, Global::eventConnector, &EventConnector::onViewLevel );
+	connect( this, &MainWindow::signalSelectTile, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
+	connect( this, &MainWindow::signalKeyPress, Global::eventConnector, &EventConnector::onKeyPress );
+	connect( this, &MainWindow::signalTogglePause, Global::eventConnector, &EventConnector::onTogglePause );
+	connect( this, &MainWindow::signalUpdateRenderOptions, Global::eventConnector, &EventConnector::onUpdateRenderOptions );
+	connect( this, &MainWindow::signalUpdateCursorPos, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateCursorPos );
 
-	connect( EventConnector::getInstance().aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalFullScreen, this, &MainWindow::onFullScreen, Qt::QueuedConnection );
 
-	connect( &GameManager::getInstance(), &GameManager::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalInitView, this, &MainWindow::onInitViewAfterLoad, Qt::QueuedConnection );
 
 	instance = this;
 }
@@ -122,10 +123,10 @@ MainWindow::~MainWindow()
 
 	if( !m_isFullScreen )
 	{
-		Config::getInstance().set( "WindowWidth", this->width() );
-		Config::getInstance().set( "WindowHeight", this->height() );
-		Config::getInstance().set( "WindowPosX", this->position().x() );
-		Config::getInstance().set( "WindowPosY", this->position().y() );
+		Global::cfg->set( "WindowWidth", this->width() );
+		Global::cfg->set( "WindowHeight", this->height() );
+		Global::cfg->set( "WindowPosX", this->position().x() );
+		Global::cfg->set( "WindowPosY", this->position().y() );
 	}
 	
 	IO::saveConfig();
@@ -149,13 +150,13 @@ void MainWindow::toggleFullScreen()
 	if ( m_isFullScreen )
 	{
 		w->showFullScreen();
-		Config::getInstance().set( "fullscreen", true );
+		Global::cfg->set( "fullscreen", true );
 	}
 	else
 	{
 		// Reset from fullscreen:
 		w->showNormal();
-		Config::getInstance().set( "fullscreen", false );
+		Global::cfg->set( "fullscreen", false );
 	}
 	m_renderer->onRenderParamsChanged();
 }
@@ -164,7 +165,7 @@ void MainWindow::onFullScreen( bool value )
 {
 	QOpenGLWindow* w = this;
 	m_isFullScreen = value;
-	Config::getInstance().set( "fullscreen", value );
+	Global::cfg->set( "fullscreen", value );
 	if ( value )
 	{
 		w->showFullScreen();
@@ -230,9 +231,12 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
-				Selection::getInstance().rotate();
-				Selection::getInstance().updateSelection( m_cursorPos, false, false );
-				redraw();
+				if( Global::sel )
+				{
+					Global::sel->rotate();
+					Global::sel->updateSelection( m_cursorPos, false, false );
+					redraw();
+				}
 				break;
 			case Qt::Key_Comma:
 				m_renderer->rotate( 1 );
@@ -244,7 +248,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				emit signalKeyPress( event->key() );
 				break;
 			case Qt::Key_Space:
-				GameManager::getInstance().trySetPaused( !GameManager::getInstance().paused() );
+				emit signalTogglePause();
 				break;
 			case Qt::Key_W:
 				keyboardMove();
@@ -328,7 +332,7 @@ void MainWindow::keyboardMove()
 
 	if( m_renderer && (x || y) )
 	{
-		const float keyboardMoveSpeed = (Config::getInstance().get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
+		const float keyboardMoveSpeed = (Global::cfg->get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
 
 		float moveX = -x * keyboardMoveSpeed * elapsedTime;
 		float moveY = -y * keyboardMoveSpeed * elapsedTime;
@@ -380,19 +384,18 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	m_mouseX  = gp.x();
 	m_mouseY  = gp.y();
 
-	if ( Selection::getInstance().hasAction() )
+	m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, false, event->modifiers() & Qt::ShiftModifier );
+	emit signalUpdateCursorPos( m_cursorPos.toString() );
+	if ( Global::sel && Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-		Selection::getInstance().updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
-		Selection::getInstance().setControlActive( event->modifiers() & Qt::ControlModifier );
+		Global::sel->updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+		Global::sel->setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
 	}
 }
 
 void MainWindow::onInitViewAfterLoad()
 {
-	Config& config = Config::getInstance();
-
 	m_renderer->setScale( 1.0 );
 	m_moveX = GameState::moveX;
 	m_moveY = GameState::moveY;
@@ -463,24 +466,27 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-					if ( Selection::getInstance().hasAction() )
+					if( Global::sel )
 					{
-						if ( Selection::getInstance().leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
+						m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+						if ( Global::sel->hasAction() )
 						{
-							// open info windows after creating something
+							if ( Global::sel->leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
+							{
+								// open info windows after creating something
+							}
+							redraw();
 						}
-						redraw();
-					}
-					else
-					{
-						//open tile info or do other game related stuff
-						if ( m_cursorPos.x < 0 || m_cursorPos.y < 0 || m_cursorPos.x > Global::dimX - 1 || m_cursorPos.y > Global::dimX - 1 || m_cursorPos.z < 0 || m_cursorPos.z > Global::dimZ - 1 )
+						else
 						{
-							//return;
+							//open tile info or do other game related stuff
+							if ( m_cursorPos.x < 0 || m_cursorPos.y < 0 || m_cursorPos.x > Global::dimX - 1 || m_cursorPos.y > Global::dimX - 1 || m_cursorPos.z < 0 || m_cursorPos.z > Global::dimZ - 1 )
+							{
+								//return;
+							}
+							unsigned int tileID = m_cursorPos.toInt();
+							emit signalSelectTile( tileID );
 						}
-						unsigned int tileID = m_cursorPos.toInt();
-						emit signalSelectTile( tileID );
 					}
 				}
 			}
@@ -502,11 +508,11 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			}
 			else
 			{
-				if ( Selection::getInstance().hasAction() )
+				if ( Global::sel && Global::sel->hasAction() )
 				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), event->modifiers() & Qt::ShiftModifier );
-					Selection::getInstance().rightClick( m_cursorPos );
-					m_selectedAction = Selection::getInstance().action();
+					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
+					Global::sel->rightClick( m_cursorPos );
+					m_selectedAction = Global::sel->action();
 					redraw();
 				}
 				m_rightDown = false;
@@ -530,7 +536,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		}
 		else
 		{
-			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Config::getInstance().get( "toggleMouseWheel" ).toBool() ) 
+			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() ) 
 			{
 				// Scale the view / do the zoom
 				auto delta = wEvent->delta();
@@ -578,11 +584,11 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Selection::getInstance().hasAction() )
+	if ( Global::sel && Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
-		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
-		Selection::getInstance().setControlActive( ctrl );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
+		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
+		Global::sel->setControlActive( ctrl );
 		redraw();
 	}
 }
@@ -596,11 +602,11 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Selection::getInstance().hasAction() )
+	if ( Global::sel && Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Selection::getInstance().isFloor(), shift );
-		Selection::getInstance().updateSelection( m_cursorPos, shift, ctrl );
-		Selection::getInstance().setControlActive( ctrl );
+		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
+		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
+		Global::sel->setControlActive( ctrl );
 		redraw();
 	}
 }
@@ -727,8 +733,8 @@ void MainWindow::resizeGL( int w, int h )
 
 	if( !m_isFullScreen )
 	{
-		Config::getInstance().set( "WindowWidth", w );
-		Config::getInstance().set( "WindowHeight", h );
+		Global::cfg->set( "WindowWidth", w );
+		Global::cfg->set( "WindowHeight", h );
 	}
 
 	if ( m_view )
@@ -778,7 +784,7 @@ MainWindowRenderer* MainWindow::renderer()
 
 void MainWindow::installResourceProviders()
 {
-	const std::string contentPath = Config::getInstance().get( "dataPath" ).toString().toStdString() + "/xaml/";
+	const std::string contentPath = Global::cfg->get( "dataPath" ).toString().toStdString() + "/xaml/";
 	Noesis::GUI::SetXamlProvider( Noesis::MakePtr<NoesisApp::LocalXamlProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetTextureProvider( Noesis::MakePtr<NoesisApp::LocalTextureProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetFontProvider( Noesis::MakePtr<NoesisApp::LocalFontProvider>( contentPath.c_str() ) );
@@ -822,6 +828,8 @@ void MainWindow::registerComponents()
 	Noesis::RegisterComponent<IngnomiaGUI::MilitaryModel>();
 	Noesis::RegisterComponent<IngnomiaGUI::InventoryGui>();
 	Noesis::RegisterComponent<IngnomiaGUI::InventoryModel>();
+	Noesis::RegisterComponent<IngnomiaGUI::SelectionGui>();
+	Noesis::RegisterComponent<IngnomiaGUI::SelectionModel>();
 
 	Noesis::RegisterComponent<Noesis::EnumConverter<IngnomiaGUI::State>>();
 	Noesis::RegisterComponent<IngnomiaGUI::ColorToBrushConverter>();

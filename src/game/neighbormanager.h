@@ -17,13 +17,13 @@
 */
 #pragma once
 
+
 #include "../base/position.h"
 
 #include <QMap>
-#include <QMutex>
-#include <QObject>
 #include <QVariantMap>
 
+class Game;
 struct Mission;
 
 enum class KingdomType
@@ -83,12 +83,10 @@ struct NeighborKingdom
 class NeighborManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( NeighborManager )
 public:
-	NeighborManager( QObject* parent = nullptr );
+	NeighborManager( Game* parent );
 	~NeighborManager();
-
-	void reset();
 
 	void addRandomKingdom( KingdomType type );
 
@@ -114,7 +112,7 @@ public:
 	void emissary( Mission* mission );
 
 private:
-	QMutex m_mutex;
+	QPointer<Game> g;
 
 	QList<NeighborKingdom> m_kingdoms;
 

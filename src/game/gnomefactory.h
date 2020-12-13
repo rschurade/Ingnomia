@@ -22,26 +22,14 @@
 
 #include <QString>
 
+class Game;
+
 class GnomeFactory
 {
-private:
-	// Private Constructor
-	GnomeFactory();
-	// Stop the compiler generating methods of copy the object
-	GnomeFactory( GnomeFactory const& copy );            // Not Implemented
-	GnomeFactory& operator=( GnomeFactory const& copy ); // Not Implemented
-
+	Q_DISABLE_COPY_MOVE( GnomeFactory )
 public:
+	GnomeFactory( Game* gm );
 	~GnomeFactory();
-
-	static GnomeFactory& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static GnomeFactory instance;
-		return instance;
-	}
 
 	bool init();
 
@@ -49,4 +37,7 @@ public:
 	GnomeTrader* createGnomeTrader( Position& pos );
 	Gnome* createGnome( QVariantMap values );
 	GnomeTrader* createGnomeTrader( QVariantMap values );
+
+private:
+    QPointer<Game> g;
 };

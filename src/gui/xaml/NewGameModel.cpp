@@ -19,8 +19,8 @@
 #include "NewGameModel.h"
 
 #include "../../base/db.h"
-#include "../../game/gamemanager.h"
 #include "../../game/newgamesettings.h"
+
 #include "../eventconnector.h"
 #include "../strings.h"
 
@@ -92,9 +92,9 @@ void GameItem::setAmount( const char* value )
 		{
 			m_amount = 0;
 		}
-		NewGameSettings::getInstance().setAmount( _sid.Str(), m_amount );
+		Global::newGameSettings->setAmount( _sid.Str(), m_amount );
 
-		NewGameSettings::getInstance().setChecked( _sid.Str(), m_amount != 0 );
+		Global::newGameSettings->setChecked( _sid.Str(), m_amount != 0 );
 		
 		OnPropertyChanged( "IsChecked" );
 	}
@@ -102,7 +102,7 @@ void GameItem::setAmount( const char* value )
 
 bool GameItem::isChecked() const
 {
-	return NewGameSettings::getInstance().isChecked( _sid.Str() );
+	return Global::newGameSettings->isChecked( _sid.Str() );
 }
 
 void GameItem::setChecked( bool value )
@@ -110,8 +110,8 @@ void GameItem::setChecked( bool value )
 	m_amount = value ? -1 : 0;
 	m_amountString = QString::number( m_amount ).toStdString().c_str();
 
-	NewGameSettings::getInstance().setAmount( _sid.Str(), m_amount );
-	NewGameSettings::getInstance().setChecked( _sid.Str(), value );
+	Global::newGameSettings->setAmount( _sid.Str(), m_amount );
+	Global::newGameSettings->setChecked( _sid.Str(), value );
 
 	OnPropertyChanged( "Amount" );
 }
@@ -166,13 +166,13 @@ NewGameModel::NewGameModel() :
 	_allowedPlants      = *new ObservableCollection<GameItem>();
 	_allowedTrees       = *new ObservableCollection<GameItem>();
 
-	_kingdomName  = NewGameSettings::getInstance().kingdomName().toStdString().c_str();
-	_seed         = NewGameSettings::getInstance().seed().toStdString().c_str();
+	_kingdomName  = Global::newGameSettings->kingdomName().toStdString().c_str();
+	_seed         = Global::newGameSettings->seed().toStdString().c_str();
 	_itemAmount   = "1";
 	_animalAmount = "1";
 
 	_presets = *new ObservableCollection<Preset>();
-	for ( auto name : NewGameSettings::getInstance().presetNames() )
+	for ( auto name : Global::newGameSettings->presetNames() )
 	{
 		_presets->Add( MakePtr<Preset>( name.toStdString().c_str() ) );
 	}
@@ -209,7 +209,7 @@ NewGameModel::NewGameModel() :
 	_genders->Add( MakePtr<GameItem>( "Female", "Female" ) );
 	SetSelectedGender( _genders->Get( 0 ) );
 
-	for ( auto vt : NewGameSettings::getInstance().trees() )
+	for ( auto vt : Global::newGameSettings->trees() )
 	{
 		auto vm = vt.toMap();
 		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString() );
@@ -217,7 +217,7 @@ NewGameModel::NewGameModel() :
 		_allowedTrees->Add( gi );
 	}
 
-	for ( auto vt : NewGameSettings::getInstance().plants() )
+	for ( auto vt : Global::newGameSettings->plants() )
 	{
 		auto vm = vt.toMap();
 		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString() );
@@ -225,7 +225,7 @@ NewGameModel::NewGameModel() :
 		_allowedPlants->Add( gi );
 	}
 
-	for ( auto vt : NewGameSettings::getInstance().animals() )
+	for ( auto vt : Global::newGameSettings->animals() )
 	{
 		auto vm = vt.toMap();
 		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString(), vm.value( "Amount" ).toInt() );
@@ -274,22 +274,22 @@ const DelegateCommand* NewGameModel::GetRemoveAnimal() const
 
 void NewGameModel::OnRandomKingdomName( BaseComponent* param )
 {
-	NewGameSettings::getInstance().setRandomName();
-	_kingdomName = NewGameSettings::getInstance().kingdomName().toStdString().c_str();
+	Global::newGameSettings->setRandomName();
+	_kingdomName = Global::newGameSettings->kingdomName().toStdString().c_str();
 	OnPropertyChanged( "KingdomName" );
 }
 
 void NewGameModel::OnRandomSeed( BaseComponent* param )
 {
-	NewGameSettings::getInstance().setRandomSeed();
-	_seed = NewGameSettings::getInstance().seed().toStdString().c_str();
+	Global::newGameSettings->setRandomSeed();
+	_seed = Global::newGameSettings->seed().toStdString().c_str();
 	OnPropertyChanged( "Seed" );
 }
 
 void NewGameModel::OnNewPreset( BaseComponent* param )
 {
 	qDebug() << "on new preset";
-	QString newName = NewGameSettings::getInstance().addPreset();
+	QString newName = Global::newGameSettings->addPreset();
 	if ( !newName.isEmpty() )
 	{
 		_presets->Add( MakePtr<Preset>( newName.toStdString().c_str() ) );
@@ -302,7 +302,7 @@ void NewGameModel::OnDeletePreset( BaseComponent* param )
 	//get name from combobox
 	auto name = _selectedPreset->GetName();
 	qDebug() << "on delete preset" << name;
-	if ( NewGameSettings::getInstance().removePreset( name ) )
+	if ( Global::newGameSettings->removePreset( name ) )
 	{
 		SetSelectedPreset( _presets->Get( 0 ) );
 		for ( int i = 0; i < _presets->Count(); ++i )
@@ -336,7 +336,7 @@ void NewGameModel::OnAddItem( BaseComponent* param )
 		mat2 = _selectedItemMaterial2->sid();
 	}
 
-	NewGameSettings::getInstance().addStartingItem( itemSID, mat1, mat2, amount );
+	Global::newGameSettings->addStartingItem( itemSID, mat1, mat2, amount );
 
 	updateStartingItems();
 
@@ -345,7 +345,7 @@ void NewGameModel::OnAddItem( BaseComponent* param )
 void NewGameModel::OnRemoveItem( BaseComponent* param )
 {
 	qDebug() << "on remove item" << param->ToString().Str();
-	NewGameSettings::getInstance().removeStartingItem( param->ToString().Str() );
+	Global::newGameSettings->removeStartingItem( param->ToString().Str() );
 	updateStartingItems();
 }
 
@@ -364,7 +364,7 @@ void NewGameModel::OnAddAnimal( BaseComponent* param )
 		gender = _selectedGender->sid();
 	}
 
-	NewGameSettings::getInstance().addStartingAnimal( type, gender, amount );
+	Global::newGameSettings->addStartingAnimal( type, gender, amount );
 
 	updateStartingAnimals();
 
@@ -373,18 +373,18 @@ void NewGameModel::OnAddAnimal( BaseComponent* param )
 void NewGameModel::OnRemoveAnimal( BaseComponent* param )
 {
 	qDebug() << "on remove animal" << param->ToString().Str();
-	NewGameSettings::getInstance().removeStartingAnimal( param->ToString().Str() );
+	Global::newGameSettings->removeStartingAnimal( param->ToString().Str() );
 	updateStartingAnimals();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetWorldSize() const
 {
-	return NewGameSettings::getInstance().worldSize();
+	return Global::newGameSettings->worldSize();
 }
 void NewGameModel::SetWorldSize( int size )
 {
-	if ( NewGameSettings::getInstance().setWorldSize( size ) )
+	if ( Global::newGameSettings->setWorldSize( size ) )
 	{
 		OnPropertyChanged( "WorldSize" );
 	}
@@ -392,11 +392,11 @@ void NewGameModel::SetWorldSize( int size )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetZLevels() const
 {
-	return NewGameSettings::getInstance().zLevels();
+	return Global::newGameSettings->zLevels();
 }
 void NewGameModel::SetZLevels( int value )
 {
-	if ( NewGameSettings::getInstance().setZLevels( value ) )
+	if ( Global::newGameSettings->setZLevels( value ) )
 	{
 		OnPropertyChanged( "ZLevels" );
 	}
@@ -404,11 +404,11 @@ void NewGameModel::SetZLevels( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetGround() const
 {
-	return NewGameSettings::getInstance().ground();
+	return Global::newGameSettings->ground();
 }
 void NewGameModel::SetGround( int value )
 {
-	if ( NewGameSettings::getInstance().setGround( value ) )
+	if ( Global::newGameSettings->setGround( value ) )
 	{
 		OnPropertyChanged( "Ground" );
 	}
@@ -416,11 +416,11 @@ void NewGameModel::SetGround( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetFlatness() const
 {
-	return NewGameSettings::getInstance().flatness();
+	return Global::newGameSettings->flatness();
 }
 void NewGameModel::SetFlatness( int value )
 {
-	if ( NewGameSettings::getInstance().setFlatness( value ) )
+	if ( Global::newGameSettings->setFlatness( value ) )
 	{
 		OnPropertyChanged( "Flatness" );
 	}
@@ -428,11 +428,11 @@ void NewGameModel::SetFlatness( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetOceanSize() const
 {
-	return NewGameSettings::getInstance().oceanSize();
+	return Global::newGameSettings->oceanSize();
 }
 void NewGameModel::SetOceanSize( int value )
 {
-	if ( NewGameSettings::getInstance().setOceanSize( value ) )
+	if ( Global::newGameSettings->setOceanSize( value ) )
 	{
 		OnPropertyChanged( "OceanSize" );
 	}
@@ -440,11 +440,11 @@ void NewGameModel::SetOceanSize( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetRivers() const
 {
-	return NewGameSettings::getInstance().rivers();
+	return Global::newGameSettings->rivers();
 }
 void NewGameModel::SetRivers( int value )
 {
-	if ( NewGameSettings::getInstance().setRivers( value ) )
+	if ( Global::newGameSettings->setRivers( value ) )
 	{
 		OnPropertyChanged( "Rivers" );
 	}
@@ -452,11 +452,11 @@ void NewGameModel::SetRivers( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetRiverSize() const
 {
-	return NewGameSettings::getInstance().riverSize();
+	return Global::newGameSettings->riverSize();
 }
 void NewGameModel::SetRiverSize( int value )
 {
-	if ( NewGameSettings::getInstance().setRiverSize( value ) )
+	if ( Global::newGameSettings->setRiverSize( value ) )
 	{
 		OnPropertyChanged( "RiverSize" );
 	}
@@ -464,11 +464,11 @@ void NewGameModel::SetRiverSize( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetNumGnomes() const
 {
-	return NewGameSettings::getInstance().numGnomes();
+	return Global::newGameSettings->numGnomes();
 }
 void NewGameModel::SetNumGnomes( int value )
 {
-	if ( NewGameSettings::getInstance().setNumGnomes( value ) )
+	if ( Global::newGameSettings->setNumGnomes( value ) )
 	{
 		OnPropertyChanged( "NumGnomes" );
 	}
@@ -477,11 +477,11 @@ void NewGameModel::SetNumGnomes( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetStartZone() const
 {
-	return NewGameSettings::getInstance().startZone();
+	return Global::newGameSettings->startZone();
 }
 void NewGameModel::SetStartZone( int value )
 {
-	if ( NewGameSettings::getInstance().setStartZone( value ) )
+	if ( Global::newGameSettings->setStartZone( value ) )
 	{
 		OnPropertyChanged( "StartZone" );
 	}
@@ -490,11 +490,11 @@ void NewGameModel::SetStartZone( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetTreeDensity() const
 {
-	return NewGameSettings::getInstance().treeDensity();
+	return Global::newGameSettings->treeDensity();
 }
 void NewGameModel::SetTreeDensity( int value )
 {
-	if ( NewGameSettings::getInstance().setTreeDensity( value ) )
+	if ( Global::newGameSettings->setTreeDensity( value ) )
 	{
 		OnPropertyChanged( "TreeDensity" );
 	}
@@ -502,11 +502,11 @@ void NewGameModel::SetTreeDensity( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetPlantDensity() const
 {
-	return NewGameSettings::getInstance().plantDensity();
+	return Global::newGameSettings->plantDensity();
 }
 void NewGameModel::SetPlantDensity( int value )
 {
-	if ( NewGameSettings::getInstance().setPlantDensity( value ) )
+	if ( Global::newGameSettings->setPlantDensity( value ) )
 	{
 		OnPropertyChanged( "PlantDensity" );
 	}
@@ -519,9 +519,9 @@ const char* NewGameModel::GetKingdomName() const
 }
 void NewGameModel::SetKingdomName( const char* value )
 {
-	if ( NewGameSettings::getInstance().setKingdomName( value ) )
+	if ( Global::newGameSettings->setKingdomName( value ) )
 	{
-		_kingdomName = NewGameSettings::getInstance().kingdomName().toStdString().c_str();
+		_kingdomName = Global::newGameSettings->kingdomName().toStdString().c_str();
 		OnPropertyChanged( "KingdomName" );
 	}
 }
@@ -533,9 +533,9 @@ const char* NewGameModel::GetSeed() const
 }
 void NewGameModel::SetSeed( const char* value )
 {
-	if ( NewGameSettings::getInstance().setSeed( value ) )
+	if ( Global::newGameSettings->setSeed( value ) )
 	{
-		_seed = NewGameSettings::getInstance().seed().toStdString().c_str();
+		_seed = Global::newGameSettings->seed().toStdString().c_str();
 		OnPropertyChanged( "Seed" );
 	}
 }
@@ -543,12 +543,12 @@ void NewGameModel::SetSeed( const char* value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetMaxPerType() const
 {
-	return NewGameSettings::getInstance().globalMaxPerType();
+	return Global::newGameSettings->globalMaxPerType();
 }
 
 void NewGameModel::SetMaxPertype( int value )
 {
-	if ( NewGameSettings::getInstance().setMaxPerType( value ) )
+	if ( Global::newGameSettings->setMaxPerType( value ) )
 	{
 		OnPropertyChanged( "MaxPerType" );
 	}
@@ -557,12 +557,12 @@ void NewGameModel::SetMaxPertype( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int NewGameModel::GetNumWildAnimals() const
 {
-	return NewGameSettings::getInstance().numWildAnimals();
+	return Global::newGameSettings->numWildAnimals();
 }
 
 void NewGameModel::SetNumWildAnimals( int value )
 {
-	if ( NewGameSettings::getInstance().setNumWildAnimals( value ) )
+	if ( Global::newGameSettings->setNumWildAnimals( value ) )
 	{
 		OnPropertyChanged( "NumWildAnimals" );
 	}
@@ -571,12 +571,12 @@ void NewGameModel::SetNumWildAnimals( int value )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool NewGameModel::GetPeaceful() const
 {
-	return NewGameSettings::getInstance().isPeaceful();
+	return Global::newGameSettings->isPeaceful();
 }
 
 void NewGameModel::SetPeaceful( bool value )
 {
-	NewGameSettings::getInstance().setPeaceful( value );
+	Global::newGameSettings->setPeaceful( value );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -616,7 +616,7 @@ void NewGameModel::SetSelectedPreset( Preset* preset )
 {
 	if ( _selectedPreset != preset )
 	{
-		NewGameSettings::getInstance().setPreset( preset->GetName() );
+		Global::newGameSettings->setPreset( preset->GetName() );
 
 		_selectedPreset = preset;
 		OnPropertyChanged( "SelectedPreset" );
@@ -630,7 +630,7 @@ void NewGameModel::updateStartingItems()
 {
 	_startingItems->Clear();
 
-	for ( auto si : NewGameSettings::getInstance().startingItems() )
+	for ( auto si : Global::newGameSettings->startingItems() )
 	{
 		_startingItems->Add( MakePtr<StartItem>( si.itemSID, si.mat1, si.mat2, si.amount ) );
 	}
@@ -641,7 +641,7 @@ void NewGameModel::updateStartingAnimals()
 {
 	_startingAnimals->Clear();
 
-	for ( auto sa : NewGameSettings::getInstance().startingAnimals() )
+	for ( auto sa : Global::newGameSettings->startingAnimals() )
 	{
 		_startingAnimals->Add( MakePtr<StartAnimal>( sa.type, sa.gender, sa.amount ) );
 	}
@@ -671,7 +671,7 @@ void NewGameModel::SetSelectedItem( GameItem* item )
 		QStringList mats1;
 		QStringList mats2;
 
-		NewGameSettings::getInstance().materialsForItem( item->sid(), mats1, mats2 );
+		Global::newGameSettings->materialsForItem( item->sid(), mats1, mats2 );
 
 		if ( mats1.size() )
 		{

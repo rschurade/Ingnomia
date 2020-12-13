@@ -20,14 +20,25 @@
 #include "../base/db.h"
 #include "../base/dbhelper.h"
 #include "../base/global.h"
+#include "../base/util.h"
+
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/militarymanager.h"
+
+#include "../gfx/spritefactory.h"
+
 #include "../gui/strings.h"
 
 AggregatorCreatureInfo::AggregatorCreatureInfo( QObject* parent ) :
 	QObject(parent)
 {
+}
+
+void AggregatorCreatureInfo::init( Game* game )
+{
+	g = game;
 }
 
 void AggregatorCreatureInfo::update()
@@ -40,8 +51,9 @@ void AggregatorCreatureInfo::update()
 
 void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 {
+	if( !g ) return;
 	m_currentID = id;
-	auto gnome = Global::gm().gnome( id );
+	auto gnome = g->gm()->gnome( id );
 	if( gnome )
 	{
 		m_info.name = gnome->name();
@@ -64,8 +76,41 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 
 		if( gnome->roleID() )
 		{
-			m_info.uniform = Global::mil().uniformCopy( gnome->roleID() );
+			m_info.uniform = g->mil()->uniformCopy( gnome->roleID() );
 			m_info.equipment = gnome->equipment();
+		}
+		m_info.itemPics.clear();
+		if( m_info.equipment.head.itemID )
+		{
+			createUniformImg( "ArmorHead", m_info.uniform.parts.value( "HeadArmor" ), m_info.equipment.head );
+		}
+		if( m_info.equipment.chest.itemID )
+		{
+			createUniformImg( "ArmorChest", m_info.uniform.parts.value( "ChestArmor" ), m_info.equipment.chest );
+		}
+		if( m_info.equipment.arm.itemID )
+		{
+			createUniformImg( "ArmorArms", m_info.uniform.parts.value( "ArmArmor" ), m_info.equipment.arm );
+		}
+		if( m_info.equipment.hand.itemID )
+		{
+			createUniformImg( "ArmorHands", m_info.uniform.parts.value( "HandArmor" ), m_info.equipment.hand );
+		}
+		if( m_info.equipment.leg.itemID )
+		{
+			createUniformImg( "ArmorLegs", m_info.uniform.parts.value( "LegArmor" ), m_info.equipment.leg );
+		}
+		if( m_info.equipment.foot.itemID )
+		{
+			createUniformImg( "ArmorFeet", m_info.uniform.parts.value( "FootArmor" ), m_info.equipment.foot );
+		}
+		if( m_info.equipment.leftHandHeld.itemID )
+		{
+			createItemImg( "LeftHandHeld", m_info.equipment.leftHandHeld );
+		}
+		if( m_info.equipment.rightHandHeld.itemID )
+		{
+			createItemImg( "RightHandHeld", m_info.equipment.rightHandHeld );
 		}
 
 		emit signalCreatureUpdate( m_info );
@@ -73,7 +118,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 	}
 	else
 	{
-		auto monster = Global::cm().monster( id );
+		auto monster = g->cm()->monster( id );
 		if( monster )
 		{
 			m_info.name = monster->name();
@@ -98,7 +143,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 		}
 		else
 		{
-			auto animal = Global::cm().animal( id );
+			auto animal = g->cm()->animal( id );
 			if( animal )
 			{
 				m_info.name = animal->name();
@@ -130,12 +175,14 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 
 void AggregatorCreatureInfo::onRequestProfessionList()
 {
-	emit signalProfessionList( Global::gm().professions() );
+	if( !g ) return;
+	emit signalProfessionList( g->gm()->professions() );
 }
 
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
 {
-	auto gnome = Global::gm().gnome( gnomeID );
+	if( !g ) return;
+	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
 		QString oldProf = gnome->profession();
@@ -145,4 +192,96 @@ void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString prof
 			//onUpdateSingleGnome( gnomeID );
 		}
 	}
+}
+
+void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& eItem )
+{
+	if( !g ) return;
+	if( eItem.itemID == 0 )
+	{
+		return;
+	}
+	QStringList mats;
+	if( eItem.allMats.size() )
+	{
+		mats = eItem.allMats;
+	}
+	else
+	{
+		mats.append( eItem.material );
+		mats.append( "Pine" );
+	}
+
+	auto sprite = g->sf()->createSprite( "UI" + eItem.item, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+
+		std::vector<unsigned char> buffer;
+
+		Global::util->createBufferForNoesisImage( pm, buffer );
+		m_info.itemPics.insert( slot, buffer );
+	}
+}
+
+void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem )
+{
+	if( !g ) return;
+	if( uItem.item.isEmpty() || eItem.itemID == 0 )
+	{
+		return; 
+	}
+	QStringList mats;
+	mats.append( eItem.material );
+
+	auto sprite = g->sf()->createSprite( "UI" + uItem.type + slot, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+
+		std::vector<unsigned char> buffer;
+
+		Global::util->createBufferForNoesisImage( pm, buffer );
+		m_info.itemPics.insert( slot, buffer );
+	}
+}
+
+void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
+{
+	if( !g ) return;
+	QStringList mats; 
+	mats.append( "any" );
+	
+	auto sprite = g->sf()->createSprite( spriteID, mats );
+	if( sprite )
+	{
+		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+
+		std::vector<unsigned char> buffer;
+
+		Global::util->createBufferForNoesisImage( pm, buffer );
+
+		m_emptyPics.insert( spriteID, buffer );
+	}
+}
+
+void AggregatorCreatureInfo::onRequestEmptySlotImages()
+{
+	if( !g ) return;
+	m_emptyPics.clear();
+
+	createEmptyUniformImg( "UIEmptySlotHead" );
+	createEmptyUniformImg( "UIEmptySlotChest" );
+	createEmptyUniformImg( "UIEmptySlotArms" );
+	createEmptyUniformImg( "UIEmptySlotHands" );
+	createEmptyUniformImg( "UIEmptySlotLegs" );
+	createEmptyUniformImg( "UIEmptySlotFeet" );
+	createEmptyUniformImg( "UIEmptySlotShield" );
+	createEmptyUniformImg( "UIEmptySlotWeapon" );
+	createEmptyUniformImg( "UIEmptySlotBack" );
+	createEmptyUniformImg( "UIEmptySlotNeck" );
+	createEmptyUniformImg( "UIEmptySlotRing" );
+	createEmptyUniformImg( "UIEmptySlotRing" );
+
+	emit signalEmptyPics( m_emptyPics );
 }

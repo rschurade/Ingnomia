@@ -17,6 +17,7 @@
 */
 #include "inventoryproxy.h"
 
+#include "../../base/global.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -25,13 +26,13 @@ InventoryProxy::InventoryProxy( QObject* parent ) :
 	QObject( parent )
 {
 	
-    connect( EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::signalInventoryCategories, this, &InventoryProxy::onCategoryUpdate, Qt::QueuedConnection );
-    connect( EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::signalInventoryGroups, this, &InventoryProxy::onGroupsUpdate, Qt::QueuedConnection );
-    connect( EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::signalInventoryItems, this, &InventoryProxy::onItemsUpdate, Qt::QueuedConnection );
+    connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryCategories, this, &InventoryProxy::onCategoryUpdate, Qt::QueuedConnection );
+    connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryGroups, this, &InventoryProxy::onGroupsUpdate, Qt::QueuedConnection );
+    connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryItems, this, &InventoryProxy::onItemsUpdate, Qt::QueuedConnection );
 
-    connect( this, &InventoryProxy::signalRequestCategories, EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
-    connect( this, &InventoryProxy::signalRequestGroups, EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::onRequestGroups, Qt::QueuedConnection );
-    connect( this, &InventoryProxy::signalRequestItems, EventConnector::getInstance().aggregatorInventory(), &AggregatorInventory::onRequestItems, Qt::QueuedConnection );
+    connect( this, &InventoryProxy::signalRequestCategories, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
+    connect( this, &InventoryProxy::signalRequestGroups, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestGroups, Qt::QueuedConnection );
+    connect( this, &InventoryProxy::signalRequestItems, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestItems, Qt::QueuedConnection );
 }
 
 void InventoryProxy::setParent( IngnomiaGUI::InventoryModel* parent )

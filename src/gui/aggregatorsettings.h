@@ -47,6 +47,8 @@ private:
 public slots:
 	void onRequestSettings();
 
+    void onRequestUIScale();
+
     void onSetLanguage( QString language );
     void onSetUIScale( float scale );
     void onSetKeyboardSpeed( int value );

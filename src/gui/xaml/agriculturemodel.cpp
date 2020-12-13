@@ -55,7 +55,7 @@ TreeSelectEntry::TreeSelectEntry( const GuiPlant& tree )
 	m_sid  = tree.plantID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Util::createBufferForNoesisImage( tree.sprite, buffer );
+	Global::util->createBufferForNoesisImage( tree.sprite, buffer );
 	m_bitmapSource = BitmapImage::Create( tree.sprite.width(), tree.sprite.height(), 96, 96, buffer.data(), tree.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
@@ -94,7 +94,7 @@ AnimalSelectEntry::AnimalSelectEntry( const GuiAnimal& animal )
 	m_sid  = animal.animalID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Util::createBufferForNoesisImage( animal.sprite, buffer );
+	Global::util->createBufferForNoesisImage( animal.sprite, buffer );
 
 	m_bitmapSource = BitmapImage::Create( animal.sprite.width(), animal.sprite.height(), 96, 96, buffer.data(), animal.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
@@ -134,7 +134,7 @@ PlantSelectEntry::PlantSelectEntry( const GuiPlant& plant )
 	m_sid  = plant.plantID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Util::createBufferForNoesisImage( plant.sprite, buffer );
+	Global::util->createBufferForNoesisImage( plant.sprite, buffer );
 	m_bitmapSource = BitmapImage::Create( plant.sprite.width(), plant.sprite.height(), 96, 96, buffer.data(), plant.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
@@ -230,7 +230,7 @@ FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem& food, AgriculturePro
 	m_checked = food.checked;
 
 	std::vector<unsigned char> buffer;
-	Util::createBufferForNoesisImage( food.sprite, buffer );
+	Global::util->createBufferForNoesisImage( food.sprite, buffer );
 	m_bitmapSource = BitmapImage::Create( food.sprite.width(), food.sprite.height(), 96, 96, buffer.data(), food.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
@@ -446,7 +446,7 @@ void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 	if ( !info.product.plantID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
 		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$MaterialName_" + info.product.plantID ) + ")" ).toStdString().c_str();
@@ -517,7 +517,7 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	if ( !info.product.animalID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
 		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$CreatureName_" + info.product.animalID ) + ")" ).toStdString().c_str();
@@ -565,7 +565,7 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	if ( !info.product.plantID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Util::createBufferForNoesisImage( info.product.sprite, buffer );
+		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
 
 		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
 

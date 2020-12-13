@@ -27,8 +27,8 @@ class Animal : public Creature
 	friend class AnimalWidget;
 
 public:
-	Animal( QString species, Position& pos, Gender gender, bool adult );
-	Animal( QVariantMap in );
+	Animal( QString species, Position& pos, Gender gender, bool adult, Game* game );
+	Animal( QVariantMap in, Game* game );
 	Animal();
 	~Animal();
 
@@ -149,6 +149,7 @@ private:
 
 	bool m_isProducer = false;
 	bool m_isEggLayer = false;
+	bool m_isGrazer   = false;
 
 	bool m_isEgg   = false;
 	bool m_isYoung = false;

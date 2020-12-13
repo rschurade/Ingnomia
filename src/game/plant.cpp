@@ -21,6 +21,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
@@ -41,7 +42,8 @@ Plant::Plant() :
 {
 }
 
-Plant::Plant( Position& pos, QString ID, bool fullyGrown ) :
+Plant::Plant( Position& pos, QString ID, bool fullyGrown, Game* game ) :
+	g( game ),
 	Object( pos ),
 	m_plantID( ID )
 {
@@ -95,7 +97,8 @@ Plant::Plant( Position& pos, QString ID, bool fullyGrown ) :
 	setGrowTime();
 }
 
-Plant::Plant( QVariant values ) :
+Plant::Plant( QVariant values, Game* game ) :
+	g( game ),
 	Object( Position() )
 {
 	QVariantMap in = values.toMap();
@@ -143,7 +146,7 @@ Plant::~Plant()
 {
 }
 
-QVariant Plant::serialize()
+QVariant Plant::serialize() const
 {
 	QVariantMap out;
 
@@ -252,7 +255,7 @@ OnTickReturn Plant::liveOneTick( bool dayChanged, bool seasonChanged )
 		switch ( m_growLight )
 		{
 			case GrowLight::SUN:
-				if ( GameState::daylight && Global::w().hasSunlight( m_position ) )
+				if ( GameState::daylight && g->w()->hasSunlight( m_position ) )
 					--m_ticksToNextState;
 				break;
 			case GrowLight::DARK:
@@ -282,7 +285,7 @@ void Plant::setGrowTime()
 	if ( m_state < sl.size() - 1 )
 	{
 		QVariantMap sm     = sl[m_state];
-		int ticks          = sm["GrowTime"].toFloat() * Util::ticksPerDay;
+		int ticks          = sm["GrowTime"].toFloat() * Global::util->ticksPerDay;
 		int dev            = ticks * 0.05;
 		int rand           = ( QRandomGenerator::global()->generate() % dev ) - ( dev / 2 );
 		m_ticksToNextState = ticks + rand;
@@ -311,8 +314,8 @@ void Plant::updateState()
 		}
 		if ( !m_isMulti )
 		{
-			m_sprite = Global::sf().createSprite( spriteID, { DB::select( "Material", "Plants", m_plantID ).toString() } );
-			Global::w().setWallSprite( m_position, m_sprite->uID );
+			m_sprite = g->sf()->createSprite( spriteID, { DB::select( "Material", "Plants", m_plantID ).toString() } );
+			g->w()->setWallSprite( m_position, m_sprite->uID );
 		}
 		else
 		{
@@ -385,7 +388,7 @@ bool Plant::fell()
 				int randVal = ( rand() % random ) + 1;
 				for ( int i = 0; i < randVal; ++i )
 				{
-					Global::inv().createItem( m_position, itemID, materialID );
+					g->inv()->createItem( m_position, itemID, materialID );
 				}
 				continue;
 			}
@@ -401,33 +404,32 @@ bool Plant::fell()
 					if ( !sm.value( "Layout" ).toString().isEmpty() )
 					{
 						auto ll      = DB::selectRows( "TreeLayouts_Layout", m_plantID );
-						World& world = Global::w();
 						for ( auto vm : ll )
 						{
 							Position offset( vm.value( "Offset" ).toString() );
 							Position newPos = m_position + offset;
-							world.setWallSprite( newPos, 0, 0 );
-							world.clearTileFlag( newPos, TileFlag::TF_OCCUPIED );
-							world.clearTileFlag( newPos, TileFlag::TF_OVERSIZE );
-							if ( world.floorType( newPos ) & FT_SOLIDFLOOR )
+							g->w()->setWallSprite( newPos, 0, 0 );
+							g->w()->clearTileFlag( newPos, TileFlag::TF_OCCUPIED );
+							g->w()->clearTileFlag( newPos, TileFlag::TF_OVERSIZE );
+							if ( g->w()->floorType( newPos ) & FT_SOLIDFLOOR )
 							{
-								world.setTileFlag( newPos, TileFlag::TF_WALKABLE );
+								g->w()->setTileFlag( newPos, TileFlag::TF_WALKABLE );
 							}
 
 							if ( newPos.x == 0 || newPos.x == Global::dimX - 1 || newPos.y == 0 || newPos.y == Global::dimX - 1 )
 							{
-								Global::inv().createItem( m_position, itemID, materialID );
+								g->inv()->createItem( m_position, itemID, materialID );
 							}
 							else
 							{
-								world.getFloorLevelBelow( newPos, false );
-								Global::inv().createItem( newPos, itemID, materialID );
+								g->w()->getFloorLevelBelow( newPos, false );
+								g->inv()->createItem( newPos, itemID, materialID );
 							}
 						}
 					}
 					else
 					{
-						Global::inv().createItem( m_position, itemID, materialID );
+						g->inv()->createItem( m_position, itemID, materialID );
 					}
 				}
 			}
@@ -454,12 +456,12 @@ bool Plant::harvest( Position& pos )
 				int ra       = rand() % 100;
 				if ( chance * 100 <= ra )
 				{
-					Global::inv().createItem( pos, itemID, materialID );
+					g->inv()->createItem( pos, itemID, materialID );
 				}
 			}
 			else
 			{
-				Global::inv().createItem( pos, itemID, materialID );
+				g->inv()->createItem( pos, itemID, materialID );
 			}
 		}
 		QString action = row.value( "Action" ).toString();
@@ -505,19 +507,16 @@ bool Plant::harvestable()
 
 void Plant::layoutMulti( QString layoutSID, bool withFruit )
 {
-	World& world      = Global::w();
-	SpriteFactory& sf = Global::sf();
-
 	Position extractPos = m_position.eastOf();
-	if ( !Global::w().isWalkable( extractPos ) )
+	if ( !g->w()->isWalkable( extractPos ) )
 	{
 		extractPos = m_position.southOf();
 
-		if ( !Global::w().isWalkable( extractPos ) )
+		if ( !g->w()->isWalkable( extractPos ) )
 		{
 			extractPos = m_position.westOf();
 
-			if ( !Global::w().isWalkable( extractPos ) )
+			if ( !g->w()->isWalkable( extractPos ) )
 			{
 				extractPos = m_position.northOf();
 			}
@@ -536,7 +535,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 
 		if ( offset == Position( 0, 0, 0 ) )
 		{
-			m_sprite = sf.createSprite( spriteID, { "None" } );
+			m_sprite = g->sf()->createSprite( spriteID, { "None" } );
 		}
 
 		if ( withFruit && _isFruitTree )
@@ -547,28 +546,28 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 					spriteID += "WithFruit";
 			}
 		}
-		Sprite* sprite = sf.createSprite( spriteID, { "None" } );
+		Sprite* sprite = g->sf()->createSprite( spriteID, { "None" } );
 		if ( ( m_position.z + offset.z ) < Global::dimZ )
 		{
 			Position pos = m_position + offset;
 
-			world.removeWall( pos, extractPos );
+			g->w()->removeWall( pos, extractPos );
 			if ( pos.z > m_position.z )
 			{
 				//world.removeFloor( pos, extractPos );
 			}
 
-			world.setWallSprite( pos, sprite->uID, Util::rotString2Char( vm.value( "Rotation" ).toString() ) );
-			world.clearTileFlag( pos, TileFlag::TF_WALKABLE );
-			world.setTileFlag( pos, TileFlag::TF_OCCUPIED );
-			world.setTileFlag( pos, TileFlag::TF_OVERSIZE );
+			g->w()->setWallSprite( pos, sprite->uID, Global::util->rotString2Char( vm.value( "Rotation" ).toString() ) );
+			g->w()->clearTileFlag( pos, TileFlag::TF_WALKABLE );
+			g->w()->setTileFlag( pos, TileFlag::TF_OCCUPIED );
+			g->w()->setTileFlag( pos, TileFlag::TF_OVERSIZE );
 
-			Global::gm().forceMoveGnomes( pos, extractPos );
-			Global::cm().forceMoveAnimals( pos, extractPos );
-			Global::w().expelTileItems( pos, extractPos );
+			g->gm()->forceMoveGnomes( pos, extractPos );
+			g->cm()->forceMoveAnimals( pos, extractPos );
+			g->w()->expelTileItems( pos, extractPos );
 			if ( m_isTree )
 			{
-				world.setTileFlag( pos, TileFlag::TF_SUNLIGHT );
+				g->w()->setTileFlag( pos, TileFlag::TF_SUNLIGHT );
 			}
 		}
 	}

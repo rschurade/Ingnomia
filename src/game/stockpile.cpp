@@ -20,6 +20,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
 #include "../game/world.h"
@@ -28,14 +29,14 @@
 #include <QElapsedTimer>
 #include <QString>
 
-Stockpile::Stockpile() :
-	WorldObject()
+Stockpile::Stockpile( Game* game ) :
+	WorldObject( game )
 {
 	m_name = "Stockpile";
 }
 
-Stockpile::Stockpile( QList<QPair<Position, bool>> tiles ) :
-	WorldObject()
+Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
+	WorldObject( game )
 {
 	m_name = "Stockpile"; // + QString::number( m_id );
 
@@ -51,6 +52,14 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles ) :
 
 Stockpile::~Stockpile()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 void Stockpile::addTile( Position& pos )
@@ -63,17 +72,16 @@ void Stockpile::addTile( Position& pos )
 
 	m_fields.insert( pos.toInt(), infi );
 
-	Global::w().setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
+	g->w()->setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
 }
 
-Stockpile::Stockpile( QVariantMap vals ) :
-	WorldObject( vals )
+Stockpile::Stockpile( QVariantMap vals, Game* game ) :
+	WorldObject( vals, game )
 {
 	m_pullOthers        = vals.value( "PullOthers" ).toBool();
 	m_allowPull         = vals.value( "AllowPull" ).toBool();
 	m_limitWithmaterial = vals.value( "LimitWithMaterial" ).toBool();
 
-	Inventory& inv   = Global::inv();
 	QVariantList vfl = vals.value( "Fields" ).toList();
 	for ( auto vf : vfl )
 	{
@@ -88,7 +96,7 @@ Stockpile::Stockpile( QVariantMap vals ) :
 			QVariantList vli = vf.toMap().value( "Items" ).toList();
 			for ( auto vi : vli )
 			{
-				if ( inv.itemExists( vi.toUInt() ) )
+				if ( g->inv()->itemExists( vi.toUInt() ) )
 				{
 					infi->items.insert( vi.toUInt() );
 				}
@@ -100,7 +108,7 @@ Stockpile::Stockpile( QVariantMap vals ) :
 			for ( auto vi : vli )
 			{
 				unsigned int itemID = vi.toUInt();
-				if ( inv.itemExists( itemID ) && inv.isInJob( itemID ) )
+				if ( g->inv()->itemExists( itemID ) && g->inv()->isInJob( itemID ) )
 				{
 					infi->reservedItems.insert( itemID );
 				}
@@ -109,7 +117,7 @@ Stockpile::Stockpile( QVariantMap vals ) :
 
 		if ( infi->containerID )
 		{
-			infi->requireSame = Global::inv().requireSame( infi->containerID );
+			infi->requireSame = g->inv()->requireSame( infi->containerID );
 		}
 
 		m_fields.insert( infi->pos.toInt(), infi );
@@ -225,7 +233,6 @@ bool Stockpile::onTick( quint64 tick )
 {
 	if ( !m_active )
 		return false;
-	Inventory& inv         = Global::inv();
 	bool lastUpdateLongAgo = ( tick - m_lastUpdateTick ) > 100;
 	if ( ( m_filterChanged || m_possibleItems.empty() ) && lastUpdateLongAgo )
 	{
@@ -250,7 +257,7 @@ bool Stockpile::onTick( quint64 tick )
 				}
 			}
 
-			m_possibleItems = inv.getClosestItemsForStockpile( m_id, m_fields.first()->pos, m_pullOthers, effectiveFilter );
+			m_possibleItems = g->inv()->getClosestItemsForStockpile( m_id, m_fields.first()->pos, m_pullOthers, effectiveFilter );
 			if ( m_possibleItems.size() > 5000 )
 			{
 				qWarning() << "Excessive number of candidates for stockpile";
@@ -265,7 +272,6 @@ bool Stockpile::onTick( quint64 tick )
 
 QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 {
-	Inventory& inv = Global::inv();
 	QSet<QPair<QString, QString>> freeSlots;
 	for ( auto infi : m_fields )
 	{
@@ -275,7 +281,7 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 			{
 				if ( infi->items.size() == 0 || !infi->requireSame )
 				{
-					for ( const auto& itemSID : Util::itemsAllowedInContainer( infi->containerID ) )
+					for ( const auto& itemSID : Global::util->itemsAllowedInContainer( infi->containerID ) )
 					{
 						freeSlots.insert( { itemSID, "Any" } );
 					}
@@ -284,7 +290,7 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 				{
 					auto item = *infi->items.begin();
 					// Same item only
-					freeSlots.insert( { inv.itemSID( item ), inv.materialSID( item ) } );
+					freeSlots.insert( { g->inv()->itemSID( item ), g->inv()->materialSID( item ) } );
 				}
 			}
 			else
@@ -297,7 +303,7 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 				{
 					auto item = *infi->items.begin();
 					// Same item only
-					freeSlots.insert( { inv.itemSID( item ), inv.materialSID( item ) } );
+					freeSlots.insert( { g->inv()->itemSID( item ), g->inv()->materialSID( item ) } );
 				}
 			}
 		}
@@ -309,15 +315,14 @@ unsigned int Stockpile::getJob()
 {
 	if ( m_isFull || !m_active || m_filter.getActive().isEmpty() || m_fields.empty() )
 		return 0;
-	Inventory& inv = Global::inv();
-	//
+
 	int itemsChecked = 0;
 	while ( !m_possibleItems.empty() && itemsChecked < 50 )
 	{
 		++itemsChecked;
 		unsigned int item   = m_possibleItems.takeFirst();
-		QString itemSID     = Global::inv().itemSID( item );
-		QString materialSID = Global::inv().materialSID( item );
+		QString itemSID     = g->inv()->itemSID( item );
+		QString materialSID = g->inv()->materialSID( item );
 		bool suspended      = false;
 
 		if ( m_limitWithmaterial )
@@ -335,7 +340,7 @@ unsigned int Stockpile::getJob()
 			}
 		}
 
-		if ( !suspended && !inv.isInJob( item ) && inv.isInStockpile( item ) != m_id && Global::w().regionMap().checkConnectedRegions( m_fields.first()->pos, inv.getItemPos( item ) ) )
+		if ( !suspended && !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id && g->w()->regionMap().checkConnectedRegions( m_fields.first()->pos, g->inv()->getItemPos( item ) ) )
 		{
 			m_isFull = true;
 			//loop over all stockpile fields
@@ -347,7 +352,7 @@ unsigned int Stockpile::getJob()
 					if ( infi->reservedItems.size() > 0 )
 					{
 						unsigned int reservedItemID = *infi->reservedItems.begin();
-						if ( !inv.itemExists( reservedItemID ) || inv.isInJob( reservedItemID ) == 0 )
+						if ( !g->inv()->itemExists( reservedItemID ) || g->inv()->isInJob( reservedItemID ) == 0 )
 						{
 							infi->reservedItems.remove( reservedItemID );
 						}
@@ -359,7 +364,7 @@ unsigned int Stockpile::getJob()
 						if ( infi->items.size() + infi->reservedItems.size() == 0 )
 						{
 							//container is empty
-							if ( Util::itemAllowedInContainer( item, infi->containerID ) )
+							if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
 							{
 								return createJob( item, infi );
 							}
@@ -368,18 +373,18 @@ unsigned int Stockpile::getJob()
 						{
 							if ( infi->requireSame )
 							{
-								if ( infi->capacity > ( inv.itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) && infi->capacity > infi->items.size() + infi->reservedItems.size() )
+								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) && infi->capacity > infi->items.size() + infi->reservedItems.size() )
 								{
 									unsigned int firstItem = 0;
-									if ( inv.itemsInContainer( infi->containerID ).size() )
+									if ( g->inv()->itemsInContainer( infi->containerID ).size() )
 									{
-										firstItem = *inv.itemsInContainer( infi->containerID ).begin();
+										firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
 									}
 									else if ( infi->reservedItems.size() )
 									{
 										firstItem = *infi->reservedItems.begin();
 									}
-									if ( ( firstItem != 0 && inv.isSameTypeAndMaterial( item, firstItem ) ) )
+									if ( ( firstItem != 0 && g->inv()->isSameTypeAndMaterial( item, firstItem ) ) )
 									{
 										return createJob( item, infi );
 									}
@@ -391,10 +396,10 @@ unsigned int Stockpile::getJob()
 							}
 							else
 							{
-								if ( infi->capacity > ( inv.itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) &&
+								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) &&
 									 infi->capacity > infi->items.size() + infi->reservedItems.size() )
 								{
-									if ( Util::itemAllowedInContainer( item, infi->containerID ) )
+									if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
 									{
 										return createJob( item, infi );
 									}
@@ -419,7 +424,7 @@ unsigned int Stockpile::getJob()
 						if ( infi->items.size() + infi->reservedItems.size() == 0 )
 						{
 							// field is empty
-							if ( !inv.isInJob( item ) && inv.isInStockpile( item ) != m_id )
+							if ( !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id )
 							{
 								// create hauling job
 								return createJob( item, infi );
@@ -431,7 +436,7 @@ unsigned int Stockpile::getJob()
 							unsigned char newStackSize = infi->stackSize;
 							if ( infi->reservedItems.size() > 0 )
 							{
-								newStackSize = qMax( newStackSize, inv.stackSize( *infi->reservedItems.begin() ) );
+								newStackSize = qMax( newStackSize, g->inv()->stackSize( *infi->reservedItems.begin() ) );
 							}
 
 							if ( newStackSize > 1 && ( ( infi->items.size() + infi->reservedItems.size() ) < newStackSize ) )
@@ -447,7 +452,7 @@ unsigned int Stockpile::getJob()
 								{
 									itemID = *infi->reservedItems.begin();
 								}
-								if ( inv.isSameTypeAndMaterial( itemID, item ) )
+								if ( g->inv()->isSameTypeAndMaterial( itemID, item ) )
 								{
 									return createJob( item, infi );
 								}
@@ -467,10 +472,8 @@ unsigned int Stockpile::getJob()
 
 unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 {
-	Inventory& inv = Global::inv();
-
-	QString itemSID        = inv.itemSID( itemID );
-	QString materialSID    = inv.materialSID( itemID );
+	QString itemSID        = g->inv()->itemSID( itemID );
+	QString materialSID    = g->inv()->materialSID( itemID );
 	int freeSpace          = 1;
 	int countItems         = infi->items.size();
 	int countReservedItems = infi->reservedItems.size();
@@ -482,11 +485,11 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 	{
 		if ( infi->items.size() == 0 && infi->reservedItems.size() == 0 )
 		{
-			freeSpace = inv.stackSize( itemID );
+			freeSpace = g->inv()->stackSize( itemID );
 		}
 		else if ( infi->items.size() == 0 && infi->reservedItems.size() > 0 )
 		{
-			freeSpace = inv.stackSize( *infi->reservedItems.begin() ) - ( countItems + countReservedItems );
+			freeSpace = g->inv()->stackSize( *infi->reservedItems.begin() ) - ( countItems + countReservedItems );
 		}
 		else
 		{
@@ -498,16 +501,16 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 	if ( freeSpace > 1 )
 	{
 		// there is more than one item of this type not in stockpiles already
-		int itemCount = inv.itemCountNotInStockpile( itemSID, materialSID );
+		int itemCount = g->inv()->itemCountNotInStockpile( itemSID, materialSID );
 		if ( itemCount > 1 )
 		{
 			// carry container exists?
-			QString carryContainer = Util::carryContainerForItem( itemSID );
-			freeSpace              = qMin( freeSpace, Util::capacity( carryContainer ) );
+			QString carryContainer = Global::util->carryContainerForItem( itemSID );
+			freeSpace              = qMin( freeSpace, Global::util->capacity( carryContainer ) );
 
 			if ( !carryContainer.isEmpty() )
 			{
-				if ( inv.itemCount( carryContainer, "any" ) > 0 )
+				if ( g->inv()->itemCount( carryContainer, "any" ) > 0 )
 				{
 					Job* job = new Job;
 					job->setType( "HauleMultipleItems" );
@@ -520,25 +523,25 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 
 					job->addItemToHaul( itemID );
 					infi->reservedItems.insert( itemID );
-					inv.setInJob( itemID, job->id() );
+					g->inv()->setInJob( itemID, job->id() );
 					--freeSpace;
 
-					//auto possibleItems = inv.getClosestItems( infi->pos, false, itemSID, materialSID );
+					//auto possibleItems = g->inv()->getClosestItems( infi->pos, false, itemSID, materialSID );
 					// m_possible items are now sorted by item and material
 					//
 					while ( !m_possibleItems.empty() && freeSpace > 0 )
 					{
 						auto nextItem = m_possibleItems.takeFirst();
-						if ( materialSID != inv.materialSID( nextItem ) || itemSID != inv.itemSID( nextItem ) )
+						if ( materialSID != g->inv()->materialSID( nextItem ) || itemSID != g->inv()->itemSID( nextItem ) )
 						{
 							break;
 						}
 
-						if ( !inv.isInJob( nextItem ) && inv.isInStockpile( nextItem ) != m_id && Global::w().regionMap().checkConnectedRegions( infi->pos, inv.getItemPos( nextItem ) ) )
+						if ( !g->inv()->isInJob( nextItem ) && g->inv()->isInStockpile( nextItem ) != m_id && g->w()->regionMap().checkConnectedRegions( infi->pos, g->inv()->getItemPos( nextItem ) ) )
 						{
 							job->addItemToHaul( nextItem );
 							infi->reservedItems.insert( nextItem );
-							inv.setInJob( nextItem, job->id() );
+							g->inv()->setInJob( nextItem, job->id() );
 							--freeSpace;
 						}
 					}
@@ -556,7 +559,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 	job->setStockpile( m_id );
 
 	job->addItemToHaul( itemID );
-	inv.setInJob( itemID, job->id() );
+	g->inv()->setInJob( itemID, job->id() );
 
 	job->setPos( infi->pos );
 	job->setPosItemInput( infi->pos );
@@ -592,7 +595,7 @@ unsigned int Stockpile::getCleanUpJob()
 {
 	if ( !m_active || m_filter.getActive().isEmpty() )
 		return 0;
-	Inventory& inv = Global::inv();
+
 	// cleaning up
 	//loop over all stockpile fields
 	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
@@ -603,12 +606,12 @@ unsigned int Stockpile::getCleanUpJob()
 		{
 			if ( infi->requireSame )
 			{
-				if ( infi->capacity > ( inv.itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
+				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
 				{
 					unsigned int firstItem = 0;
-					if ( inv.itemsInContainer( infi->containerID ).size() )
+					if ( g->inv()->itemsInContainer( infi->containerID ).size() )
 					{
-						firstItem = *inv.itemsInContainer( infi->containerID ).begin();
+						firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
 					}
 					else if ( infi->reservedItems.size() )
 					{
@@ -616,7 +619,7 @@ unsigned int Stockpile::getCleanUpJob()
 					}
 					if ( firstItem != 0 )
 					{
-						if ( inv.isInJob( firstItem ) )
+						if ( g->inv()->isInJob( firstItem ) )
 						{
 							return 0;
 						}
@@ -628,9 +631,9 @@ unsigned int Stockpile::getCleanUpJob()
 							{
 								for ( auto oi : infi2->items )
 								{
-									if ( inv.itemSID( oi ) == inv.itemSID( firstItem ) &&
-										 inv.materialSID( oi ) == inv.materialSID( firstItem ) &&
-										 !inv.isInJob( oi ) )
+									if ( g->inv()->itemSID( oi ) == g->inv()->itemSID( firstItem ) &&
+										 g->inv()->materialSID( oi ) == g->inv()->materialSID( firstItem ) &&
+										 !g->inv()->isInJob( oi ) )
 									{
 										return createJob( oi, infi );
 									}
@@ -642,7 +645,7 @@ unsigned int Stockpile::getCleanUpJob()
 			}
 			else
 			{
-				if ( infi->capacity > ( inv.itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
+				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
 				{
 					for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
 					{
@@ -651,7 +654,7 @@ unsigned int Stockpile::getCleanUpJob()
 						{
 							for ( auto oi : infi2->items )
 							{
-								if ( Util::itemAllowedInContainer( oi, infi->containerID ) && !inv.isInJob( oi ) )
+								if ( Global::util->itemAllowedInContainer( oi, infi->containerID ) && !g->inv()->isInJob( oi ) )
 								{
 									return createJob( oi, infi );
 								}
@@ -671,7 +674,7 @@ unsigned int Stockpile::getCleanUpJob()
 			if ( infi->stackSize > 1 && ( infi->items.size() + infi->reservedItems.size() < infi->stackSize ) )
 			{
 				unsigned int firstItem = *infi->items.begin();
-				if ( inv.isInJob( firstItem ) )
+				if ( g->inv()->isInJob( firstItem ) )
 				{
 					return 0;
 				}
@@ -684,9 +687,9 @@ unsigned int Stockpile::getCleanUpJob()
 					{
 						for ( auto oi : infi2->items )
 						{
-							if ( inv.itemSID( oi ) == inv.itemSID( firstItem ) &&
-								 inv.materialSID( oi ) == inv.materialSID( firstItem ) &&
-								 !inv.isInJob( oi ) &&
+							if ( g->inv()->itemSID( oi ) == g->inv()->itemSID( firstItem ) &&
+								 g->inv()->materialSID( oi ) == g->inv()->materialSID( firstItem ) &&
+								 !g->inv()->isInJob( oi ) &&
 								 infi2->items.size() < infi2->stackSize )
 							{
 								return createJob( oi, infi );
@@ -713,7 +716,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 		Job* job = m_jobsOut[jobID];
 		for ( auto itemID : job->itemsToHaul() )
 		{
-			Global::inv().setInJob( itemID, 0 );
+			g->inv()->setInJob( itemID, 0 );
 			Position pos = job->pos();
 			if ( m_fields.contains( pos.toInt() ) )
 			{
@@ -721,8 +724,8 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 				m_fields[pos.toInt()]->isFull = false;
 				m_isFull                      = false;
 			}
-			QString itemSID     = Global::inv().itemSID( itemID );
-			QString materialSID = Global::inv().materialSID( itemID );
+			QString itemSID     = g->inv()->itemSID( itemID );
+			QString materialSID = g->inv()->materialSID( itemID );
 			if ( m_limitWithmaterial )
 			{
 				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[itemSID + materialSID].activateThreshold )
@@ -766,25 +769,24 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 		field->items.insert( item );
 		field->isFull  = false;
 		m_isFull       = false;
-		Inventory& inv = Global::inv();
-		inv.setInStockpile( item, m_id );
-		inv.setInJob( item, 0 );
+		g->inv()->setInStockpile( item, m_id );
+		g->inv()->setInJob( item, 0 );
 
 		if ( field->containerID )
 		{
-			if ( Util::itemAllowedInContainer( item, field->containerID ) )
+			if ( Global::util->itemAllowedInContainer( item, field->containerID ) )
 			{
-				inv.putItemInContainer( item, field->containerID );
+				g->inv()->putItemInContainer( item, field->containerID );
 			}
 		}
 		else
 		{
-			field->stackSize = inv.stackSize( *field->items.begin() );
-			inv.setInContainer( item, 0 );
+			field->stackSize = g->inv()->stackSize( *field->items.begin() );
+			g->inv()->setInContainer( item, 0 );
 		}
 		// if count of that item type reached suspend threshold, suspend that item
-		QString itemSID     = inv.itemSID( item );
-		QString materialSID = inv.materialSID( item );
+		QString itemSID     = g->inv()->itemSID( item );
+		QString materialSID = g->inv()->materialSID( item );
 		if ( m_limitWithmaterial )
 		{
 			int threshold = m_limits[itemSID + materialSID].suspendThreshold;
@@ -806,9 +808,8 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 		return true;
 	}
 
-	Inventory& inv = Global::inv();
-	inv.setInStockpile( item, 0 );
-	inv.setInJob( item, 0 );
+	g->inv()->setInStockpile( item, 0 );
+	g->inv()->setInJob( item, 0 );
 
 	if ( Global::debugMode )
 		qDebug() << "item insert failed";
@@ -824,13 +825,13 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 		{
 			field->isFull = false;
 			m_isFull      = false;
-			Global::inv().setInStockpile( item, 0 );
+			g->inv()->setInStockpile( item, 0 );
 			if ( field->items.empty() && !field->containerID )
 			{
 				field->stackSize = 1;
 			}
-			QString itemSID     = Global::inv().itemSID( item );
-			QString materialSID = Global::inv().materialSID( item );
+			QString itemSID     = g->inv()->itemSID( item );
+			QString materialSID = g->inv()->materialSID( item );
 
 			if ( m_limitWithmaterial )
 			{
@@ -884,16 +885,14 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 		// unchecked some items, need to expel it from the stockpile
 		QSet<QString> filter = m_filter.getActiveSimple();
 
-		Inventory& inv = Global::inv();
-
 		for ( auto infi : m_fields )
 		{
 			QList<unsigned int> toRemove;
 			for ( auto oi : infi->items )
 			{
-				if ( !filter.contains( inv.combinedID( oi ) ) )
+				if ( !filter.contains( g->inv()->combinedID( oi ) ) )
 				{
-					inv.setInStockpile( oi, false );
+					g->inv()->setInStockpile( oi, false );
 					toRemove.append( oi );
 				}
 			}
@@ -911,42 +910,41 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 	{
 		if ( containerID )
 		{
-			Inventory& inv        = Global::inv();
 			InventoryField* field = m_fields.value( pos.toInt() );
 
 			field->containerID = containerID;
-			field->requireSame = inv.requireSame( containerID );
+			field->requireSame = g->inv()->requireSame( containerID );
 
-			field->capacity = inv.capacity( containerID );
-			inv.setConstructedOrEquipped( containerID, true );
+			field->capacity = g->inv()->capacity( containerID );
+			g->inv()->setConstructedOrEquipped( containerID, true );
 
-			for ( auto itemID : inv.itemsInContainer( containerID ) )
+			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
 			{
-				inv.setItemPos( itemID, pos );
+				g->inv()->setItemPos( itemID, pos );
 				if ( allowedInStockpile( itemID ) )
 				{
 					//insertItem( pos, itemID );
-					inv.setInStockpile( itemID, m_id );
+					g->inv()->setInStockpile( itemID, m_id );
 				}
 			}
 
 			auto items = m_fields[pos.toInt()]->items;
 			for ( auto item : items )
 			{
-				if ( Util::itemAllowedInContainer( item, containerID ) && inv.itemsInContainer( containerID ).size() < inv.capacity( containerID ) )
+				if ( Global::util->itemAllowedInContainer( item, containerID ) && g->inv()->itemsInContainer( containerID ).size() < g->inv()->capacity( containerID ) )
 				{
 					// if an item is already in the container and the container requires same
-					if ( field->requireSame && inv.itemsInContainer( containerID ).size() )
+					if ( field->requireSame && g->inv()->itemsInContainer( containerID ).size() )
 					{
-						unsigned int firstItem = *inv.itemsInContainer( containerID ).begin();
-						if ( inv.isSameTypeAndMaterial( item, firstItem ) )
+						unsigned int firstItem = *g->inv()->itemsInContainer( containerID ).begin();
+						if ( g->inv()->isSameTypeAndMaterial( item, firstItem ) )
 						{
-							inv.putItemInContainer( item, containerID );
+							g->inv()->putItemInContainer( item, containerID );
 						}
 					}
 					else
 					{
-						inv.putItemInContainer( item, containerID );
+						g->inv()->putItemInContainer( item, containerID );
 					}
 				}
 				else
@@ -955,7 +953,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 				}
 			}
 			field->items.clear();
-			for ( auto itemID : inv.itemsInContainer( containerID ) )
+			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
 			{
 				if ( allowedInStockpile( itemID ) )
 				{
@@ -973,8 +971,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 		InventoryField* field = m_fields.value( pos.toInt() );
 		if ( field->containerID == containerID )
 		{
-			Inventory& inv = Global::inv();
-			auto items     = inv.itemsInContainer( containerID );
+			auto items     = g->inv()->itemsInContainer( containerID );
 			for ( auto item : items )
 			{
 				removeItem( pos, item );
@@ -988,7 +985,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 
 bool Stockpile::allowedInStockpile( unsigned int itemID )
 {
-	return m_filter.getActiveSimple().contains( Global::inv().combinedID( itemID ) );
+	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
 }
 
 Job& Stockpile::getJob( unsigned int jobID )
@@ -996,7 +993,7 @@ Job& Stockpile::getJob( unsigned int jobID )
 	return *m_jobsOut[jobID];
 }
 
-bool Stockpile::hasJobID( unsigned int jobID )
+bool Stockpile::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }
@@ -1004,19 +1001,18 @@ bool Stockpile::hasJobID( unsigned int jobID )
 bool Stockpile::removeTile( Position& pos )
 {
 	InventoryField* infi = m_fields.value( pos.toInt() );
-	Inventory& inv       = Global::inv();
 	// unconstruct container on tile
 	if ( infi->containerID != 0 )
 	{
-		Global::w().deconstruct( infi->pos, infi->pos, false );
-		//inv.setConstructed( infi->containerID, false );
+		g->w()->deconstruct( infi->pos, infi->pos, false );
+		//g->inv()->setConstructed( infi->containerID, false );
 	}
 
 	// unstockpile all items on tile
 	for ( auto itemID : infi->items )
 	{
-		inv.setInContainer( itemID, 0 );
-		inv.setInStockpile( itemID, 0 );
+		g->inv()->setInContainer( itemID, 0 );
+		g->inv()->setInStockpile( itemID, 0 );
 	}
 	if ( m_jobsOut.contains( pos.toInt() ) )
 	{
@@ -1027,7 +1023,7 @@ bool Stockpile::removeTile( Position& pos )
 	infi->reservedItems.clear();
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
-	Global::w().clearTileFlag( pos, TileFlag::TF_STOCKPILE );
+	g->w()->clearTileFlag( pos, TileFlag::TF_STOCKPILE );
 	delete infi;
 	// if last tile deleted return true
 	if ( m_fields.empty() )
@@ -1057,13 +1053,12 @@ void Stockpile::unlinkWorkshop( unsigned int workshopID )
 int Stockpile::count( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	Inventory& inv = Global::inv();
 	for ( auto spf : m_fields )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) && materialSID == inv.materialSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) && materialSID == g->inv()->materialSID( itemUID ) )
 			{
 				++count;
 			}
@@ -1075,13 +1070,12 @@ int Stockpile::count( QString itemSID, QString materialSID )
 int Stockpile::count( QString itemSID )
 {
 	int count      = 0;
-	Inventory& inv = Global::inv();
 	for ( auto spf : m_fields )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) )
 			{
 				++count;
 			}
@@ -1093,20 +1087,19 @@ int Stockpile::count( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID )
 {
 	int count      = 0;
-	Inventory& inv = Global::inv();
 	for ( auto spf : m_fields )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) )
 			{
 				++count;
 			}
 		}
 		for ( auto itemUID : spf->reservedItems )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) )
 			{
 				++count;
 			}
@@ -1118,20 +1111,19 @@ int Stockpile::countPlusReserved( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	Inventory& inv = Global::inv();
 	for ( auto spf : m_fields )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) && materialSID == inv.materialSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) && materialSID == g->inv()->materialSID( itemUID ) )
 			{
 				++count;
 			}
 		}
 		for ( auto itemUID : spf->reservedItems )
 		{
-			if ( itemSID == inv.itemSID( itemUID ) && materialSID == inv.materialSID( itemUID ) )
+			if ( itemSID == g->inv()->itemSID( itemUID ) && materialSID == g->inv()->materialSID( itemUID ) )
 			{
 				++count;
 			}

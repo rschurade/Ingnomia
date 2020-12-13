@@ -16,12 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "fluidmanager.h"
+#include "game.h"
 
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/gnomemanager.h"
-#include "../game/inventory.h"
 #include "../game/mechanismmanager.h"
 #include "../game/world.h"
 #include "../gui/strings.h"
@@ -47,25 +46,14 @@ void NetworkPipe::deserialize( QVariantMap in )
 	type    = (PipeType)in.value( "Type" ).value<unsigned char>();
 }
 
-FluidManager::FluidManager()
+FluidManager::FluidManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 
 FluidManager::~FluidManager()
 {
-}
-
-void FluidManager::reset()
-{
-	m_inputs.clear();
-	m_allPipes.clear();
-	m_outputs.clear();
-}
-
-void FluidManager::init()
-{
-	reset();
-	m_lastTick = GameState::tick;
 }
 
 void FluidManager::loadPipes( QVariantList data )
@@ -109,9 +97,6 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	m_lastTick = tickNumber;
 
 	bool needUpdate = false;
-	QMutexLocker lock( &m_mutex );
-
-	World& world = Global::w();
 
 	QQueue<Position> workQueue;
 
@@ -124,12 +109,12 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		{
 			NetworkPipe& nw = m_allPipes[outPos.toInt()];
 
-			unsigned char fl = world.fluidLevel( nw.pos );
+			unsigned char fl = g->m_world->fluidLevel( nw.pos );
 
 			if ( nw.level > 0 && fl < 10 )
 			{
 				nw.level -= 1;
-				world.changeFluidLevel( nw.pos, +1 );
+				g->m_world->changeFluidLevel( nw.pos, +1 );
 			}
 			if ( nw.ins.size() )
 			{
@@ -193,13 +178,13 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 			if ( nw.level < nw.capacity )
 			{
-				if ( Global::mcm().hasPower( inPos ) )
+				if ( g->m_mechanismManager->hasPower( inPos ) )
 				{
-					unsigned char bfl = world.fluidLevel( inPos.belowOf() );
+					unsigned char bfl = g->m_world->fluidLevel( inPos.belowOf() );
 					if ( bfl > 0 )
 					{
 						nw.level += 1;
-						world.changeFluidLevel( inPos.belowOf(), -1 );
+						g->m_world->changeFluidLevel( inPos.belowOf(), -1 );
 					}
 				}
 			}
@@ -357,7 +342,7 @@ Job* FluidManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool FluidManager::hasJobID( unsigned int jobID )
+bool FluidManager::hasJobID( unsigned int jobID ) const
 {
 	return false;
 }

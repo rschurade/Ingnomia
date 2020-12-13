@@ -17,17 +17,26 @@
 */
 #pragma once
 
+
 #include "../game/automaton.h"
 #include "../game/gnome.h"
 #include "../game/gnometrader.h"
 
 #include <QList>
 
+class Game;
+
 class GnomeManager : public QObject
 {
-	Q_OBJECT
+	friend class Gnome;
+	friend class GnomeTrader;
+	friend class Automaton;
 
+	Q_OBJECT
+	Q_DISABLE_COPY_MOVE( GnomeManager )
 private:
+	QPointer<Game> g;
+
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;
 	QMap<unsigned int, Gnome*> m_gnomesByID;
@@ -41,12 +50,8 @@ private:
 	QHash<unsigned int, Job*> m_jobs;
 
 public:
-	GnomeManager( QObject* parent = nullptr );
+	GnomeManager( Game* parent );
 	~GnomeManager();
-
-	void init();
-	void reset();
-	void clear();
 
 	void loadProfessions();
 	void saveProfessions();
@@ -103,7 +108,7 @@ public:
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
 	Job* getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID );
+	bool hasJobID( unsigned int jobID ) const;
 
 	void setInMission( unsigned int gnomeID, unsigned int missionID );
 

@@ -17,9 +17,10 @@
 */
 #pragma once
 
-#include "../base/filter.h"
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
+
+#include "../game/worldobject.h"
 
 #include <QHash>
 #include <QList>
@@ -44,15 +45,16 @@ struct RoomTile
 
 class Job;
 
-class Room
+class Room : public WorldObject
 {
+	Q_DISABLE_COPY_MOVE( Room )
 public:
 	Room();
-	Room( QList<QPair<Position, bool>> tiles );
-	Room( QVariantMap vals );
+	Room( QList<QPair<Position, bool>> tiles, Game* game );
+	Room( QVariantMap vals, Game* game );
 	~Room();
 
-	QVariant serialize();
+	QVariant serialize() const;
 
 	QMap<unsigned int, RoomTile*>& getFields()
 	{
@@ -61,33 +63,15 @@ public:
 
 	void onTick( quint64 tick );
 
-	QString name()
-	{
-		return m_name;
-	}
-	void setName( QString name )
-	{
-		m_name = name;
-	}
-
-	unsigned int id()
-	{
-		return m_id;
-	}
-	void setId( unsigned int id )
-	{
-		m_id = id;
-	}
-
 	// return true if last tile was removed
-	bool removeTile( Position& pos );
-	void addTile( Position& pos );
+	bool removeTile( const Position & pos );
+	void addTile( const Position & pos );
 
 	void setType( RoomType type )
 	{
 		m_type = type;
 	};
-	RoomType type()
+	RoomType type() const
 	{
 		return m_type;
 	}
@@ -98,11 +82,11 @@ public:
 	bool checkRoofed();
 	bool checkEnclosed();
 
-	bool roofed()
+	bool roofed() const
 	{
 		return m_roofed;
 	}
-	bool enclosed()
+	bool enclosed() const
 	{
 		return m_enclosed;
 	}
@@ -111,7 +95,7 @@ public:
 	{
 		m_owner = id;
 	}
-	unsigned int owner()
+	unsigned int owner() const
 	{
 		return m_owner;
 	}
@@ -119,27 +103,23 @@ public:
 	QList<unsigned int> beds();
 	QList<unsigned int> chairs();
 
-	bool hasAlarmBell();
+	bool hasAlarmBell() const;
 	void setHasAlarmBell( bool value );
 
-	Position firstBellPos();
-	QList<Position> allBellPos();
+	Position firstBellPos() const;
+	QList<Position> allBellPos() const;
 
-	Position randomTilePos();
+	Position randomTilePos() const;
 
 private:
 	quint64 m_lastUpdateTick = 0;
 
-	unsigned int m_id    = 0;
 	unsigned int m_owner = 0;
-	bool m_active        = true;
 	bool m_roofed        = false;
 	bool m_enclosed      = false;
 	bool m_hasAlarmBell  = false;
 
 	QMap<unsigned int, RoomTile*> m_fields;
-
-	QString m_name = "Room";
 
 	RoomType m_type = RoomType::NotSet;
 };

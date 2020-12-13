@@ -66,6 +66,9 @@ public:
 
 	void setUIScale( float value );
 
+	void OnResume( BaseComponent* param = nullptr );
+	void OnContinueGameFinished( bool gameLoaded );
+
 private:
 	const NoesisApp::DelegateCommand* GetStart() const;
 	const NoesisApp::DelegateCommand* GetSettings() const;
@@ -90,16 +93,12 @@ private:
 	void OnSettings( BaseComponent* param );
 	void OnNewGame( BaseComponent* param );
 	void OnContinueGame( BaseComponent* param );
-	void OnNewGameFinished();
-	void OnContinueGameFinished( bool gameLoaded );
 	void OnSetupGame( BaseComponent* param );
 	void OnLoadGame( BaseComponent* param );
 	void OnSaveGame( BaseComponent* param );
 	void OnExit( BaseComponent* param );
 	void OnBackToMain( BaseComponent* param );
-	void OnResume( BaseComponent* param );
 	void OnFadeInCompleted( BaseComponent* params );
-	void OnPause( BaseComponent* params );
 
 	State GetState() const;
 	void SetState( State value );

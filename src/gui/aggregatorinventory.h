@@ -17,8 +17,12 @@
 */
 #pragma once
 
+#include "../base/enums.h"
+
 #include <QObject>
 #include <QList>
+
+class Game;
 
 struct GuiInventoryItem
 {
@@ -48,6 +52,28 @@ struct GuiInventoryCategory
 };
 Q_DECLARE_METATYPE( GuiInventoryCategory )
 
+struct GuiBuildRequiredItem
+{
+    QString itemID;
+    int amount = 0;
+
+    QList< QPair<QString, int> > availableMats;
+};
+Q_DECLARE_METATYPE( GuiBuildRequiredItem )
+
+struct GuiBuildItem
+{
+    QString id;
+    QString name;
+    BuildItemType biType;
+    std::vector<unsigned char> buffer;
+    int iconWidth = 0;
+    int iconHeight = 0;
+
+    QList<GuiBuildRequiredItem> requiredItems;
+};
+Q_DECLARE_METATYPE( GuiBuildItem )
+
 
 
 class AggregatorInventory : public QObject
@@ -58,18 +84,33 @@ public:
 	AggregatorInventory( QObject* parent = nullptr );
 	~AggregatorInventory();
 
+    void init( Game* game );
+
 private:
+    QPointer<Game> g;
+
     QList<GuiInventoryCategory> m_categories;
     QList<GuiInventoryGroup> m_groups;
     QList<GuiInventoryItem> m_items;
+    QList<GuiBuildItem> m_buildItems;
+
+    QMap<BuildSelection, QString> m_buildSelection2String;
+    QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;
+
+    void setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection );
+    void setAvailableMats( GuiBuildRequiredItem& gbri );
 
 public slots:
 	void onRequestCategories();
     void onRequestGroups( QString category );
     void onRequestItems( QString category, QString group );
+
+    void onRequestBuildItems( BuildSelection buildSelection, QString category );
 	
 signals:
 	void signalInventoryCategories( const QList<GuiInventoryCategory>& categories );
     void signalInventoryGroups( const QList<GuiInventoryGroup>& groups );
     void signalInventoryItems( const QList<GuiInventoryItem>& items );
+
+    void signalBuildItems( const QList<GuiBuildItem>& items );
 };

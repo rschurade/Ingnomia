@@ -15,9 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+#include "gnome.h"
+#include "gnomemanager.h"
+#include "game.h"
+
+
 #include "../base/enums.h"
 #include "../base/global.h"
-#include "gnome.h"
+
 //#include "../base/config.h"
 #include "../base/gamestate.h"
 //#include "../base/util.h"
@@ -25,6 +31,7 @@
 //#include "../base/position.h"
 
 #include "../game/creaturemanager.h"
+#include "../game/gnomemanager.h"
 //#include "../game/farmingmanager.h"
 //#include "../game/world.h"
 //#include "../game/stockpile.h"
@@ -153,11 +160,11 @@ BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 
 	for ( auto ci : cil )
 	{
-		if ( Global::inv().getItemPos( ci ) != inputPos )
+		if ( g->inv()->getItemPos( ci ) != inputPos )
 		{
 			m_itemToPickUp = ci;
-			setCurrentTarget( Global::inv().getItemPos( ci ) );
-			log( "Item is at " + Global::inv().getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
+			setCurrentTarget( g->inv()->getItemPos( ci ) );
+			log( "Item is at " + g->inv()->getItemPos( ci ).toString() + " and must go to " + inputPos.toString() );
 			return BT_RESULT::FAILURE;
 		}
 	}
@@ -195,18 +202,18 @@ BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 
 	auto cil = m_job->itemsToHaul();
 	PriorityQueue<unsigned int, int> pq;
-	Inventory& inv = Global::inv();
+
 	for ( auto itemID : cil )
 	{
-		if ( !inv.isPickedUp( itemID ) )
+		if ( !g->inv()->isPickedUp( itemID ) )
 		{
-			pq.put( itemID, inv.distanceSquare( itemID, m_position ) );
+			pq.put( itemID, g->inv()->distanceSquare( itemID, m_position ) );
 		}
 	}
 	if ( !pq.empty() )
 	{
 		unsigned int itemID = pq.get();
-		setCurrentTarget( inv.getItemPos( itemID ) );
+		setCurrentTarget( g->inv()->getItemPos( itemID ) );
 		m_itemToPickUp = itemID;
 	}
 
@@ -248,7 +255,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 {
 	if ( m_assignedWorkshop )
 	{
-		auto ws = Global::wsm().workshop( m_assignedWorkshop );
+		auto ws = g->wsm()->workshop( m_assignedWorkshop );
 		if ( ws )
 		{
 			QString type = ws->type();
@@ -263,7 +270,7 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 
 BT_RESULT Gnome::conditionIsCivilian( bool halt )
 {
-	bool roleIsCivilian = Global::mil().roleIsCivilian( m_roleID);
+	bool roleIsCivilian = g->mil()->roleIsCivilian( m_roleID);
 	if( m_roleID == 0 || roleIsCivilian )
 	{
 		return BT_RESULT::SUCCESS;
@@ -273,18 +280,18 @@ BT_RESULT Gnome::conditionIsCivilian( bool halt )
 
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 {
-	auto squad = Global::mil().getSquadForGnome( m_id );
+	auto squad = g->mil()->getSquadForGnome( m_id );
 	if( squad )
 	{
 		for( const auto& prio : squad->priorities )
 		{
 			if ( prio.attitude == MilAttitude::HUNT )
 			{
-				const auto& targetSet = Global::cm().animalsByType( prio.type );
+				const auto& targetSet = g->cm()->animalsByType( prio.type );
 				for ( const auto& targetID : targetSet )
 				{
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
-					if ( Global::cm().hasPathTo( m_position, targetID ) )
+					if ( g->cm()->hasPathTo( m_position, targetID ) )
 					{
 						return BT_RESULT::SUCCESS;
 					}

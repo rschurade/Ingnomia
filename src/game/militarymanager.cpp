@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "militarymanager.h"
+#include "game.h"
 
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -24,7 +25,6 @@
 #include "../base/util.h"
 #include "../game/gnome.h"
 #include "../game/creaturemanager.h"
-#include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 
 #include <QDebug>
@@ -127,7 +127,7 @@ QVariantMap Squad::serialize()
 	QVariantMap out;
 	out.insert( "Name", name );
 	out.insert( "ID", id );
-	out.insert( "Gnomes", Util::uintList2Variant( gnomes ) );
+	out.insert( "Gnomes", Global::util->uintList2Variant( gnomes ) );
 
 	QVariantList vl;
 	for( auto prio : priorities )
@@ -142,11 +142,12 @@ QVariantMap Squad::serialize()
 	return out;
 }
 
-Squad::Squad( const QVariantMap& in )
+Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
+	types( tps )
 {
 	name       = in.value( "Name" ).toString();
 	id         = in.value( "ID" ).toUInt();
-	gnomes     = Util::variantList2UInt( in.value( "Gnomes" ).toList() );
+	gnomes     = Global::util->variantList2UInt( in.value( "Gnomes" ).toList() );
 
 	if( in.contains( "Priorities" ) )
 	{
@@ -160,7 +161,6 @@ Squad::Squad( const QVariantMap& in )
 			TargetPriority tp { type, (MilAttitude)vm.value( "Attitude" ).toInt() };
 			priorities.append( tp );
 		}
-		auto types = Global::cm().types();
 		for( auto type : types )
 		{
 			if( !typeSet.contains( type ) )
@@ -172,7 +172,6 @@ Squad::Squad( const QVariantMap& in )
 	}
 	else
 	{
-		auto types = Global::cm().types();
 		for( auto type : types )
 		{
 			TargetPriority tp { type, MilAttitude::_IGNORE };
@@ -181,19 +180,13 @@ Squad::Squad( const QVariantMap& in )
 	}
 }
 
-MilitaryManager::MilitaryManager( QObject* parent ) :
-	QObject(parent)
+MilitaryManager::MilitaryManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 }
 MilitaryManager::~MilitaryManager()
 {
-}
-
-void MilitaryManager::reset()
-{
-	m_roles.clear();
-	m_squads.clear();
-	m_gnome2Squad.clear();
 }
 
 void MilitaryManager::init()
@@ -225,7 +218,7 @@ void MilitaryManager::init()
 		auto sl = mm.value( "Squads" ).toList();
 		for ( auto entry : sl )
 		{
-			Squad squad( entry.toMap() );
+			Squad squad( g->m_creatureManager->types(), entry.toMap() );
 			m_squads.insert( squad.id, squad );
 
 			for( auto gnome : squad.gnomes )
@@ -379,9 +372,9 @@ Squad* MilitaryManager::squad( unsigned int id )
 
 unsigned int MilitaryManager::addSquad()
 {
-	Squad squad;
+	Squad squad( g->m_creatureManager->types() );
 
-	auto types = Global::cm().types();
+	auto types = g->m_creatureManager->types();
 	for( auto type : types )
 	{
 		TargetPriority tp { type, MilAttitude::_IGNORE };

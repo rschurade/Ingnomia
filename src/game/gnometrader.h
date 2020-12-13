@@ -43,8 +43,8 @@ struct TraderDefinition {
 class GnomeTrader : public Gnome
 {
 public:
-	GnomeTrader( Position& pos, QString name, Gender gender );
-	GnomeTrader( QVariantMap& in );
+	GnomeTrader( Position& pos, QString name, Gender gender, Game* game );
+	GnomeTrader( QVariantMap& in, Game* game );
 	~GnomeTrader();
 
 	virtual void serialize( QVariantMap& out );

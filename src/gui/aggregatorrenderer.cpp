@@ -18,6 +18,7 @@
 #include "aggregatorrenderer.h"
 
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/creature.h"
 #include "../game/creaturemanager.h"
 #include "../game/gnomemanager.h"
@@ -34,9 +35,15 @@ AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 	qRegisterMetaType<AxleDataInfo>();
 }
 
+void AggregatorRenderer::init( Game* game )
+{
+	g = game;
+}
+
 TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 {
-	const auto& tile = Global::w().world()[tileID];
+	if( !g ) return TileDataUpdate();
+	const auto& tile = g->w()->world()[tileID];
 	TileData td;
 	if ( tile.floorSpriteUID )
 	{
@@ -59,9 +66,9 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 		td.itemSpriteUID = tile.itemSpriteUID;
 	}
 
-	if ( Global::w().hasJob( Position( tileID ) ) )
+	if ( g->w()->hasJob( Position( tileID ) ) )
 	{
-		QVariantMap job      = Global::w().jobSprite( Position( tileID ) );
+		QVariantMap job      = g->w()->jobSprite( Position( tileID ) );
 		QVariantMap floorJob = job.value( "Floor" ).toMap();
 		QVariantMap wallJob  = job.value( "Wall" ).toMap();
 
@@ -91,64 +98,64 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 
 QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 {
+	if( !g ) return QHash<unsigned int, unsigned int>();
 	QHash<unsigned int, unsigned int> creatures;
 
-	SpriteFactory& sf = Global::sf();
 	Sprite* sprite    = nullptr;
 
 	unsigned int posID = 0;
 
 	//TODO remove when we create gnome corpses
-	for ( auto g : Global::gm().deadGnomes() )
+	for ( auto gn : g->gm()->deadGnomes() )
 	{
-		posID = g->getPos().toInt();
+		posID = gn->getPos().toInt();
 		{
 			unsigned int spriteID = 0;
-			sprite                = sf.getCreatureSprite( g->id(), spriteID );
+			sprite                = g->sf()->getCreatureSprite( gn->id(), spriteID );
 			if ( sprite )
 			{
-				spriteID += g->facing() * ROT_BIT;
+				spriteID += gn->facing() * ROT_BIT;
 			}
 			creatures[posID] = spriteID;
 		}
 	}
 
-	for ( auto g : Global::gm().gnomes() )
+	for ( auto gn : g->gm()->gnomes() )
 	{
-		if ( !g->goneOffMap() )
+		if ( !gn->goneOffMap() )
 		{
-			posID = g->getPos().toInt();
+			posID = gn->getPos().toInt();
 			{
 				unsigned int spriteID = 0;
-				sprite                = sf.getCreatureSprite( g->id(), spriteID );
+				sprite                = g->sf()->getCreatureSprite( gn->id(), spriteID );
 				if ( sprite )
 				{
-					spriteID += g->facing() * ROT_BIT;
+					spriteID += gn->facing() * ROT_BIT;
 				}
 				creatures[posID] = spriteID;
 			}
 		}
 	}
-	for ( auto g : Global::gm().specialGnomes() )
+	for ( auto gn : g->gm()->specialGnomes() )
 	{
-		posID = g->getPos().toInt();
+		posID = gn->getPos().toInt();
 		{
 			unsigned int spriteID = 0;
-			sprite                = sf.getCreatureSprite( g->id(), spriteID );
+			sprite                = g->sf()->getCreatureSprite( gn->id(), spriteID );
 			if ( sprite )
 			{
-				spriteID += g->facing() * ROT_BIT;
+				spriteID += gn->facing() * ROT_BIT;
 			}
 			creatures[posID] = spriteID;
 		}
 	}
 
-	for ( auto a : Global::gm().automatons() )
+	for ( auto a : g->gm()->automatons() )
 	{
 		posID = a->getPos().toInt();
 		{
 			unsigned int spriteID = 0;
-			sprite                = sf.getCreatureSprite( a->id(), spriteID );
+			sprite                = g->sf()->getCreatureSprite( a->id(), spriteID );
 			if ( sprite )
 			{
 				spriteID += a->facing() * ROT_BIT;
@@ -157,9 +164,9 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 		}
 	}
 
-	auto& creatureList = Global::cm().creatures();
+	const auto& creatureList = g->cm()->creatures();
 
-	for( auto creature : creatureList )
+	for( const auto& creature : creatureList )
 	{
 		switch( creature->type() )
 		{
@@ -181,7 +188,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 					}
 					else
 					{
-						Sprite* sprite        = sf.getSprite( a->spriteUID() );
+						Sprite* sprite        = g->sf()->getSprite( a->spriteUID() );
 						unsigned int spriteID = 0;
 						if ( sprite )
 						{
@@ -200,7 +207,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 				if ( !creatures.contains( posID ) && !m->isDead() )
 				{
 					unsigned int spriteID = 0;
-					sprite                = sf.getCreatureSprite( m->id(), spriteID );
+					sprite                = g->sf()->getCreatureSprite( m->id(), spriteID );
 					if ( sprite )
 					{
 						spriteID += m->facing() * ROT_BIT;
@@ -216,6 +223,7 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 
 void AggregatorRenderer::onAllTileInfo()
 {
+	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
 	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
@@ -225,7 +233,7 @@ void AggregatorRenderer::onAllTileInfo()
 	constexpr size_t batchSize = 1 << 16;
 	TileDataUpdateInfo tileUpdates;
 	tileUpdates.updates.reserve( batchSize );
-	const unsigned int worldSize = (unsigned int)Global::w().world().size();
+	const unsigned int worldSize = (unsigned int)g->w()->world().size();
 	for ( unsigned int tileUID = 0; tileUID < worldSize; ++tileUID )
 	{
 		auto update = aggregateTile( tileUID );
@@ -255,6 +263,7 @@ void AggregatorRenderer::onAllTileInfo()
 
 void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
 {
+	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
 	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
@@ -290,7 +299,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 		emit signalTileUpdates( tileUpdates );
 	}
 
-	if ( Global::mcm().axlesChanged() )
+	if ( g->mcm()->axlesChanged() )
 	{
 		onAxleDataUpdate();
 	}
@@ -299,22 +308,23 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 
 void AggregatorRenderer::onThoughtBubbleUpdate()
 {
+	if( !g ) return;
 	ThoughtBubbleInfo info;
-	for ( const auto& g : Global::gm().gnomes() )
+	for ( const auto& gn : g->gm()->gnomes() )
 	{
-		QString thoughtBubble = g->thoughtBubble();
+		QString thoughtBubble = gn->thoughtBubble();
 		if ( !thoughtBubble.isEmpty() )
 		{
-			info.thoughtBubbles.push_back( { g->getPos(), Global::sf().thoughtBubbleID( thoughtBubble ) } );
+			info.thoughtBubbles.push_back( { gn->getPos(), g->sf()->thoughtBubbleID( thoughtBubble ) } );
 		}
 	}
 
-	for ( const auto& g : Global::cm().animals() )
+	for ( const auto& gn : g->cm()->animals() )
 	{
-		QString thoughtBubble = g->thoughtBubble();
+		QString thoughtBubble = gn->thoughtBubble();
 		if ( !thoughtBubble.isEmpty() )
 		{
-			info.thoughtBubbles.push_back( { g->getPos(), Global::sf().thoughtBubbleID( thoughtBubble ) } );
+			info.thoughtBubbles.push_back( { gn->getPos(), g->sf()->thoughtBubbleID( thoughtBubble ) } );
 		}
 	}
 	emit signalThoughtBubbles( info );
@@ -322,12 +332,14 @@ void AggregatorRenderer::onThoughtBubbleUpdate()
 
 void AggregatorRenderer::onAxleDataUpdate()
 {
+	if( !g ) return;
 	AxleDataInfo data;
-	data.data = Global::mcm().axleData();
+	data.data = g->mcm()->axleData();
 	emit signalAxleData( data );
 }
 
 void AggregatorRenderer::onWorldParametersChanged()
 {
+	if( !g ) return;
 	emit signalWorldParametersChanged();
 }

@@ -25,11 +25,12 @@
 
 struct Tile;
 class Region;
+class World;
 
 class RegionMap
 {
 public:
-	RegionMap();
+	RegionMap( World* parent );
 	~RegionMap();
 
 	void clear();
@@ -51,6 +52,8 @@ public:
 	bool checkConnectedRegions( const Position& start, const Position& goal );
 
 private:
+	World* m_world = nullptr;
+
 	std::vector<unsigned int> m_regionMap;
 	std::vector<Region> m_regions;
 

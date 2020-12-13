@@ -101,7 +101,6 @@ int GameState::viewLevel = 100;
 bool GameState::init()
 {
 	nextID = 1000000;
-
 	return true;
 }
 
@@ -196,6 +195,10 @@ void GameState::load( QVariantMap& vals )
 
 		tmp.insert( newKey, vals.value( key ) );
 	}
+
+	Global::dimX = tmp.value( "dimX" ).toInt();
+	Global::dimY = tmp.value( "dimY" ).toInt();
+	Global::dimZ = tmp.value( "dimZ" ).toInt();
 
 	alarm       = tmp.value( "alarm" ).toInt();
 	alarmRoomID = tmp.value( "alarmRoomID" ).toUInt();
@@ -298,10 +301,6 @@ void GameState::load( QVariantMap& vals )
 
 	addedMaterials    = tmp.value( "addedMaterials" ).toList();
 	addedTranslations = tmp.value( "addedTranslations" ).toMap();
-
-	Global::dimX = tmp.value( "dimX" ).toInt();
-	Global::dimY = tmp.value( "dimY" ).toInt();
-	Global::dimZ = tmp.value( "dimZ" ).toInt();
 
 	moveX = tmp.value( "moveX" ).toInt();
 	moveY = tmp.value( "moveY" ).toInt();

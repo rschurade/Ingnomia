@@ -21,6 +21,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
@@ -29,17 +30,22 @@
 
 #include <QDebug>
 
-Grove::Grove()
-{
-}
 Grove::~Grove()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 GroveProperties::GroveProperties( QVariantMap& in )
 {
 	auto vjpl = in.value( "JobPriorities" ).toList();
-	for ( auto vjp : vjpl )
+	for ( const auto& vjp : vjpl )
 	{
 		jobPriorities.append( vjp.value<quint8>() );
 	}
@@ -58,7 +64,7 @@ GroveProperties::GroveProperties( QVariantMap& in )
 	autoFellMax = in.value( "AutoFellMax" ).toInt();
 }
 
-void GroveProperties::serialize( QVariantMap& out )
+void GroveProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "grove" );
 
@@ -83,8 +89,8 @@ void GroveProperties::serialize( QVariantMap& out )
 	out.insert( "JobPriorities", jpl );
 }
 
-Grove::Grove( QList<QPair<Position, bool>> tiles ) :
-	WorldObject()
+Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
+	WorldObject( game )
 {
 	m_name = "Grove";
 
@@ -93,7 +99,7 @@ Grove::Grove( QList<QPair<Position, bool>> tiles ) :
 	m_properties.jobPriorities.push_back( GroveJobs::PickFruit );
 	m_properties.jobPriorities.push_back( GroveJobs::FellTree );
 
-	for ( auto p : tiles )
+	for ( const auto& p : tiles )
 	{
 		if ( p.second )
 		{
@@ -104,12 +110,12 @@ Grove::Grove( QList<QPair<Position, bool>> tiles ) :
 	}
 }
 
-Grove::Grove( QVariantMap vals ) :
-	WorldObject( vals ),
+Grove::Grove( QVariantMap vals, Game* game ) :
+	WorldObject( vals, game ),
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();
-	for ( auto vf : vfl )
+	for ( const auto& vf : vfl )
 	{
 		auto vfm          = vf.toMap();
 		GroveField* grofi = new GroveField;
@@ -120,14 +126,14 @@ Grove::Grove( QVariantMap vals ) :
 	}
 
 	QVariantList vjl = vals.value( "Jobs" ).toList();
-	for ( auto vj : vjl )
+	for ( const auto& vj : vjl )
 	{
 		Job* job = new Job( vj.toMap() );
 		m_jobsOut.insert( job->id(), job );
 	}
 }
 
-QVariant Grove::serialize()
+QVariant Grove::serialize() const
 {
 	QVariantMap out;
 	WorldObject::serialize( out );
@@ -170,7 +176,7 @@ void Grove::updateAutoForester()
 {
 	if ( m_properties.autoPick )
 	{
-		unsigned int count = Global::inv().itemCount( "Fruit", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "Fruit", m_properties.treeType );
 		unsigned int min   = m_properties.autoPickMin;
 		unsigned int max   = m_properties.autoPickMax;
 		if ( count < min )
@@ -184,7 +190,7 @@ void Grove::updateAutoForester()
 	}
 	if ( m_properties.autoFell )
 	{
-		unsigned int count = Global::inv().itemCount( "RawWood", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "RawWood", m_properties.treeType );
 		unsigned int min   = m_properties.autoFellMin;
 		unsigned int max   = m_properties.autoFellMax;
 		if ( count < min )
@@ -279,7 +285,7 @@ bool Grove::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Grove::getJob( unsigned int jobID )
+Job* Grove::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -288,12 +294,12 @@ Job* Grove::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Grove::hasJobID( unsigned int jobID )
+bool Grove::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }
 
-bool Grove::hasPlantTreeJob( Position pos )
+bool Grove::hasPlantTreeJob( Position pos ) const
 {
 	for ( auto job : m_jobsOut )
 	{
@@ -311,16 +317,16 @@ Job* Grove::getPlantJob()
 	for ( auto gf : m_fields )
 	{
 		// tile is empty, we plant something
-		if ( !gf->hasJob && m_properties.plant && !Global::w().plants().contains( gf->pos.toInt() ) && Global::w().noTree( gf->pos, 2, 2 ) && Global::w().isWalkable( gf->pos ) )
+		if ( !gf->hasJob && m_properties.plant && !g->w()->plants().contains( gf->pos.toInt() ) && g->w()->noTree( gf->pos, 2, 2 ) && g->w()->isWalkable( gf->pos ) )
 		{
 			QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
 			QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
 
-			if ( Global::inv().itemCount( seedID, mat ) > 0 )
+			if ( g->inv()->itemCount( seedID, mat ) > 0 )
 			{
 				Job* job = new Job();
 				job->setType( "PlantTree" );
-				job->setRequiredSkill( Util::requiredSkill( "PlantTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "PlantTree" ) );
 				job->setPos( gf->pos );
 				job->addPossibleWorkPosition( gf->pos );
 				job->setItem( m_properties.treeType );
@@ -343,9 +349,9 @@ Job* Grove::getPickJob()
 	Job* job = new Job();
 	for ( auto gf : m_fields )
 	{
-		if ( !gf->hasJob && Global::w().plants().contains( gf->pos.toInt() ) )
+		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& tree = Global::w().plants()[gf->pos.toInt()];
+			Plant& tree = g->w()->plants()[gf->pos.toInt()];
 			if ( !tree.isTree() )
 			{
 				continue;
@@ -353,22 +359,22 @@ Job* Grove::getPickJob()
 			if ( m_properties.pickFruit && tree.harvestable() )
 			{
 				bool hasWorkPos = false;
-				if ( Global::w().isWalkable( gf->pos.northOf() ) )
+				if ( g->w()->isWalkable( gf->pos.northOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.northOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.eastOf() ) )
+				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.eastOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.southOf() ) )
+				if ( g->w()->isWalkable( gf->pos.southOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.southOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.westOf() ) )
+				if ( g->w()->isWalkable( gf->pos.westOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.westOf() );
 					hasWorkPos = true;
@@ -379,7 +385,7 @@ Job* Grove::getPickJob()
 				}
 
 				job->setType( "HarvestTree" );
-				job->setRequiredSkill( Util::requiredSkill( "HarvestTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "HarvestTree" ) );
 				job->setPos( gf->pos );
 
 				job->setNoJobSprite( true );
@@ -397,9 +403,9 @@ Job* Grove::getFellJob()
 	Job* job = new Job();
 	for ( auto gf : m_fields )
 	{
-		if ( !gf->hasJob && Global::w().plants().contains( gf->pos.toInt() ) )
+		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& tree = Global::w().plants()[gf->pos.toInt()];
+			Plant& tree = g->w()->plants()[gf->pos.toInt()];
 			if ( !tree.isTree() )
 			{
 				continue;
@@ -413,22 +419,22 @@ Job* Grove::getFellJob()
 			if ( m_properties.fell && tree.matureWood() )
 			{
 				bool hasWorkPos = false;
-				if ( Global::w().isWalkable( gf->pos.northOf() ) )
+				if ( g->w()->isWalkable( gf->pos.northOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.northOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.eastOf() ) )
+				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.eastOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.southOf() ) )
+				if ( g->w()->isWalkable( gf->pos.southOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.southOf() );
 					hasWorkPos = true;
 				}
-				if ( Global::w().isWalkable( gf->pos.westOf() ) )
+				if ( g->w()->isWalkable( gf->pos.westOf() ) )
 				{
 					job->addPossibleWorkPosition( gf->pos.westOf() );
 					hasWorkPos = true;
@@ -439,7 +445,7 @@ Job* Grove::getFellJob()
 				}
 
 				job->setType( "FellTree" );
-				job->setRequiredSkill( Util::requiredSkill( "FellTree" ) );
+				job->setRequiredSkill( Global::util->requiredSkill( "FellTree" ) );
 				job->setPos( gf->pos );
 				job->setRequiredTool( "FellingAxe", 1 );
 				job->setNoJobSprite( true );
@@ -452,21 +458,23 @@ Job* Grove::getFellJob()
 	return nullptr;
 }
 
-bool Grove::removeTile( Position& pos )
+bool Grove::removeTile( const Position & pos )
 {
 	GroveField* gf = m_fields.value( pos.toInt() );
 
 	m_fields.remove( pos.toInt() );
 
-	Global::w().clearTileFlag( pos, TileFlag::TF_GROVE );
+	g->w()->clearTileFlag( pos, TileFlag::TF_GROVE );
 	delete gf;
 	// if last tile deleted return true
 	return m_fields.empty();
 }
 
-void Grove::addTile( Position& pos )
+void Grove::addTile( const Position & pos )
 {
 	GroveField* grofi = new GroveField;
 	grofi->pos        = pos;
 	m_fields.insert( pos.toInt(), grofi );
+
+	g->w()->setTileFlag( pos, TileFlag::TF_GROVE );
 }

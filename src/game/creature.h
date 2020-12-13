@@ -26,6 +26,7 @@
 #include <QPixmap>
 
 class QPainter;
+class Game;
 
 struct AggroEntry
 {
@@ -127,8 +128,8 @@ struct Equipment
 class Creature : public Object
 {
 public:
-	Creature( const Position& pos, QString name, Gender gender, QString species );
-	Creature( QVariantMap in );
+	Creature( const Position& pos, QString name, Gender gender, QString species, Game* game );
+	Creature( QVariantMap in, Game* game );
 	~Creature();
 
 	bool operator<( const Creature& other ) const
@@ -278,6 +279,8 @@ public:
 	bool hasTransparency() { return m_hasTransparency; }
 
 protected:
+	QPointer<Game> g;
+
 	virtual void loadBehaviorTree( QString id ) final;
 	virtual void initTaskMap() = 0;
 
@@ -389,7 +392,7 @@ protected:
 	QList<AggroEntry> m_aggroList;
 
 	QString m_btName        = "";
-	BT_Node* m_behaviorTree = nullptr;
+	QScopedPointer<BT_Node> m_behaviorTree;
 
 	BT_RESULT conditionIsMale( bool halt );
 	BT_RESULT conditionIsFemale( bool halt );

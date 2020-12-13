@@ -21,6 +21,8 @@
 
 #include <QString>
 
+class Game;
+
 enum class GrowLight : unsigned char
 {
 	SUN,
@@ -39,11 +41,11 @@ class Plant : public Object
 {
 public:
 	Plant();
-	Plant( Position& pos, QString ID, bool fullyGrown = false );
-	Plant( QVariant values );
+	Plant( Position& pos, QString ID, bool fullyGrown, Game* game );
+	Plant( QVariant values, Game* game );
 	~Plant();
 
-	virtual QVariant serialize();
+	virtual QVariant serialize() const;
 
 	OnTickReturn onTick( quint64 tickNumber, bool dayChanged, bool seasonChanged );
 
@@ -102,6 +104,8 @@ public:
 	void setGrowsThisSeason();
 
 private:
+	QPointer<Game> g;
+
 	QString m_plantID;
 
 	Sprite* m_sprite = 0;

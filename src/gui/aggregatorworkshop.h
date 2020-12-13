@@ -22,6 +22,7 @@
 
 #include <QObject>
 
+class Game;
 struct TraderItem;
 
 struct GuiWorkshopMaterial
@@ -32,6 +33,7 @@ struct GuiWorkshopMaterial
 
 struct GuiWorkshopComponent
 {
+	QPointer<Game> g;
 	QString sid;
 	int amount;
 	bool requireSame;
@@ -44,6 +46,7 @@ struct GuiWorkshopComponent
 
 struct GuiWorkshopProduct
 {
+	QPointer<Game> g;
 	QString sid;
 
 	void updateComponents();
@@ -96,7 +99,11 @@ public:
 	AggregatorWorkshop( QObject* parent = nullptr );
 	~AggregatorWorkshop();
 
+	void init( Game* game );
+
 private:
+    QPointer<Game> g;
+
 	bool m_infoDirty    = false;
 	bool m_contentDirty = false;
 

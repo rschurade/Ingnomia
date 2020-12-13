@@ -21,6 +21,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/gnomemanager.h"
@@ -28,14 +29,14 @@
 #include "../game/plant.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
-#include "world.h"
+#include "../game/world.h"
 
 #include <QDebug>
 #include <QPainter>
 #include <QPixmap>
 
-Animal::Animal( QString species, Position& pos, Gender gender, bool adult ) :
-	Creature( pos, species, gender, species )
+Animal::Animal( QString species, Position& pos, Gender gender, bool adult, Game* game ) :
+	Creature( pos, species, gender, species, game )
 {
 	initTaskMap();
 
@@ -44,7 +45,7 @@ Animal::Animal( QString species, Position& pos, Gender gender, bool adult ) :
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_btName   = avm.value( "BehaviorTree" ).toString();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	
+
 	m_isMulti = avm.value( "IsMulti" ).toBool();
 
 	int hungerRand = ( rand() % 20 ) - 10;
@@ -63,8 +64,8 @@ Animal::Animal( QString species, Position& pos, Gender gender, bool adult ) :
 	m_type = CreatureType::ANIMAL;
 }
 
-Animal::Animal( QVariantMap in ) :
-	Creature( in ),
+Animal::Animal( QVariantMap in, Game* game ) :
+	Creature( in, game ),
 	//bool m_tame = false;
 	m_tame( in.value( "Tame" ).toBool() ),
 	m_birthTick( in.value( "BirthTick" ).value<quint64>() ),
@@ -90,7 +91,7 @@ Animal::Animal( QVariantMap in ) :
 
 	m_aquatic  = avm.value( "Aquatic" ).toBool();
 	m_preyList = avm.value( "Prey" ).toString().split( "|" );
-	
+
 	m_hunger = qMax( -10.f, in.value( "Hunger" ).toFloat() );
 
 	QVariantMap m_stateMap;
@@ -144,7 +145,7 @@ void Animal::serialize( QVariantMap& out )
 }
 
 Animal::Animal() :
-	Creature( Position(), "", Gender::UNDEFINED, "" )
+	Creature( Position(), "", Gender::UNDEFINED, "", g )
 {
 	initTaskMap();
 }
@@ -157,7 +158,7 @@ void Animal::checkInJob()
 {
 	if ( m_inJob )
 	{
-		if ( !Global::jm().getJob( m_inJob ) )
+		if ( !g->jm()->getJob( m_inJob ) )
 		{
 			qDebug() << "Animal:" << m_id << "has inJobID:" << m_inJob << " that doesn't exist";
 			m_inJob    = 0;
@@ -168,7 +169,7 @@ void Animal::checkInJob()
 
 void Animal::init()
 {
-	Global::w().insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 
 	m_anatomy.init( "Animal" );
 
@@ -207,10 +208,10 @@ void Animal::updateSprite()
 				break;
 		}
 		auto rows = DB::selectRows( "Creature_Layouts", spriteName );
-		for ( auto row : rows )
+		for ( const auto& row : rows )
 		{
 			auto spriteSID = row.value( "Sprite" ).toString();
-			Sprite* sprite = Global::sf().createAnimalSprite( spriteSID );
+			Sprite* sprite = g->sf()->createAnimalSprite( spriteSID );
 			if ( sprite )
 			{
 				//m_multiSprites.append( QPair<Position, unsigned int>( m_position + Position( row.value( "Offset" ) ), sprite->uID ) );
@@ -223,16 +224,16 @@ void Animal::updateSprite()
 		Sprite* sprite = nullptr;
 		if ( m_dye.isEmpty() )
 		{
-			sprite = Global::sf().createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() );
+			sprite = g->sf()->createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() );
 		}
 		else
 		{
-			sprite = Global::sf().createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() + m_dye );
+			sprite = g->sf()->createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() + m_dye );
 		}
 		if ( sprite )
 		{
-			m_hasTransparency  = sprite->hasTransp;
-			m_spriteID = sprite->uID;
+			m_hasTransparency = sprite->hasTransp;
+			m_spriteID        = sprite->uID;
 		}
 		else
 		{
@@ -322,7 +323,7 @@ void Animal::setState( int state )
 	int days = m_stateMap.value( "DaysToNextState" ).toInt();
 	if ( days )
 	{
-		m_stateChangeTick = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		m_stateChangeTick = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 	}
 	else
 	{
@@ -332,7 +333,7 @@ void Animal::setState( int state )
 	QString behaviorID = m_species + m_stateMap.value( "ID2" ).toString();
 
 	auto behaviorList = DB::selectRows( "Animals_States_Behavior", behaviorID );
-	for ( auto vBehavior : behaviorList )
+	for ( const auto& vBehavior : behaviorList )
 	{
 		QString behavior = vBehavior.value( "ID2" ).toString();
 		m_stateMap.insert( behavior, vBehavior );
@@ -366,6 +367,14 @@ void Animal::setState( int state )
 		return false;
 	}();
 
+	m_isGrazer = [this]() {
+		if ( m_stateMap.contains( "Grazing" ) )
+		{
+			return true;
+		}
+		return false;
+	}();
+
 	m_isEgg   = isEgg();
 	m_isYoung = isYoung();
 	m_isAdult = isAdult();
@@ -380,7 +389,7 @@ CreatureTickResult Animal::onTick( quint64 tickNumber, bool seasonChanged, bool 
 {
 	processCooldowns( tickNumber );
 
-	m_anatomy.setFluidLevelonTile( Global::w().fluidLevel( m_position ) );
+	m_anatomy.setFluidLevelonTile( g->w()->fluidLevel( m_position ) );
 
 	if ( m_anatomy.statusChanged() )
 	{
@@ -446,15 +455,15 @@ void Animal::move( Position oldPos )
 		if ( m_position != oldPos )
 		{
 			auto rows = DB::selectRows( "Creature_Layouts", m_species );
-			for ( auto row : rows )
+			for ( const auto& row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
-				Global::w().setWallSprite( oldPos + offset, 0 );
+				g->w()->setWallSprite( oldPos + offset, 0 );
 			}
-			for ( auto row : rows )
+			for ( const auto& row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
-				Global::w().setWallSprite( m_position + offset, Global::sf().createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
+				g->w()->setWallSprite( m_position + offset, g->sf()->createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
 			}
 		}
 	}
@@ -569,7 +578,7 @@ BT_RESULT Animal::actionLayEgg( bool halt )
 		QVariantMap def = m_stateMap.value( "EggLayer" ).toMap();
 		//first visit;
 		int days        = def.value( "DaysBetween" ).toInt();
-		quint64 nextLay = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextLay = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_birthTick     = nextLay;
 		return BT_RESULT::FAILURE;
 	}
@@ -580,25 +589,25 @@ BT_RESULT Animal::actionLayEgg( bool halt )
 		bool collectEggs = false;
 		if ( m_pastureID != 0 )
 		{
-			Pasture* pasture = Global::fm().getPasture( m_pastureID );
+			Pasture* pasture = g->fm()->getPasture( m_pastureID );
 			if ( pasture )
 			{
 				collectEggs = pasture->harvest();
 			}
 		}
-		int totalCount = Global::cm().count( m_species );
+		int totalCount = g->cm()->count( m_species );
 		if ( ( totalCount < GameState::maxAnimalsPerType && totalCount < 1000 ) || collectEggs )
 		{
 			for ( int i = 0; i < def.value( "Amount" ).toInt(); ++i )
 			{
 				if ( collectEggs )
 				{
-					Global::inv().createItem( m_position, "Egg", { m_species } );
+					g->inv()->createItem( m_position, "Egg", { m_species } );
 				}
 				else
 				{
-					Global::cm().addCreature( CreatureType::ANIMAL, def.value( "EggID" ).toString(), m_position, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, false, m_tame );
-					if ( Global::cm().count( m_species ) >= GameState::maxAnimalsPerType )
+					g->cm()->addCreature( CreatureType::ANIMAL, def.value( "EggID" ).toString(), m_position, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, false, m_tame );
+					if ( g->cm()->count( m_species ) >= GameState::maxAnimalsPerType )
 					{
 						break;
 					}
@@ -632,7 +641,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 		//first visit;
 		QVariantMap def  = m_stateMap.value( "Producer" ).toMap();
 		int days         = def.value( "DaysBetween" ).toInt();
-		quint64 nextProd = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextProd = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_produceTick    = nextProd;
 		return BT_RESULT::FAILURE;
 	}
@@ -646,7 +655,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 			QString produce = def.value( "ItemID" ).toString();
 			for ( int i = 0; i < def.value( "Amount" ).toInt(); ++i )
 			{
-				Global::inv().createItem( m_position, def.value( "ItemID" ).toString(), { m_species } );
+				g->inv()->createItem( m_position, def.value( "ItemID" ).toString(), { m_species } );
 			}
 		}
 		else
@@ -660,7 +669,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 			//qDebug() << m_name << def.value( "ItemID" ).toString() <<producedAmount;
 		}
 		int days         = def.value( "DaysBetween" ).toInt();
-		quint64 nextProd = GameState::tick + ( Util::ticksPerDayRandomized( 5 ) * days );
+		quint64 nextProd = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
 		m_produceTick    = nextProd;
 		return BT_RESULT::SUCCESS;
 	}
@@ -671,23 +680,23 @@ BT_RESULT Animal::actionTryHaveSex( bool halt )
 {
 	if ( m_gender == Gender::MALE && m_isAdult && m_hunger > 50 )
 	{
-		int totalCount = Global::cm().count( m_species );
+		int totalCount = g->cm()->count( m_species );
 		if ( totalCount < GameState::maxAnimalsPerType && totalCount < 1000 )
 		{
 			//isOnPasture
 			if ( m_pastureID )
 			{
 				//last sex longer than 24 hours ago
-				if ( m_lastSex + Util::ticksPerDay < GameState::tick )
+				if ( m_lastSex + Global::util->ticksPerDay < GameState::tick )
 				{
 					// non pregnant female on pasture
-					Pasture* pasture = Global::fm().getPasture( m_pastureID );
+					Pasture* pasture = g->fm()->getPasture( m_pastureID );
 					if ( pasture )
 					{
 						auto list = pasture->animals();
 						for ( auto id : list )
 						{
-							auto a = Global::cm().animal( id );
+							auto a = g->cm()->animal( id );
 							if ( a->gender() == Gender::FEMALE && !a->isPregnant() && a->isAdult() )
 							{
 								a->setPregnant( true );
@@ -708,14 +717,14 @@ BT_RESULT Animal::actionGiveBirth( bool halt )
 	// birth tick reached
 	if ( m_birthTick && GameState::tick > m_birthTick )
 	{
-		int totalCount = Global::cm().count( m_species );
+		int totalCount = g->cm()->count( m_species );
 		if ( ( totalCount < GameState::maxAnimalsPerType && totalCount < 1000 ) )
 		{
 			// create baby
 			setPregnant( false );
-			unsigned int babyID = Global::cm().addCreature( CreatureType::ANIMAL, m_species, m_position, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, false, m_tame );
+			unsigned int babyID = g->cm()->addCreature( CreatureType::ANIMAL, m_species, m_position, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, false, m_tame );
 			// if mother on pasture and space on pasture
-			Pasture* pasture = Global::fm().getPasture( m_pastureID );
+			Pasture* pasture = g->fm()->getPasture( m_pastureID );
 			if ( pasture )
 			{
 				pasture->addAnimal( babyID );
@@ -731,7 +740,7 @@ void Animal::setPregnant( bool pregnant )
 	if ( pregnant )
 	{
 		int days      = DB::select( "GestationDays", "Animals", m_species ).toInt();
-		quint64 ticks = Util::ticksPerDayRandomized( 5 ) * days;
+		quint64 ticks = Global::util->ticksPerDayRandomized( 5 ) * days;
 		m_birthTick   = GameState::tick + ticks;
 	}
 	else
@@ -793,7 +802,7 @@ void Animal::harvest()
 
 bool Animal::morph( QVariantMap def )
 {
-	Global::cm().addCreature( CreatureType::ANIMAL, def.value( "CreatureID" ).toString(), m_position, m_gender, false, m_tame );
+	g->cm()->addCreature( CreatureType::ANIMAL, def.value( "CreatureID" ).toString(), m_position, m_gender, false, m_tame );
 	m_toDestroy = true;
 	return true;
 }
@@ -817,47 +826,30 @@ BT_RESULT Animal::actionGraze( bool halt )
 {
 	if ( m_hunger < 80 )
 	{
-		if ( m_stateMap.contains( "Grazing" ) )
+		Tile& tile = g->w()->getTile( m_position );
+		if ( m_isGrazer )
 		{
-			Tile& tile = Global::w().getTile( m_position );
-
-			if ( GameState::season != 3 )
+			if ( tile.flags & TileFlag::TF_GRASS && tile.vegetationLevel > 10 )
 			{
-				if ( tile.flags & TileFlag::TF_GRASS && tile.vegetationLevel > 10 )
+				if ( tile.flags & TileFlag::TF_PASTURE )
 				{
-					if ( tile.flags & TileFlag::TF_PASTURE )
-					{
-						tile.vegetationLevel = qMax( 10, tile.vegetationLevel - 1 );
-					}
-
-					m_hunger += m_foodValue;
-
-					Global::w().addToUpdateList( m_position );
-					return BT_RESULT::SUCCESS;
+					tile.vegetationLevel = qMax( 10, tile.vegetationLevel - 1 );
 				}
-			}
-			if ( tile.flags & TileFlag::TF_PASTURE )
-			{
-				auto pasture = Global::fm().getPasture( m_pastureID );
-				if ( pasture )
-				{
-					if ( pasture->eatFromTrough() )
-					{
-						m_hunger += m_foodValue * 5;
-						return BT_RESULT::SUCCESS;
-					}
-				}
+
+				m_hunger += m_foodValue;
+
+				g->w()->addToUpdateList( m_position );
+				return BT_RESULT::SUCCESS;
 			}
 		}
-		else
+		if ( m_pastureID && (bool)( tile.flags & TileFlag::TF_PASTURE ) )
 		{
-			auto pasture = Global::fm().getPasture( m_pastureID );
-			if ( pasture )
+			auto pasture =  g->fm()->getPastureAtPos( m_position );
+			if ( pasture && pasture->id() == m_pastureID )
 			{
 				if ( pasture->eatFromTrough() )
 				{
-					m_hunger += 20;
-
+					m_hunger += m_foodValue * 5;
 					return BT_RESULT::SUCCESS;
 				}
 			}
@@ -868,16 +860,16 @@ BT_RESULT Animal::actionGraze( bool halt )
 
 BT_RESULT Animal::actionFindPrey( bool halt )
 {
-	for ( auto sPrey : m_preyList )
+	for ( const auto& sPrey : m_preyList )
 	{
-		Animal* prey = Global::cm().getClosestAnimal( m_position, sPrey );
+		Animal* prey = g->cm()->getClosestAnimal( m_position, sPrey );
 		if ( prey )
 		{
-			QList<Position> neighbs = Util::neighbors8( prey->getPos() );
+			QList<Position> neighbs = Global::util->neighbors8( prey->getPos() );
 			auto distances          = PriorityQueue<Position, int>();
-			for ( auto neigh : neighbs )
+			for ( const auto& neigh : neighbs )
 			{
-				if ( Global::w().isWalkable( neigh ) && PathFinder::getInstance().checkConnectedRegions( neigh, m_position ) )
+				if ( g->w()->isWalkable( neigh ) && g->pf()->checkConnectedRegions( neigh, m_position ) )
 				{
 					distances.put( neigh, m_position.distSquare( neigh ) );
 				}
@@ -899,14 +891,14 @@ BT_RESULT Animal::actionKillPrey( bool halt )
 {
 	//TODO check if adjacent
 
-	Animal* prey = Global::cm().animal( m_currentPrey );
+	Animal* prey = g->cm()->animal( m_currentPrey );
 	if ( prey )
 	{
 		if ( prey->kill( true ) )
 		{
-			m_corpseToEat = Global::inv().createItem( prey->getPos(), "AnimalCorpse", { prey->species() } );
+			m_corpseToEat = g->inv()->createItem( prey->getPos(), "AnimalCorpse", { prey->species() } );
 			m_currentPrey = 0;
-			Global::inv().setInJob( m_corpseToEat, m_id );
+			g->inv()->setInJob( m_corpseToEat, m_id );
 
 			return BT_RESULT::SUCCESS;
 		}
@@ -927,9 +919,9 @@ BT_RESULT Animal::actionEatPrey( bool halt )
 		m_hunger += 0.5;
 		if ( m_hunger >= 100 )
 		{
-			Global::inv().createItem( Position( Global::inv().getItemPos( m_corpseToEat ) ), "Bone", Global::inv().materialSID( m_corpseToEat ) + "Bone" );
+			g->inv()->createItem( Position( g->inv()->getItemPos( m_corpseToEat ) ), "Bone", g->inv()->materialSID( m_corpseToEat ) + "Bone" );
 
-			Global::inv().destroyObject( m_corpseToEat );
+			g->inv()->destroyObject( m_corpseToEat );
 			m_corpseToEat = 0;
 			return BT_RESULT::SUCCESS;
 		}
@@ -986,7 +978,7 @@ BT_RESULT Animal::actionMove( bool halt )
 		return BT_RESULT::SUCCESS;
 	}
 
-	PathFinderResult pfr = PathFinder::getInstance().getPath( m_id, m_position, targetPos, m_ignoreNoPass, m_currentPath );
+	PathFinderResult pfr = g->pf()->getPath( m_id, m_position, targetPos, m_ignoreNoPass, m_currentPath );
 	switch ( pfr )
 	{
 		case PathFinderResult::NoConnection:
@@ -1029,11 +1021,11 @@ BT_RESULT Animal::actionFindRetreat( bool halt )
 		default:
 			break;
 	}
-	Global::w().getFloorLevelBelow( pos, false );
+	g->w()->getFloorLevelBelow( pos, false );
 
-	if ( Global::w().fluidLevel( pos ) == 0 )
+	if ( g->w()->fluidLevel( pos ) == 0 )
 	{
-		if ( PathFinder::getInstance().checkConnectedRegions( pos, m_position ) )
+		if ( g->pf()->checkConnectedRegions( pos, m_position ) )
 		{
 			setCurrentTarget( pos );
 			return BT_RESULT::SUCCESS;
@@ -1074,7 +1066,7 @@ BT_RESULT Animal::actionFindShed( bool halt )
 {
 	if ( m_pastureID )
 	{
-		Pasture* pasture = Global::fm().getPasture( m_pastureID );
+		Pasture* pasture = g->fm()->getPasture( m_pastureID );
 		if ( pasture )
 		{
 			Position pos = pasture->findShed();
@@ -1092,7 +1084,7 @@ BT_RESULT Animal::actionFindRandomPastureField( bool halt )
 {
 	if ( m_pastureID )
 	{
-		Pasture* pasture = Global::fm().getPasture( m_pastureID );
+		Pasture* pasture = g->fm()->getPasture( m_pastureID );
 		if ( pasture )
 		{
 			int random = rand() % pasture->countTiles();
@@ -1120,10 +1112,10 @@ BT_RESULT Animal::actionGetTarget( bool halt )
 	if ( m_aggroList.size() )
 	{
 		unsigned int targetID = m_aggroList.first().id;
-		Creature* creature    = Global::cm().creature( targetID );
+		Creature* creature    = g->cm()->creature( targetID );
 		if ( !creature )
 		{
-			creature = Global::gm().gnome( targetID );
+			creature = g->gm()->gnome( targetID );
 		}
 		if ( creature && !creature->isDead() )
 		{
@@ -1147,7 +1139,7 @@ BT_RESULT Animal::actionGetTarget( bool halt )
 
 BT_RESULT Animal::actionGuardDogGetTarget( bool halt )
 {
-	auto foxes = Global::cm().animalsByDistance( m_position, "Fox" );
+	auto foxes = g->cm()->animalsByDistance( m_position, "Fox" );
 	if ( !foxes.empty() )
 	{
 		auto fox = foxes.get();
@@ -1163,12 +1155,12 @@ BT_RESULT Animal::actionGuardDogGetTarget( bool halt )
 
 BT_RESULT Animal::actionAttackTarget( bool halt )
 {
-	Creature* creature = Global::gm().gnome( m_currentAttackTarget );
+	Creature* creature = g->gm()->gnome( m_currentAttackTarget );
 	if ( !creature )
 	{
-		creature = Global::cm().creature( m_currentAttackTarget );
+		creature = g->cm()->creature( m_currentAttackTarget );
 	}
-	
+
 	if ( creature && !creature->isDead() )
 	{
 		m_facing = getFacing( m_position, creature->getPos() );
@@ -1304,7 +1296,7 @@ bool Animal::toButcher()
 {
 	return m_toButcher;
 }
-	
+
 void Animal::setToButcher( bool value )
 {
 	m_toButcher = value;

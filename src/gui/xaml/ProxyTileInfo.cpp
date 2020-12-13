@@ -21,6 +21,7 @@
 #include "../../base/gamestate.h"
 #include "../../gfx/sprite.h"
 #include "../../gfx/spritefactory.h"
+#include "../../base/global.h"
 #include "../eventconnector.h"
 #include "TileInfoModel.h"
 
@@ -30,15 +31,15 @@
 ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	QObject( parent )
 {
-	connect( EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateTileInfo, this, &ProxyTileInfo::onUpdateTileInfo, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalTerrainCommand, &EventConnector::getInstance(), &EventConnector::onTerrainCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalManageCommand, &EventConnector::getInstance(), &EventConnector::onManageCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalRequestStockpileItems, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateTileInfo, this, &ProxyTileInfo::onUpdateTileInfo, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalTerrainCommand, Global::eventConnector, &EventConnector::onTerrainCommand, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalManageCommand, Global::eventConnector, &EventConnector::onManageCommand, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalRequestStockpileItems, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
 
-	connect( this, &ProxyTileInfo::signalSetTennant, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalSetAlarm, EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetTennant, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetAlarm, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
 }
 
 ProxyTileInfo::~ProxyTileInfo()

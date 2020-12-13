@@ -30,11 +30,9 @@ struct Uniform;
 
 class Gnome : public CanWork
 {
-	friend class GnomeWidget;
-
 public:
-	Gnome( Position& pos, QString name, Gender gender );
-	Gnome( QVariantMap& in );
+	Gnome( Position& pos, QString name, Gender gender, Game* game );
+	Gnome( QVariantMap& in, Game* game );
 	~Gnome();
 
 	virtual void init();

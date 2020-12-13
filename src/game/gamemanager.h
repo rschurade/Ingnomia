@@ -24,68 +24,49 @@
 #include <QThread>
 
 class Game;
+class EventConnector;
+class NewGameSettings;
+class SpriteFactory;
 
 class GameManager : public QObject
 {
 	Q_OBJECT
-
-private:
-	// Private Constructor
-	GameManager( QObject* parent = nullptr );
-	// Stop the compiler generating methods of copy the object
-	GameManager( GameManager const& copy );            // Not Implemented
-	GameManager& operator=( GameManager const& copy ); // Not Implemented
-
+	Q_DISABLE_COPY_MOVE( GameManager )
 public:
+	GameManager( QObject* parent = nullptr );
 	~GameManager();
 
-	static GameManager& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static GameManager instance;
-		return instance;
-	}
-
-	void startNewGame( std::function<void( void )> callback );
+	void startNewGame();
 	void setUpNewGame();
-	void continueLastGame( std::function<void( bool )> callback );
-	void loadGame( QString folder, std::function<void( bool )> callback );
+	void continueLastGame();
+	void loadGame( QString folder );
 	void saveGame();
 
-	bool showMainMenu()
-	{
-		return m_showMainMenu;
-	}
 	void setShowMainMenu( bool value );
+	void endCurrentGame();
 
 	GameSpeed gameSpeed();
 	void setGameSpeed( GameSpeed speed );
 
 	bool paused();
-	void trySetPaused( bool value );
 	void setPaused( bool value );
 
+	EventConnector* eventConnector();
+
+	Game* game();
+	
 private:
-	bool m_showMainMenu = true;
+	QPointer<EventConnector> m_eventConnector;
+	//SpriteFactory* m_sf = nullptr;
 
-	Game* m_game = nullptr;
-	QThread m_gameThread;
-
-	GameSpeed m_gameSpeed = GameSpeed::Normal;
-	bool m_paused         = true;
-
+	QPointer<Game> m_game;
+	
 	void init();
 	void createNewGame();
 
+	void postCreationInit();
+	
 signals:
-	void startGame();
-	void stopGame();
-	void signalUpdateGameSpeed( GameSpeed speed );
-	void signalUpdatePaused( bool value );
-
-	void signalInitView();
 
 public slots:
 	void onGeneratorMessage( QString message );

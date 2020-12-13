@@ -41,11 +41,16 @@ struct Position
 		x( 0 ), y( 0 ), z( 0 )
 	{
 		QStringList sl = text.split( " " );
+		assert( sl.size() == 3 );
 		if ( sl.size() == 3 )
 		{
 			x = sl[0].toInt();
 			y = sl[1].toInt();
 			z = sl[2].toInt();
+
+			assert( x < Global::dimX );
+			assert( y < Global::dimY );
+			assert( z <= Global::dimZ );
 		}
 	}
 
@@ -53,11 +58,16 @@ struct Position
 		x( 0 ), y( 0 ), z( 0 )
 	{
 		QStringList sl = val.toString().split( " " );
+		assert( sl.size() == 3 );
 		if ( sl.size() == 3 )
 		{
 			x = sl[0].toInt();
 			y = sl[1].toInt();
 			z = sl[2].toInt();
+
+			assert( x < Global::dimX );
+			assert( y < Global::dimY );
+			assert( z <= Global::dimZ );
 		}
 	}
 
@@ -65,25 +75,12 @@ struct Position
 		x( 0 ), y( 0 ), z( 0 )
 	{
 		z = tileID / ( Global::dimX * Global::dimY );
-		if ( z > 0 )
-		{
-			int rest = tileID % ( z * Global::dimX * Global::dimY );
-			y        = rest / Global::dimX;
-			x        = rest;
-			if ( y > 0 )
-			{
-				x = rest % ( y * Global::dimX );
-			}
-		}
-		else
-		{
-			y = tileID / Global::dimX;
-			x = tileID;
-			if ( y > 0 )
-			{
-				x = tileID % ( y * Global::dimX );
-			}
-		}
+		y = ( tileID / Global::dimX ) % Global::dimY;
+		x = tileID % Global::dimX;
+
+		assert( x < Global::dimX );
+		assert( y < Global::dimY );
+		assert( z <= Global::dimZ );
 	}
 
 	constexpr bool operator==( const Position& other ) const

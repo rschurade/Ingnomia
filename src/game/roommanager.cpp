@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "roommanager.h"
+#include "game.h"
 
 #include "../base/config.h"
 #include "../base/global.h"
@@ -27,76 +28,73 @@
 
 #include <QDebug>
 
-RoomManager::RoomManager()
+RoomManager::RoomManager( Game* parent ) :
+	g( parent ),
+	QObject( parent )
 {
 	m_errorDoor.name = "Error Door";
 }
 
 RoomManager::~RoomManager()
 {
-}
-
-void RoomManager::reset()
-{
-	m_rooms.clear();
-	m_allRoomTiles.clear();
-	m_doors.clear();
+	for ( const auto& room : m_rooms )
+	{
+		delete room;
+	}
 }
 
 void RoomManager::onTick( quint64 tick )
 {
-	for ( auto&& room : m_rooms )
+	for ( const auto& room : m_rooms )
 	{
-		room.onTick( tick );
+		room->onTick( tick );
 	}
 }
 
 void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fields, RoomType type )
 {
-	if ( m_allRoomTiles.contains( firstClick.toInt() ) )
+	if ( m_allRoomTiles.contains( firstClick ) )
 	{
-		unsigned int spID = m_allRoomTiles.value( firstClick.toInt() );
-		Room& sp          = m_rooms[spID];
+		unsigned int spID = m_allRoomTiles.value( firstClick );
+		Room& sp          = *m_rooms[spID];
 		for ( auto p : fields )
 		{
-			if ( p.second && !m_allRoomTiles.contains( p.first.toInt() ) )
+			if ( p.second && !m_allRoomTiles.contains( p.first ) )
 			{
-				m_allRoomTiles.insert( p.first.toInt(), spID );
+				m_allRoomTiles.insert( p.first, spID );
 				sp.addTile( p.first );
 			}
 		}
-		m_lastAdded = spID;
 	}
 	else
 	{
-		Room sp( fields );
+		auto sp = new Room( fields, g );
 		for ( auto p : fields )
 		{
 			if ( p.second )
 			{
-				m_allRoomTiles.insert( p.first.toInt(), sp.id() );
+				m_allRoomTiles.insert( p.first, sp->id() );
 			}
 		}
-		sp.setType( type );
+		sp->setType( type );
 
 		switch( type )
 		{
 			case RoomType::PersonalRoom:
-				sp.setName( "Personal Room" );
+				sp->setName( "Personal Room" );
 				break;
 			case RoomType::Dorm:
-				sp.setName( "Dormitory" );
+				sp->setName( "Dormitory" );
 				break;
 			case RoomType::Hospital:
-				sp.setName( "Hospital" );
+				sp->setName( "Hospital" );
 				break;
 			case RoomType::Dining:
-				sp.setName( "Dining Room" );
+				sp->setName( "Dining Room" );
 				break;
 		}
 
-		m_rooms.insert( sp.id(), sp );
-		m_lastAdded = sp.id();
+		m_rooms.insert( sp->id(), sp );
 	}
 }
 
@@ -106,30 +104,48 @@ void RoomManager::addNoPass( Position firstClick, QList<QPair<Position, bool>> f
 	{
 		if ( p.second )
 		{
-			Global::w().setTileFlag( p.first, TileFlag::TF_NOPASS );
-			Global::w().regionMap().updatePosition( p.first );
+			g->m_world->setTileFlag( p.first, TileFlag::TF_NOPASS );
+			g->m_world->regionMap().updatePosition( p.first );
 		}
 	}
 }
 
 void RoomManager::load( QVariantMap vals )
 {
-	Room sp( vals );
+	auto sp = new Room( vals, g );
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();
-		m_allRoomTiles.insert( Position( sfm.value( "Pos" ) ).toInt(), sp.id() );
+		m_allRoomTiles.insert( Position( sfm.value( "Pos" ) ), sp->id() );
 		auto furID = sfm.value( "FurID" ).toUInt();
-		if ( Global::inv().itemSID( furID ) == "AlarmBell" )
+		if ( g->m_inv->itemSID( furID ) == "AlarmBell" )
 		{
-			sp.setHasAlarmBell( true );
+			sp->setHasAlarmBell( true );
 		}
 	}
-	m_rooms.insert( sp.id(), sp );
+	m_rooms.insert( sp->id(), sp );
 }
 
 void RoomManager::removeRoom( unsigned int id )
 {
+	auto it = m_rooms.find( id );
+	if ( it != m_rooms.end() )
+	{
+		for ( auto field = m_allRoomTiles.begin(); field != m_allRoomTiles.end(); )
+		{
+			if ( field.value() == it.value()->id() )
+			{
+				it.value()->removeTile( field.key() );
+				field = m_allRoomTiles.erase( field );
+			}
+			else
+			{
+				++field;
+			}
+		}
+		delete it.value();
+		m_rooms.erase( it );
+	}
 }
 
 void RoomManager::removeTile( Position pos )
@@ -142,17 +158,14 @@ void RoomManager::removeTile( Position pos )
 			m_rooms.remove( sp->id() );
 		}
 	}
-	m_allRoomTiles.remove( pos.toInt() );
+	m_allRoomTiles.remove( pos );
 }
 
 Room* RoomManager::getRoomAtPos( Position pos )
 {
-	if ( m_allRoomTiles.contains( pos.toInt() ) )
+	if ( m_allRoomTiles.contains( pos ) )
 	{
-		if ( m_rooms.contains( m_allRoomTiles[pos.toInt()] ) )
-		{
-			return &m_rooms[m_allRoomTiles[pos.toInt()]];
-		}
+		return getRoom( m_allRoomTiles[pos] );
 	}
 	return nullptr;
 }
@@ -161,14 +174,23 @@ Room* RoomManager::getRoom( unsigned int id )
 {
 	if ( m_rooms.contains( id ) )
 	{
-		return &m_rooms[id];
+		return m_rooms[id];
 	}
 	return nullptr;
 }
 
+const QHash<unsigned int, Room*>& RoomManager::allRooms()
+{
+	return m_rooms;
+}
+
+const QHash<Position, Door>& RoomManager::allDoors()
+{
+	return m_doors;
+}
+
 void RoomManager::addFurniture( unsigned int itemUID, Position pos )
 {
-	//TODO make safe
 	Room* room = getRoomAtPos( pos );
 	if ( room )
 	{
@@ -185,32 +207,18 @@ void RoomManager::removeFurniture( Position pos )
 	}
 }
 
-Room* RoomManager::getLastAddedRoom()
-{
-	if ( m_lastAdded && m_rooms.contains( m_lastAdded ) )
-	{
-		return &m_rooms[m_lastAdded];
-	}
-
-	if ( m_rooms.size() )
-	{
-		return &m_rooms.last();
-	}
-	return nullptr;
-}
-
 void RoomManager::addDoor( Position pos, unsigned int itemUID, unsigned int materialUID )
 {
 	Door door;
 	door.pos         = pos;
 	door.itemUID     = itemUID;
 	door.materialUID = materialUID;
-	m_doors.insert( pos.toInt(), door );
+	m_doors.insert( pos, door );
 }
 
 void RoomManager::removeDoor( Position pos )
 {
-	m_doors.remove( pos.toInt() );
+	m_doors.remove( pos );
 }
 
 void RoomManager::loadDoor( QVariantMap vm )
@@ -223,17 +231,17 @@ void RoomManager::loadDoor( QVariantMap vm )
 	door.blockGnomes   = vm.value( "BlockGnomes" ).toBool();
 	door.blockAnimals  = vm.value( "BlockAnimals" ).toBool();
 	door.blockMonsters = vm.value( "BlockMonsters" ).toBool();
-	m_doors.insert( door.pos.toInt(), door );
+	m_doors.insert( door.pos, door );
 
-	Global::w().getTile( door.pos ).wallSpriteUID = Global::inv().spriteID( door.itemUID );
-	unsigned int nextItem                         = Global::inv().getFirstObjectAtPosition( door.pos );
+	g->m_world->getTile( door.pos ).wallSpriteUID = g->m_inv->spriteID( door.itemUID );
+	unsigned int nextItem                         = g->m_inv->getFirstObjectAtPosition( door.pos );
 	if ( nextItem )
 	{
-		Global::w().setItemSprite( door.pos, Global::inv().spriteID( nextItem ) );
+		g->m_world->setItemSprite( door.pos, g->m_inv->spriteID( nextItem ) );
 	}
 	else
 	{
-		Global::w().setItemSprite( door.pos, 0 );
+		g->m_world->setItemSprite( door.pos, 0 );
 	}
 }
 
@@ -250,11 +258,11 @@ QList<unsigned int> RoomManager::getDorms()
 {
 	QList<unsigned int> out;
 
-	for ( auto id : m_rooms.keys() )
+	for ( const auto& room : m_rooms)
 	{
-		if ( m_rooms[id].type() == RoomType::Dorm )
+		if ( room->type() == RoomType::Dorm )
 		{
-			out.append( id );
+			out.append( room->id() );
 		}
 	}
 
@@ -265,29 +273,30 @@ QList<unsigned int> RoomManager::getDinings()
 {
 	QList<unsigned int> out;
 
-	for ( auto id : m_rooms.keys() )
+	for ( const auto& room : m_rooms )
 	{
-		if ( m_rooms[id].type() == RoomType::Dining )
+		if ( room->type() == RoomType::Dining )
 		{
-			out.append( id );
+			out.append( room->id() );
 		}
 	}
 
 	return out;
 }
 
+bool RoomManager::isRoom( Position pos ) const
+{
+	return m_allRoomTiles.contains( pos );
+}
+
 bool RoomManager::isDining( Position pos )
 {
-	if ( m_allRoomTiles.contains( pos.toInt() ) )
+	auto room = getRoomAtPos( pos );
+	if (room)
 	{
-		auto roomID = m_allRoomTiles.value( pos.toInt() );
-		if ( m_rooms.contains( roomID ) )
+		if ( room->type() == RoomType::Dining )
 		{
-			auto room = m_rooms.value( roomID );
-			if ( room.type() == RoomType::Dining )
-			{
-				return true;
-			}
+			return true;
 		}
 	}
 	return false;
@@ -295,22 +304,12 @@ bool RoomManager::isDining( Position pos )
 
 bool RoomManager::allowBell( Position pos )
 {
-	if ( m_allRoomTiles.contains( pos.toInt() ) )
+	auto room = getRoomAtPos( pos );
+	if ( room )
 	{
-		auto roomID = m_allRoomTiles.value( pos.toInt() );
-		if ( m_rooms.contains( roomID ) )
+		if ( room->type() == RoomType::Dining )
 		{
-			auto room = m_rooms.value( roomID );
-			if ( room.type() == RoomType::Dining )
-			{
-				return true;
-				/*
-				if( !room.hasAlarmBell() )
-				{
-					return true;
-				}
-				*/
-			}
+			return true;
 		}
 	}
 	return false;
@@ -350,12 +349,12 @@ bool RoomManager::blockMonsters( const unsigned int tileUID )
 
 bool RoomManager::createAlarmJob( unsigned int roomID )
 {
-	if ( m_rooms.contains( roomID ) )
+	auto room = getRoom( roomID );
+	if ( room )
 	{
-		auto room = m_rooms.value( roomID );
-		if ( room.type() == RoomType::Dining )
+		if ( room->type() == RoomType::Dining )
 		{
-			auto pos = room.firstBellPos();
+			auto pos = room->firstBellPos();
 
 			if ( pos.isZero() )
 			{
@@ -363,7 +362,7 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 				return false;
 			}
 
-			if ( Global::jm().addJob( "SoundAlarm", pos, 0 ) )
+			if ( g->m_jobManager->addJob( "SoundAlarm", pos, 0 ) )
 			{
 				return true;
 			}
@@ -379,16 +378,16 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 
 bool RoomManager::cancelAlarmJob( unsigned int roomID )
 {
-	if ( m_rooms.contains( roomID ) )
+	auto room = getRoom( roomID );
+	if ( room )
 	{
-		auto room = m_rooms.value( roomID );
-		if ( room.type() == RoomType::Dining )
+		if ( room->type() == RoomType::Dining )
 		{
-			auto posList = room.allBellPos();
+			auto posList = room->allBellPos();
 
-			for ( auto pos : posList )
+			for ( const auto& pos : posList )
 			{
-				Global::jm().cancelJob( pos );
+				g->m_jobManager->cancelJob( pos );
 			}
 		}
 	}

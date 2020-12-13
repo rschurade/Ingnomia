@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+class Game;
+
 struct GuiTICreatureInfo
 {
 	QString text;
@@ -93,7 +95,11 @@ public:
 	AggregatorTileInfo( QObject* parent = nullptr );
 	~AggregatorTileInfo();
 
+	void init( Game* game );
+
 private:
+    QPointer<Game> g;
+
 	unsigned int m_currentTileID = 0;
 	bool m_tileInfoDirty         = false;
 	GuiTileInfo m_tileInfo;

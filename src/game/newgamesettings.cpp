@@ -148,7 +148,7 @@ void NewGameSettings::loadEmbarkMap()
 	if ( !IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( Config::getInstance().get( "dataPath" ).toString() + "/JSON/newgame.json", sd ) )
+		if ( IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/newgame.json", sd ) )
 		{
 			IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd );
 		}
@@ -494,7 +494,7 @@ void NewGameSettings::removeStartingAnimal( QString tag )
 void NewGameSettings::loadPresets()
 {
 	QJsonDocument sd;
-	bool ok = IO::loadFile( Config::getInstance().get( "dataPath" ).toString() + "/JSON/embarkpresets.json", sd );
+	bool ok = IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/embarkpresets.json", sd );
 	if ( ok )
 	{
 		m_standardPresets = sd.toVariant().toList();

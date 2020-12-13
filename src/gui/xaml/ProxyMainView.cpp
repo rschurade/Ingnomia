@@ -17,6 +17,8 @@
 */
 #include "ProxyMainView.h"
 
+#include "../../base/global.h"
+
 #include "../aggregatorloadgame.h"
 #include "../aggregatorsettings.h"
 #include "../eventconnector.h"
@@ -25,12 +27,24 @@
 ProxyMainView::ProxyMainView( QObject* parent ) :
 	QObject( parent )
 {
-	connect( &EventConnector::getInstance(), &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
-	connect( &EventConnector::getInstance(), &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
 
-	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
+	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
+
+	connect( this, &ProxyMainView::signalRequestUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
+
+	connect( this, &ProxyMainView::signalStartNewGame, Global::eventConnector, &EventConnector::onStartNewGame, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalContinueLastGame, Global::eventConnector, &EventConnector::onContinueLastGame, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalLoadGame, Global::eventConnector, &EventConnector::onLoadGame, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalSaveGame, Global::eventConnector, &EventConnector::onSaveGame, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalSetShowMainMenu, Global::eventConnector, &EventConnector::onSetShowMainMenu, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalEndGame, Global::eventConnector, &EventConnector::onEndGame, Qt::QueuedConnection );
+
+	connect( Global::eventConnector, &EventConnector::signalResume, this, &ProxyMainView::onResume, Qt::QueuedConnection );
+	connect( Global::eventConnector, &EventConnector::signalLoadGameDone, this, &ProxyMainView::onLoadGameDone, Qt::QueuedConnection );
 }
 
 ProxyMainView::~ProxyMainView()
@@ -69,4 +83,55 @@ void ProxyMainView::onUIScale( float value )
 void ProxyMainView::requestLoadScreenUpdate()
 {
 	emit signalRequestLoadScreenUpdate();
+}
+
+void ProxyMainView::requestUIScale()
+{
+	emit signalRequestUIScale();
+}
+
+void ProxyMainView::startNewGame()
+{
+	emit signalStartNewGame();
+}
+	
+void ProxyMainView::continueLastGame()
+{
+	emit signalContinueLastGame();
+}
+
+void ProxyMainView::loadGame( QString param )
+{
+	emit signalLoadGame( param );
+}
+
+void ProxyMainView::saveGame()
+{
+	emit signalSaveGame();
+}
+
+void ProxyMainView::setShowMainMenu( bool value )
+{
+	emit signalSetShowMainMenu( value );
+}
+
+void ProxyMainView::onResume()
+{
+	if ( m_parent )
+	{
+		m_parent->OnResume();
+	}
+}
+
+void ProxyMainView::onLoadGameDone( bool value )
+{
+	if ( m_parent )
+	{
+		m_parent->OnContinueGameFinished( value );
+	}
+}
+
+void ProxyMainView::endGame()
+{
+	emit signalEndGame();
 }

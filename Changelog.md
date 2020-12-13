@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+- large refactor of code base to fix some crashes and memory leaks
 
 ### Added
+- Willow trees
+- Info display for selected command and selection size
 
 ### Changed
+- Rivers now have sand floor, preventing grass and plants spawning there
 
 ### Removed
 

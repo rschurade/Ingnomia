@@ -17,6 +17,7 @@
 */
 #include "loadgameproxy.h"
 
+#include "../../base/global.h"
 #include "../eventconnector.h"
 
 #include <QDebug>
@@ -24,11 +25,11 @@
 LoadGameProxy::LoadGameProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &LoadGameProxy::signalRequestKingdoms, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms, Qt::QueuedConnection );
-	connect( this, &LoadGameProxy::signalRequestSaveGames, EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::onRequestSaveGames, Qt::QueuedConnection );
+	connect( this, &LoadGameProxy::signalRequestKingdoms, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms, Qt::QueuedConnection );
+	connect( this, &LoadGameProxy::signalRequestSaveGames, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestSaveGames, Qt::QueuedConnection );
 
-	connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalKingdoms, this, &LoadGameProxy::onKingdoms, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::signalKingdoms, this, &LoadGameProxy::onKingdoms, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
 }
 
 void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )

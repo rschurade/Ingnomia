@@ -17,21 +17,23 @@
 */
 #pragma once
 
-#include <QMutex>
 #include <QPoint>
+#include <QPointer>
 #include <QSize>
 #include <QString>
 #include <QVariantMap>
 
+class Game;
+
 class WorldObject
 {
-
+	Q_DISABLE_COPY_MOVE( WorldObject )
 public:
-	WorldObject();
-	WorldObject( QVariantMap vals );
+	WorldObject( Game* game );
+	WorldObject( QVariantMap vals, Game* game );
 	virtual ~WorldObject();
 
-	void serialize( QVariantMap& out );
+	void serialize( QVariantMap& out ) const;
 
 	QString name()
 	{
@@ -70,6 +72,7 @@ public:
 	}
 
 protected:
+	QPointer<Game> g;
 	unsigned int m_id = 0;
 	QString m_name    = "";
 	bool m_active     = true;

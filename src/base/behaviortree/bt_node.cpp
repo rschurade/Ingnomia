@@ -29,6 +29,10 @@ BT_Node::BT_Node( QString name, QVariantMap& blackboard ) :
 
 BT_Node::~BT_Node()
 {
+	for ( const auto& child : m_children )
+	{
+		delete child;
+	}
 }
 
 QVariantMap BT_Node::serialize() const

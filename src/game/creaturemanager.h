@@ -20,17 +20,15 @@
 #include "../game/animal.h"
 #include "../game/monster.h"
 
-#include <QObject>
+class Game;
 
 class CreatureManager : public QObject
 {
 	Q_OBJECT
-
+	Q_DISABLE_COPY_MOVE( CreatureManager )
 public:
-	CreatureManager();
+	CreatureManager( Game* parent );
 	~CreatureManager();
-
-	void reset();
 
 	void onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
@@ -73,6 +71,7 @@ public:
 	bool hasPathTo( Position& pos, unsigned int creatureID );
 
 private:
+	QPointer<Game> g;
 	QList<Creature*> m_creatures;
 	QList<Animal*> m_animals;
 	QList<Monster*> m_monsters;
@@ -81,8 +80,6 @@ private:
 
 	QMap<QString, unsigned int> m_countPerType;
 	QMap<QString, QList<unsigned int>> m_creaturesPerType;
-
-	QMutex m_mutex;
 
 	int m_startIndex = 0;
 

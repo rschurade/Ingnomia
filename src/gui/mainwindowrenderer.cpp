@@ -17,6 +17,8 @@
 */
 #include "mainwindowrenderer.h"
 
+#include "../game/game.h" //TODO only temporary
+
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -65,16 +67,18 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	QObject( parent ),
 	m_parent( parent )
 {
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
 
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
-	connect( EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
+
 
 	// Full polling of initial state on load
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
-	connect( this, &MainWindowRenderer::fullDataRequired, EventConnector::getInstance().aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
+	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
 
 	qDebug() << "initialize GL ...";
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
@@ -121,7 +125,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 		// Only want to handle these from dedicated graphic debugger
 		if ( type == GL_DEBUG_TYPE_PUSH_GROUP || type == GL_DEBUG_TYPE_POP_GROUP )
 			return;
-		qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
+		//qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
 	};
 	glEnable( GL_DEBUG_OUTPUT );
 	f->glDebugMessageCallback( logHandler, nullptr );
@@ -241,7 +245,7 @@ void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 
 QString MainWindowRenderer::copyShaderToString( QString name )
 {
-	QFile file( Config::getInstance().get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
+	QFile file( Global::cfg->get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
 	file.open( QIODevice::ReadOnly );
 	QTextStream in( &file );
 	QString code( "" );
@@ -385,14 +389,12 @@ void MainWindowRenderer::initTextures()
 	GLint max_layers;
 	glGetIntegerv( GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers );
 
-	SpriteFactory& sf = Global::sf();
-
 	qDebug() << "max array size: " << max_layers;
-	qDebug() << "used " << sf.size() << " sprites";
+	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
 
-	m_texesUsed = sf.texesUsed();
+	m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-	int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+	int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 
 	for ( int i = 0; i < 32; ++i )
 	{
@@ -401,7 +403,7 @@ void MainWindowRenderer::initTextures()
 
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
-		uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
+		uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
 	}
 
 
@@ -417,7 +419,7 @@ void MainWindowRenderer::initWorld()
 
 	glGenBuffers( 1, &m_tileBo );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileBo );
-	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * Global::w().world().size(), nullptr, GL_DYNAMIC_DRAW );
+	glBufferData( GL_SHADER_STORAGE_BUFFER, TD_SIZE * sizeof( unsigned int ) * Global::eventConnector->game()->w()->world().size(), nullptr, GL_DYNAMIC_DRAW );
 	const uint8_t zero = 0;
 	glClearBufferData( GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, &zero );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, 0 ); // unbind
@@ -440,14 +442,14 @@ void MainWindowRenderer::updateRenderParams()
 {
 	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_width * m_width + m_height * m_height ) / 12 ) / m_scale ) );
 
-	m_renderDepth = Config::getInstance().get( "renderDepth" ).toInt();
+	m_renderDepth = Global::cfg->get( "renderDepth" ).toInt();
 
 	m_viewLevel = GameState::viewLevel;
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
 
-	m_lightMin = Config::getInstance().get( "lightMin" ).toFloat();
+	m_lightMin = Global::cfg->get( "lightMin" ).toFloat();
 	if ( m_lightMin < 0.01 )
 		m_lightMin = 0.3f;
 
@@ -496,7 +498,7 @@ void MainWindowRenderer::paintWorld()
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 
-	if ( GameManager::getInstance().showMainMenu() )
+	if ( m_inMenu )
 	{
 		return;
 	}
@@ -558,7 +560,7 @@ void MainWindowRenderer::paintWorld()
 
 	//glFinish();
 
-	bool pause = Config::getInstance().get( "Pause" ).toBool();
+	bool pause = Global::cfg->get( "Pause" ).toBool();
 
 	if ( pause != m_pause )
 	{
@@ -653,7 +655,7 @@ void MainWindowRenderer::paintTiles()
 void MainWindowRenderer::paintSelection()
 {
 	// TODO this is a workaround until some transparency solution is implemented
-	auto action = Selection::getInstance().action();
+	auto action = Global::sel->action();
 	if( action == "DigStairsDown" || action == "DigRampDown" )
 	{
 		glDisable( GL_DEPTH_TEST );
@@ -838,61 +840,57 @@ void MainWindowRenderer::uploadTileData( const QVector<TileDataUpdate>& tileData
 
 void MainWindowRenderer::updateTextures()
 {
-	SpriteFactory& sf = Global::sf();
-
-	if ( Global::sf().textureAdded() || Global::sf().creatureTextureAdded() )
+	if ( Global::eventConnector->game()->sf()->textureAdded() || Global::eventConnector->game()->sf()->creatureTextureAdded() )
 	{
 		DebugScope s( "update textures" );
 
-		m_texesUsed = sf.texesUsed();
+		m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-		int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+		int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
-			uploadArrayTexture( i, maxArrayTextures, sf.pixelData( i ).cbegin() );
+			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
 		}
 	}
 }
 
 void MainWindowRenderer::updateSelection()
 {
-	if ( Selection::getInstance().changed() )
+	if ( Global::sel->changed() )
 	{
 		DebugScope s( "update selection" );
 
-		SpriteFactory& sf = Global::sf();
-
-		QString action = Selection::getInstance().action();
+		QString action = Global::sel->action();
 		m_selectionData.clear();
 		if ( !action.isEmpty() )
 		{
-			bool isFloor = Selection::getInstance().isFloor();
+			bool isFloor = Global::sel->isFloor();
 
-			QList<QPair<Position, bool>> selection = Selection::getInstance().getSelection();
+			QList<QPair<Position, bool>> selection = Global::sel->getSelection();
 
 			QList<QPair<Sprite*, QPair<Position, unsigned char>>> sprites;
 			QList<QPair<Sprite*, QPair<Position, unsigned char>>> spritesInv;
 
-			int rotation = Selection::getInstance().rotation();
+			int rotation = Global::sel->rotation();
 
 			QList<QVariantMap> spriteIDs;
 
 			if ( action == "BuildWall" || action == "BuildFancyWall" || action == "BuildFloor" || action == "BuildFancyFloor" || action == "BuildRamp" || action == "BuildRampCorner" || action == "BuildStairs" )
 			{
-				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Selection::getInstance().itemID() );
+				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Global::sel->itemID() );
 			}
 			else if ( action == "BuildWorkshop" )
 			{
-				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Selection::getInstance().itemID() );
+				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Global::sel->itemID() );
 			}
 			else if ( action == "BuildItem" )
 			{
 				QVariantMap sprite;
-				sprite.insert( "SpriteID", DBH::spriteID( Selection::getInstance().itemID() ) );
+				sprite.insert( "SpriteID", DBH::spriteID( Global::sel->itemID() ) );
 				sprite.insert( "Offset", "0 0 0" );
 				sprite.insert( "Type", "Furniture" );
-				sprite.insert( "Material", Selection::getInstance().material() );
+				sprite.insert( "Material", Global::sel->material() );
 				spriteIDs.push_back( sprite );
 			}
 			else
@@ -914,7 +912,7 @@ void MainWindowRenderer::updateSelection()
 					}
 
 					// TODO repair rot
-					unsigned char localRot = Util::rotString2Char( entry.value( "WallRotation" ).toString() );
+					unsigned char localRot = Global::util->rotString2Char( entry.value( "WallRotation" ).toString() );
 
 					Sprite* addSpriteValid = nullptr;
 
@@ -926,11 +924,11 @@ void MainWindowRenderer::updateSelection()
 
 					if ( entry.contains( "Material" ) )
 					{
-						addSpriteValid = sf.createSprite( entry["SpriteID"].toString(), mats );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), mats );
 					}
 					else
 					{
-						addSpriteValid = sf.createSprite( entry["SpriteID"].toString(), { "None" } );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), { "None" } );
 					}
 					Position offset( 0, 0, 0 );
 					if ( entry.contains( "Offset" ) )
@@ -993,8 +991,8 @@ void MainWindowRenderer::updateSelection()
 							offset.y = -1 * rotX;
 							break;
 					}
-					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( sf.createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
-					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( sf.createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
 				}
 			}
 			unsigned int tileID = 0;
@@ -1063,6 +1061,11 @@ unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )
 
 Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
+	if( !Global::eventConnector || !Global::eventConnector->game() || !Global::eventConnector->game()->w() )
+	{
+		return Position( 0, 0, 0 );
+	}
+
 	Position cursorPos;
 	int dim = Global::dimX;
 	if ( dim == 0 )
@@ -1081,7 +1084,6 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 
 	int dimZ = Global::dimZ;
 
-	World& world     = Global::w();
 	bool zFloorFound = false;
 
 	int origViewLevel = viewLevel;
@@ -1154,7 +1156,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.y = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
 
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y += 1;
@@ -1165,7 +1167,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x += 1;
 					cursorPos.y -= 1;
@@ -1175,7 +1177,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y -= 1;
@@ -1185,7 +1187,7 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				cursorPos.x = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, selX - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::w().getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y += 1;
@@ -1193,10 +1195,10 @@ Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, b
 				break;
 		}
 
-		const Tile& tile = world.getTile( cursorPos );
+		const Tile& tile = Global::eventConnector->game()->w()->getTile( cursorPos );
 		if ( cursorPos.z > 0 )
 		{
-			Tile& tileBelow = world.getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
+			Tile& tileBelow = Global::eventConnector->game()->w()->getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
 			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
 			{
 				zFloorFound = true;
@@ -1248,4 +1250,9 @@ void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 	x = -2 * ( Global::dimX * tileHeight + y );
 	//y = -Global::dimY * tileHeight + tmp/2;
 	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
+}
+
+void MainWindowRenderer::onSetInMenu( bool value )
+{
+	m_inMenu = value;
 }

@@ -17,6 +17,7 @@
 */
 #pragma once
 
+
 #include "../base/priorityqueue.h"
 #include "../game/job.h"
 
@@ -24,23 +25,18 @@
 #include <QHash>
 #include <QList>
 #include <QMap>
-#include <QMutex>
 #include <QQueue>
 #include <QString>
 
-//typedef QMap<unsigned int, Job> JobHash;
+class Game;
 
-//typedef QMap<QString, QMultiMap<int, unsigned int> >JobMap;
-
-//typedef PriorityQueue< unsigned int, unsigned char> JobQueue;
-
-//typedef QHash<unsigned int, unsigned int >JobPositionHash;
-
-//typedef QPair<QString, QString> ItemMaterialPair;
-
-class JobManager
+class JobManager : public QObject
 {
+	Q_OBJECT
+	Q_DISABLE_COPY_MOVE( JobManager )
 private:
+	QPointer<Game> g;
+
 	QMap<unsigned int, Job> m_jobList;
 	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;
 
@@ -54,8 +50,6 @@ private:
 
 	int m_startIndex;
 
-	QMutex m_mutex;
-
 	bool workPositionWalkable( unsigned int jobID );
 	bool isReachable( unsigned int jobID, unsigned int regionID );
 
@@ -68,12 +62,11 @@ private:
 	void removeFromPositionHash( unsigned int jobID );
 
 public:
-	JobManager();
+	JobManager() = delete;
+	JobManager( Game* parent );
 	~JobManager();
 
 	void onTick();
-
-	void reset();
 
 	QString jobManagerInfo();
 

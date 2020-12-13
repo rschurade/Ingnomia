@@ -17,44 +17,38 @@
 */
 #pragma once
 
-#include "aggregatoragri.h"
-#include "aggregatorcreatureinfo.h"
-#include "aggregatordebug.h"
-#include "aggregatorinventory.h"
-#include "aggregatorpopulation.h"
-#include "aggregatorrenderer.h"
-#include "aggregatorstockpile.h"
-#include "aggregatortileinfo.h"
-#include "aggregatorworkshop.h"
-#include "aggregatorneighbors.h"
-#include "aggregatormilitary.h"
-#include "aggregatorsettings.h"
-#include "aggregatorloadgame.h"
-
 #include <QObject>
+
+class GameManager;
+
+class AggregatorTileInfo;     
+class AggregatorStockpile;    
+class AggregatorWorkshop;     
+class AggregatorAgri;         
+class AggregatorRenderer;
+class AggregatorPopulation;
+class AggregatorCreatureInfo;
+class AggregatorDebug;
+class AggregatorNeighbors;
+class AggregatorMilitary;   
+class AggregatorSettings;     
+class AggregatorInventory;    
+class AggregatorLoadGame;     
+class AggregatorSelection;
+
+
+class Game;
 
 class EventConnector : public QObject
 {
 	Q_OBJECT
 
-private:
-	// Private Constructor
-	EventConnector( QObject* parent = 0 );
-	// Stop the compiler generating methods of copy the object
-	EventConnector( EventConnector const& copy );            // Not Implemented
-	EventConnector& operator=( EventConnector const& copy ); // Not Implemented
-
 public:
+	// Private Constructor
+	EventConnector( GameManager* parent );
 	~EventConnector();
 
-	static EventConnector& getInstance()
-	{
-		// The only instance
-		// Guaranteed to be lazy initialized
-		// Guaranteed that it will be destroyed correctly
-		static EventConnector instance;
-		return instance;
-	}
+	void setGamePtr( Game* game );
 
 	AggregatorTileInfo* aggregatorTileInfo()
 	{
@@ -108,8 +102,28 @@ public:
 	{
 		return m_loadGameAggregator;
 	}
+	AggregatorSelection* aggregatorSelection()
+	{
+		return m_selectionAggregator;
+	}
 
+	void emitStartGame();
+	void emitStopGame();
+	void emitInitView();
+	void emitInMenu( bool value );
+
+	void emitPause( bool paused );
+	void emitGameSpeed( GameSpeed speed );
+
+	void sendResume();
+	void sendLoadGameDone( bool value );
+
+	Game* game();
 private:
+	GameManager* gm = nullptr;
+	QPointer<Game> g;
+	
+
 	AggregatorTileInfo* m_tiAggregator = nullptr;
 	AggregatorStockpile* m_spAggregator = nullptr;
 	AggregatorWorkshop* m_wsAggregator = nullptr;
@@ -123,6 +137,7 @@ private:
 	AggregatorSettings* m_settingsAggregator = nullptr;
 	AggregatorInventory* m_inventoryAggregator = nullptr;
 	AggregatorLoadGame* m_loadGameAggregator = nullptr;
+	AggregatorSelection* m_selectionAggregator = nullptr;
 
 public slots:
 	void onExit();
@@ -132,9 +147,11 @@ public slots:
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
 
-	void onUpdatePause( bool paused );
-	void onUpdateGameSpeed( GameSpeed speed );
+	void onSetPause( bool paused );
+	void onSetGameSpeed( GameSpeed speed );
+
 	void onKeyPress( int key );
+	void onTogglePause();
 	void onPropagateEscape();
 
 	void onBuild();
@@ -144,6 +161,23 @@ public slots:
 
 	void onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
 	void onUpdateRenderOptions();
+
+	void onStartNewGame();
+	void onContinueLastGame();
+	void onLoadGame( QString folder );
+	void onSaveGame();
+	void onSetShowMainMenu( bool value );
+	void onEndGame();
+
+	void onSetSelectionAction( QString action );
+	void onSetSelectionItem( QString item );
+	void onSetSelectionMaterials( QStringList mats );
+
+	void onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
+
+	void onAnswer( unsigned int id, bool answer );
+	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
+
 signals:
 	void signalExit();
 	void signalWindowSize( int w, int h );
@@ -156,4 +190,13 @@ signals:
 	void signalPropagateKeyEsc();
 	void signalBuild();
 	void signalUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
+
+	void startGame();
+	void stopGame();
+	void signalInitView();
+	void signalInMenu( bool value );
+	void signalResume();
+	void signalLoadGameDone( bool value );
+
+	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 };

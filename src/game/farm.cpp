@@ -22,6 +22,7 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
@@ -54,7 +55,7 @@ FarmProperties::FarmProperties( QVariantMap& in )
 	autoHarvestItem2Max = in.value( "AutoHarvestItem2Max" ).toUInt();
 }
 
-void FarmProperties::serialize( QVariantMap& out )
+void FarmProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "farm" );
 	out.insert( "PlantType", plantType );
@@ -80,12 +81,8 @@ void FarmProperties::serialize( QVariantMap& out )
 	out.insert( "AutoHarvestItem2Max", autoHarvestItem2Max );
 }
 
-Farm::Farm()
-{
-}
-
-Farm::Farm( QList<QPair<Position, bool>> tiles ) :
-	WorldObject()
+Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
+	WorldObject( game )
 {
 	m_name = "Farm";
 
@@ -114,8 +111,8 @@ Farm::Farm( QList<QPair<Position, bool>> tiles ) :
 	}
 }
 
-Farm::Farm( QVariantMap vals ) :
-	WorldObject( vals ),
+Farm::Farm( QVariantMap vals, Game* game ) :
+	WorldObject( vals, game ),
 	m_properties( vals )
 {
 	QVariantList vfl = vals.value( "Fields" ).toList();
@@ -144,14 +141,14 @@ Farm::Farm( QVariantMap vals ) :
 	}
 }
 
-QVariant Farm::serialize()
+QVariant Farm::serialize() const
 {
 	QVariantMap out;
 	WorldObject::serialize( out );
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( auto field : m_fields )
+	for ( const auto& field : m_fields )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
@@ -161,7 +158,7 @@ QVariant Farm::serialize()
 	out.insert( "Fields", tiles );
 
 	QVariantList jobs;
-	for ( auto job : m_jobsOut )
+	for ( const auto& job : m_jobsOut )
 	{
 		jobs.append( job->serialize() );
 	}
@@ -172,13 +169,23 @@ QVariant Farm::serialize()
 
 Farm::~Farm()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
-void Farm::addTile( Position& pos )
+void Farm::addTile( const Position & pos )
 {
 	FarmField* grofi = new FarmField;
 	grofi->pos       = pos;
 	m_fields.insert( pos.toInt(), grofi );
+
+	g->w()->setTileFlag( pos, TileFlag::TF_FARM );
 }
 
 void Farm::onTick( quint64 tick )
@@ -192,7 +199,7 @@ void Farm::updateAutoFarmer()
 {
 	QString seedMaterialID = DB::select( "Material", "Plants", m_properties.plantType ).toString();
 
-	unsigned int countSeed = Global::inv().itemCount( m_properties.seedItem, seedMaterialID );
+	unsigned int countSeed = g->inv()->itemCount( m_properties.seedItem, seedMaterialID );
 
 	auto hl = DB::selectRows( "Plants_OnHarvest_HarvestedItem", m_properties.plantType );
 
@@ -213,7 +220,7 @@ void Farm::updateAutoFarmer()
 	unsigned int countItem2 = 0;
 	if ( !item1ID.isEmpty() )
 	{
-		countItem1 = Global::inv().itemCount( item1ID, material1ID );
+		countItem1 = g->inv()->itemCount( item1ID, material1ID );
 	}
 
 	for ( auto hi : hl )
@@ -227,14 +234,14 @@ void Farm::updateAutoFarmer()
 	}
 	if ( !item2ID.isEmpty() )
 	{
-		countItem2 = Global::inv().itemCount( item2ID, material2ID );
+		countItem2 = g->inv()->itemCount( item2ID, material2ID );
 	}
 	bool harvestOn  = false;
 	bool harvestOff = false;
 
 	if ( m_properties.autoHarvestSeed )
 	{
-		unsigned int count = Global::inv().itemCount( m_properties.seedItem, seedMaterialID );
+		unsigned int count = g->inv()->itemCount( m_properties.seedItem, seedMaterialID );
 		unsigned int min   = m_properties.autoHarvestSeedMin;
 		unsigned int max   = m_properties.autoHarvestSeedMax;
 		if ( count < min )
@@ -248,7 +255,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem1 && !item1ID.isEmpty() )
 	{
-		unsigned int count = Global::inv().itemCount( item1ID, material1ID );
+		unsigned int count = g->inv()->itemCount( item1ID, material1ID );
 		unsigned int min   = m_properties.autoHarvestItem1Min;
 		unsigned int max   = m_properties.autoHarvestItem1Max;
 		if ( count < min )
@@ -262,7 +269,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem2 && !item2ID.isEmpty() )
 	{
-		unsigned int count = Global::inv().itemCount( item2ID, material2ID );
+		unsigned int count = g->inv()->itemCount( item2ID, material2ID );
 		unsigned int min   = m_properties.autoHarvestItem2Min;
 		unsigned int max   = m_properties.autoHarvestItem2Max;
 		if ( count < min )
@@ -292,7 +299,7 @@ unsigned int Farm::getJob( unsigned int gnomeID, QString skillID )
 {
 	if ( !m_active )
 		return 0;
-	if ( Global::gm().gnomeCanReach( gnomeID, m_properties.firstPos ) )
+	if ( g->gm()->gnomeCanReach( gnomeID, m_properties.firstPos ) )
 	{
 		Job* job = nullptr;
 		if ( skillID == "Farming" )
@@ -364,7 +371,7 @@ bool Farm::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Farm::getJob( unsigned int jobID )
+Job* Farm::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -373,7 +380,7 @@ Job* Farm::getJob( unsigned int jobID )
 	return nullptr;
 }
 
-bool Farm::hasJobID( unsigned int jobID )
+bool Farm::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }
@@ -386,12 +393,12 @@ Job* Farm::getTillJob()
 	}
 	for ( auto gf : m_fields )
 	{
-		Tile& tile = Global::w().getTile( gf->pos );
-		if ( !gf->hasJob && !Global::w().plants().contains( gf->pos.toInt() ) && !( tile.flags & TileFlag::TF_TILLED ) )
+		Tile& tile = g->w()->getTile( gf->pos );
+		if ( !gf->hasJob && !g->w()->plants().contains( gf->pos.toInt() ) && !( tile.flags & TileFlag::TF_TILLED ) )
 		{
 			Job* job = new Job;
 			job->setType( "Till" );
-			job->setRequiredSkill( Util::requiredSkill( "Till" ) );
+			job->setRequiredSkill( Global::util->requiredSkill( "Till" ) );
 			job->setPos( gf->pos );
 			job->addPossibleWorkPosition( gf->pos );
 			job->setNoJobSprite( true );
@@ -415,8 +422,7 @@ Job* Farm::getPlantJob()
 		return nullptr;
 	}
 
-	Inventory& inv = Global::inv();
-	auto item      = inv.getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
+	auto item      = g->inv()->getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
 
 	if ( item == 0 )
 	{
@@ -425,13 +431,13 @@ Job* Farm::getPlantJob()
 
 	for ( auto gf : m_fields )
 	{
-		Tile& tile = Global::w().getTile( gf->pos );
+		Tile& tile = g->w()->getTile( gf->pos );
 		// tile is empty, we plant something
-		if ( !gf->hasJob && !Global::w().plants().contains( gf->pos.toInt() ) && ( tile.flags & TileFlag::TF_TILLED ) )
+		if ( !gf->hasJob && !g->w()->plants().contains( gf->pos.toInt() ) && ( tile.flags & TileFlag::TF_TILLED ) )
 		{
 			Job* job = new Job;
 			job->setType( "PlantFarm" );
-			job->setRequiredSkill( Util::requiredSkill( "PlantFarm" ) );
+			job->setRequiredSkill( Global::util->requiredSkill( "PlantFarm" ) );
 			job->setPos( gf->pos );
 			job->addPossibleWorkPosition( gf->pos );
 			job->setItem( "Plant" );
@@ -456,9 +462,9 @@ Job* Farm::getHarvestJob()
 	{
 		for ( auto gf : m_fields )
 		{
-			if ( !gf->hasJob && Global::w().plants().contains( gf->pos.toInt() ) )
+			if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
 			{
-				Plant& plant = Global::w().plants()[gf->pos.toInt()];
+				Plant& plant = g->w()->plants()[gf->pos.toInt()];
 				if ( !plant.isPlant() )
 				{
 					continue;
@@ -467,7 +473,7 @@ Job* Farm::getHarvestJob()
 				{
 					Job* job = new Job;
 					job->setType( "Harvest" );
-					job->setRequiredSkill( Util::requiredSkill( "Harvest" ) );
+					job->setRequiredSkill( Global::util->requiredSkill( "Harvest" ) );
 					job->setPos( gf->pos );
 					job->addPossibleWorkPosition( gf->pos );
 					job->setNoJobSprite( true );
@@ -480,13 +486,13 @@ Job* Farm::getHarvestJob()
 	return nullptr;
 }
 
-bool Farm::removeTile( Position& pos )
+bool Farm::removeTile( const Position & pos )
 {
 	FarmField* ff = m_fields.value( pos.toInt() );
 
 	m_fields.remove( pos.toInt() );
 
-	Global::w().clearTileFlag( pos, TileFlag::TF_FARM );
+	g->w()->clearTileFlag( pos, TileFlag::TF_FARM );
 	delete ff;
 
 	if ( m_fields.size() )
@@ -515,14 +521,14 @@ void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 	for ( auto gf : m_fields )
 	{
 
-		Tile& tile = Global::w().getTile( gf->pos );
+		Tile& tile = g->w()->getTile( gf->pos );
 		if ( tile.flags & TileFlag::TF_TILLED )
 		{
 			++tilled;
 		}
-		if ( Global::w().plants().contains( gf->pos.toInt() ) )
+		if ( g->w()->plants().contains( gf->pos.toInt() ) )
 		{
-			Plant& plant = Global::w().plants()[gf->pos.toInt()];
+			Plant& plant = g->w()->plants()[gf->pos.toInt()];
 
 			if ( plant.isPlant() )
 			{

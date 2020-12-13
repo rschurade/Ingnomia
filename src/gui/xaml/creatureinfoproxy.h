@@ -34,6 +34,8 @@ public:
 	void requestProfessionList();
 	void setProfession( unsigned int gnomeID, QString profession );
 
+	void requestEmptySlotImages();
+
 
 private:
 	IngnomiaGUI::CreatureInfoModel* m_parent = nullptr;
@@ -41,9 +43,10 @@ private:
 private slots:
 	void onUpdateInfo( const GuiCreatureInfo& info );
 	void onProfessionList( const QStringList& profs );
-	
+	void onEmptyPics( const QMap< QString, std::vector<unsigned char> >& emptyPics );
 signals:
 	void signalRequestCreatureUpdate( unsigned int creatureID );
 	void signalRequestProfessionList();
 	void signalSetProfession( unsigned int gnomeID, QString profession );
+	void signalRequestEmptySlotImages();
 };

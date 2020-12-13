@@ -33,6 +33,7 @@
 
 SpriteFactory::SpriteFactory()
 {
+	init();
 }
 
 SpriteFactory::~SpriteFactory()
@@ -72,12 +73,12 @@ bool SpriteFactory::init()
 
 	for ( auto color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
 	{
-		m_colors.push_back( Util::string2QColor( color.toString() ) );
+		m_colors.push_back( Global::util->string2QColor( color.toString() ) );
 	}
 
 	for ( auto color : DB::selectRows( "HairColors" ) )
 	{
-		m_hairColors.push_back( Util::string2QColor( color.value( "Color" ).toString() ) );
+		m_hairColors.push_back( Global::util->string2QColor( color.value( "Color" ).toString() ) );
 	}
 
 	bool loaded = true;
@@ -88,7 +89,7 @@ bool SpriteFactory::init()
 		if ( !m_pixmapSources.contains( tilesheet ) )
 		{
 			QPixmap pm;
-			loaded = pm.load( Config::getInstance().get( "dataPath" ).toString() + "/tilesheet/" + tilesheet );
+			loaded = pm.load( Global::cfg->get( "dataPath" ).toString() + "/tilesheet/" + tilesheet );
 			if ( !loaded )
 			{
 				loaded = pm.load( tilesheet );
@@ -1186,7 +1187,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 			if ( m_pixelData.size() < tex + 1 )
 			{
-				int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+				int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 				int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 				for ( int i = 0; i < 32; ++i )
@@ -1230,7 +1231,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 		if ( m_pixelData.size() < tex + 1 )
 		{
-			int maxArrayTextures = Config::getInstance().get( "MaxArrayTextures" ).toInt();
+			int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 			int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 			for ( int i = 0; i < 32; ++i )
@@ -1375,7 +1376,7 @@ QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material
 	}
 
 	QPixmap pm = m_baseSprites[baseSprite];
-	tintPixmap( pm, Util::string2QColor( DBH::materialColor( material ) ) );
+	tintPixmap( pm, Global::util->string2QColor( DBH::materialColor( material ) ) );
 	return pm;
 }
 

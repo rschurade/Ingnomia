@@ -36,7 +36,10 @@
 
 #include "../base/db.h"
 #include "../base/global.h"
+#include "../game/game.h"
 #include "../game/inventory.h"
+
+#include "../gui/eventconnector.h"
 
 #pragma region Filter
 Filter::Filter()
@@ -49,7 +52,7 @@ Filter::Filter( QVariantMap in )
 	update();
 
 	QVariantList ffl = in.value( "Items" ).toList();
-	for ( auto vf : ffl )
+	for ( const auto& vf : ffl )
 	{
 		QString entry = vf.toString();
 		setActiveSimple( entry );
@@ -61,7 +64,7 @@ QVariantMap Filter::serialize()
 	QVariantMap out;
 
 	QVariantList filter;
-	for ( auto entry : getActiveSimple() )
+	for ( const auto& entry : getActiveSimple() )
 	{
 		filter.append( entry );
 	}
@@ -78,31 +81,33 @@ void Filter::clear()
 
 void Filter::update()
 {
-	Inventory& inv = Global::inv();
+	if( !Global::eventConnector || !Global::eventConnector->game() ) return;
+
+	auto inv = Global::eventConnector->game()->inv();
 
 	QStringList keys = DB::ids( "ItemGrouping" );
 
-	for ( auto category : keys )
+	for ( const auto& category : keys )
 	{
 		if ( !m_categories.contains( category ) )
 		{
 			m_categories.insert( category, FilterCategory() );
 		}
 	}
-	for ( auto category : inv.categories() )
+	for ( const auto& category : inv->categories() )
 	{
-		for ( auto group : inv.groups( category ) )
+		for ( const auto& group : inv->groups( category ) )
 		{
 			m_categories[category].addGroup( group );
 		}
 	}
-	for ( auto category : inv.categories() )
+	for ( const auto& category : inv->categories() )
 	{
-		for ( auto group : inv.groups( category ) )
+		for ( const auto& group : inv->groups( category ) )
 		{
-			for ( auto item : inv.items( category, group ) )
+			for ( const auto& item : inv->items( category, group ) )
 			{
-				for ( auto material : inv.materials( category, group, item ) )
+				for ( const auto& material : inv->materials( category, group, item ) )
 				{
 					addItem( category, group, item, material );
 				}
@@ -180,13 +185,13 @@ const QSet<QPair<QString, QString>>& Filter::getActive()
 	{
 		m_active.clear();
 
-		for ( auto category : categories() )
+		for ( const auto& category : categories() )
 		{
-			for ( auto group : groups( category ) )
+			for ( const auto& group : groups( category ) )
 			{
-				for ( auto item : items( category, group ) )
+				for ( const auto& item : items( category, group ) )
 				{
-					for ( auto material : materials( category, group, item ) )
+					for ( const auto& material : materials( category, group, item ) )
 					{
 						if ( getCheckState( category, group, item, material ) )
 						{
@@ -207,13 +212,13 @@ QSet<QString> Filter::getActiveSimple()
 	if ( m_activeSimpleDirty )
 	{
 		m_activeSimple.clear();
-		for ( auto category : categories() )
+		for ( const auto& category : categories() )
 		{
-			for ( auto group : groups( category ) )
+			for ( const auto& group : groups( category ) )
 			{
-				for ( auto item : items( category, group ) )
+				for ( const auto& item : items( category, group ) )
 				{
-					for ( auto material : materials( category, group, item ) )
+					for ( const auto& material : materials( category, group, item ) )
 					{
 						if ( getCheckState( category, group, item, material ) )
 						{
@@ -233,9 +238,9 @@ void Filter::setActiveSimple( QString val )
 	QStringList lv = val.split( "_" );
 	if ( lv.size() == 2 )
 	{
-		for ( auto category : categories() )
+		for ( const auto& category : categories() )
 		{
-			for ( auto group : groups( category ) )
+			for ( const auto& group : groups( category ) )
 			{
 				if ( materials( category, group, lv[0] ).contains( lv[1] ) )
 				{
@@ -281,7 +286,7 @@ QStringList FilterCategory::materials( QString group, QString item )
 
 void FilterCategory::setCheckState( bool state )
 {
-	for ( auto key : m_groups.keys() )
+	for ( const auto& key : m_groups.keys() )
 	{
 		m_groups[key].setCheckState( state );
 	}
@@ -330,7 +335,7 @@ QStringList FilterGroup::materials( QString item )
 
 void FilterGroup::setCheckState( bool state )
 {
-	for ( auto key : m_items.keys() )
+	for ( const auto& key : m_items.keys() )
 	{
 		m_items[key].setCheckState( state );
 	}
@@ -383,7 +388,7 @@ QStringList FilterItem::materials()
 
 void FilterItem::setCheckState( bool state )
 {
-	for ( auto key : m_materials.keys() )
+	for ( const auto& key : m_materials.keys() )
 	{
 		m_materials[key] = state;
 	}

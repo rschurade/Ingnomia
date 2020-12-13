@@ -37,6 +37,7 @@
 #include <QString>
 
 class ProxyGameView;
+struct GuiBuildItem;
 
 namespace Noesis
 {
@@ -103,6 +104,7 @@ private:
 class NRequiredItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
+	NRequiredItem( QString sid, int amount, const QList<QPair<QString, int>>& mats );
 	NRequiredItem( QString sid, int amount );
 
 	const char* GetName() const;
@@ -126,18 +128,11 @@ private:
 	NS_DECLARE_REFLECTION( NRequiredItem, Noesis::BaseComponent )
 };
 
-enum class BuildItemType
-{
-	Workshop,
-	Item,
-	Terrain
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class BuildItem final : public Noesis::BaseComponent
 {
 public:
-	BuildItem( QString name, QString sid, BuildItemType type );
+	BuildItem( const GuiBuildItem& gbi, ProxyGameView* proxy );
 
 	const char* GetName() const;
 	QString sid() const;
@@ -147,6 +142,8 @@ private:
 	Noesis::String m_name;
 	QString m_sid;
 	BuildItemType m_type;
+	ProxyGameView* m_proxy = nullptr;
+
 	Noesis::Ptr<Noesis::BitmapSource> m_bitmapSource;
 
 	Noesis::Ptr<Noesis::ObservableCollection<NRequiredItem>> m_requiredItems;
@@ -165,47 +162,6 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-enum class ButtonSelection
-{
-	None,
-	Build,
-	Mine,
-	Agriculture,
-	Designation,
-	Job,
-	Magic
-};
-
-enum class BuildSelection
-{
-	None,
-	Workshop,
-	Wall,
-	Floor,
-	Stairs,
-	Ramps,
-	Containers,
-	Fence,
-	Furniture,
-	Utility
-};
-
-enum class ShownInfo
-{
-	None,
-	TileInfo,
-	Stockpile,
-	Workshop,
-	Agriculture,
-	Population,
-	CreatureInfo,
-	Debug,
-	Neighbors,
-	Military,
-	Inventory
-};
-
-
 struct GuiMessageEvent {
 	unsigned int id;
 	QString title;
@@ -230,6 +186,7 @@ public:
 	void updateGameSpeed( GameSpeed speed );
 	void updateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
+	void updateBuildItems( const QList<GuiBuildItem>& items );
 
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
@@ -308,6 +265,8 @@ private:
 	const char* getShowInventory() const;
 	void setShowInventory( bool value );
 
+	const char* getShowSelection() const;
+	void setShowSelection( bool value );
 
 	const char* getShowCreatureInfo() const;
 
@@ -351,6 +310,9 @@ private:
 	Noesis::String m_kingdomInfo1;
 	Noesis::String m_kingdomInfo2;
 	Noesis::String m_kingdomInfo3;
+
+	bool m_paused = false;
+	GameSpeed m_gameSpeed = GameSpeed::Normal;
 
 	bool m_renderDesignations = true;
 	bool m_renderJobs = true;
@@ -402,6 +364,8 @@ private:
 
 	const char* getMessageHeader() const;
 	const char* getMessageText() const;
+
+	bool m_showSelection = true;
 
 	void onMessageButtonCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetMessageButtonCmd() const

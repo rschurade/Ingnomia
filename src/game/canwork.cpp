@@ -23,6 +23,7 @@
 #include "../base/global.h"
 #include "../base/position.h"
 #include "../base/util.h"
+#include "../game/game.h"
 #include "../game/automaton.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
@@ -53,19 +54,19 @@ typedef exprtk::expression<double> expression_t;
 typedef exprtk::parser<double> parser_t;
 typedef exprtk::parser_error::type _error_t;
 
-CanWork::CanWork( Position& pos, QString name, Gender gender, QString species ) :
-	Creature( pos, name, gender, species )
+CanWork::CanWork( Position& pos, QString name, Gender gender, QString species, Game* game ) :
+	Creature( pos, name, gender, species, game )
 {
 }
 
-CanWork::CanWork( QVariantMap in ) :
-	Creature( in )
+CanWork::CanWork( QVariantMap in, Game* game ) :
+	Creature( in, game )
 {
 	m_jobID = in.value( "JobID" ).toUInt();
 
 	if ( m_jobID )
 	{
-		m_job = Global::jm().getJob( m_jobID );
+		m_job = g->jm()->getJob( m_jobID );
 
 		m_currentTask = in.value( "CurrentTask" ).toMap();
 
@@ -86,7 +87,7 @@ CanWork::CanWork( QVariantMap in ) :
 
 		if ( in.contains( "EffectedTiles" ) )
 		{
-			m_effectedTiles = Util::variantList2Position( in.value( "EffectedTiles" ).toList() );
+			m_effectedTiles = Global::util->variantList2Position( in.value( "EffectedTiles" ).toList() );
 		}
 
 		m_animal          = in.value( "Animal" ).toUInt();
@@ -229,7 +230,7 @@ void CanWork::setAllSkillsActive( bool active )
 			m_job->setAborted( true );
 		}
 	}
-	for ( auto&& p : m_skillActive )
+	for ( auto& p : m_skillActive )
 	{
 		p = active;
 	}
@@ -271,7 +272,7 @@ void CanWork::cleanUpJob( bool finished )
 		// do stuff we need variables from the job object first
 		// pointer may become invalid after giveBackJob or finishJob
 
-		Animal* a = Global::cm().animal( m_job->animal() );
+		Animal* a = g->cm()->animal( m_job->animal() );
 		if ( a )
 		{
 			a->setFollowID( 0 );
@@ -286,7 +287,7 @@ void CanWork::cleanUpJob( bool finished )
 			QVariant tgv = DB::select( "TechGain", "Jobs", m_job->type() );
 			gainTech( tgv, m_job );
 
-			Global::jm().finishJob( m_jobID );
+			g->jm()->finishJob( m_jobID );
 		}
 		else
 		{
@@ -298,49 +299,45 @@ void CanWork::cleanUpJob( bool finished )
 				m_job->setPosItemInput( Position( 0, 0, 0 ) );
 			}
 			m_job->setAborted( false );
-			Global::jm().giveBackJob( m_jobID );
+			g->jm()->giveBackJob( m_jobID );
 		}
 	}
 
-	Inventory& inv = Global::inv();
 	if ( !claimedItems().empty() )
 	{
 		for ( auto itemID : claimedItems() )
 		{
-			inv.setInJob( itemID, 0 );
-			if ( inv.isPickedUp( itemID ) && !inv.isConstructedOrEquipped( itemID ) )
+			g->inv()->setInJob( itemID, 0 );
+			if ( g->inv()->isPickedUp( itemID ) && !g->inv()->isConstructedOrEquipped( itemID ) )
 			{
-				inv.putDownItem( itemID, m_position );
+				g->inv()->putDownItem( itemID, m_position );
 			}
 		}
 	}
 	if( m_btBlackBoard.contains( "ClaimedUniformItem" ) )
 	{
 		auto itemID = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
-		inv.setInJob( itemID, 0 );
+		g->inv()->setInJob( itemID, 0 );
 		m_btBlackBoard.remove( "ClaimedUniformItem" );
 		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
 	}
 
 	for ( auto itemID : m_carriedItems )
 	{
-		Inventory& inv = Global::inv();
-		if ( inv.isPickedUp( itemID ) && !inv.isConstructedOrEquipped( itemID ) )
+		if ( g->inv()->isPickedUp( itemID ) && !g->inv()->isConstructedOrEquipped( itemID ) )
 		{
-			inv.putDownItem( itemID, m_position );
+			g->inv()->putDownItem( itemID, m_position );
 		}
-		inv.setInJob( itemID, 0 );
+		g->inv()->setInJob( itemID, 0 );
 	}
 	m_carriedItems.clear();
 
 	spriteNeedsUpdate = dropEquippedItem();
 
 	// clean up magic
-	World& world = Global::w();
-
 	for ( auto pos : m_effectedTiles )
 	{
-		Global::w().clearJobSprite( pos, false );
+		g->w()->clearJobSprite( pos, false );
 	}
 
 	m_currentPath.clear();
@@ -363,7 +360,7 @@ int CanWork::getDurationTicks( QVariant value, Job* job )
 		value = DB::select( "ProductionTime", "Crafts", job->craftID() );
 	}
 
-	int ticks = value.toInt() * Util::ticksPerMinute;
+	int ticks = value.toInt() * Global::util->ticksPerMinute;
 	//if( Global::debugMode ) qDebug() << m_name << "getDurationTicks: " << job->type() << ticks;
 	return ticks;
 }
@@ -515,12 +512,11 @@ double CanWork::parseValue( QVariant v )
 
 bool CanWork::dropEquippedItem()
 {
-	Inventory& inv = Global::inv();
 	// release a claimed tool if this is run before the gnome picked it up
 	unsigned int claimedItem = m_btBlackBoard.value( "ClaimedTool" ).toUInt();
 	if ( claimedItem )
 	{
-		inv.setInJob( claimedItem, 0 );
+		g->inv()->setInJob( claimedItem, 0 );
 	}
 	m_btBlackBoard.remove( "ClaimedTool" );
 
@@ -530,7 +526,7 @@ bool CanWork::dropEquippedItem()
 		// check if item belongs to uniform
 		if ( m_roleID )
 		{
-			auto uniform = Global::mil().uniform( m_roleID );
+			auto uniform = g->mil()->uniform( m_roleID );
 			if ( uniform )
 			{
 				QString rhi = uniform->parts["RightHandHeld"].item;
@@ -542,10 +538,10 @@ bool CanWork::dropEquippedItem()
 			}
 		}
 
-		inv.putDownItem( equippedItem, m_position );
-		inv.gravity( m_position );
-		inv.setInJob( equippedItem, 0 );
-		inv.setConstructedOrEquipped( equippedItem, false );
+		g->inv()->putDownItem( equippedItem, m_position );
+		g->inv()->gravity( m_position );
+		g->inv()->setInJob( equippedItem, 0 );
+		g->inv()->setConstructedOrEquipped( equippedItem, false );
 		m_equipment.rightHandHeld.itemID = 0;
 		m_equipment.rightHandHeld.item.clear();
 		m_equipment.rightHandHeld.materialID = 0;
@@ -566,9 +562,9 @@ void CanWork::equipHand( unsigned int item, QString side )
 		if ( side == "Left" )
 		{
 			m_leftHandAttackSkill = getSkillLevel( "Melee" );
-			m_leftHandAttackValue = Global::inv().attackValue( item );
+			m_leftHandAttackValue = g->inv()->attackValue( item );
 			m_leftHandArmed       = true;
-			if ( Global::inv().isWeapon( item ) )
+			if ( g->inv()->isWeapon( item ) )
 			{
 				m_leftHandHasWeapon = true;
 			}
@@ -577,16 +573,16 @@ void CanWork::equipHand( unsigned int item, QString side )
 				m_leftHandHasWeapon = false;
 			}
 
-			m_lightIntensity = DB::select( "LightIntensity", "Items", Global::inv().itemSID( item ) ).toInt();
+			m_lightIntensity = DB::select( "LightIntensity", "Items", g->inv()->itemSID( item ) ).toInt();
 			if ( m_lightIntensity )
 			{
-				Global::w().addLight( m_id, m_position, m_lightIntensity );
+				g->w()->addLight( m_id, m_position, m_lightIntensity );
 			}
 		}
 		else
 		{
 			m_rightHandAttackSkill = getSkillLevel( "Melee" );
-			m_rightHandAttackValue = Global::inv().attackValue( item );
+			m_rightHandAttackValue = g->inv()->attackValue( item );
 			m_rightHandArmed       = true;
 		}
 	}
@@ -600,7 +596,7 @@ void CanWork::equipHand( unsigned int item, QString side )
 			m_leftHandHasWeapon   = false;
 
 			m_lightIntensity = 0;
-			Global::w().removeLight( m_id );
+			g->w()->removeLight( m_id );
 		}
 		else
 		{
@@ -614,7 +610,6 @@ void CanWork::equipHand( unsigned int item, QString side )
 
 bool CanWork::mineWall()
 {
-	World& world = Global::w();
 	// remove the wall
 	Position offset;
 	if ( m_currentTask.contains( "Offset" ) )
@@ -623,10 +618,10 @@ bool CanWork::mineWall()
 	}
 	Position pos( m_job->pos() + offset );
 
-	auto mats = world.mineWall( pos, m_workPosition );
+	auto mats = g->w()->mineWall( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, mats.first );
-	Util::createRawMaterialItem( pos, mats.second );
+	Global::util->createRawMaterialItem( pos, mats.first );
+	Global::util->createRawMaterialItem( pos, mats.second );
 
 	return true;
 }
@@ -639,7 +634,7 @@ bool CanWork::mineFloor()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	auto mat = Global::w().removeFloor( pos, m_position );
+	auto mat = g->w()->removeFloor( pos, m_position );
 
 	QString materialSID = "None";
 	QString type        = "None";
@@ -648,66 +643,64 @@ bool CanWork::mineFloor()
 
 	if ( type == "Soil" )
 	{
-		Global::inv().createItem( m_job->workPos(), "RawSoil", materialSID );
+		g->inv()->createItem( m_job->workPos(), "RawSoil", materialSID );
 	}
 	else if ( type == "Stone" )
 	{
-		Global::inv().createItem( m_job->workPos(), "RawStone", materialSID );
+		g->inv()->createItem( m_job->workPos(), "RawStone", materialSID );
 	}
 	return true;
 }
 
 bool CanWork::digHole()
 {
-	World& world = Global::w();
 	// remove the wall
 	Position offset( 0, 0, -1 );
 	Position pos( m_job->pos() );
 
 	/*
-	if( Global::w().checkTrapGnomeFloor( pos, m_position ) )
+	if( g->w()->checkTrapGnomeFloor( pos, m_position ) )
 	{
 		return false;
 	}
 	*/
 
-	world.removeFloor( pos, m_position );
-	auto mats = world.mineWall( pos + offset, m_position );
+	g->w()->removeFloor( pos, m_position );
+	auto mats = g->w()->mineWall( pos + offset, m_position );
 
-	Util::createRawMaterialItem( m_position, mats.first );
-	Util::createRawMaterialItem( m_position, mats.second );
+	Global::util->createRawMaterialItem( m_position, mats.first );
+	Global::util->createRawMaterialItem( m_position, mats.second );
 
 	Position rp( m_job->pos() + offset );
-	Global::w().createRamp( rp.x, rp.y, rp.z );
-	Global::w().createRamp( rp.x + 1, rp.y, rp.z );
-	Global::w().createRamp( rp.x - 1, rp.y, rp.z );
-	Global::w().createRamp( rp.x, rp.y + 1, rp.z );
-	Global::w().createRamp( rp.x, rp.y - 1, rp.z );
+	g->w()->createRamp( rp.x, rp.y, rp.z );
+	g->w()->createRamp( rp.x + 1, rp.y, rp.z );
+	g->w()->createRamp( rp.x - 1, rp.y, rp.z );
+	g->w()->createRamp( rp.x, rp.y + 1, rp.z );
+	g->w()->createRamp( rp.x, rp.y - 1, rp.z );
 
-	Global::w().updateRampAtPos( rp.northOf() );
-	Global::w().updateRampAtPos( rp.southOf() );
-	Global::w().updateRampAtPos( rp.eastOf() );
-	Global::w().updateRampAtPos( rp.westOf() );
+	g->w()->updateRampAtPos( rp.northOf() );
+	g->w()->updateRampAtPos( rp.southOf() );
+	g->w()->updateRampAtPos( rp.eastOf() );
+	g->w()->updateRampAtPos( rp.westOf() );
 
-	Global::w().addToUpdateList( pos );
-	Global::w().addToUpdateList( rp );
+	g->w()->addToUpdateList( pos );
+	g->w()->addToUpdateList( rp );
 
-	Global::w().addToUpdateList( pos.northOf() );
-	Global::w().addToUpdateList( pos.southOf() );
-	Global::w().addToUpdateList( pos.eastOf() );
-	Global::w().addToUpdateList( pos.westOf() );
+	g->w()->addToUpdateList( pos.northOf() );
+	g->w()->addToUpdateList( pos.southOf() );
+	g->w()->addToUpdateList( pos.eastOf() );
+	g->w()->addToUpdateList( pos.westOf() );
 
-	Global::w().addToUpdateList( rp.northOf() );
-	Global::w().addToUpdateList( rp.southOf() );
-	Global::w().addToUpdateList( rp.eastOf() );
-	Global::w().addToUpdateList( rp.westOf() );
+	g->w()->addToUpdateList( rp.northOf() );
+	g->w()->addToUpdateList( rp.southOf() );
+	g->w()->addToUpdateList( rp.eastOf() );
+	g->w()->addToUpdateList( rp.westOf() );
 
 	return true;
 }
 
 bool CanWork::explorativeMineWall()
 {
-	World& world = Global::w();
 	// remove the wall
 	Position offset;
 	if ( m_currentTask.contains( "Offset" ) )
@@ -716,10 +709,10 @@ bool CanWork::explorativeMineWall()
 	}
 	Position pos( m_job->pos() + offset );
 
-	auto mats = world.mineWall( pos, m_workPosition );
+	auto mats = g->w()->mineWall( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, mats.first );
-	Util::createRawMaterialItem( pos, mats.second );
+	Global::util->createRawMaterialItem( pos, mats.first );
+	Global::util->createRawMaterialItem( pos, mats.second );
 
 	if ( mats.second )
 	{
@@ -732,9 +725,9 @@ bool CanWork::explorativeMineWall()
 		};
 		for ( const auto& candidate : candidates )
 		{
-			if ( world.getTile(candidate).embeddedMaterial == mats.second )
+			if ( g->w()->getTile(candidate).embeddedMaterial == mats.second )
 			{
-				Global::jm().addJob( "ExplorativeMine", candidate, 0 );
+				g->jm()->addJob( "ExplorativeMine", candidate, 0 );
 			}
 		}
 	}
@@ -751,9 +744,9 @@ bool CanWork::removeRamp()
 	}
 	Position pos( m_job->pos() + offset );
 
-	unsigned short materialInt = Global::w().removeRamp( pos, m_workPosition );
+	unsigned short materialInt = g->w()->removeRamp( pos, m_workPosition );
 
-	Util::createRawMaterialItem( pos, materialInt );
+	Global::util->createRawMaterialItem( pos, materialInt );
 
 	return true;
 }
@@ -768,7 +761,7 @@ bool CanWork::removeWall()
 	}
 	Position pos( m_job->pos() + offset );
 
-	Global::w().removeWall( pos, m_workPosition );
+	g->w()->removeWall( pos, m_workPosition );
 
 	return true;
 }
@@ -781,7 +774,7 @@ bool CanWork::removeFloor()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	Global::w().removeFloor( pos, m_position );
+	g->w()->removeFloor( pos, m_position );
 
 	return true;
 }
@@ -818,13 +811,12 @@ bool CanWork::constructAnimate()
 		Position pos( m_job->pos() + offset );
 
 		QStringList materials;
-		World& world = Global::w();
 
 		if ( !claimedItems().empty() )
 		{
 			for ( auto item : claimedItems() )
 			{
-				materials.push_back( Global::inv().materialSID( item ) );
+				materials.push_back( g->inv()->materialSID( item ) );
 			}
 		}
 		// paint the intermediate sprite and return
@@ -835,8 +827,8 @@ bool CanWork::constructAnimate()
 			{
 				isFloor = true;
 			}
-			Sprite* s = Global::sf().createSprite( spriteID, { materials.first() } );
-			world.setJobSprite( pos, s->uID, m_job->rotation(), isFloor, m_jobID, false );
+			Sprite* s = g->sf()->createSprite( spriteID, { materials.first() } );
+			g->w()->setJobSprite( pos, s->uID, m_job->rotation(), isFloor, m_jobID, false );
 			return true;
 		}
 	}
@@ -853,10 +845,10 @@ bool CanWork::constructDugStairs()
 	m_currentTask.insert( "Offset", offset.toString() );
 
 	Position pos( m_job->pos() + offset );
-	auto wallMat = Global::w().wallMaterial( pos );
+	auto wallMat = g->w()->wallMaterial( pos );
 	removeWall();
 
-	auto item = Util::createRawMaterialItem( pos, wallMat );
+	auto item = Global::util->createRawMaterialItem( pos, wallMat );
 	if ( item )
 	{
 		addClaimedItem( item, m_job->id() );
@@ -868,19 +860,19 @@ bool CanWork::constructDugStairs()
 		return false;
 	}
 	unsigned itemID     = cil.first();
-	QString materialSID = Global::inv().materialSID( itemID );
+	QString materialSID = g->inv()->materialSID( itemID );
 	QString type        = DB::select( "Type", "Materials", materialSID ).toString();
 
 	bool result = false;
 	if ( type == "Soil" || type == "Sand" || type == "Clay" )
 	{
 		m_job->setItem( "SoilStairs" );
-		//result = Global::w().construct( "SoilStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
+		//result = g->w()->construct( "SoilStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
 	}
 	else if ( type == "Stone" )
 	{
 		m_job->setItem( "StoneStairs" );
-		//result = Global::w().construct( "StoneStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
+		//result = g->w()->construct( "StoneStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
 	}
 
 	return construct();
@@ -894,10 +886,10 @@ bool CanWork::constructDugRamp()
 	m_currentTask.insert( "Offset", "0 0 -1" );
 
 	Position pos( m_job->pos() + Position( 0, 0, -1 ) );
-	auto wallMat = Global::w().wallMaterial( pos );
+	auto wallMat = g->w()->wallMaterial( pos );
 	removeWall(); // offset 0 0 -1
 
-	auto item = Util::createRawMaterialItem( pos, wallMat );
+	auto item = Global::util->createRawMaterialItem( pos, wallMat );
 	if ( item )
 	{
 		addClaimedItem( item, m_job->id() );
@@ -910,18 +902,18 @@ bool CanWork::constructDugRamp()
 	}
 	unsigned itemID = cil.first();
 
-	QString materialSID = Global::inv().materialSID( itemID );
+	QString materialSID = g->inv()->materialSID( itemID );
 	QString type        = DB::select( "Type", "Materials", materialSID ).toString();
 
 	if ( type == "Soil" || type == "Sand" || type == "Clay" )
 	{
 		m_job->setItem( "SoilRamp" );
-		//result = Global::w().construct( "SoilStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
+		//result = g->w()->construct( "SoilStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
 	}
 	else if ( type == "Stone" )
 	{
 		m_job->setItem( "StoneRamp" );
-		//result = Global::w().construct( "StoneStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
+		//result = g->w()->construct( "StoneStairs", m_job->pos(), m_job->rotation(), claimedItems(), m_position );
 	}
 	return construct();
 }
@@ -943,46 +935,44 @@ bool CanWork::construct()
 	Position offset( m_currentTask.value( "Offset" ).toString() );
 	Position pos( m_job->pos() + offset );
 
-	Inventory& inv = Global::inv();
-
 	bool result = false;
 
 	if ( m_job->type() == "BuildWorkshop" )
 	{
-		result = Global::w().constructWorkshop( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->constructWorkshop( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
 	}
 	else if ( m_job->type() == "BuildItem" )
 	{
-		result = Global::w().constructItem( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->constructItem( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
 	}
 	else
 	{
-		result = Global::w().construct( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->construct( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
 	}
 
 	if ( result )
 	{
 		for ( auto itemUID : claimedItems() )
 		{
-			inv.setInJob( itemUID, 0 );
+			g->inv()->setInJob( itemUID, 0 );
 
-			if ( inv.isConstructedOrEquipped( itemUID ) )
+			if ( g->inv()->isConstructedOrEquipped( itemUID ) )
 			{
 				/*
-				if( Global::inv().isContainer( itemUID ) )
+				if( g->inv()->isContainer( itemUID ) )
 				{
-					for( auto iic : Global::inv().itemsInContainer( itemUID ) )
+					for( auto iic : g->inv()->itemsInContainer( itemUID ) )
 					{
-						Global::inv().setInContainer( iic, 0 );
-						Global::inv().moveItemToPos( iic, m_position );
+						g->inv()->setInContainer( iic, 0 );
+						g->inv()->moveItemToPos( iic, m_position );
 					}
 				}
 				*/
 			}
 			else
 			{
-				Global::inv().pickUpItem( itemUID );
-				Global::inv().destroyObject( itemUID );
+				g->inv()->pickUpItem( itemUID );
+				g->inv()->destroyObject( itemUID );
 			}
 		}
 		clearClaimedItems();
@@ -1016,7 +1006,7 @@ bool CanWork::createItem()
 			{
 				if ( type == im.value( "ConditionValue" ).toString() )
 				{
-					Global::inv().createItem( pos, im.value( "ItemID" ).toString(), materialSID );
+					g->inv()->createItem( pos, im.value( "ItemID" ).toString(), materialSID );
 					return true;
 				}
 			}
@@ -1035,7 +1025,7 @@ bool CanWork::harvest()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	QMap<unsigned int, Plant>& plants = Global::w().plants();
+	QMap<unsigned int, Plant>& plants = g->w()->plants();
 	if ( plants.contains( pos.toInt() ) )
 	{
 		Plant& plant = plants[pos.toInt()];
@@ -1044,11 +1034,11 @@ bool CanWork::harvest()
 			// remove plant;
 			if ( plant.isPlant() )
 			{
-				Global::w().clearTileFlag( pos, TileFlag::TF_TILLED );
-				Sprite* s = Global::sf().createSprite( "RoughFloor", { DBH::materialSID( Global::w().floorMaterial( pos ) ) } );
-				Global::w().setFloorSprite( pos, s->uID );
-				Global::w().setWallSprite( pos, 0 );
-				Global::w().removeGrass( pos );
+				g->w()->clearTileFlag( pos, TileFlag::TF_TILLED );
+				Sprite* s = g->sf()->createSprite( "RoughFloor", { DBH::materialSID( g->w()->floorMaterial( pos ) ) } );
+				g->w()->setFloorSprite( pos, s->uID );
+				g->w()->setWallSprite( pos, 0 );
+				g->w()->removeGrass( pos );
 			}
 			plants.remove( pos.toInt() );
 
@@ -1057,18 +1047,18 @@ bool CanWork::harvest()
 		if ( plant.harvestable() )
 		{
 			m_repeatJob      = true;
-			m_taskFinishTick = GameState::tick + m_currentTask.value( "Duration" ).toInt() * Util::ticksPerMinute;
+			m_taskFinishTick = GameState::tick + m_currentTask.value( "Duration" ).toInt() * Global::util->ticksPerMinute;
 			return true;
 		}
 	}
 	m_repeatJob = false;
 
-	if ( Global::fm().isBeehive( pos ) )
+	if ( g->fm()->isBeehive( pos ) )
 	{
 
-		if ( Global::fm().harvestBeehive( pos ) )
+		if ( g->fm()->harvestBeehive( pos ) )
 		{
-			Global::inv().createItem( pos, "Honey", "Bee" );
+			g->inv()->createItem( pos, "Honey", "Bee" );
 		}
 	}
 
@@ -1085,10 +1075,10 @@ bool CanWork::harvestHay()
 	}
 	Position pos( m_job->pos() + offset );
 
-	if ( Global::w().hasMaxGrass( pos ) )
+	if ( g->w()->hasMaxGrass( pos ) )
 	{
-		Global::inv().createItem( pos, "Hay", "Grass" );
-		Global::w().setVegetationLevel( pos, 30 );
+		g->inv()->createItem( pos, "Hay", "Grass" );
+		g->w()->setVegetationLevel( pos, 30 );
 
 		return true;
 	}
@@ -1100,11 +1090,11 @@ bool CanWork::plantTree()
 {
 	if ( !claimedItems().empty() )
 	{
-		Global::w().plantTree( m_job->pos(), m_job->item() );
-		Global::inv().pickUpItem( claimedItems().first() );
+		g->w()->plantTree( m_job->pos(), m_job->item() );
+		g->inv()->pickUpItem( claimedItems().first() );
 		for ( auto ci : claimedItems() )
 		{
-			Global::inv().destroyObject( ci );
+			g->inv()->destroyObject( ci );
 		}
 		clearClaimedItems();
 		return true;
@@ -1116,11 +1106,11 @@ bool CanWork::plant()
 {
 	if ( !claimedItems().empty() )
 	{
-		Global::w().plant( m_job->pos(), claimedItems().first() );
-		Global::inv().pickUpItem( claimedItems().first() );
+		g->w()->plant( m_job->pos(), claimedItems().first() );
+		g->inv()->pickUpItem( claimedItems().first() );
 		for ( auto ci : claimedItems() )
 		{
-			Global::inv().destroyObject( ci );
+			g->inv()->destroyObject( ci );
 		}
 		clearClaimedItems();
 		return true;
@@ -1130,7 +1120,7 @@ bool CanWork::plant()
 
 bool CanWork::removePlant()
 {
-	Global::w().removePlant( m_job->pos() );
+	g->w()->removePlant( m_job->pos() );
 	return true;
 }
 
@@ -1142,10 +1132,10 @@ bool CanWork::till()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	Global::w().setTileFlag( pos, TileFlag::TF_TILLED );
-	Global::w().removeGrass( pos );
-	Sprite* s = Global::sf().createSprite( "TilledSoil", { DBH::materialSID( Global::w().floorMaterial( pos ) ) } );
-	Global::w().setFloorSprite( pos, s->uID );
+	g->w()->setTileFlag( pos, TileFlag::TF_TILLED );
+	g->w()->removeGrass( pos );
+	Sprite* s = g->sf()->createSprite( "TilledSoil", { DBH::materialSID( g->w()->floorMaterial( pos ) ) } );
+	g->w()->setFloorSprite( pos, s->uID );
 	return true;
 }
 
@@ -1185,18 +1175,18 @@ bool CanWork::craft()
 					{
 						auto item = claimedItems().first();
 
-						auto sourceMaterial = Global::inv().materialSID( item );
-						auto material       = Util::randomMetalSliver( sourceMaterial );
-						unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), material );
-						Global::inv().setMadeBy( itemID, id() );
+						auto sourceMaterial = g->inv()->materialSID( item );
+						auto material       = Global::util->randomMetalSliver( sourceMaterial );
+						unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), material );
+						g->inv()->setMadeBy( itemID, id() );
 					}
 				}
 			}
 			else
 			{
-				unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), resultMaterial );
-				Global::inv().setMadeBy( itemID, id() );
-				Global::inv().setQuality( itemID, qIndex );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), resultMaterial );
+				g->inv()->setMadeBy( itemID, id() );
+				g->inv()->setQuality( itemID, qIndex );
 			}
 		}
 		else if ( m_job->conversionMaterial().isEmpty() )
@@ -1206,18 +1196,18 @@ bool CanWork::craft()
 				return false;
 			}
 
-			unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), claimedItems() );
-			Global::inv().setMadeBy( itemID, id() );
-			Global::inv().setQuality( itemID, qIndex );
+			unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), claimedItems() );
+			g->inv()->setMadeBy( itemID, id() );
+			g->inv()->setQuality( itemID, qIndex );
 			if ( m_job->item() == "Automaton" )
 			{
-				Automaton* a = new Automaton( m_job->posItemOutput(), itemID );
-				//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), Global::inv().spriteID( itemID ) ) );
+				Automaton* a = new Automaton( m_job->posItemOutput(), itemID, g );
+				//a->setSpriteID( g->sf()->setAutomatonSprite( a->id(), g->inv()->spriteID( itemID ) ) );
 				//a->updateSprite();
 
-				Global::gm().addAutomaton( a );
-				Global::inv().pickUpItem( itemID );
-				Global::inv().setInJob( itemID, a->id() );
+				g->gm()->addAutomaton( a );
+				g->inv()->pickUpItem( itemID );
+				g->inv()->setInJob( itemID, a->id() );
 			}
 		}
 		else
@@ -1228,7 +1218,7 @@ bool CanWork::craft()
 				unsigned int sourceItem = 0;
 				for ( auto item : claimedItems() )
 				{
-					if ( Global::inv().itemSID( item ) == "Dye" )
+					if ( g->inv()->itemSID( item ) == "Dye" )
 					{
 						dyeItem = item;
 					}
@@ -1237,14 +1227,14 @@ bool CanWork::craft()
 						sourceItem = item;
 					}
 				}
-				QString sourceMaterial = Global::inv().materialSID( sourceItem );
-				QString dyeMaterial    = Global::inv().materialSID( dyeItem );
+				QString sourceMaterial = g->inv()->materialSID( sourceItem );
+				QString dyeMaterial    = g->inv()->materialSID( dyeItem );
 
-				QString targetMaterial = Util::addDyeMaterial( sourceMaterial, dyeMaterial );
+				QString targetMaterial = Global::util->addDyeMaterial( sourceMaterial, dyeMaterial );
 
-				unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), targetMaterial );
-				Global::inv().setMadeBy( itemID, id() );
-				Global::inv().setQuality( itemID, Global::inv().quality( sourceItem ) );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), targetMaterial );
+				g->inv()->setMadeBy( itemID, id() );
+				g->inv()->setQuality( itemID, g->inv()->quality( sourceItem ) );
 			}
 			else if ( m_job->conversionMaterial() == "$GnomeHair" )
 			{
@@ -1254,7 +1244,7 @@ bool CanWork::craft()
 					return false;
 				}
 				unsigned int sourceItem = claimedItems().first();
-				QString sourceMaterial  = Global::inv().materialSID( sourceItem );
+				QString sourceMaterial  = g->inv()->materialSID( sourceItem );
 				QString dyeColor        = DB::select( "Color", "Materials", sourceMaterial ).toString();
 				auto keys               = DB::ids( "Materials", "Type", "Dye" );
 				int id                  = 0;
@@ -1273,25 +1263,25 @@ bool CanWork::craft()
 			else if ( m_job->conversionMaterial() == "$Leather" )
 			{
 				unsigned int sourceItem = claimedItems().first();
-				QString sourceMaterial  = Global::inv().materialSID( sourceItem );
+				QString sourceMaterial  = g->inv()->materialSID( sourceItem );
 
-				unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), sourceMaterial + "Leather" );
-				Global::inv().setMadeBy( itemID, id() );
-				Global::inv().setQuality( itemID, qIndex );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), sourceMaterial + "Leather" );
+				g->inv()->setMadeBy( itemID, id() );
+				g->inv()->setQuality( itemID, qIndex );
 			}
 			else
 			{
-				unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), m_job->item(), m_job->conversionMaterial() );
-				Global::inv().setMadeBy( itemID, id() );
-				Global::inv().setQuality( itemID, qIndex );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), m_job->conversionMaterial() );
+				g->inv()->setMadeBy( itemID, id() );
+				g->inv()->setQuality( itemID, qIndex );
 			}
 		}
 	}
 
 	for ( auto item : claimedItems() )
 	{
-		Global::inv().pickUpItem( item );
-		Global::inv().destroyObject( item );
+		g->inv()->pickUpItem( item );
+		g->inv()->destroyObject( item );
 	}
 	clearClaimedItems();
 	return true;
@@ -1306,14 +1296,14 @@ bool CanWork::fellTree()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	QMap<unsigned int, Plant>& plants = Global::w().plants();
+	QMap<unsigned int, Plant>& plants = g->w()->plants();
 	if ( plants.contains( pos.toInt() ) )
 	{
 		Plant& plant = plants[pos.toInt()];
 		if ( plant.fell() )
 		{
 			// remove plant;
-			Global::w().removePlant( pos );
+			g->w()->removePlant( pos );
 			return true;
 		}
 	}
@@ -1329,7 +1319,7 @@ bool CanWork::deconstruct()
 	}
 	Position pos( m_job->pos() + offset );
 
-	Global::w().deconstruct( pos, m_position, false );
+	g->w()->deconstruct( pos, m_position, false );
 	return true;
 }
 
@@ -1337,13 +1327,13 @@ bool CanWork::butcherFish()
 {
 	for ( auto itemUID : claimedItems() )
 	{
-		QString materialSID = Global::inv().materialSID( itemUID );
+		QString materialSID = g->inv()->materialSID( itemUID );
 
-		Global::inv().createItem( m_job->posItemOutput(), "Meat", materialSID );
-		Global::inv().createItem( m_job->posItemOutput(), "FishBone", materialSID );
+		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
+		g->inv()->createItem( m_job->posItemOutput(), "FishBone", materialSID );
 
-		Global::inv().pickUpItem( itemUID );
-		Global::inv().destroyObject( itemUID );
+		g->inv()->pickUpItem( itemUID );
+		g->inv()->destroyObject( itemUID );
 	}
 	clearClaimedItems();
 	return true;
@@ -1353,13 +1343,13 @@ bool CanWork::butcherCorpse()
 {
 	for ( auto itemUID : claimedItems() )
 	{
-		QString materialSID = Global::inv().materialSID( itemUID );
+		QString materialSID = g->inv()->materialSID( itemUID );
 
-		Global::inv().createItem( m_job->posItemOutput(), "Meat", materialSID );
-		Global::inv().createItem( m_job->posItemOutput(), "Bone", materialSID );
+		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
+		g->inv()->createItem( m_job->posItemOutput(), "Bone", materialSID );
 
-		Global::inv().pickUpItem( itemUID );
-		Global::inv().destroyObject( itemUID );
+		g->inv()->pickUpItem( itemUID );
+		g->inv()->destroyObject( itemUID );
 	}
 	clearClaimedItems();
 	return true;
@@ -1367,8 +1357,8 @@ bool CanWork::butcherCorpse()
 
 bool CanWork::fish()
 {
-	unsigned int itemID = Global::inv().createItem( m_job->posItemOutput(), "Fish", "GreenFish" );
-	Global::inv().setMadeBy( itemID, id() );
+	unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), "Fish", "GreenFish" );
+	g->inv()->setMadeBy( itemID, id() );
 	return true;
 }
 
@@ -1397,7 +1387,7 @@ bool CanWork::prepareSpell()
 	m_effectedTiles.clear();
 
 	Position center        = m_job->pos();
-	unsigned int spriteUID = Global::sf().createSprite( "Sparkles", { "None" } )->uID + 2048;
+	unsigned int spriteUID = g->sf()->createSprite( "Sparkles", { "None" } )->uID + 2048;
 
 	int xMin = qMax( 1, center.x - radius );
 	int yMin = qMax( 1, center.y - radius );
@@ -1410,7 +1400,7 @@ bool CanWork::prepareSpell()
 			if ( center.distSquare( x, y, center.z ) <= radius2 )
 			{
 				m_effectedTiles.append( Position( x, y, center.z ).toString() );
-				Global::w().setJobSprite( Position( x, y, center.z ), spriteUID, 0, false, m_job->id(), true );
+				g->w()->setJobSprite( Position( x, y, center.z ), spriteUID, 0, false, m_job->id(), true );
 			}
 		}
 	}
@@ -1438,8 +1428,6 @@ bool CanWork::finishSpell()
 	QVariantList reqs    = spellMap.value( "EffectRequirements" ).toList();
 	QVariantList effects = spellMap.value( "Effects" ).toList();
 
-	World& world = Global::w();
-
 	for ( auto pos : m_effectedTiles )
 	{
 		bool effected = true;
@@ -1448,15 +1436,15 @@ bool CanWork::finishSpell()
 			QString sReq = vReq.toString();
 			if ( sReq == "Plant" )
 			{
-				effected &= world.plants().contains( pos.toInt() );
+				effected &= g->w()->plants().contains( pos.toInt() );
 			}
 			else if ( sReq == "RoughWall" )
 			{
-				effected &= ( world.wallType( pos ) == WT_ROUGH );
+				effected &= ( g->w()->wallType( pos ) == WT_ROUGH );
 			}
 			else if ( sReq == "EmbeddedMaterial" )
 			{
-				effected &= ( world.embeddedMaterial( pos ) != 0 );
+				effected &= ( g->w()->embeddedMaterial( pos ) != 0 );
 			}
 		}
 
@@ -1467,17 +1455,17 @@ bool CanWork::finishSpell()
 				QString sEffect = vEffect.toString();
 				if ( sEffect == "Reveal" )
 				{
-					world.clearTileFlag( pos, TileFlag::TF_UNDISCOVERED );
-					world.addToUpdateList( pos );
+					g->w()->clearTileFlag( pos, TileFlag::TF_UNDISCOVERED );
+					g->w()->addToUpdateList( pos );
 				}
 				else if ( sEffect == "PlantGrowth" )
 				{
-					world.plants()[pos.toInt()].speedUpGrowth( Util::ticksPerDay * getSkillLevel( m_job->requiredSkill() ) );
+					g->w()->plants()[pos.toInt()].speedUpGrowth( Global::util->ticksPerDay * getSkillLevel( m_job->requiredSkill() ) );
 				}
 			}
 		}
 
-		Global::w().clearJobSprite( pos, false );
+		g->w()->clearJobSprite( pos, false );
 	}
 	return true;
 }
@@ -1486,7 +1474,7 @@ bool CanWork::switchMechanism()
 {
 	if ( m_job )
 	{
-		Global::mcm().toggleActive( m_job->mechanism() );
+		g->mcm()->toggleActive( m_job->mechanism() );
 		return true;
 	}
 
@@ -1497,7 +1485,7 @@ bool CanWork::invertMechanism()
 {
 	if ( m_job )
 	{
-		Global::mcm().toggleInvert( m_job->mechanism() );
+		g->mcm()->toggleInvert( m_job->mechanism() );
 		return true;
 	}
 
@@ -1512,7 +1500,7 @@ bool CanWork::refuel()
 
 		if ( m_job->automaton() )
 		{
-			auto a = Global::gm().automaton( m_job->automaton() );
+			auto a = g->gm()->automaton( m_job->automaton() );
 			if ( a )
 			{
 				a->fillUp( burnValue );
@@ -1520,13 +1508,13 @@ bool CanWork::refuel()
 		}
 		else if ( m_job->mechanism() )
 		{
-			Global::mcm().refuel( m_job->mechanism(), burnValue );
+			g->mcm()->refuel( m_job->mechanism(), burnValue );
 		}
 
 		for ( auto item : claimedItems() )
 		{
-			Global::inv().pickUpItem( item );
-			Global::inv().destroyObject( item );
+			g->inv()->pickUpItem( item );
+			g->inv()->destroyObject( item );
 		}
 		clearClaimedItems();
 
@@ -1543,7 +1531,7 @@ bool CanWork::install()
 
 		if ( m_job->automaton() )
 		{
-			auto a = Global::gm().automaton( m_job->automaton() );
+			auto a = g->gm()->automaton( m_job->automaton() );
 			if ( a )
 			{
 				for ( auto item : claimedItems() )
@@ -1564,7 +1552,7 @@ bool CanWork::uninstall()
 	{
 		if ( m_job->automaton() )
 		{
-			auto a = Global::gm().automaton( m_job->automaton() );
+			auto a = g->gm()->automaton( m_job->automaton() );
 			if ( a )
 			{
 				a->installCore( 0 );
@@ -1579,15 +1567,15 @@ bool CanWork::fillTrough()
 {
 	if ( m_job )
 	{
-		auto pasture = Global::fm().getPastureAtPos( m_job->pos() );
+		auto pasture = g->fm()->getPastureAtPos( m_job->pos() );
 		if ( pasture && m_claimedItems.size() == 1 )
 		{
 			pasture->addFood( m_claimedItems.first() );
 
 			for ( auto item : claimedItems() )
 			{
-				Global::inv().pickUpItem( item );
-				Global::inv().destroyObject( item );
+				g->inv()->pickUpItem( item );
+				g->inv()->destroyObject( item );
 			}
 			clearClaimedItems();
 			return true;
@@ -1597,7 +1585,7 @@ bool CanWork::fillTrough()
 
 			for ( auto item : claimedItems() )
 			{
-				Global::inv().setInJob( item, 0 );
+				g->inv()->setInJob( item, 0 );
 			}
 			clearClaimedItems();
 			return false;
@@ -1613,7 +1601,7 @@ bool CanWork::soundAlarm()
 	{
 		if ( GameState::alarm == 1 )
 		{
-			auto room = Global::rm().getRoomAtPos( m_job->pos() );
+			auto room = g->rm()->getRoomAtPos( m_job->pos() );
 			if ( room )
 			{
 				GameState::alarmRoomID = room->id();

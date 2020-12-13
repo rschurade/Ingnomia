@@ -20,6 +20,7 @@
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../game/gnomemanager.h"
+#include "../game/game.h"
 
 #include "../gui/strings.h"
 
@@ -32,8 +33,14 @@ AggregatorMilitary::~AggregatorMilitary()
 {
 }
 
+void AggregatorMilitary::init( Game* game )
+{
+	g = game;
+}
+
 void AggregatorMilitary::sendSquadUpdate()
 {
+	if( !g ) return;
 	m_squads.clear();
 
 	GuiSquad ngs;
@@ -42,16 +49,16 @@ void AggregatorMilitary::sendSquadUpdate()
 	ngs.showLeftArrow = false;
 	ngs.showRightArrow = false;
 
-	for( auto gnome : Global::gm().gnomes() )
+	for( auto gnome : g->gm()->gnomes() )
 	{
-		if( !Global::mil().getSquadForGnome( gnome->id() ) )
+		if( !g->mil()->getSquadForGnome( gnome->id() ) )
 		{
 			ngs.gnomes.append( { gnome->id(), gnome->name(), gnome->roleID() } );
 		}
 	}
 	m_squads.append( ngs );
 
-	for( const auto& squad : Global::mil().squads() )
+	for( const auto& squad : g->mil()->squads() )
 	{
 		GuiSquad gs;
 		gs.name = squad.name;
@@ -70,8 +77,8 @@ void AggregatorMilitary::sendSquadUpdate()
 		{
 			GuiSquadGnome gsg;
 			gsg.id = gnomeID;
-			gsg.name = Global::gm().name( gnomeID );
-			gsg.roleID = Global::gm().roleID( gnomeID );
+			gsg.name = g->gm()->name( gnomeID );
+			gsg.roleID = g->gm()->roleID( gnomeID );
 
 			gs.gnomes.append( gsg );
 		}
@@ -95,11 +102,12 @@ void AggregatorMilitary::onRequestRoles()
 
 void AggregatorMilitary::sendRoleUpdate()
 {
+	if( !g ) return;
 	m_roles.clear();
 
 	auto uniformSlots = DB::ids( "Uniform" );
 
-	for( auto& role : Global::mil().roles() )
+	for( auto& role : g->mil()->roles() )
 	{
 		GuiMilRole gmr;
 		gmr.name = role.name;
@@ -141,7 +149,8 @@ GuiUniformItem AggregatorMilitary::createUniformItem( QString slot, QVariantMap 
 
 void AggregatorMilitary::sendPriorityUpdate( unsigned int squadID )
 {
-	auto squad = Global::mil().squad( squadID );
+	if( !g ) return;
+	auto squad = g->mil()->squad( squadID );
 	if( squad )
 	{
 		m_tmpPriorities.clear();
@@ -166,36 +175,42 @@ void AggregatorMilitary::onRequestMilitary()
 
 void AggregatorMilitary::onAddSquad()
 {
-	Global::mil().addSquad();
+	if( !g ) return;
+	g->mil()->addSquad();
 	sendSquadUpdate();
 }
 
 void AggregatorMilitary::onRemoveSquad( unsigned int id )
 {
-	Global::mil().removeSquad( id );
+	if( !g ) return;
+	g->mil()->removeSquad( id );
 	sendSquadUpdate();
 }
 	
 void AggregatorMilitary::onRenameSquad( unsigned int id, QString newName )
 {
-	Global::mil().renameSquad( id, newName );
+	if( !g ) return;
+	g->mil()->renameSquad( id, newName );
 }
 
 void AggregatorMilitary::onMoveSquadLeft( unsigned int id )
 {
-	Global::mil().moveSquadUp( id );
+	if( !g ) return;
+	g->mil()->moveSquadUp( id );
 	sendSquadUpdate();
 }
 	
 void AggregatorMilitary::onMoveSquadRight( unsigned int id )
 {
-	Global::mil().moveSquadDown( id );
+	if( !g ) return;
+	g->mil()->moveSquadDown( id );
 	sendSquadUpdate();
 }
 
 void AggregatorMilitary::onRemoveGnomeFromSquad( unsigned int gnomeID )
 {
-	if( Global::mil().removeGnome( gnomeID ) )
+	if( !g ) return;
+	if( g->mil()->removeGnome( gnomeID ) )
 	{
 		sendSquadUpdate();
 	}
@@ -203,7 +218,8 @@ void AggregatorMilitary::onRemoveGnomeFromSquad( unsigned int gnomeID )
 	
 void AggregatorMilitary::onMoveGnomeLeft( unsigned int gnomeID )
 {
-	if( Global::mil().moveGnomeUp( gnomeID ) )
+	if( !g ) return;
+	if( g->mil()->moveGnomeUp( gnomeID ) )
 	{
 		sendSquadUpdate();
 	}
@@ -211,7 +227,8 @@ void AggregatorMilitary::onMoveGnomeLeft( unsigned int gnomeID )
 
 void AggregatorMilitary::onMoveGnomeRight( unsigned int gnomeID )
 {
-	if( Global::mil().moveGnomeDown( gnomeID ) )
+	if( !g ) return;
+	if( g->mil()->moveGnomeDown( gnomeID ) )
 	{
 		sendSquadUpdate();
 	}
@@ -220,7 +237,8 @@ void AggregatorMilitary::onMoveGnomeRight( unsigned int gnomeID )
 	
 void AggregatorMilitary::onMovePrioUp( unsigned int squadID, QString type )
 {
-	if( Global::mil().movePrioUp( squadID, type ) )
+	if( !g ) return;
+	if( g->mil()->movePrioUp( squadID, type ) )
 	{
 		sendPriorityUpdate( squadID );
 	}
@@ -228,7 +246,8 @@ void AggregatorMilitary::onMovePrioUp( unsigned int squadID, QString type )
 
 void AggregatorMilitary::onMovePrioDown( unsigned int squadID, QString type )
 {
-	if( Global::mil().movePrioDown( squadID, type ) )
+	if( !g ) return;
+	if( g->mil()->movePrioDown( squadID, type ) )
 	{
 		sendPriorityUpdate( squadID );
 	}
@@ -236,24 +255,28 @@ void AggregatorMilitary::onMovePrioDown( unsigned int squadID, QString type )
 
 void AggregatorMilitary::onAddRole()
 {
-	Global::mil().addRole();
+	if( !g ) return;
+	g->mil()->addRole();
 	sendRoleUpdate();
 }
 	
 void AggregatorMilitary::onRemoveRole( unsigned int id )
 {
-	Global::mil().removeRole( id );
+	if( !g ) return;
+	g->mil()->removeRole( id );
 	sendRoleUpdate();
 }
 
 void AggregatorMilitary::onRenameRole( unsigned int id, QString newName )
 {
-	Global::mil().renameRole( id, newName );
+	if( !g ) return;
+	g->mil()->renameRole( id, newName );
 }
 
 void AggregatorMilitary::onSetArmorType( unsigned int roleID, QString slot, QString type, QString material )
 {
-	Global::mil().setArmorType( roleID, slot, type, material );
+	if( !g ) return;
+	g->mil()->setArmorType( roleID, slot, type, material );
 	QStringList mats;
 	mats.append( "any" );
 
@@ -273,10 +296,18 @@ void AggregatorMilitary::onSetArmorType( unsigned int roleID, QString slot, QStr
 
 void AggregatorMilitary::onSetRole( unsigned int gnomeID, unsigned int roleID )
 {
-	Global::gm().setRoleID( gnomeID, roleID );
+	if( !g ) return;
+	g->gm()->setRoleID( gnomeID, roleID );
 }
 
 void AggregatorMilitary::onSetRoleCivilian( unsigned int roleID, bool value )
 {
-	Global::mil().setRoleCivilian( roleID, value );
+	if( !g ) return;
+	g->mil()->setRoleCivilian( roleID, value );
+}
+
+void AggregatorMilitary::onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude )
+{
+	if( !g ) return;
+	g->mil()->onSetAttitude( squadID, type, attitude );
 }

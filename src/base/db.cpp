@@ -39,7 +39,7 @@ void DB::init()
 {
 	QMutexLocker lock( &DB::m_mutex );
 
-	QFile file( Config::getInstance().get( "dataPath" ).toString() + "/db/" + "ingnomia.db.sql" );
+	QFile file( Global::cfg->get( "dataPath" ).toString() + "/db/" + "ingnomia.db.sql" );
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString sql = file.readAll();
     file.close();
@@ -431,6 +431,38 @@ QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString wher
 	}
 	return out;
 }
+
+QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString whereVal, QString whereCol2, QString whereVal2 )
+{
+	QMutexLocker lock( &DB::m_mutex );
+	++accessCounter;
+	QSqlQuery query( getDB() );
+	QList<QVariantMap> out;
+	if ( query.exec( "SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"" ) )
+	{
+		m_counter.add( query.lastQuery() );
+		while ( query.next() )
+		{
+			QVariantMap result;
+			auto record = getDB().record( table );
+			int count   = record.count();
+
+			for ( int i = 0; i < count; ++i )
+			{
+				result.insert( record.field( i ).name(), query.value( record.field( i ).name() ) );
+			}
+			out.append( result );
+		}
+	}
+	else
+	{
+		qDebug() << "sql error:  " << query.lastError();
+		qDebug() << "SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"";
+	}
+
+	return out;
+}
+
 
 QList<QVariantMap> DB::selectRows( QString table )
 {

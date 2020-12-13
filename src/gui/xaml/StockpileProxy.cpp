@@ -31,11 +31,11 @@
 StockpileProxy::StockpileProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::signalUpdateInfo, this, &StockpileProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::signalUpdateContent, this, &StockpileProxy::onUpdateContent, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateInfo, this, &StockpileProxy::onUpdateInfo, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateContent, this, &StockpileProxy::onUpdateContent, Qt::QueuedConnection );
 
-	connect( this, &StockpileProxy::signalSetBasicOptions, EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &StockpileProxy::signalSetActive, EventConnector::getInstance().aggregatorStockpile(), &AggregatorStockpile::onSetActive, Qt::QueuedConnection );
+	connect( this, &StockpileProxy::signalSetBasicOptions, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetBasicOptions, Qt::QueuedConnection );
+	connect( this, &StockpileProxy::signalSetActive, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetActive, Qt::QueuedConnection );
 }
 
 StockpileProxy::~StockpileProxy()

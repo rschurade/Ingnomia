@@ -242,6 +242,7 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<Border x:Name="LeftButtonBorder" Grid.Column="0" Style="{StaticResource Panel}">
 					<StackPanel Orientation="Horizontal">
@@ -301,7 +302,8 @@
 						</Button>
 					</StackPanel>
 				</Border>
-				<Border x:Name="RightButtonBorder" Grid.Column="2" Style="{StaticResource Panel}">
+				<local:SelectionGui x:Name="SelectionGui" Grid.Column="2" HorizontalAlignment="Right" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowSelection }" />
+				<Border x:Name="RightButtonBorder" Grid.Column="3" Style="{StaticResource Panel}">
 					<StackPanel Orientation="Horizontal">
 						<Button x:Name="RCB2" Style="{StaticResource CommandButton}"
 							Command="{Binding CmdRightCommandButton}" CommandParameter="Kingdom">
