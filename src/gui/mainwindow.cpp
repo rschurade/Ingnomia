@@ -22,6 +22,7 @@
 #include "../base/io.h"
 #include "../base/selection.h"
 #include "../gui/eventconnector.h"
+#include "../gui/aggregatorselection.h"
 
 #include "license.h"
 #include "mainwindowrenderer.h"
@@ -52,6 +53,9 @@
 #include "xaml/debugmodel.h"
 #include "xaml/inventory.xaml.h"
 #include "xaml/inventorymodel.h"
+#include "xaml/selection.xaml.h"
+#include "xaml/selectionmodel.h"
+
 
 #include "xaml/military.xaml.h"
 #include "xaml/militarymodel.h"
@@ -102,6 +106,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( this, &MainWindow::signalKeyPress, Global::eventConnector, &EventConnector::onKeyPress );
 	connect( this, &MainWindow::signalTogglePause, Global::eventConnector, &EventConnector::onTogglePause );
 	connect( this, &MainWindow::signalUpdateRenderOptions, Global::eventConnector, &EventConnector::onUpdateRenderOptions );
+	connect( this, &MainWindow::signalUpdateCursorPos, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateCursorPos );
 
 	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
@@ -379,9 +384,10 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	m_mouseX  = gp.x();
 	m_mouseY  = gp.y();
 
+	m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, false, event->modifiers() & Qt::ShiftModifier );
+	emit signalUpdateCursorPos( m_cursorPos.toString() );
 	if ( Global::sel && Global::sel->hasAction() )
 	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
 		Global::sel->updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 		Global::sel->setControlActive( event->modifiers() & Qt::ControlModifier );
 		redraw();
@@ -822,6 +828,8 @@ void MainWindow::registerComponents()
 	Noesis::RegisterComponent<IngnomiaGUI::MilitaryModel>();
 	Noesis::RegisterComponent<IngnomiaGUI::InventoryGui>();
 	Noesis::RegisterComponent<IngnomiaGUI::InventoryModel>();
+	Noesis::RegisterComponent<IngnomiaGUI::SelectionGui>();
+	Noesis::RegisterComponent<IngnomiaGUI::SelectionModel>();
 
 	Noesis::RegisterComponent<Noesis::EnumConverter<IngnomiaGUI::State>>();
 	Noesis::RegisterComponent<IngnomiaGUI::ColorToBrushConverter>();

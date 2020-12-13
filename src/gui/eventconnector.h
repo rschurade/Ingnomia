@@ -34,6 +34,7 @@ class AggregatorMilitary;
 class AggregatorSettings;     
 class AggregatorInventory;    
 class AggregatorLoadGame;     
+class AggregatorSelection;
 
 
 class Game;
@@ -101,6 +102,10 @@ public:
 	{
 		return m_loadGameAggregator;
 	}
+	AggregatorSelection* aggregatorSelection()
+	{
+		return m_selectionAggregator;
+	}
 
 	void emitStartGame();
 	void emitStopGame();
@@ -132,7 +137,8 @@ private:
 	AggregatorSettings* m_settingsAggregator = nullptr;
 	AggregatorInventory* m_inventoryAggregator = nullptr;
 	AggregatorLoadGame* m_loadGameAggregator = nullptr;
-	
+	AggregatorSelection* m_selectionAggregator = nullptr;
+
 public slots:
 	void onExit();
 	void onWindowSize( int w, int h );

@@ -1325,6 +1325,24 @@ void GameModel::eventMessage( unsigned int id, QString title, QString msg, bool 
 	}
 }
 
+const char* GameModel::getShowSelection() const
+{
+	if ( m_showSelection )
+	{
+		return "Visible";
+	}
+	return "Hidden";
+}
+	
+void GameModel::setShowSelection( bool value )
+{
+	if( m_showSelection != value )
+	{
+		m_showSelection = value;
+		OnPropertyChanged( "ShowSelection" );
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -1375,6 +1393,7 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 	NsProp( "ShowNeighbors", &GameModel::getShowNeighbors );
 	NsProp( "ShowMilitary", &GameModel::getShowMilitary );
 	NsProp( "ShowInventory", &GameModel::getShowInventory );
+	NsProp( "ShowSelection", &GameModel::getShowSelection );
 	
 	NsProp( "ShowMessage", &GameModel::getShowMessage );
 	NsProp( "ShowMessageButtonOk", &GameModel::getShowMessageButtonOk );

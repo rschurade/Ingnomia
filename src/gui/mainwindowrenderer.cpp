@@ -1061,6 +1061,11 @@ unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )
 
 Position MainWindowRenderer::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
+	if( !Global::eventConnector || !Global::eventConnector->game() || !Global::eventConnector->game()->w() )
+	{
+		return Position( 0, 0, 0 );
+	}
+
 	Position cursorPos;
 	int dim = Global::dimX;
 	if ( dim == 0 )

@@ -42,7 +42,8 @@ Selection::Selection( Game* game ) :
 	m_rotation( 0 ),
 	m_firstClicked( false ),
 	m_action( "" ),
-	m_debug( false )
+	m_debug( false ),
+	QObject( game )
 {
 	m_selectionSize.first  = 0;
 	m_selectionSize.second = 0;
@@ -116,6 +117,8 @@ void Selection::clear()
 	m_item = "";
 	m_materials.clear();
 	m_canRotate = false;
+
+	emit signalActionChanged( "" );
 }
 
 void Selection::rotate()
@@ -144,6 +147,9 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		m_isMultiZ  = actionMap.value( "MultiZ" ).toBool();
 		m_canRotate = actionMap.value( "Rotate" ).toBool();
 		m_selection.push_back( QPair<Position, bool>( pos, testTileForJobSelection( pos ) ) );
+		
+		emit signalFirstClick( m_firstClick.toString() );
+
 		if ( !m_isMulti && !shift )
 		{
 			onSecondClick( shift, ctrl );
@@ -160,6 +166,8 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		onSecondClick( shift, ctrl );
 		m_firstClicked = false;
 		m_changed      = true;
+		emit signalFirstClick( "" );
+		emit signalSize( "" );
 		return true;
 	}
 }
@@ -178,6 +186,8 @@ void Selection::setAction( QString action )
 	m_isMulti   = actionMap.value( "Multi" ).toBool();
 	m_isMultiZ  = actionMap.value( "MultiZ" ).toBool();
 	m_canRotate = actionMap.value( "Rotate" ).toBool();
+
+	emit signalActionChanged( m_action );
 }
 
 void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
@@ -252,6 +262,16 @@ void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
 			}
 		}
 	}
+
+	if( m_firstClicked )
+	{
+		emit signalSize( QString::number( m_selectionSize.first ) + " x " + QString::number( m_selectionSize.second ) );
+	}
+	else
+	{
+		emit signalSize( "" );
+	}
+
 	m_changed = true;
 }
 
@@ -270,6 +290,10 @@ void Selection::rightClick( Position& pos )
 	{
 		clear();
 	}
+
+	emit signalFirstClick( "" );
+	emit signalSize( "" );
+		
 	m_changed = true;
 }
 

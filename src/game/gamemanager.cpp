@@ -61,6 +61,7 @@
 #include "../gui/aggregatormilitary.h"
 #include "../gui/aggregatorsettings.h"
 #include "../gui/aggregatorloadgame.h"
+#include "../gui/aggregatorselection.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -262,6 +263,10 @@ void GameManager::postCreationInit()
 	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
 	connect( m_game, &Game::signalTimeAndDate,     m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
+
+	connect( Global::sel, &Selection::signalActionChanged, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onActionChanged, Qt::QueuedConnection );
+	connect( Global::sel, &Selection::signalFirstClick, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateFirstClick, Qt::QueuedConnection );
+	connect( Global::sel, &Selection::signalSize, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateSize, Qt::QueuedConnection );
 
 	m_eventConnector->emitPause( m_game->paused() );
 	m_eventConnector->emitStartGame();

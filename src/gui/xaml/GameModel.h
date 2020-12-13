@@ -265,6 +265,8 @@ private:
 	const char* getShowInventory() const;
 	void setShowInventory( bool value );
 
+	const char* getShowSelection() const;
+	void setShowSelection( bool value );
 
 	const char* getShowCreatureInfo() const;
 
@@ -362,6 +364,8 @@ private:
 
 	const char* getMessageHeader() const;
 	const char* getMessageText() const;
+
+	bool m_showSelection = true;
 
 	void onMessageButtonCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetMessageButtonCmd() const

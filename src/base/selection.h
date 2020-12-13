@@ -60,8 +60,10 @@ enum enumReqs
 	SEL_ANYWALL
 };
 
-class Selection
+class Selection : public QObject
 {
+	Q_OBJECT
+
 private:
 	QPointer<Game> g;
 
@@ -153,4 +155,9 @@ public:
 	}
 
 	bool changed();
+
+signals:
+	void signalActionChanged( const QString action );
+	void signalFirstClick( const QString firstClick );
+	void signalSize( const QString size );
 };

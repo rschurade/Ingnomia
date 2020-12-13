@@ -30,6 +30,7 @@
 #include "aggregatormilitary.h"
 #include "aggregatorsettings.h"
 #include "aggregatorloadgame.h"
+#include "aggregatorselection.h"
 
 #include "../base/db.h"
 #include "../base/config.h"
@@ -61,6 +62,7 @@ EventConnector::EventConnector( GameManager* parent ) :
 	m_settingsAggregator	 = new AggregatorSettings( this );
 	m_inventoryAggregator    = new AggregatorInventory( this );
 	m_loadGameAggregator	 = new AggregatorLoadGame( this );
+	m_selectionAggregator	 = new AggregatorSelection( this );
 }
 
 void EventConnector::setGamePtr( Game* game )

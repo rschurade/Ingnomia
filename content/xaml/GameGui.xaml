@@ -229,6 +229,8 @@
 				</ScrollViewer>
 			</Border>
 
+			<local:SelectionGui x:Name="SelectionGui" Grid.Column="4" HorizontalAlignment="Right" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowSelection }" />
+
 			<local:TileInfo x:Name="TileInfo" Grid.Column="4" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowTileInfo }" HorizontalAlignment="Right" />
 
 			<local:CreatureInfo x:Name="CreatureInfo"
