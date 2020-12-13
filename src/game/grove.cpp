@@ -32,6 +32,14 @@
 
 Grove::~Grove()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 GroveProperties::GroveProperties( QVariantMap& in )

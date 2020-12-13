@@ -56,6 +56,10 @@ Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Room::~Room()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
 }
 
 void Room::addTile( const Position & pos )

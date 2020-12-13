@@ -169,6 +169,14 @@ QVariant Farm::serialize()
 
 Farm::~Farm()
 {
+	for ( const auto& field : m_fields )
+	{
+		delete field;
+	}
+	for ( const auto& job : m_jobsOut )
+	{
+		delete job;
+	}
 }
 
 void Farm::addTile( const Position & pos )

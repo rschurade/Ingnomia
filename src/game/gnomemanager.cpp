@@ -45,6 +45,26 @@ GnomeManager::GnomeManager( Game* parent ) :
 
 GnomeManager::~GnomeManager()
 {
+	for ( const auto& gnome : m_gnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_specialGnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_deadGnomes )
+	{
+		delete gnome;
+	}
+	for ( const auto& gnome : m_automatons )
+	{
+		delete gnome;
+	}
+	for ( const auto& job : m_jobs )
+	{
+		delete job;
+	}
 }
 
 bool GnomeManager::contains( unsigned int gnomeID )

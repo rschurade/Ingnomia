@@ -58,6 +58,14 @@ Inventory::~Inventory()
 
 	m_foodItems.clear();
 	m_drinkItems.clear();
+
+	for ( const auto& octtreeGroup : m_octrees )
+	{
+		for (const auto& octree : octtreeGroup)
+		{
+			delete octree;
+		}
+	}
 }
 
 void Inventory::init()
