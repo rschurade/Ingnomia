@@ -388,7 +388,7 @@ StockpileModel::StockpileModel()
 	{
 		m_prios->Add( MakePtr<SpPriority>( ( QString( "Priority " ) + QString::number( i + 1 ) ).toStdString().c_str() ) );
 	}
-	SetSelectedPriority( m_prios->Get( 0 ) );
+	m_selectedPrio = m_prios->Get( 0 );
 
 	m_categories = *new ObservableCollection<CategoryItem>();
 
@@ -411,7 +411,7 @@ void StockpileModel::onUpdateInfo( const GuiStockpileInfo& info )
 	{
 		m_prios->Add( MakePtr<SpPriority>( ( QString( "Priority " ) + QString::number( i + 1 ) ).toStdString().c_str() ) );
 	}
-	SetSelectedPriority( m_prios->Get( qMin( qMax( 0, info.priority ), m_prios->Count() ) ) );
+	m_selectedPrio = m_prios->Get( qMin( qMax( 0, info.priority ), m_prios->Count() ) );
 
 	//auto cats = info.filter.categories();
 	auto filter = info.filter;
