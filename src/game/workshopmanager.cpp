@@ -239,16 +239,19 @@ bool WorkshopManager::craftJobExists( const QString& itemSID, const QString& mat
 
 void WorkshopManager::setPriority( unsigned int workshopID, int prio )
 {
-	int current = 0;
-	for ( const auto& w : m_workshops )
+	if( prio > 0 && prio < m_workshops.size() )
 	{
-		if ( w->id() == workshopID )
+		int current = 0;
+		for ( const auto& w : m_workshops )
 		{
-			break;
+			if ( w->id() == workshopID )
+			{
+				break;
+			}
+			++current;
 		}
-		++current;
+		m_workshops.move( current, prio );
 	}
-	m_workshops.move( current, prio );
 }
 
 int WorkshopManager::priority( unsigned int workshopID )
