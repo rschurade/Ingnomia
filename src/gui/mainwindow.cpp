@@ -20,7 +20,6 @@
 
 #include "../base/config.h"
 #include "../base/io.h"
-#include "../base/selection.h"
 #include "../gui/eventconnector.h"
 #include "../gui/aggregatorselection.h"
 
@@ -102,11 +101,15 @@ MainWindow::MainWindow( QWidget* parent ) :
 	connect( Global::eventConnector, &EventConnector::signalExit, this, &MainWindow::onExit );
 	connect( this, &MainWindow::signalWindowSize, Global::eventConnector, &EventConnector::onWindowSize );
 	connect( this, &MainWindow::signalViewLevel, Global::eventConnector, &EventConnector::onViewLevel );
-	connect( this, &MainWindow::signalSelectTile, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onShowTileInfo );
 	connect( this, &MainWindow::signalKeyPress, Global::eventConnector, &EventConnector::onKeyPress );
 	connect( this, &MainWindow::signalTogglePause, Global::eventConnector, &EventConnector::onTogglePause );
 	connect( this, &MainWindow::signalUpdateRenderOptions, Global::eventConnector, &EventConnector::onUpdateRenderOptions );
-	connect( this, &MainWindow::signalUpdateCursorPos, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateCursorPos );
+		
+	connect( this, &MainWindow::signalMouse, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onMouse, Qt::QueuedConnection );
+	connect( this, &MainWindow::signalLeftClick, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onLeftClick, Qt::QueuedConnection );
+	connect( this, &MainWindow::signalRightClick, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onRightClick, Qt::QueuedConnection );
+	connect( this, &MainWindow::signalRotateSelection, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onRotateSelection, Qt::QueuedConnection );
+	connect( this, &MainWindow::signalRenderParams, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onRenderParams, Qt::QueuedConnection );
 
 	connect( Global::eventConnector->aggregatorDebug(), &AggregatorDebug::signalSetWindowSize, this, &MainWindow::onSetWindowSize, Qt::QueuedConnection );
 
@@ -159,6 +162,7 @@ void MainWindow::toggleFullScreen()
 		Global::cfg->set( "fullscreen", false );
 	}
 	m_renderer->onRenderParamsChanged();
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
 void MainWindow::onFullScreen( bool value )
@@ -176,6 +180,7 @@ void MainWindow::onFullScreen( bool value )
 		w->showNormal();
 	}
 	m_renderer->onRenderParamsChanged();
+	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
 void MainWindow::keyPressEvent( QKeyEvent* event )
@@ -226,17 +231,14 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 					emit signalUpdateRenderOptions();
 				}
 				m_renderer->onRenderParamsChanged();
+				emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 				break;
 			case Qt::Key_F:
 				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
-				if( Global::sel )
-				{
-					Global::sel->rotate();
-					Global::sel->updateSelection( m_cursorPos, false, false );
-					redraw();
-				}
+				emit signalRotateSelection();
+				redraw();
 				break;
 			case Qt::Key_Comma:
 				m_renderer->rotate( 1 );
@@ -374,6 +376,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 				m_moveX = gp.x();
 				m_moveY = gp.y();
 			}
+			emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 		}
 		else
 		{
@@ -384,14 +387,10 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	m_mouseX  = gp.x();
 	m_mouseY  = gp.y();
 
-	m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, false, event->modifiers() & Qt::ShiftModifier );
-	emit signalUpdateCursorPos( m_cursorPos.toString() );
-	if ( Global::sel && Global::sel->hasAction() )
-	{
-		Global::sel->updateSelection( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
-		Global::sel->setControlActive( event->modifiers() & Qt::ControlModifier );
-		redraw();
-	}
+
+	emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+
+	redraw();
 }
 
 void MainWindow::onInitViewAfterLoad()
@@ -402,6 +401,7 @@ void MainWindow::onInitViewAfterLoad()
 	m_renderer->move( m_moveX, m_moveY );
 	
 	m_renderer->setScale( GameState::scale );
+	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
 void MainWindow::mousePressEvent( QMouseEvent* event )
@@ -466,28 +466,9 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			{
 				if ( !m_isMove && m_leftDown )
 				{
-					if( Global::sel )
-					{
-						m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
-						if ( Global::sel->hasAction() )
-						{
-							if ( Global::sel->leftClick( m_cursorPos, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier ) )
-							{
-								// open info windows after creating something
-							}
-							redraw();
-						}
-						else
-						{
-							//open tile info or do other game related stuff
-							if ( m_cursorPos.x < 0 || m_cursorPos.y < 0 || m_cursorPos.x > Global::dimX - 1 || m_cursorPos.y > Global::dimX - 1 || m_cursorPos.z < 0 || m_cursorPos.z > Global::dimZ - 1 )
-							{
-								//return;
-							}
-							unsigned int tileID = m_cursorPos.toInt();
-							emit signalSelectTile( tileID );
-						}
-					}
+					emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+					emit signalLeftClick( event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+					redraw();
 				}
 			}
 			m_isMove   = false;
@@ -508,13 +489,9 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 			}
 			else
 			{
-				if ( Global::sel && Global::sel->hasAction() )
-				{
-					m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), event->modifiers() & Qt::ShiftModifier );
-					Global::sel->rightClick( m_cursorPos );
-					m_selectedAction = Global::sel->action();
-					redraw();
-				}
+				emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
+				emit signalRightClick();
+				redraw();
 				m_rightDown = false;
 			}
 		}
@@ -554,6 +531,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 				}
 			}
 		}
+		emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	}
 }
 
@@ -582,15 +560,11 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
+	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	emit signalViewLevel( GameState::viewLevel );
 
-	if ( Global::sel && Global::sel->hasAction() )
-	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
-		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
-		Global::sel->setControlActive( ctrl );
-		redraw();
-	}
+	emit signalMouse( m_mouseX, m_mouseY, shift, ctrl );
+	redraw();
 }
 
 void MainWindow::keyboardZMinus( bool shift, bool ctrl )
@@ -601,14 +575,9 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
-
-	if ( Global::sel && Global::sel->hasAction() )
-	{
-		m_cursorPos = m_renderer->calcCursor( m_mouseX, m_mouseY, Global::sel->isFloor(), shift );
-		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
-		Global::sel->setControlActive( ctrl );
-		redraw();
-	}
+	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalMouse( m_mouseX, m_mouseY, shift, ctrl );
+	redraw();
 }
 
 void MainWindow::noesisInit()

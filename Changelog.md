@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Fixed
+- moved cursor calculation to game thread
+
+### Added
+
+### Changed
+
+### Removed
+
+
 ## [0.8.4]
 
 ### Fixed

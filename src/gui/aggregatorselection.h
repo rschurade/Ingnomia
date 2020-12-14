@@ -30,16 +30,34 @@ public:
 	~AggregatorSelection();
 
 private:
-	
+	Position calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const;
+
+    int m_width = 0;
+    int m_height = 0;
+    int m_moveX = 0;
+    int m_moveY = 0;
+    float m_scale = 1.0;
+    int m_rotation = 0;
+
+    Position m_cursorPos;
+
 public slots:
     void onActionChanged( const QString action );
     void onUpdateCursorPos( const QString pos );
     void onUpdateFirstClick( const QString pos );
     void onUpdateSize( const QString size );
 
+    void onRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation );
+    void onMouse( int mouseX, int mouseY, bool shift, bool ctrl );
+    void onLeftClick( bool shift, bool ctrl );
+    void onRightClick();
+    void onRotateSelection();
+
 signals:
     void signalAction( const QString action );
     void signalCursorPos( const QString pos );
     void signalFirstClick( const QString pos );
     void signalSize( const QString size );
+
+    void signalSelectTile( unsigned int );
 };

@@ -63,6 +63,8 @@ EventConnector::EventConnector( GameManager* parent ) :
 	m_inventoryAggregator    = new AggregatorInventory( this );
 	m_loadGameAggregator	 = new AggregatorLoadGame( this );
 	m_selectionAggregator	 = new AggregatorSelection( this );
+
+	connect( m_selectionAggregator, &AggregatorSelection::signalSelectTile, m_tiAggregator, &AggregatorTileInfo::onShowTileInfo );
 }
 
 void EventConnector::setGamePtr( Game* game )

@@ -106,9 +106,6 @@ private:
 
 	void onExit();
 
-	Position m_cursorPos;
-	QString m_selectedAction = "";
-
 	QTimer* m_timer = nullptr;
 	QElapsedTimer m_keyboardMovementTimer;
 
@@ -146,11 +143,15 @@ public slots:
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );
-	void signalSelectTile( unsigned int );
+	
 
 	void signalKeyPress( int key );
 	void signalUpdateRenderOptions();
 	void signalTogglePause();
 
-	void signalUpdateCursorPos( const QString pos );
+	void signalRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation );
+	void signalRotateSelection();
+	void signalMouse( int mouseX, int mouseY, bool shift, bool ctrl );
+	void signalLeftClick( bool shift, bool ctrl );
+	void signalRightClick();
 };

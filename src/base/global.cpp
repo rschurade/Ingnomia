@@ -24,26 +24,6 @@
 #include "../base/logger.h"
 #include "../base/util.h"
 
-#include "../game/creaturemanager.h"
-#include "../game/eventmanager.h"
-#include "../game/farmingmanager.h"
-#include "../game/fluidmanager.h"
-#include "../game/gnomemanager.h"
-#include "../game/inventory.h"
-#include "../game/itemhistory.h"
-#include "../game/jobmanager.h"
-#include "../game/mechanismmanager.h"
-#include "../game/militarymanager.h"
-#include "../game/neighbormanager.h"
-#include "../game/roommanager.h"
-#include "../game/stockpilemanager.h"
-#include "../game/workshopmanager.h"
-#include "../game/world.h"
-
-#include "../gfx/spritefactory.h"
-
-//#include "../gui/keybindings.h"
-
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
@@ -57,9 +37,6 @@ NewGameSettings* Global::newGameSettings = nullptr;
 Config* Global::cfg = nullptr;
 
 Logger Global::m_logger;
-
-//KeyBindings Global::m_keyBindings;
-
 
 bool Global::wallsLowered = false;
 bool Global::showAxles    = false;

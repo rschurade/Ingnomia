@@ -44,7 +44,10 @@ public:
 	MainWindowRenderer( MainWindow* parent = Q_NULLPTR );
 	~MainWindowRenderer();
 
-	Position calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const;
+	int rotation() { return m_rotation; }
+	float scale() { return m_scale; }
+	int moveX() { return m_moveX; }
+	int moveY() { return m_moveY; }
 
 protected:
 	QOpenGLVertexArrayObject m_vao;
