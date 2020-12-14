@@ -18,19 +18,23 @@
 #include "aggregatorselection.h"
 #include "eventconnector.h"
 
+#include "../base/db.h"
 #include "../base/global.h"
 #include "../base/gamestate.h"
 #include "../base/selection.h"
+#include "../base/util.h"
 
 #include "../game/game.h"
 #include "../game/world.h"
+
+#include "../gfx/spritefactory.h"
 
 #include <QDebug>
 
 AggregatorSelection::AggregatorSelection( QObject* parent ) :
 	QObject(parent)
 {
-	
+	qRegisterMetaType<SelectionData>();
 }
 
 AggregatorSelection::~AggregatorSelection()
@@ -76,6 +80,7 @@ void AggregatorSelection::onMouse( int mouseX, int mouseY, bool shift, bool ctrl
 		Global::sel->setControlActive( ctrl );
 
 		onUpdateCursorPos( m_cursorPos.toString() );
+		updateSelection();
 	}
 }
 
@@ -85,7 +90,9 @@ void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 	{
 		if ( Global::sel->hasAction() )
 		{
-			Global::sel->leftClick( m_cursorPos, shift, ctrl );										
+			Global::sel->leftClick( m_cursorPos, shift, ctrl );	
+			Global::sel->updateSelection( m_cursorPos, shift, ctrl );
+			updateSelection();
 		}
 		else
 		{
@@ -100,6 +107,7 @@ void AggregatorSelection::onRightClick()
 	if( Global::sel )
 	{
 		Global::sel->rightClick( m_cursorPos );
+		updateSelection();
 	}
 }
 
@@ -108,6 +116,7 @@ void AggregatorSelection::onRotateSelection()
 	if( Global::sel )
 	{
 		Global::sel->rotate();
+		updateSelection();
 	}
 }
 
@@ -279,4 +288,211 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 		cursorPos.z = viewLevel;
 	}
 	return cursorPos;
+}
+
+void AggregatorSelection::updateSelection()
+{
+	if ( Global::sel->changed() )
+	{
+		//DebugScope s( "update selection" );
+
+		QString action = Global::sel->action();
+		m_selectionData.clear();
+		if ( !action.isEmpty() )
+		{
+			bool isFloor = Global::sel->isFloor();
+
+			QList<QPair<Position, bool>> selection = Global::sel->getSelection();
+
+			QList<QPair<Sprite*, QPair<Position, unsigned char>>> sprites;
+			QList<QPair<Sprite*, QPair<Position, unsigned char>>> spritesInv;
+
+			int rotation = Global::sel->rotation();
+
+			QList<QVariantMap> spriteIDs;
+
+			if ( action == "BuildWall" || action == "BuildFancyWall" || action == "BuildFloor" || action == "BuildFancyFloor" || action == "BuildRamp" || action == "BuildRampCorner" || action == "BuildStairs" )
+			{
+				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Global::sel->itemID() );
+			}
+			else if ( action == "BuildWorkshop" )
+			{
+				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Global::sel->itemID() );
+			}
+			else if ( action == "BuildItem" )
+			{
+				QVariantMap sprite;
+				sprite.insert( "SpriteID", DBH::spriteID( Global::sel->itemID() ) );
+				sprite.insert( "Offset", "0 0 0" );
+				sprite.insert( "Type", "Furniture" );
+				sprite.insert( "Material", Global::sel->material() );
+				spriteIDs.push_back( sprite );
+			}
+			else
+			{
+				spriteIDs = DB::selectRows( "Actions_Tiles", "ID", action );
+			}
+			for ( auto asi : spriteIDs )
+			{
+				QVariantMap entry = asi;
+				if ( !entry.value( "SpriteID" ).toString().isEmpty() )
+				{
+					if ( entry.value( "SpriteID" ).toString() == "none" )
+					{
+						continue;
+					}
+					if ( !entry.value( "SpriteIDOverride" ).toString().isEmpty() )
+					{
+						entry.insert( "SpriteID", entry.value( "SpriteIDOverride" ).toString() );
+					}
+
+					// TODO repair rot
+					unsigned char localRot = Global::util->rotString2Char( entry.value( "WallRotation" ).toString() );
+
+					Sprite* addSpriteValid = nullptr;
+
+					QStringList mats;
+					for ( auto mv : entry.value( "Material" ).toList() )
+					{
+						mats.push_back( mv.toString() );
+					}
+
+					if ( entry.contains( "Material" ) )
+					{
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), mats );
+					}
+					else
+					{
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), { "None" } );
+					}
+					Position offset( 0, 0, 0 );
+					if ( entry.contains( "Offset" ) )
+					{
+						QString os      = entry["Offset"].toString();
+						QStringList osl = os.split( " " );
+
+						if ( osl.size() == 3 )
+						{
+							offset.x = osl[0].toInt();
+							offset.y = osl[1].toInt();
+							offset.z = osl[2].toInt();
+						}
+						int rotX = offset.x;
+						int rotY = offset.y;
+						switch ( rotation )
+						{
+							case 1:
+								offset.x = -1 * rotY;
+								offset.y = rotX;
+								break;
+							case 2:
+								offset.x = -1 * rotX;
+								offset.y = -1 * rotY;
+								break;
+							case 3:
+								offset.x = rotY;
+								offset.y = -1 * rotX;
+								break;
+						}
+					}
+					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( addSpriteValid, { offset, localRot } ) );
+					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( addSpriteValid, { offset, localRot } ) );
+				}
+				else
+				{
+					QString os      = entry["Offset"].toString();
+					QStringList osl = os.split( " " );
+					Position offset( 0, 0, 0 );
+					if ( osl.size() == 3 )
+					{
+						offset.x = osl[0].toInt();
+						offset.y = osl[1].toInt();
+						offset.z = osl[2].toInt();
+					}
+					int rotX = offset.x;
+					int rotY = offset.y;
+					switch ( rotation )
+					{
+						case 1:
+							offset.x = -1 * rotY;
+							offset.y = rotX;
+							break;
+						case 2:
+							offset.x = -1 * rotX;
+							offset.y = -1 * rotY;
+							break;
+						case 3:
+							offset.x = rotY;
+							offset.y = -1 * rotX;
+							break;
+					}
+					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
+				}
+			}
+			unsigned int tileID = 0;
+			for ( auto p : selection )
+			{
+				if ( p.second )
+				{
+					for ( auto as : sprites )
+					{
+						if ( as.first )
+						{
+							SelectionData sd;
+							sd.spriteID = as.first->uID;
+							sd.localRot = ( ( rotation + as.second.second ) % 4 );
+							sd.pos      = Position( p.first + as.second.first );
+							sd.pos.setToBounds();
+							sd.isFloor = isFloor;
+							sd.valid   = true;
+							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
+						}
+					}
+				}
+				else
+				{
+					for ( auto as : spritesInv )
+					{
+						if ( as.first )
+						{
+							SelectionData sd;
+							sd.spriteID = as.first->uID;
+							sd.localRot = ( ( rotation + as.second.second ) % 4 );
+							sd.pos      = Position( p.first + as.second.first );
+							sd.pos.setToBounds();
+							sd.isFloor = isFloor;
+							sd.valid   = false;
+							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
+						}
+					}
+				}
+			}
+		}
+		bool noDepthTest = ( action == "DigStairsDown" || action == "DigRampDown" );
+
+		emit signalUpdateSelection( m_selectionData, noDepthTest );
+	}
+}
+
+unsigned int AggregatorSelection::posToInt( Position pos, quint8 rotation )
+{
+	//return x + Global::dimX * y + Global::dimX * Global::dimX * z;
+
+	switch ( rotation )
+	{
+		case 0:
+			return pos.toInt();
+			break;
+		case 1:
+			return pos.x + Global::dimX * ( Global::dimX - pos.y ) + Global::dimX * Global::dimX * pos.z;
+			break;
+		case 2:
+			return ( Global::dimX - pos.x ) + Global::dimX * ( Global::dimX - pos.y ) + Global::dimX * Global::dimX * pos.z;
+			break;
+		case 3:
+			return ( Global::dimX - pos.x ) + Global::dimX * pos.y + Global::dimX * Global::dimX * pos.z;
+			break;
+	}
+	return 0;
 }

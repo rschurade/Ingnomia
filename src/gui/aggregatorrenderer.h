@@ -67,7 +67,8 @@ struct SelectionData
 	bool isFloor            = false;
 	quint8 localRot         = 0;
 };
-Q_DECLARE_TYPEINFO( SelectionData, Q_PRIMITIVE_TYPE );
+//Q_DECLARE_TYPEINFO( SelectionData, Q_PRIMITIVE_TYPE );
+Q_DECLARE_METATYPE( SelectionData );
 
 struct ThoughtBubble
 {

@@ -23,7 +23,6 @@
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
-#include "../base/selection.h"
 #include "../base/util.h"
 #include "../base/vptr.h"
 #include "../game/gamemanager.h"
@@ -33,6 +32,7 @@
 #include "../gfx/spritefactory.h"
 #include "eventconnector.h"
 #include "mainwindow.h"
+#include "aggregatorselection.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -74,6 +74,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
 	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
 
+	connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalUpdateSelection, this, &MainWindowRenderer::onUpdateSelection, Qt::QueuedConnection );
 
 	// Full polling of initial state on load
 	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
@@ -520,7 +521,6 @@ void MainWindowRenderer::paintWorld()
 		updateRenderParams();
 	}
 	updateWorld();
-	updateSelection();
 
 	timer.start();
 	updateTextures();
@@ -655,8 +655,7 @@ void MainWindowRenderer::paintTiles()
 void MainWindowRenderer::paintSelection()
 {
 	// TODO this is a workaround until some transparency solution is implemented
-	auto action = Global::sel->action();
-	if( action == "DigStairsDown" || action == "DigRampDown" )
+	if( m_selectionNoDepthTest )
 	{
 		glDisable( GL_DEPTH_TEST );
 	}
@@ -682,7 +681,7 @@ void MainWindowRenderer::paintSelection()
 	}
 
 	m_selectionShader->release();
-	if( action == "DigStairsDown" || action == "DigRampDown" )
+	if( m_selectionNoDepthTest )
 	{
 		glEnable( GL_DEPTH_TEST );
 	}
@@ -858,186 +857,14 @@ void MainWindowRenderer::updateTextures()
 	}
 }
 
-void MainWindowRenderer::updateSelection()
+void MainWindowRenderer::onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest )
 {
-	if ( Global::sel->changed() )
+	m_selectionData.clear();
+	for( const auto& key : data.keys() )
 	{
-		DebugScope s( "update selection" );
-
-		QString action = Global::sel->action();
-		m_selectionData.clear();
-		if ( !action.isEmpty() )
-		{
-			bool isFloor = Global::sel->isFloor();
-
-			QList<QPair<Position, bool>> selection = Global::sel->getSelection();
-
-			QList<QPair<Sprite*, QPair<Position, unsigned char>>> sprites;
-			QList<QPair<Sprite*, QPair<Position, unsigned char>>> spritesInv;
-
-			int rotation = Global::sel->rotation();
-
-			QList<QVariantMap> spriteIDs;
-
-			if ( action == "BuildWall" || action == "BuildFancyWall" || action == "BuildFloor" || action == "BuildFancyFloor" || action == "BuildRamp" || action == "BuildRampCorner" || action == "BuildStairs" )
-			{
-				spriteIDs = DB::selectRows( "Constructions_Sprites", "ID", Global::sel->itemID() );
-			}
-			else if ( action == "BuildWorkshop" )
-			{
-				spriteIDs = DB::selectRows( "Workshops_Components", "ID", Global::sel->itemID() );
-			}
-			else if ( action == "BuildItem" )
-			{
-				QVariantMap sprite;
-				sprite.insert( "SpriteID", DBH::spriteID( Global::sel->itemID() ) );
-				sprite.insert( "Offset", "0 0 0" );
-				sprite.insert( "Type", "Furniture" );
-				sprite.insert( "Material", Global::sel->material() );
-				spriteIDs.push_back( sprite );
-			}
-			else
-			{
-				spriteIDs = DB::selectRows( "Actions_Tiles", "ID", action );
-			}
-			for ( auto asi : spriteIDs )
-			{
-				QVariantMap entry = asi;
-				if ( !entry.value( "SpriteID" ).toString().isEmpty() )
-				{
-					if ( entry.value( "SpriteID" ).toString() == "none" )
-					{
-						continue;
-					}
-					if ( !entry.value( "SpriteIDOverride" ).toString().isEmpty() )
-					{
-						entry.insert( "SpriteID", entry.value( "SpriteIDOverride" ).toString() );
-					}
-
-					// TODO repair rot
-					unsigned char localRot = Global::util->rotString2Char( entry.value( "WallRotation" ).toString() );
-
-					Sprite* addSpriteValid = nullptr;
-
-					QStringList mats;
-					for ( auto mv : entry.value( "Material" ).toList() )
-					{
-						mats.push_back( mv.toString() );
-					}
-
-					if ( entry.contains( "Material" ) )
-					{
-						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), mats );
-					}
-					else
-					{
-						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), { "None" } );
-					}
-					Position offset( 0, 0, 0 );
-					if ( entry.contains( "Offset" ) )
-					{
-						QString os      = entry["Offset"].toString();
-						QStringList osl = os.split( " " );
-
-						if ( osl.size() == 3 )
-						{
-							offset.x = osl[0].toInt();
-							offset.y = osl[1].toInt();
-							offset.z = osl[2].toInt();
-						}
-						int rotX = offset.x;
-						int rotY = offset.y;
-						switch ( rotation )
-						{
-							case 1:
-								offset.x = -1 * rotY;
-								offset.y = rotX;
-								break;
-							case 2:
-								offset.x = -1 * rotX;
-								offset.y = -1 * rotY;
-								break;
-							case 3:
-								offset.x = rotY;
-								offset.y = -1 * rotX;
-								break;
-						}
-					}
-					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( addSpriteValid, { offset, localRot } ) );
-					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( addSpriteValid, { offset, localRot } ) );
-				}
-				else
-				{
-					QString os      = entry["Offset"].toString();
-					QStringList osl = os.split( " " );
-					Position offset( 0, 0, 0 );
-					if ( osl.size() == 3 )
-					{
-						offset.x = osl[0].toInt();
-						offset.y = osl[1].toInt();
-						offset.z = osl[2].toInt();
-					}
-					int rotX = offset.x;
-					int rotY = offset.y;
-					switch ( rotation )
-					{
-						case 1:
-							offset.x = -1 * rotY;
-							offset.y = rotX;
-							break;
-						case 2:
-							offset.x = -1 * rotX;
-							offset.y = -1 * rotY;
-							break;
-						case 3:
-							offset.x = rotY;
-							offset.y = -1 * rotX;
-							break;
-					}
-					sprites.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
-					spritesInv.push_back( QPair<Sprite*, QPair<Position, unsigned char>>( Global::eventConnector->game()->sf()->createSprite( "SolidSelectionFloor", { "None" } ), { offset, 0 } ) );
-				}
-			}
-			unsigned int tileID = 0;
-			for ( auto p : selection )
-			{
-				if ( p.second )
-				{
-					for ( auto as : sprites )
-					{
-						if ( as.first )
-						{
-							SelectionData sd;
-							sd.spriteID = as.first->uID;
-							sd.localRot = ( ( rotation + as.second.second ) % 4 );
-							sd.pos      = Position( p.first + as.second.first );
-							sd.pos.setToBounds();
-							sd.isFloor = isFloor;
-							sd.valid   = true;
-							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
-						}
-					}
-				}
-				else
-				{
-					for ( auto as : spritesInv )
-					{
-						if ( as.first )
-						{
-							SelectionData sd;
-							sd.spriteID = as.first->uID;
-							sd.localRot = ( ( rotation + as.second.second ) % 4 );
-							sd.pos      = Position( p.first + as.second.first );
-							sd.pos.setToBounds();
-							sd.isFloor = isFloor;
-							sd.valid   = false;
-							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
-						}
-					}
-				}
-			}
-		}
+		m_selectionData.insert( key, data[key] );
 	}
+	m_selectionNoDepthTest = noDepthTest;
 }
 
 unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )

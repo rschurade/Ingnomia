@@ -86,7 +86,6 @@ private:
 	void updateTextures();
 	void updateRenderParams();
 
-	void updateSelection();
 	void updatePositionAfterCWRotation( float& x, float& y );
 
 	void createArrayTexture( int unit, int depth );
@@ -137,6 +136,8 @@ private:
 	bool m_reloadShaders = false;
 
 	QMap<unsigned int, SelectionData> m_selectionData;
+	bool m_selectionNoDepthTest = false;
+
 	ThoughtBubbleInfo m_thoughBubbles;
 	AxleDataInfo m_axleData;
 	QVector<QVector<TileDataUpdate>> m_pendingUpdates;
@@ -161,6 +162,8 @@ public slots:
 	void onRenderParamsChanged();
 
 	void onSetInMenu( bool value );
+
+	void onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest );
 
 signals:
 	void redrawRequired();

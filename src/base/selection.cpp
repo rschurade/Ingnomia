@@ -155,6 +155,7 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 			onSecondClick( shift, ctrl );
 			m_firstClicked = false;
 			m_changed      = true;
+			updateSelection( pos, shift, ctrl );
 			return true;
 		}
 		return false;
@@ -168,6 +169,7 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		m_changed      = true;
 		emit signalFirstClick( "" );
 		emit signalSize( "" );
+		updateSelection( pos, shift, ctrl );
 		return true;
 	}
 }

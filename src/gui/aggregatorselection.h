@@ -17,6 +17,8 @@
 */
 #pragma once
 
+#include "aggregatorrenderer.h"
+
 #include "../base/position.h"
 
 #include <QObject>
@@ -31,6 +33,8 @@ public:
 
 private:
 	Position calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const;
+    void updateSelection();
+    unsigned int posToInt( Position pos, quint8 rotation );
 
     int m_width = 0;
     int m_height = 0;
@@ -40,6 +44,8 @@ private:
     int m_rotation = 0;
 
     Position m_cursorPos;
+
+    QMap<unsigned int, SelectionData> m_selectionData;
 
 public slots:
     void onActionChanged( const QString action );
@@ -60,4 +66,6 @@ signals:
     void signalSize( const QString size );
 
     void signalSelectTile( unsigned int );
+
+    void signalUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest );
 };
