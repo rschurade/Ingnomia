@@ -37,9 +37,16 @@ public:
 
 	BT_Node* takeChild()
 	{
-		auto child = m_children.back();
-		m_children.pop_back();
-		return child;
+		if ( m_children.size() )
+		{
+			auto child = m_children.back();
+			m_children.pop_back();
+			return child;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 };
 }
@@ -79,6 +86,7 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QS
 
 				BT_Node* rootNode = dummy.takeChild();
 
+				assert( rootNode );
 				if ( !rootNode )
 				{
 					qCritical() << "failed to create root node for behavior tree " << treeID;
