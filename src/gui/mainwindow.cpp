@@ -77,14 +77,8 @@
 #include <NsGui/IntegrationAPI.h>
 #include <NsRender/GLFactory.h>
 
-#include <QApplication>
-#include <QCoreApplication>
 #include <QDebug>
-#include <QDesktopWidget>
-#include <QFile>
-#include <QImage>
 #include <QKeyEvent>
-#include <QMessageBox>
 #include <QMouseEvent>
 #include <QTimer>
 
