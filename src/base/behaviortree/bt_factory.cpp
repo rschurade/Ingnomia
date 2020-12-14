@@ -87,12 +87,15 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QS
 				BT_Node* rootNode = dummy.takeChild();
 
 				assert( rootNode );
-				if ( !rootNode )
+				if ( rootNode )
+				{
+					getNodes( rootNode, treeRoot, documentRoot, actions, blackboard );
+				}
+				else
 				{
 					qCritical() << "failed to create root node for behavior tree " << treeID;
 				}
 
-				getNodes( rootNode, treeRoot, documentRoot, actions, blackboard );
 				return rootNode;
 			}
 		}
