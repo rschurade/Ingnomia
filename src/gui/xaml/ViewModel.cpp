@@ -309,9 +309,8 @@ void ViewModel::OnBack( BaseComponent* )
 			break;
 		case State::GameRunning:
 			_showMainMenu = true;
-			OnPropertyChanged( "ShowMainMenu" );
 			_showGameGUI = false;
-			OnPropertyChanged( "ShowGameGui" );
+			_ingame = true;
 			SetState( State::Ingame );
 			m_proxy->setShowMainMenu( true );
 			break;
@@ -328,18 +327,15 @@ void ViewModel::OnBack( BaseComponent* )
 			}
 			_showMainMenu = true;
 			_showGameGUI  = false;
-			OnPropertyChanged( "ShowMainMenu" );
-			OnPropertyChanged( "ShowGameGui" );
 			m_proxy->setShowMainMenu( true );
 			break;
 		case State::Start:
 		case State::Ingame:
 		{
+			qDebug() << "ViewModel OnBack 4";
 			_showMainMenu = false;
 			_ingame       = false;
-			OnPropertyChanged( "ShowMainMenu" );
 			_showGameGUI = true;
-			OnPropertyChanged( "ShowGameGui" );
 			m_proxy->setShowMainMenu( false );
 			SetState( State::GameRunning );
 			break;
@@ -348,6 +344,8 @@ void ViewModel::OnBack( BaseComponent* )
 		default:
 			break;
 	}
+	OnPropertyChanged( "ShowMainMenu" );
+	OnPropertyChanged( "ShowGameGui" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
