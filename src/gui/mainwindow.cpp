@@ -174,7 +174,7 @@ void MainWindow::onFullScreen( bool value )
 		w->showNormal();
 	}
 	m_renderer->onRenderParamsChanged();
-	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
 void MainWindow::keyPressEvent( QKeyEvent* event )
@@ -225,7 +225,6 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 					emit signalUpdateRenderOptions();
 				}
 				m_renderer->onRenderParamsChanged();
-				emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 				break;
 			case Qt::Key_F:
 				//toggleFullScreen();
@@ -267,6 +266,8 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				redraw();
 				break;
 		}
+		emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+		emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 	}
 }
 
@@ -302,6 +303,8 @@ void MainWindow::keyReleaseEvent( QKeyEvent* event )
 			redraw();
 			break;
 	}
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 }
 
 bool MainWindow::isOverGui( int x, int y )
@@ -340,6 +343,7 @@ void MainWindow::keyboardMove()
 		}
 
 		m_renderer->move( moveX, moveY );
+		emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	}
 }
 
@@ -370,7 +374,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 				m_moveX = gp.x();
 				m_moveY = gp.y();
 			}
-			emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+			emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 		}
 		else
 		{
@@ -395,7 +399,7 @@ void MainWindow::onInitViewAfterLoad()
 	m_renderer->move( m_moveX, m_moveY );
 	
 	m_renderer->setScale( GameState::scale );
-	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
 void MainWindow::mousePressEvent( QMouseEvent* event )
@@ -525,7 +529,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 				}
 			}
 		}
-		emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+		emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	}
 }
 
@@ -554,7 +558,7 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	GameState::viewLevel = qMax( 0, qMin( dimZ, GameState::viewLevel ) );
 
 	m_renderer->onRenderParamsChanged();
-	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	emit signalViewLevel( GameState::viewLevel );
 
 	emit signalMouse( m_mouseX, m_mouseY, shift, ctrl );
@@ -569,7 +573,7 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 
 	m_renderer->onRenderParamsChanged();
 	emit signalViewLevel( GameState::viewLevel );
-	emit emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
+	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 	emit signalMouse( m_mouseX, m_mouseY, shift, ctrl );
 	redraw();
 }
