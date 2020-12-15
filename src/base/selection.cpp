@@ -887,3 +887,9 @@ bool Selection::changed()
 	m_changed = false;
 	return out;
 }
+
+void Selection::updateGui()
+{
+	emit signalActionChanged( "" );
+	emit signalSize( "" );
+}

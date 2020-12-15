@@ -155,6 +155,7 @@ public:
 	}
 
 	bool changed();
+	void updateGui();
 
 signals:
 	void signalActionChanged( const QString action );

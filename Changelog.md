@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - moved cursor calculation to game thread
+- cursor detached from selection when using WASD
+- going back to resume screen when selecting settings out of a running game
 
 ### Added
 

@@ -332,7 +332,6 @@ void ViewModel::OnBack( BaseComponent* )
 		case State::Start:
 		case State::Ingame:
 		{
-			qDebug() << "ViewModel OnBack 4";
 			_showMainMenu = false;
 			_ingame       = false;
 			_showGameGUI = true;
