@@ -162,7 +162,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	}
 	if( info.equipment.rightHandHeld.itemID )
 	{
-		m_bitmapRHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "RighthandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+		m_bitmapRHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "RightHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 	}
 	//m_bitmapBack = createUniformImg( "Back", info.uniform );
 	//m_bitmapNeck = createUniformImg( "", info.uniform );
