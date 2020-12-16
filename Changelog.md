@@ -7,8 +7,10 @@ All notable changes to this project will be documented in this file.
 - moved cursor calculation to game thread
 - cursor detached from selection when using WASD
 - going back to resume screen when selecting settings out of a running game
+- container capacity on stockpiles after load
 
 ### Added
+- capacity infor for stockpile tiles on tile info
 
 ### Changed
 

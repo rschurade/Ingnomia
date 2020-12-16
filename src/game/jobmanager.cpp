@@ -130,7 +130,6 @@ void JobManager::onTick()
 		{
 			if ( requiredItemsAvail( jobID ) )
 			{
-				qDebug() << job.type() << job.priority() << job.id();
 				m_jobsPerType[job.type()].insert( job.priority(), job.id() );
 			}
 			else

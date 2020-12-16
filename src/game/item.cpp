@@ -63,7 +63,8 @@ Item::Item( QVariantMap in ) :
 	m_position = Position( in.value( "Position" ).toString() );
 	m_spriteID = in.value( "SpriteID" ).toUInt();
 	*/
-	m_itemUID       = DBH::itemUID( in.value( "ItemSID" ).toString() );
+	QString itemSID = in.value( "ItemSID" ).toString();
+	m_itemUID       = DBH::itemUID( itemSID );
 	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString() );
 	m_isInStockpile = in.value( "InStockpile" ).toUInt();
 	m_isInJob       = in.value( "InJob" ).toUInt();
@@ -113,8 +114,8 @@ Item::Item( QVariantMap in ) :
 		{
 			m_extraData = new ItemExtraData;
 		}
-		m_extraData->capacity    = DB::select( "Capacity", "Containers", m_itemUID ).value<unsigned char>();
-		m_extraData->requireSame = DB::select( "RequireSame", "Containers", m_itemUID ).toBool();
+		m_extraData->capacity    = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
+		m_extraData->requireSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
 	}
 }
 

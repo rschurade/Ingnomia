@@ -17,6 +17,7 @@
 */
 #include "stockpile.h"
 
+#include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
@@ -118,6 +119,9 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		if ( infi->containerID )
 		{
 			infi->requireSame = g->inv()->requireSame( infi->containerID );
+			//repair capacity
+			infi->capacity = DB::select( "Capacity", "Containers", g->inv()->itemSID( infi->containerID ) ).value<unsigned char>(); 
+
 		}
 
 		m_fields.insert( infi->pos.toInt(), infi );
@@ -916,6 +920,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 			field->requireSame = g->inv()->requireSame( containerID );
 
 			field->capacity = g->inv()->capacity( containerID );
+
 			g->inv()->setConstructedOrEquipped( containerID, true );
 
 			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
