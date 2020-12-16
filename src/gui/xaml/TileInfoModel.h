@@ -259,6 +259,7 @@ private:
 	bool m_hasAlarmBell        = false;
 	Noesis::String m_beds;
 	bool m_alarm = false;
+	Noesis::String m_roomValue;
 
 	Noesis::String m_capacity;
 	Noesis::String m_itemCount;

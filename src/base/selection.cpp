@@ -59,6 +59,7 @@ Selection::Selection( Game* game ) :
 	m_reqMap.insert( "Stockpile", SEL_STOCKPILE );
 	m_reqMap.insert( "Room", SEL_ROOM );
 	m_reqMap.insert( "AllowBell", SEL_ALLOW_BELL );
+	m_reqMap.insert( "AllowFurniture", SEL_ALLOW_FURNITURE );
 	m_reqMap.insert( "Pasture", SEL_PASTURE );
 	m_reqMap.insert( "Walkable", SEL_WALKABLE );
 	m_reqMap.insert( "Mechanism", SEL_MECHANISM );
@@ -444,6 +445,10 @@ bool Selection::testTileForJobSelection( const Position& pos )
 					if ( !( tile->flags & TileFlag::TF_ROOM ) || !g->rm()->allowBell( testPos ) )
 						return false;
 					break;
+				case SEL_ALLOW_FURNITURE:
+					if ( ( tile->flags & ( TileFlag::TF_STOCKPILE + TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_NOPASS ) ) )
+						return false;
+					break;
 				case SEL_PASTURE:
 					if ( !( tile->flags & TileFlag::TF_PASTURE ) )
 						return false;
@@ -570,6 +575,9 @@ bool Selection::testTileForJobSelection( const Position& pos )
 					if ( tile->flags & TileFlag::TF_ROOM )
 						return false;
 					break;
+				case SEL_PASTURE:
+					if ( tile->flags & TileFlag::TF_PASTURE )
+						return false;
 				case SEL_STAIRS:
 					if ( (bool)( tile->wallType & WallType::WT_STAIR ) )
 						return false;

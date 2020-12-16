@@ -85,6 +85,7 @@ struct GuiTileInfo
 	bool hasRoof      = false;
 	QString beds;
 	bool alarm = false;
+	unsigned int roomValue = 0;
 };
 
 Q_DECLARE_METATYPE( GuiTileInfo )

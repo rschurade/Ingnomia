@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - capacity info for stockpile tiles on tile info
 
 ### Changed
+- furniture can now be constructed anywhere and won't get deconstructed when a room designation underneath is removed
 
 ### Removed
 

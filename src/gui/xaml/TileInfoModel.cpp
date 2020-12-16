@@ -235,6 +235,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 			m_hasAlarmBell = tileInfo.hasAlarmBell;
 			m_beds         = tileInfo.beds.toStdString().c_str();
 			m_alarm        = tileInfo.alarm;
+			m_roomValue	   = QString::number( tileInfo.roomValue ).toStdString().c_str();
 		}
 	}
 	else
@@ -652,7 +653,7 @@ const char* TileInfoModel::GetVisAlarm() const
 
 const char* TileInfoModel::GetRoomValue() const
 {
-	return "0";
+	return m_roomValue.Str();
 }
 
 const char* TileInfoModel::GetBeds() const

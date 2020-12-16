@@ -316,6 +316,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					m_tileInfo.hasRoof      = ro->roofed();
 					m_tileInfo.hasAlarmBell = ro->hasAlarmBell();
 					m_tileInfo.alarm        = GameState::alarm;
+					m_tileInfo.roomValue    = ro->value();              
 
 					QList<unsigned int> beds = ro->beds();
 					int countFree            = beds.size();

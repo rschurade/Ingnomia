@@ -321,6 +321,8 @@ public:
 
 	QString getDebugWallConstruction( Position pos );
 	QString getDebugFloorConstruction( Position pos );
+
+	unsigned int getFurnitureOnTile( Position pos );
 };
 
 #endif /* WORLD_H_ */

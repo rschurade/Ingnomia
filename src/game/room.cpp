@@ -66,6 +66,7 @@ void Room::addTile( const Position & pos )
 {
 	RoomTile* rt = new RoomTile;
 	rt->pos      = pos;
+	rt->furnitureID = g->w()->getFurnitureOnTile( pos );
 
 	m_fields.insert( pos.toInt(), rt );
 
@@ -132,18 +133,12 @@ void Room::onTick( quint64 tick )
 bool Room::removeTile( const Position & pos )
 {
 	RoomTile* rt   = m_fields.value( pos.toInt() );
-	// unconstruct furniture on tile
-	unsigned int itemID = 0;
-	if ( rt->furnitureID != 0 )
-	{
-		itemID = rt->furnitureID;
-		g->inv()->setConstructedOrEquipped( rt->furnitureID, false );
-	}
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
 	g->w()->clearTileFlag( pos, TileFlag::TF_ROOM );
 	delete rt;
 
+	unsigned int itemID = rt->furnitureID;
 	if ( itemID )
 	{
 		if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
@@ -366,4 +361,17 @@ Position Room::randomTilePos() const
 		}
 	}
 	return Position();
+}
+
+unsigned int Room::value()
+{
+	unsigned int out = 0;
+	for ( const auto& f : m_fields )
+	{
+		if ( f->furnitureID )
+		{
+			out += g->inv()->value( f->furnitureID );
+		}
+	}
+	return out;
 }

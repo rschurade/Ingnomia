@@ -91,6 +91,8 @@ public:
 		return m_enclosed;
 	}
 
+	unsigned int value();
+
 	void setOwner( unsigned int id )
 	{
 		m_owner = id;

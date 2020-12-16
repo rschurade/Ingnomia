@@ -410,6 +410,19 @@ QString World::getDebugWallConstruction( Position pos )
 	return "no construction";
 }
 
+unsigned int World::getFurnitureOnTile( Position pos )
+{
+	if ( m_wallConstructions.contains( pos.toInt() ) )
+	{
+		auto wc = m_wallConstructions.value( pos.toInt() );
+		if( wc.value( "Type").toString() == "Furniture" )
+		{
+			return wc.value( "Item" ).toUInt();
+		}
+	}
+	return 0;
+}
+
 QString World::getDebugFloorConstruction( Position pos )
 {
 	if ( m_floorConstructions.contains( pos.toInt() ) )
