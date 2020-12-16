@@ -577,6 +577,10 @@ void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 {
 	m_miniStockpileName = info.name.toStdString().c_str();
 
+	m_capacity = ( "Capacity: " + QString::number( info.capacity ) ).toStdString().c_str();
+	m_itemCount = ( "Used: " + QString::number( info.itemCount ).toStdString() ).c_str();
+	m_reserved = ( "Reserved: " + QString::number( info.reserved ).toStdString() ).c_str();
+
 	_miniSPContents->Clear();
 
 	for ( auto is : info.summary )
@@ -586,6 +590,9 @@ void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 
 	OnPropertyChanged( "MiniStockpileName" );
 	OnPropertyChanged( "MiniStockpileContents" );
+	OnPropertyChanged( "Capacity" );
+	OnPropertyChanged( "ItemCount" );
+	OnPropertyChanged( "Reserved" );
 }
 
 Noesis::ObservableCollection<IngnomiaGUI::TabItem>* TileInfoModel::getMiniSPContents() const
@@ -685,6 +692,21 @@ void TileInfoModel::SetAlarm( bool value )
 	}
 }
 
+const char* TileInfoModel::GetCapacity() const
+{
+	return m_capacity.Str();
+}
+	
+const char* TileInfoModel::GetItemCount() const
+{
+	return m_itemCount.Str();
+}
+
+const char* TileInfoModel::GetReserved() const
+{
+	return m_reserved.Str();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -721,6 +743,9 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 
 	NsProp( "MiniStockpileName", &TileInfoModel::GetMiniSPName );
 	NsProp( "MiniStockpileContents", &TileInfoModel::getMiniSPContents );
+	NsProp( "Capacity", &TileInfoModel::GetCapacity );
+	NsProp( "ItemCount", &TileInfoModel::GetItemCount );
+	NsProp( "Reserved", &TileInfoModel::GetReserved );
 
 	NsProp( "PossibleTennants", &TileInfoModel::getPossibleTennants );
 	NsProp( "Tennant", &TileInfoModel::GetTennant, &TileInfoModel::SetTennant );

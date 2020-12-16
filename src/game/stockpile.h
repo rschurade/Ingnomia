@@ -151,6 +151,11 @@ public:
 
 	void setInfiNotFull( Position pos );
 
+	int capacity( unsigned int tileID );
+	int itemCount( unsigned int tileID );
+	int reserved( unsigned int tileID );
+
+
 private:
 	bool m_pullOthers = false;
 	bool m_allowPull  = false;

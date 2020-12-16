@@ -1280,7 +1280,7 @@ bool Workshop::outputTileFree()
 	Position pos = outputPos();
 	//TODO make number configurable
 
-	bool isFree = g->inv()->countItemsAtPos( pos ) < 40;
+	bool isFree = g->inv()->countItemsAtPos( pos ) < 20;
 
 	if ( !isFree )
 	{

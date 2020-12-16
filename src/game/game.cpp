@@ -122,6 +122,8 @@ Game::~Game()
 
 void Game::generateWorld( NewGameSettings* ngs )
 {
+	m_inv->loadFilter();
+
 	WorldGenerator wg( ngs, this );
 	connect( &wg, &WorldGenerator::signalStatus, dynamic_cast<GameManager*>( parent() ), &GameManager::onGeneratorMessage );
 	m_world.reset( wg.generateTopology() );	

@@ -34,9 +34,11 @@ struct GuiTICreatureInfo
 struct GuiItemInfo
 {
 	QString text;
-	unsigned int id;
+	unsigned int id = 0;
 	QString material;
-	unsigned int count;
+	unsigned int count = 0;
+	bool inStockpile = false;
+	bool inContainer = false;
 };
 
 struct GuiTileInfo

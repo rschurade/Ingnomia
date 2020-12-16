@@ -305,6 +305,16 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	{
 		obj.setSpriteID( sprite->uID );
 	}
+
+	if ( !m_octrees.contains( baseItem ) )
+	{
+		int x = Global::dimX / 2;
+		int y = Global::dimY / 2;
+		int z = Global::dimZ / 2;
+		m_octrees[baseItem].insert( material, new Octree( x, y, z, x, y, z ) );
+	}
+
+
 	addObject( obj, baseItem, material );
 
 	return obj.id();

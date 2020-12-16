@@ -77,6 +77,12 @@
 						<StackPanel Orientation="Horizontal">
 							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{StaticResource TileInfo_Stockpile}" />
 							<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding MiniStockpileName}" />
+						</StackPanel>
+						<StackPanel>
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="This tile:" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding Capacity}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding ItemCount}" />
+							<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding Reserved}" />
 							<Button Content="{StaticResource TileInfo_Manage}" Margin="2" Command="{Binding CmdManage }" />
 						</StackPanel>
 						<ScrollViewer VerticalScrollBarVisibility="Auto">

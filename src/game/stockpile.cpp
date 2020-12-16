@@ -1209,3 +1209,39 @@ bool Stockpile::limitWithMaterial()
 {
 	return m_limitWithmaterial;
 }
+
+int Stockpile::capacity( unsigned int tileID )
+{
+	if ( m_fields.contains( tileID ) )
+	{
+
+		InventoryField* field = m_fields.value( tileID );
+		return field->capacity;
+		
+	}
+	return 0;
+}
+
+int Stockpile::itemCount( unsigned int tileID )
+{
+	if ( m_fields.contains( tileID ) )
+	{
+
+		InventoryField* field = m_fields.value( tileID );
+		return field->items.size();
+		
+	}
+	return 0;
+}
+
+int Stockpile::reserved( unsigned int tileID )
+{
+	if ( m_fields.contains( tileID ) )
+	{
+
+		InventoryField* field = m_fields.value( tileID );
+		return field->reservedItems.size();
+		
+	}
+	return 0;
+}

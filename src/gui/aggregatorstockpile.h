@@ -42,6 +42,9 @@ struct GuiStockpileInfo
 	bool suspended         = false;
 	bool allowPullFromHere = false;
 	bool pullFromOthers    = false;
+	int capacity           = 0;
+	int itemCount          = 0;
+	int reserved           = 0;
 
 	Filter filter;
 

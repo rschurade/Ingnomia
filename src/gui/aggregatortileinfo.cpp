@@ -143,7 +143,22 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			Counter<QString> counter;
 			for ( auto item : pe )
 			{
-				counter.add( S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) ) );
+				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
+				info += "(";
+				if( g->inv()->isConstructedOrEquipped( item ) )
+				{
+					info += "b";
+				}
+				if( g->inv()->isInStockpile( item ) )
+				{
+					info += "s";
+				}
+				if( g->inv()->isInContainer( item ) )
+				{
+					info += "c";
+				}
+				info += ")";
+				counter.add( info );
 			}
 			for ( auto key : counter.keys() )
 			{
@@ -349,6 +364,9 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 		m_spInfo.suspended         = !sp->active();
 		m_spInfo.allowPullFromHere = sp->allowsPull();
 		m_spInfo.pullFromOthers    = sp->pullsOthers();
+		m_spInfo.capacity          = sp->capacity( tileID );
+		m_spInfo.itemCount         = sp->itemCount( tileID );
+		m_spInfo.reserved          = sp->reserved( tileID );
 
 		m_spInfo.filter = sp->filter();
 

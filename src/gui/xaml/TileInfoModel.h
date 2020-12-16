@@ -260,6 +260,10 @@ private:
 	Noesis::String m_beds;
 	bool m_alarm = false;
 
+	Noesis::String m_capacity;
+	Noesis::String m_itemCount;
+	Noesis::String m_reserved;
+
 	TileInfoMode _mode = TileInfoMode::Terrain;
 
 	struct
@@ -296,6 +300,10 @@ private:
 	const char* GetBeds() const;
 	const char* GetEnclosed() const;
 	const char* GetRoofed() const;
+
+	const char* GetCapacity() const;
+	const char* GetItemCount() const;
+	const char* GetReserved() const;
 
 	bool GetAlarm() const;
 	void SetAlarm( bool value );
