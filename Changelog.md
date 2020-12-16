@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - container capacity on stockpiles after load
 
 ### Added
-- capacity infor for stockpile tiles on tile info
+- capacity info for stockpile tiles on tile info
 
 ### Changed
 

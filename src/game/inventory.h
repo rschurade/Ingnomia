@@ -206,6 +206,8 @@ private:
 
 	QPointer<ItemHistory> m_itemHistory;
 
+	Octree* octree( const QString& itemSID, const QString& materialSID );
+
 	int m_dimX;
 	int m_dimY;
 	int m_dimZ;

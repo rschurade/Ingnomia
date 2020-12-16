@@ -306,24 +306,29 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 		obj.setSpriteID( sprite->uID );
 	}
 
-	if ( !m_octrees.contains( baseItem ) )
+	addObject( obj, baseItem, material );
+
+	return obj.id();
+}
+
+Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
+{
+	if ( !m_octrees.contains( itemSID ) || !m_octrees[itemSID].contains( materialSID ) )
 	{
 		int x = Global::dimX / 2;
 		int y = Global::dimY / 2;
 		int z = Global::dimZ / 2;
-		m_octrees[baseItem].insert( material, new Octree( x, y, z, x, y, z ) );
+		m_octrees[itemSID].insert( materialSID, new Octree( x, y, z, x, y, z ) );
 	}
-
-
-	addObject( obj, baseItem, material );
-
-	return obj.id();
+	return m_octrees[itemSID][materialSID];
 }
 
 void Inventory::addObject( Item& object, const QString& itemID, const QString& materialID )
 {
 	m_items.insert( object.id(), object );
 	Item* item = getItem( object.id() );
+
+	Octree* ot = octree( itemID, materialID );
 
 	if ( !item->isPickedUp() )
 	{
@@ -339,30 +344,8 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		}
 
 		Position pos = item->getPos();
-		if ( m_octrees.contains( itemID ) )
-		{
-			if ( m_octrees[itemID].contains( materialID ) )
-			{
-				m_octrees[itemID][materialID]->insertItem( pos.x, pos.y, pos.z, item->id() );
-			}
-			else
-			{
-				int x = Global::dimX / 2;
-				int y = Global::dimY / 2;
-				int z = Global::dimZ / 2;
-				m_octrees[itemID].insert( materialID, new Octree( x, y, z, x, y, z ) );
-				m_octrees[itemID][materialID]->insertItem( pos.x, pos.y, pos.z, item->id() );
-			}
-		}
-		else
-		{
-			int x = Global::dimX / 2;
-			int y = Global::dimY / 2;
-			int z = Global::dimZ / 2;
-			m_octrees[itemID].insert( materialID, new Octree( x, y, z, x, y, z ) );
-			m_octrees[itemID][materialID]->insertItem( pos.x, pos.y, pos.z, item->id() );
-		}
-
+		ot->insertItem( pos.x, pos.y, pos.z, item->id() );
+		
 		if ( !item->isConstructedOrEquipped() && !item->isInContainer() )
 		{
 			g->m_world->setItemSprite( item->getPos(), object.spriteID() );
@@ -428,13 +411,8 @@ void Inventory::destroyObject( unsigned int id )
 			QString itemSID     = DBH::id( "Items", item->itemUID() );
 
 			Position pos = item->getPos();
-			if( m_octrees.contains( itemSID ) )
-			{
-				if( m_octrees[itemSID].contains( materialSID ) )
-				{
-					m_octrees[itemSID][materialSID]->removeItem( pos.x, pos.y, pos.z, id );
-				}
-			}
+			Octree* ot = octree( itemSID, materialSID );
+			ot->removeItem( pos.x, pos.y, pos.z, id );
 			
 			m_hash[itemSID][materialSID].remove( id );
 
@@ -552,25 +530,21 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 		}
 		return true;
 	};
-
-	if ( m_octrees.contains( itemSID ) )
+	
+	if ( materialSID == "any" )
 	{
-		if ( materialSID == "any" )
+		for ( auto material : m_octrees[itemSID].keys() )
 		{
-			for ( auto materials : m_octrees[itemSID].keys() )
-			{
-				m_octrees[itemSID][materials]->visit( pos.x, pos.y, pos.z, predicate );
-				if ( thisCount >= count )
-					break;
-			}
+			Octree* ot = octree( itemSID, material );
+			ot->visit( pos.x, pos.y, pos.z, predicate );
+			if ( thisCount >= count )
+				break;
 		}
-		else
-		{
-			if ( m_octrees[itemSID].contains( materialSID ) )
-			{
-				m_octrees[itemSID][materialSID]->visit( pos.x, pos.y, pos.z, predicate );
-			}
-		}
+	}
+	else
+	{
+		Octree* ot = octree( itemSID, materialSID );
+		ot->visit( pos.x, pos.y, pos.z, predicate );
 	}
 
 	return thisCount >= count;
@@ -647,32 +621,18 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 		return true;
 	};
 
-	if ( m_octrees.contains( itemSID ) )
+	if ( materialSID == "any" )
 	{
-		if ( materialSID == "any" )
+		for ( auto material : m_octrees[itemSID].keys() )
 		{
-			for ( auto materials : m_octrees[itemSID].keys() )
-			{
-				if( m_octrees.contains( itemSID ) )
-				{
-					if( m_octrees[itemSID].contains( materials ) )
-					{
-						m_octrees[itemSID][materials]->visit( pos.x, pos.y, pos.z, predicate );
-					}
-				}
-				
-			}
+			Octree* ot = octree( itemSID, material );
+			ot->visit( pos.x, pos.y, pos.z, predicate );
 		}
-		else
-		{
-			if( m_octrees.contains( itemSID ) )
-			{
-				if ( m_octrees[itemSID].contains( materialSID ) )
-				{
-					m_octrees[itemSID][materialSID]->visit( pos.x, pos.y, pos.z, predicate );
-				}
-			}
-		}
+	}
+	else
+	{
+		Octree* ot = octree( itemSID, materialSID );
+		ot->visit( pos.x, pos.y, pos.z, predicate );
 	}
 
 	return out;
@@ -705,22 +665,18 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 		itemSID     = filterItem.first;
 		materialSID = filterItem.second;
 
-		if ( m_octrees.contains( itemSID ) )
+		if ( materialSID == "any" )
 		{
-			if ( materialSID == "any" )
+			for ( auto material : m_octrees[itemSID].keys() )
 			{
-				for ( auto materials : m_octrees[itemSID].keys() )
-				{
-					items.append( m_octrees[itemSID][materials]->query( pos.x, pos.y, pos.z ) );
-				}
+				Octree* ot = octree( itemSID, material );
+				items += ot->query( pos.x, pos.y, pos.z );
 			}
-			else
-			{
-				if ( m_octrees[itemSID].contains( materialSID ) )
-				{
-					items = m_octrees[itemSID][materialSID]->query( pos.x, pos.y, pos.z );
-				}
-			}
+		}
+		else
+		{
+			Octree* ot = octree( itemSID, materialSID );
+			items += ot->query( pos.x, pos.y, pos.z );
 		}
 
 		for ( auto itemID : items )
@@ -867,31 +823,8 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 			m_positionHash.remove( pos.toInt() );
 		}
 
-
-		if( m_octrees.contains( item->itemSID() ) )
-		{
-			if( m_octrees[item->itemSID()].contains( item->materialSID() ) )
-			{
-				auto octree = m_octrees[item->itemSID()][item->materialSID()];
-				if ( octree )
-				{
-					octree->removeItem( pos.x, pos.y, pos.z, item->id() );
-				}
-				else
-				{
-					qDebug() << "!!! pickupitem octree for " << item->itemSID() << item->materialSID() << "doesn't exist!!!";
-				}
-			}
-			else
-			{
-				qDebug() << "!!! pickupitem octree for " << item->itemSID() << item->materialSID() << "doesn't exist!!!";
-			}
-		}
-		else
-		{
-			qDebug() << "!!! pickupitem octree for " << item->itemSID() << item->materialSID() << "doesn't exist!!!";
-		}
-
+		Octree* ot = octree( item->itemSID(), item->materialSID() );
+		ot->removeItem( pos.x, pos.y, pos.z, item->id() );
 
 		if ( item->isContainer() )
 		{
@@ -904,18 +837,9 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 					QString inItemSID = inItem->itemSID();
 					QString inMatSID  = inItem->materialSID();
 
-					if( m_octrees.contains( inItemSID ) )
-					{
-						if( m_octrees[inItemSID].contains( inMatSID ) )
-						{
-							auto octree       = m_octrees[inItemSID][inMatSID];
-							if ( octree )
-							{
-								octree->removeItem( pos.x, pos.y, pos.z, inItemID );
-								m_positionHash[pos.toInt()].remove( inItemID );
-							}
-						}
-					}
+					Octree* ot = octree( inItemSID, inMatSID );
+					ot->removeItem( pos.x, pos.y, pos.z, inItemID );
+					m_positionHash[pos.toInt()].remove( inItemID );
 				}
 			}
 		}
@@ -953,21 +877,9 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 			m_positionHash.insert( newPos.toInt(), entry );
 		}
 
-		if( m_octrees.contains( item->itemSID() ) )
-		{
-			if( m_octrees[item->itemSID()].contains( item->materialSID() ) )
-			{
-				auto octree = m_octrees[item->itemSID()][item->materialSID()];
-				if ( octree )
-				{
-					octree->insertItem( newPos.x, newPos.y, newPos.z, item->id() );
-				}
-				else
-				{
-					qDebug() << "!!! putdownitem octree for " << item->itemSID() << item->materialSID() << "doesn't exist!!!";
-				}
-			}
-		}
+		Octree* ot = octree( item->itemSID(), item->materialSID() );
+		ot->insertItem( newPos.x, newPos.y, newPos.z, item->id() );
+			
 		if ( item->isContainer() )
 		{
 			for ( auto inItemID : item->containedItems() )
