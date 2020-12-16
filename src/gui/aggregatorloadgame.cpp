@@ -65,27 +65,34 @@ void AggregatorLoadGame::onRequestKingdoms()
 		}
 		if ( !gdirs.empty() )
 		{
-			QString gdir = gdirs.last();
-
-			QJsonDocument jd;
-			IO::loadFile( gdir + "/game.json", jd );
-
-			if ( jd.isArray() )
+			for( int i = gdirs.size() - 1; i >= 0; --i )
 			{
-				QJsonArray ja = jd.array();
+				QString gdir = gdirs[i];
+			
+				QJsonDocument jd;
+				IO::loadFile( gdir + "/game.json", jd );
 
-				QVariantMap vm = ja.toVariantList().first().toMap();
+				if ( jd.isArray() )
+				{
+					QJsonArray ja = jd.array();
+					auto vl = ja.toVariantList();
+					if( vl.size() > 0 )
+					{
+						QVariantMap vm = vl.first().toMap();
 
-				QFile file( gdir + "/game.json" );
-				QFileInfo fi( file );
+						QFile file( gdir + "/game.json" );
+						QFileInfo fi( file );
 
-				GuiSaveInfo gsk;
-				gsk.folder  = kingdomFolder;
-				gsk.name    = vm.value( "kingdomName" ).toString();
-				gsk.version = vm.value( "Version" ).toString();
-				gsk.date    = fi.lastModified().toString();
+						GuiSaveInfo gsk;
+						gsk.folder  = kingdomFolder;
+						gsk.name    = vm.value( "kingdomName" ).toString();
+						gsk.version = vm.value( "Version" ).toString();
+						gsk.date    = fi.lastModified().toString();
 
-				m_kingdomList.append( gsk );
+						m_kingdomList.append( gsk );
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -112,25 +119,33 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 
 		QJsonDocument jd;
 		IO::loadFile( gsi.folder + "/game.json", jd );
-		QJsonArray ja  = jd.array();
-		QVariantMap vm = ja.toVariantList().first().toMap();
 
-		gsi.version    = IO::versionString( gsi.folder );
-		gsi.compatible = true;
-
-		if ( !IO::saveCompatible( gsi.folder ) )
+		if( jd.isArray() )
 		{
-			gsi.version += " - not compatible - sorry broke save games again";
-			gsi.compatible = false;
+			QJsonArray ja  = jd.array();
+			auto vl = ja.toVariantList();
+			if( vl.size() > 0 )
+			{
+				QVariantMap vm = vl.first().toMap();
+
+				gsi.version    = IO::versionString( gsi.folder );
+				gsi.compatible = true;
+
+				if ( !IO::saveCompatible( gsi.folder ) )
+				{
+					gsi.version += " - not compatible - sorry broke save games again";
+					gsi.compatible = false;
+				}
+
+				gsi.name = vm.value( "kingdomName" ).toString();
+
+				QFile file( gsi.folder + "/game.json" );
+				QFileInfo fi( file );
+				gsi.date = fi.lastModified().toString();
+
+				m_gameList.append( gsi );
+			}
 		}
-
-		gsi.name = vm.value( "kingdomName" ).toString();
-
-		QFile file( gsi.folder + "/game.json" );
-		QFileInfo fi( file );
-		gsi.date = fi.lastModified().toString();
-
-		m_gameList.append( gsi );
 	}
 
 	emit signalSaveGames( m_gameList );

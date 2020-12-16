@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - cursor detached from selection when using WASD
 - going back to resume screen when selecting settings out of a running game
 - container capacity on stockpiles after load
+- crash with incorrect data in save folders
 
 ### Added
 - capacity info for stockpile tiles on tile info
