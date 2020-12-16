@@ -235,6 +235,8 @@ private:
 	bool GetPullOthers() const;
 	void SetPullOthers( bool value );
 
+	void setBasicOptions();
+
 	Noesis::ObservableCollection<SpPriority>* GetPrios() const;
 	void SetSelectedPriority( SpPriority* prio );
 	SpPriority* GetSelectedPriority() const;
@@ -251,6 +253,7 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<GuiLimitItem>> m_limitItems;
 
 	StockpileProxy* m_proxy = nullptr;
+	bool m_blockSignals = false;
 
 	unsigned int m_stockpileID = 0;
 	Noesis::String m_name      = "-Stockpile-";

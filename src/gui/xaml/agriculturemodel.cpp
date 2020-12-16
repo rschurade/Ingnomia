@@ -357,6 +357,7 @@ void AgricultureModel::updateGlobalTreeInfo( const QList<GuiPlant>& info )
 
 void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QString name, QString product, int priority, int maxPriority, bool suspended )
 {
+	m_blockSignals = true;
 	bool isSame = ( m_id == ID );
 	m_id        = ID;
 	m_type      = type;
@@ -421,6 +422,7 @@ void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QStri
 
 		OnPropertyChanged( "ShowManageWindow" );
 	}
+	m_blockSignals = false;
 }
 
 void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
@@ -579,6 +581,14 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	OnPropertyChanged( "Title" );
 }
 
+void AgricultureModel::setBasicOptions()
+{
+	if( !m_blockSignals )
+	{
+		m_proxy->setBasicOptions( m_id, m_name.Str(), m_prios->IndexOf( m_selectedPrio ), m_suspended );
+	}
+}
+
 const char* AgricultureModel::GetName() const
 {
 	return m_name.Str();
@@ -592,7 +602,7 @@ const char* AgricultureModel::GetTitle() const
 void AgricultureModel::SetName( const char* value )
 {
 	m_name = value;
-	m_proxy->setBasicOptions( m_id, m_name.Str(), m_prios->IndexOf( m_selectedPrio ), m_suspended );
+	setBasicOptions();
 	OnPropertyChanged( "Name" );
 }
 
@@ -606,7 +616,7 @@ void AgricultureModel::SetSuspended( bool value )
 	if ( m_suspended != value )
 	{
 		m_suspended = value;
-		m_proxy->setBasicOptions( m_id, m_name.Str(), m_prios->IndexOf( m_selectedPrio ), m_suspended );
+		setBasicOptions();
 		OnPropertyChanged( "Suspended" );
 	}
 }
@@ -708,14 +718,12 @@ Noesis::ObservableCollection<AcPriority>* AgricultureModel::GetPrios() const
 
 void AgricultureModel::SetSelectedPriority( AcPriority* prio )
 {
-	qDebug() << "AgricultureModel::SetSelectedPriority";
 	if ( m_selectedPrio && prio && m_selectedPrio != prio )
 	{
 		qDebug() << m_selectedPrio->GetName() << prio->GetName();
 
 		m_selectedPrio = prio;
-		qDebug() << "AgricultureModel::SetSelectedPriority !!!";
-		m_proxy->setBasicOptions( m_id, m_name.Str(), m_prios->IndexOf( m_selectedPrio ), m_suspended );
+		setBasicOptions();
 		OnPropertyChanged( "SelectedPrio" );
 	}
 }

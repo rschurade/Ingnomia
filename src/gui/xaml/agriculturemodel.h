@@ -365,6 +365,9 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<FoodSelectRow>> m_foodRows;
 
 	AgricultureProxy* m_proxy = nullptr;
+	bool m_blockSignals = false;
+
+	void setBasicOptions();
 
 	unsigned int m_id           = 0;
 	Noesis::String m_name       = "-Farm-";
