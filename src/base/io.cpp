@@ -442,18 +442,25 @@ QString IO::versionString( QString folder )
 	QJsonDocument jd;
 	IO::loadFile( folder + "/game.json", jd );
 
-	QJsonArray ja = jd.array();
-
-	QVariantMap vm = ja.toVariantList().first().toMap();
-
-	if ( vm.contains( "Version" ) )
+	if( jd.isArray() )
 	{
-		return vm.value( "Version" ).toString();
+		QJsonArray ja = jd.array();
+		auto vl = ja.toVariantList();
+		if( vl.size() > 0 )
+		{
+			QVariantMap vm = vl.first().toMap();
+
+			if ( vm.contains( "Version" ) )
+			{
+				return vm.value( "Version" ).toString();
+			}
+			else
+			{
+				return vm.value( "version" ).toString();
+			}
+		}
 	}
-	else
-	{
-		return vm.value( "version" ).toString();
-	}
+	return ( "0.0.0.0" );
 }
 
 int IO::versionInt( QString folder )
