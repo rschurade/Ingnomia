@@ -38,28 +38,14 @@
 
 			<Border Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2">
 				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="1*" />
-						<RowDefinition Height="10*" />
-					</Grid.RowDefinitions>
-					<ScrollViewer HorizontalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="0">
-						<ItemsControl ItemsSource="{Binding GroupButtons}" ItemTemplate="{StaticResource InvGroupButtonTemplate}">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel Orientation="Horizontal" />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-						</ItemsControl>
-					</ScrollViewer>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Grid.Row="1">
-						<ItemsControl ItemsSource="{Binding Items}" ItemTemplate="{StaticResource InvItemTemplate}">
+						<ItemsControl ItemsSource="{Binding Categories, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource InvCategoryTemplate}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel />
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 						</ItemsControl>
-						
 					</ScrollViewer>
 				</Grid>
 			</Border>

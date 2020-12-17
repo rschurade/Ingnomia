@@ -32,58 +32,328 @@ using namespace Noesis;
 using namespace NoesisApp;
 
 
-
+#pragma region MaterialItem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CategoryButton::CategoryButton( QString name, QString sid, QString image )
+
+IngnomiaGUI::InvMaterialItem::InvMaterialItem( const GuiInventoryMaterial& mat, InventoryProxy* proxy ) :
+	m_proxy( proxy ),
+	m_sid( mat.id ),
+	m_category( mat.cat ),
+	m_group( mat.group ),
+	m_item( mat.item )
 {
-	m_name  = name.toStdString().c_str();
-	m_sid   = sid.toStdString().c_str();
-	m_image = image.toStdString().c_str();
+	m_name   = mat.name.toStdString().c_str();
+	m_active = false;
+
+	m_inStock = QString::number( mat.countInStockpiles ).toStdString().c_str();
+	m_total = QString::number( mat.countTotal ).toStdString().c_str();
 }
 
-const char* CategoryButton::GetName() const
+const char* IngnomiaGUI::InvMaterialItem::GetName() const
 {
 	return m_name.Str();
 }
 
-const char* CategoryButton::GetID() const
+bool IngnomiaGUI::InvMaterialItem::GetChecked() const
 {
-	return m_sid.Str();
+	return m_active;
 }
 
-const char* CategoryButton::GetImage() const
+void IngnomiaGUI::InvMaterialItem::SetChecked( bool value )
 {
-	return m_image.Str();
+	if ( m_active != value )
+	{
+		m_active = value;
+		//m_proxy->setActive( m_stockpileID, value, m_category, m_group, m_item, m_sid );
+	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-InvItemEntry::InvItemEntry( QString item, QString material, QString inStockpile, QString total ) :
-	m_item( item.toStdString().c_str() ),
-	m_material( material.toStdString().c_str() ),
-	m_inStockpile( inStockpile.toStdString().c_str() ),
-	m_total( total.toStdString().c_str() )
-{
-}
-	
-const char* InvItemEntry::GetItem() const
-{
-	return m_item.Str();
-}
-
-const char* InvItemEntry::GetMaterial() const
-{
-	return m_material.Str();
-}
-
-const char* InvItemEntry::GetInStockpile() const
-{
-	return m_inStockpile.Str();
-}
-
-const char* InvItemEntry::GetTotal() const
+const char* IngnomiaGUI::InvMaterialItem::getTotal() const
 {
 	return m_total.Str();
 }
+	
+const char* IngnomiaGUI::InvMaterialItem::getInStock() const
+{
+	return m_inStock.Str();
+}
+
+#pragma endregion MaterialItem
+
+#pragma region ItemItem
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+IngnomiaGUI::InvItemItem::InvItemItem( const GuiInventoryItem& gii, InventoryProxy* proxy ) :
+	m_proxy( proxy ),
+	m_sid( gii.id ),
+	m_category( gii.cat ),
+	m_group( gii.group )
+{
+	m_name = gii.name.toStdString().c_str();
+	m_inStock = QString::number( gii.countInStockpiles ).toStdString().c_str();
+	m_total = QString::number( gii.countTotal ).toStdString().c_str();
+
+	m_materials = *new ObservableCollection<InvMaterialItem>();
+
+	for( const auto& mat : gii.materials )
+	{
+		m_materials->Add( MakePtr<InvMaterialItem>( mat, proxy ) );
+	}
+
+	UpdateState();
+}
+
+const char* IngnomiaGUI::InvItemItem::GetName() const
+{
+	return m_name.Str();
+}
+
+const Noesis::Nullable<bool>& IngnomiaGUI::InvItemItem::GetState() const
+{
+	return m_state;
+}
+
+bool IngnomiaGUI::InvItemItem::getExpanded() const
+{
+	return !GetState().HasValue();
+}
+
+void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
+{
+	bool active = value.HasValue() && value.GetValue();
+	//m_proxy->setActive( m_stockpileID, active, m_category, m_group, m_sid );
+}
+
+void IngnomiaGUI::InvItemItem::UpdateState()
+{
+	bool allChecked   = false;
+	bool allUnchecked = true;
+	for ( int i = 0; i < m_materials->Count(); ++i )
+	{
+		bool checked = m_materials->Get( i )->GetChecked();
+		if ( !checked )
+		{
+			allChecked = false;
+		}
+		else if ( checked )
+		{
+			allUnchecked = false;
+		}
+	}
+	if ( allChecked && !allUnchecked )
+	{
+		m_state = true;
+	}
+	else if ( !allChecked && allUnchecked )
+	{
+		m_state = false;
+	}
+	else
+	{
+		m_state = nullptr;
+	}
+
+	OnPropertyChanged( "Checked" );
+	OnPropertyChanged( "Expanded" );
+}
+
+const char* IngnomiaGUI::InvItemItem::getTotal() const
+{
+	return m_total.Str();
+}
+	
+const char* IngnomiaGUI::InvItemItem::getInStock() const
+{
+	return m_inStock.Str();
+}
+
+#pragma endregion ItemItem
+
+#pragma region GroupItem
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+IngnomiaGUI::InvGroupItem::InvGroupItem( const GuiInventoryGroup& gig, InventoryProxy* proxy ) :
+	m_proxy( proxy ),
+	m_sid( gig.id ),
+	m_category( gig.cat )
+{
+	m_name = gig.name.toStdString().c_str();
+	m_inStock = QString::number( gig.countInStockpiles ).toStdString().c_str();
+	m_total = QString::number( gig.countTotal ).toStdString().c_str();
+
+	m_items = *new ObservableCollection<InvItemItem>();
+
+	for ( auto item : gig.items )
+	{
+		m_items->Add( MakePtr<InvItemItem>( item, proxy ) );
+	}
+
+	UpdateState();
+}
+
+const char* IngnomiaGUI::InvGroupItem::GetName() const
+{
+	return m_name.Str();
+}
+
+const Noesis::Nullable<bool>& IngnomiaGUI::InvGroupItem::GetState() const
+{
+	return m_state;
+}
+
+bool IngnomiaGUI::InvGroupItem::getExpanded() const
+{
+	return !GetState().HasValue();
+}
+
+void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
+{
+	bool active = value.HasValue() && value.GetValue();
+	//m_proxy->setActive( m_stockpileID, active, m_category, m_sid );
+}
+
+void IngnomiaGUI::InvGroupItem::UpdateState()
+{
+	bool allChecked   = false;
+	bool allUnchecked = true;
+	for ( int i = 0; i < m_items->Count(); ++i )
+	{
+		auto checked = m_items->Get( i )->GetState();
+		if ( checked.HasValue() && checked )
+		{
+			allUnchecked = false;
+		}
+		else if ( checked.HasValue() && !checked )
+		{
+			allChecked = false;
+		}
+		else
+		{
+			allChecked   = false;
+			allUnchecked = false;
+		}
+	}
+	if ( allChecked && !allUnchecked )
+	{
+		m_state = true;
+	}
+	else if ( !allChecked && allUnchecked )
+	{
+		m_state = false;
+	}
+	else
+	{
+		m_state = nullptr;
+	}
+	OnPropertyChanged( "Checked" );
+	OnPropertyChanged( "Expanded" );
+}
+
+const char* IngnomiaGUI::InvGroupItem::getTotal() const
+{
+	return m_total.Str();
+}
+	
+const char* IngnomiaGUI::InvGroupItem::getInStock() const
+{
+	return m_inStock.Str();
+}
+
+
+#pragma endregion GroupItem
+
+#pragma region CategoryItem
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+IngnomiaGUI::InvCategoryItem::InvCategoryItem( const GuiInventoryCategory& gic, InventoryProxy* proxy ) :
+	m_proxy( proxy ),
+	m_sid( gic.id )
+{
+	m_name = gic.name.toStdString().c_str();
+	m_inStock = QString::number( gic.countInStockpiles ).toStdString().c_str();
+	m_total = QString::number( gic.countTotal ).toStdString().c_str();
+
+	m_groups = *new ObservableCollection<InvGroupItem>();
+
+	for ( auto group : gic.groups )
+	{
+		m_groups->Add( MakePtr<InvGroupItem>( group, proxy ) );
+	}
+
+	UpdateState();
+}
+
+const char* IngnomiaGUI::InvCategoryItem::GetName() const
+{
+	return m_name.Str();
+}
+
+const Noesis::Nullable<bool>& IngnomiaGUI::InvCategoryItem::GetState() const
+{
+	return m_state;
+}
+
+bool IngnomiaGUI::InvCategoryItem::getExpanded() const
+{
+	return !GetState().HasValue();
+}
+
+void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value )
+{
+	bool active = value.HasValue() && value.GetValue();
+	//m_proxy->setActive( m_stockpileID, active, m_sid );
+}
+
+void IngnomiaGUI::InvCategoryItem::UpdateState()
+{
+	bool allChecked   = false;
+	bool allUnchecked = true;
+	for ( int i = 0; i < m_groups->Count(); ++i )
+	{
+		auto checked = m_groups->Get( i )->GetState();
+		if ( checked.HasValue() && checked )
+		{
+			allUnchecked = false;
+		}
+		else if ( checked.HasValue() && !checked )
+		{
+			allChecked = false;
+		}
+		else
+		{
+			allChecked   = false;
+			allUnchecked = false;
+		}
+	}
+	if ( allChecked && !allUnchecked )
+	{
+		m_state = true;
+	}
+	else if ( !allChecked && allUnchecked )
+	{
+		m_state = false;
+	}
+	else
+	{
+		m_state = nullptr;
+	}
+	OnPropertyChanged( "Checked" );
+	OnPropertyChanged( "Expanded" );
+}
+
+const char* IngnomiaGUI::InvCategoryItem::getTotal() const
+{
+	return m_total.Str();
+}
+	
+const char* IngnomiaGUI::InvCategoryItem::getInStock() const
+{
+	return m_inStock.Str();
+}
+
+
+#pragma endregion CategoryItem
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,78 +362,26 @@ InventoryModel::InventoryModel()
 	m_proxy = new InventoryProxy;
 	m_proxy->setParent( this );
 
-	m_categoryCmd.SetExecuteFunc( MakeDelegate( this, &InventoryModel::onCategoryCmd ) );
-	m_groupCmd.SetExecuteFunc( MakeDelegate( this, &InventoryModel::onGroupCmd ) );
+	m_categories = *new ObservableCollection<InvCategoryItem>();
 
-	m_categoryButtons   = *new ObservableCollection<CategoryButton>();
-	m_groupButtons   = *new ObservableCollection<CategoryButton>();
-	m_items   = *new ObservableCollection<InvItemEntry>();
+	m_proxy->requestCategories();
 }
 
 void InventoryModel::updateCategories( const QList<GuiInventoryCategory>& categories )
 {
-	m_categoryButtons->Clear();
-	
-	for( const auto& cat : categories )
+	qDebug() << "InventoryModel::updateCategories";
+	m_categories->Clear();
+	for ( const auto& cat : categories )
 	{
-		m_categoryButtons->Add( MakePtr<CategoryButton>( cat.name, cat.id, "buttons/wood.png" ) );
-	}
-	
-	if( !categories.isEmpty() )
-	{
-		m_category = categories.first().id;
-		m_proxy->requestGroups( m_category );
-	}
-	OnPropertyChanged( "CategoryButtons" );
-}
-	
-void InventoryModel::updateGroups( const QList<GuiInventoryGroup>& groups )
-{
-	m_groupButtons->Clear();
-	
-	for( const auto& group : groups )
-	{
-		m_groupButtons->Add( MakePtr<CategoryButton>( group.name, group.id, "buttons/wood.png" ) );
-	}
-	if( !groups.isEmpty() )
-	{
-		m_proxy->requestItems( m_category, groups.first().id );
+		m_categories->Add( MakePtr<InvCategoryItem>( cat, m_proxy ) );
 	}
 
-	OnPropertyChanged( "GroupButtons" );
+	OnPropertyChanged( "Categories" );
 }
 
-void InventoryModel::updateItems( const QList<GuiInventoryItem>& items )
+Noesis::ObservableCollection<InvCategoryItem>* InventoryModel::GetCategories() const
 {
-	m_items->Clear();
-	
-	m_items->Add( MakePtr<InvItemEntry>( "Item", "Material", "In Stockpiles", "Total in world" ) );
-	for( const auto& item : items )
-	{
-		if( item.countTotal > 0 )
-		{
-			m_items->Add( MakePtr<InvItemEntry>( item.item, item.material, QString::number( item.countInStockpiles ), QString::number( item.countTotal ) ) );
-		}
-	}
-
-	OnPropertyChanged( "Items" );
-}
-
-void InventoryModel::onCategoryCmd( BaseComponent* param )
-{
-	if( param )
-	{
-		m_category = param->ToString().Str();
-		m_proxy->requestGroups( m_category );
-	}
-}
-
-void InventoryModel::onGroupCmd( BaseComponent* param )
-{
-	if( param )
-	{
-		m_proxy->requestItems( m_category, param->ToString().Str() );
-	}
+	return m_categories;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,26 +389,45 @@ NS_BEGIN_COLD_REGION
 
 NS_IMPLEMENT_REFLECTION( InventoryModel, "IngnomiaGUI.InventoryModel" )
 {
-	NsProp( "CmdCategory", &InventoryModel::getCategoryCmd );
-	NsProp( "CmdGroup", &InventoryModel::getGroupCmd );
-
-	NsProp( "CategoryButtons", &InventoryModel::getCategoryButtons );
-	NsProp( "GroupButtons", &InventoryModel::getGroupButtons );
-	NsProp( "Items", &InventoryModel::getItems );
+	NsProp( "Categories", &InventoryModel::GetCategories );
 }
 
-NS_IMPLEMENT_REFLECTION( CategoryButton )
+
+NS_IMPLEMENT_REFLECTION( IngnomiaGUI::InvCategoryItem )
 {
-	NsProp( "Name", &CategoryButton::GetName );
-	NsProp( "ID", &CategoryButton::GetID );
-	NsProp( "Image", &CategoryButton::GetImage );
+	NsProp( "Name", &InvCategoryItem::GetName );
+	NsProp( "Checked", &InvCategoryItem::GetState, &InvCategoryItem::SetState );
+	NsProp( "Expanded", &InvCategoryItem::getExpanded );
+	NsProp( "Children", &InvCategoryItem::GetGroups );
+	NsProp( "Total", &InvCategoryItem::getTotal );
+	NsProp( "InStock", &InvCategoryItem::getInStock );
 }
 
-NS_IMPLEMENT_REFLECTION( InvItemEntry )
+NS_IMPLEMENT_REFLECTION( IngnomiaGUI::InvGroupItem )
 {
-	NsProp( "Item", &InvItemEntry::GetItem );
-	NsProp( "Material", &InvItemEntry::GetMaterial );
-	NsProp( "InStock", &InvItemEntry::GetInStockpile );
-	NsProp( "Total", &InvItemEntry::GetTotal );
+	NsProp( "Name", &InvGroupItem::GetName );
+	NsProp( "Checked", &InvGroupItem::GetState, &InvGroupItem::SetState );
+	NsProp( "Expanded", &InvGroupItem::getExpanded );
+	NsProp( "Children", &InvGroupItem::GetItems );
+	NsProp( "Total", &InvGroupItem::getTotal );
+	NsProp( "InStock", &InvGroupItem::getInStock );
+}
+
+NS_IMPLEMENT_REFLECTION( IngnomiaGUI::InvItemItem )
+{
+	NsProp( "Name", &InvItemItem::GetName );
+	NsProp( "Checked", &InvItemItem::GetState, &InvItemItem::SetState );
+	NsProp( "Expanded", &InvItemItem::getExpanded );
+	NsProp( "Children", &InvItemItem::GetMaterials );
+	NsProp( "Total", &InvItemItem::getTotal );
+	NsProp( "InStock", &InvItemItem::getInStock );
+}
+
+NS_IMPLEMENT_REFLECTION( IngnomiaGUI::InvMaterialItem )
+{
+	NsProp( "Name", &InvMaterialItem::GetName );
+	NsProp( "Checked", &InvMaterialItem::GetChecked, &InvMaterialItem::SetChecked );
+	NsProp( "Total", &InvMaterialItem::getTotal );
+	NsProp( "InStock", &InvMaterialItem::getInStock );
 }
 

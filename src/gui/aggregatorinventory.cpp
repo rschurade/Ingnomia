@@ -66,55 +66,76 @@ void AggregatorInventory::onRequestCategories()
 	m_categories.clear();
 	for ( const auto& cat : g->inv()->categories() )
 	{
+		GuiInventoryCategory gic;
+		gic.id = cat;
+		gic.name = S::s( "$CategoryName_" + cat );
+
+		for ( const auto& group : g->inv()->groups( cat ) )
 		{
-			m_categories.append( { cat, S::s( "$CategoryName_" + cat ) } );
+			GuiInventoryGroup gig;
+			gig.id = group;
+			gig.name = S::s( "$GroupName_" + group );
+			gig.cat = cat;
+
+
+			for ( const auto& item : g->inv()->items( cat, group ) )
+			{
+				GuiInventoryItem gii;
+				gii.id = item;
+				gii.name = S::s( "$ItemName_" + item );
+				gii.cat = cat;
+				gii.group = group;
+
+				for ( const auto& mat : g->inv()->materials( cat, group, item ) )
+				{
+					auto result   = g->inv()->itemCountDetailed( item, mat );
+
+					GuiInventoryMaterial gim;
+					gim.id = mat;
+					gim.name = S::s( "$MaterialName_" + mat );
+					gim.cat = cat;
+					gim.group = group;
+					gim.item = item;
+					gim.countTotal = result.total; 
+					gim.countInJob = result.inJob; 
+					gim.countInStockpiles = result.inStockpile;
+					gim.countEquipped = result.equipped;
+					gim.countConstructed = result.constructed;
+					gim.countLoose = result.loose; 
+					gim.totalValue = result.totalValue;
+
+					gii.countTotal += result.total;
+					gii.countInStockpiles += result.inStockpile;
+
+					gii.materials.append( gim );
+				}
+				gig.countTotal += gii.countTotal;
+				gig.countInStockpiles += gii.countInStockpiles;
+
+				gig.items.append( gii );
+			}
+
+			
+
+			/*
+			std::sort( gig.items.begin(), gig.items.end(), []( const GuiInventoryItem a, const GuiInventoryItem& b ) -> bool {
+				if ( a.countTotal != b.countTotal )
+					return a.countTotal > b.countTotal;
+				if ( a.item != b.item )
+					return a.item > b.item;
+				return a.material > b.material;
+			} );
+			*/
+
+			gic.countTotal += gig.countTotal;
+			gic.countInStockpiles += gig.countInStockpiles;
+
+			gic.groups.append( gig );
 		}
+		m_categories.append( gic );
 	}
 
 	emit signalInventoryCategories( m_categories );
-}
-
-void AggregatorInventory::onRequestGroups( QString category )
-{
-	if( !g ) return;
-	m_groups.clear();
-
-	for ( const auto& group : g->inv()->groups( category ) )
-	{
-		{
-			m_groups.append( { group, S::s( "$GroupName_" + group ) } );
-		}
-	}
-
-	emit signalInventoryGroups( m_groups );
-}
-
-void AggregatorInventory::onRequestItems( QString category, QString group )
-{
-	if( !g ) return;
-	m_items.clear();
-
-	for ( const auto& item : g->inv()->items( category, group ) )
-	{
-		for ( const auto& mat : g->inv()->materials( category, group, item ) )
-		{
-			QString iName = S::s( "$ItemName_" + item );
-			QString mName = S::s( "$MaterialName_" + mat );
-			auto result   = g->inv()->itemCountDetailed( item, mat );
-
-			m_items.append( { iName, mName, result.total, result.inJob, result.inStockpile, result.equipped, result.constructed, result.loose, result.totalValue } );
-		}
-	}
-
-	std::sort( m_items.begin(), m_items.end(), []( const GuiInventoryItem a, const GuiInventoryItem& b ) -> bool {
-		if ( a.countTotal != b.countTotal )
-			return a.countTotal > b.countTotal;
-		if ( a.item != b.item )
-			return a.item > b.item;
-		return a.material > b.material;
-	} );
-
-	emit signalInventoryItems( m_items );
 }
 
 void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QString category )

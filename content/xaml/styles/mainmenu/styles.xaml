@@ -268,7 +268,7 @@
 
 		</Button>
 	</DataTemplate>
-	
+<!--	
 	<DataTemplate x:Key="InvCategoryButtonTemplate">
 		<Button 
 			FontSize="16"
@@ -301,7 +301,7 @@
 			<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="150" TextAlignment="Center"/>
 		</StackPanel>
 	</DataTemplate>
-
+-->
 	<Style x:Key="TabButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="Template">
@@ -1188,5 +1188,84 @@
 			</Border>
 		</Grid>
 	</DataTemplate>
+	
+	
+	<DataTemplate x:Key="InvMaterialTemplate">
+		<StackPanel Orientation="Horizontal">
+			<CheckBox Content="{Binding Name}" IsChecked="{Binding Checked}" Width="150" Margin="4" FontSize="16"/>
+			<TextBlock Text="In Stock: "  FontSize="16" Margin="2" Width="80" TextAlignment="Center"/>
+			<TextBlock Text="{Binding InStock}"  FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+			<TextBlock Text="Total: "  FontSize="16" Margin="2" Width="50" TextAlignment="Center"/>
+			<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate x:Key="InvItemTemplate">
+		<Expander VerticalAlignment="Center" Margin="4" IsExpanded="{Binding Expanded, Mode=OneWay}">
+			<Expander.Header>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox IsChecked="{Binding Checked}" IsThreeState="True"/>
+					<TextBlock Text="{Binding Name}" FontSize="16" Width="150"/>
+					<TextBlock Text="In Stock: "  FontSize="16" Margin="2" Width="80" TextAlignment="Center"/>
+					<TextBlock Text="{Binding InStock}"  FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+					<TextBlock Text="Total: "  FontSize="16" Margin="2" Width="50" TextAlignment="Center"/>
+					<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+				</StackPanel>
+			</Expander.Header>
+			<ItemsControl x:Name="ICMaterials" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource InvMaterialTemplate}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+			</ItemsControl>
+		</Expander>
+	</DataTemplate>
+
+	<DataTemplate x:Key="InvGroupTemplate">
+		<Expander VerticalAlignment="Center" Margin="4"  IsExpanded="{Binding Expanded, Mode=OneWay}">
+			<Expander.Header>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox IsChecked="{Binding Checked}" IsThreeState="True"/>
+					<TextBlock Text="{Binding Name}" FontSize="16" Width="150"/>
+					<TextBlock Text="In Stock: "  FontSize="16" Margin="2" Width="80" TextAlignment="Center"/>
+					<TextBlock Text="{Binding InStock}"  FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+					<TextBlock Text="Total: "  FontSize="16" Margin="2" Width="50" TextAlignment="Center"/>
+					<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+				</StackPanel>
+			</Expander.Header>
+			<ItemsControl x:Name="ICItems" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource InvItemTemplate}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+			</ItemsControl>
+		</Expander>
+	</DataTemplate>
+
+	<DataTemplate x:Key="InvCategoryTemplate">
+		<Expander VerticalAlignment="Center" Margin="4" IsExpanded="{Binding Expanded, Mode=OneWay}">
+			<Expander.Header>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox  x:Name="ICCB" IsChecked="{Binding Checked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True"/>
+					<TextBlock Text="{Binding Name}" FontSize="16" Width="150"/>
+					<TextBlock Text="In Stock: "  FontSize="16" Margin="2" Width="80" TextAlignment="Center"/>
+					<TextBlock Text="{Binding InStock}"  FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+					<TextBlock Text="Total: "  FontSize="16" Margin="2" Width="50" TextAlignment="Center"/>
+					<TextBlock Text="{Binding Total}"    FontSize="16" Margin="2" Width="100" TextAlignment="Center"/>
+				</StackPanel>
+			</Expander.Header>
+			<ItemsControl x:Name="ICGroups" ItemsSource="{Binding Children}" ItemTemplate="{StaticResource InvGroupTemplate}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+			</ItemsControl>
+		</Expander>
+	</DataTemplate>
+	
+	
 
 </ResourceDictionary>

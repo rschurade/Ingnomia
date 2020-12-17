@@ -42,44 +42,149 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+#pragma region FilterItems
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class CategoryButton final : public Noesis::BaseComponent
+class InvMaterialItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
-	CategoryButton( QString name, QString sid, QString image );
+	InvMaterialItem( const GuiInventoryMaterial& mat, InventoryProxy* proxy );
 
 	const char* GetName() const;
-	const char* GetID() const;
-	const char* GetImage() const;
+
+	bool GetChecked() const;
+	void SetChecked( bool value );
+
+	const char* getTotal() const;
+	const char* getInStock() const;
 
 private:
 	Noesis::String m_name;
-	Noesis::String m_sid;
-	Noesis::String m_image;
+	Noesis::String m_inStock;
+	Noesis::String m_total;
+	QString m_sid;
+	QString m_item;
+	QString m_group;
+	QString m_category;
 
-	NS_DECLARE_REFLECTION( CategoryButton, Noesis::BaseComponent )
+	bool m_active = false;
+
+	InventoryProxy* m_proxy = nullptr;
+
+	NS_DECLARE_REFLECTION( InvMaterialItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class InvItemEntry final : public Noesis::BaseComponent
+class InvItemItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
-	InvItemEntry( QString item, QString material, QString inStockpile, QString total );
+	InvItemItem( const GuiInventoryItem& gii, InventoryProxy* proxy );
 
-	const char* GetItem() const;
-	const char* GetMaterial() const;
-	const char* GetInStockpile() const;
-	const char* GetTotal() const;
+	const char* GetName() const;
+	const Noesis::Nullable<bool>& GetState() const;
+	void SetState( const Noesis::Nullable<bool>& value );
+	bool getExpanded() const;
+
+	const char* getTotal() const;
+	const char* getInStock() const;
 
 private:
-	Noesis::String m_item;
-	Noesis::String m_material;
-	Noesis::String m_inStockpile;
+	void UpdateState();
+	Noesis::String m_name;
+	Noesis::String m_inStock;
 	Noesis::String m_total;
-	
+	QString m_sid;
+	QString m_group;
+	QString m_category;
 
-	NS_DECLARE_REFLECTION( InvItemEntry, Noesis::BaseComponent )
+	unsigned char m_active = 0;
+	Noesis::Nullable<bool> m_state;
+
+	InventoryProxy* m_proxy = nullptr;
+
+	Noesis::ObservableCollection<InvMaterialItem>* GetMaterials() const
+	{
+		return m_materials;
+	}
+	Noesis::Ptr<Noesis::ObservableCollection<InvMaterialItem>> m_materials;
+
+	NS_DECLARE_REFLECTION( InvItemItem, NoesisApp::NotifyPropertyChangedBase )
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class InvGroupItem final : public NoesisApp::NotifyPropertyChangedBase
+{
+public:
+	InvGroupItem( const GuiInventoryGroup& gig, InventoryProxy* proxy );
+
+	const char* GetName() const;
+
+	const Noesis::Nullable<bool>& GetState() const;
+	void SetState( const Noesis::Nullable<bool>& value );
+	bool getExpanded() const;
+
+	const char* getTotal() const;
+	const char* getInStock() const;
+
+private:
+	void UpdateState();
+	Noesis::String m_name;
+	Noesis::String m_inStock;
+	Noesis::String m_total;
+	unsigned int m_stockpileID = 0;
+	QString m_sid;
+	QString m_category;
+
+	unsigned char m_active = 0;
+	Noesis::Nullable<bool> m_state;
+
+	InventoryProxy* m_proxy = nullptr;
+
+	Noesis::ObservableCollection<InvItemItem>* GetItems() const
+	{
+		return m_items;
+	}
+	Noesis::Ptr<Noesis::ObservableCollection<InvItemItem>> m_items;
+
+	NS_DECLARE_REFLECTION( InvGroupItem, NoesisApp::NotifyPropertyChangedBase )
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class InvCategoryItem final : public NoesisApp::NotifyPropertyChangedBase
+{
+public:
+	InvCategoryItem( const GuiInventoryCategory& gic, InventoryProxy* proxy );
+
+	const char* GetName() const;
+
+	const Noesis::Nullable<bool>& GetState() const;
+	void SetState( const Noesis::Nullable<bool>& value );
+	bool getExpanded() const;
+
+	const char* getTotal() const;
+	const char* getInStock() const;
+
+private:
+	void UpdateState();
+	Noesis::String m_name;
+	Noesis::String m_inStock;
+	Noesis::String m_total;
+	QString m_sid;
+
+	unsigned char m_active = 0;
+	Noesis::Nullable<bool> m_state;
+
+	InventoryProxy* m_proxy = nullptr;
+
+	Noesis::ObservableCollection<InvGroupItem>* GetGroups() const
+	{
+		return m_groups;
+	}
+	Noesis::Ptr<Noesis::ObservableCollection<InvGroupItem>> m_groups;
+
+	NS_DECLARE_REFLECTION( InvCategoryItem, NoesisApp::NotifyPropertyChangedBase )
+};
+#pragma endregion FilterItems
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,45 +194,12 @@ public:
 	InventoryModel();
 
 	void updateCategories( const QList<GuiInventoryCategory>& categories );
-	void updateGroups( const QList<GuiInventoryGroup>& groups );
-	void updateItems( const QList<GuiInventoryItem>& items );
 
 private:
 	InventoryProxy* m_proxy = nullptr;
 
-	NoesisApp::DelegateCommand m_categoryCmd;
-	void onCategoryCmd( BaseComponent* param );
-	const NoesisApp::DelegateCommand* getCategoryCmd() const
-	{
-		return &m_categoryCmd;
-	}
-	NoesisApp::DelegateCommand m_groupCmd;
-	void onGroupCmd( BaseComponent* param );
-	const NoesisApp::DelegateCommand* getGroupCmd() const
-	{
-		return &m_groupCmd;
-	}
-	
-
-	Noesis::Ptr<Noesis::ObservableCollection<CategoryButton>> m_categoryButtons;
-	Noesis::ObservableCollection<CategoryButton>* getCategoryButtons() const
-	{
-		return m_categoryButtons;
-	}
-
-	Noesis::Ptr<Noesis::ObservableCollection<CategoryButton>> m_groupButtons;
-	Noesis::ObservableCollection<CategoryButton>* getGroupButtons() const
-	{
-		return m_groupButtons;
-	}
-
-	Noesis::Ptr<Noesis::ObservableCollection<InvItemEntry>> m_items;
-	Noesis::ObservableCollection<InvItemEntry>* getItems() const
-	{
-		return m_items;
-	}
-
-	QString m_category;
+	Noesis::ObservableCollection<InvCategoryItem>* GetCategories() const;
+	Noesis::Ptr<Noesis::ObservableCollection<InvCategoryItem>> m_categories;
 
 
 	NS_DECLARE_REFLECTION( InventoryModel, NotifyPropertyChangedBase )

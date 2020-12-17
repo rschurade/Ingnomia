@@ -27,12 +27,8 @@ InventoryProxy::InventoryProxy( QObject* parent ) :
 {
 	
     connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryCategories, this, &InventoryProxy::onCategoryUpdate, Qt::QueuedConnection );
-    connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryGroups, this, &InventoryProxy::onGroupsUpdate, Qt::QueuedConnection );
-    connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryItems, this, &InventoryProxy::onItemsUpdate, Qt::QueuedConnection );
 
     connect( this, &InventoryProxy::signalRequestCategories, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
-    connect( this, &InventoryProxy::signalRequestGroups, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestGroups, Qt::QueuedConnection );
-    connect( this, &InventoryProxy::signalRequestItems, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestItems, Qt::QueuedConnection );
 }
 
 void InventoryProxy::setParent( IngnomiaGUI::InventoryModel* parent )
@@ -45,38 +41,11 @@ void InventoryProxy::requestCategories()
 {
     emit signalRequestCategories();
 }
-
-void InventoryProxy::requestGroups( QString category )
-{
-    emit signalRequestGroups( category );
-}
-
-void InventoryProxy::requestItems( QString category, QString group )
-{
-    emit signalRequestItems( category, group );
-}
-
 	
 void InventoryProxy::onCategoryUpdate( const QList<GuiInventoryCategory>& categories )
 {
     if( m_parent )
 	{
         m_parent->updateCategories( categories );
-	}
-}
-
-void InventoryProxy::onGroupsUpdate( const QList<GuiInventoryGroup>& groups )
-{
-    if( m_parent )
-	{
-        m_parent->updateGroups( groups );
-	}
-}
-
-void InventoryProxy::onItemsUpdate( const QList<GuiInventoryItem>& items )
-{
-    if( m_parent )
-	{
-        m_parent->updateItems( items );
 	}
 }

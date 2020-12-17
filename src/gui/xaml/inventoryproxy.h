@@ -31,8 +31,6 @@ public:
 	void setParent( IngnomiaGUI::InventoryModel* parent );
 
     void requestCategories();
-    void requestGroups( QString category );
-    void requestItems( QString category, QString group );
 
 private:
 	IngnomiaGUI::InventoryModel* m_parent = nullptr;
@@ -41,11 +39,7 @@ private:
 
 private slots:
     void onCategoryUpdate( const QList<GuiInventoryCategory>& categories );
-    void onGroupsUpdate( const QList<GuiInventoryGroup>& groups );
-    void onItemsUpdate( const QList<GuiInventoryItem>& items );
 
 signals:
     void signalRequestCategories();
-    void signalRequestGroups( QString category );
-    void signalRequestItems( QString category, QString group );
 };

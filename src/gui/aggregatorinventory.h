@@ -24,17 +24,37 @@
 
 class Game;
 
+struct GuiInventoryMaterial
+{
+	QString id;
+    QString name;
+    QString cat;
+    QString group;
+    QString item;
+	unsigned int countTotal = 0;
+	unsigned int countInJob = 0;
+	unsigned int countInStockpiles = 0;
+	unsigned int countEquipped = 0;
+	unsigned int countConstructed = 0;
+	unsigned int countLoose = 0;
+	unsigned int totalValue = 0;
+};
+Q_DECLARE_METATYPE( GuiInventoryMaterial )
+
 struct GuiInventoryItem
 {
-	QString item;
-    QString material;
-	unsigned int countTotal;
-	unsigned int countInJob;
-	unsigned int countInStockpiles;
-	unsigned int countEquipped;
-	unsigned int countConstructed;
-	unsigned int countLoose;
-	unsigned int totalValue;
+	QString id;
+    QString name;
+    QString cat;
+    QString group;
+	unsigned int countTotal = 0;
+	unsigned int countInJob = 0;
+	unsigned int countInStockpiles = 0;
+	unsigned int countEquipped = 0;
+	unsigned int countConstructed = 0;
+	unsigned int countLoose = 0;
+	unsigned int totalValue = 0;
+    QList<GuiInventoryMaterial> materials;
 };
 Q_DECLARE_METATYPE( GuiInventoryItem )
 
@@ -42,6 +62,15 @@ struct GuiInventoryGroup
 {
     QString id;
 	QString name;
+    QString cat;
+    unsigned int countTotal = 0;
+	unsigned int countInJob = 0;
+	unsigned int countInStockpiles = 0;
+	unsigned int countEquipped = 0;
+	unsigned int countConstructed = 0;
+	unsigned int countLoose = 0;
+	unsigned int totalValue = 0;
+    QList<GuiInventoryItem> items;
 };
 Q_DECLARE_METATYPE( GuiInventoryGroup )
 
@@ -49,8 +78,19 @@ struct GuiInventoryCategory
 {
     QString id;
 	QString name;
+    unsigned int countTotal = 0;
+	unsigned int countInJob = 0;
+	unsigned int countInStockpiles = 0;
+	unsigned int countEquipped = 0;
+	unsigned int countConstructed = 0;
+	unsigned int countLoose = 0;
+	unsigned int totalValue = 0;
+    QList<GuiInventoryGroup> groups;
 };
 Q_DECLARE_METATYPE( GuiInventoryCategory )
+
+
+
 
 struct GuiBuildRequiredItem
 {
@@ -90,8 +130,7 @@ private:
     QPointer<Game> g;
 
     QList<GuiInventoryCategory> m_categories;
-    QList<GuiInventoryGroup> m_groups;
-    QList<GuiInventoryItem> m_items;
+    
     QList<GuiBuildItem> m_buildItems;
 
     QMap<BuildSelection, QString> m_buildSelection2String;
@@ -102,15 +141,11 @@ private:
 
 public slots:
 	void onRequestCategories();
-    void onRequestGroups( QString category );
-    void onRequestItems( QString category, QString group );
-
+   
     void onRequestBuildItems( BuildSelection buildSelection, QString category );
 	
 signals:
 	void signalInventoryCategories( const QList<GuiInventoryCategory>& categories );
-    void signalInventoryGroups( const QList<GuiInventoryGroup>& groups );
-    void signalInventoryItems( const QList<GuiInventoryItem>& items );
-
+    
     void signalBuildItems( const QList<GuiBuildItem>& items );
 };
