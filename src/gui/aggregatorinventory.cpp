@@ -89,25 +89,27 @@ void AggregatorInventory::onRequestCategories()
 				for ( const auto& mat : g->inv()->materials( cat, group, item ) )
 				{
 					auto result   = g->inv()->itemCountDetailed( item, mat );
+					if( result.total > 0 )
+					{
+						GuiInventoryMaterial gim;
+						gim.id = mat;
+						gim.name = S::s( "$MaterialName_" + mat );
+						gim.cat = cat;
+						gim.group = group;
+						gim.item = item;
+						gim.countTotal = result.total; 
+						gim.countInJob = result.inJob; 
+						gim.countInStockpiles = result.inStockpile;
+						gim.countEquipped = result.equipped;
+						gim.countConstructed = result.constructed;
+						gim.countLoose = result.loose; 
+						gim.totalValue = result.totalValue;
 
-					GuiInventoryMaterial gim;
-					gim.id = mat;
-					gim.name = S::s( "$MaterialName_" + mat );
-					gim.cat = cat;
-					gim.group = group;
-					gim.item = item;
-					gim.countTotal = result.total; 
-					gim.countInJob = result.inJob; 
-					gim.countInStockpiles = result.inStockpile;
-					gim.countEquipped = result.equipped;
-					gim.countConstructed = result.constructed;
-					gim.countLoose = result.loose; 
-					gim.totalValue = result.totalValue;
+						gii.countTotal += result.total;
+						gii.countInStockpiles += result.inStockpile;
 
-					gii.countTotal += result.total;
-					gii.countInStockpiles += result.inStockpile;
-
-					gii.materials.append( gim );
+						gii.materials.append( gim );
+					}
 				}
 				gig.countTotal += gii.countTotal;
 				gig.countInStockpiles += gii.countInStockpiles;
