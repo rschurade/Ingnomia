@@ -27,12 +27,12 @@ class Game;
 
 struct GuiWatchedItem
 {
-    QString category;
-    QString group;
-    QString item;
-    QString material;
+    QString category = "";
+    QString group = "";
+    QString item = "";
+    QString material = "";
+    QString guiString = "";
     int count = 0;
-    QString guiString;
 };
 Q_DECLARE_METATYPE( GuiWatchedItem )
 
