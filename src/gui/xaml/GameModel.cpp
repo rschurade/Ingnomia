@@ -268,9 +268,12 @@ GameModel::GameModel()
 	m_proxy = new ProxyGameView;
 	m_proxy->setParent( this );
 
+	
+
 	_commandButtons = *new ObservableCollection<CommandButton>();
 	_buildButtons   = *new ObservableCollection<BuildButton>();
 	_buildItems     = *new ObservableCollection<BuildItem>();
+	m_watchList		= *new Noesis::ObservableCollection<GameItem>();
 
 	m_year  = "*Year*";
 	m_day   = "*Day*";
@@ -1343,6 +1346,21 @@ void GameModel::setShowSelection( bool value )
 	}
 }
 
+void GameModel::updateWatchList( const QList<GuiWatchedItem>& list )
+{
+	m_watchList->Clear();
+	for( const auto& item : list )
+	{
+		m_watchList->Add( MakePtr<GameItem>( item.guiString, "" ) );
+	}
+	OnPropertyChanged( "WatchList" );
+}
+
+Noesis::ObservableCollection<GameItem>* GameModel::GetWatchList() const
+{
+	return m_watchList;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -1404,6 +1422,9 @@ NS_IMPLEMENT_REFLECTION( GameModel, "IngnomiaGUI.GameModel" )
 
 	NsProp( "CloseWindowCmd", &GameModel::GetCloseWindowCmd );
 	NsProp( "OpenCreatureDetailsCmd", &GameModel::GetOpenGnomeDetailsCmd );
+
+	NsProp( "WatchList", &GameModel::GetWatchList );
+
 }
 
 NS_IMPLEMENT_REFLECTION( CommandButton )

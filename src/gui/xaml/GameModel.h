@@ -38,6 +38,7 @@
 
 class ProxyGameView;
 struct GuiBuildItem;
+struct GuiWatchedItem;
 
 namespace Noesis
 {
@@ -187,6 +188,7 @@ public:
 	void updateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
 	void updateBuildItems( const QList<GuiBuildItem>& items );
+	void updateWatchList( const QList<GuiWatchedItem>& list );
 
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
@@ -274,6 +276,8 @@ private:
 	Noesis::ObservableCollection<BuildButton>* GetBuildButtons() const;
 	Noesis::ObservableCollection<BuildItem>* GetBuildItems() const;
 
+	Noesis::ObservableCollection<GameItem>* GetWatchList() const;
+
 	void OnCmdButtonCommand( BaseComponent* param );
 	void OnCmdCategory( BaseComponent* param );
 
@@ -334,6 +338,8 @@ private:
 	Noesis::Ptr<Noesis::ObservableCollection<CommandButton>> _commandButtons;
 	Noesis::Ptr<Noesis::ObservableCollection<BuildButton>> _buildButtons;
 	Noesis::Ptr<Noesis::ObservableCollection<BuildItem>> _buildItems;
+
+	Noesis::Ptr<Noesis::ObservableCollection<GameItem>> m_watchList;
 
 	void onCloseWindowCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetCloseWindowCmd() const

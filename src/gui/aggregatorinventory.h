@@ -21,8 +21,20 @@
 
 #include <QObject>
 #include <QList>
+#include <QHash>
 
 class Game;
+
+struct GuiWatchedItem
+{
+    QString category;
+    QString group;
+    QString item;
+    QString material;
+    int count = 0;
+    QString guiString;
+};
+Q_DECLARE_METATYPE( GuiWatchedItem )
 
 struct GuiInventoryMaterial
 {
@@ -138,6 +150,7 @@ private:
     QList<GuiBuildItem> m_buildItems;
 
     QSet<QString> m_watchedItems;
+    QList<GuiWatchedItem> m_watchedItemList;
 
     QMap<BuildSelection, QString> m_buildSelection2String;
     QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;
@@ -145,15 +158,28 @@ private:
     void setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection );
     void setAvailableMats( GuiBuildRequiredItem& gbri );
     
+    QHash<QString, QString> m_itemToGroupCache;
+    QHash<QString, QString> m_itemToCategoryCache;
+
+    void updateWatchedItem( QString cat );
+    void updateWatchedItem( QString cat, QString group );
+    void updateWatchedItem( QString cat, QString group, QString item );
+    void updateWatchedItem( QString cat, QString group, QString item, QString mat );
+
 public slots:
 	void onRequestCategories();
    
     void onRequestBuildItems( BuildSelection buildSelection, QString category );
 	
-    void onSetActive( bool active, QString category, QString group, QString item, QString material );
+    void onSetActive( bool active, const GuiWatchedItem& gwi );
+
+    void onAddItem( QString itemSID, QString materialSID );
+    void onRemoveItem( QString itemSID, QString materialSID );
 
 signals:
 	void signalInventoryCategories( const QList<GuiInventoryCategory>& categories );
     
     void signalBuildItems( const QList<GuiBuildItem>& items );
+
+    void signalWatchList( const QList<GuiWatchedItem>& watchedItemList );
 };

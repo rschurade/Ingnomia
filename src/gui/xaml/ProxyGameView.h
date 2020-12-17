@@ -83,6 +83,8 @@ private slots:
 
 	void onBuildItems( const QList<GuiBuildItem>& items );
 
+	void onWatchList( const QList<GuiWatchedItem>& watchedItemList );
+
 signals:
 	void signalCloseStockpileWindow();
 	void signalCloseWorkshopWindow();

@@ -238,4 +238,8 @@ private:
 	int m_wealth = 0;
 
 	bool m_itemsChanged = false; //flag is used for updating the stock overview
+
+signals:
+	void signalAddItem( QString itemSID, QString materialSID );
+	void signalRemoveItem( QString itemSID, QString materialSID );
 };

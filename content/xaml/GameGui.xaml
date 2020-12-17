@@ -136,6 +136,18 @@
 				</Border>
 			</Grid>
 		</Grid>
+		
+		<Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" >
+			<ItemsControl ItemsSource="{Binding WatchList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource ItemTemplate16}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+			</ItemsControl>
+		</Grid>
+		
+		
 
 		<local:StockpileGui x:Name="SPGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowStockpile }" />
 		<local:WorkshopGui x:Name="WSGui" Grid.Row="1" HorizontalAlignment="Center" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.ShowWorkshop }" />

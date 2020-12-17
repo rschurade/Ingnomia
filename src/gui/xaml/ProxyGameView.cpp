@@ -74,6 +74,7 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 
 	connect( this, &ProxyGameView::signalRequestBuildItems, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestBuildItems, Qt::QueuedConnection );
 	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalBuildItems, this,  &ProxyGameView::onBuildItems, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalWatchList, this,  &ProxyGameView::onWatchList, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalRequestCmdBuild, Global::eventConnector, &EventConnector::onCmdBuild, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetSelectionAction, Global::eventConnector, &EventConnector::onSetSelectionAction, Qt::QueuedConnection );
 }
@@ -283,4 +284,12 @@ void ProxyGameView::requestCmdBuild( BuildItemType type, QString param, QString 
 void ProxyGameView::setSelectionAction( QString action )
 {
 	emit signalSetSelectionAction( action );
+}
+
+void ProxyGameView::onWatchList( const QList<GuiWatchedItem>& watchlist )
+{
+	if( m_parent )
+	{
+		m_parent->updateWatchList( watchlist );
+	}
 }

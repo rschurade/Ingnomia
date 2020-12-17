@@ -32,7 +32,7 @@ public:
 
     void requestCategories();
 
-    void setActive( bool active, QString category, QString group = "", QString item = "", QString material = "" );
+    void setActive( bool active, const GuiWatchedItem& gwi );
 
 private:
 	IngnomiaGUI::InventoryModel* m_parent = nullptr;
@@ -44,5 +44,5 @@ private slots:
 
 signals:
     void signalRequestCategories();
-    void signalSetActive( bool active, QString category, QString group, QString item, QString material );
+    void signalSetActive( bool active, const GuiWatchedItem& gwi );
 };

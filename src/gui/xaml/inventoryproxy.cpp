@@ -51,7 +51,7 @@ void InventoryProxy::onCategoryUpdate( const QList<GuiInventoryCategory>& catego
 	}
 }
 
-void InventoryProxy::setActive( bool active, QString category, QString group, QString item, QString material )
+void InventoryProxy::setActive( bool active, const GuiWatchedItem& gwi )
 {
-    emit signalSetActive( active, category, group, item, material );
+    emit signalSetActive( active, gwi );
 }

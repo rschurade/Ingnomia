@@ -115,6 +115,10 @@
 	<DataTemplate x:Key="ItemTemplate">
 		<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
 	</DataTemplate>
+	
+	<DataTemplate x:Key="ItemTemplate12">
+		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="12" Margin="1" />
+	</DataTemplate>
 
 	<DataTemplate x:Key="StartItemTemplate">
 		<Grid x:Name="StartItemRow" RenderTransformOrigin="0.5,0.5" Margin="2">

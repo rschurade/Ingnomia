@@ -64,7 +64,8 @@ void IngnomiaGUI::InvMaterialItem::SetChecked( bool value )
 	if ( m_active != value )
 	{
 		m_active = value;
-		m_proxy->setActive( value, m_category, m_group, m_item, m_sid );
+		GuiWatchedItem gwi{ m_category, m_group, m_item, m_sid };
+		m_proxy->setActive( value, gwi );
 	}
 }
 
@@ -125,7 +126,8 @@ bool IngnomiaGUI::InvItemItem::getExpanded() const
 void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
-	m_proxy->setActive( active, m_category, m_group, m_sid );
+	GuiWatchedItem gwi{ m_category, m_group, m_sid };
+	m_proxy->setActive( active, gwi );
 }
 
 void IngnomiaGUI::InvItemItem::UpdateState()
@@ -217,7 +219,8 @@ bool IngnomiaGUI::InvGroupItem::getExpanded() const
 void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
-	m_proxy->setActive( active, m_category, m_sid );
+	GuiWatchedItem gwi{ m_category, m_sid };
+	m_proxy->setActive( active, gwi );
 }
 
 void IngnomiaGUI::InvGroupItem::UpdateState()
@@ -311,14 +314,15 @@ bool IngnomiaGUI::InvCategoryItem::getExpanded() const
 
 void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value )
 {
-	qDebug() << value.HasValue() << value.GetValue() << m_state.HasValue() << m_state.GetValue();
+	//qDebug() << value.HasValue() << value.GetValue() << m_state.HasValue() << m_state.GetValue();
 	bool active = value.HasValue() && value.GetValue();
 	if( value.HasValue() && !value.GetValue() && !m_state.HasValue() && !m_state.GetValue() )
 	{
 		active = true;
 	}
 	
-	m_proxy->setActive( active, m_sid );
+	GuiWatchedItem gwi{ m_sid };
+	m_proxy->setActive( active, gwi );
 }
 
 void IngnomiaGUI::InvCategoryItem::UpdateState()
@@ -386,7 +390,6 @@ InventoryModel::InventoryModel()
 
 void InventoryModel::updateCategories( const QList<GuiInventoryCategory>& categories )
 {
-	qDebug() << "InventoryModel::updateCategories";
 	m_categories->Clear();
 	for ( const auto& cat : categories )
 	{
@@ -447,4 +450,3 @@ NS_IMPLEMENT_REFLECTION( IngnomiaGUI::InvMaterialItem )
 	NsProp( "Total", &InvMaterialItem::getTotal );
 	NsProp( "InStock", &InvMaterialItem::getInStock );
 }
-
