@@ -43,7 +43,7 @@ IngnomiaGUI::InvMaterialItem::InvMaterialItem( const GuiInventoryMaterial& mat, 
 	m_item( mat.item )
 {
 	m_name   = mat.name.toStdString().c_str();
-	m_active = false;
+	m_active = mat.watched;
 
 	m_inStock = QString::number( mat.countInStockpiles ).toStdString().c_str();
 	m_total = QString::number( mat.countTotal ).toStdString().c_str();
@@ -64,7 +64,7 @@ void IngnomiaGUI::InvMaterialItem::SetChecked( bool value )
 	if ( m_active != value )
 	{
 		m_active = value;
-		//m_proxy->setActive( m_stockpileID, value, m_category, m_group, m_item, m_sid );
+		m_proxy->setActive( value, m_category, m_group, m_item, m_sid );
 	}
 }
 
@@ -100,7 +100,11 @@ IngnomiaGUI::InvItemItem::InvItemItem( const GuiInventoryItem& gii, InventoryPro
 		m_materials->Add( MakePtr<InvMaterialItem>( mat, proxy ) );
 	}
 
-	UpdateState();
+	m_state = gii.watched;
+	if( !m_state )
+	{
+		UpdateState();
+	}
 }
 
 const char* IngnomiaGUI::InvItemItem::GetName() const
@@ -121,7 +125,7 @@ bool IngnomiaGUI::InvItemItem::getExpanded() const
 void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
-	//m_proxy->setActive( m_stockpileID, active, m_category, m_group, m_sid );
+	m_proxy->setActive( active, m_category, m_group, m_sid );
 }
 
 void IngnomiaGUI::InvItemItem::UpdateState()
@@ -188,7 +192,11 @@ IngnomiaGUI::InvGroupItem::InvGroupItem( const GuiInventoryGroup& gig, Inventory
 		m_items->Add( MakePtr<InvItemItem>( item, proxy ) );
 	}
 
-	UpdateState();
+	m_state = gig.watched;
+	if( !m_state )
+	{
+		UpdateState();
+	}
 }
 
 const char* IngnomiaGUI::InvGroupItem::GetName() const
@@ -209,7 +217,7 @@ bool IngnomiaGUI::InvGroupItem::getExpanded() const
 void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
-	//m_proxy->setActive( m_stockpileID, active, m_category, m_sid );
+	m_proxy->setActive( active, m_category, m_sid );
 }
 
 void IngnomiaGUI::InvGroupItem::UpdateState()
@@ -274,13 +282,16 @@ IngnomiaGUI::InvCategoryItem::InvCategoryItem( const GuiInventoryCategory& gic, 
 	m_total = QString::number( gic.countTotal ).toStdString().c_str();
 
 	m_groups = *new ObservableCollection<InvGroupItem>();
-
+	
 	for ( auto group : gic.groups )
 	{
 		m_groups->Add( MakePtr<InvGroupItem>( group, proxy ) );
 	}
-
-	UpdateState();
+	m_state = gic.watched;
+	if( !m_state )
+	{
+		UpdateState();
+	}
 }
 
 const char* IngnomiaGUI::InvCategoryItem::GetName() const
@@ -300,8 +311,14 @@ bool IngnomiaGUI::InvCategoryItem::getExpanded() const
 
 void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value )
 {
+	qDebug() << value.HasValue() << value.GetValue() << m_state.HasValue() << m_state.GetValue();
 	bool active = value.HasValue() && value.GetValue();
-	//m_proxy->setActive( m_stockpileID, active, m_sid );
+	if( value.HasValue() && !value.GetValue() && !m_state.HasValue() && !m_state.GetValue() )
+	{
+		active = true;
+	}
+	
+	m_proxy->setActive( active, m_sid );
 }
 
 void IngnomiaGUI::InvCategoryItem::UpdateState()

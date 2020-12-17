@@ -29,6 +29,7 @@ InventoryProxy::InventoryProxy( QObject* parent ) :
     connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalInventoryCategories, this, &InventoryProxy::onCategoryUpdate, Qt::QueuedConnection );
 
     connect( this, &InventoryProxy::signalRequestCategories, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
+    connect( this, &InventoryProxy::signalSetActive, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onSetActive, Qt::QueuedConnection );
 }
 
 void InventoryProxy::setParent( IngnomiaGUI::InventoryModel* parent )
@@ -48,4 +49,9 @@ void InventoryProxy::onCategoryUpdate( const QList<GuiInventoryCategory>& catego
 	{
         m_parent->updateCategories( categories );
 	}
+}
+
+void InventoryProxy::setActive( bool active, QString category, QString group, QString item, QString material )
+{
+    emit signalSetActive( active, category, group, item, material );
 }

@@ -38,6 +38,7 @@ struct GuiInventoryMaterial
 	unsigned int countConstructed = 0;
 	unsigned int countLoose = 0;
 	unsigned int totalValue = 0;
+    bool watched = false;
 };
 Q_DECLARE_METATYPE( GuiInventoryMaterial )
 
@@ -54,6 +55,7 @@ struct GuiInventoryItem
 	unsigned int countConstructed = 0;
 	unsigned int countLoose = 0;
 	unsigned int totalValue = 0;
+    bool watched = false;
     QList<GuiInventoryMaterial> materials;
 };
 Q_DECLARE_METATYPE( GuiInventoryItem )
@@ -70,6 +72,7 @@ struct GuiInventoryGroup
 	unsigned int countConstructed = 0;
 	unsigned int countLoose = 0;
 	unsigned int totalValue = 0;
+    bool watched = false;
     QList<GuiInventoryItem> items;
 };
 Q_DECLARE_METATYPE( GuiInventoryGroup )
@@ -85,6 +88,7 @@ struct GuiInventoryCategory
 	unsigned int countConstructed = 0;
 	unsigned int countLoose = 0;
 	unsigned int totalValue = 0;
+    bool watched = false;
     QList<GuiInventoryGroup> groups;
 };
 Q_DECLARE_METATYPE( GuiInventoryCategory )
@@ -133,17 +137,21 @@ private:
     
     QList<GuiBuildItem> m_buildItems;
 
+    QSet<QString> m_watchedItems;
+
     QMap<BuildSelection, QString> m_buildSelection2String;
     QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;
 
     void setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection );
     void setAvailableMats( GuiBuildRequiredItem& gbri );
-
+    
 public slots:
 	void onRequestCategories();
    
     void onRequestBuildItems( BuildSelection buildSelection, QString category );
 	
+    void onSetActive( bool active, QString category, QString group, QString item, QString material );
+
 signals:
 	void signalInventoryCategories( const QList<GuiInventoryCategory>& categories );
     

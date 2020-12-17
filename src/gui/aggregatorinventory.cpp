@@ -69,6 +69,7 @@ void AggregatorInventory::onRequestCategories()
 		GuiInventoryCategory gic;
 		gic.id = cat;
 		gic.name = S::s( "$CategoryName_" + cat );
+		gic.watched = m_watchedItems.contains( cat );
 
 		for ( const auto& group : g->inv()->groups( cat ) )
 		{
@@ -76,6 +77,7 @@ void AggregatorInventory::onRequestCategories()
 			gig.id = group;
 			gig.name = S::s( "$GroupName_" + group );
 			gig.cat = cat;
+			gig.watched = m_watchedItems.contains( cat + group );
 
 
 			for ( const auto& item : g->inv()->items( cat, group ) )
@@ -85,6 +87,7 @@ void AggregatorInventory::onRequestCategories()
 				gii.name = S::s( "$ItemName_" + item );
 				gii.cat = cat;
 				gii.group = group;
+				gii.watched = m_watchedItems.contains( cat + group + item );
 
 				for ( const auto& mat : g->inv()->materials( cat, group, item ) )
 				{
@@ -97,6 +100,7 @@ void AggregatorInventory::onRequestCategories()
 						gim.cat = cat;
 						gim.group = group;
 						gim.item = item;
+						gim.watched = m_watchedItems.contains( cat + group + item + mat );
 						gim.countTotal = result.total; 
 						gim.countInJob = result.inJob; 
 						gim.countInStockpiles = result.inStockpile;
@@ -295,4 +299,18 @@ void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 			gbri.availableMats.append( { key, mats[key] } );
 		}
 	}
+}
+
+void AggregatorInventory::onSetActive( bool active, QString category, QString group, QString item, QString material )
+{
+	qDebug() << active << category + group + item + material;
+	if( active )
+	{
+		m_watchedItems.insert( category + group + item + material );
+	}
+	else
+	{
+		m_watchedItems.remove( category + group + item + material );
+	}
+	onRequestCategories();
 }
