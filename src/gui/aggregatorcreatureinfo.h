@@ -71,8 +71,8 @@ private:
 
 	unsigned int m_currentID = 0;
 
-	void createItemImg( QString slot, const EquipmentItem& eItem );
-	void createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem );
+	void createItemImg( QString slot, EquipmentItem& eItem );
+	void createUniformImg( QString slot, const UniformItem& uItem, EquipmentItem& eItem );
 	void createEmptyUniformImg( QString spriteID );
 
 public slots:

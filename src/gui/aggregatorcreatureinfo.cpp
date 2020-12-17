@@ -194,7 +194,7 @@ void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString prof
 	}
 }
 
-void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& eItem )
+void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 {
 	if( !g ) return;
 	if( eItem.itemID == 0 )
@@ -222,9 +222,13 @@ void AggregatorCreatureInfo::createItemImg( QString slot, const EquipmentItem& e
 		Global::util->createBufferForNoesisImage( pm, buffer );
 		m_info.itemPics.insert( slot, buffer );
 	}
+	else
+	{
+		eItem.itemID = 0;
+	}
 }
 
-void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& uItem, const EquipmentItem& eItem )
+void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& uItem, EquipmentItem& eItem )
 {
 	if( !g ) return;
 	if( uItem.item.isEmpty() || eItem.itemID == 0 )
@@ -244,6 +248,10 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 		Global::util->createBufferForNoesisImage( pm, buffer );
 		m_info.itemPics.insert( slot, buffer );
 	}
+	else
+	{
+		eItem.itemID = 0;
+	}
 }
 
 void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
@@ -261,6 +269,12 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 
 		Global::util->createBufferForNoesisImage( pm, buffer );
 
+		m_emptyPics.insert( spriteID, buffer );
+	}
+	else
+	{
+		std::vector<unsigned char> buffer;
+		buffer.resize( 32 * 32 * 4, 0 );
 		m_emptyPics.insert( spriteID, buffer );
 	}
 }
