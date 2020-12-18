@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - capacity info for stockpile tiles on tile info
 - watched item list
+- 24 new food items with recipes and kitchen integration
 
 ### Changed
 - furniture can now be constructed anywhere and won't get deconstructed when a room designation underneath is removed
