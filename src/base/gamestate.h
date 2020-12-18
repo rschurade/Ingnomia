@@ -20,6 +20,7 @@
 #define GAMESTATE_H_
 
 #include "../base/position.h"
+#include "../gui/aggregatorinventory.h"
 
 #include <QHash>
 #include <QString>
@@ -116,6 +117,8 @@ public:
 	static int moveY;
 	static float scale;
 	static int viewLevel;
+
+	static QList<GuiWatchedItem> watchedItemList;
 
 private:
 	static unsigned int nextID;

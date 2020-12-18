@@ -18,6 +18,7 @@
 #include "aggregatorinventory.h"
 
 #include "../base/db.h"
+#include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
 #include "../game/game.h"
@@ -68,6 +69,29 @@ void AggregatorInventory::init( Game* game )
 				m_itemToCategoryCache.insert( item, cat );
 				m_itemToGroupCache.insert( item, group );
 			}
+		}
+	}
+	m_watchedItems.clear();
+	for( auto gwi : GameState::watchedItemList )
+	{
+		QString key = gwi.category + gwi.group + gwi.item + gwi.material;
+		m_watchedItems.insert( key );
+
+		if( m_watchedItems.contains( gwi.category ) && gwi.category == key )
+		{
+			updateWatchedItem( gwi.category );
+		}
+		else if( m_watchedItems.contains( gwi.category + gwi.group ) && gwi.category + gwi.group == key  )
+		{
+			updateWatchedItem( gwi.category, gwi.group );
+		}
+		else if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item ) && gwi.category + gwi.group + gwi.item == key )
+		{
+			updateWatchedItem( gwi.category, gwi.group, gwi.item );
+		}
+		else //if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item + gwi.material ) && gwi.category + gwi.group + gwi.item + gwi.material == key )
+		{
+			updateWatchedItem( gwi.category, gwi.group, gwi.item, gwi.material );
 		}
 	}
 }
@@ -307,17 +331,17 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 	if( active )
 	{
 		m_watchedItems.insert( key );
-		m_watchedItemList.append( gwi );
+		GameState::watchedItemList.append( gwi );
 	}
 	else
 	{
 		m_watchedItems.remove( key );
-		for( int i = 0; i < m_watchedItemList.size(); ++i )
+		for( int i = 0; i < GameState::watchedItemList.size(); ++i )
 		{
-			auto hwi = m_watchedItemList[i];
+			auto hwi = GameState::watchedItemList[i];
 			if( gwi.category == hwi.category && gwi.group == hwi.group && gwi.item == hwi.item && gwi.material == hwi.material )
 			{
-				m_watchedItemList.removeAt( i );
+				GameState::watchedItemList.removeAt( i );
 				break;
 			}
 		}
@@ -393,7 +417,7 @@ void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
 
 void AggregatorInventory::updateWatchedItem( QString cat )
 {
-	for( auto& gwi : m_watchedItemList )
+	for( auto& gwi : GameState::watchedItemList )
 	{
 		if( gwi.category == cat && gwi.group.isEmpty() && gwi.item.isEmpty() && gwi.material.isEmpty() )
 		{
@@ -412,12 +436,12 @@ void AggregatorInventory::updateWatchedItem( QString cat )
 			break;
 		}
 	}
-	emit signalWatchList( m_watchedItemList );
+	emit signalWatchList( GameState::watchedItemList );
 }
     
 void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 {
-	for( auto& gwi : m_watchedItemList )
+	for( auto& gwi : GameState::watchedItemList )
 	{
 		if( gwi.category == cat && gwi.group == group && gwi.item.isEmpty() && gwi.material.isEmpty() )
 		{
@@ -435,12 +459,12 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 			break;
 		}
 	}
-	emit signalWatchList( m_watchedItemList );
+	emit signalWatchList( GameState::watchedItemList );
 }
 
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item )
 {
-	for( auto& gwi : m_watchedItemList )
+	for( auto& gwi : GameState::watchedItemList )
 	{
 		if( gwi.category == cat && gwi.group == group && gwi.item == item && gwi.material.isEmpty() )
 		{
@@ -453,19 +477,19 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 			break;
 		}
 	}
-	emit signalWatchList( m_watchedItemList );
+	emit signalWatchList( GameState::watchedItemList );
 }
 
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item, QString mat )
 {
-	for( auto& gwi : m_watchedItemList )
+	for( auto& gwi : GameState::watchedItemList )
 	{
 		if( gwi.category == cat && gwi.group == group && gwi.item == item && gwi.material == mat )
 		{
 			gwi.count = g->inv()->itemCount( item, mat );
-			gwi.guiString = S::s( "$MaterialName_" + mat ) + S::s( "$ItemName_" + item ) + ": " + QString::number( gwi.count );
+			gwi.guiString = S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + item ) + ": " + QString::number( gwi.count );
 			break;
 		}
 	}
-	emit signalWatchList( m_watchedItemList );
+	emit signalWatchList( GameState::watchedItemList );
 }

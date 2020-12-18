@@ -98,6 +98,8 @@ int GameState::moveY = 0;
 float GameState::scale = 0.0;
 int GameState::viewLevel = 100;
 
+QList<GuiWatchedItem> GameState::watchedItemList;
+
 bool GameState::init()
 {
 	nextID = 1000000;
@@ -182,6 +184,18 @@ void GameState::serialize( QVariantMap& out )
 	out.insert( "moveY", moveY );
 	out.insert( "scale", scale );
 	out.insert( "viewLevel", viewLevel );
+
+	QVariantList qwil;
+	for( const auto& gwi : GameState::watchedItemList )
+	{
+		QVariantMap qwi;
+		qwi.insert( "category", gwi.category );
+		qwi.insert( "group", gwi.group );
+		qwi.insert( "item", gwi.item );
+		qwi.insert( "material", gwi.material );
+		qwil.append( qwi );
+	}
+	out.insert( "watchedItems", qwil );
 }
 
 void GameState::load( QVariantMap& vals )
@@ -306,6 +320,15 @@ void GameState::load( QVariantMap& vals )
 	moveY = tmp.value( "moveY" ).toInt();
 	scale = qMax( tmp.value( "scale" ).toFloat(), 1.0f );
 	viewLevel = qMax( tmp.value( "viewLevel" ).toInt(), 100 );
+
+	GameState::watchedItemList.clear();
+	auto qwil = tmp.value( "watchedItems" ).toList();
+	for( auto qval : qwil )
+	{
+		QVariantMap qwi = qval.toMap();
+		GuiWatchedItem gwi{ qwi.value( "category" ).toString(), qwi.value( "group" ).toString(), qwi.value( "item" ).toString(), qwi.value( "material" ).toString() };
+		GameState::watchedItemList.append( gwi );
+	}
 }
 
 unsigned int GameState::createID()

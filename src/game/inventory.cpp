@@ -1365,11 +1365,13 @@ void Inventory::setConstructedOrEquipped( unsigned int id, bool status )
 		if ( item->isConstructedOrEquipped() && !status )
 		{
 			removeFromWealth( item );
+			emit signalRemoveItem( itemSID( id ), materialSID( id ) );
 		}
 		item->setIsConstructedOrEquipped( status );
 		if ( status )
 		{
 			addToWealth( item );
+			emit signalAddItem( itemSID( id ), materialSID( id ) );
 		}
 	}
 }

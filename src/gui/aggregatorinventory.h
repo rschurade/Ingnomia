@@ -150,7 +150,6 @@ private:
     QList<GuiBuildItem> m_buildItems;
 
     QSet<QString> m_watchedItems;
-    QList<GuiWatchedItem> m_watchedItemList;
 
     QMap<BuildSelection, QString> m_buildSelection2String;
     QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;
