@@ -1439,7 +1439,6 @@ BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 				if ( dropped )
 				{
 					updateSprite();
-					m_equipmentChanged = true;
 				}
 				if ( success )
 				{
@@ -1472,7 +1471,6 @@ BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 				if ( dropped )
 				{
 					m_equipment.clearAllItems();
-					m_equipmentChanged = true;
 					updateSprite();
 				}
 			}
@@ -2598,7 +2596,6 @@ bool Gnome::equipItem()
 		}
 
 		updateSprite();
-		m_equipmentChanged = true;
 
 		m_uniformWorn = true;
 

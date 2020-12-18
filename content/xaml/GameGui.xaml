@@ -138,7 +138,7 @@
 		</Grid>
 		
 		<Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" >
-			<ItemsControl ItemsSource="{Binding WatchList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource ItemTemplate16}">
+			<ItemsControl ItemsSource="{Binding WatchList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource ItemTemplate16B}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel />

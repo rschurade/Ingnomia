@@ -111,6 +111,10 @@
 	<DataTemplate x:Key="ItemTemplate16">
 		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="16" Margin="1"/>
 	</DataTemplate>
+	
+	<DataTemplate x:Key="ItemTemplate16B">
+		<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" Margin="1"/>
+	</DataTemplate>
 
 	<DataTemplate x:Key="ItemTemplate">
 		<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>

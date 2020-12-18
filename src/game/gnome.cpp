@@ -242,7 +242,7 @@ void Gnome::updateSprite()
 	m_spriteDefBack = createSpriteDef( "GnomeBack", true );
 
 	g->sf()->setCreatureSprite( m_id, m_spriteDef, m_spriteDefBack, isDead() );
-
+	m_equipmentChanged = true;
 	m_renderParamsChanged = true;
 }
 
