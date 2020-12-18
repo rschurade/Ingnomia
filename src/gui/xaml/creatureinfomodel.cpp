@@ -136,7 +136,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorHead" ) )
 		{
-			if( info.itemPics.value( "ArmorHead" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorHead" ).size() == 8192 )
 			{
 				m_bitmapHead = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -146,7 +146,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorChest" ) )
 		{
-			if( info.itemPics.value( "ArmorChest" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorChest" ).size() == 8192 )
 			{
 				m_bitmapChest = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorChest" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -156,7 +156,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorArms" ) )
 		{
-			if( info.itemPics.value( "ArmorArms" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorArms" ).size() == 8192 )
 			{
 				m_bitmapArms = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorArms" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -166,7 +166,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorHands" ) )
 		{
-			if( info.itemPics.value( "ArmorHands" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorHands" ).size() == 8192 )
 			{
 				m_bitmapHands = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorHands" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -176,7 +176,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorLegs" ) )
 		{
-			if( info.itemPics.value( "ArmorLegs" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorLegs" ).size() == 8192 )
 			{
 				m_bitmapLegs = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorLegs" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -186,7 +186,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorFeet" ) )
 		{
-			if( info.itemPics.value( "ArmorFeet" ).size() == 4096 )
+			if( info.itemPics.value( "ArmorFeet" ).size() == 8192 )
 			{
 				m_bitmapFeet = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorFeet" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -196,7 +196,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "LeftHandHeld" ) )
 		{
-			if( info.itemPics.value( "LeftHandHeld" ).size() == 4096 )
+			if( info.itemPics.value( "LeftHandHeld" ).size() == 8192 )
 			{
 				m_bitmapLHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "LeftHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
@@ -206,7 +206,7 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "RightHandHeld" ) )
 		{
-			if( info.itemPics.value( "RightHandHeld" ).size() == 4096 )
+			if( info.itemPics.value( "RightHandHeld" ).size() == 8192 )
 			{
 				m_bitmapRHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "RightHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
