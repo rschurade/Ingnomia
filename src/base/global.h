@@ -67,6 +67,7 @@ public:
 	static int zWeight;
 	static double xpMod;
 	static bool debugMode;
+	static bool debugOpenGL;
 
 	static QMap<QString, QSet<QString>> allowedInContainer;
 

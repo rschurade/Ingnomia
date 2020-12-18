@@ -230,8 +230,15 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 				//toggleFullScreen();
 				break;
 			case Qt::Key_R:
-				emit signalRotateSelection();
-				redraw();
+				if ( event->modifiers() & Qt::ControlModifier )
+				{
+					Global::debugOpenGL = !Global::debugOpenGL;
+				}
+				else
+				{
+					emit signalRotateSelection();
+					redraw();
+				}
 				break;
 			case Qt::Key_Comma:
 				m_renderer->rotate( 1 );

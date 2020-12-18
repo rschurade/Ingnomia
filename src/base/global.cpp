@@ -63,6 +63,7 @@ int Global::zWeight = 20;
 double Global::xpMod = 250.;
 
 bool Global::debugMode = false;
+bool Global::debugOpenGL = false;
 
 QMap<QString, QDomElement> Global::m_behaviorTrees;
 
