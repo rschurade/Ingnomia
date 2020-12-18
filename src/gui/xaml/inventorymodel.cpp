@@ -126,6 +126,7 @@ bool IngnomiaGUI::InvItemItem::getExpanded() const
 void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
+	m_state = active;
 	GuiWatchedItem gwi{ m_category, m_group, m_sid };
 	m_proxy->setActive( active, gwi );
 }
@@ -219,6 +220,7 @@ bool IngnomiaGUI::InvGroupItem::getExpanded() const
 void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
+	m_state = active;
 	GuiWatchedItem gwi{ m_category, m_sid };
 	m_proxy->setActive( active, gwi );
 }
@@ -320,7 +322,7 @@ void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value
 	{
 		active = true;
 	}
-	
+	m_state = active;
 	GuiWatchedItem gwi{ m_sid };
 	m_proxy->setActive( active, gwi );
 }

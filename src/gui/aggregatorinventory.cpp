@@ -365,7 +365,7 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 	}
 
 
-	onRequestCategories();
+	//onRequestCategories();
 }
 
     
