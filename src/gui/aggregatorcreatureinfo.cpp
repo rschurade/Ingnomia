@@ -77,40 +77,46 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 		if( gnome->roleID() )
 		{
 			m_info.uniform = g->mil()->uniformCopy( gnome->roleID() );
-			m_info.equipment = gnome->equipment();
 		}
-		m_info.itemPics.clear();
-		if( m_info.equipment.head.itemID )
+		m_info.equipment = gnome->equipment();
+		
+		if( m_previousID != m_currentID || gnome->equipmentChanged() )
 		{
-			createUniformImg( "ArmorHead", m_info.uniform.parts.value( "HeadArmor" ), m_info.equipment.head );
-		}
-		if( m_info.equipment.chest.itemID )
-		{
-			createUniformImg( "ArmorChest", m_info.uniform.parts.value( "ChestArmor" ), m_info.equipment.chest );
-		}
-		if( m_info.equipment.arm.itemID )
-		{
-			createUniformImg( "ArmorArms", m_info.uniform.parts.value( "ArmArmor" ), m_info.equipment.arm );
-		}
-		if( m_info.equipment.hand.itemID )
-		{
-			createUniformImg( "ArmorHands", m_info.uniform.parts.value( "HandArmor" ), m_info.equipment.hand );
-		}
-		if( m_info.equipment.leg.itemID )
-		{
-			createUniformImg( "ArmorLegs", m_info.uniform.parts.value( "LegArmor" ), m_info.equipment.leg );
-		}
-		if( m_info.equipment.foot.itemID )
-		{
-			createUniformImg( "ArmorFeet", m_info.uniform.parts.value( "FootArmor" ), m_info.equipment.foot );
-		}
-		if( m_info.equipment.leftHandHeld.itemID )
-		{
-			createItemImg( "LeftHandHeld", m_info.equipment.leftHandHeld );
-		}
-		if( m_info.equipment.rightHandHeld.itemID )
-		{
-			createItemImg( "RightHandHeld", m_info.equipment.rightHandHeld );
+			m_previousID = m_currentID;
+
+			m_info.itemPics.clear();
+			if( m_info.equipment.head.itemID )
+			{
+				createUniformImg( "ArmorHead", m_info.uniform.parts.value( "HeadArmor" ), m_info.equipment.head );
+			}
+			if( m_info.equipment.chest.itemID )
+			{
+				createUniformImg( "ArmorChest", m_info.uniform.parts.value( "ChestArmor" ), m_info.equipment.chest );
+			}
+			if( m_info.equipment.arm.itemID )
+			{
+				createUniformImg( "ArmorArms", m_info.uniform.parts.value( "ArmArmor" ), m_info.equipment.arm );
+			}
+			if( m_info.equipment.hand.itemID )
+			{
+				createUniformImg( "ArmorHands", m_info.uniform.parts.value( "HandArmor" ), m_info.equipment.hand );
+			}
+			if( m_info.equipment.leg.itemID )
+			{
+				createUniformImg( "ArmorLegs", m_info.uniform.parts.value( "LegArmor" ), m_info.equipment.leg );
+			}
+			if( m_info.equipment.foot.itemID )
+			{
+				createUniformImg( "ArmorFeet", m_info.uniform.parts.value( "FootArmor" ), m_info.equipment.foot );
+			}
+			if( m_info.equipment.leftHandHeld.itemID )
+			{
+				createItemImg( "LeftHandHeld", m_info.equipment.leftHandHeld );
+			}
+			if( m_info.equipment.rightHandHeld.itemID )
+			{
+				createItemImg( "RightHandHeld", m_info.equipment.rightHandHeld );
+			}
 		}
 
 		emit signalCreatureUpdate( m_info );

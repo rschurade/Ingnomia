@@ -2596,6 +2596,7 @@ bool Gnome::equipItem()
 		}
 
 		updateSprite();
+		m_equipmentChanged = true;
 
 		m_uniformWorn = true;
 

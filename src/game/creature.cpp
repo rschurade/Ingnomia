@@ -1201,3 +1201,10 @@ BT_RESULT Creature::actionGetSafeRoomPosition( bool halt )
 	}
 	return BT_RESULT::FAILURE;
 }
+
+bool Creature::equipmentChanged()
+{
+	bool tmp = m_equipmentChanged;
+	m_equipmentChanged = false;
+	return tmp;
+}

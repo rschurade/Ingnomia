@@ -281,235 +281,151 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 
 		unsigned int item = 0;
 
-		if ( uniform )
+		switch ( part )
 		{
-			switch ( part )
-			{
-				case CP_HEAD:
-					break;
-				case CP_TORSO:
-					break;
-				case CP_LEFT_ARM:
-					break;
-				case CP_RIGHT_ARM:
-					break;
-				case CP_LEFT_HAND:
-					break;
-				case CP_RIGHT_HAND:
-					break;
-				case CP_LEFT_LEG:
-					break;
-				case CP_RIGHT_LEG:
-					break;
-				case CP_LEFT_FOOT:
-					break;
-				case CP_RIGHT_FOOT:
-					break;
+			case CP_HEAD:
+				break;
+			case CP_TORSO:
+				break;
+			case CP_LEFT_ARM:
+				break;
+			case CP_RIGHT_ARM:
+				break;
+			case CP_LEFT_HAND:
+				break;
+			case CP_RIGHT_HAND:
+				break;
+			case CP_LEFT_LEG:
+				break;
+			case CP_RIGHT_LEG:
+				break;
+			case CP_LEFT_FOOT:
+				break;
+			case CP_RIGHT_FOOT:
+				break;
 
-				case CP_HAIR:
-					pm.insert( "Tint", m_equipment.hairColor );
-					bs = m_equipment.hair;
-					pm.insert( "IsHair", true );
-					pm.insert( "Hidden", hairConcealed );
-					break;
-				case CP_FACIAL_HAIR:
-					pm.insert( "Tint", m_equipment.hairColor );
-					bs = m_equipment.facialHair;
-					break;
-				case CP_CLOTHING:
-					pm.insert( "Tint", m_equipment.shirtColor );
-					bs = m_equipment.shirt;
-					break;
-				case CP_BOOTS:
-					break;
-				case CP_HAT:
-					break;
+			case CP_HAIR:
+				pm.insert( "Tint", m_equipment.hairColor );
+				bs = m_equipment.hair;
+				pm.insert( "IsHair", true );
+				pm.insert( "Hidden", hairConcealed );
+				break;
+			case CP_FACIAL_HAIR:
+				pm.insert( "Tint", m_equipment.hairColor );
+				bs = m_equipment.facialHair;
+				break;
+			case CP_CLOTHING:
+				pm.insert( "Tint", m_equipment.shirtColor );
+				bs = m_equipment.shirt;
+				break;
+			case CP_BOOTS:
+				break;
+			case CP_HAT:
+				break;
 
-				case CP_ARMOR_HEAD:
-					if ( m_equipment.head.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.head.itemID );
-						bs += "HeadArmor";
-						hairConcealed = true;
-						pm.insert( "Material", m_equipment.head.material );
-					}
-					break;
-				case CP_ARMOR_TORSO:
-					if ( m_equipment.chest.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.chest.itemID );
-						bs += "ChestArmor";
-						pm.insert( "Material", m_equipment.chest.material );
-					}
-					break;
-				case CP_ARMOR_LEFT_ARM:
-					if ( m_equipment.arm.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.arm.itemID );
-						bs += "LeftArmArmor";
-						pm.insert( "Material", m_equipment.arm.material );
-					}
-					break;
-				case CP_ARMOR_RIGHT_ARM:
-					if ( m_equipment.arm.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.arm.itemID );
-						bs += "RightArmArmor";
-						pm.insert( "Material", m_equipment.arm.material );
-					}
-					break;
-				case CP_ARMOR_LEFT_HAND:
-					if ( m_equipment.hand.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.hand.itemID );
-						bs += "LeftHandArmor";
-						pm.insert( "Material", m_equipment.hand.material );
-					}
-					break;
-				case CP_ARMOR_RIGHT_HAND:
-					if ( m_equipment.hand.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.hand.itemID );
-						bs += "RightHandArmor";
-						pm.insert( "Material", m_equipment.hand.material );
-					}
-					break;
-				case CP_ARMOR_LEFT_FOOT:
-					if ( m_equipment.foot.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.foot.itemID );
-						bs += "LeftFootArmor";
-						pm.insert( "Material", m_equipment.foot.material );
-					}
-					break;
-				case CP_ARMOR_RIGHT_FOOT:
-					if ( m_equipment.foot.itemID )
-					{
-						bs = "Gnome";
-						bs += g->inv()->itemGroup( m_equipment.foot.itemID );
-						bs += "RightFootArmor";
-						pm.insert( "Material", m_equipment.foot.material );
-					}
-					break;
-				case CP_LEFT_HAND_HELD:
-					if ( m_equipment.leftHandHeld.itemID )
-					{
-						bs = "Gnome";
-						bs += m_equipment.leftHandHeld.item;
-						bs += "Left";
-						pm.insert( "Material", m_equipment.leftHandHeld.material );
-						pm.insert( "HasBase", true );
-					}
-					break;
-				case CP_RIGHT_HAND_HELD:
-					if ( m_equipment.rightHandHeld.itemID )
-					{
-						bs = "Gnome";
-						bs += m_equipment.rightHandHeld.item;
-						bs += "Right";
-						pm.insert( "Material", m_equipment.leftHandHeld.material );
-						pm.insert( "HasBase", true );
-					}
-					break;
-				case CP_BACK:
-					if ( isBack && m_equipment.back.itemID )
-					{
-						bs = "Gnome";
-						bs += m_equipment.back.item;
-						pm.insert( "Material", m_equipment.leftHandHeld.material );
-					}
-					break;
-			}
+			case CP_ARMOR_HEAD:
+				if ( m_equipment.head.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.head.itemID );
+					bs += "HeadArmor";
+					hairConcealed = true;
+					pm.insert( "Material", m_equipment.head.material );
+				}
+				break;
+			case CP_ARMOR_TORSO:
+				if ( m_equipment.chest.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.chest.itemID );
+					bs += "ChestArmor";
+					pm.insert( "Material", m_equipment.chest.material );
+				}
+				break;
+			case CP_ARMOR_LEFT_ARM:
+				if ( m_equipment.arm.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
+					bs += "LeftArmArmor";
+					pm.insert( "Material", m_equipment.arm.material );
+				}
+				break;
+			case CP_ARMOR_RIGHT_ARM:
+				if ( m_equipment.arm.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
+					bs += "RightArmArmor";
+					pm.insert( "Material", m_equipment.arm.material );
+				}
+				break;
+			case CP_ARMOR_LEFT_HAND:
+				if ( m_equipment.hand.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
+					bs += "LeftHandArmor";
+					pm.insert( "Material", m_equipment.hand.material );
+				}
+				break;
+			case CP_ARMOR_RIGHT_HAND:
+				if ( m_equipment.hand.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
+					bs += "RightHandArmor";
+					pm.insert( "Material", m_equipment.hand.material );
+				}
+				break;
+			case CP_ARMOR_LEFT_FOOT:
+				if ( m_equipment.foot.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
+					bs += "LeftFootArmor";
+					pm.insert( "Material", m_equipment.foot.material );
+				}
+				break;
+			case CP_ARMOR_RIGHT_FOOT:
+				if ( m_equipment.foot.itemID )
+				{
+					bs = "Gnome";
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
+					bs += "RightFootArmor";
+					pm.insert( "Material", m_equipment.foot.material );
+				}
+				break;
+			case CP_LEFT_HAND_HELD:
+				if ( m_equipment.leftHandHeld.itemID )
+				{
+					bs = "Gnome";
+					bs += m_equipment.leftHandHeld.item;
+					bs += "Left";
+					pm.insert( "Material", m_equipment.leftHandHeld.material );
+					pm.insert( "HasBase", true );
+				}
+				break;
+			case CP_RIGHT_HAND_HELD:
+				if ( m_equipment.rightHandHeld.itemID )
+				{
+					bs = "Gnome";
+					bs += m_equipment.rightHandHeld.item;
+					bs += "Right";
+					pm.insert( "Material", m_equipment.leftHandHeld.material );
+					pm.insert( "HasBase", true );
+				}
+				break;
+			case CP_BACK:
+				if ( isBack && m_equipment.back.itemID )
+				{
+					bs = "Gnome";
+					bs += m_equipment.back.item;
+					pm.insert( "Material", m_equipment.leftHandHeld.material );
+				}
+				break;
 		}
-		else
-		{
-			switch ( part )
-			{
-				case CP_HEAD:
-					break;
-				case CP_TORSO:
-					break;
-				case CP_LEFT_ARM:
-					break;
-				case CP_RIGHT_ARM:
-					break;
-				case CP_LEFT_HAND:
-					break;
-				case CP_RIGHT_HAND:
-					break;
-				case CP_LEFT_LEG:
-					break;
-				case CP_RIGHT_LEG:
-					break;
-				case CP_LEFT_FOOT:
-					break;
-				case CP_RIGHT_FOOT:
-					break;
-				case CP_BACK:
-					break;
-				case CP_HAIR:
-					pm.insert( "Tint", m_equipment.hairColor );
-					bs = m_equipment.hair;
-					pm.insert( "IsHair", true );
-					break;
-				case CP_FACIAL_HAIR:
-					pm.insert( "Tint", m_equipment.hairColor );
-					bs = m_equipment.facialHair;
-					break;
-				case CP_CLOTHING:
-					pm.insert( "Tint", m_equipment.shirtColor );
-					bs = m_equipment.shirt;
-					break;
-				case CP_BOOTS:
-					break;
-				case CP_HAT:
-					break;
-
-				case CP_ARMOR_HEAD:
-					break;
-				case CP_ARMOR_TORSO:
-					break;
-				case CP_ARMOR_LEFT_ARM:
-					break;
-				case CP_ARMOR_RIGHT_ARM:
-					break;
-				case CP_ARMOR_LEFT_HAND:
-					break;
-				case CP_ARMOR_RIGHT_HAND:
-					break;
-				case CP_ARMOR_LEFT_FOOT:
-					break;
-				case CP_ARMOR_RIGHT_FOOT:
-					break;
-				case CP_LEFT_HAND_HELD:
-					if ( m_equipment.leftHandHeld.itemID )
-					{
-						bs = "Gnome";
-						bs += m_equipment.leftHandHeld.item;
-						bs += "Left";
-						pm.insert( "Material", m_equipment.leftHandHeld.material );
-						pm.insert( "HasBase", true );
-					}
-					break;
-				case CP_RIGHT_HAND_HELD:
-					if ( m_equipment.rightHandHeld.itemID )
-					{
-						bs = "Gnome";
-						bs += m_equipment.rightHandHeld.item;
-						bs += "Right";
-						pm.insert( "Material", m_equipment.leftHandHeld.material );
-						pm.insert( "HasBase", true );
-					}
-					break;
-			}
-		}
+		
 
 		if ( isBack && !bs.endsWith( "Back" ) )
 		{

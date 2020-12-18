@@ -70,6 +70,7 @@ private:
 	QMap< QString, std::vector<unsigned char> > m_emptyPics;
 
 	unsigned int m_currentID = 0;
+	unsigned int m_previousID = 0;
 
 	void createItemImg( QString slot, EquipmentItem& eItem );
 	void createUniformImg( QString slot, const UniformItem& uItem, EquipmentItem& eItem );

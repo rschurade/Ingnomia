@@ -1029,8 +1029,8 @@ QStringList Util::possibleMaterials( QString allowedMaterials, QString allowedMa
 
 void Util::createBufferForNoesisImage( const QPixmap& pm, std::vector<unsigned char>& buffer )
 {
-	int w = pm.width();
-	int h = pm.height();
+	int w = 32; //pm.width();
+	int h = 32; //pm.height();
 
 	buffer.resize( w * h * 4, 0 );
 	QImage img = pm.toImage();

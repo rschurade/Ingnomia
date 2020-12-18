@@ -278,6 +278,8 @@ public:
 
 	bool hasTransparency() { return m_hasTransparency; }
 
+	bool equipmentChanged();
+
 protected:
 	QPointer<Game> g;
 
@@ -343,6 +345,8 @@ protected:
 
 	Equipment m_equipment;
 	unsigned int m_roleID = 0;
+
+	bool m_equipmentChanged = true;
 
 	//move cooldown cache, set to m_moveCooldown after succesful move
 	float m_moveDelay = 1000;
