@@ -311,7 +311,22 @@ void Plant::updateState()
 		m_matureWood = sm.value( "Fell" ).toBool();
 		m_harvestable = sm.value( "Harvest" ).toBool();
 		m_hasAlpha = sm.value( "HasAlpha" ).toBool();
-		m_lightIntensity = sm.value( "LightIntensity" ).toInt();
+
+		int newLightIntens =  sm.value( "LightIntensity" ).toInt();
+
+		if( newLightIntens == 0 && m_lightIntensity )
+		{
+			g->w()->removeLight( m_id );
+		}
+		else if( newLightIntens > 0 && !m_lightIntensity )
+		{
+			g->w()->addLight( m_id, m_position, newLightIntens );
+		}
+		else if( newLightIntens > 0 && m_lightIntensity > 0 && newLightIntens != m_lightIntensity )
+		{
+			g->w()->moveLight( m_id, m_position, newLightIntens );
+		}
+		m_lightIntensity = newLightIntens;
 		if ( m_harvestable )
 		{
 			m_numFruits = DB::select( "NumFruitsPerSeason", "Plants", m_plantID ).toInt();
@@ -471,6 +486,10 @@ bool Plant::harvest( Position& pos )
 		QString action = row.value( "Action" ).toString();
 		if ( action == "Destroy" )
 		{
+			if( !m_lightIntensity )
+			{
+				g->w()->removeLight( m_id );
+			}
 			return true;
 		}
 		if ( action == "ReduceFruitCount" )

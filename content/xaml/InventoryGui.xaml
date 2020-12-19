@@ -25,15 +25,6 @@
 	<Grid MinHeight="700" MaxHeight="700">
 		<StackPanel Orientation="Horizontal">
 			<Border Style="{StaticResource Panel}" MinWidth="100" Margin="2">
-				<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-					<ItemsControl ItemsSource="{Binding CategoryButtons}" ItemTemplate="{StaticResource InvCategoryButtonTemplate}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<StackPanel />
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-					</ItemsControl>
-				</ScrollViewer>
 			</Border>
 
 			<Border Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2">

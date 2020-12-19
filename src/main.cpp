@@ -239,4 +239,3 @@ extern "C"
 	__declspec( dllexport ) DWORD AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif // _WIN32
-

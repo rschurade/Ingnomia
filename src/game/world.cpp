@@ -499,10 +499,6 @@ void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 	{
 		setTileFlag( pos, TileFlag::TF_TRANSPARENT );
 	}
-	if( plant_.lightIntensity() )
-	{
-		addLight( plant_.id(), pos, plant_.lightIntensity() );
-	}
 	tile.wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 	addToUpdateList( pos );
 }
