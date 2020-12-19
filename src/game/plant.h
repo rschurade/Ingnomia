@@ -81,6 +81,15 @@ public:
 		return m_isTree && m_matureWood;
 	}
 
+	bool hasAlpha()
+	{
+		return m_hasAlpha;
+	}
+	int lightIntensity()
+	{
+		return m_lightIntensity;
+	}
+
 	//return true when plant is destroyed
 	bool fell();
 	//return true when plant is destroyed
@@ -123,6 +132,8 @@ private:
 	bool m_isPlant            = false;
 	bool m_isMushroom         = false;
 	bool m_isUndergroundPlant = false;
+	bool m_hasAlpha           = false;
+	int m_lightIntensity      = 0;
 
 	bool m_growsThisSeason = true;
 

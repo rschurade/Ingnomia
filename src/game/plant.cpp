@@ -122,7 +122,8 @@ Plant::Plant( QVariant values, Game* game ) :
 	m_isPlant            = in.value( "IsPlant" ).toBool();
 	m_isUndergroundPlant = in.value( "IsUnderground" ).toBool();
 	m_numFruits          = in.value( "NumFruits" ).toInt();
-
+	m_hasAlpha           = in.value( "HasAlpha" ).toBool();
+	m_lightIntensity     = in.value( "LightIntensity" ).toInt();
 	setGrowsThisSeason();
 
 	QString growLight = in.value( "GrowsIn" ).toString();
@@ -166,6 +167,8 @@ QVariant Plant::serialize() const
 	out.insert( "IsPlant", m_isPlant );
 	out.insert( "IsUnderground", m_isUndergroundPlant );
 	out.insert( "NumFruits", m_numFruits );
+	out.insert( "HasAlpha", m_hasAlpha );
+	out.insert( "LightIntensity", m_lightIntensity );
 	switch ( m_growLight )
 	{
 		case GrowLight::SUN:
@@ -307,7 +310,8 @@ void Plant::updateState()
 
 		m_matureWood = sm.value( "Fell" ).toBool();
 		m_harvestable = sm.value( "Harvest" ).toBool();
-
+		m_hasAlpha = sm.value( "HasAlpha" ).toBool();
+		m_lightIntensity = sm.value( "LightIntensity" ).toInt();
 		if ( m_harvestable )
 		{
 			m_numFruits = DB::select( "NumFruitsPerSeason", "Plants", m_plantID ).toInt();
