@@ -153,6 +153,7 @@ NewGameModel::NewGameModel() :
 	_randomKingdomName.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnRandomKingdomName ) );
 	_randomSeed.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnRandomSeed ) );
 	_newPreset.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnNewPreset ) );
+	_savePreset.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnSavePreset ) );
 	_deletePreset.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnDeletePreset ) );
 	_addItem.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnAddItem ) );
 	_removeItem.SetExecuteFunc( MakeDelegate( this, &NewGameModel::OnRemoveItem ) );
@@ -247,6 +248,11 @@ const DelegateCommand* NewGameModel::GetNewPreset() const
 	return &_newPreset;
 }
 
+const DelegateCommand* NewGameModel::GetSavePreset() const
+{
+	return &_savePreset;
+}
+
 const DelegateCommand* NewGameModel::GetDeletePreset() const
 {
 	return &_deletePreset;
@@ -295,6 +301,12 @@ void NewGameModel::OnNewPreset( BaseComponent* param )
 		_presets->Add( MakePtr<Preset>( newName.toStdString().c_str() ) );
 	}
 	SetSelectedPreset( _presets->Get( _presets->Count() - 1 ) );
+}
+
+void NewGameModel::OnSavePreset( BaseComponent* param )
+{
+	qDebug() << "on save preset";
+	Global::newGameSettings->onSavePreset();
 }
 
 void NewGameModel::OnDeletePreset( BaseComponent* param )
@@ -800,6 +812,7 @@ NS_IMPLEMENT_REFLECTION( NewGameModel, "IngnomiaGUI.NewGameModel" )
 	NsProp( "RandomKingdomName", &NewGameModel::GetRandomKingdomName );
 	NsProp( "RandomSeed", &NewGameModel::GetRandomSeed );
 	NsProp( "NewPreset", &NewGameModel::GetNewPreset );
+	NsProp( "SavePreset", &NewGameModel::GetSavePreset );
 	NsProp( "DeletePreset", &NewGameModel::GetDeletePreset );
 	NsProp( "AddItem", &NewGameModel::GetAddItem );
 	NsProp( "RemoveItem", &NewGameModel::GetRemoveItem );

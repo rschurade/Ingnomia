@@ -89,6 +89,18 @@ void NewGameSettings::save()
 
 
 	QVariantList startItems;
+	collectStartItems( startItems );
+
+	embarkMap.insert( "startingItems", startItems );
+
+	QJsonDocument sd = QJsonDocument::fromVariant( embarkMap );
+	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd );
+
+	savePreset( startItems );
+}
+
+void NewGameSettings::collectStartItems( QVariantList& sil )
+{
 	for( const auto& si : m_startingItems )
 	{
 		QVariantMap sim;
@@ -122,7 +134,7 @@ void NewGameSettings::save()
 				sim.insert( "Type", "CombinedItem" );
 			}
 		}
-		startItems.append( sim );
+		sil.append( sim );
 	}
 	for( const auto& si : m_startingAnimals )
 	{
@@ -131,13 +143,8 @@ void NewGameSettings::save()
 		sim.insert( "ItemID", si.type );
 		sim.insert( "Gender", si.gender );
 		sim.insert( "Type", "Animal" );
-		startItems.append( sim );
+		sil.append( sim );
 	}
-
-	embarkMap.insert( "startingItems", startItems );
-
-	QJsonDocument sd = QJsonDocument::fromVariant( embarkMap );
-	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd );
 }
 
 void NewGameSettings::loadEmbarkMap()
@@ -503,13 +510,22 @@ void NewGameSettings::loadPresets()
 	ok = IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/userpresets.json", sd );
 	if ( ok )
 	{
-		m_userPresets = sd.toVariant().toList();
+		m_userPresets.clear();
+		for( auto vp : sd.toVariant().toList() )
+		{
+			m_userPresets.append( vp.toMap() );
+		}
 	}
 }
 
 void NewGameSettings::saveUserPresets()
 {
-	QJsonDocument sd = QJsonDocument::fromVariant( m_userPresets );
+	QVariantList up;
+	for( auto pm : m_userPresets )
+	{
+		up.append( pm );
+	}
+	QJsonDocument sd = QJsonDocument::fromVariant( up );
 	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/userpresets.json", sd );
 }
 
@@ -528,9 +544,8 @@ void NewGameSettings::setPreset( QString name )
 			return;
 		}
 	}
-	for ( auto p : m_userPresets )
+	for ( auto pm : m_userPresets )
 	{
-		auto pm = p.toMap();
 		if ( pm.value( "Name" ).toString() == name )
 		{
 			auto sil = pm.value( "startingItems" ).toList();
@@ -550,9 +565,8 @@ QString NewGameSettings::addPreset()
 	while ( true )
 	{
 		bool conflict = false;
-		for ( auto p : m_userPresets )
+		for ( auto pm : m_userPresets )
 		{
-			auto pm   = p.toMap();
 			auto name = pm.value( "Name" ).toString();
 			if ( name == newName )
 			{
@@ -581,9 +595,8 @@ QString NewGameSettings::addPreset()
 				return newName;
 			}
 		}
-		for ( auto p : m_userPresets )
+		for ( auto pm : m_userPresets )
 		{
-			auto pm = p.toMap();
 			if ( pm.value( "Name" ).toString() == m_selectedPreset )
 			{
 				pm.insert( "Name", newName );
@@ -593,14 +606,45 @@ QString NewGameSettings::addPreset()
 			}
 		}
 	}
+	else
+	{
+		QVariantMap pm;
+		pm.insert( "Name", newName );
+		pm.insert( "startingItems", QVariantList() );
+		m_userPresets.append( pm );
+		saveUserPresets();
+		return newName;
+	}
 	return "";
+}
+
+bool NewGameSettings::savePreset(  QVariantList items )
+{
+	for ( auto& pm : m_userPresets )
+	{
+		if ( pm.value( "Name" ).toString() == m_selectedPreset )
+		{
+			pm.insert( "startingItems", items );
+		
+			saveUserPresets();
+			return true;
+		}
+	}
+	return false;
+}
+
+bool NewGameSettings::onSavePreset()
+{
+	QVariantList sil;
+	collectStartItems( sil );
+	return savePreset( sil );
 }
 
 bool NewGameSettings::removePreset( QString name )
 {
 	for ( int i = 0; i < m_userPresets.size(); ++i )
 	{
-		auto pm = m_userPresets[i].toMap();
+		auto pm = m_userPresets[i];
 		if ( pm.value( "Name" ).toString() == name )
 		{
 			m_selectedPreset = "";
@@ -664,9 +708,9 @@ QStringList NewGameSettings::presetNames()
 	{
 		out.append( p.toMap().value( "Name" ).toString() );
 	}
-	for ( auto p : m_userPresets )
+	for ( auto pm : m_userPresets )
 	{
-		out.append( p.toMap().value( "Name" ).toString() );
+		out.append( pm.value( "Name" ).toString() );
 	}
 	return out;
 }

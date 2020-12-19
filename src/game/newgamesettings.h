@@ -167,6 +167,8 @@ public:
 	QStringList presetNames();
 	QString addPreset();
 	bool removePreset( QString name );
+	bool savePreset( QVariantList items );
+	bool onSavePreset();
 
 	bool isChecked( QString sid );
 	void setChecked( QString sid, bool value );
@@ -179,6 +181,8 @@ private:
 	void saveUserPresets();
 
 	void setStartingItems( QVariantList sil );
+	void collectStartItems( QVariantList& sil );
+
 
 	QString m_kingdomName;
 	QString m_seed;
@@ -205,7 +209,7 @@ private:
 	QStringList materials( QString itemSID );
 
 	QVariantList m_standardPresets;
-	QVariantList m_userPresets;
+	QList<QVariantMap> m_userPresets;
 
 	QString m_selectedPreset;
 

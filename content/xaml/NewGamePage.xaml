@@ -200,6 +200,7 @@
 							<Grid Grid.Row="0" HorizontalAlignment="Stretch" Margin="5">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="2*" />
 									<ColumnDefinition Width="1*" />
 									<ColumnDefinition Width="1*" />
 									<ColumnDefinition Width="1*" />
@@ -210,7 +211,8 @@
 									SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
 									ItemTemplate="{StaticResource ItemTemplate}" />
 								<Button Grid.Column="2" x:Name="NewPreset"  Content="{StaticResource NewGamePage_NewPreset}" Command="{Binding NewPreset}" Margin="1" />
-								<Button Grid.Column="3" x:Name="DeletePreset"  Content="{StaticResource NewGamePage_DeletePreset}" Command="{Binding DeletePreset}" Margin="1" />
+								<Button Grid.Column="3" x:Name="SavePreset"  Content="Save preset" Command="{Binding SavePreset}" Margin="1" />
+								<Button Grid.Column="4" x:Name="DeletePreset"  Content="{StaticResource NewGamePage_DeletePreset}" Command="{Binding DeletePreset}" Margin="1" />
 							</Grid>
 
 							<Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="5">

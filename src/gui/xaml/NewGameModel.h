@@ -113,6 +113,7 @@ private:
 	const NoesisApp::DelegateCommand* GetRandomKingdomName() const;
 	const NoesisApp::DelegateCommand* GetRandomSeed() const;
 	const NoesisApp::DelegateCommand* GetNewPreset() const;
+	const NoesisApp::DelegateCommand* GetSavePreset() const;
 	const NoesisApp::DelegateCommand* GetDeletePreset() const;
 	const NoesisApp::DelegateCommand* GetAddItem() const;
 	const NoesisApp::DelegateCommand* GetRemoveItem() const;
@@ -122,6 +123,7 @@ private:
 	void OnRandomKingdomName( BaseComponent* param );
 	void OnRandomSeed( BaseComponent* param );
 	void OnNewPreset( BaseComponent* param );
+	void OnSavePreset( BaseComponent* param );
 	void OnDeletePreset( BaseComponent* param );
 	void OnAddItem( BaseComponent* param );
 	void OnRemoveItem( BaseComponent* param );
@@ -216,6 +218,7 @@ private:
 	NoesisApp::DelegateCommand _randomKingdomName;
 	NoesisApp::DelegateCommand _randomSeed;
 	NoesisApp::DelegateCommand _newPreset;
+	NoesisApp::DelegateCommand _savePreset;
 	NoesisApp::DelegateCommand _deletePreset;
 	NoesisApp::DelegateCommand _addItem;
 	NoesisApp::DelegateCommand _removeItem;
