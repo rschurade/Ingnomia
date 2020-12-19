@@ -4916,7 +4916,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Water','water');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Lava','lava');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Pine','pine');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Oak','oak');
-INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_WillowWood','willow wood');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Willow','willow');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_AppleWood','applewood');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Birch','birch');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$MaterialName_Coal','coal');
@@ -5703,7 +5703,7 @@ INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Woad',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','DyersWeed',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','Oak',100,0,NULL,10.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','WillowWood',100,0,NULL,10.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','Willow',100,0,NULL,10.0);
 INSERT INTO "Traders" ("ID") VALUES ('WoodTrader');
 INSERT INTO "Traders" ("ID") VALUES ('OreTrader');
 INSERT INTO "Traders" ("ID") VALUES ('AnimalTrader');
@@ -10484,8 +10484,8 @@ INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('Apple
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('OrangeTree','RawWood','OrangeWood',0.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('OakTree','RawWood','Oak',0.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('OakTree','Oak','Oak',3.0);
-INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','RawWood','WillowWood',0.0);
-INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','Seed','WillowSeed',2.0);
+INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','RawWood','Willow',0.0);
+INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('WillowTree','Seed','Willow',2.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('BirchTree','RawWood','Birch',0.0);
 INSERT INTO "Plants_OnFell" ("ID","ItemID","MaterialID","Random") VALUES ('BirchTree','Seed','Birch',3.0);
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('Strawberry',1,NULL,'Sun','Spring|Summer|Autumn',NULL,0,'Winter','Strawberry',0.0,'Seed',NULL,'Plant');
@@ -10530,7 +10530,7 @@ INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason"
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('AppleTree',0,'Fruit','Sun','Spring|Summer|Autumn',NULL,0,'Winter','Apple',9.0,'Fruit','AppleTree','Tree');
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('OrangeTree',0,'Fruit','Sun','Spring|Summer|Autumn',NULL,0,'Winter','Orange',9.0,'Fruit','OrangeTree','Tree');
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('OakTree',0,NULL,'Sun','Spring|Summer|Autumn',NULL,0,NULL,'Oak',0.0,'Oak','OakTree212','Tree');
-INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('WillowTree',0,NULL,'Sun','Spring|Summer|Autumn',NULL,0,NULL,'Willow',0.0,'WillowSeed','WillowTree212','Tree');
+INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('WillowTree',0,NULL,'Sun','Spring|Summer|Autumn',NULL,0,NULL,'Willow',0.0,'Seed','WillowTree212','Tree');
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('Mushroom1',0,NULL,'Dark','Spring|Summer|Autumn|Winter',NULL,1,NULL,'Mushroom',0.0,NULL,NULL,'Mushroom');
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('Mushroom2',0,NULL,'Dark','Spring|Summer|Autumn|Winter',NULL,1,NULL,'Mushroom',0.0,NULL,NULL,'Mushroom');
 INSERT INTO "Plants" ("ID","AllowInWild","FruitItemID","GrowsIn","GrowsInSeason","IsKilledInSeason","IsLarge","LosesFruitInSeason","Material","NumFruitsPerSeason","SeedItemID","ToolButtonSprite","Type") VALUES ('Mushroom3',0,NULL,'Dark','Spring|Summer|Autumn|Winter',NULL,1,NULL,'Mushroom',0.0,NULL,NULL,'Mushroom');
@@ -11066,7 +11066,7 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Water'
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Lava','255 90 0 255',1.0,'Liquid',0.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Pine','199 134 54 255',0.5,'Wood',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Oak','169 104 54 255',0.7,'Wood',1.0);
-INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('WillowWood','189 124 74 255',0.7,'Wood',1.0);
+INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Willow','189 124 74 255',0.7,'Wood',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('AppleWood','199 101 54 255',0.5,'Wood',1.5);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Birch','242 210 105 255',0.5,'Wood',2.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Coal','64 64 64 255',0.5,'Coal',1.0);

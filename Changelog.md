@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - buildable carry containers
 - crash because of incorrect bitmaps in gnome detail window
 - user presets saving on embark
+- translation string for willow tree
+- willow trees are now plantable
 
 ### Added
 - capacity info for stockpile tiles on tile info
