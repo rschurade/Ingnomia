@@ -1377,7 +1377,7 @@ void World::createRamp( int x, int y, int z )
 	{
 		tile.floorType      = FloorType::FT_SOLIDFLOOR;
 		tile.floorMaterial  = tileBelow.wallMaterial;
-		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", tileBelow.wallMaterial ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
+		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", DBH::materialSID( tileBelow.wallMaterial ) ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
 	}
 
 	bool north = m_world[x + ( y - 1 ) * m_dimX + offset].wallType & WallType::WT_ROUGH;
@@ -1460,7 +1460,7 @@ void World::createRamp( int x, int y, int z, QString materialSID )
 	{
 		tile.floorType      = FloorType::FT_SOLIDFLOOR;
 		tile.floorMaterial  = tileBelow.wallMaterial;
-		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", tileBelow.wallMaterial ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
+		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", DBH::materialSID( tileBelow.wallMaterial ) ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
 	}
 
 	bool north = m_world[x + ( y - 1 ) * m_dimX + offset].wallType & WallType::WT_SOLIDWALL;

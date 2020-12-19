@@ -372,7 +372,7 @@ QVariantMap DB::selectRow( QString table, QString whereVal )
 	return QVariantMap();
 }
 
-QVariantMap DB::selectRow( QString table, int whereVal )
+QVariantMap DB::selectRow1( QString table, int whereVal )
 {
 	QMutexLocker lock( &DB::m_mutex );
 	++accessCounter;
@@ -427,7 +427,7 @@ QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString wher
 	else
 	{
 		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT rowid FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"";
+		qDebug() << "SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"";
 	}
 	return out;
 }
@@ -489,7 +489,7 @@ QList<QVariantMap> DB::selectRows( QString table )
 	else
 	{
 		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT rowid FROM " + table;
+		qDebug() << "SELECT * FROM " + table;
 	}
 	return out;
 }
@@ -518,7 +518,7 @@ QList<QVariantMap> DB::selectRows( QString table, QString id )
 	else
 	{
 		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT rowid FROM " + table + " WHERE ID = \"" + id + "\"";
+		qDebug() << "SELECT * FROM " + table + " WHERE ID = \"" + id + "\"";
 	}
 	return out;
 }
@@ -548,7 +548,7 @@ QList<QVariantMap> DB::selectRows( QString table, int rowid )
 	else
 	{
 		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT rowid FROM " + table + " WHERE rowid = \"" + QString::number( rowid ) + "\"";
+		qDebug() << "SELECT * FROM " + table + " WHERE rowid = \"" + QString::number( rowid ) + "\"";
 	}
 	return out;
 }

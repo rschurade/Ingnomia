@@ -18,14 +18,13 @@
 #include "dbhelper.h"
 
 #include "../base/db.h"
+#include "../base/gamestate.h"
 
 QMap<QString, QString> DBHelper::m_spriteIDCache;
 QMap<QString, bool> DBHelper::m_spriteIsRandomCache;
 QMap<QString, bool> DBHelper::m_spriteHasAnimCache;
 QMap<QString, QString> DBHelper::m_materialColorCache;
-QMap<int, QString> DBHelper::m_materialSIDCache;
 QMap<int, QString> DBHelper::m_itemSIDCache;
-QMap<QString, int> DBHelper::m_materialUIDCache;
 QMap<QString, int> DBHelper::m_materialToolLevelCache;
 QMap<QString, int> DBHelper::m_itemUIDCache;
 QMap<int, bool> DBHelper::m_itemIsContainerCache;
@@ -109,24 +108,24 @@ int DBHelper::materialToolLevel( QString material )
 
 int DBH::materialUID( QString material )
 {
-	if ( m_materialUIDCache.contains( material ) )
+	if( !GameState::materialSID2ID.contains( material ) )
 	{
-		return m_materialUIDCache.value( material );
+		GameState::materialID2SID.insert( GameState::materialSID2ID.size(), material );
+		GameState::materialSID2ID.insert( material, GameState::materialSID2ID.size() );
 	}
-	int materialUID = DB::execQuery( "SELECT rowid FROM Materials WHERE ID = \"" + material + "\"" ).toInt();
-	m_materialUIDCache.insert( material, materialUID );
-	return materialUID;
+	return GameState::materialSID2ID.value( material );
+	
+
 }
 
 QString DBH::materialSID( int material )
 {
-	if ( m_materialSIDCache.contains( material ) )
+	if ( GameState::materialID2SID.contains( material ) )
 	{
-		return m_materialSIDCache.value( material );
+		return GameState::materialID2SID.value( material );
 	}
-	QString materialSID = DB::execQuery( "SELECT ID FROM Materials WHERE rowid = \"" + QString::number( material ) + "\"" ).toString();
-	m_materialSIDCache.insert( material, materialSID );
-	return materialSID;
+	qDebug() << "***ERROR*** DBH::materialSID : no entry for material:" << material;
+	return "NONE";
 }
 
 int DBH::itemUID( QString item )

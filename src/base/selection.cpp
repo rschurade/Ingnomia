@@ -475,8 +475,9 @@ bool Selection::testTileForJobSelection( const Position& pos )
 					break;
 				case SEL_SOIL:
 				{
-					unsigned short matUID = tile->floorMaterial;
-					if ( DB::select( "Type", "Materials", matUID ).toString() != "Soil" )
+					QString matSID = DBH::materialSID( tile->floorMaterial );
+
+					if ( DB::select( "Type", "Materials", matSID ).toString() != "Soil" )
 					{
 						return false;
 					}
@@ -596,8 +597,8 @@ bool Selection::testTileForJobSelection( const Position& pos )
 					break;
 				case SEL_SOIL:
 				{
-					unsigned short matUID = tile->floorMaterial;
-					if ( DB::select( "Type", "Materials", matUID ).toString() == "Soil" )
+					QString matSID = DBH::materialSID( tile->floorMaterial );
+					if ( DB::select( "Type", "Materials", matSID ).toString() == "Soil" )
 					{
 						return false;
 					}
@@ -775,7 +776,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 	{
 		for ( auto m : m_materials )
 		{
-			vUMats.push_back( DBH::rowID( "Materials", m ) );
+			vUMats.push_back( DBH::materialUID( m ) );
 		}
 		if ( m_isMulti )
 		{

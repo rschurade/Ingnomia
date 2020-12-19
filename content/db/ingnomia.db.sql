@@ -11074,7 +11074,6 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Water'
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Lava','255 90 0 255',1.0,'Liquid',0.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Pine','199 134 54 255',0.5,'Wood',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Oak','169 104 54 255',0.7,'Wood',1.0);
-INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Willow','189 124 74 255',0.7,'Wood',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('AppleWood','199 101 54 255',0.5,'Wood',1.5);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Birch','242 210 105 255',0.5,'Wood',2.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Coal','64 64 64 255',0.5,'Coal',1.0);
@@ -11218,6 +11217,7 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('BearLe
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('WolfLeather','255 255 255 255',0.5,'Leather',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('StagLeather','255 255 255 255',0.5,'Leather',1.0);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Glass','255 255 255 255',0.8,'Glass',1.0);
+INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Willow','189 124 74 255',0.7,'Wood',1.0);
 INSERT INTO "Magic" ("ID","Color","Spells") VALUES ('Nature','255 106 0 255','SpeedGrowth');
 INSERT INTO "Magic" ("ID","Color","Spells") VALUES ('Geomancy','175 114 86 255','RevealOre');
 INSERT INTO "Lairs_Spawns" ("ID","Type","Offset","Level","Rotation","Gender") VALUES ('MantLair1','Queen','5 5 0',0,0,2);

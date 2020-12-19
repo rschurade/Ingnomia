@@ -44,7 +44,7 @@ Item::Item( Position& pos, QString itemSID, QString materialSID ) :
 		setNutritionalValue( DB::select( "EatValue", "Items", itemSID ).toInt() );
 		setDrinkValue( DB::select( "DrinkValue", "Items", itemSID ).toInt() );
 	}
-	if ( DB::select( "IsContainer", "Items", m_itemUID ).toBool() )
+	if ( DB::select( "IsContainer", "Items", itemSID ).toBool() )
 	{
 		if ( !m_extraData )
 		{

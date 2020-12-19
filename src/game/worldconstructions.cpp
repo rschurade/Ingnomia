@@ -972,8 +972,8 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		}
 	}
 
-	QString type  = DB::select( "Category", "Items", g->inv()->itemUID( itemID ) ).toString();
-	QString group = DB::select( "ItemGroup", "Items", g->inv()->itemUID( itemID ) ).toString();
+	QString type  = DB::select( "Category", "Items", g->inv()->itemSID( itemID ) ).toString();
+	QString group = DB::select( "ItemGroup", "Items", g->inv()->itemSID( itemID ) ).toString();
 
 	Tile& tile = getTile( pos );
 

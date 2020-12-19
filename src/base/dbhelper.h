@@ -60,9 +60,7 @@ private:
 	static QMap<QString, bool> m_spriteHasAnimCache;
 	static QMap<QString, QString> m_materialColorCache;
 
-	static QMap<int, QString> m_materialSIDCache;
 	static QMap<int, QString> m_itemSIDCache;
-	static QMap<QString, int> m_materialUIDCache;
 	static QMap<QString, int> m_materialToolLevelCache;
 	static QMap<QString, int> m_itemUIDCache;
 	static QMap<int, bool> m_itemIsContainerCache;

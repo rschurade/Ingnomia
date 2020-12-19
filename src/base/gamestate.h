@@ -120,6 +120,9 @@ public:
 
 	static QList<GuiWatchedItem> watchedItemList;
 
+	static QHash<QString, int> materialSID2ID;
+	static QHash<int, QString> materialID2SID;
+
 private:
 	static unsigned int nextID;
 
