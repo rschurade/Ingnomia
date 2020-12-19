@@ -8,13 +8,17 @@ All notable changes to this project will be documented in this file.
 - cursor detached from selection when using WASD
 - going back to resume screen when selecting settings out of a running game
 - container capacity on stockpiles after load
-- crash with incorrect data in save folders
+- crash because of incorrect data in save folders
 - buildable carry containers
+- crash because of incorrect bitmaps in gnome detail window
+- user presets saving on embark
 
 ### Added
 - capacity info for stockpile tiles on tile info
 - watched item list
 - 24 new food items with recipes and kitchen integration
+- button to save user presets
+- glass bottle and jar
 
 ### Changed
 - furniture can now be constructed anywhere and won't get deconstructed when a room designation underneath is removed
