@@ -849,7 +849,6 @@ void GameModel::OnCmdCategory( BaseComponent* param )
 
 void GameModel::setCategory( const char* cats )
 {
-	qDebug() << "GameModel::setCategory" << cats;
 	QString cat( cats );
 	m_proxy->requestBuildItems( m_buildSelection, cat );
 }
@@ -869,7 +868,6 @@ void GameModel::updateBuildItems( const QList<GuiBuildItem>& items )
 void GameModel::OnCmdButtonCommand( BaseComponent* param )
 {
 	QString cmd( param->ToString().Str() );
-	qDebug() << cmd;
 
 	switch ( m_selectedButtons )
 	{
@@ -1278,11 +1276,9 @@ const char* GameModel::getMessageText() const
 
 void GameModel::onMessageButtonCmd( BaseComponent* param )
 {
-	qDebug() << "GameModel::onMessageButtonCmd";
 	if( param )
 	{
 		QString qParam = param->ToString().Str();
-		qDebug() << qParam;
 		if( qParam != "ok" )
 		{
 			m_proxy->sendEventAnswer( m_messageID, qParam == "yes" );
@@ -1291,7 +1287,6 @@ void GameModel::onMessageButtonCmd( BaseComponent* param )
 		if( !m_messageQueue.isEmpty() )
 		{
 			auto gme = m_messageQueue.takeFirst();
-			qDebug() << gme.id << gme.title << gme.msg << gme.pause << gme.yesno;
 			eventMessage( gme.id, gme.title, gme.msg, gme.pause, gme.yesno );
 		}
 	}

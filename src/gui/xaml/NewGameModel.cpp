@@ -294,7 +294,6 @@ void NewGameModel::OnRandomSeed( BaseComponent* param )
 
 void NewGameModel::OnNewPreset( BaseComponent* param )
 {
-	qDebug() << "on new preset";
 	QString newName = Global::newGameSettings->addPreset();
 	if ( !newName.isEmpty() )
 	{
@@ -305,7 +304,6 @@ void NewGameModel::OnNewPreset( BaseComponent* param )
 
 void NewGameModel::OnSavePreset( BaseComponent* param )
 {
-	qDebug() << "on save preset";
 	Global::newGameSettings->onSavePreset();
 }
 
@@ -313,7 +311,6 @@ void NewGameModel::OnDeletePreset( BaseComponent* param )
 {
 	//get name from combobox
 	auto name = _selectedPreset->GetName();
-	qDebug() << "on delete preset" << name;
 	if ( Global::newGameSettings->removePreset( name ) )
 	{
 		SetSelectedPreset( _presets->Get( 0 ) );
@@ -351,12 +348,9 @@ void NewGameModel::OnAddItem( BaseComponent* param )
 	Global::newGameSettings->addStartingItem( itemSID, mat1, mat2, amount );
 
 	updateStartingItems();
-
-	qDebug() << "on add item" << amount << itemSID << mat1 << mat2;
 }
 void NewGameModel::OnRemoveItem( BaseComponent* param )
 {
-	qDebug() << "on remove item" << param->ToString().Str();
 	Global::newGameSettings->removeStartingItem( param->ToString().Str() );
 	updateStartingItems();
 }
@@ -379,12 +373,9 @@ void NewGameModel::OnAddAnimal( BaseComponent* param )
 	Global::newGameSettings->addStartingAnimal( type, gender, amount );
 
 	updateStartingAnimals();
-
-	qDebug() << "on add animal" << amount << type << gender;
 }
 void NewGameModel::OnRemoveAnimal( BaseComponent* param )
 {
-	qDebug() << "on remove animal" << param->ToString().Str();
 	Global::newGameSettings->removeStartingAnimal( param->ToString().Str() );
 	updateStartingAnimals();
 }

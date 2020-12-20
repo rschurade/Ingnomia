@@ -362,8 +362,6 @@ void PopulationModel::onRemoveAllSkillsCmd( BaseComponent* param )
 
 void PopulationModel::onSortCmd( BaseComponent* param )
 {
-	qDebug() << param->ToString().Str();
-
 	m_proxy->sortGnomes( param->ToString().Str() );
 }
 
@@ -415,7 +413,6 @@ const char* PopulationModel::GetShowProfEdit() const
 
 void PopulationModel::updateSchedules( const GuiScheduleInfo& info )
 {
-	qDebug() << "PopulationModel::updateSchedules";
 	m_scheduleGnomes->Clear();
 
 	for( const auto& gnome : info.schedules )

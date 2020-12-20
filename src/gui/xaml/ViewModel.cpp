@@ -203,7 +203,6 @@ void ViewModel::OnStart( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnSettings( BaseComponent* )
 {
-	qDebug() << "ViewModel OnSettings";
 	NS_LOG_INFO( "ViewModel OnSettings" );
 	SetState( State::Settings );
 }
@@ -211,7 +210,6 @@ void ViewModel::OnSettings( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnNewGame( BaseComponent* )
 {
-	qDebug() << "ViewModel OnNewGame";
 	NS_LOG_INFO( "ViewModel OnNewGame" );
 	SetState( State::Wait );
 	m_proxy->startNewGame();
@@ -223,13 +221,11 @@ void ViewModel::OnContinueGame( BaseComponent* param )
 
 	if ( !param )
 	{
-		qDebug() << "ViewModel OnContinueGame last game";
 		SetState( State::Wait );
 		m_proxy->continueLastGame();
 	}
 	else
 	{
-		qDebug() << "ViewModel OnContinueGame" << param->ToString().Str();
 		SetState( State::Wait );
 		m_proxy->loadGame( param->ToString().Str() );
 	}
@@ -242,7 +238,6 @@ void ViewModel::OnContinueGameFinished( bool gameLoaded )
 {
 	if ( gameLoaded )
 	{
-		qDebug() << "load game finished";
 		OnResume( nullptr );
 	}
 	else
@@ -254,7 +249,6 @@ void ViewModel::OnContinueGameFinished( bool gameLoaded )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnSetupGame( BaseComponent* )
 {
-	qDebug() << "ViewModel OnSetupGame";
 	NS_LOG_INFO( "ViewModel OnNewGame" );
 	SetState( State::NewGame );
 }
@@ -262,7 +256,6 @@ void ViewModel::OnSetupGame( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnLoadGame( BaseComponent* )
 {
-	qDebug() << "ViewModel OnLoadGame";
 	NS_LOG_INFO( "ViewModel OnLoadGame" );
 	m_proxy->requestLoadScreenUpdate();
 	SetState( State::LoadGame );
@@ -271,7 +264,6 @@ void ViewModel::OnLoadGame( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnSaveGame( BaseComponent* )
 {
-	qDebug() << "ViewModel OnSaveGame";
 	NS_LOG_INFO( "ViewModel OnSaveGame" );
 
 	m_proxy->saveGame();
@@ -280,7 +272,6 @@ void ViewModel::OnSaveGame( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnExit( BaseComponent* )
 {
-	qDebug() << "ViewModel OnExit";
 	NS_LOG_INFO( "Exiting game" );
 	//NoesisApp::Application::Current()->Shutdown();
 	Global::eventConnector->onExit();
@@ -302,7 +293,6 @@ void ViewModel::OnBackToMain( BaseComponent* )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ViewModel::OnBack( BaseComponent* )
 {
-	qDebug() << "ViewModel OnBack";
 	switch ( _state )
 	{
 		case State::Main:

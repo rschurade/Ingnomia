@@ -107,7 +107,6 @@ void LoadGameModel::SetSelectedKingdom( SaveItem* item )
 {
 	if ( _selectedKingdom != item )
 	{
-		//qDebug() << item->_path.c_str();
 		_selectedKingdom = item;
 		OnPropertyChanged( "SelectedKingdom" );
 
@@ -144,10 +143,9 @@ const NoesisApp::DelegateCommand* LoadGameModel::GetLoadGame() const
 
 void LoadGameModel::OnLoadGame( BaseComponent* param )
 {
-	qDebug() << "OnLoadGame";
 	if ( _selectedGame )
 	{
-		qDebug() << _selectedGame->_path.Str();
+		
 	}
 }
 

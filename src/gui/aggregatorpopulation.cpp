@@ -57,7 +57,6 @@ void AggregatorPopulation::init( Game* game )
 void AggregatorPopulation::onRequestPopulationUpdate()
 {
 	if( !g ) return;
-	qDebug() << "AggregatorPopulation::onRequestPopulationUpdate()" << m_sortMode;
 
 	emit signalProfessionList( g->gm()->professions() );
 

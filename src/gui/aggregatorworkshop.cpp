@@ -129,8 +129,6 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 		auto ws = g->wsm()->workshop( workshopID );
 		if ( ws )
 		{
-			qDebug() << workshopID << ws->name();
-
 			m_info.name             = ws->name();
 			m_info.priority         = g->wsm()->priority( workshopID );
 			m_info.maxPriority      = g->wsm()->maxPriority();
@@ -217,7 +215,6 @@ void AggregatorWorkshop::onSetBasicOptions( unsigned int workshopID, QString nam
 	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{
-		//qDebug() << WorkshopID << name << priority << suspended;
 		ws->setName( name );
 		g->wsm()->setPriority( workshopID, priority );
 		ws->setActive( !suspended );
@@ -241,7 +238,6 @@ void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butc
 void AggregatorWorkshop::onCraftItem( unsigned int workshopID, QString craftID, int mode, int number, QStringList mats )
 {
 	if( !g ) return;
-	qDebug() << "onCraftItem" << workshopID << craftID << mode << number << mats;
 	auto ws = g->wsm()->workshop( workshopID );
 	if ( ws )
 	{

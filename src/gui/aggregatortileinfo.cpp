@@ -398,7 +398,6 @@ void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int 
 	auto room = g->rm()->getRoom( designationID );
 	if ( room )
 	{
-		qDebug() << "room" << designationID << "set owner" << gnomeID;
 		auto oldOwner = room->owner();
 
 		room->setOwner( gnomeID );
