@@ -372,36 +372,6 @@ QVariantMap DB::selectRow( QString table, QString whereVal )
 	return QVariantMap();
 }
 
-QVariantMap DB::selectRow1( QString table, int whereVal )
-{
-	QMutexLocker lock( &DB::m_mutex );
-	++accessCounter;
-	QSqlQuery query( getDB() );
-	if ( query.exec( "SELECT * FROM " + table + " WHERE rowid = \"" + QString::number( whereVal ) + "\"" ) )
-	{
-		m_counter.add( query.lastQuery() );
-		if ( query.next() )
-		{
-			auto record = getDB().record( table );
-			int count   = record.count();
-
-			QVariantMap out;
-			for ( int i = 0; i < count; ++i )
-			{
-				out.insert( record.field( i ).name(), query.value( record.field( i ).name() ) );
-			}
-			return out;
-		}
-	}
-	else
-	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE roid = \"" + whereVal + "\"";
-	}
-
-	return QVariantMap();
-}
-
 QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString whereVal )
 {
 	QMutexLocker lock( &DB::m_mutex );
@@ -523,36 +493,6 @@ QList<QVariantMap> DB::selectRows( QString table, QString id )
 	return out;
 }
 
-QList<QVariantMap> DB::selectRows( QString table, int rowid )
-{
-	QMutexLocker lock( &DB::m_mutex );
-	++accessCounter;
-	QList<QVariantMap> out;
-	QSqlQuery query( getDB() );
-	if ( query.exec( "SELECT * FROM " + table + " WHERE rowid = \"" + QString::number( rowid ) + "\"" ) )
-	{
-		m_counter.add( query.lastQuery() );
-		auto record = query.record();
-		int count   = record.count();
-		while ( query.next() )
-		{
-			QVariantMap result;
-
-			for ( int i = 0; i < count; ++i )
-			{
-				result.insert( record.field( i ).name(), query.value( record.field( i ).name() ) );
-			}
-			out.append( result );
-		}
-	}
-	else
-	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE rowid = \"" + QString::number( rowid ) + "\"";
-	}
-	return out;
-}
-
 Counter<QString>& DB::getQueryCounter()
 {
 	return m_counter;
@@ -561,106 +501,6 @@ Counter<QString>& DB::getQueryCounter()
 QStringList DB::tables()
 {
 	return getDB().tables();
-}
-
-bool DB::createItem( const Item& item, QString itemSID, QString materialSID )
-{
-	auto baseItemMap = selectRow( "Items", itemSID );
-	int value        = item.value();
-	QMutexLocker lock( &DB::m_mutex );
-	++accessCounter;
-
-	m_itemCreateQuery.bindValue( 0, QString::number( item.id() ) );                   //UID
-	m_itemCreateQuery.bindValue( 1, item.getPos().toString() );                       //position
-	m_itemCreateQuery.bindValue( 2, QString::number( item.spriteID() ) );             //spriteID
-	m_itemCreateQuery.bindValue( 3, QString::number( item.itemUID() ) );              //itemUID
-	m_itemCreateQuery.bindValue( 4, QString::number( item.materialUID() ) );          //materialUID
-	m_itemCreateQuery.bindValue( 5, itemSID );                                        //itemSID
-	m_itemCreateQuery.bindValue( 6, materialSID );                                    //materialSID
-	m_itemCreateQuery.bindValue( 7, baseItemMap.value( "Category" ).toString() );     //category
-	m_itemCreateQuery.bindValue( 8, baseItemMap.value( "Group" ).toString() );        // group
-	m_itemCreateQuery.bindValue( 9, 0 );                                              //pickedUp
-	m_itemCreateQuery.bindValue( 10, 0 );                                             //isConstructed
-	m_itemCreateQuery.bindValue( 11, 0 );                                             //inStockpile
-	m_itemCreateQuery.bindValue( 12, 0 );                                             // inJob
-	m_itemCreateQuery.bindValue( 13, baseItemMap.value( "IsContainer" ).toBool() );   //isContainer
-	m_itemCreateQuery.bindValue( 14, 0 );                                             //inContainer
-	m_itemCreateQuery.bindValue( 15, 0 );                                             // madeBy
-	m_itemCreateQuery.bindValue( 16, 1 );                                             //quality
-	m_itemCreateQuery.bindValue( 17, value );                                         //value
-	m_itemCreateQuery.bindValue( 18, baseItemMap.value( "EatValue" ).toInt() );       //eatValue
-	m_itemCreateQuery.bindValue( 19, baseItemMap.value( "DrinkValue" ).toInt() );     //drinkValue
-	m_itemCreateQuery.bindValue( 20, "" );                                            //color
-	m_itemCreateQuery.bindValue( 21, baseItemMap.value( "HasComponents" ).toBool() ); //hasComponents
-	m_itemCreateQuery.bindValue( 22, 0 );                                             //componentOf
-	m_itemCreateQuery.bindValue( 23, baseItemMap.value( "IsTool" ).toBool() );        //istTool
-	m_itemCreateQuery.bindValue( 24, baseItemMap.value( "LightIntensity" ).toInt() ); //lightIntensity
-	m_itemCreateQuery.bindValue( 25, baseItemMap.value( "StackSize" ).toBool() );
-
-	if ( !m_itemCreateQuery.exec() )
-	{
-		qDebug() << "sql error:  " << m_itemCreateQuery.lastError();
-		//qDebug() << "INSERT INTO v_Items ( \"UID\", \"position\", \"spriteID\" ) VALUES (\"" + QString::number( itemID ) + "\", \"" + pos.toString() + "\", \"" + QString::number( spriteID ) +"\" )";
-		return false;
-	}
-
-	return true;
-}
-
-bool DB::createItem( const QVariantMap& in )
-{
-	QMutexLocker lock( &DB::m_mutex );
-	++accessCounter;
-
-	m_itemCreateQuery.bindValue( 0, in.value( "UID" ) );             //UID
-	m_itemCreateQuery.bindValue( 1, in.value( "position" ) );        //position
-	m_itemCreateQuery.bindValue( 2, in.value( "spriteID" ) );        //spriteID
-	m_itemCreateQuery.bindValue( 3, in.value( "itemUID" ) );         //itemUID
-	m_itemCreateQuery.bindValue( 4, in.value( "materialUID" ) );     //materialUID
-	m_itemCreateQuery.bindValue( 5, in.value( "itemSID" ) );         //itemSID
-	m_itemCreateQuery.bindValue( 6, in.value( "materialSID" ) );     //materialSID
-	m_itemCreateQuery.bindValue( 7, in.value( "category" ) );        //category
-	m_itemCreateQuery.bindValue( 8, in.value( "group" ) );           // group
-	m_itemCreateQuery.bindValue( 9, in.value( "pickedUp" ) );        //pickedUp
-	m_itemCreateQuery.bindValue( 10, in.value( "isConstructed" ) );  //isConstructed
-	m_itemCreateQuery.bindValue( 11, in.value( "inStockpile" ) );    //inStockpile
-	m_itemCreateQuery.bindValue( 12, in.value( "inJob" ) );          // inJob
-	m_itemCreateQuery.bindValue( 13, in.value( "isContainer" ) );    //isContainer
-	m_itemCreateQuery.bindValue( 14, in.value( "inContainer" ) );    //inContainer
-	m_itemCreateQuery.bindValue( 15, in.value( "madeBy" ) );         // madeBy
-	m_itemCreateQuery.bindValue( 16, in.value( "quality" ) );        //quality
-	m_itemCreateQuery.bindValue( 17, in.value( "value" ) );          //value
-	m_itemCreateQuery.bindValue( 18, in.value( "eatValue" ) );       //eatValue
-	m_itemCreateQuery.bindValue( 19, in.value( "drinkValue" ) );     //drinkValue
-	m_itemCreateQuery.bindValue( 20, in.value( "color" ) );          //color
-	m_itemCreateQuery.bindValue( 21, in.value( "hasComponents" ) );  //hasComponents
-	m_itemCreateQuery.bindValue( 22, in.value( "componentOf" ) );    //componentOf
-	m_itemCreateQuery.bindValue( 23, in.value( "isTool" ) );         //istTool
-	m_itemCreateQuery.bindValue( 24, in.value( "lightIntensity" ) ); //lightIntensity
-	m_itemCreateQuery.bindValue( 25, in.value( "stackSize" ) );
-
-	if ( !m_itemCreateQuery.exec() )
-	{
-		qDebug() << "sql error:  " << m_itemCreateQuery.lastError();
-		//qDebug() << "INSERT INTO v_Items ( \"UID\", \"position\", \"spriteID\" ) VALUES (\"" + QString::number( itemID ) + "\", \"" + pos.toString() + "\", \"" + QString::number( spriteID ) +"\" )";
-		return false;
-	}
-
-	return true;
-}
-
-bool DB::destroyItem( unsigned int itemID )
-{
-	QMutexLocker lock( &DB::m_mutex );
-	QSqlQuery query = getDB().exec( "DELETE FROM v_Items WHERE UID = \"" + QString::number( itemID ) + "\"" );
-	if ( query.isValid() )
-	{
-		if ( query.numRowsAffected() > 0 )
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 bool DB::updateRow( QString table, QVariantMap values )

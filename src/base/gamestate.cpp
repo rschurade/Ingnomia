@@ -362,7 +362,7 @@ void GameState::load( QVariantMap& vals )
 	{
 		for( auto id : DB::ids( "Items" ) )
 		{
-			int rowid = DB::select( "rowid", "Items", id ).toInt();
+			int rowid = DBH::rowID( "Items", id );
 			itemID2SID.insert( rowid, id );
 			itemSID2ID.insert( id, rowid );
 		}
@@ -384,7 +384,7 @@ void GameState::load( QVariantMap& vals )
 	{
 		for( auto id : DB::ids( "Materials" ) )
 		{
-			int rowid = DB::select( "rowid", "Materials", id ).toInt();
+			int rowid = DBH::rowID( "Materials", id );
 			materialID2SID.insert( rowid, id );
 			materialSID2ID.insert( id, rowid );
 		}

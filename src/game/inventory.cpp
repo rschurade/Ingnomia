@@ -930,8 +930,6 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 
 bool Inventory::isPickedUp( unsigned int id )
 {
-	//DB::execQuery( "SELECT pickedUp FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
-
 	Item* item = getItem( id );
 	if ( item )
 	{
@@ -955,8 +953,6 @@ QList<QString> Inventory::groups( QString category )
 }
 QList<QString> Inventory::items( QString category, QString group )
 {
-	//DB::execQuery2( "SELECT DISTINCT itemSID FROM v_Items WHERE category = \"" + category + "\" AND \"group\" = \"" + group + "\"" );
-
 	if ( m_itemsSorted.contains( category ) )
 	{
 		if ( m_itemsSorted[category].contains( group ) )
@@ -969,8 +965,6 @@ QList<QString> Inventory::items( QString category, QString group )
 
 QList<QString> Inventory::materials( QString category, QString group, QString item )
 {
-	//DB::execQuery2( "SELECT DISTINCT materialSID FROM v_Items WHERE category = \"" + category + "\" AND \"group\" = \"" + group + "\" AND itemSID = \"" + item + "\"" );
-
 	if ( m_hash.contains( item ) )
 	{
 		return m_hash[item].keys();
@@ -980,8 +974,6 @@ QList<QString> Inventory::materials( QString category, QString group, QString it
 
 bool Inventory::isInGroup( QString category, QString group, unsigned int itemID )
 {
-	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE UID = \"" + QString::number( itemID ) + "\" AND category = \"" + category + "\" AND \"group\" = \"" + group + "\"" );
-
 	if ( m_itemsSorted.contains( category ) )
 	{
 		if ( m_itemsSorted[category].contains( group ) )
@@ -1000,12 +992,6 @@ bool Inventory::isInGroup( QString category, QString group, unsigned int itemID 
 QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allowInJob )
 {
 	QMap<QString, int> mats;
-	/*
-	auto vMats = DB::execQuery2( "SELECT DISTINCT materialSID FROM v_Items WHERE itemSID = \"" + itemID + "\"" );
-	//for( auto vMat : vMats )
-	{
-		//qDebug() << itemID << vMat.toString() << DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + vMat.toString() + "\" AND isConstructed = 0 AND pickedUp = 0" ).toInt();
-	}*/
 
 	mats.insert( "any", 0 );
 
@@ -1043,8 +1029,6 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 
 unsigned int Inventory::itemCount( QString itemID, QString materialID )
 {
-	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + materialID + "\"" );
-
 	unsigned int result = 0;
 
 	if ( materialID == "any" )
@@ -1082,8 +1066,6 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 
 unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 {
-	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + materialID + "\"" );
-
 	unsigned int result = 0;
 
 	if ( materialID == "any" )
@@ -1121,8 +1103,6 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 
 unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID )
 {
-	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + materialID + "\" AND inStockpile > 0" );
-
 	unsigned int result = 0;
 
 	if ( materialID == "any" )
@@ -1160,8 +1140,6 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 
 unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materialID )
 {
-	//DB::execQuery( "SELECT count(*) FROM v_Items WHERE itemSID = \"" + itemID + "\" AND materialSID = \"" + materialID + "\" AND inStockpile = 0" );
-
 	unsigned int result = 0;
 
 	if ( materialID == "any" )
@@ -1269,7 +1247,6 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 
 bool Inventory::isContainer( unsigned int id )
 {
-	//DB::execQuery( "SELECT isContainer FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1280,7 +1257,6 @@ bool Inventory::isContainer( unsigned int id )
 
 unsigned int Inventory::isInStockpile( unsigned int id )
 {
-	//DB::execQuery( "SELECT inStockpile FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1291,7 +1267,6 @@ unsigned int Inventory::isInStockpile( unsigned int id )
 
 void Inventory::setInStockpile( unsigned int id, unsigned int stockpile )
 {
-	//DB::execQuery( "UPDATE v_Items SET inStockpile = \"" + QString::number( stockpile ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1305,7 +1280,6 @@ void Inventory::setInStockpile( unsigned int id, unsigned int stockpile )
 
 unsigned int Inventory::isInJob( unsigned int id )
 {
-	//DB::execQuery( "SELECT inJob FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1316,7 +1290,6 @@ unsigned int Inventory::isInJob( unsigned int id )
 
 void Inventory::setInJob( unsigned int id, unsigned int job )
 {
-	//DB::execQuery( "UPDATE v_Items SET inJob = \"" + QString::number( job ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1326,7 +1299,6 @@ void Inventory::setInJob( unsigned int id, unsigned int job )
 
 unsigned int Inventory::isInContainer( unsigned int id )
 {
-	//DB::execQuery( "SELECT inContainer FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1337,7 +1309,6 @@ unsigned int Inventory::isInContainer( unsigned int id )
 
 void Inventory::setInContainer( unsigned int id, unsigned int container )
 {
-	//DB::execQuery( "UPDATE v_Items SET inContainer = \"" + QString::number( container ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1347,7 +1318,6 @@ void Inventory::setInContainer( unsigned int id, unsigned int container )
 
 bool Inventory::isConstructedOrEquipped( unsigned int id )
 {
-	//DB::execQuery( "SELECT isConstructed FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1358,7 +1328,6 @@ bool Inventory::isConstructedOrEquipped( unsigned int id )
 
 void Inventory::setConstructedOrEquipped( unsigned int id, bool status )
 {
-	//DB::execQuery( "UPDATE v_Items SET isConstructed = \"" + QString::number( status ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1378,7 +1347,6 @@ void Inventory::setConstructedOrEquipped( unsigned int id, bool status )
 
 unsigned int Inventory::value( unsigned int id )
 {
-	//DB::execQuery( "SELECT \"value\" FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1389,7 +1357,6 @@ unsigned int Inventory::value( unsigned int id )
 
 void Inventory::setValue( unsigned int id, unsigned int value )
 {
-	//DB::execQuery( "UPDATE v_Items SET \"value\" = \"" + QString::number( value ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1399,7 +1366,6 @@ void Inventory::setValue( unsigned int id, unsigned int value )
 
 unsigned char Inventory::quality( unsigned int id )
 {
-	//DB::execQuery( "SELECT quality FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1410,7 +1376,6 @@ unsigned char Inventory::quality( unsigned int id )
 
 void Inventory::setQuality( unsigned int id, unsigned char quality )
 {
-	//DB::execQuery( "UPDATE v_Items SET quality = \"" + QString::number( quality ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1420,7 +1385,6 @@ void Inventory::setQuality( unsigned int id, unsigned char quality )
 
 unsigned int Inventory::madeBy( unsigned int id )
 {
-	//DB::execQuery( "SELECT madeBy FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1431,7 +1395,6 @@ unsigned int Inventory::madeBy( unsigned int id )
 
 void Inventory::setMadeBy( unsigned int id, unsigned int creatureID )
 {
-	//DB::execQuery( "UPDATE v_Items SET madeBy = \"" + QString::number( creatureID ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1441,7 +1404,6 @@ void Inventory::setMadeBy( unsigned int id, unsigned int creatureID )
 
 void Inventory::putItemInContainer( unsigned int id, unsigned int containerID )
 {
-	//DB::execQuery( "UPDATE v_Items SET inContainer = \"" + QString::number( containerID ) + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item      = getItem( id );
 	auto container = getItem( containerID );
 	if ( item != 0 && container != 0 )
@@ -1465,7 +1427,6 @@ void Inventory::putItemInContainer( unsigned int id, unsigned int containerID )
 
 void Inventory::removeItemFromContainer( unsigned int id )
 {
-	//DB::execQuery( "UPDATE v_Items SET inContainer = 0 WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1508,7 +1469,6 @@ QString Inventory::designation( unsigned int id )
 
 QString Inventory::itemSID( unsigned int id )
 {
-	//DB::execQuery( "SELECT itemSID FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1519,7 +1479,6 @@ QString Inventory::itemSID( unsigned int id )
 
 unsigned int Inventory::itemUID( unsigned int id )
 {
-	//DB::execQuery( "SELECT itemUID FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1530,7 +1489,6 @@ unsigned int Inventory::itemUID( unsigned int id )
 
 QString Inventory::materialSID( unsigned int id )
 {
-	//DB::execQuery( "SELECT materialSID FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1541,7 +1499,6 @@ QString Inventory::materialSID( unsigned int id )
 
 unsigned int Inventory::materialUID( unsigned int id )
 {
-	//DB::execQuery( "SELECT materialUID FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1552,7 +1509,6 @@ unsigned int Inventory::materialUID( unsigned int id )
 
 QString Inventory::combinedID( unsigned int id )
 {
-	//return DBH::itemSID( m_itemUID ) + "_" + DBH::materialSID( m_materialUID );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1563,7 +1519,6 @@ QString Inventory::combinedID( unsigned int id )
 
 unsigned int Inventory::spriteID( unsigned int id )
 {
-	//DB::execQuery( "SELECT spriteID FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1574,7 +1529,6 @@ unsigned int Inventory::spriteID( unsigned int id )
 
 Position Inventory::getItemPos( unsigned int id )
 {
-	//DB::execQuery( "SELECT position FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1594,7 +1548,6 @@ void Inventory::setItemPos( unsigned int id, const Position& pos )
 
 unsigned char Inventory::stackSize( unsigned int id )
 {
-	//DB::execQuery( "SELECT stacksize FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1626,7 +1579,6 @@ bool Inventory::requireSame( unsigned int id )
 
 const QSet<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
 {
-	//DB::execQuery2( "SELECT UID FROM v_items WHERE inContainer = \"" + QString::number( containerID ) + "\"" );
 	auto container = getItem( containerID );
 	if ( container )
 	{
@@ -1638,7 +1590,6 @@ const QSet<unsigned int>& Inventory::itemsInContainer( unsigned int containerID 
 
 unsigned char Inventory::nutritionalValue( unsigned int id )
 {
-	//DB::execQuery( "SELECT eatValue FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1649,7 +1600,6 @@ unsigned char Inventory::nutritionalValue( unsigned int id )
 
 unsigned char Inventory::drinkValue( unsigned int id )
 {
-	//DB::execQuery( "SELECT drinkValue FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1690,7 +1640,6 @@ bool Inventory::isTool( unsigned int id )
 
 void Inventory::setColor( unsigned int id, QString color )
 {
-	//DB::execQuery( "UPDATE v_Items SET color = \"" + color + "\" WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{
@@ -1700,7 +1649,6 @@ void Inventory::setColor( unsigned int id, QString color )
 
 unsigned int Inventory::color( unsigned int id )
 {
-	//DB::execQuery( "SELECT color FROM v_Items WHERE UID = \"" + QString::number( id ) + "\"" );
 	auto item = getItem( id );
 	if ( item )
 	{

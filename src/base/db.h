@@ -54,21 +54,15 @@ public:
 	static int numRows( QString table, QString id );
 
 	static QVariantMap selectRow( QString table, QString whereVal );
-	static QVariantMap selectRow1( QString table, int whereVal );
 	static QList<QVariantMap> selectRows( QString table, QString whereCol, QString whereVal );
 	static QList<QVariantMap> selectRows( QString table, QString whereCol, QString whereVal, QString whereCol2, QString whereVal2 );
 	static QList<QVariantMap> selectRows( QString table );
 	static QList<QVariantMap> selectRows( QString table, QString id );
-	static QList<QVariantMap> selectRows( QString table, int rowid );
 
 	static int getAccessCounter();
 	static Counter<QString>& getQueryCounter();
 
 	static QStringList tables();
-
-	static bool createItem( const Item& item, QString itemSID, QString materialSID );
-	static bool createItem( const QVariantMap& in );
-	static bool destroyItem( unsigned int itemID );
 
 	static bool updateRow( QString table, QVariantMap values );
 	static bool addRow( QString table, QVariantMap values );
