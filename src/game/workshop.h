@@ -274,6 +274,7 @@ private:
 
 	QMap<unsigned int, Position> m_tiles;
 	QList<CraftJob> m_jobList;
+	QList<CraftJob> m_autoCraftList;
 
 	Job* m_job        = nullptr;
 	Job* m_fishingJob = nullptr;

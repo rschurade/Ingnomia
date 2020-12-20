@@ -373,6 +373,12 @@ void Workshop::onTick( quint64 tick )
 		m_job = nullptr;
 	}
 
+	for ( auto& cj : m_autoCraftList )
+	{
+		m_jobList.push_front( cj );
+	}
+	m_autoCraftList.clear();
+
 	if ( !m_job && !m_jobList.empty() && outputTileFree() )
 	{
 		for ( auto& cj : m_jobList )
@@ -421,6 +427,9 @@ void Workshop::onTick( quint64 tick )
 			}
 		}
 	}
+
+
+
 	if ( !m_job && m_properties.type == "Butcher" && outputTileFree() )
 	{
 		m_job = createButcherJob();
@@ -677,7 +686,7 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 
 	checkAutoGenerate( cj );
 
-	m_jobList.push_front( cj );
+	m_autoCraftList.push_back( cj );
 
 	return true;
 }
@@ -693,10 +702,31 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 				return true;
 			}
 		}
+		for( const auto& cj : m_autoCraftList )
+		{
+			if( cj.itemSID == itemSID )
+			{
+				return true;
+			}
+		}
 	}
 	else
 	{
 		for( const auto& cj : m_jobList )
+		{
+			if( cj.itemSID == itemSID )
+			{
+				if( cj.requiredItems.size() )
+				{
+					const auto& reqItem = cj.requiredItems.first();
+					if( reqItem.materialSID == materialSID )
+					{
+						return true;
+					}
+				}
+			}
+		}
+		for( const auto& cj : m_autoCraftList )
 		{
 			if( cj.itemSID == itemSID )
 			{
