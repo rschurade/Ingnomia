@@ -24,9 +24,7 @@ QMap<QString, QString> DBHelper::m_spriteIDCache;
 QMap<QString, bool> DBHelper::m_spriteIsRandomCache;
 QMap<QString, bool> DBHelper::m_spriteHasAnimCache;
 QMap<QString, QString> DBHelper::m_materialColorCache;
-QMap<int, QString> DBHelper::m_itemSIDCache;
 QMap<QString, int> DBHelper::m_materialToolLevelCache;
-QMap<QString, int> DBHelper::m_itemUIDCache;
 QMap<int, bool> DBHelper::m_itemIsContainerCache;
 QMap<int, QString> DBHelper::m_qualitySIDCache;
 QMap<int, float> DBHelper::m_qualityModCache;
@@ -114,8 +112,6 @@ int DBH::materialUID( QString material )
 		GameState::materialSID2ID.insert( material, GameState::materialSID2ID.size() );
 	}
 	return GameState::materialSID2ID.value( material );
-	
-
 }
 
 QString DBH::materialSID( int material )
@@ -130,24 +126,22 @@ QString DBH::materialSID( int material )
 
 int DBH::itemUID( QString item )
 {
-	if ( m_itemUIDCache.contains( item ) )
+	if( !GameState::itemSID2ID.contains( item ) )
 	{
-		return m_itemUIDCache.value( item );
+		GameState::itemID2SID.insert( GameState::itemSID2ID.size(), item );
+		GameState::itemSID2ID.insert( item, GameState::itemSID2ID.size() );
 	}
-	int itemUID = DB::execQuery( "SELECT rowid FROM Items WHERE ID = \"" + item + "\"" ).toInt();
-	m_itemUIDCache.insert( item, itemUID );
-	return itemUID;
+	return GameState::itemSID2ID.value( item );
 }
 
 QString DBH::itemSID( int item )
 {
-	if ( m_itemSIDCache.contains( item ) )
+	if ( GameState::itemID2SID.contains( item ) )
 	{
-		return m_itemSIDCache.value( item );
+		return GameState::itemID2SID.value( item );
 	}
-	QString itemSID = DB::execQuery( "SELECT ID FROM Items WHERE rowid = \"" + QString::number( item ) + "\"" ).toString();
-	m_itemSIDCache.insert( item, itemSID );
-	return itemSID;
+	qDebug() << "***ERROR*** DBH::itemSID : no entry for item:" << item;
+	return "NONE";
 }
 
 
@@ -157,7 +151,7 @@ bool DBHelper::itemIsContainer( int item )
 	{
 		return m_itemIsContainerCache.value( item );
 	}
-	bool isContainer = DB::select( "IsContainer", "Items", item ).toBool();
+	bool isContainer = DB::select( "IsContainer", "Items", DBH::itemSID( item ) ).toBool();
 	m_itemIsContainerCache.insert( item, isContainer );
 	return isContainer;
 }

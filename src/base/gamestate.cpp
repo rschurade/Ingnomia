@@ -102,6 +102,9 @@ QList<GuiWatchedItem> GameState::watchedItemList;
 
 QHash<QString, int> GameState::materialSID2ID;
 QHash<int, QString> GameState::materialID2SID;
+QHash<QString, int> GameState::itemSID2ID;
+QHash<int, QString> GameState::itemID2SID;
+
 
 bool GameState::init()
 {
@@ -204,12 +207,19 @@ void GameState::serialize( QVariantMap& out )
 	out.insert( "watchedItems", qwil );
 
 	QVariantMap vmIDs;
-
 	for( auto key : GameState::materialSID2ID.keys() )
 	{
 		vmIDs.insert( key, materialSID2ID.value( key ) );
 	}
 	out.insert( "mats2ids", vmIDs );
+
+	QVariantMap viIDs;
+	for( auto key : GameState::itemSID2ID.keys() )
+	{
+		viIDs.insert( key, itemSID2ID.value( key ) );
+	}
+	out.insert( "items2ids", viIDs );
+
 }
 
 void GameState::load( QVariantMap& vals )
@@ -342,6 +352,28 @@ void GameState::load( QVariantMap& vals )
 		QVariantMap qwi = qval.toMap();
 		GuiWatchedItem gwi{ qwi.value( "category" ).toString(), qwi.value( "group" ).toString(), qwi.value( "item" ).toString(), qwi.value( "material" ).toString() };
 		GameState::watchedItemList.append( gwi );
+	}
+
+	itemSID2ID.clear();
+	itemID2SID.clear();
+	QVariantMap viIDs= tmp.value( "items2ids" ).toMap();
+
+	if( viIDs.isEmpty() )
+	{
+		for( auto id : DB::ids( "Items" ) )
+		{
+			int rowid = DB::select( "rowid", "Items", id ).toInt();
+			itemID2SID.insert( rowid, id );
+			itemSID2ID.insert( id, rowid );
+		}
+	}
+	else
+	{
+		for( auto key : viIDs.keys() )
+		{
+			itemID2SID.insert( viIDs.value( key ).toInt(), key );
+			itemSID2ID.insert( key, viIDs.value( key ).toInt() );
+		}
 	}
 
 	materialSID2ID.clear();

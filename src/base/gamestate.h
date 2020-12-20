@@ -122,6 +122,8 @@ public:
 
 	static QHash<QString, int> materialSID2ID;
 	static QHash<int, QString> materialID2SID;
+	static QHash<QString, int> itemSID2ID;
+	static QHash<int, QString> itemID2SID;
 
 private:
 	static unsigned int nextID;

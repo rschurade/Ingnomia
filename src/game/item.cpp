@@ -325,7 +325,7 @@ void Item::setPickedUp( bool status )
 
 unsigned char Item::stackSize() const
 {
-	return DB::select( "StackSize", "Items", m_itemUID ).toUInt();
+	return DB::select( "StackSize", "Items", DBH::itemSID( m_itemUID ) ).toUInt();
 }
 
 bool Item::isConstructedOrEquipped() const
@@ -452,17 +452,17 @@ void Item::setColor( QString color )
 
 int Item::attackValue() const
 {
-	return DB::select( "AttackValue", "Items", m_itemUID ).toInt();
+	return DB::select( "AttackValue", "Items", DBH::itemSID( m_itemUID ) ).toInt();
 }
 
 bool Item::isWeapon() const
 {
-	return DB::select( "AttackValue", "Items", m_itemUID ).toInt() > 0;
+	return DB::select( "AttackValue", "Items", DBH::itemSID( m_itemUID ) ).toInt() > 0;
 }
 
 bool Item::isTool() const
 {
-	return DB::select( "IsTool", "Items", m_itemUID ).toBool();
+	return DB::select( "IsTool", "Items", DBH::itemSID( m_itemUID ) ).toBool();
 }
 
 bool Item::insertItem( unsigned int itemID )
