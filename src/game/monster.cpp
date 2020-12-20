@@ -173,11 +173,11 @@ void Monster::generateAggroList()
 {
 	m_aggroList.clear();
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
-	for ( auto& g : g->gm()->gnomes() )
+	for ( auto& gn : g->gm()->gnomes() )
 	{
-		if ( !g->isOnMission() )
+		if ( !gn->isOnMission() )
 		{
-			AggroEntry ae { rand() % 100, g->id() };
+			AggroEntry ae { rand() % 100, gn->id() };
 			m_aggroList.append( ae );
 		}
 	}

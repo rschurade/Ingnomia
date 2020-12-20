@@ -142,8 +142,8 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 			for ( auto outPos : tempList )
 			{
-				auto pos = nw.outs.takeFirst();
-				nw.outs.push_back( pos );
+				auto pos2 = nw.outs.takeFirst();
+				nw.outs.push_back( pos2 );
 
 				NetworkPipe& outPipe = m_allPipes[outPos.toInt()];
 				if ( nw.level > 0 && outPipe.level < outPipe.capacity )
@@ -161,8 +161,8 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 				{
 					workQueue.enqueue( inPos );
 				}
-				auto pos = nw.ins.takeFirst();
-				nw.ins.push_back( pos );
+				auto pos2 = nw.ins.takeFirst();
+				nw.ins.push_back( pos2 );
 			}
 		}
 		else

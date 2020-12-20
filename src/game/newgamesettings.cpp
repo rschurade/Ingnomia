@@ -204,7 +204,7 @@ void NewGameSettings::loadEmbarkMap()
 	setStartingItems( sil );
 
 	// QString m_kingdomName not in embark map, we want to change it on every embark
-	QString m_seed = embarkMap.value( "seed" ).toString();
+	m_seed = embarkMap.value( "seed" ).toString();
 
 	m_worldSize    = embarkMap.value( "dimX" ).toInt();
 	m_zLevels      = embarkMap.value( "dimZ" ).toInt();

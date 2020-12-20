@@ -455,9 +455,9 @@ bool FarmingManager::isPasture( Position pos ) const
 
 unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 {
-	for ( auto& g : m_groves )
+	for ( auto& gr : m_groves )
 	{
-		unsigned int job = g->getJob( gnomeID, skillID );
+		unsigned int job = gr->getJob( gnomeID, skillID );
 		if ( job )
 		{
 			return job;
@@ -484,11 +484,11 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 
 bool FarmingManager::finishJob( unsigned int jobID )
 {
-	for ( auto& g : m_groves )
+	for ( auto& gr : m_groves )
 	{
-		if ( g->finishJob( jobID ) )
+		if ( gr->finishJob( jobID ) )
 		{
-			emit signalGroveChanged( g->id() );
+			emit signalGroveChanged( gr->id() );
 			return true;
 		}
 	}
@@ -513,11 +513,11 @@ bool FarmingManager::finishJob( unsigned int jobID )
 
 bool FarmingManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto& g : m_groves )
+	for ( auto& gr : m_groves )
 	{
-		if ( g->giveBackJob( jobID ) )
+		if ( gr->giveBackJob( jobID ) )
 		{
-			emit signalGroveChanged( g->id() );
+			emit signalGroveChanged( gr->id() );
 			return true;
 		}
 	}
@@ -542,11 +542,11 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 
 Job* FarmingManager::getJob( unsigned int jobID )
 {
-	for ( const auto& g : m_groves )
+	for ( const auto& gr : m_groves )
 	{
-		if ( g->hasJobID( jobID ) )
+		if ( gr->hasJobID( jobID ) )
 		{
-			return g->getJob( jobID );
+			return gr->getJob( jobID );
 		}
 	}
 	for ( const auto& f : m_farms )
@@ -568,9 +568,9 @@ Job* FarmingManager::getJob( unsigned int jobID )
 
 bool FarmingManager::hasJobID( unsigned int jobID ) const
 {
-	for ( const auto& g : m_groves )
+	for ( const auto& gr : m_groves )
 	{
-		if ( g->hasJobID( jobID ) )
+		if ( gr->hasJobID( jobID ) )
 		{
 			return true;
 		}

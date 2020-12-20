@@ -795,16 +795,16 @@ void MechanismManager::updateNetWorks()
 			mn.id = md.itemID;
 			while ( !workQueue.empty() )
 			{
-				auto md = workQueue.dequeue();
-				if ( md.active && md.fuel > 0 && md.producePower > 0 )
+				auto md2 = workQueue.dequeue();
+				if ( md2.active && md2.fuel > 0 && md2.producePower > 0 )
 				{
-					mn.produce += md.producePower;
-					mn.producers.insert( md.itemID );
+					mn.produce += md2.producePower;
+					mn.producers.insert( md2.itemID );
 				}
-				if ( md.active && md.consumePower > 0 )
+				if ( md2.active && md2.consumePower > 0 )
 				{
-					mn.consume += md.consumePower;
-					mn.consumers.insert( md.itemID );
+					mn.consume += md2.consumePower;
+					mn.consumers.insert( md2.itemID );
 				}
 
 				for ( auto toPos : md.connectsTo )
@@ -857,7 +857,7 @@ void MechanismManager::updateNetWorks()
 
 void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 {
-	QString itemSID = g->m_inv->itemSID( md.itemID );
+	QString itemSID = g->inv()->itemSID( md.itemID );
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 
 	if ( md.anim )
@@ -866,9 +866,6 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 	}
 	else
 	{
-		QString itemSID = g->m_inv->itemSID( md.itemID );
-		auto row        = DB::selectRow( "Mechanism", itemSID );
-
 		if ( md.anim )
 		{
 			g->m_world->setWallSpriteAnim( md.pos, isOn );

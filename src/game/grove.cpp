@@ -313,7 +313,6 @@ bool Grove::hasPlantTreeJob( Position pos ) const
 
 Job* Grove::getPlantJob()
 {
-	Job* job = 0;
 	for ( auto gf : m_fields )
 	{
 		// tile is empty, we plant something

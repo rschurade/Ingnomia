@@ -94,25 +94,8 @@ Animal::Animal( QVariantMap in, Game* game ) :
 
 	m_hunger = qMax( -10.f, in.value( "Hunger" ).toFloat() );
 
-	QVariantMap m_stateMap;
 	setState( m_state );
 	m_stateChangeTick = in.value( "sct" ).value<quint64>();
-
-	//also used for egg laying
-	quint64 m_birthTick = 0;
-
-	quint64 m_produceTick = 0;
-
-	quint64 m_lastSex = 0;
-
-	unsigned int m_currentPrey = 0;
-
-	bool m_inShed = false;
-
-	quint8 m_producedAmount = 0;
-	QString m_produce;
-
-	unsigned int m_corpseToEat = 0;
 
 	checkInJob();
 }

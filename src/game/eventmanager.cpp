@@ -515,8 +515,8 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 		QString msg = em.value( "OnSuccess" ).toMap().value( "Message" ).toString();
 		if ( !msg.isEmpty() )
 		{
-			int amount = em.value( "Amount" ).toInt();
-			msg.replace( "$Num", QString::number( amount ) );
+			int amount2 = em.value( "Amount" ).toInt();
+			msg.replace( "$Num", QString::number( amount2 ) );
 			QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
 			Global::eventConnector->onEvent( 0, title, msg, true, false );
 		}

@@ -282,14 +282,15 @@ bool SpriteFactory::init()
 		}
 	}
 
+	/* only for debug purpose
 	QJsonArray ja;
 	for ( auto sprite : spriteList )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( sprite );
 		ja.append( jv );
 	}
-
 	IO::saveFile( "spriteconv.json", ja );
+	*/
 
 	for ( auto row : spriteList )
 	{

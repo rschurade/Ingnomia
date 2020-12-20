@@ -135,17 +135,17 @@ void GnomeManager::addAutomaton( QVariantMap values )
 void GnomeManager::addGnome( QVariantMap values )
 {
 	GnomeFactory gf( g );
-	Gnome* g( gf.createGnome( values ) );
-	m_gnomes.push_back( g );
-	m_gnomesByID.insert( g->id(), m_gnomes.last() );
+	Gnome* gn( gf.createGnome( values ) );
+	m_gnomes.push_back( gn );
+	m_gnomesByID.insert( gn->id(), m_gnomes.last() );
 }
 
 void GnomeManager::addTrader( QVariantMap values )
 {
 	GnomeFactory gf( g );
-	GnomeTrader* g( gf.createGnomeTrader( values ) );
-	m_specialGnomes.push_back( g );
-	m_gnomesByID.insert( g->id(), m_specialGnomes.last() );
+	GnomeTrader* gt( gf.createGnomeTrader( values ) );
+	m_specialGnomes.push_back( gt );
+	m_gnomesByID.insert( gt->id(), m_specialGnomes.last() );
 }
 
 void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
@@ -161,7 +161,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	QList<unsigned int> deadOrGoneSpecial;
 	for ( int i = m_startIndex; i < m_gnomes.size(); ++i )
 	{
-		Gnome* g = m_gnomes[i];
+		Gnome* gn = m_gnomes[i];
 #ifdef CHECKTIME
 		QElapsedTimer timer2;
 		timer2.start();
@@ -176,18 +176,18 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			return;
 		}
 #else
-		CreatureTickResult tr = g->onTick( tickNumber, seasonChanged, dayChanged, hourChanged, minuteChanged );
+		CreatureTickResult tr = gn->onTick( tickNumber, seasonChanged, dayChanged, hourChanged, minuteChanged );
 #endif
 		m_startIndex = i + 1;
 		switch ( tr )
 		{
 			case CreatureTickResult::DEAD:
-				deadGnomes.append( g->id() );
+				deadGnomes.append( gn->id() );
 				break;
 			case CreatureTickResult::OK:
 				break;
 			case CreatureTickResult::JOBCHANGED:
-				emit signalGnomeActivity( g->id(), g->getActivity() );
+				emit signalGnomeActivity( gn->id(), gn->getActivity() );
 				break;
 			case CreatureTickResult::TODESTROY:
 				break;
@@ -288,16 +288,16 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 
 void GnomeManager::forceMoveGnomes( Position from, Position to )
 {
-	for ( auto& g : m_gnomes )
+	for ( auto& gn : m_gnomes )
 	{
 		// check gnome position
-		if ( g->getPos().toInt() == from.toInt() )
+		if ( gn->getPos().toInt() == from.toInt() )
 		{
 			//qDebug() << "force move gnome from " << from.toString() << " to " << to.toString();
 			// move gnome
-			g->forceMove( to );
+			gn->forceMove( to );
 			// abort job if he has one
-			g->setJobAborted( "GnomeManager" );
+			gn->setJobAborted( "GnomeManager" );
 		}
 	}
 }

@@ -841,8 +841,8 @@ unsigned int Inventory::pickUpItem( unsigned int id )
 					QString inItemSID = inItem->itemSID();
 					QString inMatSID  = inItem->materialSID();
 
-					Octree* ot = octree( inItemSID, inMatSID );
-					ot->removeItem( pos.x, pos.y, pos.z, inItemID );
+					Octree* ot2 = octree( inItemSID, inMatSID );
+					ot2->removeItem( pos.x, pos.y, pos.z, inItemID );
 					m_positionHash[pos.toInt()].remove( inItemID );
 				}
 			}

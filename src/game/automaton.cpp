@@ -316,10 +316,10 @@ void Automaton::installCore( unsigned int itemID )
 
 			loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
 			qDebug() << "installing skills for " << itemSID;
-			for ( auto row : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
+			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
 			{
-				QString skillID = row.value( "SkillID" ).toString();
-				int value       = row.value( "SkillValue" ).toInt();
+				QString skillID = row2.value( "SkillID" ).toString();
+				int value       = row2.value( "SkillValue" ).toInt();
 
 				qDebug() << skillID << value;
 				m_skills.insert( skillID, value );

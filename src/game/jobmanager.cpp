@@ -527,18 +527,6 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		{
 			return jobID;
 		}
-		if ( Global::debugMode )
-		{
-			auto ela = et.elapsed();
-			if ( ela > 20 )
-			{
-				if ( jobID )
-				{
-					qDebug() << "JM WSM GETJOB" << ela << "ms"
-							 << "job:" << skillID;
-				}
-			}
-		}
 
 		auto possibleJobIDs   = m_jobIDs.value( skillID ); //  DB::select2( "ID", "Jobs", "SkillID", skillID );
 		unsigned int regionID = g->w()->regionMap().regionID( gnomePos );
@@ -795,9 +783,9 @@ void JobManager::finishJob( unsigned int jobID )
 
 		removeFromPositionHash( jobID );
 
-		for ( auto& type : m_jobsPerType )
+		for ( auto& mtype : m_jobsPerType )
 		{
-			type.remove( job.priority(), jobID );
+			mtype.remove( job.priority(), jobID );
 		}
 		m_jobList.remove( jobID );
 	}

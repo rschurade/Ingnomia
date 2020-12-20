@@ -432,21 +432,21 @@ QColor Util::colorInt2Color( unsigned int color )
 {
 	int a = color & 0xff;
 	int b = ( color >> 8 ) & 0xff;
-	int g = ( color >> 16 ) & 0xff;
+	int gg = ( color >> 16 ) & 0xff;
 	int r = ( color >> 24 ) & 0xff;
-	return QColor( r, g, b, a );
+	return QColor( r, gg, b, a );
 }
 
 unsigned int Util::string2Color( QString color )
 {
 	QStringList clist = color.split( " " );
-	unsigned char r, g, b;
-	r = g = b       = 0;
+	unsigned char r, gg, b;
+	r = gg = b       = 0;
 	unsigned char a = 255;
 	if ( clist.size() > 2 )
 	{
 		r = clist[0].toInt();
-		g = clist[1].toInt();
+		gg = clist[1].toInt();
 		b = clist[2].toInt();
 	}
 	if ( clist.size() > 3 )
@@ -454,7 +454,7 @@ unsigned int Util::string2Color( QString color )
 		a = clist[3].toInt();
 	}
 
-	return r * 16777216 + g * 65536 + b * 256 + a;
+	return r * 16777216 + gg * 65536 + b * 256 + a;
 }
 
 QColor Util::string2QColor( QString color )
@@ -862,9 +862,9 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 
 QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
 {
-	auto sprite = DB::select( "SpriteID", "Items", itemID );
+	auto vsprite = DB::select( "SpriteID", "Items", itemID );
 	QVariantMap component;
-	component.insert( "SpriteID", sprite );
+	component.insert( "SpriteID", vsprite );
 	component.insert( "Offset", "0 0 0" );
 
 	QList<QVariantMap> comps;
