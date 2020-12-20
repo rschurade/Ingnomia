@@ -63,7 +63,6 @@ void AgricultureProxy::setParent( IngnomiaGUI::AgricultureModel* parent )
 
 void AgricultureProxy::onUpdateFarm( const GuiFarmInfo& info )
 {
-	qDebug() << "AgricultureProxy::onUpdateFarm";
 	if ( m_parent )
 	{
 		m_AgricultureID = info.ID;
@@ -74,7 +73,6 @@ void AgricultureProxy::onUpdateFarm( const GuiFarmInfo& info )
 
 void AgricultureProxy::onUpdatePasture( const GuiPastureInfo& info )
 {
-	qDebug() << "AgricultureProxy::onUpdatePasture";
 	if ( m_parent )
 	{
 		m_AgricultureID = info.ID;
@@ -85,7 +83,6 @@ void AgricultureProxy::onUpdatePasture( const GuiPastureInfo& info )
 
 void AgricultureProxy::onUpdateGrove( const GuiGroveInfo& info )
 {
-	qDebug() << "AgricultureProxy::onUpdateGrove";
 	if ( m_parent )
 	{
 		m_AgricultureID = info.ID;
@@ -96,31 +93,26 @@ void AgricultureProxy::onUpdateGrove( const GuiGroveInfo& info )
 
 void AgricultureProxy::setBasicOptions( unsigned int agricultureID, QString name, int priority, bool suspended )
 {
-	qDebug() << "AgricultureProxy::setBasicOptions";
 	emit signalSetBasicOptions( m_type, agricultureID, name, priority, suspended );
 }
 
 void AgricultureProxy::selectProduct( unsigned int agricultureID, QString product )
 {
-	qDebug() << "AgricultureProxy::selectProduct";
 	emit signalSelectProduct( m_type, agricultureID, product );
 }
 
 void AgricultureProxy::setHarvestOptions( unsigned int agricultureID, bool harvest, bool harvestHay, bool tame )
 {
-	qDebug() << "AgricultureProxy::setHarvestOptions";
 	emit signalSetHarvestOptions( m_type, agricultureID, harvest, harvestHay, tame );
 }
 
 void AgricultureProxy::setGroveOptions( unsigned int designationID, bool pick, bool plant, bool fell )
 {
-	qDebug() << "AgricultureProxy::setGroveOptions";
 	emit signalSetGroveOptions( designationID, pick, plant, fell );
 }
 
 void AgricultureProxy::onUpdateGlobalPlants( const QList<GuiPlant>& plants )
 {
-	qDebug() << "AgricultureProxy::onUpdateGlobalPlants";
 	if ( m_parent )
 	{
 		m_parent->updateGlobalPlantInfo( plants );
@@ -129,7 +121,6 @@ void AgricultureProxy::onUpdateGlobalPlants( const QList<GuiPlant>& plants )
 
 void AgricultureProxy::onUpdateGlobalAnimals( const QList<GuiAnimal>& animals )
 {
-	qDebug() << "AgricultureProxy::onUpdateGlobalAnimals";
 	if ( m_parent )
 	{
 		m_parent->updateGlobalAnimalInfo( animals );
@@ -138,7 +129,6 @@ void AgricultureProxy::onUpdateGlobalAnimals( const QList<GuiAnimal>& animals )
 
 void AgricultureProxy::onUpdateGlobalTrees( const QList<GuiPlant>& trees )
 {
-	qDebug() << "AgricultureProxy::onUpdateGlobalTrees";
 	if ( m_parent )
 	{
 		m_parent->updateGlobalTreeInfo( trees );
@@ -147,19 +137,16 @@ void AgricultureProxy::onUpdateGlobalTrees( const QList<GuiPlant>& trees )
 
 void AgricultureProxy::requestGlobalPlantInfo()
 {
-	qDebug() << "AgricultureProxy::requestGlobalPlantInfo";
 	emit signalRequestGlobalPlantInfo();
 }
 
 void AgricultureProxy::requestGlobalAnimalInfo()
 {
-	qDebug() << "AgricultureProxy::requestGlobalAnimalInfo";
 	emit signalRequestGlobalAnimalInfo();
 }
 
 void AgricultureProxy::requestGlobalTreeInfo()
 {
-	qDebug() << "AgricultureProxy::requestGlobalTreeInfo";
 	emit signalRequestGlobalTreeInfo();
 }
 

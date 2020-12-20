@@ -301,7 +301,6 @@ void JobManager::addLoadedJob( QVariant vals )
 
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
 {
-	//qDebug() << "jobManager() addJob simple" << type << pos.toString();
 	if ( g->w()->hasJob( pos ) )
 	{
 		return 0;

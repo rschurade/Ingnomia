@@ -285,7 +285,7 @@ bool EventManager::checkRequirements( Event& event )
 
 void EventManager::executeEvent( Event& event )
 {
-	qDebug() << "execute event";
+	//qDebug() << "execute event";
 	auto data = event.data.toMap();
 	/*
 	for( auto key : data.keys() )

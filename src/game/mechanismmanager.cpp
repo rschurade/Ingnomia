@@ -457,7 +457,6 @@ void MechanismManager::installItem( MechanismData md )
 void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 {
 	QString itemSID = g->m_inv->itemSID( itemID );
-	qDebug() << "installing " << itemSID;
 
 	MechanismData md;
 	md.itemID = itemID;

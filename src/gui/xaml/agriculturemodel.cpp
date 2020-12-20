@@ -300,7 +300,6 @@ AgricultureModel::AgricultureModel()
 
 void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
 {
-	qDebug() << "AgricultureModel::updateGlobalPlantInfo";
 	m_plantRows->Clear();
 	int plantDone = 0;
 	while ( plantDone < info.size() )
@@ -319,7 +318,6 @@ void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
 
 void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
 {
-	qDebug() << "AgricultureModel::updateGlobalAnimalInfo";
 	m_animalRows->Clear();
 	int animalDone = 0;
 	while ( animalDone < info.size() )
@@ -338,7 +336,6 @@ void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
 
 void AgricultureModel::updateGlobalTreeInfo( const QList<GuiPlant>& info )
 {
-	qDebug() << "AgricultureModel::updateGlobalTreeInfo";
 	m_treeRows->Clear();
 	int plantDone = 0;
 	while ( plantDone < info.size() )
@@ -427,7 +424,6 @@ void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QStri
 
 void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 {
-	qDebug() << "AgricultureModel::updateFarmInfo";
 	updateStandardInfo( info.ID, AgriType::Farm, info.name, info.plantType, info.priority, info.maxPriority, info.suspended );
 
 	if ( m_harvest != info.harvest )
@@ -471,7 +467,6 @@ void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 
 void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 {
-	qDebug() << "AgricultureModel::updatePastureInfo";
 	updateStandardInfo( info.ID, AgriType::Pasture, info.name, info.animalType, info.priority, info.maxPriority, info.suspended );
 
 	if ( m_harvest != info.harvest )
@@ -551,7 +546,6 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 
 void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 {
-	qDebug() << "AgricultureModel::updateGroveInfo";
 	updateStandardInfo( info.ID, AgriType::Grove, info.name, info.treeType, info.priority, info.maxPriority, info.suspended );
 
 	m_plantTrees = info.plantTrees;
@@ -720,8 +714,6 @@ void AgricultureModel::SetSelectedPriority( AcPriority* prio )
 {
 	if ( m_selectedPrio && prio && m_selectedPrio != prio )
 	{
-		qDebug() << m_selectedPrio->GetName() << prio->GetName();
-
 		m_selectedPrio = prio;
 		setBasicOptions();
 		OnPropertyChanged( "SelectedPrio" );
@@ -1034,7 +1026,6 @@ void AgricultureModel::SetMaxHay( const char* value )
 		int val = qValue.toInt( &ok );
 		if( ok )
 		{
-			qDebug() << "set max hay to: " << value;
 			m_maxHay = value;
 		}
 	}

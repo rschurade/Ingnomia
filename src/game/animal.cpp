@@ -143,7 +143,7 @@ void Animal::checkInJob()
 	{
 		if ( !g->jm()->getJob( m_inJob ) )
 		{
-			qDebug() << "Animal:" << m_id << "has inJobID:" << m_inJob << " that doesn't exist";
+			//qDebug() << "Animal:" << m_id << "has inJobID:" << m_inJob << " that doesn't exist";
 			m_inJob    = 0;
 			m_followID = 0;
 		}
@@ -649,7 +649,6 @@ BT_RESULT Animal::actionProduce( bool halt )
 				m_produce = def.value( "ItemID" ).toString();
 				++m_producedAmount;
 			}
-			//qDebug() << m_name << def.value( "ItemID" ).toString() <<producedAmount;
 		}
 		int days         = def.value( "DaysBetween" ).toInt();
 		quint64 nextProd = GameState::tick + ( Global::util->ticksPerDayRandomized( 5 ) * days );
@@ -1128,7 +1127,7 @@ BT_RESULT Animal::actionGuardDogGetTarget( bool halt )
 		auto fox = foxes.get();
 		if ( m_position.distSquare( fox->getPos() ) < 40 )
 		{
-			qDebug() << "fox alert";
+			//qDebug() << "fox alert";
 			AggroEntry ae { 100, fox->id() };
 			m_aggroList.append( ae );
 		}

@@ -113,7 +113,6 @@ void Automaton::updateSprite()
 	for ( auto vcomp : components )
 	{
 		auto comp = vcomp.toMap();
-		qDebug() << comp.value( "ItSID" ).toString() << comp.value( "MaSID" ).toString();
 		auto it = comp.value( "ItSID" ).toString();
 		auto ma = comp.value( "MaSID" ).toString();
 
@@ -160,7 +159,6 @@ void Automaton::updateSprite()
 			pm.insert( "BaseSprite", bsl[rn] );
 		}
 		QString idPart = pm.value( "ID" ).toString() + pm.value( "Part" ).toString();
-		//qDebug() << idPart;
 		if ( compMats.contains( idPart ) )
 		{
 			pm.insert( "Material", compMats.value( idPart ) );
@@ -207,7 +205,7 @@ void Automaton::updateSprite()
 		QString aid = pm.value( "ID" ).toString();
 		aid.chop( 4 );
 		QString idPart = aid + pm.value( "Part" ).toString();
-		//qDebug() << idPart;
+
 		if ( compMats.contains( idPart ) )
 		{
 			pm.insert( "Material", compMats.value( idPart ) );
@@ -262,7 +260,6 @@ CreatureTickResult Automaton::onTick( quint64 tickNumber, bool seasonChanged, bo
 
 	if ( m_job && ( m_job->isAborted() || m_job->isCanceled() ) )
 	{
-		qDebug() << m_job->type() << " job is canceled";
 		cleanUpJob( false );
 		m_behaviorTree->halt();
 	}
@@ -315,13 +312,11 @@ void Automaton::installCore( unsigned int itemID )
 			auto row = DB::selectRow( "Automaton_Cores", itemSID );
 
 			loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
-			qDebug() << "installing skills for " << itemSID;
 			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
 			{
 				QString skillID = row2.value( "SkillID" ).toString();
 				int value       = row2.value( "SkillValue" ).toInt();
 
-				qDebug() << skillID << value;
 				m_skills.insert( skillID, value );
 				m_skillActive.insert( skillID, true );
 				m_skillPriorities.append( skillID );

@@ -729,7 +729,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					{
 						if ( sp->count( itemSID, mat ) < count )
 						{
-							qDebug() << "##4" << itemSID << materialSID;
 							return false;
 						}
 						for ( int i = 0; i < count; ++i )
@@ -776,7 +775,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 				}
 				else
 				{
-					qDebug() << "##3 restriction";
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
@@ -2383,8 +2381,6 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 		{
 			auto mission = g->em()->getMission( m_mission );
 
-			qDebug() << (int)mission->type << mission->startTick << mission->nextCheckTick << (int)mission->step;
-
 			switch ( mission->step )
 			{
 				case MissionStep::TRAVEL:
@@ -2491,7 +2487,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 		}
 		return BT_RESULT::RUNNING;
 	}
-	qDebug() << "Mission failure";
+	//qDebug() << "Mission failure";
 	return BT_RESULT::FAILURE;
 }
 
@@ -2529,7 +2525,7 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 		mission->step = MissionStep::RETURNED;
 		mission->result.insert( "TotalTime", ( GameState::tick - mission->startTick ) / ( Global::util->ticksPerMinute * Global::util->minutesPerHour ) );
 
-		qDebug() << "Returning from mission at " << m_position.toString();
+		//qDebug() << "Returning from mission at " << m_position.toString();
 	}
 	else
 	{
