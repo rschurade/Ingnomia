@@ -274,6 +274,8 @@ void GameManager::postCreationInit()
 	connect( Global::sel, &Selection::signalSize, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateSize, Qt::QueuedConnection );
 	Global::sel->updateGui();
 
+	m_eventConnector->aggregatorInventory()->update();
+
 	m_eventConnector->emitPause( m_game->paused() );
 	m_eventConnector->emitStartGame();
 }

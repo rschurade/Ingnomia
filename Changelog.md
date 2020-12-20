@@ -26,6 +26,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - furniture can now be constructed anywhere and won't get deconstructed when a room designation underneath is removed
 - redesigned inventory overview
+- removed direkt mapping of certain ids to databse rows, that should prevent save games breaking in the future when stuff is removed or inserted at the wrong place
+- grain plants produce seeds again and need seeds for planting
 
 ### Removed
 

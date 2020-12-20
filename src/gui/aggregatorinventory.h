@@ -141,6 +141,7 @@ public:
 	~AggregatorInventory();
 
     void init( Game* game );
+    void update();
 
 private:
     QPointer<Game> g;

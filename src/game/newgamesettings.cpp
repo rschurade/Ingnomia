@@ -501,7 +501,10 @@ void NewGameSettings::removeStartingAnimal( QString tag )
 void NewGameSettings::loadPresets()
 {
 	QJsonDocument sd;
-	bool ok = IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/embarkpresets.json", sd );
+
+	QString exePath = QCoreApplication::applicationDirPath();
+
+	bool ok = IO::loadFile( exePath + "/content/JSON/embarkpresets.json", sd );
 	if ( ok )
 	{
 		m_standardPresets = sd.toVariant().toList();

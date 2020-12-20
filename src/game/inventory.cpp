@@ -189,6 +189,7 @@ bool Inventory::itemExists( unsigned int itemID )
 
 unsigned int Inventory::createItem( Position pos, QString itemSID, QString materialSID )
 {
+	DBH::itemUID( itemSID );
 	//qDebug() << "create item " << pos.toString() << baseItem << material;
 	Item obj( pos, itemSID, materialSID );
 	Sprite* sprite = g->m_sf->createSprite( itemSID, { materialSID } );
@@ -203,6 +204,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 
 unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigned int> components )
 {
+	DBH::itemUID( itemSID );
 	//qDebug() << "create item " << pos.toString() << itemSID << components;
 	QVariantList compList = DB::select2( "ItemID", "Items_Components", "ID", itemSID );
 
@@ -231,6 +233,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 	{
 		// first component decides the material of the item for material level bonuses and other things
 		QString firstCompSID = compList.first().toMap().value( "ItemID" ).toString();
+		DBH::itemUID( firstCompSID );
 		QString firstMat     = materialSID( components.first() );
 		Item obj( pos, itemSID, firstMat );
 
@@ -278,6 +281,7 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 		qDebug() << "missing materialSID" << values.value( "ID" ).toUInt() << "at" << values.value( "Position" ).toString();
 		return 0;
 	}
+	DBH::itemUID( values.value( "ItemSID" ).toString() );
 	//Item obj( pos, baseItem, material );
 	Item obj( values );
 
@@ -327,7 +331,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 {
 	m_items.insert( object.id(), object );
 	Item* item = getItem( object.id() );
-
+	
 	Octree* ot = octree( itemID, materialID );
 
 	if ( !item->isPickedUp() )
@@ -410,7 +414,7 @@ void Inventory::destroyObject( unsigned int id )
 			}
 
 			QString materialSID = DBH::materialSID( item->materialUID() );
-			QString itemSID     = DBH::id( "Items", item->itemUID() );
+			QString itemSID     = DBH::itemSID( item->itemUID() );
 
 			Position pos = item->getPos();
 			Octree* ot = octree( itemSID, materialSID );

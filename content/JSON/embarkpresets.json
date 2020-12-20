@@ -49,7 +49,7 @@
 		},
 		{
 			"Amount": 32,
-			"ItemID": "Grain",
+			"ItemID": "Seed",
 			"MaterialID": "Wheat",
 			"Type": "Item"
 		},
@@ -143,7 +143,7 @@
 		},
 		{
 			"Amount": 20,
-			"ItemID": "Grain",
+			"ItemID": "Seed",
 			"MaterialID": "Wheat",
 			"Type": "Item"
 		},
@@ -155,7 +155,7 @@
 		},
 		{
 			"Amount": 20,
-			"ItemID": "Grain",
+			"ItemID": "Seed",
 			"MaterialID": "Barley",
 			"Type": "Item"
 		},
@@ -241,7 +241,7 @@
 		},
 		{
 			"Amount": 20,
-			"ItemID": "Grain",
+			"ItemID": "Seed",
 			"MaterialID": "Wheat",
 			"Type": "Item"
 		},

@@ -472,11 +472,19 @@ bool Plant::harvest( Position& pos )
 			if ( harvItem.contains( "Chance" ) )
 			{
 				float chance = harvItem.value( "Chance" ).toFloat();
-				int ra       = rand() % 100;
-				if ( chance * 100 <= ra )
+				if( chance > 0.0 )
+				{
+					int ra = rand() % 100;
+					if ( ra < chance * 100 )
+					{
+						g->inv()->createItem( pos, itemID, materialID );
+					}
+				}
+				else
 				{
 					g->inv()->createItem( pos, itemID, materialID );
 				}
+				
 			}
 			else
 			{

@@ -111,6 +111,8 @@ bool GameState::init()
 	GameState::materialSID2ID.clear();
 	GameState::materialID2SID.clear();
 
+	GameState::watchedItemList.clear();
+
 	nextID = 1000000;
 	return true;
 }

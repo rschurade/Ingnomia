@@ -127,7 +127,7 @@ void AggregatorInventory::onRequestCategories()
 				for ( const auto& mat : g->inv()->materials( cat, group, item ) )
 				{
 					auto result   = g->inv()->itemCountDetailed( item, mat );
-					if( result.total > 0 )
+					//if( result.total > 0 )
 					{
 						GuiInventoryMaterial gim;
 						gim.id = mat;
@@ -491,5 +491,12 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 			break;
 		}
 	}
+	emit signalWatchList( GameState::watchedItemList );
+}
+
+void AggregatorInventory::update()
+{
+	onRequestCategories();
+
 	emit signalWatchList( GameState::watchedItemList );
 }
