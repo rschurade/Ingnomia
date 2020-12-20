@@ -35,6 +35,8 @@ ProxyMainView::ProxyMainView( QObject* parent ) :
 	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
 
 	connect( this, &ProxyMainView::signalRequestUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
+	connect( this, &ProxyMainView::signalRequestVersion, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestVersion, Qt::QueuedConnection );
+	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalVersion, this, &ProxyMainView::onVersion, Qt::QueuedConnection );
 
 	connect( this, &ProxyMainView::signalStartNewGame, Global::eventConnector, &EventConnector::onStartNewGame, Qt::QueuedConnection );
 	connect( this, &ProxyMainView::signalContinueLastGame, Global::eventConnector, &EventConnector::onContinueLastGame, Qt::QueuedConnection );
@@ -134,4 +136,17 @@ void ProxyMainView::onLoadGameDone( bool value )
 void ProxyMainView::endGame()
 {
 	emit signalEndGame();
+}
+
+void ProxyMainView::requestVersion()
+{
+	emit signalRequestVersion();
+}
+
+void ProxyMainView::onVersion( QString version )
+{
+	if( m_parent )
+	{
+		m_parent->updateVersion( version );
+	}
 }

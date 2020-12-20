@@ -87,3 +87,8 @@ void AggregatorSettings::onRequestUIScale()
     float scale = Global::cfg->get( "uiscale" ).toFloat();
     emit signalUIScale( scale );
 }
+void AggregatorSettings::onRequestVersion()
+{
+    QString version = Global::cfg->get( "CurrentVersion" ).toString();
+    emit signalVersion( version );
+}

@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - 24 new food items with recipes and kitchen integration
 - button to save user presets
 - glass bottle and jar
+- show version on main menu screen
 
 ### Changed
 - furniture can now be constructed anywhere and won't get deconstructed when a room designation underneath is removed

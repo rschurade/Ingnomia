@@ -33,6 +33,7 @@ public:
 
 	void requestLoadScreenUpdate();
 	void requestUIScale();
+	void requestVersion();
 
 	void startNewGame();
 	void continueLastGame();
@@ -53,10 +54,12 @@ private slots:
 
 	void onResume();
 	void onLoadGameDone( bool value );
+	void onVersion( QString version );
 
 signals:
 	void signalRequestLoadScreenUpdate();
 	void signalRequestUIScale();
+	void signalRequestVersion();
 
 	void signalStartNewGame();
 	void signalContinueLastGame();
@@ -64,4 +67,5 @@ signals:
 	void signalSaveGame();
 	void signalSetShowMainMenu( bool value );
 	void signalEndGame();
+	
 };

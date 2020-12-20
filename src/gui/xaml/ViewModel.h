@@ -65,6 +65,7 @@ public:
 	void OnBack( BaseComponent* param );
 
 	void setUIScale( float value );
+	void updateVersion( QString version );
 
 	void OnResume( BaseComponent* param = nullptr );
 	void OnContinueGameFinished( bool gameLoaded );
@@ -88,6 +89,8 @@ private:
 	const char* GetShowGameGUI() const;
 	const char* GetWindowWidth() const;
 	const char* GetWindowHeight() const;
+
+	const char* GetVersion() const;
 
 	void OnStart( BaseComponent* param );
 	void OnSettings( BaseComponent* param );
@@ -132,6 +135,7 @@ private:
 	float m_scale = 1.0;
 	Noesis::String _windowWidthString;
 	Noesis::String _windowHeightString;
+	Noesis::String m_version;
 
 	ProxyMainView* m_proxy = nullptr;
 

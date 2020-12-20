@@ -69,5 +69,6 @@
 				</Grid>
 			</StackPanel>
 		</Viewbox>
+		<TextBlock Grid.Row="2" Grid.Column="0" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="{Binding Version}" />
 	</Grid>
 </UserControl>

@@ -61,7 +61,10 @@ ViewModel::ViewModel()
 	_ingame       = false;
 	m_scale       = 1.0f; 
 
+	m_version = "0.0.0.0";
+
 	m_proxy->requestUIScale();
+	m_proxy->requestVersion();
 }
 
 void ViewModel::setWindowSize( int w, int h )
@@ -74,6 +77,12 @@ void ViewModel::setWindowSize( int w, int h )
 	_windowHeightString = QString::number( _windowHeight ).toStdString().c_str();
 	OnPropertyChanged( "WindowWidth" );
 	OnPropertyChanged( "WindowHeight" );
+}
+
+void ViewModel::updateVersion( QString version )
+{
+	m_version = version.toStdString().c_str();	
+	OnPropertyChanged( "Version" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,6 +387,11 @@ void ViewModel::setUIScale( float value )
 	setWindowSize( _realWidth, _realHeight );
 }
 
+const char* ViewModel::GetVersion() const
+{
+	return m_version.Str();;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -402,6 +416,7 @@ NS_IMPLEMENT_REFLECTION( IngnomiaGUI::ViewModel, "IngnomiaGUI.ViewModel" )
 	NsProp( "ShowGameGUI", &ViewModel::GetShowGameGUI );
 	NsProp( "WindowWidth", &ViewModel::GetWindowWidth );
 	NsProp( "WindowHeight", &ViewModel::GetWindowHeight );
+	NsProp( "Version", &ViewModel::GetVersion );
 
 	NsProp( "NewGameModel", &ViewModel::getNewGameModel );
 

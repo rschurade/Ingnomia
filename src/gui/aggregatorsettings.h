@@ -48,6 +48,7 @@ public slots:
 	void onRequestSettings();
 
     void onRequestUIScale();
+    void onRequestVersion();
 
     void onSetLanguage( QString language );
     void onSetUIScale( float scale );
@@ -62,4 +63,5 @@ signals:
     void signalFullScreen( bool value );
     void signalUIScale( float value );
     void signalSetLanguage( QString language );
+    void signalVersion( QString version );
 };
