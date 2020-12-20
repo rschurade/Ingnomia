@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - user presets saving on embark
 - translation string for willow tree
 - willow trees are now plantable
+- fish shouldn't drown anymore
 
 ### Added
 - capacity info for stockpile tiles on tile info

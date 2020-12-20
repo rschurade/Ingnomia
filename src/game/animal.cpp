@@ -154,7 +154,8 @@ void Animal::init()
 {
 	g->w()->insertCreatureAtPosition( m_position, m_id );
 
-	m_anatomy.init( "Animal" );
+
+	m_anatomy.init( "Animal", m_aquatic );
 
 	loadBehaviorTree( m_btName );
 

@@ -31,9 +31,10 @@ Anatomy::~Anatomy()
 {
 }
 
-void Anatomy::init( QString type )
+void Anatomy::init( QString type, bool isAquatic )
 {
 	m_type = type;
+	m_isAquatic = isAquatic || ( type == "Fish" );
 
 	auto def = DB::selectRow( "Anatomy", type );
 
@@ -95,6 +96,7 @@ QVariantMap Anatomy::serialize() const
 	out.insert( "Blood", m_blood );
 	out.insert( "Bleeding", m_bleeding );
 	out.insert( "Status", m_status );
+	out.insert( "Aquatic", m_isAquatic );
 
 	QVariantList vlParts;
 
@@ -114,7 +116,7 @@ QVariantMap Anatomy::serialize() const
 void Anatomy::deserialize( QVariantMap in )
 {
 	m_type = in.value( "Type" ).toString();
-	init( m_type );
+	init( m_type, in.value( "Aquatic" ).toBool() );
 
 	m_statusChanged = true;
 	m_status        = (AnatomyStatus)in.value( "Status" ).toUInt();
@@ -359,7 +361,7 @@ AnatomyStatus Anatomy::status()
 
 void Anatomy::setFluidLevelonTile( unsigned char fluidLevel )
 {
-	if ( fluidLevel > 5 )
+	if ( fluidLevel > 5 && !m_isAquatic )
 	{
 		m_status        = AnatomyStatus( m_status | AS_DEAD );
 		m_statusChanged = true;

@@ -52,7 +52,7 @@ public:
 	Anatomy();
 	~Anatomy();
 
-	void init( QString type );
+	void init( QString type, bool isAquatic );
 	QVariantMap serialize() const;
 	void deserialize( QVariantMap state );
 
@@ -69,6 +69,8 @@ public:
 
 private:
 	QString m_type;
+
+	bool m_isAquatic = false;
 
 	float m_blood    = 5000;
 	float m_bleeding = 0.0;

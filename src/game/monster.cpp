@@ -43,7 +43,7 @@ Monster::Monster( QString species, int level, Position& pos, Gender gender, Game
 
 	updateSprite();
 
-	m_anatomy.init( "Humanoid" );
+	m_anatomy.init( "Humanoid", false );
 }
 
 Monster::Monster( QVariantMap in, Game* game ) :

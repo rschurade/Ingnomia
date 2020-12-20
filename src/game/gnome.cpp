@@ -65,7 +65,7 @@ Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 
 	m_type = CreatureType::GNOME;
 
-	m_anatomy.init( "Humanoid" );
+	m_anatomy.init( "Humanoid", false );
 
 	for ( int i = 0; i < 24; ++i )
 	{
