@@ -142,6 +142,11 @@ int main( int argc, char* argv[] )
 			<< "build" << BUILD_ID;
 #endif // GIT_REPO
 
+	// Disable use of ANGLE, as it supports OpenGL 3.x at most
+	QCoreApplication::setAttribute( Qt::AA_UseDesktopOpenGL );
+	// Require use of shared base context, so OpenGL context won't get invalidated on fullscreen toggles etc.
+	QCoreApplication::setAttribute( Qt::AA_ShareOpenGLContexts );
+
 	QApplication a( argc, argv );
 	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );
 	QCoreApplication::setOrganizationDomain( PROJECT_HOMEPAGE_URL );
