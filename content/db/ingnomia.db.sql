@@ -1222,7 +1222,7 @@ INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","No
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('MachineShop','Wrench|Rod|Gear|Spring|Spike|Screw|Cylinder',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Mechanics');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Automaton','Automaton|AutomatonHead|AutomatonTorso|AutomatonArm|AutomatonLeg|AutomatonCoreMark1|AutomatonCoreMark2','','0 1 0','0 -1 0','3 3',NULL,NULL,'Mechanics');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('Windmill','Flour',NULL,'1 0 0','1 3 0','4 4',NULL,'windmill.png','Food');
-INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('WasteDisposal','BurnFishBone|BurnStraw|BurnSeeds',NULL,'0 1 0','0 -1 0','3 3','true',NULL,'Misc');
+INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('WasteDisposal','BurnBone|BurnFishBone|BurnStraw|BurnSeeds',NULL,'0 1 0','0 -1 0','3 3','true',NULL,'Misc');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('GlassFurnace','GlassIngot|RoughGlassGem',NULL,'0 1 0','0 -1 0','3 3',NULL,NULL,'Craft');
 INSERT INTO "Workshops" ("ID","Crafts","GUI","InputTile","OutputTile","Size","NoAutoGenerate","Icon","Tab") VALUES ('GlassMaker','MosaicTile|GlassBottle|GlassJar','','0 1 0','0 -1 0','3 3','','','Craft');
 INSERT INTO "Words_Verb" ("PastParticiple","PresentParticiple","SimplePast","SimplePresent","Word") VALUES ('aced','acing','aced','aces','ace');
@@ -5472,6 +5472,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$SelectItem','select item');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$SelectMaterial','select material');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$WorkshopName_WasteDisposal','waste disposal');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BurnFishBone','burn fish bones');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BurnBone','burn bones');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BurnStraw','burn straw');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BurnSeeds','burn seeds');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CategoryName_Leather','Leather');
@@ -12899,6 +12900,7 @@ INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","A
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AutomatonCoreMark2',NULL,NULL,4,'Spring',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('Shed',NULL,NULL,6,'Plank',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnFishBone',NULL,NULL,1,'FishBone',NULL);
+INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnBone',NULL,NULL,1,'Bone',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnStraw',NULL,NULL,1,'Straw',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('BurnSeeds',NULL,NULL,5,'Seed',NULL);
 INSERT INTO "Crafts_Components" ("ID","AllowedMaterial","AllowedMaterialType","Amount","ItemID","RequireSame") VALUES ('AlarmBellBell',NULL,NULL,2,'Bar',NULL);
@@ -13140,6 +13142,7 @@ INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTim
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BoneBed',1,NULL,'Bed',50.0,NULL,'Bone','Bonecarving');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('Shed',1,NULL,'Shed',50.0,NULL,'Wood','Carpentry');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnFishBone',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
+INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnBone',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnStraw',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('BurnSeeds',0,NULL,NULL,1.0,NULL,NULL,'Smelting');
 INSERT INTO "Crafts" ("ID","Amount","ConversionMaterial","ItemID","ProductionTime","ResultMaterial","ResultMaterialTypes","SkillID") VALUES ('AlarmBellBase',1,'','AlarmBellBase',30.0,NULL,'Wood','Carpentry');
