@@ -4626,6 +4626,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_WillowTree','willow t
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_PineTree','pine tree');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_Plank','plank');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_PlankStairs','plank stairs');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_BlockStairs','block stairs');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_PuzzleBox','puzzle box');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_Radish','fruit');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ItemName_RawCloth','raw cloth');
@@ -5587,6 +5588,7 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_SkullWall','s
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_BoneFloor','bone floor');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_WallTorch','wall torch');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_PlankStairs','plank stairs');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_BlockStairs','block stairs');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_MosaicWall','mosaic wall');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$ConstructionName_MosaicFloor','mosaic floor');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$GroupName_Sand','Soil');
@@ -9751,9 +9753,9 @@ INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Ti
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('FlourSack',0,'Sack',0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('WindmillBase2',0,NULL,0,'0 4',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SoilStairsTop',0,NULL,0,'0 16',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StoneStairsTop',0,NULL,0,'0 16',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StoneStairsTop',0,NULL,0,'0 16',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SoilStairs',0,NULL,0,'0 0',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StoneStairs',0,NULL,0,'0 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StoneStairs',0,NULL,0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('WoodDoor',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StoneDoor',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('WoodTable',0,NULL,0,'0 0',0,NULL,NULL,0);
@@ -13273,6 +13275,8 @@ INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride"
 INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('WallTorch','0 0 0','WallTorch',NULL,'Wall');
 INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('PlankStairs','0 0 0','PlankStairs',NULL,'StairsBottom');
 INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('PlankStairs','0 0 1','PlankStairsTop',NULL,'StairsTop');
+INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('BlockStairs','0 0 0','StoneStairs',NULL,'StairsBottom');
+INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('BlockStairs','0 0 1','StoneStairsTop',NULL,'StairsTop');
 INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('MosaicWall','0 0 0','MosaicWall',NULL,'Wall');
 INSERT INTO "Constructions_Sprites" ("ID","Offset","SpriteID","SpriteIDOverride","Type") VALUES ('MosaicFloor','0 0 0','MosaicFloor',NULL,'Floor');
 INSERT INTO "Constructions_IntermediateSprites" ("ID","Offset","Percent","SpriteID","Type") VALUES ('BlockWall','0 0 0',98.0,'BlockWall100','Wall');
@@ -13332,6 +13336,7 @@ INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","
 INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('BoneFloor',4,'Bone',NULL,NULL);
 INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('WallTorch',1,'Torch',NULL,NULL);
 INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('PlankStairs',4,'Plank',NULL,NULL);
+INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('BlockStairs',2,'Block',NULL,NULL);
 INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('MosaicWall',2,'MosaicTile',NULL,NULL);
 INSERT INTO "Constructions_Components" ("ID","Amount","ItemID","MaterialTypes","Materials") VALUES ('MosaicFloor',2,'MosaicTile',NULL,NULL);
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('SoilStairs',0,1,'Stairs','Soil');
@@ -13385,6 +13390,7 @@ INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category")
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('BoneFloor',0,0,'Floor','Other');
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('WallTorch',0,1,'Item',NULL);
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('PlankStairs',0,1,'Stairs','Wood');
+INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('BlockStairs',0,1,'Stairs','Stone');
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('MosaicWall',0,0,'Wall','Other');
 INSERT INTO "Constructions" ("ID","NoConstruction","Rotation","Type","Category") VALUES ('MosaicFloor',0,0,'Floor','Other');
 INSERT INTO "BaseSprites" ("ID","SourceRectangle","Tilesheet") VALUES ('EmptyFloor','320 0 32 32','terrain.png');
