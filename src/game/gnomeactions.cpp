@@ -2385,7 +2385,11 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 			{
 				// how is that possible?
 				// need to return the gnome to this world
-
+				g->w()->insertCreatureAtPosition( m_position, m_id );
+				m_goneOffMap = false;
+				m_mission       = 0;
+				m_isOnMission   = false;
+				m_nextCheckTick = 0;
 				return BT_RESULT::FAILURE;
 			}
 
@@ -2503,7 +2507,7 @@ BT_RESULT Gnome::actionLeaveForMission( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
 
-	 g->w()->removeCreatureFromPosition( m_position, m_id );
+	g->w()->removeCreatureFromPosition( m_position, m_id );
 	m_goneOffMap = true;
 
 	Mission* mission = g->em()->getMission( m_mission );
@@ -2541,7 +2545,7 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 		qDebug() << "Returning from mission but mission doesn't exist anymore";
 	}
 
-	 g->w()->insertCreatureAtPosition( m_position, m_id );
+	g->w()->insertCreatureAtPosition( m_position, m_id );
 	m_goneOffMap = false;
 
 	m_mission       = 0;

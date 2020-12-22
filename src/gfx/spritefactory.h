@@ -40,6 +40,13 @@ struct DefNode
 		childPos   = "1";
 		numFrames  = 1;
 	};
+	~DefNode()
+	{
+		for( auto& child : childs )
+		{
+			delete child;
+		}
+	}
 
 	QString type;
 	QString offset;
