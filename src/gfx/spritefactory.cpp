@@ -38,6 +38,16 @@ SpriteFactory::SpriteFactory()
 
 SpriteFactory::~SpriteFactory()
 {
+	for( auto& sprite : m_sprites )
+	{
+		delete sprite;
+	}
+	m_sprites.clear();
+	for( auto& def : m_spriteDefinitions )
+	{
+		delete def;
+	}
+	m_spriteDefinitions.clear();
 }
 
 bool SpriteFactory::init()

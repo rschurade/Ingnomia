@@ -386,8 +386,6 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 	m_itemsChanged = true;
 
 	emit signalAddItem( itemID, materialID );
-
-	//DB::createItem( object, itemID, materialID );
 }
 
 void Inventory::destroyObject( unsigned int id )
@@ -432,7 +430,6 @@ void Inventory::destroyObject( unsigned int id )
 			emit signalRemoveItem( itemSID, materialSID );
 		}
 
-		//DB::destroyItem( id );
 		m_itemsChanged = true;
 	}
 }
