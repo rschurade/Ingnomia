@@ -2381,6 +2381,14 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 		{
 			auto mission = g->em()->getMission( m_mission );
 
+			if( !mission )
+			{
+				// how is that possible?
+				// need to return the gnome to this world
+
+				return BT_RESULT::FAILURE;
+			}
+
 			switch ( mission->step )
 			{
 				case MissionStep::TRAVEL:
