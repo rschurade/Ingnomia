@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [unrelease]
+
+### Fixed
+- crash with missions
+
+### Added
+- burn recipe for bones in the waste disposal
+- stairs made from stone blocks
+
+### Changed
+
+### Removed
+
 ## [0.8.5]
 
 ### Fixed
