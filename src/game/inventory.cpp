@@ -378,7 +378,6 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 	{
 		m_hash[itemID].insert( materialID, QHash<unsigned int, Item*>() );
 		m_hash[itemID][materialID].insert( item->id(), item );
-		Global::cfg->set( "updateItemFilter", true );
 	}
 
 	m_itemHistory->plusItem( itemID, materialID );

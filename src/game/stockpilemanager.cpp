@@ -42,6 +42,7 @@ StockpileManager::~StockpileManager()
 
 void StockpileManager::onTick( quint64 tick )
 {
+	/*
 	if ( Global::cfg->get( "updateItemFilter" ).toBool() )
 	{
 		for ( auto& sp : m_stockpiles )
@@ -50,7 +51,7 @@ void StockpileManager::onTick( quint64 tick )
 		}
 	}
 	Global::cfg->set( "updateItemFilter", false );
-
+	*/
 	for ( auto& sp : m_stockpiles )
 	{
 		if ( sp->countFields() == 0 && !sp->stillHasJobs() )

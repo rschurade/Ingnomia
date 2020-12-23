@@ -143,8 +143,6 @@ public:
 
 	bool suspendChanged();
 
-	void updateFilter();
-
 	bool stillHasJobs();
 
 	int countFields();

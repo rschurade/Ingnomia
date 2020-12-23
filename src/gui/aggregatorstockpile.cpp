@@ -164,7 +164,7 @@ void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString n
 void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
 	if( !g ) return;
-	//qDebug() << "set active:" << stockpileID << active << category << group << item << material;
+	qDebug() << "set active:" << stockpileID << active << category << group << item << material;
 	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{

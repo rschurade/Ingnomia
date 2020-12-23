@@ -1189,12 +1189,6 @@ bool Stockpile::suspendChanged()
 	return out;
 }
 
-void Stockpile::updateFilter()
-{
-	m_filter.update();
-	m_filterChanged = true;
-}
-
 bool Stockpile::stillHasJobs()
 {
 	return !m_jobsOut.isEmpty();
