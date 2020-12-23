@@ -308,19 +308,19 @@
 			
 						<!--
 			#############################################################################################################################
-				Standard GUI for normal production workshops
+				GUI for fishing workshops
 			#############################################################################################################################
 			-->
 
 			<Border Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding FisherGui}">
 				<StackPanel>
 					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding Name}" />
-					<TextBox x:Name="WSNameN" Text="{Binding Name}" Margin="10,5,10,5" />
-					<ComboBox x:Name="PrioritySelectorN" Margin="10,5,10,5"
+					<TextBox  Text="{Binding Name}" Margin="10,5,10,5" />
+					<ComboBox Margin="10,5,10,5"
 								ItemsSource="{Binding Priorities}"
 								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"
 								ItemTemplate="{StaticResource ItemTemplate}" />
-					<CheckBox x:Name="CBSuspendN" Content="{StaticResource WorkshopGui_SuspendWorkshop}" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+					<CheckBox Content="{StaticResource WorkshopGui_SuspendWorkshop}" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
 						<CheckBox.ToolTip>
 							<StackPanel Width="500" Background="#FF365264">
 								<TextBlock Text="{StaticResource WorkshopGui_WorkshopSuspendWork}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
