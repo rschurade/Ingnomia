@@ -1154,6 +1154,7 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 
 bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Position workPos, bool ignoreGravity )
 {
+	qDebug() << "deconstruct" << decPos.toString() << isFloor;
 	if ( constr.value( "ConstructionID" ).toString() == "Item" )
 	{
 		unsigned itemID = constr.value( "Item" ).toUInt();
@@ -1280,6 +1281,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 				Tile& tile         = getTile( pos );
 				tile.wallType      = ( WallType )( WallType::WT_NOWALL );
 				tile.wallSpriteUID = 0;
+				tile.wallMaterial  = 0;
 				if ( tile.floorType != ( FloorType )( FloorType::FT_NOFLOOR ) )
 				{
 					tile.flags += TileFlag::TF_WALKABLE;
@@ -1292,6 +1294,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 				Tile& tile          = getTile( pos );
 				tile.floorType      = ( FloorType )( FloorType::FT_NOFLOOR );
 				tile.floorSpriteUID = 0;
+				tile.floorMaterial  = 0;
 				clearTileFlag( pos, TileFlag::TF_WALKABLE );
 
 				PositionEntry pe;

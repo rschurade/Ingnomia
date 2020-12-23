@@ -1279,6 +1279,7 @@ unsigned short World::removeFloor( Position pos, Position extractTo )
 	clearTileFlag( pos, TileFlag::TF_WALKABLE );
 	m_regionMap.updatePosition( pos );
 	removeGrass( pos );
+	removePlant( pos );
 	//g->inv()->gravity( pos );
 
 	if ( tile.flags & TileFlag::TF_SUNLIGHT )
@@ -1299,6 +1300,7 @@ unsigned short World::removeFloor( Position pos, Position extractTo )
 	{
 		g->gm()->forceMoveGnomes( pos, extractTo );
 	}
+	
 	discover( pos.belowOf() );
 
 	addToUpdateList( pos );
