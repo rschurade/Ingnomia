@@ -305,6 +305,37 @@
 					<Button x:Name="BtradeR" Content="{StaticResource WorkshopGui_TradeAction}" Command="{Binding CmdTrade}" Grid.Row="3" HorizontalAlignment="Center" Margin="4" />
 				</Grid>
 			</Border>
+			
+						<!--
+			#############################################################################################################################
+				Standard GUI for normal production workshops
+			#############################################################################################################################
+			-->
+
+			<Border Style="{StaticResource Panel}" MinWidth="300" MaxWidth="300" MinHeight="700" Margin="2" Visibility="{Binding FisherGui}">
+				<StackPanel>
+					<TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Text="{Binding Name}" />
+					<TextBox x:Name="WSNameN" Text="{Binding Name}" Margin="10,5,10,5" />
+					<ComboBox x:Name="PrioritySelectorN" Margin="10,5,10,5"
+								ItemsSource="{Binding Priorities}"
+								SelectedItem="{Binding SelectedPrio, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+					<CheckBox x:Name="CBSuspendN" Content="{StaticResource WorkshopGui_SuspendWorkshop}" IsChecked="{Binding Suspended, Mode=TwoWay}" Margin="10,5,10,5">
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="{StaticResource WorkshopGui_WorkshopSuspendWork}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="{StaticResource WorkshopGui_WorkshopStopWork}" FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+							</StackPanel>
+						</CheckBox.ToolTip>
+					</CheckBox>
+					<CheckBox Content="Catch Fish" IsChecked="{Binding CatchFish, Mode=TwoWay}" Margin="10,5,10,5">
+						
+					</CheckBox>
+					<CheckBox Content="Process Fish" IsChecked="{Binding ProcessFish, Mode=TwoWay}" Margin="10,5,10,5">
+						
+					</CheckBox>
+				</StackPanel>
+			</Border>
 
 			<Button MinWidth="32" MaxWidth="32" MinHeight="32" MaxHeight="32" VerticalAlignment="Top"
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameGui}}, Path=DataContext.CloseWindowCmd }"

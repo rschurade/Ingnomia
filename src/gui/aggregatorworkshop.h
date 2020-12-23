@@ -67,6 +67,8 @@ struct GuiWorkshopInfo
 	bool linkStockpile    = false;
 	bool butcherExcess    = false;
 	bool butcherCorpses   = false;
+	bool catchFish        = false;
+	bool processFish      = false;
 
 	QString gui;
 
@@ -137,6 +139,7 @@ public slots:
 
 	void onSetBasicOptions( unsigned int workshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile );
 	void onSetButcherOptions( unsigned int WorkshopID, bool butcherCorpses, bool butcherExcess );
+	void onSetFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish );
 	void onCraftItem( unsigned int workshopID, QString craftID, int mode, int number, QStringList mats );
 	void onCraftJobCommand( unsigned int workshopID, unsigned int craftJobID, QString command );
 	void onCraftJobParams( unsigned int workshopID, unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );

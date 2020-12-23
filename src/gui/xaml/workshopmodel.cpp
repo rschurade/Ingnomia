@@ -410,8 +410,8 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	}
 	else if ( m_gui == "Butcher" )
 	{
-		SetButcherCorpses( info.butcherCorpses );
-		SetButcherExcess( info.butcherExcess );
+		m_butcherCorpses = info.butcherCorpses;
+		m_butcherExcess = info.butcherExcess;
 	}
 	else if ( m_gui == "Trader" )
 	{
@@ -421,6 +421,12 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 		m_selectedPlayerOffer = nullptr;
 		m_proxy->requestAllTradeItems( m_workshopID );
 	}
+	else if ( m_gui == "Fishery" )
+	{
+		m_catchFish = info.catchFish;
+		m_processFish = info.processFish;
+	}
+	qDebug() << m_gui;
 
 	OnPropertyChanged( "Priorities" );
 	OnPropertyChanged( "SelectedPrio" );
@@ -428,6 +434,12 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	OnPropertyChanged( "NormalGui" );
 	OnPropertyChanged( "ButcherGui" );
 	OnPropertyChanged( "TraderGui" );
+	OnPropertyChanged( "FisherGui" );
+
+	OnPropertyChanged( "ButcherExcess" );
+	OnPropertyChanged( "ButcherCorpses" );
+	OnPropertyChanged( "CatchFish" );
+	OnPropertyChanged( "ProcessFish" );
 }
 
 void WorkshopModel::onUpdateCraftList( const GuiWorkshopInfo& info )
@@ -508,6 +520,15 @@ const char* WorkshopModel::GetTraderVisible() const
 	return "Collapsed";
 }
 
+const char* WorkshopModel::GetFisherVisible() const
+{
+	if ( m_gui == "Fishery" )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+
 bool WorkshopModel::GetAutoCraftMissing() const
 {
 	return m_autoCraftMissing;
@@ -580,7 +601,7 @@ void WorkshopModel::SetButcherExcess( bool value )
 	{
 		m_butcherExcess = value;
 		m_proxy->setButcherOptions( m_workshopID, m_butcherCorpses, m_butcherExcess );
-		OnPropertyChanged( "ButcherExcess" );
+		
 	}
 }
 
@@ -595,10 +616,37 @@ void WorkshopModel::SetButcherCorpses( bool value )
 	{
 		m_butcherCorpses = value;
 		m_proxy->setButcherOptions( m_workshopID, m_butcherCorpses, m_butcherExcess );
-		OnPropertyChanged( "ButcherCorpses" );
 	}
 }
 #pragma endregion ButcherSpecific
+
+bool WorkshopModel::GetCatchFish() const
+{
+	return m_catchFish;
+}
+	
+void WorkshopModel::SetCatchFish( bool value )
+{
+	if( m_catchFish != value )
+	{
+		m_catchFish = value;
+		m_proxy->setFisherOptions( m_workshopID, m_catchFish, m_processFish );
+	}
+}
+
+bool WorkshopModel::GetProcessFish() const
+{
+	return m_processFish;
+}
+
+void WorkshopModel::SetProcessFish( bool value )
+{
+	if( m_processFish != value )
+	{
+		m_processFish = value;
+		m_proxy->setFisherOptions( m_workshopID, m_catchFish, m_processFish );
+	}
+}
 
 #pragma region TraderSpecific
 void WorkshopModel::updateTraderStock( const QList<GuiTradeItem>& items )
@@ -955,6 +1003,9 @@ NS_IMPLEMENT_REFLECTION( WorkshopModel, "IngnomiaGUI.WorkshopModel" )
 	NsProp( "ButcherCorpses", &WorkshopModel::GetButcherCorpses, &WorkshopModel::SetButcherCorpses );
 	NsProp( "ButcherExcess", &WorkshopModel::GetButcherExcess, &WorkshopModel::SetButcherExcess );
 
+	NsProp( "CatchFish", &WorkshopModel::GetCatchFish, &WorkshopModel::SetCatchFish );
+	NsProp( "ProcessFish", &WorkshopModel::GetProcessFish, &WorkshopModel::SetProcessFish );
+
 	NsProp( "Priorities", &WorkshopModel::GetPrios );
 	NsProp( "SelectedPrio", &WorkshopModel::GetSelectedPriority, &WorkshopModel::SetSelectedPriority );
 
@@ -964,6 +1015,7 @@ NS_IMPLEMENT_REFLECTION( WorkshopModel, "IngnomiaGUI.WorkshopModel" )
 	NsProp( "NormalGui", &WorkshopModel::GetNormalVisible );
 	NsProp( "ButcherGui", &WorkshopModel::GetButcherVisible );
 	NsProp( "TraderGui", &WorkshopModel::GetTraderVisible );
+	NsProp( "FisherGui", &WorkshopModel::GetFisherVisible );
 
 	NsProp( "TraderStock", &WorkshopModel::GetTraderStock );
 	NsProp( "TraderOffer", &WorkshopModel::GetTraderOffer );

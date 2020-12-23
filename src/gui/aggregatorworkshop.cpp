@@ -235,6 +235,17 @@ void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butc
 	}
 }
 
+void AggregatorWorkshop::onSetFisherOptions( unsigned int workshopID, bool catchFish, bool processFish )
+{
+	if( !g ) return;
+	auto ws = g->wsm()->workshop( workshopID );
+	if ( ws )
+	{
+		ws->setFish( catchFish );
+		ws->setProcessFish( processFish );
+	}
+}
+
 void AggregatorWorkshop::onCraftItem( unsigned int workshopID, QString craftID, int mode, int number, QStringList mats )
 {
 	if( !g ) return;

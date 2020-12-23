@@ -34,6 +34,7 @@ WorkshopProxy::WorkshopProxy( QObject* parent ) :
 
 	connect( this, &WorkshopProxy::signalSetBasicOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetBasicOptions, Qt::QueuedConnection );
 	connect( this, &WorkshopProxy::signalSetButcherOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetButcherOptions, Qt::QueuedConnection );
+	connect( this, &WorkshopProxy::signalSetFisherOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetFisherOptions, Qt::QueuedConnection );
 	connect( this, &WorkshopProxy::signalCraftItem, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftItem, Qt::QueuedConnection );
 	connect( this, &WorkshopProxy::signalCraftJobCommand, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobCommand, Qt::QueuedConnection );
 	connect( this, &WorkshopProxy::signalCraftJobParams, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobParams, Qt::QueuedConnection );
@@ -185,4 +186,9 @@ void WorkshopProxy::onUpdatePlayerValue( int value )
 void WorkshopProxy::trade( unsigned int workshopID )
 {
 	emit signalTrade( workshopID );
+}
+
+void WorkshopProxy::setFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish )
+{
+	emit signalSetFisherOptions( WorkshopID, catchFish, processFish );
 }

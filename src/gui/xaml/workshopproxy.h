@@ -34,6 +34,7 @@ public:
 
 	void setBasicOptions( unsigned int WorkshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile );
 	void setButcherOptions( unsigned int WorkshopID, bool butcherCorpses, bool butcherExcess );
+	void setFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish );
 
 	void craftItem( QString sid, int mode, int number, QStringList mats );
 
@@ -70,6 +71,7 @@ private slots:
 signals:
 	void signalSetBasicOptions( unsigned int WorkshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile );
 	void signalSetButcherOptions( unsigned int WorkshopID, bool butcherCorpses, bool butcherExcess );
+	void signalSetFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish );
 	void signalCraftItem( unsigned int WorkshopID, QString craftID, int mode, int number, QStringList mats );
 	void signalCraftJobCommand( unsigned int workshopID, unsigned int craftJobID, QString command );
 	void signalCraftJobParams( unsigned int workshopID, unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );

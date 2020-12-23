@@ -265,10 +265,15 @@ private:
 	void SetButcherExcess( bool value );
 	bool GetButcherCorpses() const;
 	void SetButcherCorpses( bool value );
+	bool GetCatchFish() const;
+	void SetCatchFish( bool value );
+	bool GetProcessFish() const;
+	void SetProcessFish( bool value );
 
 	const char* GetNormalVisible() const;
 	const char* GetButcherVisible() const;
 	const char* GetTraderVisible() const;
+	const char* GetFisherVisible() const;
 
 	const char* GetTraderValue() const;
 	const char* GetPlayerValue() const;
@@ -373,6 +378,8 @@ private:
 	bool m_connectStockpile   = false;
 	bool m_butcherCorpses     = false;
 	bool m_butcherExcess      = false;
+	bool m_catchFish		  = false;
+	bool m_processFish		  = false;
 
 	QString m_gui;
 
