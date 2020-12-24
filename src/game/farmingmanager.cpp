@@ -634,7 +634,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 		if ( grove )
 		{
 			m_allGroveTiles.remove( pos );
-			if ( grove->removeTile( pos ) )
+			if ( grove->removeTile( pos ) && grove->canDelete() )
 			{
 				removeGrove( grove->id() );
 			}

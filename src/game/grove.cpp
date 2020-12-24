@@ -299,6 +299,11 @@ bool Grove::hasJobID( unsigned int jobID ) const
 	return m_jobsOut.contains( jobID );
 }
 
+bool Grove::canDelete() const
+{
+	return m_jobsOut.isEmpty();
+}
+
 bool Grove::hasPlantTreeJob( Position pos ) const
 {
 	for ( auto job : m_jobsOut )

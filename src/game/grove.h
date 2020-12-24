@@ -84,6 +84,7 @@ public:
 	bool giveBackJob( unsigned int job );
 	Job* getJob( unsigned int jobID ) const;
 	bool hasJobID( unsigned int jobID ) const;
+	bool canDelete() const;
 
 	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
