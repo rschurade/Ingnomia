@@ -37,7 +37,7 @@ class JobManager : public QObject
 private:
 	QPointer<Game> g;
 
-	QMap<unsigned int, Job*> m_jobList;
+	QHash<unsigned int, Job*> m_jobList;
 	QHash<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
 
 	QHash<QString, int> m_skillToInt;
