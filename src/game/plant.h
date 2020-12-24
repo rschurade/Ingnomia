@@ -143,5 +143,6 @@ private:
 
 	void setGrowTime();
 	void updateState();
+	bool testLayoutMulti( QString layoutSID );
 	void layoutMulti( QString layoutSID, bool withFruit = false );
 };

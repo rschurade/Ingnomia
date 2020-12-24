@@ -21,8 +21,8 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/game.h"
 #include "../game/creaturemanager.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/world.h"
@@ -304,25 +304,33 @@ void Plant::updateState()
 
 	if ( m_state < sl.size() )
 	{
-		QVariantMap sm   = sl[m_state];
-		m_isMulti        = !sm.value( "Layout" ).toString().isEmpty();
+		QVariantMap sm     = sl[m_state];
+		const bool isMulti = !sm.value( "Layout" ).toString().isEmpty();
+		//!TODO Logik broken if plants contain multiple multi-phases with different bounding boxes, would need to properly deconstruct the plant first...
+		// Check if this can become a multi-sprite plant without colliding with anything
+		if ( !m_isMulti && isMulti && !testLayoutMulti( sm.value( "Layout" ).toString() ) )
+		{
+			m_state = qMax( 0, m_state - 1 );
+			return;
+		}
+		m_isMulti        = isMulti;
 		QString spriteID = sm.value( "SpriteID" ).toString();
 
-		m_matureWood = sm.value( "Fell" ).toBool();
+		m_matureWood  = sm.value( "Fell" ).toBool();
 		m_harvestable = sm.value( "Harvest" ).toBool();
-		m_hasAlpha = sm.value( "HasAlpha" ).toBool();
+		m_hasAlpha    = sm.value( "HasAlpha" ).toBool();
 
-		int newLightIntens =  sm.value( "LightIntensity" ).toInt();
+		int newLightIntens = sm.value( "LightIntensity" ).toInt();
 
-		if( newLightIntens == 0 && m_lightIntensity )
+		if ( newLightIntens == 0 && m_lightIntensity )
 		{
 			g->w()->removeLight( m_id );
 		}
-		else if( newLightIntens > 0 && !m_lightIntensity )
+		else if ( newLightIntens > 0 && !m_lightIntensity )
 		{
 			g->w()->addLight( m_id, m_position, newLightIntens );
 		}
-		else if( newLightIntens > 0 && m_lightIntensity > 0 && newLightIntens != m_lightIntensity )
+		else if ( newLightIntens > 0 && m_lightIntensity > 0 && newLightIntens != m_lightIntensity )
 		{
 			g->w()->moveLight( m_id, m_position, newLightIntens );
 		}
@@ -422,7 +430,7 @@ bool Plant::fell()
 
 					if ( !sm.value( "Layout" ).toString().isEmpty() )
 					{
-						auto ll      = DB::selectRows( "TreeLayouts_Layout", m_plantID );
+						auto ll = DB::selectRows( "TreeLayouts_Layout", m_plantID );
 						for ( auto vm : ll )
 						{
 							Position offset( vm.value( "Offset" ).toString() );
@@ -430,6 +438,7 @@ bool Plant::fell()
 							g->w()->setWallSprite( newPos, 0, 0 );
 							g->w()->clearTileFlag( newPos, TileFlag::TF_OCCUPIED );
 							g->w()->clearTileFlag( newPos, TileFlag::TF_OVERSIZE );
+							g->w()->getTile( newPos ).wallType = WT_NOWALL;
 							if ( g->w()->floorType( newPos ) & FT_SOLIDFLOOR )
 							{
 								g->w()->setTileFlag( newPos, TileFlag::TF_WALKABLE );
@@ -472,7 +481,7 @@ bool Plant::harvest( Position& pos )
 			if ( harvItem.contains( "Chance" ) )
 			{
 				float chance = harvItem.value( "Chance" ).toFloat();
-				if( chance > 0.0 )
+				if ( chance > 0.0 )
 				{
 					int ra = rand() % 100;
 					if ( ra < chance * 100 )
@@ -484,7 +493,6 @@ bool Plant::harvest( Position& pos )
 				{
 					g->inv()->createItem( pos, itemID, materialID );
 				}
-				
 			}
 			else
 			{
@@ -494,7 +502,7 @@ bool Plant::harvest( Position& pos )
 		QString action = row.value( "Action" ).toString();
 		if ( action == "Destroy" )
 		{
-			if( !m_lightIntensity )
+			if ( !m_lightIntensity )
 			{
 				g->w()->removeLight( m_id );
 			}
@@ -582,16 +590,13 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 		{
 			Position pos = m_position + offset;
 
-			g->w()->removeWall( pos, extractPos );
-			if ( pos.z > m_position.z )
-			{
-				//world.removeFloor( pos, extractPos );
-			}
-
 			g->w()->setWallSprite( pos, sprite->uID, Global::util->rotString2Char( vm.value( "Rotation" ).toString() ) );
 			g->w()->clearTileFlag( pos, TileFlag::TF_WALKABLE );
 			g->w()->setTileFlag( pos, TileFlag::TF_OCCUPIED );
 			g->w()->setTileFlag( pos, TileFlag::TF_OVERSIZE );
+
+			// Solid wall (selectable) for the trunk only
+			g->w()->getTile( pos ).wallType = offset == Position() ? static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING | WT_SOLIDWALL ) : static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING );
 
 			g->gm()->forceMoveGnomes( pos, extractPos );
 			g->cm()->forceMoveAnimals( pos, extractPos );
@@ -602,6 +607,42 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 			}
 		}
 	}
+}
+
+bool Plant::testLayoutMulti( QString layoutSID )
+{
+	Position extractPos = m_position.eastOf();
+	if ( !g->w()->isWalkable( m_position.eastOf() ) && !g->w()->isWalkable( m_position.southOf() ) && !g->w()->isWalkable( m_position.westOf() ) && !g->w()->isWalkable( m_position.northOf() ) )
+	{
+		return false;
+	}
+	auto ll = DB::selectRows( "TreeLayouts_Layout", layoutSID );
+	for ( const auto& vm : ll )
+	{
+		const Position offset( vm.value( "Offset" ).toString() );
+		const Position pos = m_position + offset;
+		const auto tf      = g->w()->getTileFlag( pos );
+		const auto ft      = g->w()->floorType( pos );
+		const auto wt      = g->w()->wallType( pos );
+
+		// Floating floors above the ground
+		if ( offset.z > 0 && ft != FT_NOFLOOR )
+		{
+			return false;
+		}
+		// Any existing wall
+		if ( wt != WT_NOWALL )
+		{
+			return false;
+		}
+		// Any existing plant
+		if ( tf & TileFlag::TF_OCCUPIED )
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void Plant::speedUpGrowth( unsigned int ticks )
