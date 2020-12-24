@@ -64,7 +64,7 @@ public:
 	unsigned int getJob();
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job& getJob( unsigned int jobID );
+	Job* getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
 	QList<unsigned int> allStockpiles()

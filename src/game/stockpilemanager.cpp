@@ -267,7 +267,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job& StockpileManager::getJob( unsigned int jobID )
+Job* StockpileManager::getJob( unsigned int jobID )
 {
 	for ( const auto& sp : m_stockpiles )
 	{

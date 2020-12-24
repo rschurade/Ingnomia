@@ -374,7 +374,7 @@ void IO::sanitize()
 		std::unordered_set<unsigned int> legalJobs;
 		for ( const auto& job : g->jm()->allJobs() )
 		{
-			legalJobs.emplace( job.id() );
+			legalJobs.emplace( job->id() );
 		}
 
 		std::unordered_set<unsigned int> carriedItems;
@@ -493,7 +493,7 @@ QJsonArray IO::jsonArrayConfig()
 bool IO::loadConfig( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		auto map = entry.toMap();
 	}
@@ -534,12 +534,12 @@ bool IO::loadGame( QJsonDocument& jd )
 		GameState::load( map );
 	}
 
-	for ( auto vMat : GameState::addedMaterials )
+	for ( const auto& vMat : GameState::addedMaterials )
 	{
 		DB::addRow( "Materials", vMat.toMap() );
 	}
 
-	for ( auto key : GameState::addedTranslations.keys() )
+	for ( const auto& key : GameState::addedTranslations.keys() )
 	{
 		Strings::getInstance().insertString( key, GameState::addedTranslations[key].toString() );
 	}
@@ -559,7 +559,7 @@ bool IO::saveWorld( QString folder )
 		QDataStream out( &worldFile );
 		std::vector<Tile>& world = g->w()->world();
 
-		for ( auto tile : world )
+		for ( const auto& tile : world )
 		{
 			out << (quint64)tile.flags;
 			out << (quint16)tile.wallType;
@@ -650,7 +650,7 @@ QJsonArray IO::jsonArrayWallConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayWallConstructions";
 	QJsonArray ja;
-	for ( auto constr : g->w()->wallConstructions() )
+	for ( const auto& constr : g->w()->wallConstructions() )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -664,7 +664,7 @@ QJsonArray IO::jsonArrayFloorConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFloorConstructions";
 	QJsonArray ja;
-	for ( auto constr : g->w()->floorConstructions() )
+	for ( const auto& constr : g->w()->floorConstructions() )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -692,7 +692,7 @@ QJsonArray IO::jsonArraySprites()
 	if ( Global::debugMode )
 		qDebug() << "jsonArraySprites";
 	QJsonArray ja;
-	for ( auto sc : g->sf()->spriteCreations() )
+	for ( const auto& sc : g->sf()->spriteCreations() )
 	{
 		QVariantMap vm;
 		vm.insert( "ItemSID", sc.itemSID );
@@ -714,7 +714,7 @@ bool IO::loadSprites( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
 	QList<SpriteCreation> scl;
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		QVariantMap em = entry.toMap();
 		SpriteCreation sc;
@@ -734,21 +734,21 @@ QJsonArray IO::jsonArrayGnomes()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayGnomes";
 	QJsonArray ja;
-	for ( auto gnome : g->gm()->gnomes() )
+	for ( const auto& gnome : g->gm()->gnomes() )
 	{
 		QVariantMap out;
 		gnome->serialize( out );
 		QJsonValue jv = QJsonValue::fromVariant( out );
 		ja.append( jv );
 	}
-	for ( auto gnome : g->gm()->specialGnomes() )
+	for ( const auto& gnome : g->gm()->specialGnomes() )
 	{
 		QVariantMap out;
 		gnome->serialize( out );
 		QJsonValue jv = QJsonValue::fromVariant( out );
 		ja.append( jv );
 	}
-	for ( auto automaton : g->gm()->automatons() )
+	for ( const auto& automaton : g->gm()->automatons() )
 	{
 		QVariantMap out;
 		automaton->serialize( out );
@@ -809,7 +809,7 @@ bool IO::loadGnomes( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
 	qDebug() << "load " << ja.toVariantList().size() << "gnomes";
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		auto em = entry.toMap();
 		switch ( (CreatureType)em.value( "Type" ).toInt() )
@@ -835,7 +835,7 @@ bool IO::loadMonsters( QString folder )
 	{
 		loadFile( folder + "monsters.json", jd );
 		QJsonArray ja = jd.array();
-		for ( auto entry : ja.toVariantList() )
+		for ( const auto& entry : ja.toVariantList() )
 		{
 			g->cm()->addCreature( CreatureType::MONSTER, entry.toMap() );
 		}
@@ -847,7 +847,7 @@ bool IO::loadMonsters( QString folder )
 		{
 			loadFile( folder + "monsters" + QString::number( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
-			for ( auto entry : ja.toVariantList() )
+			for ( const auto& entry : ja.toVariantList() )
 			{
 				g->cm()->addCreature( CreatureType::MONSTER, entry.toMap() );
 			}
@@ -910,7 +910,7 @@ bool IO::loadPlants( QString folder )
 	{
 		loadFile( folder + "plants.json", jd );
 		QJsonArray ja = jd.array();
-		for ( auto entry : ja.toVariantList() )
+		for ( const auto& entry : ja.toVariantList() )
 		{
 			Plant plant( entry.toMap(), g );
 			g->w()->addPlant( plant );
@@ -925,7 +925,7 @@ bool IO::loadPlants( QString folder )
 			loadFile( folder + "plants" + QString::number( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 
-			for ( auto entry : ja.toVariantList() )
+			for ( const auto& entry : ja.toVariantList() )
 			{
 				Plant plant( entry.toMap(), g );
 				g->w()->addPlant( plant );
@@ -1014,7 +1014,7 @@ bool IO::loadItems( QString folder )
 			loadFile( folder + "items" + QString::number( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 
-			for ( auto entry : ja.toVariantList() )
+			for ( const auto& entry : ja.toVariantList() )
 			{
 				g->inv()->createItem( entry.toMap() );
 				++count;
@@ -1038,11 +1038,11 @@ QJsonArray IO::jsonArrayJobs()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayJobs";
 	QJsonArray ja;
-	for ( auto job : g->jm()->allJobs() )
+	for ( const auto& job : g->jm()->allJobs() )
 	{
-		if ( !job.type().isEmpty() )
+		if ( !job->type().isEmpty() )
 		{
-			QJsonValue jv = QJsonValue::fromVariant( job.serialize() );
+			QJsonValue jv = QJsonValue::fromVariant( job->serialize() );
 			ja.append( jv );
 		}
 	}
@@ -1057,7 +1057,7 @@ QJsonArray IO::jsonArrayJobSprites()
 	QJsonArray ja;
 	auto jobSprites = g->w()->jobSprites();
 
-	for ( auto key : jobSprites.keys() )
+	for ( const auto& key : jobSprites.keys() )
 	{
 		auto entry = jobSprites[key];
 		entry.insert( "PosID", key );
@@ -1071,7 +1071,7 @@ QJsonArray IO::jsonArrayJobSprites()
 bool IO::loadJobs( QJsonDocument& jd )
 {
 	QJsonArray ja  = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->jm()->addLoadedJob( entry );
 	}
@@ -1081,7 +1081,7 @@ bool IO::loadJobs( QJsonDocument& jd )
 bool IO::loadJobSprites( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		auto em          = entry.toMap();
 		unsigned int key = em.value( "JobID" ).toUInt();
@@ -1163,7 +1163,7 @@ QJsonArray IO::jsonArrayDoors()
 bool IO::loadFarms( QJsonDocument& jd )
 {
 	QJsonArray ja      = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->fm()->load( entry.toMap() );
 	}
@@ -1173,7 +1173,7 @@ bool IO::loadFarms( QJsonDocument& jd )
 bool IO::loadRooms( QJsonDocument& jd )
 {
 	QJsonArray ja   = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->rm()->load( entry.toMap() );
 	}
@@ -1183,7 +1183,7 @@ bool IO::loadRooms( QJsonDocument& jd )
 bool IO::loadDoors( QJsonDocument& jd )
 {
 	QJsonArray ja   = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->rm()->loadDoor( entry.toMap() );
 	}
@@ -1195,7 +1195,7 @@ QJsonArray IO::jsonArrayStockpiles()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayStockpiles";
 	QJsonArray ja;
-	for ( auto stockpileID : g->spm()->allStockpilesOrdered() )
+	for ( const auto& stockpileID : g->spm()->allStockpilesOrdered() )
 	{
 		auto stockpile = g->spm()->getStockpile( stockpileID );
 		if ( stockpile )
@@ -1211,7 +1211,7 @@ QJsonArray IO::jsonArrayStockpiles()
 bool IO::loadStockpiles( QJsonDocument& jd )
 {
 	QJsonArray ja        = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->spm()->load( entry.toMap() );
 	}
@@ -1223,7 +1223,7 @@ QJsonArray IO::jsonArrayWorkshops()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayWorkshops";
 	QJsonArray ja;
-	for ( auto w : g->wsm()->workshops() )
+	for ( const auto& w : g->wsm()->workshops() )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( w->serialize() );
 		ja.append( jv );
@@ -1234,10 +1234,10 @@ QJsonArray IO::jsonArrayWorkshops()
 bool IO::loadWorkshops( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->wsm()->addWorkshop( entry.toMap() );
-		for ( auto s : entry.toMap().value( "Sprites" ).toList() )
+		for ( const auto& s : entry.toMap().value( "Sprites" ).toList() )
 		{
 			g->w()->addLoadedSprites( s.toMap() );
 		}
@@ -1297,7 +1297,7 @@ bool IO::loadAnimals( QString folder )
 	{
 		loadFile( folder + "animals.json", jd );
 		QJsonArray ja = jd.array();
-		for ( auto entry : ja.toVariantList() )
+		for ( const auto& entry : ja.toVariantList() )
 		{
 			g->cm()->addCreature( CreatureType::ANIMAL, entry.toMap() );
 		}
@@ -1309,7 +1309,7 @@ bool IO::loadAnimals( QString folder )
 		{
 			loadFile( folder + "animals" + QString::number( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
-			for ( auto entry : ja.toVariantList() )
+			for ( const auto& entry : ja.toVariantList() )
 			{
 				g->cm()->addCreature( CreatureType::ANIMAL, entry.toMap() );
 			}
@@ -1346,7 +1346,7 @@ QJsonDocument IO::jsonArrayEvents()
 bool IO::loadEvents( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
-	for ( auto entry : ja.toVariantList() )
+	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->em()->deserialize( entry.toMap() );
 	}
@@ -1359,7 +1359,7 @@ QJsonDocument IO::jsonArrayMechanisms()
 		qDebug() << "jsonArrayMechanisms";
 	QVariantList ol;
 
-	for ( auto md : g->mcm()->mechanisms() )
+	for ( const auto& md : g->mcm()->mechanisms() )
 	{
 		auto vmd = md.serialize();
 
@@ -1397,7 +1397,7 @@ QJsonDocument IO::jsonArrayPipes()
 		qDebug() << "jsonArrayPipes";
 	QVariantList ol;
 
-	for ( auto fp : g->flm()->pipes() )
+	for ( const auto& fp : g->flm()->pipes() )
 	{
 		auto vfp = fp.serialize();
 		/*

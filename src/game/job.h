@@ -51,7 +51,7 @@ struct RequiredTool
 
 class Job
 {
-
+	Q_DISABLE_COPY_MOVE( Job )
 private:
 	unsigned int m_id = 0;
 	QString m_type;
@@ -101,7 +101,7 @@ public:
 	Job();
 	Job( QVariantMap in );
 
-	Job( const Job& other );
+	//Job( const Job& other );
 
 	~Job();
 

@@ -69,7 +69,7 @@ struct MechanismData
 
 	QList<Position> connectsTo;
 
-	QVariantMap serialize();
+	QVariantMap serialize() const;
 	void deserialize( QVariantMap in );
 };
 

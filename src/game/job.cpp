@@ -149,6 +149,7 @@ QVariant Job::serialize() const
 	return out;
 }
 
+/*
 Job::Job( const Job& other )
 {
 	m_id            = other.m_id;
@@ -193,6 +194,7 @@ Job::Job( const Job& other )
 	m_itemsToHaul = other.m_itemsToHaul;
 	m_spell       = other.m_spell;
 }
+*/
 
 Job::~Job()
 {

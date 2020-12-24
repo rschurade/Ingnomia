@@ -37,16 +37,16 @@ class JobManager : public QObject
 private:
 	QPointer<Game> g;
 
-	QMap<unsigned int, Job> m_jobList;
-	QMap<QString, QMultiMap<int, unsigned int>> m_jobsPerType;
+	QMap<unsigned int, Job*> m_jobList;
+	QHash<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
 
-	QMap<QString, int> m_skillToInt;
+	QHash<QString, int> m_skillToInt;
 
-	QHash<unsigned int, unsigned int> m_jobPositions;
+	QHash<Position, unsigned int> m_jobPositions;
 
 	QQueue<unsigned int> m_returnedJobQueue;
 
-	QMap<QString, QStringList> m_jobIDs;
+	QHash<QString, QStringList> m_jobIDs;
 
 	int m_startIndex;
 
@@ -90,7 +90,7 @@ public:
 
 	void addLoadedJob( QVariant vals );
 
-	QMap<unsigned int, Job>& allJobs()
+	const QHash<unsigned int, Job*>& allJobs()
 	{
 		return m_jobList;
 	}

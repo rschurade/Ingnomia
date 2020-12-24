@@ -993,9 +993,9 @@ bool Stockpile::allowedInStockpile( unsigned int itemID )
 	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
 }
 
-Job& Stockpile::getJob( unsigned int jobID )
+Job* Stockpile::getJob( unsigned int jobID )
 {
-	return *m_jobsOut[jobID];
+	return m_jobsOut[jobID];
 }
 
 bool Stockpile::hasJobID( unsigned int jobID ) const

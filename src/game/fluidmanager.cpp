@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QQueue>
 
-QVariantMap NetworkPipe::serialize()
+QVariantMap NetworkPipe::serialize() const
 {
 	QVariantMap out;
 

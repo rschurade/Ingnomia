@@ -47,7 +47,7 @@ struct NetworkPipe
 	QList<Position> ins;
 	QList<Position> outs;
 
-	QVariantMap serialize();
+	QVariantMap serialize() const;
 	void deserialize( QVariantMap in );
 };
 

@@ -31,7 +31,7 @@
 #include <QDebug>
 #include <QQueue>
 
-QVariantMap MechanismData::serialize()
+QVariantMap MechanismData::serialize() const
 {
 	QVariantMap out;
 	out.insert( "Type", type );
