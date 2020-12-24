@@ -308,9 +308,15 @@ void Plant::updateState()
 		const bool isMulti = !sm.value( "Layout" ).toString().isEmpty();
 		//!TODO Logik broken if plants contain multiple multi-phases with different bounding boxes, would need to properly deconstruct the plant first...
 		// Check if this can become a multi-sprite plant without colliding with anything
-		if ( !m_isMulti && isMulti && !testLayoutMulti( sm.value( "Layout" ).toString() ) )
+		if ( !m_isMulti && isMulti && !testLayoutMulti( sm.value( "Layout" ).toString(), m_position, g ) )
 		{
 			m_state = qMax( 0, m_state - 1 );
+			
+			if( !m_sprite )
+			{
+				m_sprite = g->sf()->createSprite( "SolidSelectionWall", { "Purple" } );
+			}
+			
 			return;
 		}
 		m_isMulti        = isMulti;
@@ -609,21 +615,16 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 	}
 }
 
-bool Plant::testLayoutMulti( QString layoutSID )
+bool Plant::testLayoutMulti( QString layoutSID, Position rootPos, Game* game )
 {
-	Position extractPos = m_position.eastOf();
-	if ( !g->w()->isWalkable( m_position.eastOf() ) && !g->w()->isWalkable( m_position.southOf() ) && !g->w()->isWalkable( m_position.westOf() ) && !g->w()->isWalkable( m_position.northOf() ) )
-	{
-		return false;
-	}
 	auto ll = DB::selectRows( "TreeLayouts_Layout", layoutSID );
 	for ( const auto& vm : ll )
 	{
 		const Position offset( vm.value( "Offset" ).toString() );
-		const Position pos = m_position + offset;
-		const auto tf      = g->w()->getTileFlag( pos );
-		const auto ft      = g->w()->floorType( pos );
-		const auto wt      = g->w()->wallType( pos );
+		const Position pos = rootPos + offset;
+		const auto tf      = game->w()->getTileFlag( pos );
+		const auto ft      = game->w()->floorType( pos );
+		const auto wt      = game->w()->wallType( pos );
 
 		// Floating floors above the ground
 		if ( offset.z > 0 && ft != FT_NOFLOOR )

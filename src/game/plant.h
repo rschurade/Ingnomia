@@ -112,6 +112,8 @@ public:
 	bool growsThisSeason();
 	void setGrowsThisSeason();
 
+	static bool testLayoutMulti( QString layoutSID, Position rootPos, Game* game );
+
 private:
 	QPointer<Game> g;
 
@@ -143,6 +145,5 @@ private:
 
 	void setGrowTime();
 	void updateState();
-	bool testLayoutMulti( QString layoutSID );
 	void layoutMulti( QString layoutSID, bool withFruit = false );
 };

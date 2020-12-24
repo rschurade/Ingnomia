@@ -376,7 +376,7 @@ void WorldGenerator::addPlantsAndTrees()
 				if ( random % treeDensity == 0 || shroomRejected )
 				{
 					int ra = rand() % largeShrooms.size();
-					if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noShroom( pos, 2, 2 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
+					if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && Plant::testLayoutMulti( largeShrooms[ra], pos, g ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 					{
 						w->plantMushroom( pos, largeShrooms[ra], true );
 						shroomRejected = false;
@@ -438,7 +438,7 @@ void WorldGenerator::addPlantsAndTrees()
 					if ( trees.size() )
 					{
 						int ra = rand() % trees.size();
-						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noTree( pos, 2, 2 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
+						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && Plant::testLayoutMulti( trees[ra], pos, g ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 						{
 							w->plantTree( pos, trees[ra], true );
 							treeRejected = false;
