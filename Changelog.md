@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - fisher gui
 
 ### Changed
+- restructured the tile info window
 
 ### Removed
 

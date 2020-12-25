@@ -167,65 +167,27 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 
 	// tt is always present
 	uint32_t activeItems = 1;
-	if ( tileInfo.numGnomes > 0 || tileInfo.numAnimals > 0 || tileInfo.numMonsters > 0 )
-	{
-		if ( !_tabItems->Contains( _tabItemElements.tc ) )
-		{
-			_tabItems->Insert( activeItems, _tabItemElements.tc );
-		}
-		++activeItems;
-	}
-	else
-	{
-		_tabItems->Remove( _tabItemElements.tc );
-		_tabItemElements.tc->setActive( false );
-	}
-
-	if ( tileInfo.numItems > 0 )
-	{
-		if ( !_tabItems->Contains( _tabItemElements.ti ) )
-		{
-			_tabItems->Insert( activeItems, _tabItemElements.ti );
-		}
-		++activeItems;
-	}
-	else
-	{
-		_tabItems->Remove( _tabItemElements.ti );
-		_tabItemElements.ti->setActive( false );
-	}
 
 	auto flags        = tileInfo.flags;
 	m_designationFlag = tileInfo.designationFlag;
-	//if ( flags & ( TileFlag::TF_WORKSHOP | TileFlag::TF_STOCKPILE | TileFlag::TF_GROVE | TileFlag::TF_FARM | TileFlag::TF_PASTURE | TileFlag::TF_ROOM ) )
+	
+	_tabItems->Remove( _tabItemElements.td );
+	_tabItemElements.td->setActive( false );
+
 	if ( tileInfo.designationID )
 	{
-		if ( !_tabItems->Contains( _tabItemElements.td ) )
-		{
-			_tabItems->Insert( activeItems, _tabItemElements.td );
-		}
-		++activeItems;
 		m_designationName = tileInfo.designationName.toStdString().c_str();
 
 		if ( flags & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE ) )
 		{
 			m_proxy->sendManageCommand( m_tileID );
-			if ( _mode == TileInfoMode::Stockpile )
-			{
-				_mode = TileInfoMode::Designation;
-			}
 		}
 		else if ( flags & TileFlag::TF_STOCKPILE )
 		{
 			m_proxy->requestStockpileItems( m_tileID );
-			if ( _mode == TileInfoMode::Designation )
-			{
-				_mode = TileInfoMode::Stockpile;
-			}
 		}
 		else if ( flags & TileFlag::TF_WORKSHOP )
 		{
-			_mode = TileInfoMode::Terrain;
 		}
 		else if ( flags & TileFlag::TF_ROOM )
 		{
@@ -238,26 +200,9 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 			m_roomValue	   = QString::number( tileInfo.roomValue ).toStdString().c_str();
 		}
 	}
-	else
-	{
-		_tabItems->Remove( _tabItemElements.td );
-		_tabItemElements.td->setActive( false );
-	}
 
-	if ( flags & ( TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL + TileFlag::TF_JOB_BUSY_FLOOR ) )
-	{
-		if ( !_tabItems->Contains( _tabItemElements.tj ) )
-		{
-			_tabItems->Insert( activeItems, _tabItemElements.tj );
-		}
-		++activeItems;
-	}
-	else
-	{
-		_tabItems->Remove( _tabItemElements.tj );
-		_tabItemElements.tj->setActive( false );
-	}
-
+	m_hasJob = ( flags & ( TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL + TileFlag::TF_JOB_BUSY_FLOOR ) );
+	
 	bool anyChecked = false;
 	for ( int i = 0; i < _tabItems->Count(); ++i )
 	{
@@ -319,6 +264,29 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	}
 	if ( !tileInfo.water.isEmpty() )
 		_terrainTabItems->Add( MakePtr<TerrainTabItem>( tileInfo.water, "Water" ) );
+
+	switch ( m_designationFlag )
+	{
+		case TileFlag::TF_WORKSHOP:
+			m_designationTitle = "Workshop";
+			break;
+		case TileFlag::TF_STOCKPILE:
+			m_designationTitle = "Stockpile";
+			break;
+		case TileFlag::TF_GROVE:
+			m_designationTitle = "Grove";
+			break;
+		case TileFlag::TF_FARM:
+			m_designationTitle = "Farm";
+			break;
+		case TileFlag::TF_PASTURE:
+			m_designationTitle = "Pasture";
+			break;
+		case TileFlag::TF_ROOM:
+			m_designationTitle = "Room";
+			break;
+	}
+
 
 	_itemTabItems->Clear();
 	if ( !tileInfo.items.empty() )
@@ -405,8 +373,10 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	OnPropertyChanged( "ShowMiniStockpile" );
 
 	OnPropertyChanged( "ShowDesignation" );
+	OnPropertyChanged( "ShowDesignationSimple" );
 	OnPropertyChanged( "ShowDesignationRoom" );
 	OnPropertyChanged( "DesignationName" );
+	OnPropertyChanged( "DesignationTitle" );
 }
 
 const char* TileInfoModel::getTileID() const
@@ -454,6 +424,7 @@ void TileInfoModel::OnCmdTab( BaseComponent* param )
 	QString tab = param->ToString().Str();
 	if ( tab == "T" )
 		_mode = TileInfoMode::Terrain;
+	/*
 	else if ( tab == "I" )
 		_mode = TileInfoMode::Items;
 	else if ( tab == "C" )
@@ -488,7 +459,7 @@ void TileInfoModel::OnCmdTab( BaseComponent* param )
 	{
 		_tabItems->Get( i )->setActive( tab == _tabItems->Get( i )->GetID() );
 	}
-
+	*/
 	OnPropertyChanged( "ShowTerrain" );
 	OnPropertyChanged( "ShowItems" );
 	OnPropertyChanged( "ShowCreatures" );
@@ -509,6 +480,13 @@ void TileInfoModel::OnCmdTerrain( BaseComponent* param )
 void TileInfoModel::OnCmdManage( BaseComponent* param )
 {
 	m_proxy->sendManageCommand( m_tileID );
+
+	if ( m_designationFlag & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE ) )
+	{
+		_mode = TileInfoMode::Designation;
+	}
+	OnPropertyChanged( "ShowTerrain" );
+	OnPropertyChanged( "ShowDesignation" );
 }
 
 const char* TileInfoModel::GetShowTerrain() const
@@ -517,25 +495,25 @@ const char* TileInfoModel::GetShowTerrain() const
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
 const char* TileInfoModel::GetShowItems() const
 {
-	if ( _mode == TileInfoMode::Items )
+	if ( _itemTabItems->Count() > 0 )
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
 const char* TileInfoModel::GetShowCreatures() const
 {
-	if ( _mode == TileInfoMode::Creatures )
+	if ( _creatureTabItems->Count() > 0 )
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
 const char* TileInfoModel::GetShowDesignation() const
@@ -544,34 +522,44 @@ const char* TileInfoModel::GetShowDesignation() const
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
-const char* TileInfoModel::GetShowDesignationRoom() const
+const char* TileInfoModel::GetShowDesignationSimple() const
 {
-	if ( _mode == TileInfoMode::Room )
+	if ( m_designationFlag & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_WORKSHOP ) )
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
+}
+
+
+const char* TileInfoModel::GetShowDesignationRoom() const
+{
+	if ( m_designationFlag & TileFlag::TF_ROOM )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
 }
 
 const char* TileInfoModel::GetShowJob() const
 {
-	if ( _mode == TileInfoMode::Job )
+	if ( m_hasJob )
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
 const char* TileInfoModel::GetShowMiniSP() const
 {
-	if ( _mode == TileInfoMode::Stockpile )
+	if ( m_designationFlag & TileFlag::TF_STOCKPILE )
 	{
 		return "Visible";
 	}
-	return "Hidden";
+	return "Collapsed";
 }
 
 void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
@@ -719,6 +707,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "ShowItems", &TileInfoModel::GetShowItems );
 	NsProp( "ShowCreatures", &TileInfoModel::GetShowCreatures );
 	NsProp( "ShowDesignation", &TileInfoModel::GetShowDesignation );
+	NsProp( "ShowDesignationSimple", &TileInfoModel::GetShowDesignationSimple );
 	NsProp( "ShowDesignationRoom", &TileInfoModel::GetShowDesignationRoom );
 	NsProp( "ShowJob", &TileInfoModel::GetShowJob );
 	NsProp( "ShowMiniStockpile", &TileInfoModel::GetShowMiniSP );
@@ -741,6 +730,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "WorkablePosition", &TileInfoModel::GetWorkablePosition );
 
 	NsProp( "DesignationName", &TileInfoModel::GetDesignationName );
+	NsProp( "DesignationTitle", &TileInfoModel::GetDesignationTitle );
 
 	NsProp( "MiniStockpileName", &TileInfoModel::GetMiniSPName );
 	NsProp( "MiniStockpileContents", &TileInfoModel::getMiniSPContents );

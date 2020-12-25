@@ -233,6 +233,17 @@
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="Background" Value="{StaticResource PanelBackground}"/>
 	</Style>
+	
+	<Style TargetType="Border" x:Key="PanelTileInfo" BasedOn="{StaticResource {x:Type Border}}">
+		<Setter Property="BorderBrush" Value="Black" />
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="5" />
+		<Setter Property="Margin" Value="2"/>
+		<Setter Property="Padding" Value="2"/>
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="Background" Value="{StaticResource PanelBackgroundGrey}"/>
+	</Style>
 
 	<Style TargetType="Border" x:Key="PanelCreatureInfo" BasedOn="{StaticResource {x:Type Border}}">
 		<Setter Property="BorderBrush" Value="Black" />

@@ -178,6 +178,7 @@ private:
 	const char* GetShowItems() const;
 	const char* GetShowCreatures() const;
 	const char* GetShowDesignation() const;
+	const char* GetShowDesignationSimple() const;
 	const char* GetShowDesignationRoom() const;
 	const char* GetShowJob() const;
 	const char* GetShowMiniSP() const;
@@ -217,6 +218,11 @@ private:
 		return m_designationName.Str();
 	}
 
+	const char* GetDesignationTitle() const
+	{
+		return m_designationTitle.Str();
+	}
+
 	const NoesisApp::DelegateCommand* GetCmdTerrain() const
 	{
 		return &_cmdTerrain;
@@ -252,6 +258,7 @@ private:
 
 	unsigned int m_designationID = 0;
 	Noesis::String m_designationName;
+	Noesis::String m_designationTitle;
 	TileFlag m_designationFlag = TileFlag::TF_NONE;
 	RoomType m_roomType        = RoomType::NotSet;
 	bool m_hasRoof             = false;
@@ -260,6 +267,8 @@ private:
 	Noesis::String m_beds;
 	bool m_alarm = false;
 	Noesis::String m_roomValue;
+
+	bool m_hasJob			   = false;
 
 	Noesis::String m_capacity;
 	Noesis::String m_itemCount;
