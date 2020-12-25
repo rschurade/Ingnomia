@@ -40,6 +40,9 @@ public:
 	void setTennant( unsigned int designationID, unsigned int gnomeID );
 	void setAlarm( unsigned int designationID, bool value );
 
+	void toggleMechActive( unsigned int id );
+	void toggleMechInvert( unsigned int id );
+
 private:
 	IngnomiaGUI::TileInfoModel* m_parent = nullptr;
 
@@ -53,4 +56,6 @@ signals:
 	void signalRequestStockpileItems( unsigned int tileID );
 	void signalSetTennant( unsigned int designationID, unsigned int gnomeID );
 	void signalSetAlarm( unsigned int designationID, bool value );
+	void signalToggleMechActive( unsigned int id );
+	void signalToggleMechInvert( unsigned int id );
 };

@@ -182,7 +182,7 @@ private:
 	const char* GetShowDesignationRoom() const;
 	const char* GetShowJob() const;
 	const char* GetShowMiniSP() const;
-
+	
 	const char* GetJobName() const
 	{
 		return m_jobName.Str();
@@ -270,6 +270,16 @@ private:
 
 	bool m_hasJob			   = false;
 
+	unsigned int m_mechanismID = 0;
+	bool m_hasMechanism		   = false;
+	QString m_mechGui;
+	Noesis::String m_mechActive;
+	Noesis::String m_mechInvert;
+	Noesis::String m_mechFuel;
+	Noesis::String m_mechName;
+	
+
+
 	Noesis::String m_capacity;
 	Noesis::String m_itemCount;
 	Noesis::String m_reserved;
@@ -317,6 +327,30 @@ private:
 
 	bool GetAlarm() const;
 	void SetAlarm( bool value );
+
+	const char* GetShowMechanism() const;
+	const char* GetShowMechActive() const;
+	const char* GetShowMechFuel() const;
+	const char* GetShowMechInvert() const;
+	const char* GetMechActive() const;
+	const char* GetMechFuel() const;
+	const char* GetMechInvert() const;
+	const char* GetMechName() const;
+
+	const NoesisApp::DelegateCommand* GetCmdMechToggleActive() const
+	{
+		return &_cmdMechToggleActive;
+	}
+	void OnCmdMechToggleActive( BaseComponent* param );
+	NoesisApp::DelegateCommand _cmdMechToggleActive;
+
+	const NoesisApp::DelegateCommand* GetCmdMechToggleInvert() const
+	{
+		return &_cmdMechToggleInvert;
+	}
+	void OnCmdMechToggleInvert( BaseComponent* param );
+	NoesisApp::DelegateCommand _cmdMechToggleInvert;
+
 
 	NS_DECLARE_REFLECTION( TileInfoModel, NotifyPropertyChangedBase )
 };

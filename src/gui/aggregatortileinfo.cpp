@@ -30,6 +30,7 @@
 #include "../game/inventory.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
+#include "../game/mechanismmanager.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
@@ -143,21 +144,41 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			Counter<QString> counter;
 			for ( auto item : pe )
 			{
+				QString itext = "";
 				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
-				info += "(";
+				
 				if( g->inv()->isConstructedOrEquipped( item ) )
 				{
-					info += "b";
+					if( g->mcm()->hasMechanism( pos ) )
+					{
+						unsigned int id = g->mcm()->mechanismID( pos );
+						m_tileInfo.mechInfo = g->mcm()->mechanismData( id );
+						m_tileInfo.mechInfo.name = info;
+						if( item == id )
+						{
+							continue;
+						}
+					}
+					else
+					{
+						m_tileInfo.mechInfo.itemID = 0;
+					}
+					itext += "b";
 				}
 				if( g->inv()->isInStockpile( item ) )
 				{
-					info += "s";
+					itext += "s";
 				}
 				if( g->inv()->isInContainer( item ) )
 				{
-					info += "c";
+					itext += "c";
 				}
-				info += ")";
+				if( itext.size() )
+				{
+					info += "(";
+					info += itext;
+					info += ")";
+				}
 				counter.add( info );
 			}
 			for ( auto key : counter.keys() )
@@ -435,4 +456,14 @@ void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 			GameState::alarm       = 0;
 			break;
 	}
+}
+
+void AggregatorTileInfo::onToggleMechActive( unsigned int id )
+{
+	g->mcm()->changeActive( id );
+}
+	
+void AggregatorTileInfo::onToggleMechInvert( unsigned int id )
+{
+	g->mcm()->toggleInvert( id );
 }

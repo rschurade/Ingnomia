@@ -11041,7 +11041,7 @@ INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","Produ
 INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('SteamEngine','Active|Fuel',1,NULL,NULL,5000,25,0,'true',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('Lever','Active',1,NULL,NULL,0,0,0,'false','LeverOn','LeverOff',NULL,NULL,NULL,NULL);
 INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('Pump',NULL,0,NULL,NULL,0,0,10,'true',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('MechanicalWall','Invert',1,NULL,NULL,0,0,5,'false',NULL,NULL,'MechanicalWallOpen','MechanicalWallClosed','Floor','Wall');
+INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('MechanicalWall','Invert',1,NULL,NULL,0,0,5,'false','MechanicalWallOpen','MechanicalWallClosed',NULL, NULL,'Floor','Wall');
 INSERT INTO "Mechanism" ("ID","GUI","Buildable","Item","Sprite","MaxFuel","ProducePower","ConsumePower","Anim","WallSpriteOn","WallSpriteOff","FloorSpriteOn","FloorSpriteOff","EffectOn","EffectOff") VALUES ('PressurePlate','Invert',1,NULL,NULL,0,0,0,'false',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "MaterialToToolLevel" ("ID","RequiredToolLevel","ToolLevel") VALUES ('Wood',1.0,1.0);
 INSERT INTO "MaterialToToolLevel" ("ID","RequiredToolLevel","ToolLevel") VALUES ('Dirt',1.0,0.0);
@@ -11402,7 +11402,7 @@ INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALU
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('GearBox','Wall|Tree|Construction|Plant|Job','Floor','Floor','0 0 0');
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('Pump','Wall|Tree|Construction|Plant|Job','Floor','Wall','0 0 0');
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('Lever','Wall|Tree|Construction|Plant|Job','Floor','Wall','0 0 0');
-INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('MechanicalWall','Wall|Tree|Construction|Plant|Job','Floor','Floor','0 0 0');
+INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('MechanicalWall','Wall|Tree|Construction|Plant|Job','Floor','Wall','0 0 0');
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('PressurePlate','Wall|Tree|Construction|Plant|Job','Floor','Floor','0 0 0');
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('AlarmBell','Wall|Tree|Construction|Plant|Job','Floor|AllowBell','Wall','0 0 0');
 INSERT INTO "Items_Tiles" ("ID","Forbidden","Required","Location","Offset") VALUES ('WallTorch','Wall|Tree|Construction|Plant|Job','Floor','Wall','0 0 0');

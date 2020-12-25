@@ -130,20 +130,23 @@ void JobManager::onTick()
 		--queueSize;
 		Job* job = m_jobList[jobID];
 
-		if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
+		if( job )
 		{
-			if ( requiredItemsAvail( jobID ) )
+			if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
 			{
-				m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+				if ( requiredItemsAvail( jobID ) )
+				{
+					m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+				}
+				else
+				{
+					skippedJobs.enqueue( jobID );
+				}
 			}
 			else
 			{
 				skippedJobs.enqueue( jobID );
 			}
-		}
-		else
-		{
-			skippedJobs.enqueue( jobID );
 		}
 
 		if ( timer.elapsed() > 3 )

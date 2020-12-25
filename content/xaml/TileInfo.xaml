@@ -67,6 +67,25 @@
 								</StackPanel>
 							</Border>
 							
+							<Border Style="{StaticResource PanelTileInfo}" Visibility="{Binding ShowMechanism}">
+								<StackPanel>
+								<StackPanel Orientation="Horizontal" Visibility="{Binding ShowMechActive}">
+										<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding MechName}" />
+									</StackPanel>
+									<StackPanel Orientation="Horizontal" Visibility="{Binding ShowMechActive}">
+										<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding MechActive}" />
+										<Button Content="Toggle" Margin="2" Command="{Binding CmdMechToggleActive}" />
+									</StackPanel>
+									<StackPanel Orientation="Horizontal" Visibility="{Binding ShowMechInvert}">
+										<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding MechInvert}" />
+										<Button Content="Toggle" Margin="2" Command="{Binding CmdMechToggleInvert}" />
+									</StackPanel>
+									<StackPanel Orientation="Horizontal" Visibility="{Binding ShowMechFuel}">
+										<TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding MechFuel}" />
+									</StackPanel>
+								</StackPanel>
+							</Border>
+							
 							<Border Style="{StaticResource PanelTileInfo}" Visibility="{Binding ShowItems}">
 								<ScrollViewer VerticalScrollBarVisibility="Auto">
 									<ItemsControl ItemsSource="{Binding ItemTab}" ItemTemplate="{StaticResource ItemTemplate20}">

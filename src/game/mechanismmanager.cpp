@@ -806,23 +806,23 @@ void MechanismManager::updateNetWorks()
 					mn.consumers.insert( md2.itemID );
 				}
 
-				for ( auto toPos : md.connectsTo )
+				for ( auto toPos : md2.connectsTo )
 				{
 					if ( m_floorPositions.contains( toPos.toInt() ) )
 					{
 						auto& neighbormd = m_mechanisms[m_floorPositions[toPos.toInt()]];
-						if ( neighbormd.networkID == 0 && neighbormd.connectsTo.contains( md.pos ) )
+						if ( neighbormd.networkID == 0 && neighbormd.connectsTo.contains( md2.pos ) )
 						{
-							neighbormd.networkID = md.networkID;
+							neighbormd.networkID = md2.networkID;
 							workQueue.enqueue( neighbormd );
 						}
 					}
 					if ( m_wallPositions.contains( toPos.toInt() ) )
 					{
 						auto& neighbormd = m_mechanisms[m_wallPositions[toPos.toInt()]];
-						if ( neighbormd.networkID == 0 && neighbormd.connectsTo.contains( md.pos ) )
+						if ( neighbormd.networkID == 0 && neighbormd.connectsTo.contains( md2.pos ) )
 						{
-							neighbormd.networkID = md.networkID;
+							neighbormd.networkID = md2.networkID;
 							workQueue.enqueue( neighbormd );
 						}
 					}

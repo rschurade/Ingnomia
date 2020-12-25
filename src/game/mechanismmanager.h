@@ -47,6 +47,7 @@ struct MechanismData
 	unsigned char rot = 0;
 
 	QString gui;
+	QString name;
 
 	bool active       = false;
 	bool changeActive = false;

@@ -157,6 +157,9 @@ TileInfoModel::TileInfoModel()
 	_possibleTennants = *new ObservableCollection<CreatureTabItem>();
 
 	_jobTabRequiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
+
+	_cmdMechToggleActive.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdMechToggleActive ) );
+	_cmdMechToggleInvert.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdMechToggleInvert ) );
 }
 
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
@@ -341,6 +344,24 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	m_requiredToolAvailable = tileInfo.requiredToolAvailable.toStdString().c_str();
 	m_workablePosition      = tileInfo.workPositions.toStdString().c_str();
 
+	if( tileInfo.mechInfo.itemID != 0 && !tileInfo.mechInfo.gui.isEmpty() )
+	{
+		m_mechanismID = tileInfo.mechInfo.itemID;
+		m_hasMechanism = true;
+		m_mechGui = tileInfo.mechInfo.gui;
+		m_mechFuel = ( QString::number( tileInfo.mechInfo.fuel ) + "/" +
+			QString::number( tileInfo.mechInfo.maxFuel ) ).toStdString().c_str();
+		m_mechActive = tileInfo.mechInfo.active ? "Active" : "Inactive";
+		m_mechInvert = tileInfo.mechInfo.inverted ? "Inverted" : "Not inverted";
+
+		m_mechName = tileInfo.mechInfo.name.toStdString().c_str();
+	}
+	else
+	{
+		m_hasMechanism = false;
+	}
+
+
 	OnPropertyChanged( "JobName" );
 	OnPropertyChanged( "JobWorker" );
 	OnPropertyChanged( "JobPriority" );
@@ -377,6 +398,15 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	OnPropertyChanged( "ShowDesignationRoom" );
 	OnPropertyChanged( "DesignationName" );
 	OnPropertyChanged( "DesignationTitle" );
+
+	OnPropertyChanged( "ShowMechanism" );
+	OnPropertyChanged( "ShowMechActive" );
+	OnPropertyChanged( "ShowMechFuel" );
+	OnPropertyChanged( "ShowMechInvert" );
+	OnPropertyChanged( "MechActive" );
+	OnPropertyChanged( "MechFuel" );
+	OnPropertyChanged( "MechInvert" );
+	OnPropertyChanged( "MechName" );
 }
 
 const char* TileInfoModel::getTileID() const
@@ -696,6 +726,74 @@ const char* TileInfoModel::GetReserved() const
 	return m_reserved.Str();
 }
 
+
+const char* TileInfoModel::GetShowMechanism() const
+{
+	if ( m_hasMechanism )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+	
+const char* TileInfoModel::GetShowMechActive() const
+{
+	if ( m_mechGui.contains( "Active" ) )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+
+const char* TileInfoModel::GetShowMechFuel() const
+{
+	if ( m_mechGui.contains( "Fuel" ) )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+
+const char* TileInfoModel::GetShowMechInvert() const
+{
+	if ( m_mechGui.contains( "Invert" ) )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+
+const char* TileInfoModel::GetMechActive() const
+{
+	return m_mechActive.Str();
+}
+
+const char* TileInfoModel::GetMechFuel() const
+{
+	return m_mechFuel.Str();
+}
+
+const char* TileInfoModel::GetMechInvert() const
+{
+	return m_mechInvert.Str();
+}
+
+const char* TileInfoModel::GetMechName() const
+{
+	return m_mechName.Str();
+}
+
+void TileInfoModel::OnCmdMechToggleActive( BaseComponent* param )
+{
+	m_proxy->toggleMechActive( m_mechanismID );
+}
+
+void TileInfoModel::OnCmdMechToggleInvert( BaseComponent* param )
+{
+	m_proxy->toggleMechInvert( m_mechanismID );
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -711,7 +809,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "ShowDesignationRoom", &TileInfoModel::GetShowDesignationRoom );
 	NsProp( "ShowJob", &TileInfoModel::GetShowJob );
 	NsProp( "ShowMiniStockpile", &TileInfoModel::GetShowMiniSP );
-
+	
 	NsProp( "CmdTab", &TileInfoModel::GetCmdTab );
 	NsProp( "CmdTerrain", &TileInfoModel::GetCmdTerrain );
 	NsProp( "CmdManage", &TileInfoModel::GetCmdManage );
@@ -749,6 +847,17 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "Enclosed", &TileInfoModel::GetEnclosed );
 	NsProp( "Roofed", &TileInfoModel::GetRoofed );
 	NsProp( "Alarm", &TileInfoModel::GetAlarm, &TileInfoModel::SetAlarm );
+
+	NsProp( "ShowMechanism", &TileInfoModel::GetShowMechanism );
+	NsProp( "ShowMechActive", &TileInfoModel::GetShowMechActive );
+	NsProp( "ShowMechFuel", &TileInfoModel::GetShowMechFuel );
+	NsProp( "ShowMechInvert", &TileInfoModel::GetShowMechInvert );
+	NsProp( "MechActive", &TileInfoModel::GetMechActive );
+	NsProp( "MechFuel", &TileInfoModel::GetMechFuel );
+	NsProp( "MechInvert", &TileInfoModel::GetMechInvert );
+	NsProp( "MechName", &TileInfoModel::GetMechName );
+	NsProp( "CmdMechToggleActive", &TileInfoModel::GetCmdMechToggleActive );
+	NsProp( "CmdMechToggleInvert", &TileInfoModel::GetCmdMechToggleInvert );
 }
 
 NS_IMPLEMENT_REFLECTION( IngnomiaGUI::TabItem )

@@ -40,6 +40,9 @@ ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	connect( this, &ProxyTileInfo::signalSetAlarm, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
 
 	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
+
+	connect( this, &ProxyTileInfo::signalToggleMechActive, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechActive, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalToggleMechInvert, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechInvert, Qt::QueuedConnection );
 }
 
 ProxyTileInfo::~ProxyTileInfo()
@@ -90,4 +93,14 @@ void ProxyTileInfo::setTennant( unsigned int designationID, unsigned int gnomeID
 void ProxyTileInfo::setAlarm( unsigned int designationID, bool value )
 {
 	emit signalSetAlarm( designationID, value );
+}
+
+void ProxyTileInfo::toggleMechActive( unsigned int id )
+{
+	emit signalToggleMechActive( id );
+}
+	
+void ProxyTileInfo::toggleMechInvert( unsigned int id )
+{
+	emit signalToggleMechInvert( id );
 }

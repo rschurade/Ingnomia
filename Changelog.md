@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - burn recipe for bones in the waste disposal
 - stairs made from stone blocks
 - fisher gui
+- controls for mechanisms
 
 ### Changed
 - restructured the tile info window

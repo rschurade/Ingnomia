@@ -19,6 +19,7 @@
 
 #include "../base/tile.h"
 #include "../game/roommanager.h"
+#include "../game/mechanismmanager.h"
 #include "aggregatorstockpile.h"
 
 #include <QObject>
@@ -86,6 +87,8 @@ struct GuiTileInfo
 	QString beds;
 	bool alarm = false;
 	unsigned int roomValue = 0;
+
+	MechanismData mechInfo;
 };
 
 Q_DECLARE_METATYPE( GuiTileInfo )
@@ -115,6 +118,8 @@ public slots:
 	void onRequestStockpileItems( unsigned int tileID );
 	void onSetTennant( unsigned int designationID, unsigned int gnomeID );
 	void onSetAlarm( unsigned int designationID, bool value );
+	void onToggleMechActive( unsigned int id );
+	void onToggleMechInvert( unsigned int id );
 
 signals:
 	void signalShowTileInfo( unsigned int id );
