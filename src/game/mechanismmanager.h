@@ -60,8 +60,6 @@ struct MechanismData
 	int consumePower    = 0;
 	bool hasPower       = false;
 
-	unsigned int jobID = 0;
-
 	bool anim = false;
 
 	bool isInvertable   = false;
@@ -72,6 +70,8 @@ struct MechanismData
 
 	QVariantMap serialize() const;
 	void deserialize( QVariantMap in );
+
+	QWeakPointer<Job> job;
 };
 
 struct MechanismNetwork
@@ -100,13 +100,6 @@ public:
 	void loadMechanisms( QVariantList data );
 
 	void onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
-
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
 
 	bool hasMechanism( Position pos );
 	bool hasGearBox( Position pos );
@@ -143,10 +136,6 @@ public:
 private:
 	QPointer<Game> g;
 
-	QSharedPointer<Job> getSwitchJob( MechanismData& md );
-	QSharedPointer<Job> getInvertJob( MechanismData& md );
-	QSharedPointer<Job> getRefuelJob( MechanismData& md );
-
 	void installItem( MechanismData md );
 
 	void updateNetWorks();
@@ -173,6 +162,5 @@ private:
 
 	QHash<unsigned int, MechanismNetwork> m_networks;
 
-	QHash<unsigned int, QSharedPointer<Job>> m_jobs;
 	QHash<QString, MechanismType> m_string2Type;
 };

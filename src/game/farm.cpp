@@ -206,8 +206,11 @@ void Farm::onTick( quint64 tick )
 					//harvest
 					unsigned int jobID = g->jm()->addJob( "Harvest", gf->pos, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					//job->setPrio();
-					gf->job = job;
+					if( job )
+					{
+						//job->setPrio();
+						gf->job = job;
+					}
 				}
 			}
 			else
@@ -217,8 +220,11 @@ void Farm::onTick( quint64 tick )
 					//till
 					unsigned int jobID = g->jm()->addJob( "Till", gf->pos, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					//job->setPrio();
-					gf->job = job;
+					if( job )
+					{
+						//job->setPrio();
+						gf->job = job;
+					}
 				}
 				if ( tile.flags & TileFlag::TF_TILLED )
 				{
@@ -229,9 +235,12 @@ void Farm::onTick( quint64 tick )
 					}
 					unsigned int jobID = g->jm()->addJob( "PlantFarm", gf->pos, "Plant", { m_properties.plantType}, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					job->addRequiredItem( 1, m_properties.seedItem, m_properties.plantType, QStringList() );
-					//job->setPrio();
-					gf->job = job;
+					if( job )
+					{
+						job->addRequiredItem( 1, m_properties.seedItem, m_properties.plantType, QStringList() );
+						//job->setPrio();
+						gf->job = job;
+					}
 				}
 			}
 		}

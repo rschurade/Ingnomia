@@ -304,7 +304,7 @@ void JobManager::addLoadedJob( QVariant vals )
 
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
 {
-	if ( g->w()->hasJob( pos ) )
+	if ( g->w()->hasJob( pos ) || m_jobPositions.contains( pos ) )
 	{
 		return 0;
 	}
@@ -500,11 +500,6 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 				{
 					return jobID;
 				}
-				jobID = g->mcm()->getJob( gnomeID, skillID );
-				if ( jobID )
-				{
-					return jobID;
-				}
 			}
 			break;
 		}
@@ -641,10 +636,6 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	if ( g->gm()->hasJobID( jobID ) )
 	{
 		return g->gm()->getJob( jobID );
-	}
-	if ( g->mcm()->hasJobID( jobID ) )
-	{
-		return g->mcm()->getJob( jobID );
 	}
 	return nullptr;
 }
@@ -784,11 +775,6 @@ void JobManager::finishJob( unsigned int jobID )
 	}
 
 	if ( g->gm()->finishJob( jobID ) )
-	{
-		return;
-	}
-
-	if ( g->mcm()->finishJob( jobID ) )
 	{
 		return;
 	}
@@ -1012,10 +998,6 @@ void JobManager::giveBackJob( unsigned int jobID )
 		return;
 	}
 
-	if ( g->mcm()->giveBackJob( jobID ) )
-	{
-		return;
-	}
 }
 
 void JobManager::cancelJob( const Position& pos )

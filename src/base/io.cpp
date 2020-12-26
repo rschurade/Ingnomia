@@ -1362,20 +1362,6 @@ QJsonDocument IO::jsonArrayMechanisms()
 	for ( const auto& md : g->mcm()->mechanisms() )
 	{
 		auto vmd = md.serialize();
-
-		if ( md.jobID )
-		{
-			QSharedPointer<Job> job = g->mcm()->getJob( md.jobID );
-			if ( job )
-			{
-				vmd.insert( "Job", job->serialize() );
-			}
-			else
-			{
-				vmd.insert( "JobID", 0 );
-			}
-		}
-
 		ol.append( vmd );
 	}
 
