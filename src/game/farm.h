@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 #include "../game/worldobject.h"
+#include "../game/job.h"
 
 #include <QHash>
 #include <QList>
@@ -26,13 +27,12 @@
 #include <QPair>
 #include <QVariantMap>
 
-class Job;
 class Game;
 
 struct FarmField
 {
 	Position pos;
-	bool hasJob = false;
+	QWeakPointer<Job> job;
 };
 
 enum FarmJobs : quint8
@@ -93,12 +93,6 @@ public:
 
 	void onTick( quint64 tick );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID ) const;
-	bool hasJobID( unsigned int jobID ) const;
-
 	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
 
@@ -115,13 +109,7 @@ private:
 
 	QMap<unsigned int, FarmField*> m_fields;
 
-	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
-
 	void updateAutoFarmer();
-
-	QSharedPointer<Job> getPlantJob();
-	QSharedPointer<Job> getTillJob();
-	QSharedPointer<Job> getHarvestJob();
 
 	FarmProperties& properties()
 	{

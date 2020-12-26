@@ -217,4 +217,5 @@ public:
 	void raisePrio();
 	void lowerPrio();
 	int priority() const;
+	void setPrio( int prio );
 };

@@ -326,13 +326,13 @@ bool IO::load( QString folder )
 	loadFile( folder + "wallconstructions.json", jd );
 	IO::loadWallConstructions( jd );
 	emit signalStatus( "Loading constructions done" );
-	loadFile( folder + "workshops.json", jd );
-	IO::loadWorkshops( jd );
 	loadFile( folder + "jobs.json", jd );
 	IO::loadJobs( jd );
 	loadFile( folder + "jobsprites.json", jd );
 	IO::loadJobSprites( jd );
 	emit signalStatus( "Loading jobs done" );
+	loadFile( folder + "workshops.json", jd );
+	IO::loadWorkshops( jd );
 	loadFile( folder + "farms.json", jd );
 	IO::loadFarms( jd );
 	loadFile( folder + "stockpiles.json", jd );

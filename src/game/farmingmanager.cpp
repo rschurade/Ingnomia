@@ -463,14 +463,6 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 			return job;
 		}
 	}
-	for ( auto& f : m_farms )
-	{
-		unsigned int job = f->getJob( gnomeID, skillID );
-		if ( job )
-		{
-			return job;
-		}
-	}
 	for ( auto& pa : m_pastures )
 	{
 		unsigned int job = pa->getJob( gnomeID, skillID );
@@ -489,14 +481,6 @@ bool FarmingManager::finishJob( unsigned int jobID )
 		if ( gr->finishJob( jobID ) )
 		{
 			emit signalGroveChanged( gr->id() );
-			return true;
-		}
-	}
-	for ( auto& f : m_farms )
-	{
-		if ( f->finishJob( jobID ) )
-		{
-			emit signalFarmChanged( f->id() );
 			return true;
 		}
 	}
@@ -521,14 +505,6 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 			return true;
 		}
 	}
-	for ( auto& f : m_farms )
-	{
-		if ( f->giveBackJob( jobID ) )
-		{
-			emit signalFarmChanged( f->id() );
-			return true;
-		}
-	}
 	for ( auto& pa : m_pastures )
 	{
 		if ( pa->giveBackJob( jobID ) )
@@ -549,13 +525,6 @@ QSharedPointer<Job> FarmingManager::getJob( unsigned int jobID )
 			return gr->getJob( jobID );
 		}
 	}
-	for ( const auto& f : m_farms )
-	{
-		if ( f->hasJobID( jobID ) )
-		{
-			return f->getJob( jobID );
-		}
-	}
 	for ( const auto& pa : m_pastures )
 	{
 		if ( pa->hasJobID( jobID ) )
@@ -571,13 +540,6 @@ bool FarmingManager::hasJobID( unsigned int jobID ) const
 	for ( const auto& gr : m_groves )
 	{
 		if ( gr->hasJobID( jobID ) )
-		{
-			return true;
-		}
-	}
-	for ( const auto& f : m_farms )
-	{
-		if ( f->hasJobID( jobID ) )
 		{
 			return true;
 		}

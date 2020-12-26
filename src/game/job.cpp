@@ -566,3 +566,8 @@ bool Job::destroyOnAbort() const
 {
 	return m_destroyOnAbort;
 }
+
+void Job::setPrio( int prio )
+{
+	m_priority = qMin( 9, qMax( 0, prio ) );
+}

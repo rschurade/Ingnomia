@@ -119,8 +119,12 @@ Farm::Farm( QVariantMap vals, Game* game ) :
 	for ( auto vf : vfl )
 	{
 		FarmField* grofi = new FarmField;
-		grofi->pos       = Position( vf.toMap().value( "Pos" ).toString() );
-		grofi->hasJob    = vf.toMap().value( "HasJob" ).toBool();
+		auto gfm = vf.toMap();
+		grofi->pos       = Position( gfm.value( "Pos" ).toString() );
+		if( gfm.contains( "Job" ) )
+		{
+			grofi->job = g->jm()->getJob( gfm.value( "Job" ).toUInt() );
+		}
 		m_fields.insert( grofi->pos.toInt(), grofi );
 	}
 
@@ -137,7 +141,6 @@ Farm::Farm( QVariantMap vals, Game* game ) :
 	for ( auto vj : vjl )
 	{
 		QSharedPointer<Job> job( new Job( vj.toMap() ) );
-		m_jobsOut.insert( job->id(), job );
 	}
 }
 
@@ -152,18 +155,14 @@ QVariant Farm::serialize() const
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
-		entry.insert( "HasJob", field->hasJob );
+		if( field->job )
+		{
+			QSharedPointer<Job> spJob = field->job.toStrongRef();
+			entry.insert( "Job", spJob->id() );
+		}
 		tiles.append( entry );
 	}
 	out.insert( "Fields", tiles );
-
-	QVariantList jobs;
-	for ( const auto& job : m_jobsOut )
-	{
-		jobs.append( job->serialize() );
-	}
-	out.insert( "Jobs", jobs );
-
 	return out;
 }
 
@@ -188,6 +187,56 @@ void Farm::onTick( quint64 tick )
 {
 	if ( !m_active )
 		return;
+
+	for( auto& gf : m_fields )
+	{
+		if( !gf->job )
+		{
+			Tile& tile = g->w()->getTile( gf->pos );
+
+			if ( g->w()->plants().contains( gf->pos.toInt() ) )
+			{
+				Plant& plant = g->w()->plants()[gf->pos.toInt()];
+				if ( !plant.isPlant() )
+				{
+					continue;
+				}
+				if ( plant.harvestable() )
+				{
+					//harvest
+					unsigned int jobID = g->jm()->addJob( "Harvest", gf->pos, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					//job->setPrio();
+					gf->job = job;
+				}
+			}
+			else
+			{
+				if ( !( tile.flags & TileFlag::TF_TILLED ) )
+				{
+					//till
+					unsigned int jobID = g->jm()->addJob( "Till", gf->pos, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					//job->setPrio();
+					gf->job = job;
+				}
+				if ( tile.flags & TileFlag::TF_TILLED )
+				{
+					auto item      = g->inv()->getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
+					if ( item == 0 )
+					{
+						continue;
+					}
+					unsigned int jobID = g->jm()->addJob( "PlantFarm", gf->pos, "Plant", { m_properties.plantType}, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					job->addRequiredItem( 1, m_properties.seedItem, m_properties.plantType, QStringList() );
+					//job->setPrio();
+					gf->job = job;
+				}
+			}
+		}
+	}
+
 	//updateAutoFarmer();
 }
 
@@ -291,193 +340,9 @@ void Farm::updateAutoFarmer()
 	}
 }
 
-unsigned int Farm::getJob( unsigned int gnomeID, QString skillID )
-{
-	if ( !m_active )
-		return 0;
-	if ( g->gm()->gnomeCanReach( gnomeID, m_properties.firstPos ) )
-	{
-		QSharedPointer<Job> job = nullptr;
-		if ( skillID == "Farming" )
-		{
-			for ( auto p : m_properties.jobPriorities )
-			{
-				switch ( p )
-				{
-					case FarmJobs::Till:
-						job = getTillJob();
-						if ( job )
-						{
-							m_jobsOut.insert( job->id(), job );
-							return job->id();
-						}
-						break;
-					case FarmJobs::PlantPlant:
-						job = getPlantJob();
-						if ( job )
-						{
-							m_jobsOut.insert( job->id(), job );
-							return job->id();
-						}
-						break;
-					case FarmJobs::Harvest:
-						job = getHarvestJob();
-						if ( job )
-						{
-							m_jobsOut.insert( job->id(), job );
-							return job->id();
-						}
-						break;
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-bool Farm::finishJob( unsigned int jobID )
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		QSharedPointer<Job> job = m_jobsOut[jobID];
-		m_jobsOut.remove( jobID );
-		if ( m_fields.contains( job->pos().toInt() ) )
-		{
-			m_fields[job->pos().toInt()]->hasJob = false;
-		}
-		return true;
-	}
-	return false;
-}
-
-bool Farm::giveBackJob( unsigned int jobID )
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		QSharedPointer<Job> job = m_jobsOut[jobID];
-		if ( m_fields.contains( job->pos().toInt() ) )
-		{
-			m_fields[job->pos().toInt()]->hasJob = false;
-		}
-		m_jobsOut.remove( jobID );
-		return true;
-	}
-	return false;
-}
-
-QSharedPointer<Job> Farm::getJob( unsigned int jobID ) const
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		return m_jobsOut[jobID];
-	}
-	return nullptr;
-}
-
-bool Farm::hasJobID( unsigned int jobID ) const
-{
-	return m_jobsOut.contains( jobID );
-}
-
-QSharedPointer<Job> Farm::getTillJob()
-{
-	if ( m_fields.empty() )
-	{
-		return nullptr;
-	}
-	for ( auto gf : m_fields )
-	{
-		Tile& tile = g->w()->getTile( gf->pos );
-		if ( !gf->hasJob && !g->w()->plants().contains( gf->pos.toInt() ) && !( tile.flags & TileFlag::TF_TILLED ) )
-		{
-			QSharedPointer<Job> job( new Job );
-			job->setType( "Till" );
-			job->setRequiredSkill( Global::util->requiredSkill( "Till" ) );
-			job->setPos( gf->pos );
-			job->addPossibleWorkPosition( gf->pos );
-			job->setNoJobSprite( true );
-			gf->hasJob = true;
-			return job;
-		}
-	}
-	return nullptr;
-}
-
 bool Farm::canDelete()
 {
-	return m_jobsOut.isEmpty();
-}
-
-QSharedPointer<Job> Farm::getPlantJob()
-{
-	//any seeds present?
-	if ( m_fields.empty() )
-	{
-		return nullptr;
-	}
-
-	auto item      = g->inv()->getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
-
-	if ( item == 0 )
-	{
-		return nullptr;
-	}
-
-	for ( auto gf : m_fields )
-	{
-		Tile& tile = g->w()->getTile( gf->pos );
-		// tile is empty, we plant something
-		if ( !gf->hasJob && !g->w()->plants().contains( gf->pos.toInt() ) && ( tile.flags & TileFlag::TF_TILLED ) )
-		{
-			QSharedPointer<Job> job( new Job );
-			job->setType( "PlantFarm" );
-			job->setRequiredSkill( Global::util->requiredSkill( "PlantFarm" ) );
-			job->setPos( gf->pos );
-			job->addPossibleWorkPosition( gf->pos );
-			job->setItem( "Plant" );
-			job->setMaterial( m_properties.plantType );
-			job->setNoJobSprite( true );
-			job->addRequiredItem( 1, m_properties.seedItem, m_properties.plantType, QStringList() );
-
-			gf->hasJob = true;
-			return job;
-		}
-	}
-	return nullptr;
-}
-
-QSharedPointer<Job> Farm::getHarvestJob()
-{
-	if ( m_fields.empty() )
-	{
-		return nullptr;
-	}
-	if ( m_properties.harvest )
-	{
-		for ( auto gf : m_fields )
-		{
-			if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
-			{
-				Plant& plant = g->w()->plants()[gf->pos.toInt()];
-				if ( !plant.isPlant() )
-				{
-					continue;
-				}
-				if ( plant.harvestable() )
-				{
-					QSharedPointer<Job> job( new Job );
-					job->setType( "Harvest" );
-					job->setRequiredSkill( Global::util->requiredSkill( "Harvest" ) );
-					job->setPos( gf->pos );
-					job->addPossibleWorkPosition( gf->pos );
-					job->setNoJobSprite( true );
-					gf->hasJob = true;
-					return job;
-				}
-			}
-		}
-	}
-	return nullptr;
+	return true; //m_jobsOut.isEmpty();
 }
 
 bool Farm::removeTile( const Position & pos )
