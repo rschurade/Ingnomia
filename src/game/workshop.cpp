@@ -435,11 +435,6 @@ void Workshop::onTick( quint64 tick )
 		m_job = createButcherJob();
 	}
 
-	if ( !m_job && m_properties.type == "Dyer" )
-	{
-		m_job = createDyeSheepJob();
-	}
-
 	if ( !m_fishingJob && m_properties.type == "Fishery" && outputTileFree() && m_properties.fish )
 	{
 		m_fishingJob = createFisherJob();
