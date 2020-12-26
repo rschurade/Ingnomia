@@ -92,6 +92,8 @@ void WorkshopProperties::serialize( QVariantMap& out )
 	out.insert( "Owner", owner );
 	out.insert( "LinkedStockpile", linkedStockpile );
 
+	out.insert( "NoAutoGenerate", noAutoGenerate );
+
 	out.insert( "ToDestroy", toDestroy );
 	out.insert( "CanDelete", canDelete );
 
@@ -229,6 +231,7 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 	auto wsRow = DB::selectRow( "Workshops", type );
 
 	m_properties.gui = wsRow.value( "GUI" ).toString();
+	m_properties.noAutoGenerate = wsRow.value( "NoAutoGenerate" ).toBool();
 
 	Position posIn  = Position( wsRow.value( "InputTile" ) );
 	Position posOut = Position( wsRow.value( "OutputTile" ) );
@@ -264,23 +267,10 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 
 	m_properties.posIn  = posIn;
 	m_properties.posOut = posOut;
-
-	bool noAutoGenerate         = wsRow.value( "NoAutoGenerate" ).toBool();
-	m_properties.noAutoGenerate = noAutoGenerate;
 }
 
 Workshop::~Workshop()
 {
-	if ( m_job )
-	{
-		delete m_job;
-		m_job = nullptr;
-	}
-	if ( m_fishingJob )
-	{
-		delete m_fishingJob;
-		m_fishingJob = nullptr;
-	}
 }
 
 Workshop::Workshop( QVariantMap vals, Game* game ) :
@@ -304,11 +294,11 @@ Workshop::Workshop( QVariantMap vals, Game* game ) :
 
 	if ( vals.contains( "Job" ) )
 	{
-		m_job = new Job( vals.value( "Job" ).toMap() );
+		m_job.reset( new Job( vals.value( "Job" ).toMap() ) );
 	}
 	if ( vals.contains( "FishingJob" ) )
 	{
-		m_fishingJob = new Job( vals.value( "FishingJob" ).toMap() );
+		m_fishingJob.reset( new Job( vals.value( "FishingJob" ).toMap() ) );
 	}
 	m_spriteComposition = vals.value( "Sprites" ).toList();
 }
@@ -369,8 +359,7 @@ void Workshop::onTick( quint64 tick )
 	// investigation found job had no required skill set, no idea how this is possible
 	if ( m_job && m_job->requiredSkill().isEmpty() )
 	{
-		delete m_job;
-		m_job = nullptr;
+		m_job.reset();
 	}
 
 	for ( auto& cj : m_autoCraftList )
@@ -420,8 +409,7 @@ void Workshop::onTick( quint64 tick )
 					}
 					else
 					{
-						delete m_job;
-						m_job = 0;
+						m_job.reset();
 					}
 				}
 			}
@@ -601,8 +589,7 @@ void Workshop::cancelJob( unsigned int jobDefID )
 					}
 					else
 					{
-						delete m_job;
-						m_job = 0;
+						m_job.reset();
 					}
 				}
 			}
@@ -739,9 +726,9 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 	return false;
 }
 
-Job* Workshop::createJobFromCraftJob( CraftJob& cj )
+QSharedPointer<Job> Workshop::createJobFromCraftJob( CraftJob& cj )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "CraftAtWorkshop" );
 	job->setItem( cj.itemSID );
 	job->setConversionMaterial( cj.conversionMaterial );
@@ -765,7 +752,7 @@ Job* Workshop::createJobFromCraftJob( CraftJob& cj )
 	return job;
 }
 
-Job* Workshop::createButcherJob()
+QSharedPointer<Job> Workshop::createButcherJob()
 {
 	for ( auto& pasture : g->fm()->allPastures() )
 	{
@@ -780,7 +767,7 @@ Job* Workshop::createButcherJob()
 					{
 						if ( g->pf()->checkConnectedRegions( animal->getPos(), m_properties.pos ) )
 						{
-							Job* job = new Job();
+							QSharedPointer<Job> job( new Job() );
 							job->setType( "ButcherAnimal" );
 							job->setRequiredSkill( "Butchery" );
 							job->setAnimal( animalID );
@@ -806,7 +793,7 @@ Job* Workshop::createButcherJob()
 			{
 				if ( g->pf()->checkConnectedRegions( a->getPos(), m_properties.pos ) )
 				{
-					Job* job = new Job();
+					QSharedPointer<Job> job( new Job() );
 					job->setType( "ButcherAnimal" );
 					job->setRequiredSkill( "Butchery" );
 					job->setAnimal( a->id() );
@@ -835,7 +822,7 @@ Job* Workshop::createButcherJob()
 
 		if ( !itemID.isEmpty() )
 		{
-			Job* job = new Job();
+			QSharedPointer<Job> job( new Job() );
 			job->setType( "ButcherCorpse" );
 			job->setRequiredSkill( "Butchery" );
 			job->addPossibleWorkPosition( m_properties.pos );
@@ -853,7 +840,7 @@ Job* Workshop::createButcherJob()
 	return nullptr;
 }
 
-Job* Workshop::createDyeSheepJob()
+QSharedPointer<Job> Workshop::createDyeSheepJob()
 {
 	for ( auto pair : m_toDye )
 	{
@@ -863,7 +850,7 @@ Job* Workshop::createDyeSheepJob()
 		{
 			if ( g->pf()->checkConnectedRegions( animal->getPos(), m_properties.pos ) )
 			{
-				Job* job = new Job();
+				QSharedPointer<Job> job( new Job() );
 				job->setType( "DyeAnimal" );
 				job->setRequiredSkill( "Dyeing" );
 				job->setAnimal( animalID );
@@ -882,7 +869,7 @@ Job* Workshop::createDyeSheepJob()
 	return nullptr;
 }
 
-Job* Workshop::createFisherJob()
+QSharedPointer<Job> Workshop::createFisherJob()
 {
 	Position pos   = m_properties.posIn;
 	int waterLevel = 0;
@@ -899,7 +886,7 @@ Job* Workshop::createFisherJob()
 
 	if ( waterLevel > 40 )
 	{
-		Job* job = new Job();
+		QSharedPointer<Job> job( new Job() );
 		job->setType( "Fish" );
 		job->setRequiredSkill( "Fishing" );
 		job->setRequiredTool( "FishingRod", 0 );
@@ -912,14 +899,14 @@ Job* Workshop::createFisherJob()
 	return nullptr;
 }
 
-Job* Workshop::createFishButcherJob()
+QSharedPointer<Job> Workshop::createFishButcherJob()
 {
 	if ( g->inv()->itemCount( "Fish", "any" ) == 0 )
 	{
 		return nullptr;
 	}
 
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "ButcherFish" );
 	job->setRequiredSkill( "Fishing" );
 	job->addPossibleWorkPosition( m_properties.pos );
@@ -952,8 +939,7 @@ unsigned int Workshop::getJob( unsigned int gnomeID, QString skillID )
 				}
 				else
 				{
-					delete m_job;
-					m_job = 0;
+					m_job.reset();
 				}
 			}
 		}
@@ -969,7 +955,7 @@ unsigned int Workshop::getJob( unsigned int gnomeID, QString skillID )
 	return 0;
 }
 
-bool Workshop::checkItemsAvailable( Job* job )
+bool Workshop::checkItemsAvailable( QSharedPointer<Job> job )
 {
 	auto ril       = job->requiredItems();
 	for ( int i = 0; i < ril.size(); ++i )
@@ -1036,8 +1022,7 @@ bool Workshop::finishJob( unsigned int jobID )
 	{
 		if ( jobID == m_fishingJob->id() )
 		{
-			delete m_fishingJob;
-			m_fishingJob = 0;
+			m_fishingJob.reset();
 			return true;
 		}
 	}
@@ -1049,8 +1034,7 @@ bool Workshop::finishJob( unsigned int jobID )
 			if ( m_job->type() == "ButcherAnimal" )
 			{
 				//m_toButcher.removeAll( m_job->animal() );
-				delete m_job;
-				m_job = 0;
+				m_job.reset();
 			}
 			else if ( m_job->type() == "DyeAnimal" )
 			{
@@ -1062,19 +1046,16 @@ bool Workshop::finishJob( unsigned int jobID )
 						break;
 					}
 				}
-				delete m_job;
-				m_job = 0;
+				m_job.reset();
 			}
 			else if ( m_job->type() == "ButcherFish" )
 			{
-				delete m_job;
-				m_job = 0;
+				m_job.reset();
 			}
 			else
 			{
 				unsigned int finishedJobID = jobID;
-				delete m_job;
-				m_job = 0;
+				m_job.reset();
 				if ( !m_jobList.empty() )
 				{
 					// check job conditions
@@ -1146,8 +1127,7 @@ bool Workshop::giveBackJob( unsigned int jobID )
 	{
 		if ( jobID == m_fishingJob->id() )
 		{
-			delete m_fishingJob;
-			m_fishingJob = 0;
+			m_fishingJob.reset();
 			return true;
 		}
 	}
@@ -1164,9 +1144,7 @@ bool Workshop::giveBackJob( unsigned int jobID )
 					animal->setInJob( 0 );
 				}
 			}
-
-			delete m_job;
-			m_job = 0;
+			m_job.reset();
 			return true;
 		}
 	}
@@ -1174,7 +1152,7 @@ bool Workshop::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* Workshop::getJob( unsigned int jobID )
+QSharedPointer<Job> Workshop::getJob( unsigned int jobID )
 {
 	if ( m_fishingJob )
 	{
@@ -1342,7 +1320,7 @@ void Workshop::setAcceptGenerated( bool accept )
 
 bool Workshop::isAcceptingGenerated()
 {
-	return m_properties.acceptGenerated;
+	return m_properties.acceptGenerated && !m_properties.noAutoGenerate;
 }
 
 void Workshop::setAutoCraftMissing( bool autoCraft )

@@ -174,7 +174,7 @@ bool WorkshopManager::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* WorkshopManager::getJob( unsigned int jobID )
+QSharedPointer<Job> WorkshopManager::getJob( unsigned int jobID )
 {
 	for ( const auto& w : m_workshops )
 	{

@@ -112,7 +112,7 @@ void MechanismManager::loadMechanisms( QVariantList data )
 
 		if ( md.jobID && md.jobID > 1 )
 		{
-			Job* job = new Job( vmd.value( "Job" ).toMap() );
+			QSharedPointer<Job> job( new Job( vmd.value( "Job" ).toMap() ) );
 			m_jobs.insert( md.jobID, job );
 		}
 	}
@@ -199,7 +199,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 				{
 					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
-						Job* job = getSwitchJob( md );
+						QSharedPointer<Job> job = getSwitchJob( md );
 						m_jobs.insert( job->id(), job );
 						return job->id();
 					}
@@ -208,7 +208,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 				{
 					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
-						Job* job = getInvertJob( md );
+						QSharedPointer<Job> job = getInvertJob( md );
 						m_jobs.insert( job->id(), job );
 						return job->id();
 					}
@@ -217,7 +217,7 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 				{
 					if ( g->m_gnomeManager->gnomeCanReach( gnomeID, md.pos ) )
 					{
-						Job* job = getRefuelJob( md );
+						QSharedPointer<Job> job = getRefuelJob( md );
 						m_jobs.insert( job->id(), job );
 						return job->id();
 					}
@@ -228,9 +228,9 @@ unsigned int MechanismManager::getJob( unsigned int gnomeID, QString skillID )
 	return 0;
 }
 
-Job* MechanismManager::getSwitchJob( MechanismData& md )
+QSharedPointer<Job> MechanismManager::getSwitchJob( MechanismData& md )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "SwitchMechanism" );
 	job->setRequiredSkill( "Machining" );
 	job->addPossibleWorkPosition( md.pos );
@@ -241,9 +241,9 @@ Job* MechanismManager::getSwitchJob( MechanismData& md )
 	return job;
 }
 
-Job* MechanismManager::getInvertJob( MechanismData& md )
+QSharedPointer<Job> MechanismManager::getInvertJob( MechanismData& md )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "InvertMechanism" );
 	job->setRequiredSkill( "Machining" );
 	job->addPossibleWorkPosition( md.pos );
@@ -254,9 +254,9 @@ Job* MechanismManager::getInvertJob( MechanismData& md )
 	return job;
 }
 
-Job* MechanismManager::getRefuelJob( MechanismData& md )
+QSharedPointer<Job> MechanismManager::getRefuelJob( MechanismData& md )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "Refuel" );
 	job->setRequiredSkill( "Machining" );
 	job->addPossibleWorkPosition( md.pos );
@@ -272,13 +272,11 @@ bool MechanismManager::finishJob( unsigned int jobID )
 {
 	if ( m_jobs.contains( jobID ) )
 	{
-		Job* job = m_jobs[jobID];
+		QSharedPointer<Job> job = m_jobs[jobID];
 
 		m_mechanisms[job->mechanism()].jobID = 0;
 
 		m_jobs.remove( jobID );
-
-		delete job;
 
 		return true;
 	}
@@ -290,7 +288,7 @@ bool MechanismManager::giveBackJob( unsigned int jobID )
 	return finishJob( jobID );
 }
 
-Job* MechanismManager::getJob( unsigned int jobID )
+QSharedPointer<Job> MechanismManager::getJob( unsigned int jobID )
 {
 	if ( m_jobs.contains( jobID ) )
 	{

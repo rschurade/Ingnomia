@@ -57,10 +57,6 @@ Stockpile::~Stockpile()
 	{
 		delete field;
 	}
-	for ( const auto& job : m_jobsOut )
-	{
-		delete job;
-	}
 }
 
 void Stockpile::addTile( Position& pos )
@@ -129,7 +125,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		QVariantList vjl = vals.value( "Jobs" ).toList();
 		for ( auto vj : vjl )
 		{
-			Job* job = new Job( vj.toMap() );
+			QSharedPointer<Job> job( new Job( vj.toMap() ) );
 			m_jobsOut.insert( job->id(), job );
 		}
 	}
@@ -516,7 +512,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 			{
 				if ( g->inv()->itemCount( carryContainer, "any" ) > 0 )
 				{
-					Job* job = new Job;
+					QSharedPointer<Job> job( new Job );
 					job->setType( "HauleMultipleItems" );
 					job->setRequiredSkill( "Hauling" );
 					job->setRequiredTool( carryContainer, 0 );
@@ -556,7 +552,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 		}
 	}
 
-	Job* job = new Job;
+	QSharedPointer<Job> job( new Job );
 	job->setType( "HauleItem" );
 	job->setRequiredSkill( "Hauling" );
 
@@ -717,7 +713,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
-		Job* job = m_jobsOut[jobID];
+		QSharedPointer<Job> job = m_jobsOut[jobID];
 		for ( auto itemID : job->itemsToHaul() )
 		{
 			g->inv()->setInJob( itemID, 0 );
@@ -748,7 +744,6 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 			}
 		}
 		m_jobsOut.remove( jobID );
-		delete job;
 		return true;
 	}
 	return false;
@@ -993,7 +988,7 @@ bool Stockpile::allowedInStockpile( unsigned int itemID )
 	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
 }
 
-Job* Stockpile::getJob( unsigned int jobID )
+QSharedPointer<Job> Stockpile::getJob( unsigned int jobID )
 {
 	return m_jobsOut[jobID];
 }

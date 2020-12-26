@@ -105,7 +105,7 @@ public:
 
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID );
+	QSharedPointer<Job> getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
 	bool hasMechanism( Position pos );
@@ -143,9 +143,9 @@ public:
 private:
 	QPointer<Game> g;
 
-	Job* getSwitchJob( MechanismData& md );
-	Job* getInvertJob( MechanismData& md );
-	Job* getRefuelJob( MechanismData& md );
+	QSharedPointer<Job> getSwitchJob( MechanismData& md );
+	QSharedPointer<Job> getInvertJob( MechanismData& md );
+	QSharedPointer<Job> getRefuelJob( MechanismData& md );
 
 	void installItem( MechanismData md );
 
@@ -173,6 +173,6 @@ private:
 
 	QHash<unsigned int, MechanismNetwork> m_networks;
 
-	QHash<unsigned int, Job*> m_jobs;
+	QHash<unsigned int, QSharedPointer<Job>> m_jobs;
 	QHash<QString, MechanismType> m_string2Type;
 };

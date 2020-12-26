@@ -150,11 +150,11 @@ public:
 
 	bool setJobParams( unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );
 
-	Job* createJobFromCraftJob( CraftJob& cj );
-	Job* createButcherJob();
-	Job* createDyeSheepJob();
-	Job* createFisherJob();
-	Job* createFishButcherJob();
+	QSharedPointer<Job> createJobFromCraftJob( CraftJob& cj );
+	QSharedPointer<Job> createButcherJob();
+	QSharedPointer<Job> createDyeSheepJob();
+	QSharedPointer<Job> createFisherJob();
+	QSharedPointer<Job> createFishButcherJob();
 
 	void setLinkedStockpile( bool link );
 	unsigned int linkedStockpile();
@@ -267,7 +267,7 @@ private:
 	bool finishJob( unsigned int jobID );
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID );
+	QSharedPointer<Job> getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
 	WorkshopProperties m_properties;
@@ -276,12 +276,12 @@ private:
 	QList<CraftJob> m_jobList;
 	QList<CraftJob> m_autoCraftList;
 
-	Job* m_job        = nullptr;
-	Job* m_fishingJob = nullptr;
+	QSharedPointer<Job> m_job        = nullptr;
+	QSharedPointer<Job> m_fishingJob = nullptr;
 
 	QVariantList m_spriteComposition;
 
-	bool checkItemsAvailable( Job* job );
+	bool checkItemsAvailable( QSharedPointer<Job> job );
 
 	QList<QPair<unsigned int, QString>> m_toDye;
 };

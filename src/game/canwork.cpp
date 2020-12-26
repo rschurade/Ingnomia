@@ -344,7 +344,7 @@ void CanWork::cleanUpJob( bool finished )
 	resetJobVars();
 	m_currentAction = "idle";
 	m_jobID         = 0;
-	m_job           = nullptr;
+	m_job.reset();
 	m_jobChanged    = true;
 
 	if ( spriteNeedsUpdate )
@@ -353,7 +353,7 @@ void CanWork::cleanUpJob( bool finished )
 	}
 }
 
-int CanWork::getDurationTicks( QVariant value, Job* job )
+int CanWork::getDurationTicks( QVariant value, QSharedPointer<Job> job )
 {
 	if ( value.toString() == "$Craft" )
 	{
@@ -365,7 +365,7 @@ int CanWork::getDurationTicks( QVariant value, Job* job )
 	return ticks;
 }
 
-void CanWork::gainSkill( QVariant skillGain, Job* job )
+void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 {
 	if ( skillGain.toString().isEmpty() )
 	{
@@ -414,7 +414,7 @@ void CanWork::gainSkill( QString skillID, int gain )
 	//if( Global::debugMode )	qDebug() << name() << " gain skill: " << skillID << gain;
 }
 
-void CanWork::gainTech( QVariant techGain, Job* job )
+void CanWork::gainTech( QVariant techGain, QSharedPointer<Job> job )
 {
 	if ( techGain.toString() == "$Craft" )
 	{

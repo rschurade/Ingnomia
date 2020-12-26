@@ -86,7 +86,7 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID ) const;
+	QSharedPointer<Job> getJob( unsigned int jobID ) const;
 	bool hasJobID( unsigned int jobID ) const;
 
 	bool removeTile( const Position & pos );
@@ -151,9 +151,9 @@ private:
 	QList<unsigned int> m_animals;
 	QSet<unsigned int> m_animalsInJob;
 
-	QMap<unsigned int, Job*> m_jobsOut;
+	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
 
-	Job* createJob( QString skillID );
+	QSharedPointer<Job> createJob( QString skillID );
 
 	Animal* checkAnimalOutsidePasture();
 	Animal* checkAnimalHarvestReady();

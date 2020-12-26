@@ -123,7 +123,7 @@ Pasture::Pasture( QVariantMap vals, Game* game ) :
 	QVariantList vjl = vals.value( "Jobs" ).toList();
 	for ( auto vj : vjl )
 	{
-		Job* job = new Job( vj.toMap() );
+		QSharedPointer<Job> job( new Job( vj.toMap() ) );
 		m_jobsOut.insert( job->id(), job );
 	}
 
@@ -192,10 +192,6 @@ QVariant Pasture::serialize() const
 
 Pasture::~Pasture()
 {
-	for ( const auto& job : m_jobsOut )
-	{
-		delete job;
-	}
 }
 
 void Pasture::addTile( const Position & pos )
@@ -332,7 +328,7 @@ unsigned int Pasture::getJob( unsigned int gnomeID, QString skillID )
 	if ( g->gm()->gnomeCanReach( gnomeID, m_properties.firstPos ) )
 	{
 
-		Job* job = nullptr;
+		QSharedPointer<Job> job = nullptr;
 		if ( skillID == "AnimalHusbandry" )
 		{
 			job = createJob( "AnimalHusbandry" );
@@ -362,7 +358,7 @@ bool Pasture::finishJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
-		Job* job = m_jobsOut[jobID];
+		QSharedPointer<Job> job = m_jobsOut[jobID];
 		m_jobsOut.remove( jobID );
 		if ( m_fields.contains( job->pos().toInt() ) )
 		{
@@ -375,8 +371,6 @@ bool Pasture::finishJob( unsigned int jobID )
 		{
 			animal->setInJob( 0 );
 		}
-
-		delete job;
 		return true;
 	}
 	return false;
@@ -386,7 +380,7 @@ bool Pasture::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
-		Job* job = m_jobsOut[jobID];
+		QSharedPointer<Job> job = m_jobsOut[jobID];
 		if ( m_fields.contains( job->pos().toInt() ) )
 		{
 			m_fields[job->pos().toInt()].hasJob = false;
@@ -399,14 +393,12 @@ bool Pasture::giveBackJob( unsigned int jobID )
 		{
 			animal->setInJob( 0 );
 		}
-
-		delete job;
 		return true;
 	}
 	return false;
 }
 
-Job* Pasture::getJob( unsigned int jobID ) const
+QSharedPointer<Job> Pasture::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -420,10 +412,8 @@ bool Pasture::hasJobID( unsigned int jobID ) const
 	return m_jobsOut.contains( jobID );
 }
 
-Job* Pasture::createJob( QString skillID )
+QSharedPointer<Job> Pasture::createJob( QString skillID )
 {
-	Job* job = nullptr;
-
 	if ( m_fields.size() > 0 )
 	{
 		if ( skillID == "AnimalHusbandry" )
@@ -445,7 +435,7 @@ Job* Pasture::createJob( QString skillID )
 								{
 									if ( g->inv()->itemSID( field.util ) == "Trough" )
 									{
-										job = new Job();
+										QSharedPointer<Job> job( new Job() );
 
 										job->setType( "FillTrough" );
 										job->setRequiredSkill( "AnimalHusbandry" );
@@ -469,7 +459,7 @@ Job* Pasture::createJob( QString skillID )
 			Animal* a = checkAnimalOutsidePasture();
 			if ( a )
 			{
-				job = new Job();
+				QSharedPointer<Job> job( new Job() );
 
 				job->setType( "LeadAnimalToPasture" );
 				job->setRequiredSkill( "AnimalHusbandry" );
@@ -542,7 +532,7 @@ Job* Pasture::createJob( QString skillID )
 					}
 					if ( a )
 					{
-						job = new Job();
+						QSharedPointer<Job> job( new Job() );
 
 						job->setType( "TameAnimal" );
 						job->setRequiredSkill( "AnimalHusbandry" );
@@ -554,6 +544,8 @@ Job* Pasture::createJob( QString skillID )
 						a->setImmobile( true );
 						job->setNoJobSprite( true );
 						m_animalsInJob.insert( a->id() );
+
+						return job;
 					}
 				}
 			}
@@ -564,7 +556,7 @@ Job* Pasture::createJob( QString skillID )
 				a = checkAnimalHarvestReady();
 				if ( a )
 				{
-					job = new Job();
+					QSharedPointer<Job> job( new Job() );
 
 					job->setType( "HarvestAnimal" );
 					job->setRequiredSkill( "AnimalHusbandry" );
@@ -575,6 +567,8 @@ Job* Pasture::createJob( QString skillID )
 					a->setImmobile( true );
 					job->setNoJobSprite( true );
 					m_animalsInJob.insert( a->id() );
+
+					return job;
 				}
 			}
 		}
@@ -588,7 +582,7 @@ Job* Pasture::createJob( QString skillID )
 					{
 						if ( !field.hasJob && g->w()->hasMaxGrass( field.pos ) )
 						{
-							job = new Job();
+							QSharedPointer<Job> job( new Job() );
 
 							job->setType( "HarvestHay" );
 							job->setRequiredSkill( "Farming" );
@@ -605,7 +599,7 @@ Job* Pasture::createJob( QString skillID )
 			}
 		}
 	}
-	return job;
+	return nullptr;
 }
 
 Animal* Pasture::checkAnimalOutsidePasture()

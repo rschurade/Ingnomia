@@ -82,7 +82,7 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int job );
 	bool giveBackJob( unsigned int job );
-	Job* getJob( unsigned int jobID ) const;
+	QSharedPointer<Job> getJob( unsigned int jobID ) const;
 	bool hasJobID( unsigned int jobID ) const;
 	bool canDelete() const;
 
@@ -98,11 +98,11 @@ private:
 
 	void updateAutoForester();
 
-	Job* getPlantJob();
-	Job* getPickJob();
-	Job* getFellJob();
+	QSharedPointer<Job> getPlantJob();
+	QSharedPointer<Job> getPickJob();
+	QSharedPointer<Job> getFellJob();
 
-	QMap<unsigned int, Job*> m_jobsOut;
+	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
 
 	QMap<int, int> m_prioValues;
 

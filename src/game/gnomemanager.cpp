@@ -61,10 +61,6 @@ GnomeManager::~GnomeManager()
 	{
 		delete gnome;
 	}
-	for ( const auto& job : m_jobs )
-	{
-		delete job;
-	}
 }
 
 bool GnomeManager::contains( unsigned int gnomeID )
@@ -537,7 +533,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					{
 						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
-							Job* job = getUninstallJob( a );
+							QSharedPointer<Job> job = getUninstallJob( a );
 							m_jobs.insert( job->id(), job );
 							return job->id();
 						}
@@ -546,7 +542,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					{
 						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
-							Job* job = getRefuelJob( a );
+							QSharedPointer<Job> job = getRefuelJob( a );
 							m_jobs.insert( job->id(), job );
 							return job->id();
 						}
@@ -559,7 +555,7 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 					{
 						if ( gnomeCanReach( gnomeID, a->getPos() ) )
 						{
-							Job* job = getInstallJob( a );
+							QSharedPointer<Job> job = getInstallJob( a );
 							m_jobs.insert( job->id(), job );
 							return job->id();
 						}
@@ -571,9 +567,9 @@ unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
 	return 0;
 }
 
-Job* GnomeManager::getRefuelJob( Automaton* a )
+QSharedPointer<Job> GnomeManager::getRefuelJob( Automaton* a )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "Refuel" );
 	job->setAutomaton( a->id() );
 	job->setRequiredSkill( "Machining" );
@@ -584,9 +580,9 @@ Job* GnomeManager::getRefuelJob( Automaton* a )
 	return job;
 }
 
-Job* GnomeManager::getInstallJob( Automaton* a )
+QSharedPointer<Job> GnomeManager::getInstallJob( Automaton* a )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "Install" );
 	job->setAutomaton( a->id() );
 	job->setRequiredSkill( "Machining" );
@@ -597,9 +593,9 @@ Job* GnomeManager::getInstallJob( Automaton* a )
 	return job;
 }
 
-Job* GnomeManager::getUninstallJob( Automaton* a )
+QSharedPointer<Job> GnomeManager::getUninstallJob( Automaton* a )
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	job->setType( "Uninstall" );
 	job->setAutomaton( a->id() );
 	job->setRequiredSkill( "Machining" );
@@ -613,7 +609,7 @@ bool GnomeManager::finishJob( unsigned int jobID )
 {
 	if ( m_jobs.contains( jobID ) )
 	{
-		Job* job = m_jobs[jobID];
+		QSharedPointer<Job> job = m_jobs[jobID];
 
 		auto automatonID = job->automaton();
 
@@ -625,8 +621,6 @@ bool GnomeManager::finishJob( unsigned int jobID )
 
 		m_jobs.remove( jobID );
 
-		delete job;
-
 		return true;
 	}
 	return false;
@@ -637,7 +631,7 @@ bool GnomeManager::giveBackJob( unsigned int jobID )
 	return finishJob( jobID );
 }
 
-Job* GnomeManager::getJob( unsigned int jobID )
+QSharedPointer<Job> GnomeManager::getJob( unsigned int jobID )
 {
 	if ( m_jobs.contains( jobID ) )
 	{

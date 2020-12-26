@@ -96,7 +96,7 @@ public:
 	unsigned int getJob( unsigned int gnomeID, QString skillID );
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID ) const;
+	QSharedPointer<Job> getJob( unsigned int jobID ) const;
 	bool hasJobID( unsigned int jobID ) const;
 
 	bool removeTile( const Position & pos );
@@ -115,13 +115,13 @@ private:
 
 	QMap<unsigned int, FarmField*> m_fields;
 
-	QMap<unsigned int, Job*> m_jobsOut;
+	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
 
 	void updateAutoFarmer();
 
-	Job* getPlantJob();
-	Job* getTillJob();
-	Job* getHarvestJob();
+	QSharedPointer<Job> getPlantJob();
+	QSharedPointer<Job> getTillJob();
+	QSharedPointer<Job> getHarvestJob();
 
 	FarmProperties& properties()
 	{

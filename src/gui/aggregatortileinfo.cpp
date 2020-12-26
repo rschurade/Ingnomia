@@ -98,7 +98,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 		m_tileInfo.water       = "";
 		m_tileInfo.constructed = "";
 
-		if ( tile.wallType == WT_SOLIDWALL && tile.wallMaterial )
+		if ( (bool)( tile.wallType & WT_SOLIDWALL ) && (bool)tile.wallMaterial )
 		{
 			QString wallSID = DBH::materialSID( tile.wallMaterial );
 			QString wType   = DB::select( "Type", "Materials", wallSID ).toString();

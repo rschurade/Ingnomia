@@ -37,7 +37,7 @@ class JobManager : public QObject
 private:
 	QPointer<Game> g;
 
-	QHash<unsigned int, Job*> m_jobList;
+	QHash<unsigned int, QSharedPointer<Job>> m_jobList;
 	QHash<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
 
 	QHash<QString, int> m_skillToInt;
@@ -70,12 +70,12 @@ public:
 
 	QString jobManagerInfo();
 
-	//Job* getJob( QVariantList& profs, Position& pos );
-	//Job* getJob( unsigned int jobID );
+	//QSharedPointer<Job> getJob( QVariantList& profs, Position& pos );
+	//QSharedPointer<Job> getJob( unsigned int jobID );
 
 	unsigned int getJob( QStringList profs, unsigned int gnomeID, Position& pos );
-	Job* getJob( unsigned int jobID );
-	Job* getJobAtPos( Position pos );
+	QSharedPointer<Job> getJob( unsigned int jobID );
+	QSharedPointer<Job> getJobAtPos( Position pos );
 
 	void giveBackJob( unsigned int jobID );
 
@@ -90,7 +90,7 @@ public:
 
 	void addLoadedJob( QVariant vals );
 
-	const QHash<unsigned int, Job*>& allJobs()
+	const QHash<unsigned int, QSharedPointer<Job>>& allJobs()
 	{
 		return m_jobList;
 	}

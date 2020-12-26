@@ -1365,7 +1365,7 @@ QJsonDocument IO::jsonArrayMechanisms()
 
 		if ( md.jobID )
 		{
-			Job* job = g->mcm()->getJob( md.jobID );
+			QSharedPointer<Job> job = g->mcm()->getJob( md.jobID );
 			if ( job )
 			{
 				vmd.insert( "Job", job->serialize() );
@@ -1403,7 +1403,7 @@ QJsonDocument IO::jsonArrayPipes()
 		/*
 		if( md.jobID )
 		{
-			Job* job = g->mcm()->getJob( md.jobID );
+			QSharedPointer<Job> job = g->mcm()->getJob( md.jobID );
 			if( job )
 			{
 				vmd.insert( "Job", job->serialize() );

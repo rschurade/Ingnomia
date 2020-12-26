@@ -36,10 +36,6 @@ Grove::~Grove()
 	{
 		delete field;
 	}
-	for ( const auto& job : m_jobsOut )
-	{
-		delete job;
-	}
 }
 
 GroveProperties::GroveProperties( QVariantMap& in )
@@ -128,7 +124,7 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 	QVariantList vjl = vals.value( "Jobs" ).toList();
 	for ( const auto& vj : vjl )
 	{
-		Job* job = new Job( vj.toMap() );
+		QSharedPointer<Job> job( new Job( vj.toMap() ) );
 		m_jobsOut.insert( job->id(), job );
 	}
 }
@@ -208,7 +204,7 @@ unsigned int Grove::getJob( unsigned int gnomeID, QString skillID )
 {
 	if ( !m_active )
 		return 0;
-	Job* job = 0;
+	QSharedPointer<Job> job = 0;
 
 	for ( auto p : m_properties.jobPriorities )
 	{
@@ -246,7 +242,7 @@ bool Grove::finishJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
-		Job* job          = m_jobsOut[jobID];
+		QSharedPointer<Job> job          = m_jobsOut[jobID];
 		GroveField* grofi = m_fields[job->pos().toInt()];
 
 		if ( job->type() == "PlantTreeGrove" )
@@ -265,8 +261,6 @@ bool Grove::finishJob( unsigned int jobID )
 		m_jobsOut.remove( jobID );
 		m_fields[job->pos().toInt()]->hasJob = false;
 
-		delete job;
-
 		return true;
 	}
 	return false;
@@ -276,16 +270,15 @@ bool Grove::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
-		Job* job                             = m_jobsOut[jobID];
+		QSharedPointer<Job> job                             = m_jobsOut[jobID];
 		m_fields[job->pos().toInt()]->hasJob = false;
 		m_jobsOut.remove( jobID );
-		delete job;
 		return true;
 	}
 	return false;
 }
 
-Job* Grove::getJob( unsigned int jobID ) const
+QSharedPointer<Job> Grove::getJob( unsigned int jobID ) const
 {
 	if ( m_jobsOut.contains( jobID ) )
 	{
@@ -316,7 +309,7 @@ bool Grove::hasPlantTreeJob( Position pos ) const
 	return false;
 }
 
-Job* Grove::getPlantJob()
+QSharedPointer<Job> Grove::getPlantJob()
 {
 	for ( auto gf : m_fields )
 	{
@@ -328,7 +321,7 @@ Job* Grove::getPlantJob()
 
 			if ( g->inv()->itemCount( seedID, mat ) > 0 )
 			{
-				Job* job = new Job();
+				QSharedPointer<Job> job( new Job() );
 				job->setType( "PlantTree" );
 				job->setRequiredSkill( Global::util->requiredSkill( "PlantTree" ) );
 				job->setPos( gf->pos );
@@ -348,9 +341,9 @@ Job* Grove::getPlantJob()
 	return nullptr;
 }
 
-Job* Grove::getPickJob()
+QSharedPointer<Job> Grove::getPickJob()
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	for ( auto gf : m_fields )
 	{
 		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
@@ -398,13 +391,12 @@ Job* Grove::getPickJob()
 			}
 		}
 	}
-	delete job;
 	return nullptr;
 }
 
-Job* Grove::getFellJob()
+QSharedPointer<Job> Grove::getFellJob()
 {
-	Job* job = new Job();
+	QSharedPointer<Job> job( new Job() );
 	for ( auto gf : m_fields )
 	{
 		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
@@ -458,7 +450,6 @@ Job* Grove::getFellJob()
 			}
 		}
 	}
-	delete job;
 	return nullptr;
 }
 

@@ -80,7 +80,7 @@ void FluidManager::loadPipes( QVariantList data )
 		/*
 		if( md.jobID )
 		{
-			Job* job = new Job( vmd.value( "Job" ).toMap() );
+			QSharedPointer<Job> job = new Job( vmd.value( "Job" ).toMap() );
 			m_jobs.insert( md.jobID, job );
 		}
 		*/
@@ -337,7 +337,7 @@ bool FluidManager::giveBackJob( unsigned int jobID )
 	return finishJob( jobID );
 }
 
-Job* FluidManager::getJob( unsigned int jobID )
+QSharedPointer<Job> FluidManager::getJob( unsigned int jobID )
 {
 	return nullptr;
 }

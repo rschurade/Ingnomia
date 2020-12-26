@@ -77,7 +77,7 @@ public:
 
 	bool finishJob( unsigned int jobID );
 	bool giveBackJob( unsigned int jobID );
-	Job* getJob( unsigned int jobID );
+	QSharedPointer<Job> getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
 private:

@@ -540,7 +540,7 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 	return false;
 }
 
-Job* FarmingManager::getJob( unsigned int jobID )
+QSharedPointer<Job> FarmingManager::getJob( unsigned int jobID )
 {
 	for ( const auto& gr : m_groves )
 	{
