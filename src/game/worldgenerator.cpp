@@ -551,7 +551,7 @@ void WorldGenerator::addAnimals()
 			}
 			else
 			{
-				if ( ( w->getTileFlag( pos ) & TileFlag::TF_WATER ) || w->fluidLevel( pos ) > 6 )
+				if ( ( w->getTileFlag( pos ) & TileFlag::TF_WATER ) && w->fluidLevel( pos ) > 6 )
 				{
 					if ( numWaterTypes > 0 )
 					{

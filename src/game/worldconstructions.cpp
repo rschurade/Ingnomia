@@ -393,7 +393,6 @@ bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 	}
 	else if ( itemSID == "Pump" )
 	{
-		g->flm()->addInput( pos, itemUID );
 		g->mcm()->installItem( itemUID, pos, 0 );
 	}
 

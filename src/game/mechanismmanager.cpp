@@ -23,6 +23,7 @@
 #include "../base/global.h"
 #include "../base/util.h"
 #include "../game/gnomemanager.h"
+#include "../game/fluidmanager.h"
 #include "../game/inventory.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
@@ -452,6 +453,11 @@ void MechanismManager::installItem( MechanismData md )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 	}
+	else if ( itemSID == "Pump" )
+	{
+		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		g->flm()->addInput( md.pos, md.itemID );
+	}
 
 	m_mechanisms.insert( md.itemID, md );
 }
@@ -545,6 +551,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 		break;
 		case MT_PUMP:
 		{
+			g->flm()->addInput( pos, itemID );
 			md.jobID = 1; // setting job id to prevent it from getting jobs
 			m_wallPositions.insert( pos.toInt(), itemID );
 
