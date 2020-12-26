@@ -122,13 +122,6 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 		}
 		m_fields.insert( grofi->pos.toInt(), grofi );
 	}
-
-	QVariantList vjl = vals.value( "Jobs" ).toList();
-	for ( const auto& vj : vjl )
-	{
-		QSharedPointer<Job> job( new Job( vj.toMap() ) );
-		m_jobsOut.insert( job->id(), job );
-	}
 }
 
 QVariant Grove::serialize() const
@@ -149,13 +142,6 @@ QVariant Grove::serialize() const
 		tiles.append( entry );
 	}
 	out.insert( "Fields", tiles );
-
-	QVariantList jobs;
-	for ( auto job : m_jobsOut )
-	{
-		jobs.append( job->serialize() );
-	}
-	out.insert( "Jobs", jobs );
 
 	return out;
 }

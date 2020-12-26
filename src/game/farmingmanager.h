@@ -85,12 +85,6 @@ public:
 	int countPastures();
 	void setPasturePriority( unsigned int id, int prio );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
-
 	const QHash<unsigned int, Grove*>& allGroves();
 	const QHash<unsigned int, Farm*>& allFarms();
 	const QHash<unsigned int, Pasture*>& allPastures();

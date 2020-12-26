@@ -493,20 +493,6 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 				}
 			}
 			break;
-			case SK_Farming:
-			case SK_AnimalHusbandry:
-			case SK_Horticulture:
-			case SK_Woodcutting:
-			{
-				jobID = g->fm()->getJob( gnomeID, { skillID } );
-				{
-					if ( jobID )
-					{
-						return jobID;
-					}
-				}
-			}
-			break;
 			case SK_Machining:
 			{
 				jobID = g->gm()->getJob( gnomeID, skillID );
@@ -651,10 +637,6 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	if ( g->wsm()->hasJobID( jobID ) )
 	{
 		return g->wsm()->getJob( jobID );
-	}
-	if ( g->fm()->hasJobID( jobID ) )
-	{
-		return g->fm()->getJob( jobID );
 	}
 	if ( g->gm()->hasJobID( jobID ) )
 	{
@@ -801,10 +783,6 @@ void JobManager::finishJob( unsigned int jobID )
 		return;
 	}
 
-	if ( g->fm()->finishJob( jobID ) )
-	{
-		return;
-	}
 	if ( g->gm()->finishJob( jobID ) )
 	{
 		return;
@@ -1029,10 +1007,6 @@ void JobManager::giveBackJob( unsigned int jobID )
 		return;
 	}
 
-	if ( g->fm()->giveBackJob( jobID ) )
-	{
-		return;
-	}
 	if ( g->gm()->giveBackJob( jobID ) )
 	{
 		return;

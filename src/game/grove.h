@@ -91,8 +91,6 @@ private:
 
 	void updateAutoForester();
 
-	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
-
 	QMap<int, int> m_prioValues;
 
 	GroveProperties& properties()

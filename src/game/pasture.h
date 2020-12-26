@@ -20,6 +20,7 @@
 #include "../base/position.h"
 #include "../game/animal.h"
 #include "../game/worldobject.h"
+#include "../game/job.h"
 
 #include <QHash>
 #include <QList>
@@ -33,7 +34,7 @@ class Game;
 struct PastureField
 {
 	Position pos;
-	bool hasJob       = false;
+	QWeakPointer<Job> job;
 	unsigned int util = 0;
 };
 
@@ -83,12 +84,6 @@ public:
 
 	void addAnimal( unsigned int id );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID ) const;
-	bool hasJobID( unsigned int jobID ) const;
-
 	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
 
@@ -97,7 +92,6 @@ public:
 	bool canDelete();
 	int countTiles();
 
-	void setInJob( unsigned int animalID );
 	void removeAnimal( unsigned int animalID );
 	void removeAllAnimals();
 
@@ -146,15 +140,7 @@ public:
 private:
 	PastureProperties m_properties;
 
-	QMap<unsigned int, PastureField> m_fields;
+	QMap<unsigned int, PastureField*> m_fields;
 
 	QList<unsigned int> m_animals;
-	QSet<unsigned int> m_animalsInJob;
-
-	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
-
-	QSharedPointer<Job> createJob( QString skillID );
-
-	Animal* checkAnimalOutsidePasture();
-	Animal* checkAnimalHarvestReady();
 };

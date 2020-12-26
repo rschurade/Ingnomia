@@ -453,69 +453,6 @@ bool FarmingManager::isPasture( Position pos ) const
 	return m_allPastureTiles.contains( pos );
 }
 
-unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
-{
-	for ( auto& pa : m_pastures )
-	{
-		unsigned int job = pa->getJob( gnomeID, skillID );
-		if ( job )
-		{
-			return job;
-		}
-	}
-	return 0;
-}
-
-bool FarmingManager::finishJob( unsigned int jobID )
-{
-	for ( auto& pa : m_pastures )
-	{
-		if ( pa->finishJob( jobID ) )
-		{
-			emit signalPastureChanged( pa->id() );
-			return true;
-		}
-	}
-	return false;
-}
-
-bool FarmingManager::giveBackJob( unsigned int jobID )
-{
-	for ( auto& pa : m_pastures )
-	{
-		if ( pa->giveBackJob( jobID ) )
-		{
-			emit signalPastureChanged( pa->id() );
-			return true;
-		}
-	}
-	return false;
-}
-
-QSharedPointer<Job> FarmingManager::getJob( unsigned int jobID )
-{
-	for ( const auto& pa : m_pastures )
-	{
-		if ( pa->hasJobID( jobID ) )
-		{
-			return pa->getJob( jobID );
-		}
-	}
-	return nullptr;
-}
-
-bool FarmingManager::hasJobID( unsigned int jobID ) const
-{
-	for ( const auto& pa : m_pastures )
-	{
-		if ( pa->hasJobID( jobID ) )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 const QHash<unsigned int, Grove*>& FarmingManager::allGroves()
 {
 	return m_groves;
