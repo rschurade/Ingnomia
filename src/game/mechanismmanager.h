@@ -157,6 +157,7 @@ private:
 
 	void setActive( unsigned int itemID, bool active );
 	void setInverted( unsigned int itemID, bool inv );
+	void setConnectsTo( MechanismData& md );
 
 	quint64 m_lastTick       = 0;
 	bool m_needNetworkUpdate = false;

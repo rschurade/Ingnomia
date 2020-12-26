@@ -52,6 +52,7 @@ QVariantMap MechanismData::serialize() const
 	out.insert( "IsInvertable", isInvertable );
 	out.insert( "Inverted", inverted );
 	out.insert( "ChangeInverted", changeInverted );
+	out.insert( "Anim", anim );
 	return out;
 }
 
@@ -75,6 +76,7 @@ void MechanismData::deserialize( QVariantMap in )
 	isInvertable    = in.value( "IsInvertable" ).toBool();
 	inverted        = in.value( "Inverted" ).toBool();
 	changeInverted  = in.value( "ChangeInverted" ).toBool();
+	anim			= in.value( "Anim" ).toBool();
 }
 
 MechanismManager::MechanismManager( Game* parent ) :
@@ -593,6 +595,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 
 void MechanismManager::uninstallItem( unsigned int itemID )
 {
+	qDebug() << "huhu";
 	if ( m_mechanisms.contains( itemID ) )
 	{
 		auto md = m_mechanisms[itemID];
@@ -603,6 +606,16 @@ void MechanismManager::uninstallItem( unsigned int itemID )
 		m_axleData.remove( posID );
 
 		m_mechanisms.remove( itemID );
+
+		switch ( md.type )
+		{
+			case MT_WALL:
+			{
+				g->m_world->setWalkable( md.pos, true );
+				Tile& tile    = g->m_world->getTile( md.pos );
+				tile.wallType = WT_NOWALL;
+			}
+		}
 
 		m_needNetworkUpdate = true;
 	}
@@ -630,43 +643,16 @@ bool MechanismManager::changeActive( unsigned int itemID )
 
 void MechanismManager::setActive( unsigned int itemID, bool active )
 {
+	qDebug() << "setActive";
 	if ( m_mechanisms.contains( itemID ) )
 	{
 		auto& md = m_mechanisms[itemID];
 
 		md.active = active;
 
-		md.connectsTo.clear();
+		setConnectsTo( md );
 
-		if ( !md.inverted )
-		{
-			if ( md.active )
-			{
-				md.connectsTo.append( md.pos.eastOf() );
-				md.connectsTo.append( md.pos.westOf() );
-				md.connectsTo.append( md.pos.northOf() );
-				md.connectsTo.append( md.pos.southOf() );
-			}
-		}
-		else
-		{
-			if ( !md.active )
-			{
-				md.connectsTo.append( md.pos.eastOf() );
-				md.connectsTo.append( md.pos.westOf() );
-				md.connectsTo.append( md.pos.northOf() );
-				md.connectsTo.append( md.pos.southOf() );
-			}
-		}
-
-		if ( md.maxFuel > 0 )
-		{
-			updateSpritesAndFlags( md, md.active && ( md.fuel > 0 ) );
-		}
-		else
-		{
-			updateSpritesAndFlags( md, md.active );
-		}
+		updateSpritesAndFlags( md, md.active && ( md.fuel > 0 ) );
 
 		m_needNetworkUpdate = true;
 	}
@@ -691,29 +677,40 @@ void MechanismManager::setInverted( unsigned int itemID, bool inv )
 
 		md.inverted = inv;
 
-		md.connectsTo.clear();
-		if ( md.inverted )
-		{
-			if ( !md.active )
-			{
-				md.connectsTo.append( md.pos.eastOf() );
-				md.connectsTo.append( md.pos.westOf() );
-				md.connectsTo.append( md.pos.northOf() );
-				md.connectsTo.append( md.pos.southOf() );
-			}
-		}
-		else
-		{
-			if ( md.active )
-			{
-				md.connectsTo.append( md.pos.eastOf() );
-				md.connectsTo.append( md.pos.westOf() );
-				md.connectsTo.append( md.pos.northOf() );
-				md.connectsTo.append( md.pos.southOf() );
-			}
-		}
+		setConnectsTo( md );
 
 		m_needNetworkUpdate = true;
+	}
+}
+
+void MechanismManager::setConnectsTo( MechanismData& md )
+{
+	switch( md.type )
+	{
+		case MT_LEVER:
+		case MT_PRESSUREPLATE:
+		md.connectsTo.clear();
+			if ( md.inverted )
+			{
+				if ( !md.active )
+				{
+					md.connectsTo.append( md.pos.eastOf() );
+					md.connectsTo.append( md.pos.westOf() );
+					md.connectsTo.append( md.pos.northOf() );
+					md.connectsTo.append( md.pos.southOf() );
+				}
+			}
+			else
+			{
+				if ( md.active )
+				{
+					md.connectsTo.append( md.pos.eastOf() );
+					md.connectsTo.append( md.pos.westOf() );
+					md.connectsTo.append( md.pos.northOf() );
+					md.connectsTo.append( md.pos.southOf() );
+				}
+			}
+			break;
 	}
 }
 
@@ -753,7 +750,7 @@ void MechanismManager::refuel( unsigned int itemID, int burnValue )
 
 			if ( newFuel > 0 )
 			{
-				g->m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, m_mechanisms[itemID].active & ( m_mechanisms[itemID].fuel > 0 ) );
+				g->m_world->setWallSpriteAnim( m_mechanisms[itemID].pos, m_mechanisms[itemID].active && ( m_mechanisms[itemID].fuel > 0 ) );
 			}
 		}
 	}
@@ -858,7 +855,12 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 {
 	QString itemSID = g->inv()->itemSID( md.itemID );
 	auto row        = DB::selectRow( "Mechanism", itemSID );
+	if( md.inverted )
+	{
+		isOn  = !isOn;
+	}
 
+	qDebug() << "anim" << itemSID << md.anim << isOn;
 	if ( md.anim )
 	{
 		g->m_world->setWallSpriteAnim( md.pos, isOn );

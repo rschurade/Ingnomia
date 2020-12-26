@@ -465,5 +465,5 @@ void AggregatorTileInfo::onToggleMechActive( unsigned int id )
 	
 void AggregatorTileInfo::onToggleMechInvert( unsigned int id )
 {
-	g->mcm()->toggleInvert( id );
+	g->mcm()->changeInverted( id );
 }
