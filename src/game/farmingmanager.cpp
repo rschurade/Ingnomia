@@ -455,14 +455,6 @@ bool FarmingManager::isPasture( Position pos ) const
 
 unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 {
-	for ( auto& gr : m_groves )
-	{
-		unsigned int job = gr->getJob( gnomeID, skillID );
-		if ( job )
-		{
-			return job;
-		}
-	}
 	for ( auto& pa : m_pastures )
 	{
 		unsigned int job = pa->getJob( gnomeID, skillID );
@@ -476,14 +468,6 @@ unsigned int FarmingManager::getJob( unsigned int gnomeID, QString skillID )
 
 bool FarmingManager::finishJob( unsigned int jobID )
 {
-	for ( auto& gr : m_groves )
-	{
-		if ( gr->finishJob( jobID ) )
-		{
-			emit signalGroveChanged( gr->id() );
-			return true;
-		}
-	}
 	for ( auto& pa : m_pastures )
 	{
 		if ( pa->finishJob( jobID ) )
@@ -497,14 +481,6 @@ bool FarmingManager::finishJob( unsigned int jobID )
 
 bool FarmingManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto& gr : m_groves )
-	{
-		if ( gr->giveBackJob( jobID ) )
-		{
-			emit signalGroveChanged( gr->id() );
-			return true;
-		}
-	}
 	for ( auto& pa : m_pastures )
 	{
 		if ( pa->giveBackJob( jobID ) )
@@ -518,13 +494,6 @@ bool FarmingManager::giveBackJob( unsigned int jobID )
 
 QSharedPointer<Job> FarmingManager::getJob( unsigned int jobID )
 {
-	for ( const auto& gr : m_groves )
-	{
-		if ( gr->hasJobID( jobID ) )
-		{
-			return gr->getJob( jobID );
-		}
-	}
 	for ( const auto& pa : m_pastures )
 	{
 		if ( pa->hasJobID( jobID ) )
@@ -537,13 +506,6 @@ QSharedPointer<Job> FarmingManager::getJob( unsigned int jobID )
 
 bool FarmingManager::hasJobID( unsigned int jobID ) const
 {
-	for ( const auto& gr : m_groves )
-	{
-		if ( gr->hasJobID( jobID ) )
-		{
-			return true;
-		}
-	}
 	for ( const auto& pa : m_pastures )
 	{
 		if ( pa->hasJobID( jobID ) )
@@ -615,19 +577,6 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 			emit signalPastureChanged( pasture->id() );
 		}
 	}
-}
-
-bool FarmingManager::hasPlantTreeJob( Position pos )
-{
-	if ( isGrove( pos ) )
-	{
-		Grove* grove = getGroveAtPos( pos );
-		if ( grove )
-		{
-			return grove->hasPlantTreeJob( pos );
-		}
-	}
-	return false;
 }
 
 bool FarmingManager::addUtil( Position pos, unsigned int itemID )

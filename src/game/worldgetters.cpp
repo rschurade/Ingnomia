@@ -204,21 +204,12 @@ bool World::noTree( const Position pos, const int xRange, const int yRange )
 					return false;
 				}
 			}
-			if ( m_jobSprites.contains( testPosID ) )
+			if ( auto job = g->jm()->getJobAtPos( Position( x, y, pos.z ) ) )
 			{
-				unsigned int jobID = m_jobSprites[testPosID].value( "Wall" ).toMap().value( "JobID" ).toUInt();
-				if ( jobID )
+				if ( job && job->type() == "PlantTree" )
 				{
-					auto job = g->jm()->getJob( jobID );
-					if ( job && job->type() == "PlantTree" )
-					{
-						return false;
-					}
+					return false;
 				}
-			}
-			if ( g->fm()->hasPlantTreeJob( Position( x, y, pos.z ) ) )
-			{
-				return false;
 			}
 		}
 	}

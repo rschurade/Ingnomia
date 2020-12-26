@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 #include "../game/worldobject.h"
+#include "../game/job.h"
 
 #include <QHash>
 #include <QList>
@@ -32,8 +33,7 @@ class Game;
 struct GroveField
 {
 	Position pos;
-	bool hasJob    = false;
-	bool harvested = false;
+	QWeakPointer<Job> job;
 };
 
 enum GroveJobs : int
@@ -79,17 +79,10 @@ public:
 
 	void onTick( quint64 tick );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool finishJob( unsigned int job );
-	bool giveBackJob( unsigned int job );
-	QSharedPointer<Job> getJob( unsigned int jobID ) const;
-	bool hasJobID( unsigned int jobID ) const;
 	bool canDelete() const;
 
 	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
-
-	bool hasPlantTreeJob( Position pos ) const;
 
 private:
 	GroveProperties m_properties;
@@ -97,10 +90,6 @@ private:
 	QMap<unsigned int, GroveField*> m_fields;
 
 	void updateAutoForester();
-
-	QSharedPointer<Job> getPlantJob();
-	QSharedPointer<Job> getPickJob();
-	QSharedPointer<Job> getFellJob();
 
 	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
 

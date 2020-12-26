@@ -116,8 +116,10 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 		auto vfm          = vf.toMap();
 		GroveField* grofi = new GroveField;
 		grofi->pos        = Position( vfm.value( "Pos" ).toString() );
-		grofi->hasJob     = vfm.value( "HasJob" ).toBool();
-		grofi->harvested  = vfm.value( "Harvested" ).toBool();
+		if( vfm.contains( "Job" ) )
+		{
+			grofi->job = g->jm()->getJob( vfm.value( "Job" ).toUInt() );
+		}
 		m_fields.insert( grofi->pos.toInt(), grofi );
 	}
 
@@ -139,8 +141,11 @@ QVariant Grove::serialize() const
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
-		entry.insert( "HasJob", field->hasJob );
-		entry.insert( "Harvested", field->harvested );
+		if( field->job )
+		{
+			QSharedPointer<Job> spJob = field->job.toStrongRef();
+			entry.insert( "Job", spJob->id() );
+		}
 		tiles.append( entry );
 	}
 	out.insert( "Fields", tiles );
@@ -159,11 +164,58 @@ void Grove::onTick( quint64 tick )
 {
 	if ( !m_active )
 		return;
-	m_prioValues.clear();
-	for ( auto p : m_properties.jobPriorities )
+	
+	for( auto& gf : m_fields )
 	{
-		m_prioValues.insert( p, m_prioValues.size() );
+		if( !gf->job )
+		{
+			Tile& tile = g->w()->getTile( gf->pos );
+
+			if( !g->w()->plants().contains( gf->pos.toInt() ) )
+			{
+			
+				if ( m_properties.plant && g->w()->noTree( gf->pos, 2, 2 ) && g->w()->isWalkable( gf->pos ) )
+				{
+					QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
+					QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
+
+					auto item = g->inv()->getClosestItem( m_fields.first()->pos, true, seedID, mat );
+					if ( item == 0 )
+					{
+						continue;
+					}
+					unsigned int jobID = g->jm()->addJob( "PlantTree", gf->pos, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					job->setItem( m_properties.treeType );
+					job->addRequiredItem( 1, seedID, mat, QStringList() );
+					gf->job = job;
+				}
+			}
+			else
+			{
+				Plant& tree = g->w()->plants()[gf->pos.toInt()];
+				if ( !tree.isTree() )
+				{
+					continue;
+				}
+				if ( m_properties.pickFruit && tree.harvestable() )
+				{
+					unsigned int jobID = g->jm()->addJob( "HarvestTree", gf->pos, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					gf->job = job;
+					continue;
+				}
+				if ( m_properties.fell && tree.matureWood() )
+				{
+					unsigned int jobID = g->jm()->addJob( "FellTree", gf->pos, 0, true );
+					auto job = g->jm()->getJob( jobID );
+					gf->job = job;
+					continue;
+				}
+			}
+		}
 	}
+
 
 	updateAutoForester();
 }
@@ -200,257 +252,11 @@ void Grove::updateAutoForester()
 	}
 }
 
-unsigned int Grove::getJob( unsigned int gnomeID, QString skillID )
-{
-	if ( !m_active )
-		return 0;
-	QSharedPointer<Job> job = 0;
 
-	for ( auto p : m_properties.jobPriorities )
-	{
-		switch ( p )
-		{
-			case PlantTree:
-				if ( skillID == "Horticulture" )
-				{
-					job = getPlantJob();
-				}
-				break;
-			case PickFruit:
-				if ( skillID == "Horticulture" )
-				{
-					job = getPickJob();
-				}
-				break;
-			case FellTree:
-				if ( skillID == "Woodcutting" )
-				{
-					job = getFellJob();
-				}
-				break;
-		}
-		if ( job )
-		{
-			m_jobsOut.insert( job->id(), job );
-			return job->id();
-		}
-	}
-	return 0;
-}
-
-bool Grove::finishJob( unsigned int jobID )
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		QSharedPointer<Job> job          = m_jobsOut[jobID];
-		GroveField* grofi = m_fields[job->pos().toInt()];
-
-		if ( job->type() == "PlantTreeGrove" )
-		{
-			grofi->harvested = false;
-		}
-		else if ( job->type() == "Harvest" )
-		{
-			grofi->harvested = true;
-		}
-		else if ( job->type() == "FellTree" )
-		{
-			grofi->harvested = false;
-		}
-
-		m_jobsOut.remove( jobID );
-		m_fields[job->pos().toInt()]->hasJob = false;
-
-		return true;
-	}
-	return false;
-}
-
-bool Grove::giveBackJob( unsigned int jobID )
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		QSharedPointer<Job> job                             = m_jobsOut[jobID];
-		m_fields[job->pos().toInt()]->hasJob = false;
-		m_jobsOut.remove( jobID );
-		return true;
-	}
-	return false;
-}
-
-QSharedPointer<Job> Grove::getJob( unsigned int jobID ) const
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		return m_jobsOut[jobID];
-	}
-	return nullptr;
-}
-
-bool Grove::hasJobID( unsigned int jobID ) const
-{
-	return m_jobsOut.contains( jobID );
-}
 
 bool Grove::canDelete() const
 {
-	return m_jobsOut.isEmpty();
-}
-
-bool Grove::hasPlantTreeJob( Position pos ) const
-{
-	for ( auto job : m_jobsOut )
-	{
-		if ( job->pos() == pos )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-QSharedPointer<Job> Grove::getPlantJob()
-{
-	for ( auto gf : m_fields )
-	{
-		// tile is empty, we plant something
-		if ( !gf->hasJob && m_properties.plant && !g->w()->plants().contains( gf->pos.toInt() ) && g->w()->noTree( gf->pos, 2, 2 ) && g->w()->isWalkable( gf->pos ) )
-		{
-			QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
-			QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
-
-			if ( g->inv()->itemCount( seedID, mat ) > 0 )
-			{
-				QSharedPointer<Job> job( new Job() );
-				job->setType( "PlantTree" );
-				job->setRequiredSkill( Global::util->requiredSkill( "PlantTree" ) );
-				job->setPos( gf->pos );
-				job->addPossibleWorkPosition( gf->pos );
-				job->setItem( m_properties.treeType );
-				job->addRequiredItem( 1, seedID, mat, QStringList() );
-
-				gf->hasJob = true;
-				return job;
-			}
-			else
-			{
-				return nullptr;
-			}
-		}
-	}
-	return nullptr;
-}
-
-QSharedPointer<Job> Grove::getPickJob()
-{
-	QSharedPointer<Job> job( new Job() );
-	for ( auto gf : m_fields )
-	{
-		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
-		{
-			Plant& tree = g->w()->plants()[gf->pos.toInt()];
-			if ( !tree.isTree() )
-			{
-				continue;
-			}
-			if ( m_properties.pickFruit && tree.harvestable() )
-			{
-				bool hasWorkPos = false;
-				if ( g->w()->isWalkable( gf->pos.northOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.northOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.eastOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.southOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.southOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.westOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.westOf() );
-					hasWorkPos = true;
-				}
-				if ( !hasWorkPos )
-				{
-					continue;
-				}
-
-				job->setType( "HarvestTree" );
-				job->setRequiredSkill( Global::util->requiredSkill( "HarvestTree" ) );
-				job->setPos( gf->pos );
-
-				job->setNoJobSprite( true );
-				gf->hasJob = true;
-				return job;
-			}
-		}
-	}
-	return nullptr;
-}
-
-QSharedPointer<Job> Grove::getFellJob()
-{
-	QSharedPointer<Job> job( new Job() );
-	for ( auto gf : m_fields )
-	{
-		if ( !gf->hasJob && g->w()->plants().contains( gf->pos.toInt() ) )
-		{
-			Plant& tree = g->w()->plants()[gf->pos.toInt()];
-			if ( !tree.isTree() )
-			{
-				continue;
-			}
-
-			if ( tree.isFruitTree() && m_properties.pickFruit && ( m_prioValues.value( PickFruit ) < m_prioValues.value( FellTree ) ) && !gf->harvested )
-			{
-				continue;
-			}
-
-			if ( m_properties.fell && tree.matureWood() )
-			{
-				bool hasWorkPos = false;
-				if ( g->w()->isWalkable( gf->pos.northOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.northOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.eastOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.eastOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.southOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.southOf() );
-					hasWorkPos = true;
-				}
-				if ( g->w()->isWalkable( gf->pos.westOf() ) )
-				{
-					job->addPossibleWorkPosition( gf->pos.westOf() );
-					hasWorkPos = true;
-				}
-				if ( !hasWorkPos )
-				{
-					continue;
-				}
-
-				job->setType( "FellTree" );
-				job->setRequiredSkill( Global::util->requiredSkill( "FellTree" ) );
-				job->setPos( gf->pos );
-				job->setRequiredTool( "FellingAxe", 1 );
-				job->setNoJobSprite( true );
-				gf->hasJob = true;
-				return job;
-			}
-		}
-	}
-	return nullptr;
+	return true;
 }
 
 bool Grove::removeTile( const Position & pos )

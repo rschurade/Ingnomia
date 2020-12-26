@@ -105,8 +105,6 @@ public:
 	bool removeUtilFromPasture( Position pos, unsigned int itemID );
 	unsigned int util( Position pos );
 
-	bool hasPlantTreeJob( Position pos );
-
 	bool isBeehive( Position pos );
 	Beehive* getBeehiveAtPos( Position pos );
 	Beehive* getBeehive( unsigned int id );

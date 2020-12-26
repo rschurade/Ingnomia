@@ -222,7 +222,7 @@ void Farm::onTick( quint64 tick )
 				}
 				if ( tile.flags & TileFlag::TF_TILLED )
 				{
-					auto item      = g->inv()->getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
+					auto item = g->inv()->getClosestItem( m_fields.first()->pos, true, m_properties.seedItem, m_properties.plantType );
 					if ( item == 0 )
 					{
 						continue;
