@@ -361,7 +361,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 					for ( auto gnome : g->gm()->gnomes() )
 					{
-						GuiTICreatureInfo gci { gnome->name(), gnome->id() };
+						GuiTICreatureInfo gci { gnome->name(), gnome->id(), gnome->type(), false, "" };
 						if ( gnome->ownedRoom() )
 						{
 							if ( gnome->ownedRoom() == ro->id() )

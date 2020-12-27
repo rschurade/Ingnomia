@@ -12,9 +12,11 @@ All notable changes to this project will be documented in this file.
 - stairs made from stone blocks
 - fisher gui
 - controls for mechanisms
+- controls for automatons
 
 ### Changed
 - restructured the tile info window
+- moved all job handling other than hauling jobs to central job manager instance
 
 ### Removed
 
