@@ -48,6 +48,8 @@ private:
 
 	QHash<QString, QStringList> m_jobIDs;
 
+	QSet<QString> m_workshopSkills;
+
 	int m_startIndex;
 
 	bool workPositionWalkable( unsigned int jobID );
@@ -96,6 +98,7 @@ public:
 	}
 
 	void cancelJob( const Position& pos );
+	void deleteJob( unsigned int jobID );
 	void raisePrio( Position& pos );
 	void lowerPrio( Position& pos );
 };

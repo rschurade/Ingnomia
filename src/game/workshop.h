@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 #include "../game/worldobject.h"
+#include "../game/job.h"
 
 #include <QMap>
 #include <QVariantMap>
@@ -37,14 +38,14 @@ struct InputItem
 {
 	QString itemSID;
 	QString materialSID;
-	int amount;
-	bool requireSame;
+	int amount = 0;
+	bool requireSame = false;
+	int avail = 0;
 };
 
 struct CraftJob
 {
 	unsigned int id    = 0; // unique id for this craft job
-	unsigned int jobID = 0; // if the job is
 
 	QString craftID;       // craft definition in DB table Crafts
 	QString itemSID;       // the item to craft
@@ -150,7 +151,7 @@ public:
 
 	bool setJobParams( unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );
 
-	QSharedPointer<Job> createJobFromCraftJob( CraftJob& cj );
+	bool createJobFromCraftJob( CraftJob& cj );
 	QSharedPointer<Job> createButcherJob();
 	QSharedPointer<Job> createDyeSheepJob();
 	QSharedPointer<Job> createFisherJob();
@@ -264,11 +265,7 @@ public:
 
 private:
 	//only access through workshop manager
-	bool finishJob( unsigned int jobID );
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
+	bool finishJob( unsigned int craftJobID );
 
 	WorkshopProperties m_properties;
 
@@ -276,12 +273,15 @@ private:
 	QList<CraftJob> m_jobList;
 	QList<CraftJob> m_autoCraftList;
 
-	QSharedPointer<Job> m_job        = nullptr;
-	QSharedPointer<Job> m_fishingJob = nullptr;
+	QWeakPointer<Job> m_job;
+	unsigned int m_currentCraftJobID = 0;
+	unsigned int m_currentJobID = 0; // only needed to retrieve the job pointer after load
+	
+	QWeakPointer<Job> m_fishingJob;
 
 	QVariantList m_spriteComposition;
 
-	bool checkItemsAvailable( QSharedPointer<Job> job );
+	bool checkItemsAvailable( CraftJob& cj );
 
 	QList<QPair<unsigned int, QString>> m_toDye;
 };

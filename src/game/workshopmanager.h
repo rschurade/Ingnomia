@@ -43,13 +43,6 @@ public:
 	Workshop* workshopAt( const Position& pos );
 	Workshop* workshop( unsigned int ID );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned jobID );
-
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
-
 	QList<Workshop*>& workshops()
 	{
 		return m_workshops;
@@ -76,6 +69,8 @@ public:
 	QList<Workshop*> getTrainingGrounds();
 
 	bool craftJobExists( const QString& itemSID, const QString& materialSID );
+
+	void emitJobListChanged( unsigned int workshopID );
 
 private:
 	QPointer<Game> g;

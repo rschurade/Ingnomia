@@ -88,6 +88,7 @@ private:
 	QString m_craftID;
 	QVariantMap m_craft;
 	QString m_conversionMaterial;
+	unsigned int m_craftJobID = 0;
 
 	unsigned int m_stockpile = 0;
 	unsigned int m_animal    = 0;
@@ -213,6 +214,9 @@ public:
 
 	void setCraftID( QString craftID );
 	QString craftID() const;
+
+	void setCraftJobID( unsigned int craftJobID );
+	unsigned int craftJobID() const;
 
 	void raisePrio();
 	void lowerPrio();

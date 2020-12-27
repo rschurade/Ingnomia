@@ -103,6 +103,12 @@ JobManager::JobManager( Game* parent ) :
 		}
 		m_jobIDs.insert( skillID, jobs );
 	}
+
+	auto skillList = DB::execQuery2( "SELECT DISTINCT \"SkillID\" FROM Crafts" );
+	for( auto skill : skillList )
+	{
+		m_workshopSkills.insert( skill.toString() );
+	}
 }
 
 JobManager::~JobManager()
@@ -327,18 +333,9 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	m_jobList.insert( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
-#if 0
-	if ( isReachable( job.id(), 0 ) )
-	{
-		m_jobsPerType[type].push_back( job.id() );
-	}
-	else
-	{
-		m_returnedJobQueue.enqueue( job.id() );
-	}
-#else
+
 	m_returnedJobQueue.enqueue( job->id() );
-#endif
+
 	if ( !noJobSprite )
 	{
 		setJobSprites( job->id(), false, false );
@@ -508,13 +505,12 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		}
 		QElapsedTimer et;
 		et.start();
-		jobID = g->wsm()->getJob( gnomeID, skillID );
-		if ( jobID )
-		{
-			return jobID;
-		}
 
-		auto possibleJobIDs   = m_jobIDs.value( skillID ); //  DB::select2( "ID", "Jobs", "SkillID", skillID );
+		auto possibleJobIDs = m_jobIDs.value( skillID ); //  DB::select2( "ID", "Jobs", "SkillID", skillID );
+		if( m_workshopSkills.contains( skillID ) )
+		{
+			possibleJobIDs.push_front( "CraftAtWorkshop" );
+		}
 		unsigned int regionID = g->w()->regionMap().regionID( gnomePos );
 		for ( int prio = 9; prio >= 0; --prio )
 		{
@@ -562,6 +558,11 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 						int dist = 0;
 						for ( int i = 0; i < jobs.size(); ++i )
 						{
+							if( jobID == "CraftAtWorkshop" && m_jobList[jobs[i]]->requiredSkill() != skillID )
+							{
+								continue;
+							}
+
 							dist = m_jobList[jobs[i]]->distanceSquare( gnomePos, 10 );
 
 							if ( dist == 1 )
@@ -631,10 +632,6 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	if ( g->spm()->hasJobID( jobID ) )
 	{
 		return g->spm()->getJob( jobID );
-	}
-	if ( g->wsm()->hasJobID( jobID ) )
-	{
-		return g->wsm()->getJob( jobID );
 	}
 	if ( g->gm()->hasJobID( jobID ) )
 	{
@@ -731,10 +728,11 @@ void JobManager::finishJob( unsigned int jobID )
 	{
 		QSharedPointer<Job> job = m_jobList[jobID];
 
-		//qDebug() << "finishJob " << job.id() << job.type();
 		QString type = job->type();
-
-		setJobSprites( jobID, false, true );
+		if( !job->noJobSprite() )
+		{
+			setJobSprites( jobID, false, true );
+		}
 
 		std::vector<Position> neighs;
 		Position pos = job->pos();
@@ -766,10 +764,6 @@ void JobManager::finishJob( unsigned int jobID )
 			mtype.remove( job->priority(), jobID );
 		}
 		m_jobList.remove( jobID );
-	}
-	if ( g->wsm()->finishJob( jobID ) )
-	{
-		return;
 	}
 
 	if ( g->spm()->finishJob( jobID ) )
@@ -986,10 +980,6 @@ void JobManager::giveBackJob( unsigned int jobID )
 		m_returnedJobQueue.enqueue( jobID );
 		return;
 	}
-	if ( g->wsm()->giveBackJob( jobID ) )
-	{
-		return;
-	}
 
 	if ( g->spm()->giveBackJob( jobID ) )
 	{
@@ -1015,6 +1005,36 @@ void JobManager::cancelJob( const Position& pos )
 		jobID = g->w()->jobSprite( pos ).value( "JobID" ).toUInt();
 	}
 
+	if ( jobID != 0 && m_jobList.contains( jobID ) )
+	{
+		if ( m_jobList[jobID]->isWorked() )
+		{
+			m_jobList[jobID]->setCanceled();
+		}
+		else
+		{
+			QSharedPointer<Job> job = m_jobList[jobID];
+
+			if ( job->type() == "SoundAlarm" )
+			{
+				GameState::alarm       = 0;
+				GameState::alarmRoomID = 0;
+			}
+
+			setJobSprites( jobID, false, true );
+
+			removeFromPositionHash( jobID );
+			for ( auto& type : m_jobsPerType )
+			{
+				type.remove( job->priority(), jobID );
+			}
+			m_jobList.remove( jobID );
+		}
+	}
+}
+
+void JobManager::deleteJob( unsigned int jobID )
+{
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
 	{
 		if ( m_jobList[jobID]->isWorked() )

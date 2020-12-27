@@ -66,6 +66,10 @@ public:
 	unsigned int getItemAtPos( const Position& pos, bool allowInStockpile, QString itemID, QString materialID = "any" );
 
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QList<QPair<QString, QString>> filter, int count );
+
+	/**
+	* get closest items with connected region check
+	*/
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count );
 	bool checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID = "any" );
 	QList<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, QSet<QPair<QString, QString>> filter );

@@ -76,6 +76,7 @@ Job::Job( QVariantMap in )
 	m_item               = in.value( "Item" ).toString();
 	m_material           = in.value( "Material" ).toString();
 	m_craftID            = in.value( "CraftID" ).toString();
+	m_craftJobID            = in.value( "CraftJobID" ).toUInt();
 	m_craft              = in.value( "CraftMap" ).toMap();
 	m_conversionMaterial = in.value( "ConversionMaterial" ).toString();
 
@@ -136,6 +137,7 @@ QVariant Job::serialize() const
 	out.insert( "Item", m_item );
 	out.insert( "Material", m_material );
 	out.insert( "CraftID", m_craftID );
+	out.insert( "CraftJobID", m_craftJobID );
 	out.insert( "CraftMap", m_craft );
 	out.insert( "ConversionMaterial", m_conversionMaterial );
 
@@ -555,6 +557,16 @@ void Job::setCraftID( QString craftID )
 QString Job::craftID() const
 {
 	return m_craftID;
+}
+
+void Job::setCraftJobID( unsigned int craftJobID )
+{
+	m_craftJobID = craftJobID;
+}
+	
+unsigned int Job::craftJobID() const
+{
+	return m_craftJobID;
 }
 
 void Job::setDestroyOnAbort( bool value )

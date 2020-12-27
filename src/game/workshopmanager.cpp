@@ -120,84 +120,6 @@ Workshop* WorkshopManager::workshop( unsigned int ID )
 	return 0;
 }
 
-unsigned int WorkshopManager::getJob( unsigned int gnomeID, QString skillID )
-{
-	//first check if that gnome is assigned to a workshop
-	for ( auto& w : m_workshops )
-	{
-		if ( w->assignedGnome() == gnomeID )
-		{
-			unsigned int jobID = w->getJob( gnomeID, skillID );
-			if ( jobID != 0 )
-			{
-				return jobID;
-			}
-		}
-	}
-	// now check all other workshops
-	for ( auto& w : m_workshops )
-	{
-		if ( w->assignedGnome() == 0 )
-		{
-			unsigned int jobID = w->getJob( gnomeID, skillID );
-			if ( jobID != 0 )
-			{
-				return jobID;
-			}
-		}
-	}
-	return 0;
-}
-
-bool WorkshopManager::finishJob( unsigned int jobID )
-{
-	for ( auto& w : m_workshops )
-	{
-		if ( w->finishJob( jobID ) )
-		{
-			emit signalJobListChanged( w->id() );
-			return true;
-		}
-	}
-	return false;
-}
-
-bool WorkshopManager::giveBackJob( unsigned int jobID )
-{
-	for ( auto& w : m_workshops )
-	{
-		if ( w->giveBackJob( jobID ) )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-QSharedPointer<Job> WorkshopManager::getJob( unsigned int jobID )
-{
-	for ( const auto& w : m_workshops )
-	{
-		if ( w->hasJobID( jobID ) )
-		{
-			return w->getJob( jobID );
-		}
-	}
-	return nullptr;
-}
-
-bool WorkshopManager::hasJobID( unsigned int jobID ) const
-{
-	for ( const auto& w : m_workshops )
-	{
-		if ( w->hasJobID( jobID ) )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 void WorkshopManager::deleteWorkshop( unsigned int workshopID )
 {
 	m_toDelete.push_back( workshopID );
@@ -279,4 +201,9 @@ QList<Workshop*> WorkshopManager::getTrainingGrounds()
 		}
 	}
 	return out;
+}
+
+void WorkshopManager::emitJobListChanged( unsigned int workshopID )
+{
+	emit signalJobListChanged( workshopID );
 }
