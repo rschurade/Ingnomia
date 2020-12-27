@@ -149,6 +149,9 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	QElapsedTimer timer;
 	timer.start();
 
+	//create possible automaton jobs;
+	createJobs();
+
 	if ( m_startIndex >= m_gnomes.size() )
 	{
 		m_startIndex = 0;
@@ -517,132 +520,76 @@ bool GnomeManager::gnomeCanReach( unsigned int gnomeID, Position pos )
 	return false;
 }
 
-unsigned int GnomeManager::getJob( unsigned int gnomeID, QString skillID )
+void GnomeManager::createJobs()
 {
-	if ( skillID == "Machining" )
+	for ( auto a : m_automatons )
 	{
-		for ( auto a : m_automatons )
+		if ( a->maintenanceJobID() == 0 )
 		{
-			if ( a->maintenanceJobID() == 0 )
+			// has core
+			if ( a->coreItem() )
 			{
-				// has core
-				if ( a->coreItem() )
+				// remove core
+				if ( a->uninstallFlag() )
 				{
-					// remove core
-					if ( a->uninstallFlag() )
-					{
-						if ( gnomeCanReach( gnomeID, a->getPos() ) )
-						{
-							QSharedPointer<Job> job = getUninstallJob( a );
-							m_jobs.insert( job->id(), job );
-							return job->id();
-						}
-					}
-					else if ( a->getRefuelFlag() && a->getFuelLevel() <= 0 )
-					{
-						if ( gnomeCanReach( gnomeID, a->getPos() ) )
-						{
-							QSharedPointer<Job> job = getRefuelJob( a );
-							m_jobs.insert( job->id(), job );
-							return job->id();
-						}
-					}
+					getUninstallJob( a );
 				}
-				else
+				else if ( a->getRefuelFlag() && a->getFuelLevel() <= 0 )
 				{
-					// no core but core type is set, install core
-					if ( !a->coreType().isEmpty() )
-					{
-						if ( gnomeCanReach( gnomeID, a->getPos() ) )
-						{
-							QSharedPointer<Job> job = getInstallJob( a );
-							m_jobs.insert( job->id(), job );
-							return job->id();
-						}
-					}
+					getRefuelJob( a );
+				}
+			}
+			else
+			{
+				// no core but core type is set, install core
+				if ( !a->coreType().isEmpty() )
+				{
+					getInstallJob( a );
 				}
 			}
 		}
 	}
-	return 0;
 }
 
-QSharedPointer<Job> GnomeManager::getRefuelJob( Automaton* a )
+void GnomeManager::getRefuelJob( Automaton* a )
 {
-	QSharedPointer<Job> job( new Job() );
-	job->setType( "Refuel" );
-	job->setAutomaton( a->id() );
-	job->setRequiredSkill( "Machining" );
-	job->addPossibleWorkPosition( a->getPos() );
-	job->addRequiredItem( 1, "RawCoal", "any", {} );
-	a->setMaintenanceJobID( job->id() );
-
-	return job;
-}
-
-QSharedPointer<Job> GnomeManager::getInstallJob( Automaton* a )
-{
-	QSharedPointer<Job> job( new Job() );
-	job->setType( "Install" );
-	job->setAutomaton( a->id() );
-	job->setRequiredSkill( "Machining" );
-	job->addPossibleWorkPosition( a->getPos() );
-	job->addRequiredItem( 1, a->coreType(), "any", {} );
-	a->setMaintenanceJobID( job->id() );
-
-	return job;
-}
-
-QSharedPointer<Job> GnomeManager::getUninstallJob( Automaton* a )
-{
-	QSharedPointer<Job> job( new Job() );
-	job->setType( "Uninstall" );
-	job->setAutomaton( a->id() );
-	job->setRequiredSkill( "Machining" );
-	job->addPossibleWorkPosition( a->getPos() );
-	a->setMaintenanceJobID( job->id() );
-
-	return job;
-}
-
-bool GnomeManager::finishJob( unsigned int jobID )
-{
-	if ( m_jobs.contains( jobID ) )
+	auto jobID = g->jm()->addJob( "Refuel", a->getPos(), 0, true );
+	auto job = g->jm()->getJob( jobID );
+	if( job )
 	{
-		QSharedPointer<Job> job = m_jobs[jobID];
-
-		auto automatonID = job->automaton();
-
-		if ( m_gnomesByID.contains( automatonID ) )
-		{
-			auto a = dynamic_cast<Automaton*>( m_gnomesByID[automatonID] );
-			a->setMaintenanceJobID( 0 );
-		}
-
-		m_jobs.remove( jobID );
-
-		return true;
+		job->setAutomaton( a->id() );
+		job->setRequiredSkill( "Machining" );
+		job->addPossibleWorkPosition( a->getPos() );
+		job->addRequiredItem( 1, "RawCoal", "any", {} );
+		a->setMaintenanceJobID( job->id() );
 	}
-	return false;
 }
 
-bool GnomeManager::giveBackJob( unsigned int jobID )
+void GnomeManager::getInstallJob( Automaton* a )
 {
-	return finishJob( jobID );
-}
-
-QSharedPointer<Job> GnomeManager::getJob( unsigned int jobID )
-{
-	if ( m_jobs.contains( jobID ) )
+	auto jobID = g->jm()->addJob( "Install", a->getPos(), 0, true );
+	auto job = g->jm()->getJob( jobID );
+	if( job )
 	{
-		return m_jobs[jobID];
+		job->setAutomaton( a->id() );
+		job->setRequiredSkill( "Machining" );
+		job->addPossibleWorkPosition( a->getPos() );
+		job->addRequiredItem( 1, a->coreType(), "any", {} );
+		a->setMaintenanceJobID( job->id() );
 	}
-	return nullptr;
 }
 
-bool GnomeManager::hasJobID( unsigned int jobID ) const
+void GnomeManager::getUninstallJob( Automaton* a )
 {
-	return m_jobs.contains( jobID );
+	auto jobID = g->jm()->addJob( "Uninstall", a->getPos(), 0, true );
+	auto job = g->jm()->getJob( jobID );
+	if( job )
+	{
+		job->setAutomaton( a->id() );
+		job->setRequiredSkill( "Machining" );
+		job->addPossibleWorkPosition( a->getPos() );
+		a->setMaintenanceJobID( job->id() );
+	}
 }
 
 void GnomeManager::setInMission( unsigned int gnomeID, unsigned int missionID )

@@ -493,15 +493,6 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 				}
 			}
 			break;
-			case SK_Machining:
-			{
-				jobID = g->gm()->getJob( gnomeID, skillID );
-				if ( jobID )
-				{
-					return jobID;
-				}
-			}
-			break;
 		}
 		QElapsedTimer et;
 		et.start();
@@ -632,10 +623,6 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	if ( g->spm()->hasJobID( jobID ) )
 	{
 		return g->spm()->getJob( jobID );
-	}
-	if ( g->gm()->hasJobID( jobID ) )
-	{
-		return g->gm()->getJob( jobID );
 	}
 	return nullptr;
 }
@@ -771,10 +758,6 @@ void JobManager::finishJob( unsigned int jobID )
 		return;
 	}
 
-	if ( g->gm()->finishJob( jobID ) )
-	{
-		return;
-	}
 }
 
 void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
@@ -985,12 +968,6 @@ void JobManager::giveBackJob( unsigned int jobID )
 	{
 		return;
 	}
-
-	if ( g->gm()->giveBackJob( jobID ) )
-	{
-		return;
-	}
-
 }
 
 void JobManager::cancelJob( const Position& pos )

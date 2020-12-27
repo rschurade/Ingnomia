@@ -47,8 +47,6 @@ private:
 
 	int m_startIndex = 0;
 
-	QHash<unsigned int, QSharedPointer<Job>> m_jobs;
-
 public:
 	GnomeManager( Game* parent );
 	~GnomeManager();
@@ -103,12 +101,7 @@ public:
 
 	bool gnomeCanReach( unsigned int gnomeID, Position pos );
 
-	unsigned int getJob( unsigned int gnomeID, QString skillID );
-
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
+	void createJobs();
 
 	void setInMission( unsigned int gnomeID, unsigned int missionID );
 
@@ -118,9 +111,9 @@ public:
 	void setRoleID( unsigned int gnomeID, unsigned int roleID );
 
 private:
-	QSharedPointer<Job> getRefuelJob( Automaton* a );
-	QSharedPointer<Job> getInstallJob( Automaton* a );
-	QSharedPointer<Job> getUninstallJob( Automaton* a );
+	void getRefuelJob( Automaton* a );
+	void getInstallJob( Automaton* a );
+	void getUninstallJob( Automaton* a );
 
 signals:
 	void signalGnomeActivity( unsigned int id, QString skillID );
