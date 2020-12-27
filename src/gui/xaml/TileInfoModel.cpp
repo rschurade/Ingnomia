@@ -227,6 +227,10 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 			m_roomValue	   = QString::number( tileInfo.roomValue ).toStdString().c_str();
 		}
 	}
+	else
+	{
+		_mode = TileInfoMode::Terrain;
+	}
 
 	m_hasJob = ( flags & ( TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL + TileFlag::TF_JOB_BUSY_FLOOR ) );
 	
