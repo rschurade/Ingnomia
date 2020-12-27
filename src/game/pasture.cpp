@@ -495,14 +495,19 @@ void Pasture::addAnimal( unsigned int animalID )
 bool Pasture::removeTile( const Position & pos )
 {
 	PastureField* ff = m_fields.value( pos.toInt() );
-
 	m_fields.remove( pos.toInt() );
+	delete ff;
 
 	g->w()->clearTileFlag( pos, TileFlag::TF_PASTURE );
 
+
 	if ( m_fields.size() )
 	{
-		m_properties.firstPos = m_fields[0]->pos;
+		for ( auto field : m_fields )
+		{
+			m_properties.firstPos = field->pos;
+			break;
+		}
 	}
 	else
 	{
