@@ -299,7 +299,10 @@ void JobManager::addLoadedJob( QVariant vals )
 		m_returnedJobQueue.enqueue( job->id() );
 	}
 
-	setJobSprites( job->id(), job->isWorked(), false );
+	if( !job->noJobSprite() )
+	{
+		setJobSprites( job->id(), job->isWorked(), false );
+	}
 }
 
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
