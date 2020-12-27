@@ -131,7 +131,7 @@ void JobManager::onTick()
 	{
 		jobID = m_returnedJobQueue.dequeue();
 		--queueSize;
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 
 		if( job )
 		{
@@ -166,7 +166,7 @@ void JobManager::onTick()
 // information without querying the game state
 bool JobManager::requiredItemsAvail( unsigned int jobID )
 {
-	QSharedPointer<Job> job       = m_jobList[jobID];
+	QSharedPointer<Job> job       = m_jobList.value( jobID );
 	bool found_all = true;
 	for ( auto rim : job->requiredItems() )
 	{
@@ -200,7 +200,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList[jobID];
+		QSharedPointer<Job> job     = m_jobList.value( jobID );
 		Position pos = job->pos();
 
 		job->clearPossibleWorkPositions();
@@ -222,7 +222,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 
 bool JobManager::requiredToolExists( unsigned int jobID )
 {
-	QSharedPointer<Job> job = m_jobList[jobID];
+	QSharedPointer<Job> job = m_jobList.value( jobID );
 	auto rt  = job->requiredTool();
 
 	// need to figure out how to check rt 'inuse' & 'reachable'
@@ -260,7 +260,7 @@ bool JobManager::insertIntoPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 		if ( m_jobPositions.contains( job->pos() ) )
 		{
 			return false;
@@ -277,7 +277,7 @@ void JobManager::removeFromPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 		if ( m_jobPositions.contains( job->pos() ) )
 		{
 			m_jobPositions.remove( job->pos() );
@@ -450,7 +450,7 @@ void JobManager::setJobAvailable( unsigned int jobID )
 	setJobSprites( jobID, false, false );
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 		job->setIsWorked( false );
 	}
 }
@@ -459,7 +459,7 @@ void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 
 		if ( !job->noJobSprite() )
 		{
@@ -618,7 +618,7 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		return m_jobList[jobID];
+		return m_jobList.value( jobID );
 	}
 	if ( g->spm()->hasJobID( jobID ) )
 	{
@@ -632,7 +632,7 @@ QSharedPointer<Job> JobManager::getJobAtPos( Position pos )
 	if ( m_jobPositions.contains( pos ) )
 	{
 		unsigned jobID = m_jobPositions.value( pos );
-		return m_jobList[jobID];
+		return m_jobList.value( jobID );
 	}
 
 	return nullptr;
@@ -642,7 +642,7 @@ bool JobManager::isEnclosedBySameType( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList[jobID];
+		QSharedPointer<Job> job     = m_jobList.value( jobID );
 		Position pos = job->pos();
 		QString type = job->type();
 		if ( m_jobPositions.contains( pos.northOf() ) )
@@ -678,7 +678,7 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList[jobID];
+		QSharedPointer<Job> job     = m_jobList.value( jobID );
 		Position pos = job->pos();
 		job->clearPossibleWorkPositions();
 		// jobs on same tile
@@ -713,7 +713,7 @@ void JobManager::finishJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 
 		QString type = job->type();
 		if( !job->noJobSprite() )
@@ -764,7 +764,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList[jobID];
+		QSharedPointer<Job> job     = m_jobList.value( jobID );
 		QString type = job->type();
 		int rotation = job->rotation();
 		QList<QPair<Sprite*, Position>> sprites;
@@ -940,7 +940,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 
 		if ( job->isCanceled() || job->destroyOnAbort() )
 		{
@@ -984,13 +984,13 @@ void JobManager::cancelJob( const Position& pos )
 
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
 	{
-		if ( m_jobList[jobID]->isWorked() )
+		if ( m_jobList.value( jobID )->isWorked() )
 		{
-			m_jobList[jobID]->setCanceled();
+			m_jobList.value( jobID )->setCanceled();
 		}
 		else
 		{
-			QSharedPointer<Job> job = m_jobList[jobID];
+			QSharedPointer<Job> job = m_jobList.value( jobID );
 
 			if ( job->type() == "SoundAlarm" )
 			{
@@ -1014,13 +1014,13 @@ void JobManager::deleteJob( unsigned int jobID )
 {
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
 	{
-		if ( m_jobList[jobID]->isWorked() )
+		if ( m_jobList.value( jobID )->isWorked() )
 		{
-			m_jobList[jobID]->setCanceled();
+			m_jobList.value( jobID )->setCanceled();
 		}
 		else
 		{
-			QSharedPointer<Job> job = m_jobList[jobID];
+			QSharedPointer<Job> job = m_jobList.value( jobID );
 
 			if ( job->type() == "SoundAlarm" )
 			{
@@ -1062,7 +1062,7 @@ void JobManager::raisePrio( Position& pos )
 
 	if ( jobID != 0 )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 		if ( job->priority() < 9 )
 		{
 			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )
@@ -1090,7 +1090,7 @@ void JobManager::lowerPrio( Position& pos )
 
 	if ( jobID != 0 )
 	{
-		QSharedPointer<Job> job = m_jobList[jobID];
+		QSharedPointer<Job> job = m_jobList.value( jobID );
 		if ( job->priority() > 0 )
 		{
 			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )
