@@ -393,6 +393,20 @@
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TileInfo}}, Path=DataContext.CmdTerrain }"  CommandParameter="{Binding Action2Text}" />
 		</StackPanel>
 	</DataTemplate>
+	
+	<DataTemplate x:Key="AvailableMaterialTemplate">
+		<!--TODO Isn't working nicely with the currently selected item of a ComboBox yet-->
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" />
+			<TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="8,0,0,0">
+				(<Run Text="{Binding Amount}"/>)
+			</TextBlock>
+		</Grid>
+	</DataTemplate>
 
 	<DataTemplate x:Key="TITabCreaturesTemplate">
 		<Grid>
@@ -410,20 +424,21 @@
 		</Button>
 		</Grid>
 	</DataTemplate>
-
-	<DataTemplate x:Key="AvailableMaterialTemplate">
-		<!--TODO Isn't working nicely with the currently selected item of a ComboBox yet-->
+	
+	<DataTemplate x:Key="TITabAutomatonTemplate">
 		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
-			<TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" />
-			<TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="8,0,0,0">
-				(<Run Text="{Binding Amount}"/>)
-			</TextBlock>
+			<StackPanel>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="20" Margin="2" Grid.Column="0" />
+				<CheckBox Content="Refuel" IsChecked="{Binding Refuel}" HorizontalAlignment="Left" Width="150" Margin="2" FontSize="16"/>
+				<ComboBox Grid.Column="1" VerticalAlignment="Center" Margin="2" HorizontalAlignment="Stretch"
+								ItemsSource="{Binding Cores}"
+								SelectedItem="{Binding SelectedCore, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate16}" />
+			</StackPanel>
 		</Grid>
 	</DataTemplate>
+
+
 
 	<DataTemplate x:Key="RequiredItemTemplate">
 		<Grid Margin="0,0,0,4">

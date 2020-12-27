@@ -43,6 +43,9 @@ ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 
 	connect( this, &ProxyTileInfo::signalToggleMechActive, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechActive, Qt::QueuedConnection );
 	connect( this, &ProxyTileInfo::signalToggleMechInvert, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechInvert, Qt::QueuedConnection );
+
+	connect( this, &ProxyTileInfo::signalSetAutomatonRefuel, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAutomatonRefuel, Qt::QueuedConnection );
+	connect( this, &ProxyTileInfo::signalSetAutomatonCore, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAutomatonCore, Qt::QueuedConnection );
 }
 
 ProxyTileInfo::~ProxyTileInfo()
@@ -103,4 +106,15 @@ void ProxyTileInfo::toggleMechActive( unsigned int id )
 void ProxyTileInfo::toggleMechInvert( unsigned int id )
 {
 	emit signalToggleMechInvert( id );
+}
+
+void ProxyTileInfo::setAutomatonRefuel( unsigned int id, bool refuel )
+{
+
+	emit signalSetAutomatonRefuel( id, refuel );
+}
+	
+void ProxyTileInfo::setAutomatonCore( unsigned int id, QString core )
+{
+	emit signalSetAutomatonCore( id, core );
 }

@@ -46,13 +46,13 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class TabItem final : public NoesisApp::NotifyPropertyChangedBase
+class TITabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
-	TabItem( QString name, QString sid );
+	TITabItem( QString name, QString sid );
 
-	const char* GetName() const;
-	const char* GetID() const;
+	const char* GetName() const { return m_name.Str(); }
+	const char* GetID() const { return m_sid.Str(); }
 	bool GetChecked() const;
 	void SetChecked( bool )
 	{
@@ -61,11 +61,11 @@ public:
 	void setActive( bool active );
 
 private:
-	Noesis::String _name;
-	Noesis::String _sid;
+	Noesis::String m_name;
+	Noesis::String m_sid;
 	bool _active = false;
 
-	NS_DECLARE_REFLECTION( TabItem, NoesisApp::NotifyPropertyChangedBase )
+	NS_DECLARE_REFLECTION( TITabItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ class TerrainTabItem final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	TerrainTabItem( QString name, QString sid, QString action1 = "", QString action2 = "" );
 
-	const char* GetName() const;
-	const char* GetID() const;
+	const char* GetName() const { return m_name.Str(); }
+	const char* GetID() const { return m_sid.Str(); }
 	const char* GetAction1() const
 	{
 		return _action1.Str();
@@ -94,8 +94,8 @@ public:
 	}
 
 private:
-	Noesis::String _name;
-	Noesis::String _sid;
+	Noesis::String m_name;
+	Noesis::String m_sid;
 	Noesis::String _action1;
 	Noesis::String _action2;
 	bool _hasAction1;
@@ -110,12 +110,13 @@ class ItemTabItem final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	ItemTabItem( QString name, unsigned int id );
 
-	const char* GetName() const;
-	unsigned int GetID() const;
+	const char* GetName() const { return m_name.Str(); }
+	const char* GetID() const { return m_sid.Str(); }
 
 private:
-	Noesis::String _name;
-	unsigned int _id;
+	Noesis::String m_name;
+	unsigned int m_id;
+	Noesis::String m_sid;
 
 	NS_DECLARE_REFLECTION( ItemTabItem, NoesisApp::NotifyPropertyChangedBase )
 };
@@ -126,8 +127,8 @@ class CreatureTabItem final : public NoesisApp::NotifyPropertyChangedBase
 public:
 	CreatureTabItem( QString name, unsigned int id );
 
-	const char* GetName() const;
-	const char* GetID() const;
+	const char* GetName() const { return m_name.Str(); }
+	const char* GetID() const { return m_sid.Str(); }
 
 	unsigned int uid()
 	{
@@ -140,6 +141,40 @@ private:
 	Noesis::String m_sid;
 
 	NS_DECLARE_REFLECTION( CreatureTabItem, NoesisApp::NotifyPropertyChangedBase )
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class AutomatonTabItem final : public NoesisApp::NotifyPropertyChangedBase
+{
+public:
+	AutomatonTabItem( QString name, unsigned int id, bool refuel, QString coreItem, ProxyTileInfo* proxy );
+
+	const char* GetName() const { return m_name.Str(); }
+	const char* GetID() const { return m_sid.Str(); }
+	unsigned int uid() { return m_id; }
+
+	Noesis::ObservableCollection<TITabItem>* getCoreItems() const;
+
+	void setSelectedCore( TITabItem* mat );
+	TITabItem* getSelectedCore() const;
+
+	bool getRefuel() const;
+	void setRefuel( bool value );
+
+private:
+	ProxyTileInfo* m_proxy = nullptr;
+
+	Noesis::String m_name;
+	unsigned int m_id = 0;
+	Noesis::String m_sid;
+	bool m_refuel = false;
+	TITabItem* m_selectedCoreItem = nullptr;
+
+	Noesis::Ptr<Noesis::ObservableCollection<TITabItem>> m_coreItems;
+
+	
+
+	NS_DECLARE_REFLECTION( AutomatonTabItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,16 +202,18 @@ public:
 private:
 	const char* getTileID() const;
 
-	Noesis::ObservableCollection<TabItem>* getTabItems() const;
+	Noesis::ObservableCollection<TITabItem>* getTabItems() const;
 	Noesis::ObservableCollection<TerrainTabItem>* getTerrainTabItems() const;
 	Noesis::ObservableCollection<ItemTabItem>* getItemTabItems() const;
 	Noesis::ObservableCollection<CreatureTabItem>* getCreatureTabItems() const;
-	Noesis::ObservableCollection<TabItem>* getMiniSPContents() const;
+	Noesis::ObservableCollection<AutomatonTabItem>* getAutomatonTabItems() const;
+	Noesis::ObservableCollection<TITabItem>* getMiniSPContents() const;
 	Noesis::ObservableCollection<CreatureTabItem>* getPossibleTennants() const;
 
 	const char* GetShowTerrain() const;
 	const char* GetShowItems() const;
 	const char* GetShowCreatures() const;
+	const char* GetShowAutomatons() const;
 	const char* GetShowDesignation() const;
 	const char* GetShowDesignationSimple() const;
 	const char* GetShowDesignationRoom() const;
@@ -288,17 +325,18 @@ private:
 
 	struct
 	{
-		Noesis::Ptr<TabItem> tt;
-		Noesis::Ptr<TabItem> tc;
-		Noesis::Ptr<TabItem> ti;
-		Noesis::Ptr<TabItem> td;
-		Noesis::Ptr<TabItem> tj;
+		Noesis::Ptr<TITabItem> tt;
+		Noesis::Ptr<TITabItem> tc;
+		Noesis::Ptr<TITabItem> ti;
+		Noesis::Ptr<TITabItem> td;
+		Noesis::Ptr<TITabItem> tj;
 	} _tabItemElements;
 
-	Noesis::Ptr<Noesis::ObservableCollection<TabItem>> _tabItems; //left item bar depending on what is present on tile
+	Noesis::Ptr<Noesis::ObservableCollection<TITabItem>> _tabItems; //left item bar depending on what is present on tile
 	Noesis::Ptr<Noesis::ObservableCollection<TerrainTabItem>> _terrainTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<ItemTabItem>> _itemTabItems;
 	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _creatureTabItems;
+	Noesis::Ptr<Noesis::ObservableCollection<AutomatonTabItem>> _automatonTabItems;
 
 	Noesis::Ptr<Noesis::ObservableCollection<CreatureTabItem>> _possibleTennants;
 	void SetTennant( CreatureTabItem* tennant );
@@ -306,7 +344,7 @@ private:
 	CreatureTabItem* m_tennant = nullptr;
 
 	Noesis::String m_miniStockpileName;
-	Noesis::Ptr<Noesis::ObservableCollection<TabItem>> _miniSPContents;
+	Noesis::Ptr<Noesis::ObservableCollection<TITabItem>> _miniSPContents;
 	const char* GetMiniSPName() const
 	{
 		return m_miniStockpileName.Str();

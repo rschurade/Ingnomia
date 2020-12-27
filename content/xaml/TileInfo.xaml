@@ -108,6 +108,18 @@
 									</ItemsControl>
 								</ScrollViewer>
 							</Border>
+							<Border Style="{StaticResource PanelTileInfo}" Visibility="{Binding ShowAutomatons}">
+								<ScrollViewer VerticalScrollBarVisibility="Auto">
+									<ItemsControl ItemsSource="{Binding AutomatonTab}" ItemTemplate="{StaticResource TITabAutomatonTemplate}">
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel />
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+									</ItemsControl>
+								</ScrollViewer>
+							</Border>
+							
 							<Border Style="{StaticResource PanelTileInfo}" Visibility="{Binding ShowMiniStockPile}">
 								<Grid>
 									<StackPanel>

@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../game/gnome.h"
+#include "../game/job.h"
 
 class GnomeManager;
 
@@ -53,7 +54,7 @@ public:
 	void uninstallCore( bool uninstall );
 	bool uninstallFlag();
 
-	void setMaintenanceJobID( unsigned int id );
+	void setMaintenanceJob( QSharedPointer<Job> job );
 	unsigned int maintenanceJobID();
 
 	bool maintenanceJobChanged();
@@ -69,6 +70,6 @@ protected:
 	QString m_coreType;
 	bool m_uninstallCore = false;
 
-	unsigned int m_maintenaceJob = 0;
+	QWeakPointer<Job> m_maintenaceJob;
 	bool m_maintJobChanged       = false;
 };

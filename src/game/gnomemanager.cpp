@@ -561,7 +561,7 @@ void GnomeManager::getRefuelJob( Automaton* a )
 		job->setRequiredSkill( "Machining" );
 		job->addPossibleWorkPosition( a->getPos() );
 		job->addRequiredItem( 1, "RawCoal", "any", {} );
-		a->setMaintenanceJobID( job->id() );
+		a->setMaintenanceJob( job );
 	}
 }
 
@@ -575,7 +575,7 @@ void GnomeManager::getInstallJob( Automaton* a )
 		job->setRequiredSkill( "Machining" );
 		job->addPossibleWorkPosition( a->getPos() );
 		job->addRequiredItem( 1, a->coreType(), "any", {} );
-		a->setMaintenanceJobID( job->id() );
+		a->setMaintenanceJob( job );
 	}
 }
 
@@ -588,7 +588,7 @@ void GnomeManager::getUninstallJob( Automaton* a )
 		job->setAutomaton( a->id() );
 		job->setRequiredSkill( "Machining" );
 		job->addPossibleWorkPosition( a->getPos() );
-		a->setMaintenanceJobID( job->id() );
+		a->setMaintenanceJob( job );
 	}
 }
 

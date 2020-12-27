@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../base/tile.h"
+#include "../game/creature.h"
 #include "../game/roommanager.h"
 #include "../game/mechanismmanager.h"
 #include "aggregatorstockpile.h"
@@ -30,6 +31,9 @@ struct GuiTICreatureInfo
 {
 	QString text;
 	unsigned int id = 0;
+	CreatureType type;
+	bool refuel;
+	QString coreItem;
 };
 
 struct GuiItemInfo
@@ -120,6 +124,8 @@ public slots:
 	void onSetAlarm( unsigned int designationID, bool value );
 	void onToggleMechActive( unsigned int id );
 	void onToggleMechInvert( unsigned int id );
+	void onSetAutomatonRefuel( unsigned int id, bool refuel );
+	void onSetAutomatonCore( unsigned int id, QString core );
 
 signals:
 	void signalShowTileInfo( unsigned int id );

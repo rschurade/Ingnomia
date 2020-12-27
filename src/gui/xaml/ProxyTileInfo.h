@@ -43,6 +43,9 @@ public:
 	void toggleMechActive( unsigned int id );
 	void toggleMechInvert( unsigned int id );
 
+	void setAutomatonRefuel( unsigned int id, bool refuel );
+	void setAutomatonCore( unsigned int id, QString core );
+
 private:
 	IngnomiaGUI::TileInfoModel* m_parent = nullptr;
 
@@ -58,4 +61,7 @@ signals:
 	void signalSetAlarm( unsigned int designationID, bool value );
 	void signalToggleMechActive( unsigned int id );
 	void signalToggleMechInvert( unsigned int id );
+
+	void signalSetAutomatonRefuel( unsigned int id, bool refuel );
+	void signalSetAutomatonCore( unsigned int id, QString core );
 };

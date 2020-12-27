@@ -36,28 +36,18 @@ using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-IngnomiaGUI::TabItem::TabItem( QString name, QString sid )
+IngnomiaGUI::TITabItem::TITabItem( QString name, QString sid ) :
+	m_name( name.toStdString().c_str() ),
+	m_sid( sid.toStdString().c_str() )
 {
-	_name = name.toStdString().c_str();
-	_sid  = sid.toStdString().c_str();
 }
 
-const char* IngnomiaGUI::TabItem::GetName() const
-{
-	return _name.Str();
-}
-
-const char* IngnomiaGUI::TabItem::GetID() const
-{
-	return _sid.Str();
-}
-
-bool IngnomiaGUI::TabItem::GetChecked() const
+bool IngnomiaGUI::TITabItem::GetChecked() const
 {
 	return _active;
 }
 
-void IngnomiaGUI::TabItem::setActive( bool active )
+void IngnomiaGUI::TITabItem::setActive( bool active )
 {
 	if ( _active != active )
 	{
@@ -68,42 +58,24 @@ void IngnomiaGUI::TabItem::setActive( bool active )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-TerrainTabItem::TerrainTabItem( QString name, QString sid, QString action1, QString action2 )
+TerrainTabItem::TerrainTabItem( QString name, QString sid, QString action1, QString action2 ) :
+	m_name( name.toStdString().c_str() ),
+	m_sid( sid.toStdString().c_str() )
 {
-	_name       = name.toStdString().c_str();
-	_sid        = sid.toStdString().c_str();
 	_action1    = action1.toStdString().c_str();
 	_action2    = action2.toStdString().c_str();
 	_hasAction1 = !action1.isEmpty();
 	_hasAction2 = !action2.isEmpty();
 }
 
-const char* TerrainTabItem::GetName() const
-{
-	return _name.Str();
-}
-
-const char* TerrainTabItem::GetID() const
-{
-	return _sid.Str();
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ItemTabItem::ItemTabItem( QString name, unsigned int id )
+ItemTabItem::ItemTabItem( QString name, unsigned int id ) :
+	m_name( name.toStdString().c_str() ),
+	m_id( id ),
+	m_sid( QString::number( id ).toStdString().c_str() )
 {
-	_name = name.toStdString().c_str();
-	_id   = id;
-}
-
-const char* ItemTabItem::GetName() const
-{
-	return _name.Str();
-}
-
-unsigned int ItemTabItem::GetID() const
-{
-	return _id;
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,14 +87,65 @@ CreatureTabItem::CreatureTabItem( QString name, unsigned int id ) :
 {
 }
 
-const char* CreatureTabItem::GetName() const
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+AutomatonTabItem::AutomatonTabItem( QString name, unsigned int id, bool refuel, QString coreItem, ProxyTileInfo* proxy ) :
+	m_name( name.toStdString().c_str() ),
+	m_id( id ),
+	m_sid( QString::number( id ).toStdString().c_str() ),
+	m_refuel( refuel ),
+	m_proxy( proxy )
 {
-	return m_name.Str();
+	m_coreItems = *new ObservableCollection<TITabItem>();
+	m_coreItems->Add( MakePtr<TITabItem>( "None", "" ) );
+	m_coreItems->Add( MakePtr<TITabItem>( "Automaton Core MK1", "AutomatonCoreMark1" ) );
+	m_coreItems->Add( MakePtr<TITabItem>( "Automaton Core MK2", "AutomatonCoreMark2" ) );
+
+	if( coreItem == "AutomatonCoreMark1" )
+	{
+		m_selectedCoreItem = m_coreItems->Get( 1 );
+	}
+	else if( coreItem == "AutomatonCoreMark2" )
+	{
+		m_selectedCoreItem = m_coreItems->Get( 2 );
+	}
+	else
+	{
+		m_selectedCoreItem = m_coreItems->Get( 0 );
+	}
 }
 
-const char* CreatureTabItem::GetID() const
+Noesis::ObservableCollection<TITabItem>* AutomatonTabItem::getCoreItems() const
 {
-	return m_sid.Str();
+	return m_coreItems;
+}
+
+void AutomatonTabItem::setSelectedCore( TITabItem* ci )
+{
+	if( ci && ci != m_selectedCoreItem )
+	{
+		m_selectedCoreItem = ci;
+		m_proxy->setAutomatonCore( m_id, ci->GetID() );
+	}
+}
+	
+TITabItem* AutomatonTabItem::getSelectedCore() const
+{
+	return m_selectedCoreItem;
+}
+
+bool AutomatonTabItem::getRefuel() const
+{
+	return m_refuel;
+}
+
+void AutomatonTabItem::setRefuel( bool value )
+{
+	if( value != m_refuel )
+	{
+		m_refuel = value;
+		m_proxy->setAutomatonRefuel( m_id, m_refuel );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,27 +156,28 @@ TileInfoModel::TileInfoModel()
 
 	m_tileIDString = Noesis::String( std::to_string( m_tileID ).c_str() );
 
-	_tabItems = *new ObservableCollection<TabItem>();
+	_tabItems = *new ObservableCollection<TITabItem>();
 
-	_tabItemElements.tt = MakePtr<TabItem>( "T", "T" );
+	_tabItemElements.tt = MakePtr<TITabItem>( "T", "T" );
 	_tabItems->Add( _tabItemElements.tt );
 	_tabItemElements.tt->setActive( true );
 
-	_tabItemElements.tc = MakePtr<TabItem>( "C", "C" );
-	_tabItemElements.ti = MakePtr<TabItem>( "I", "I" );
-	_tabItemElements.td = MakePtr<TabItem>( "D", "D" );
-	_tabItemElements.tj = MakePtr<TabItem>( "J", "J" );
+	_tabItemElements.tc = MakePtr<TITabItem>( "C", "C" );
+	_tabItemElements.ti = MakePtr<TITabItem>( "I", "I" );
+	_tabItemElements.td = MakePtr<TITabItem>( "D", "D" );
+	_tabItemElements.tj = MakePtr<TITabItem>( "J", "J" );
 
 	_terrainTabItems = *new ObservableCollection<TerrainTabItem>();
 
 	_itemTabItems = *new ObservableCollection<ItemTabItem>();
 
 	_creatureTabItems = *new ObservableCollection<CreatureTabItem>();
+	_automatonTabItems = *new ObservableCollection<AutomatonTabItem>();
 
 	_cmdTab.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdTab ) );
 	_cmdTerrain.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdTerrain ) );
 	_cmdManage.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdManage ) );
-	_miniSPContents   = *new ObservableCollection<TabItem>();
+	_miniSPContents   = *new ObservableCollection<TITabItem>();
 	_possibleTennants = *new ObservableCollection<CreatureTabItem>();
 
 	_jobTabRequiredItems = *new Noesis::ObservableCollection<NRequiredItem>();
@@ -301,11 +325,19 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	}
 
 	_creatureTabItems->Clear();
+	_automatonTabItems->Clear();
 	if ( !tileInfo.creatures.empty() )
 	{
 		for ( auto gct : tileInfo.creatures )
 		{
-			_creatureTabItems->Add( MakePtr<CreatureTabItem>( gct.text, gct.id ) );
+			if( gct.type == CreatureType::AUTOMATON )
+			{
+				_automatonTabItems->Add( MakePtr<AutomatonTabItem>( gct.text, gct.id, gct.refuel, gct.coreItem, m_proxy ) );
+			}
+			else
+			{
+				_creatureTabItems->Add( MakePtr<CreatureTabItem>( gct.text, gct.id ) );
+			}
 		}
 	}
 
@@ -390,6 +422,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	OnPropertyChanged( "ShowTerrain" );
 	OnPropertyChanged( "ShowItems" );
 	OnPropertyChanged( "ShowCreatures" );
+	OnPropertyChanged( "ShowAutomatons" );
 	OnPropertyChanged( "ShowJob" );
 	OnPropertyChanged( "ShowMiniStockpile" );
 
@@ -414,7 +447,7 @@ const char* TileInfoModel::getTileID() const
 	return m_tileIDString.Str();
 }
 
-Noesis::ObservableCollection<IngnomiaGUI::TabItem>* TileInfoModel::getTabItems() const
+Noesis::ObservableCollection<IngnomiaGUI::TITabItem>* TileInfoModel::getTabItems() const
 {
 	return _tabItems;
 }
@@ -432,6 +465,11 @@ Noesis::ObservableCollection<ItemTabItem>* TileInfoModel::getItemTabItems() cons
 Noesis::ObservableCollection<CreatureTabItem>* TileInfoModel::getCreatureTabItems() const
 {
 	return _creatureTabItems;
+}
+
+Noesis::ObservableCollection<AutomatonTabItem>* TileInfoModel::getAutomatonTabItems() const
+{
+	return _automatonTabItems;
 }
 
 Noesis::ObservableCollection<CreatureTabItem>* TileInfoModel::getPossibleTennants() const
@@ -546,6 +584,15 @@ const char* TileInfoModel::GetShowCreatures() const
 	return "Collapsed";
 }
 
+const char* TileInfoModel::GetShowAutomatons() const
+{
+	if ( _automatonTabItems->Count() > 0 )
+	{
+		return "Visible";
+	}
+	return "Collapsed";
+}
+
 const char* TileInfoModel::GetShowDesignation() const
 {
 	if ( _mode == TileInfoMode::Designation )
@@ -604,7 +651,7 @@ void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 
 	for ( auto is : info.summary )
 	{
-		_miniSPContents->Add( MakePtr<IngnomiaGUI::TabItem>( QString::number( is.count ) + " " + is.materialName + " " + is.itemName, "" ) );
+		_miniSPContents->Add( MakePtr<IngnomiaGUI::TITabItem>( QString::number( is.count ) + " " + is.materialName + " " + is.itemName, "" ) );
 	}
 
 	OnPropertyChanged( "MiniStockpileName" );
@@ -614,7 +661,7 @@ void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 	OnPropertyChanged( "Reserved" );
 }
 
-Noesis::ObservableCollection<IngnomiaGUI::TabItem>* TileInfoModel::getMiniSPContents() const
+Noesis::ObservableCollection<IngnomiaGUI::TITabItem>* TileInfoModel::getMiniSPContents() const
 {
 	return _miniSPContents;
 }
@@ -804,6 +851,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "ShowTerrain", &TileInfoModel::GetShowTerrain );
 	NsProp( "ShowItems", &TileInfoModel::GetShowItems );
 	NsProp( "ShowCreatures", &TileInfoModel::GetShowCreatures );
+	NsProp( "ShowAutomatons", &TileInfoModel::GetShowAutomatons );
 	NsProp( "ShowDesignation", &TileInfoModel::GetShowDesignation );
 	NsProp( "ShowDesignationSimple", &TileInfoModel::GetShowDesignationSimple );
 	NsProp( "ShowDesignationRoom", &TileInfoModel::GetShowDesignationRoom );
@@ -817,6 +865,7 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "TerrainTab", &TileInfoModel::getTerrainTabItems );
 	NsProp( "ItemTab", &TileInfoModel::getItemTabItems );
 	NsProp( "CreatureTab", &TileInfoModel::getCreatureTabItems );
+	NsProp( "AutomatonTab", &TileInfoModel::getAutomatonTabItems );
 
 	NsProp( "JobName", &TileInfoModel::GetJobName );
 	NsProp( "JobWorker", &TileInfoModel::GetJobWorker );
@@ -860,11 +909,11 @@ NS_IMPLEMENT_REFLECTION( TileInfoModel, "IngnomiaGUI.TileInfoModel" )
 	NsProp( "CmdMechToggleInvert", &TileInfoModel::GetCmdMechToggleInvert );
 }
 
-NS_IMPLEMENT_REFLECTION( IngnomiaGUI::TabItem )
+NS_IMPLEMENT_REFLECTION( IngnomiaGUI::TITabItem )
 {
-	NsProp( "Name", &TabItem::GetName );
-	NsProp( "ID", &TabItem::GetID );
-	NsProp( "Checked", &TabItem::GetChecked, &TabItem::SetChecked );
+	NsProp( "Name", &TITabItem::GetName );
+	NsProp( "ID", &TITabItem::GetID );
+	NsProp( "Checked", &TITabItem::GetChecked, &TITabItem::SetChecked );
 }
 
 NS_IMPLEMENT_REFLECTION( TerrainTabItem )
@@ -886,4 +935,13 @@ NS_IMPLEMENT_REFLECTION( CreatureTabItem )
 {
 	NsProp( "Name", &CreatureTabItem::GetName );
 	NsProp( "ID", &CreatureTabItem::GetID );
+}
+
+NS_IMPLEMENT_REFLECTION( AutomatonTabItem )
+{
+	NsProp( "Name", &AutomatonTabItem::GetName );
+	NsProp( "ID", &AutomatonTabItem::GetID );
+	NsProp( "Cores", &AutomatonTabItem::getCoreItems );
+	NsProp( "SelectedCore", &AutomatonTabItem::getSelectedCore, &AutomatonTabItem::setSelectedCore );
+	NsProp( "Refuel", &AutomatonTabItem::getRefuel, &AutomatonTabItem::setRefuel );
 }

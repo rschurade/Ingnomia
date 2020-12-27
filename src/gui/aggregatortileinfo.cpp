@@ -198,6 +198,15 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					GuiTICreatureInfo gct;
 					gct.text = "Gnome: " + gnome->name();
 					gct.id   = gnome->id();
+					gct.type = gnome->type();
+					if( gct.type == CreatureType::AUTOMATON )
+					{
+						auto automat = dynamic_cast<Automaton*>( gnome );
+						gct.text = "Automaton: " + gnome->name();
+						gct.refuel = automat->getRefuelFlag();
+						gct.coreItem = automat->coreType();
+					}
+
 					m_tileInfo.creatures.append( gct );
 				}
 			}
@@ -466,4 +475,22 @@ void AggregatorTileInfo::onToggleMechActive( unsigned int id )
 void AggregatorTileInfo::onToggleMechInvert( unsigned int id )
 {
 	g->mcm()->changeInverted( id );
+}
+
+void AggregatorTileInfo::onSetAutomatonRefuel( unsigned int id, bool refuel )
+{
+	auto automat = g->gm()->automaton( id );
+	if( automat )
+	{
+		automat->setRefuelFlag( refuel );
+	}
+}
+	
+void AggregatorTileInfo::onSetAutomatonCore( unsigned int id, QString core )
+{
+	auto automat = g->gm()->automaton( id );
+	if( automat )
+	{
+		automat->setCoreType( core );
+	}
 }

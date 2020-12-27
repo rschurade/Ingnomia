@@ -44,7 +44,12 @@ Automaton::Automaton( QVariantMap& in, Game* game ) :
 	m_automatonItem   = in.value( "AutoItem" ).toInt();
 	m_coreType        = in.value( "CoreType" ).toString();
 	m_uninstallCore   = in.value( "UninstallFlag" ).toBool();
-	m_maintenaceJob   = in.value( "MaintenanceJob" ).toUInt();
+	unsigned int maintenaceJobID = in.value( "MaintenanceJob" ).toUInt();
+	if( maintenaceJobID )
+	{
+		m_maintenaceJob = game->jm()->getJob( maintenaceJobID );
+	}
+
 	m_maintJobChanged = in.value( "MaintJobChanged" ).toBool();
 	m_refuel          = in.value( "Refuel" ).toBool();
 
@@ -60,7 +65,7 @@ void Automaton::serialize( QVariantMap& out )
 	out.insert( "AutoItem", m_automatonItem );
 	out.insert( "CoreType", m_coreType );
 	out.insert( "UninstallFlag", m_uninstallCore );
-	out.insert( "MaintenanceJob", m_maintenaceJob );
+	out.insert( "MaintenanceJob", maintenanceJobID() );
 	out.insert( "MaintJobChanged", m_maintJobChanged );
 	out.insert( "Refuel", m_refuel );
 }
@@ -342,6 +347,10 @@ void Automaton::setRefuelFlag( bool flag )
 
 void Automaton::setCoreType( QString coreSID )
 {
+	if( !m_coreType.isEmpty() && coreSID.isEmpty() )
+	{
+		m_uninstallCore = true;
+	}
 	m_coreType        = coreSID;
 	m_maintJobChanged = true;
 }
@@ -362,15 +371,20 @@ bool Automaton::uninstallFlag()
 	return m_uninstallCore;
 }
 
-void Automaton::setMaintenanceJobID( unsigned int id )
+void Automaton::setMaintenanceJob( QSharedPointer<Job> job )
 {
-	m_maintenaceJob   = id;
+	m_maintenaceJob   = job;
 	m_maintJobChanged = true;
 }
 
 unsigned int Automaton::maintenanceJobID()
 {
-	return m_maintenaceJob;
+	if( m_maintenaceJob )
+	{
+		auto job = m_maintenaceJob.toStrongRef();
+		return job->id();
+	}
+	return 0;
 }
 
 bool Automaton::maintenanceJobChanged()
