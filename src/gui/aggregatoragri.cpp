@@ -148,7 +148,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			case TileFlag::TF_FARM:
 			{
 				auto farm = g->fm()->getFarmAtPos( Position( tileID ) );
-				if ( farm && m_farmInfo.ID != farm->id() )
+				if ( farm )
 				{
 					m_farmInfo.ID    = farm->id();
 					m_pastureInfo.ID = 0;
@@ -160,7 +160,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			case TileFlag::TF_PASTURE:
 			{
 				auto pasture = g->fm()->getPastureAtPos( Position( tileID ) );
-				if ( pasture && m_pastureInfo.ID != pasture->id() )
+				if ( pasture )
 				{
 					m_pastureInfo.ID = pasture->id();
 					m_farmInfo.ID    = 0;
@@ -172,7 +172,7 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			case TileFlag::TF_GROVE:
 			{
 				auto grove = g->fm()->getGroveAtPos( Position( tileID ) );
-				if ( grove && m_groveInfo.ID != grove->id() )
+				if ( grove )
 				{
 					m_groveInfo.ID   = grove->id();
 					m_farmInfo.ID    = 0;
@@ -275,7 +275,6 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 			m_pastureInfo.foodCurrent = past->foodLevel();
 
 			m_pastureInfo.food.clear();
-
 			if ( !past->animalType().isEmpty() )
 			{
 				past->getInfo( m_pastureInfo.numPlots, m_pastureInfo.numMale, m_pastureInfo.numFemale );
@@ -324,6 +323,10 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 
 			onRequestProductInfo( AgriType::Pasture, m_pastureInfo.ID );
 		}
+	}
+	else
+	{
+		qDebug() << "but no update";
 	}
 }
 
@@ -437,6 +440,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 				{
 					pasture->setAnimalType( productSID );
 					m_pastureInfo.animalType = productSID;
+					onUpdatePasture( designationID );
 				}
 			}
 			break;
