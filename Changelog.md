@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - crash with missions
 - remove plants on the tile above when digging stairs up
+- gnomes forgetting their rooms on load
 
 ### Added
 - burn recipe for bones in the waste disposal

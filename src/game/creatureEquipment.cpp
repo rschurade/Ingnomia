@@ -98,7 +98,7 @@ Equipment::Equipment( const QVariantMap& in )
 	shirtColor = in.value( "ShirtColor" ).toInt();
 
 	uniformID = in.value( "UniformID" ).toUInt();
-	roomID    = in.value( "roomID" ).toUInt();
+	roomID    = in.value( "RoomID" ).toUInt();
 
 	auto vmItems  = in.value( "Items" ).toMap();
 	head          = EquipmentItem( vmItems.value( "HeadArmor" ).toMap() );
