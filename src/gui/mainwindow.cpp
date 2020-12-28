@@ -715,7 +715,9 @@ void MainWindow::resizeGL( int w, int h )
 	{
 		m_view->SetSize( this->width(), this->height() );
 	}
-	m_renderer->resize( this->width(), this->height() );
+
+	const qreal scaling = this->devicePixelRatio();
+	m_renderer->resize( this->width() * scaling, this->height() * scaling );
 
 	emit signalWindowSize( this->width(), this->height() );
 
