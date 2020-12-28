@@ -305,10 +305,7 @@ void JobManager::addLoadedJob( QVariant vals )
 		m_returnedJobQueue.enqueue( job->id() );
 	}
 
-	if( !job->noJobSprite() )
-	{
-		setJobSprites( job->id(), job->isWorked(), false );
-	}
+	setJobSprites( job->id(), job->isWorked(), false );
 }
 
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
@@ -336,10 +333,7 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 
 	m_returnedJobQueue.enqueue( job->id() );
 
-	if ( !noJobSprite )
-	{
-		setJobSprites( job->id(), false, false );
-	}
+	setJobSprites( job->id(), false, false );
 
 	return job->id();
 }
@@ -438,10 +432,7 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 
 	m_returnedJobQueue.enqueue( job->id() );
 
-	if ( !noJobSprite )
-	{
-		setJobSprites( job->id(), false, false );
-	}
+	setJobSprites( job->id(), false, false );
 	return job->id();
 }
 
@@ -716,10 +707,7 @@ void JobManager::finishJob( unsigned int jobID )
 		QSharedPointer<Job> job = m_jobList.value( jobID );
 
 		QString type = job->type();
-		if( !job->noJobSprite() )
-		{
-			setJobSprites( jobID, false, true );
-		}
+		setJobSprites( jobID, false, true );
 
 		std::vector<Position> neighs;
 		Position pos = job->pos();
@@ -765,6 +753,10 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 	if ( m_jobList.contains( jobID ) )
 	{
 		QSharedPointer<Job> job     = m_jobList.value( jobID );
+		if( !job || job->noJobSprite() )
+		{
+			return;
+		}
 		QString type = job->type();
 		int rotation = job->rotation();
 		QList<QPair<Sprite*, Position>> sprites;
@@ -960,6 +952,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 			type.remove( job->priority(), jobID );
 		}
 		setJobSprites( jobID, false, false );
+
 		m_returnedJobQueue.enqueue( jobID );
 		return;
 	}
