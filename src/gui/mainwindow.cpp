@@ -692,6 +692,7 @@ void MainWindow::paintGL()
 	{
 		// Restore state managed by QOpenGLWindow
 		makeCurrent();
+		context()->functions()->glViewport( 0, 0, this->width() * devicePixelRatioF(), this->height() * devicePixelRatioF() );
 	}
 
 	// Rendering is done in the active framebuffer
