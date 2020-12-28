@@ -191,28 +191,34 @@ MilitaryManager::~MilitaryManager()
 
 void MilitaryManager::init()
 {
-	//load from file
-	QJsonDocument jd;
-	IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/military.json", jd );
-
-	QVariantMap vm = jd.toVariant().toMap();
-
-	if ( vm.contains( "Roles" ) )
+	auto mm = GameState::military;
+	QVariantList pl;
+	if ( mm.contains( "Roles" ) )
 	{
-		auto pl = vm.value( "Roles" ).toList();
-		for ( auto entry : pl )
+		pl = mm.value( "Roles" ).toList();
+	}
+	else
+	{
+		//load from file
+		QJsonDocument jd;
+		IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/military.json", jd );
+		QVariantMap vm = jd.toVariant().toMap();
+		if ( vm.contains( "Roles" ) )
 		{
-			MilitaryRole pos( entry.toMap() );
-			m_roles.insert( pos.id, pos );
+			pl = vm.value( "Roles" ).toList();
 		}
+	}
+	for ( auto entry : pl )
+	{
+		MilitaryRole pos( entry.toMap() );
+		m_roles.insert( pos.id, pos );
 	}
 	if ( m_roles.empty() )
 	{
 		addRole();
 	}
 
-	auto mm = GameState::military;
-
+	
 	if ( mm.contains( "Squads" ) )
 	{
 		auto sl = mm.value( "Squads" ).toList();
