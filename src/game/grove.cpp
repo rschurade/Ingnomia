@@ -172,9 +172,12 @@ void Grove::onTick( quint64 tick )
 					}
 					unsigned int jobID = g->jm()->addJob( "PlantTree", gf->pos, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					job->setItem( m_properties.treeType );
-					job->addRequiredItem( 1, seedID, mat, QStringList() );
-					gf->job = job;
+					if( job )
+					{
+						job->setItem( m_properties.treeType );
+						job->addRequiredItem( 1, seedID, mat, QStringList() );
+						gf->job = job;
+					}
 				}
 			}
 			else
@@ -188,14 +191,20 @@ void Grove::onTick( quint64 tick )
 				{
 					unsigned int jobID = g->jm()->addJob( "HarvestTree", gf->pos, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					gf->job = job;
-					continue;
+					if( job )
+					{
+						gf->job = job;
+					}
+						continue;
 				}
 				if ( m_properties.fell && tree.matureWood() )
 				{
 					unsigned int jobID = g->jm()->addJob( "FellTree", gf->pos, 0, true );
 					auto job = g->jm()->getJob( jobID );
-					gf->job = job;
+					if( job )
+					{
+						gf->job = job;
+					}
 					continue;
 				}
 			}
