@@ -197,12 +197,15 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 			}
 		}
 	}
-
+	
 	if ( minuteChanged )
 	{
+		m_totalCountAnimals = 0;
+		int count = 0;
 		for ( auto& pa : m_pastures )
 		{
-			pa->onTick( tickNumber );
+			pa->onTick( tickNumber, count );
+			m_totalCountAnimals += count;
 		}
 	}
 }

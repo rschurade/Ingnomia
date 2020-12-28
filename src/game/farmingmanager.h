@@ -109,6 +109,8 @@ public:
 	void emitUpdateSignalPasture( unsigned int id );
 	void emitUpdateSignalGrove( unsigned int id );
 
+	int countAnimals() { return m_totalCountAnimals; }
+
 private:
 	QPointer<Game> g;
 
@@ -128,6 +130,8 @@ private:
 
 	QHash<unsigned int, Beehive*> m_beehives;
 	QHash<Position, unsigned int> m_allBeehiveTiles;
+
+	int m_totalCountAnimals = 0;
 
 signals:
 	void signalFarmChanged( unsigned int id );

@@ -110,6 +110,8 @@ public:
 	unsigned int roleID( unsigned int gnomeID );
 	void setRoleID( unsigned int gnomeID, unsigned int roleID );
 
+	int numGnomes();
+
 private:
 	void getRefuelJob( Automaton* a );
 	void getInstallJob( Automaton* a );

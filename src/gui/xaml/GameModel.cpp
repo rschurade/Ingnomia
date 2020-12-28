@@ -288,7 +288,13 @@ GameModel::GameModel()
 void GameModel::updateKingdomInfo( QString name, QString info1, QString info2, QString info3 )
 {
 	m_kingdomName = name.toStdString().c_str();
+	m_kingdomInfo1 = info1.toStdString().c_str();
+	m_kingdomInfo2 = info2.toStdString().c_str();
+	m_kingdomInfo3 = info3.toStdString().c_str();
 	OnPropertyChanged( "KingdomName" );
+	OnPropertyChanged( "KingdomInfo1" );
+	OnPropertyChanged( "KingdomInfo2" );
+	OnPropertyChanged( "KingdomInfo3" );
 }
 
 void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )

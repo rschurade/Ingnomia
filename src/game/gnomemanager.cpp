@@ -626,3 +626,8 @@ void GnomeManager::setRoleID( unsigned int gnomeID, unsigned int roleID )
 		return m_gnomesByID[gnomeID]->setRole( roleID );
 	}
 }
+
+int GnomeManager::numGnomes()
+{
+	return m_gnomes.size();
+}

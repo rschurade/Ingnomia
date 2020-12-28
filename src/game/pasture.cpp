@@ -199,7 +199,7 @@ void Pasture::addTile( const Position & pos )
 }
 
 // farming manager calls this on hour changed
-void Pasture::onTick( quint64 tick )
+void Pasture::onTick( quint64 tick, int& count )
 {
 	for ( auto field : m_fields )
 	{
@@ -218,8 +218,6 @@ void Pasture::onTick( quint64 tick )
 	if ( !m_active )
 		return;
 
-	if ( m_animals.size() >= m_properties.max )
-		return;
 	int countMale   = 0;
 	int countFemale = 0;
 	for ( auto id : m_animals )
@@ -237,6 +235,7 @@ void Pasture::onTick( quint64 tick )
 			}
 		}
 	}
+	count = countMale + countFemale;
 
 	for ( auto& a : g->cm()->animals() )
 	{

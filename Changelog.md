@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - controls for mechanisms
 - controls for automatons
 - full DPI scaling support
+- some statistics
 
 ### Changed
 - restructured the tile info window

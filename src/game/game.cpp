@@ -241,7 +241,11 @@ void Game::loop()
 		msg += " ms (max gnome time:" + QString::number( m_maxLoopTime ) + "ms)";
 	emit sendOverlayMessage( 3, msg );
 
-	emit signalKingdomInfo( GameState::kingdomName, "", "", "" );
+	
+	emit signalKingdomInfo( GameState::kingdomName, 
+		"Gnomes: " + QString::number( gm()->numGnomes() ), 
+		"Animals: " + QString::number( fm()->countAnimals() ),
+		"Items: "  + QString::number( inv()->numItems() ) );
 
 	switch( m_gameSpeed )
 	{

@@ -1828,6 +1828,11 @@ QVariantList Inventory::components( unsigned int itemID )
 	return QVariantList();
 }
 
+int Inventory::numItems()
+{
+	return m_items.size();
+}
+
 int Inventory::kingdomWealth()
 {
 	return m_wealth;

@@ -80,7 +80,7 @@ public:
 
 	QVariant serialize() const;
 
-	void onTick( quint64 tick );
+	void onTick( quint64 tick, int& count );
 
 	void addAnimal( unsigned int id );
 

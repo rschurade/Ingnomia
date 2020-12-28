@@ -195,6 +195,7 @@ public:
 	void removeFromWealth( Item* item );
 
 	int kingdomWealth();
+	int numItems();
 
 	bool itemsChanged();
 	void setItemsChanged();
