@@ -717,6 +717,8 @@ void MainWindow::resizeGL( int w, int h )
 	}
 	m_renderer->resize( this->width(), this->height() );
 
+	context()->functions()->glViewport( 0, 0, this->width() * devicePixelRatioF(), this->height() * devicePixelRatioF() );
+
 	emit signalWindowSize( this->width(), this->height() );
 
 	update();

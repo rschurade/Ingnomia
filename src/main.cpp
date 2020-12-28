@@ -146,6 +146,10 @@ int main( int argc, char* argv[] )
 	QCoreApplication::setAttribute( Qt::AA_UseDesktopOpenGL );
 	// Require use of shared base context, so OpenGL context won't get invalidated on fullscreen toggles etc.
 	QCoreApplication::setAttribute( Qt::AA_ShareOpenGLContexts );
+	// Enable correct render surface scaling with HDPI setups.
+	QCoreApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
+	// Enable fractional DPI support (e.g. 150%)
+	QGuiApplication::setHighDpiScaleFactorRoundingPolicy( Qt::HighDpiScaleFactorRoundingPolicy::PassThrough );
 
 	QApplication a( argc, argv );
 	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );
