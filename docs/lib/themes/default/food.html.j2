@@ -1,0 +1,52 @@
+{% extends "base.html.j2" %}
+{% import "macros.html.j2" as macros with context %}
+
+
+{% macro food_table(data, value_label, value_attr) %}
+  <table class="food">
+    <tr>
+      <th colspan="2">Items</th>
+      <th>{{ value_label }}</th>
+    </tr>
+    {% for category in data %}
+      {% for group in category.groups %}
+        {% for item in group["items"] %}
+          <tr>
+            {% if loop.index == 1 %}
+              <th class="category" rowspan="{{ loop.length }}">
+                {{ group.translation|title }}
+              </th>
+            {% endif %}
+
+            <td>
+              {% if item.sprite %}
+                {{ macros.sprite(item.sprite) }}
+              {% endif %}
+              <a href="{{ base }}item/{{ item.id }}.html">{{ item.translation|title }}</a>
+            </td>
+
+            <td class="number">
+              {{ item[value_attr] }}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
+  </table>
+{% endmacro %}
+
+{% block title %}
+  All Food & Drinks - {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <h2>All Food & Drinks</h2>
+
+  <h3>Food</h3>
+
+  {{ food_table(data=food, value_label="Eat value", value_attr="eatvalue") }}
+
+  <h3>Drinks</h3>
+
+  {{ food_table(data=drinks, value_label="Drink value", value_attr="drinkvalue") }}
+{% endblock %}

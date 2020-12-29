@@ -1,0 +1,44 @@
+{% extends "base.html.j2" %}
+{% import "macros.html.j2" as macros with context %}
+
+{% block title %}
+  {{ workshop.translation|title }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <h2>
+    <span class="type">{{ workshop.tab|title }} workshop</span>
+    {{ workshop.translation|title }}
+  </h2>
+
+  <h3>Building components</h3>
+
+  <table class="workshop-components">
+    <tr>
+      <th>Item</th>
+      <th>Requires workshop</th>
+    </tr>
+    {% for item in workshop.components %}
+      <tr>
+        <td>
+          {{ macros.itemamount(item) }}
+        </td>
+        <td>
+          {% if item.workshops|length %}
+            {% for w in item.workshops %}
+              <div>{{ macros.workshop(w) }}</div>
+            {% endfor %}
+          {% else %}
+            <i>(raw material)</i>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  {% if workshop.crafts|length %}
+    <h3>Used to craft</h3>
+
+    {{ macros.craftlist(workshop.crafts, show_workshop=false) }}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html.j2" %}
+{% import "macros.html.j2" as macros with context %}
+
+{% block title %}
+  All Items - {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <h2>All Items</h2>
+
+  {{ macros.nav_table(only_section="Items", class="") }}
+{% endblock %}

@@ -377,3 +377,7 @@ build/
 
 # Visual studio code
 .vscode
+
+# Doc
+/docs/html
+

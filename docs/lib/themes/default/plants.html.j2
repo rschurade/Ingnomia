@@ -1,0 +1,71 @@
+{% extends "base.html.j2" %}
+{% import "macros.html.j2" as macros with context %}
+
+{% block title %}
+  All Plants - {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <h2>All Plants</h2>
+
+  {% for type in plants %}
+    <h3>{{ type.type }}s</h3>
+
+    <table class="plants">
+      <tr>
+        <th rowspan="2">{{ type.type }}</th>
+        <th colspan="3">Seasons</th>
+        <th colspan="2">Harvesting</th>
+      </tr>
+      <tr>
+        <th>Grows</th>
+        <th>Dies</th>
+        <th>Loses fruit</th>
+        <th>Yield</th>
+        <th>Result</th>
+      </tr>
+
+      {% for plant in type.plants %}
+        <tr>
+          <td>
+            {% if plant.sprite %}
+              {{ macros.sprite(plant.sprite, background=type.floor) }}
+            {% endif %}
+            {{ plant.id|title }}
+          </td>
+          <td class="seasons">
+            {% for season in plant.growseason %}
+              <div>{{ season }}</div>
+            {% endfor %}
+          </td>
+          <td class="seasons">
+            {% for season in plant.killseason %}
+            <div>{{ season }}</div>
+            {% endfor %}
+          </td>
+          <td class="seasons">
+            {% for season in plant.loseseason %}
+              <div>{{ season }}</div>
+            {% endfor %}
+          </td>
+          <td>
+            {% for produce in plant.harvestproduces %}
+              <div>{{ macros.itemamount(produce) }}</div>
+            {% endfor %}
+          </td>
+          <td>
+            <i>
+              {% if plant.harvestaction == 'Destroy' %}
+                Destroy plant
+              {% elif plant.harvestaction == 'StateOneBack' %}
+                Reduce growth stage
+              {% elif plant.harvestaction == 'ReduceFruitCount' %}
+                Reduce fruit count
+              {% endif %}
+            </i>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endfor %}
+{% endblock %}
