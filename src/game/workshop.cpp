@@ -624,6 +624,7 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 
 	// create job
 	CraftJob cj;
+	cj.id				  = GameState::createID();
 	cj.craftID            = craftID;
 	cj.mode               = CraftMode::CraftNumber;
 	cj.numItemsToCraft    = amount;
