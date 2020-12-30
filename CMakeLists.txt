@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo CACHE STRING INTERNAL FORCE)
 
 # Project version, 4 numbers representation
-set(DEFAULT_VERSION "0.8.5.0" CACHE STRING "Version" FORCE)
+set(DEFAULT_VERSION "0.8.6.0" CACHE STRING "Version" FORCE)
 # Set from CI only
 set(BUILD_ID "0" CACHE INTERNAL "")
 set(GIT_REPO "" CACHE INTERNAL "")
