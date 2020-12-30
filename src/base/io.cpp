@@ -379,6 +379,7 @@ void IO::sanitize()
 
 		std::unordered_set<unsigned int> carriedItems;
 		std::unordered_set<unsigned int> wornItems;
+		std::unordered_set<unsigned int> constructedItems;
 		for ( const auto& gnome : g->gm()->gnomes() )
 		{
 			{
@@ -398,6 +399,29 @@ void IO::sanitize()
 			for ( const auto& itemID : gnome->equipment().wornItems() )
 			{
 				wornItems.insert( itemID );
+			}
+		}
+		for (const auto& construction : g->w()->wallConstructions())
+		{
+			if ( construction.contains( "Item" ) )
+			{
+				constructedItems.insert( construction["Item"].toInt() );
+			}
+		}
+
+		for ( const auto& construction : g->w()->floorConstructions() )
+		{
+			if ( construction.contains( "Item" ) )
+			{
+				constructedItems.insert( construction["Item"].toInt() );
+			}
+		}
+
+		for ( const auto& workshop : g->wsm()->workshops() )
+		{
+			for ( const auto& item : workshop->sourceItems() )
+			{
+				constructedItems.insert( item.toInt() );
 			}
 		}
 
@@ -425,6 +449,12 @@ void IO::sanitize()
 					g->inv()->putDownItem( item.id(), item.getPos() );
 					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found being dragged along";
 				}
+			}
+			if ( !item.isPickedUp() && item.isConstructedOrEquipped() && constructedItems.count( item.id() ) == 0 )
+			{
+				item.setIsConstructedOrEquipped( false );
+				g->inv()->putDownItem( item.id(), item.getPos() );
+				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
 			}
 		}
 		for( auto& ws : g->wsm()->workshops() )
