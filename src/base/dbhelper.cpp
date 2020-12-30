@@ -200,11 +200,16 @@ QMap<QString, QMultiMap<QString, QString>> DBHelper::workshopPossibleCraftResult
 		return m_workshopCraftResults.value( workshopId );
 	}
 
-	const auto craftIds = DB::select( "Crafts", "Workshops", workshopId ).toString().split( "|" );
-
 	QMap<QString, QMultiMap<QString, QString>> workshopProduces;
 
-	QString craftID;
+	auto dbws = DB::workshop( workshopId );
+	if( !dbws )
+	{
+		// this should never be reached
+		return workshopProduces;
+	}
+	const auto craftIds = dbws->Crafts;
+
 	for ( const auto& craftId : craftIds )
 	{
 		QMultiMap<QString, QString> craftVariants;

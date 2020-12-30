@@ -82,15 +82,11 @@ struct WorkshopProperties
 	Position posIn;
 	Position posOut;
 
-	QString gui;
-
 	unsigned int owner           = 0;
 	unsigned int linkedStockpile = 0;
 
 	bool toDestroy = false;
 	bool canDelete = false;
-
-	bool noAutoGenerate = false;
 
 	bool butcherExcess  = false;
 	bool butcherCorpses = true;
@@ -104,6 +100,11 @@ struct WorkshopProperties
 
 	QVariantList sourceItems;
 	QVariantList itemsToSell;
+
+	// not saved in game, always loaded from DB
+	QString gui;
+	bool noAutoGenerate = false;
+	QStringList crafts;
 
 	void serialize( QVariantMap& out );
 	WorkshopProperties() {};
@@ -235,6 +236,11 @@ public:
 	QString gui()
 	{
 		return m_properties.gui;
+	}
+
+	const QStringList& crafts()
+	{
+		return m_properties.crafts;
 	}
 
 	void setAcceptGenerated( bool accept );

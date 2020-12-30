@@ -110,9 +110,10 @@ private:
 	bool constructStairs( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructRamp( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructRampCorner( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
-	bool constructWorkshop( QVariantMap& con, Position pos, int rotation, QVariantList items, Position extractTo );
 	bool constructPipe( QString type, Position pos, unsigned int itemUID );
 	bool deconstructPipe( QVariantMap constr, Position pos, Position workPos );
+
+	
 
 public:
 	World( int dimX, int dimY, int dimZ, Game* game );
@@ -204,8 +205,8 @@ public:
 
 	// returns true when construction succeeded, false otherwise
 	bool construct( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo );
-	bool constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo );
 	bool constructItem( QString itemSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo );
+	bool constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo );
 	// returns true when deconstruction succeeded, false otherwise
 	bool deconstruct( Position pos, Position workPos, bool ignoreGravity );
 	bool deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Position workPos, bool ignoreGravity );

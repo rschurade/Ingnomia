@@ -33,7 +33,8 @@ int DB::accessCounter = 0;
 Counter<QString> DB::m_counter;
 QMap<Qt::HANDLE, QSqlDatabase> DB::m_connections;
 
-QSqlQuery DB::m_itemCreateQuery;
+
+QHash<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
 
 void DB::init()
 {
@@ -53,6 +54,45 @@ void DB::init()
 		{
 			qDebug() << destQuery.lastError();
 		}
+	}
+}
+
+void DB::initStructs()
+{
+	m_workshops.clear();
+	auto rows = DB::selectRows( "Workshops" );
+	for( const auto& row : rows )
+	{
+		QSharedPointer<DBS::Workshop> ws( new DBS::Workshop );
+		ws->ID = row.value( "ID" ).toString();
+		ws->Crafts = row.value( "Crafts" ).toString().split( "|" );
+		ws->GUI = row.value( "GUI" ).toString();
+		ws->InputTile = Position( row.value( "InputTile" ) );
+		ws->OutputTile = row.value( "OutputTile" ).toString();
+		ws->Size = row.value( "Size" ).toString();
+		ws->NoAutoGenerate = row.value( "NoAutoGenerate" ).toBool();
+		ws->Icon = row.value( "Icon" ).toString();
+		ws->Tab = row.value( "Tab" ).toString();
+		
+		auto crows = DB::selectRows( "Workshops_Components", ws->ID );
+		for( const auto& crow : crows )
+		{
+			DBS::Workshop_Component wsc;
+			wsc.Amount = crow.value( "Amount" ).toInt();
+			wsc.ItemID = crow.value( "ItemID" ).toString();
+			wsc.MaterialItem = crow.value( "MaterialItem" ).toString();
+			wsc.Offset = Position( crow.value( "Offset" ) );
+			wsc.Required = crow.value( "Required" ).toString();
+			wsc.Forbidden = crow.value( "Forbidden" ).toString();
+			wsc.SpriteID = crow.value( "SpriteID" ).toString();
+			wsc.SpriteID2 = crow.value( "SpriteID2" ).toString();
+			wsc.Type = crow.value( "Type" ).toString();
+			wsc.WallRotation = crow.value( "WallRotation" ).toString();
+			wsc.IsFloor = crow.value( "IsFloor" ).toBool();
+			ws->components.append( wsc );
+		}
+		
+		m_workshops.insert( ws->ID, ws );
 	}
 }
 
@@ -576,4 +616,13 @@ bool DB::addTranslation( QString id, QString text )
 	bool ok;
 	DB::execQuery3( query, ok );
 	return ok;
+}
+
+QSharedPointer<DBS::Workshop> DB::workshop( QString id )
+{
+	if( DB::m_workshops.contains( id ) )
+	{
+		return DB::m_workshops.value( id );
+	}
+	return nullptr;
 }

@@ -142,9 +142,7 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 
 			if ( m_info.gui.isEmpty() )
 			{
-				auto crafts = DB::select( "Crafts", "Workshops", ws->type() ).toString();
-
-				for ( auto craft : crafts.split( "|" ) )
+				for ( auto craft : ws->crafts() )
 				{
 					GuiWorkshopProduct gwp;
 					gwp.g = g;

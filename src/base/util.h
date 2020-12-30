@@ -105,7 +105,7 @@ public:
 
 	QString getRandomString( int length );
 
-	QVariantList uintList2Variant( const QList<unsigned int>& list );
+	static QVariantList uintList2Variant( const QList<unsigned int>& list );
 	QList<unsigned int> variantList2UInt( const QVariantList& vlist );
 
 	QVariantList positionList2Variant( const QList<Position>& list );

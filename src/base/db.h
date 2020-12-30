@@ -19,6 +19,7 @@
 
 #include "../base/counter.h"
 #include "../base/dbhelper.h"
+#include "../base/dbstructs.h"
 #include "../base/position.h"
 
 #include <QList>
@@ -34,6 +35,7 @@ class DB
 {
 public:
 	static void init();
+	static void initStructs();
 
 	static QVariant execQuery( QString query );
 	static QVariantList execQuery2( QString query );
@@ -69,6 +71,8 @@ public:
 	static bool removeRows( QString table, QString id );
 	static bool addTranslation( QString id, QString text );
 
+	static QSharedPointer<DBS::Workshop> workshop( QString id );
+
 private:
 	static QSqlDatabase& getDB();
 
@@ -78,9 +82,9 @@ private:
 
 	static Counter<QString> m_counter;
 
-	static QSqlQuery m_itemCreateQuery;
-
 	static QMap<Qt::HANDLE, QSqlDatabase> m_connections;
+
+	static QHash<QString, QSharedPointer<DBS::Workshop>> m_workshops;
 
 	DB()  = delete;
 	~DB() = delete;

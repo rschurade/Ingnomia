@@ -167,6 +167,7 @@ int main( int argc, char* argv[] )
 	}
 
 	DB::init();
+	DB::initStructs();
 
 	if ( !S::gi().init() )
 	{

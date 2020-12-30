@@ -41,20 +41,6 @@ const int ROT_BIT  = 65536;
 const int ANIM_BIT = 262144;
 const int WALL_BIT = 524288;
 
-bool World::constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo )
-{
-	if ( itemUIDs.empty() )
-	{
-		//qDebug() << "World::constructWorkshop() - source item list is empty!";
-		return false;
-	}
-	//qDebug() << "world::constructWorkshop() " << constructionSID << pos.toString() << rotation;
-	QVariantMap con = DB::selectRow( "Workshops", constructionSID );
-
-	constructWorkshop( con, pos, rotation, Global::util->uintList2Variant( itemUIDs ), extractTo );
-	return true;
-}
-
 bool World::construct( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemIDs, Position extractTo )
 {
 	if ( itemIDs.empty() )
@@ -722,120 +708,123 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 	return true;
 }
 
-bool World::constructWorkshop( QVariantMap& con, Position pos, int rotation, QVariantList items, Position extractTo )
+bool World::constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo )
 {
-	QVariantList spriteComposition;
-
-	auto cpl = DB::selectRows( "Workshops_Components", "ID", con.value( "ID" ).toString() );
-	for ( auto cp : cpl )
+	auto dbws = DB::workshop( constructionSID );
+	if( dbws )
 	{
-		QVariantMap spm = cp;
-		Position offset;
+		QVariantList spriteComposition;
 
-		offset   = Position( spm.value( "Offset" ).toString() );
-		int rotX = offset.x;
-		int rotY = offset.y;
-		switch ( rotation )
+		auto cpl = dbws->components;
+		for ( auto cp : cpl )
 		{
-			case 1:
-				offset.x = -1 * rotY;
-				offset.y = rotX;
-				break;
-			case 2:
-				offset.x = -1 * rotX;
-				offset.y = -1 * rotY;
-				break;
-			case 3:
-				offset.x = rotY;
-				offset.y = -1 * rotX;
-				break;
-		}
+			Position offset;
 
-		Position constrPos( pos + offset );
-
-		unsigned int tid = constrPos.toInt();
-		Tile& tile       = getTile( tid );
-		addToUpdateList( tid );
-		QVariantMap scm;
-		scm.insert( "Pos", constrPos.toString() );
-
-		if ( spm.value( "SpriteID" ).toString().isEmpty() || spm.value( "SpriteID" ).toString() == "WorkshopInputIndicator" )
-		{
-			tile.wallType = WallType::WT_CONSTRUCTED;
-			tile.flags += TileFlag::TF_WORKSHOP;
-			spriteComposition.append( scm );
-			continue;
-		}
-
-		QStringList materialIDs;
-
-		if ( !spm.value( "ItemID" ).toString().isEmpty() )
-		{
-			QString baseItem = spm.value( "ItemID" ).toString();
-
-			for ( auto item : items )
+			offset   = cp.Offset;
+			int rotX = offset.x;
+			int rotY = offset.y;
+			switch ( rotation )
 			{
-				unsigned int itemUID = item.toUInt();
-				if ( g->inv()->itemSID( itemUID ) == baseItem )
-				{
-					materialIDs.push_back( g->inv()->materialSID( itemUID ) );
+				case 1:
+					offset.x = -1 * rotY;
+					offset.y = rotX;
 					break;
+				case 2:
+					offset.x = -1 * rotX;
+					offset.y = -1 * rotY;
+					break;
+				case 3:
+					offset.x = rotY;
+					offset.y = -1 * rotX;
+					break;
+			}
+
+			Position constrPos( pos + offset );
+
+			unsigned int tid = constrPos.toInt();
+			Tile& tile       = getTile( tid );
+			addToUpdateList( tid );
+			QVariantMap scm;
+			scm.insert( "Pos", constrPos.toString() );
+
+			if ( cp.SpriteID.isEmpty() || cp.SpriteID == "WorkshopInputIndicator" )
+			{
+				tile.wallType = WallType::WT_CONSTRUCTED;
+				tile.flags += TileFlag::TF_WORKSHOP;
+				spriteComposition.append( scm );
+				continue;
+			}
+
+			QStringList materialIDs;
+
+			if ( !cp.ItemID.isEmpty() )
+			{
+				QString baseItem = cp.ItemID;
+
+				for ( auto itemUID : itemUIDs )
+				{
+					if ( g->inv()->itemSID( itemUID ) == baseItem )
+					{
+						materialIDs.push_back( g->inv()->materialSID( itemUID ) );
+						break;
+					}
 				}
 			}
-		}
-		else if ( !spm.value( "MaterialItem" ).toString().isEmpty() )
-		{
-			for ( auto matID : spm.value( "MaterialItem" ).toString().split( "|" ) )
+			else if ( !cp.MaterialItem.isEmpty() )
 			{
-				materialIDs.push_back( g->inv()->materialSID( items[matID.toInt()].toUInt() ) );
+				for ( auto matID : cp.MaterialItem.split( "|" ) )
+				{
+					materialIDs.push_back( g->inv()->materialSID( itemUIDs[matID.toInt()] ) );
+				}
 			}
-		}
-		else
-		{
-			materialIDs.push_back( "None" );
-		}
-		bool floor = spm.value( "IsFloor" ).toBool();
-		scm.insert( "IsFloor", floor );
-
-		if ( floor )
-		{
-			tile.floorSpriteUID = g->sf()->createSprite( spm.value( "SpriteID" ).toString(), materialIDs )->uID;
-			scm.insert( "UID", tile.floorSpriteUID );
-			spriteComposition.append( scm );
-			tile.floorType = FT_SOLIDFLOOR;
-			setWalkable( constrPos, true );
-		}
-		else
-		{
-			Sprite* sprite     = g->sf()->createSprite( spm.value( "SpriteID" ).toString(), materialIDs );
-			tile.wallSpriteUID = sprite->uID;
-			setWallSpriteAnim( constrPos, sprite->anim );
-			scm.insert( "UID", tile.wallSpriteUID );
-			spriteComposition.append( scm );
-
-			if ( spm.contains( "WallRotation" ) )
+			else
 			{
-				QString rot = spm.value( "WallRotation" ).toString();
-				if ( rot == "FR" )
-					tile.wallRotation = 0;
-				else if ( rot == "FL" )
-					tile.wallRotation = 1;
-				else if ( rot == "BL" )
-					tile.wallRotation = 2;
-				else if ( rot == "BR" )
-					tile.wallRotation = 3;
+				materialIDs.push_back( "None" );
 			}
-			tile.wallRotation = ( tile.wallRotation + rotation ) % 4;
-			tile.wallType     = WallType::WT_CONSTRUCTED;
+			bool floor = cp.IsFloor;
+			scm.insert( "IsFloor", floor );
+
+			if ( floor )
+			{
+				tile.floorSpriteUID = g->sf()->createSprite( cp.SpriteID, materialIDs )->uID;
+				scm.insert( "UID", tile.floorSpriteUID );
+				spriteComposition.append( scm );
+				tile.floorType = FT_SOLIDFLOOR;
+				setWalkable( constrPos, true );
+			}
+			else
+			{
+				Sprite* sprite     = g->sf()->createSprite( cp.SpriteID, materialIDs );
+				tile.wallSpriteUID = sprite->uID;
+				setWallSpriteAnim( constrPos, sprite->anim );
+				scm.insert( "UID", tile.wallSpriteUID );
+				spriteComposition.append( scm );
+
+				if ( !cp.WallRotation.isEmpty() )
+				{
+					QString rot = cp.WallRotation;
+					if ( rot == "FR" )
+						tile.wallRotation = 0;
+					else if ( rot == "FL" )
+						tile.wallRotation = 1;
+					else if ( rot == "BL" )
+						tile.wallRotation = 2;
+					else if ( rot == "BR" )
+						tile.wallRotation = 3;
+				}
+				tile.wallRotation = ( tile.wallRotation + rotation ) % 4;
+				tile.wallType     = WallType::WT_CONSTRUCTED;
+			}
+			tile.flags += TileFlag::TF_WORKSHOP;
 		}
-		tile.flags += TileFlag::TF_WORKSHOP;
+
+		Workshop* ws = g->wsm()->addWorkshop( dbws->ID, pos, rotation );
+		ws->setSourceItems( Util::uintList2Variant( itemUIDs ) );
+		ws->setSprites( spriteComposition );
+
+		return true;
 	}
-
-	Workshop* ws = g->wsm()->addWorkshop( con.value( "ID" ).toString(), pos, rotation );
-	ws->setSourceItems( items );
-	ws->setSprites( spriteComposition );
-
-	return true;
+	return false;
 }
 
 bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )

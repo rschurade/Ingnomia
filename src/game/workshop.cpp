@@ -51,8 +51,6 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	owner           = in.value( "Owner" ).toUInt();
 	linkedStockpile = in.value( "LinkedStockpile" ).toUInt();
 
-	noAutoGenerate = in.value( "NoAutoGenerate" ).toBool();
-
 	toDestroy = in.value( "ToDestroy" ).toBool();
 	canDelete = in.value( "CanDelete" ).toBool();
 
@@ -69,13 +67,12 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	sourceItems = in.value( "SourceItems" ).toList();
 	itemsToSell = in.value( "ItemsToSell" ).toList();
 
-	if ( in.contains( "Gui" ) )
+	auto dbws = DB::workshop( type );
+	if( dbws )
 	{
-		gui = in.value( "Gui" ).toString();
-	}
-	else
-	{
-		gui = DB::select( "GUI", "Workshops", type ).toString();
+		gui = dbws->GUI;
+		noAutoGenerate = dbws->NoAutoGenerate;
+		crafts = dbws->Crafts;
 	}
 }
 
@@ -87,12 +84,8 @@ void WorkshopProperties::serialize( QVariantMap& out )
 	out.insert( "PosIn", posIn.toString() );
 	out.insert( "PosOut", posOut.toString() );
 
-	out.insert( "Gui", gui );
-
 	out.insert( "Owner", owner );
 	out.insert( "LinkedStockpile", linkedStockpile );
-
-	out.insert( "NoAutoGenerate", noAutoGenerate );
 
 	out.insert( "ToDestroy", toDestroy );
 	out.insert( "CanDelete", canDelete );
@@ -198,73 +191,80 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 	m_properties.pos      = pos;
 	m_name                = S::s( "$WorkshopName_" + type );
 
-	auto spl = DB::selectRows( "Workshops_Components", type );
-
-	for ( auto spm : spl )
+	auto dbws = DB::workshop( type );
+	if( dbws )
 	{
-		Position offset;
-		offset   = Position( spm.value( "Offset" ).toString() );
-		int rotX = offset.x;
-		int rotY = offset.y;
+		auto& spl = dbws->components;
+
+		for ( auto sp : spl )
+		{
+			Position offset;
+			offset   = sp.Offset;
+			int rotX = offset.x;
+			int rotY = offset.y;
+			switch ( rotation )
+			{
+				case 1:
+					offset.x = -1 * rotY;
+					offset.y = rotX;
+					break;
+				case 2:
+					offset.x = -1 * rotX;
+					offset.y = -1 * rotY;
+					break;
+				case 3:
+					offset.x = rotY;
+					offset.y = -1 * rotX;
+					break;
+			}
+
+			Position constrPos( pos + offset );
+			m_tiles.insert( constrPos.toInt(), constrPos );
+		}
+
+		m_properties.gui = dbws->GUI;
+		m_properties.noAutoGenerate = dbws->NoAutoGenerate;
+		m_properties.crafts = dbws->Crafts;
+
+		Position posIn  = dbws->InputTile;
+		Position posOut = dbws->OutputTile;
+
+		int inX  = posIn.x;
+		int inY  = posIn.y;
+		int outX = posOut.x;
+		int outY = posOut.y;
 		switch ( rotation )
 		{
 			case 1:
-				offset.x = -1 * rotY;
-				offset.y = rotX;
+				posIn.x  = -1 * inY;
+				posIn.y  = inX;
+				posOut.x = -1 * outY;
+				posOut.y = outX;
 				break;
 			case 2:
-				offset.x = -1 * rotX;
-				offset.y = -1 * rotY;
+				posIn.x  = -1 * inX;
+				posIn.y  = -1 * inY;
+				posOut.x = -1 * outX;
+				posOut.y = -1 * outY;
 				break;
 			case 3:
-				offset.x = rotY;
-				offset.y = -1 * rotX;
+				posIn.x  = inY;
+				posIn.y  = -1 * inX;
+				posOut.x = outY;
+				posOut.y = -1 * outX;
 				break;
 		}
 
-		Position constrPos( pos + offset );
-		m_tiles.insert( constrPos.toInt(), constrPos );
+		posIn  = pos + posIn;
+		posOut = pos + posOut;
+
+		m_properties.posIn  = posIn;
+		m_properties.posOut = posOut;
 	}
-
-	auto wsRow = DB::selectRow( "Workshops", type );
-
-	m_properties.gui = wsRow.value( "GUI" ).toString();
-	m_properties.noAutoGenerate = wsRow.value( "NoAutoGenerate" ).toBool();
-
-	Position posIn  = Position( wsRow.value( "InputTile" ) );
-	Position posOut = Position( wsRow.value( "OutputTile" ) );
-
-	int inX  = posIn.x;
-	int inY  = posIn.y;
-	int outX = posOut.x;
-	int outY = posOut.y;
-	switch ( rotation )
+	else
 	{
-		case 1:
-			posIn.x  = -1 * inY;
-			posIn.y  = inX;
-			posOut.x = -1 * outY;
-			posOut.y = outX;
-			break;
-		case 2:
-			posIn.x  = -1 * inX;
-			posIn.y  = -1 * inY;
-			posOut.x = -1 * outX;
-			posOut.y = -1 * outY;
-			break;
-		case 3:
-			posIn.x  = inY;
-			posIn.y  = -1 * inX;
-			posOut.x = outY;
-			posOut.y = -1 * outX;
-			break;
+		// this should never be reached
 	}
-
-	posIn  = pos + posIn;
-	posOut = pos + posOut;
-
-	m_properties.posIn  = posIn;
-	m_properties.posOut = posOut;
 }
 
 Workshop::~Workshop()

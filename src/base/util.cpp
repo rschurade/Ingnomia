@@ -822,11 +822,18 @@ void Util::debugVM( QVariantMap vm, QString name )
 
 QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList& mats )
 {
-	QString iconString = DB::select( "Icon", "Workshops", workshopID ).toString();
+	auto dbws = DB::workshop( workshopID );
 
-	if ( !iconString.isEmpty() )
+	if( !dbws )
 	{
-		const auto path = Global::cfg->get( "dataPath" ).toString() + "/xaml/buttons/" + iconString;
+		QPixmap pm( 100, 100 );
+		pm.fill( QColor( 0, 0, 0, 0 ) );
+		return pm;
+	}
+
+	if ( !dbws->Icon.isEmpty() )
+	{
+		const auto path = Global::cfg->get( "dataPath" ).toString() + "/xaml/buttons/" + dbws->Icon;
 		QPixmap pm( path );
 		assert( pm.width() > 0 );
 		return pm;
