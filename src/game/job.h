@@ -142,6 +142,7 @@ public:
 
 	QList<Position> origWorkPosOffsets();
 	void setOrigWorkPosOffsets( QString offsets );
+	void setOrigWorkPosOffsets( QList<Position> );
 
 	bool isWorked() const;
 	void setIsWorked( bool v );

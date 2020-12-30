@@ -307,6 +307,12 @@ void Job::setOrigWorkPosOffsets( QString offsets )
 	}
 }
 
+void Job::setOrigWorkPosOffsets( QList<Position> pl )
+{
+	m_origWorkPosOffsets = pl;
+}
+
+
 bool Job::isWorked() const
 {
 	return m_jobIsWorked;

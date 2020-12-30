@@ -42,7 +42,7 @@ JobManager::JobManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	for ( auto job : DB::ids( "Jobs" ) )
+	for ( auto job : DB::jobIds() )
 	{
 		m_jobsPerType.insert( job, QMultiHash<int, unsigned int>() );
 	}
@@ -97,9 +97,13 @@ JobManager::JobManager( Game* parent ) :
 	for ( auto skillID : DB::ids( "Skills" ) )
 	{
 		QStringList jobs;
-		for ( auto job : DB::select2( "ID", "Jobs", "SkillID", skillID ) )
+		for( auto jobID : DB::jobIds() )
 		{
-			jobs.append( job.toString() );
+			auto dbjob = DB::job( jobID );
+			if( dbjob->SkillID == skillID )
+			{
+				jobs.append( jobID );
+			}
 		}
 		m_jobIDs.insert( skillID, jobs );
 	}
@@ -319,13 +323,16 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	job->setPos( pos );
 	job->setRotation( rotation );
 	job->setNoJobSprite( noJobSprite );
-
-	job->setMayTrap( DB::select( "MayTrapGnome", "Jobs", type ).toBool() );
+		
 	job->setRequiredSkill( Global::util->requiredSkill( type ) );
 	job->setRequiredTool( Global::util->requiredTool( type ), Global::util->requiredToolLevel( type, pos ) );
 
-	QString wps = DB::select( "WorkPosition", "Jobs", job->type() ).toString();
-	job->setOrigWorkPosOffsets( wps );
+	auto dbjb = DB::job( type );
+	if( dbjb )
+	{
+		job->setMayTrap( dbjb->MayTrapGnome );
+		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
+	}
 
 	m_jobList.insert( job->id(), job );
 
@@ -355,11 +362,13 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 	job->setMaterial( materials.first() );
 	job->setRotation( rotation );
 	job->setNoJobSprite( noJobSprite );
-
-	QString wps = DB::select( "WorkPosition", "Jobs", job->type() ).toString();
-	job->setOrigWorkPosOffsets( wps );
-
-	QString constructionID = DB::select( "ConstructionType", "Jobs", type ).toString();
+	QString constructionID;
+	auto dbjb = DB::job( type );
+	if( dbjb )
+	{
+		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
+		constructionID = dbjb->ConstructionType; 
+	}
 
 	if ( !constructionID.isEmpty() )
 	{
@@ -488,7 +497,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		QElapsedTimer et;
 		et.start();
 
-		auto possibleJobIDs = m_jobIDs.value( skillID ); //  DB::select2( "ID", "Jobs", "SkillID", skillID );
+		auto possibleJobIDs = m_jobIDs.value( skillID );
 		if( m_workshopSkills.contains( skillID ) )
 		{
 			possibleJobIDs.push_front( "CraftAtWorkshop" );

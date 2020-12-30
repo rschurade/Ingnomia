@@ -72,6 +72,8 @@ public:
 	static bool addTranslation( QString id, QString text );
 
 	static QSharedPointer<DBS::Workshop> workshop( QString id );
+	static QSharedPointer<DBS::Job> job( QString id );
+	static QList<QString> jobIds();
 
 private:
 	static QSqlDatabase& getDB();
@@ -85,6 +87,7 @@ private:
 	static QMap<Qt::HANDLE, QSqlDatabase> m_connections;
 
 	static QHash<QString, QSharedPointer<DBS::Workshop>> m_workshops;
+	static QHash<QString, QSharedPointer<DBS::Job>> m_jobs;
 
 	DB()  = delete;
 	~DB() = delete;

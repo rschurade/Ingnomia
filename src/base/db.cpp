@@ -35,6 +35,7 @@ QMap<Qt::HANDLE, QSqlDatabase> DB::m_connections;
 
 
 QHash<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
+QHash<QString, QSharedPointer<DBS::Job>> DB::m_jobs;
 
 void DB::init()
 {
@@ -93,6 +94,47 @@ void DB::initStructs()
 		}
 		
 		m_workshops.insert( ws->ID, ws );
+	}
+
+	m_jobs.clear();
+	rows = DB::selectRows( "Jobs" );
+	for( const auto& row : rows )
+	{
+		QSharedPointer<DBS::Job> job( new DBS::Job );
+		job->ID = row.value( "ID" ).toString();
+		job->ConstructionType = row.value( "ConstructionType" ).toString();
+		job->MayTrapGnome = row.value( "MayTrapGnome" ).toBool();
+		job->RequiredToolItemID = row.value( "RequiredToolItemID" ).toString();
+		job->RequiredToolLevel = row.value( "RequiredToolLevel" ).toString();
+		job->SkillGain = row.value( "SkillGain" ).toString();
+		job->SkillID = row.value( "SkillID" ).toString();
+		job->TechGain = row.value( "TechGain" ).toString();
+		for( auto spos : row.value( "WorkPosition" ).toString().split( "|" ) )
+		{
+			job->WorkPositions.append( Position( spos ) );
+		}
+		auto trows = DB::selectRows( "Jobs_Tasks" );
+		for( const auto& trow : trows )
+		{
+			DBS::Job_Task jt;
+			jt.ConstructionID = trow.value( "ConstructionID" ).toString();
+			jt.Duration = trow.value( "Duration" ).toInt();
+			jt.Material = trow.value( "Material" ).toString();
+			jt.Offset = Position( trow.value( "Offset" ) );
+			jt.Task = trow.value( "Task" ).toString();
+			job->tasks.append( jt );
+		}
+		auto srows = DB::selectRows( "Jobs_SpriteID" );
+		for( const auto& srow : srows )
+		{
+			DBS::Job_SpriteID js;
+			js.Offset = Position( srow.value( "Offset" ) );
+			js.Rotate = srow.value( "Rotate" ).toBool();
+			js.SpriteID = srow.value( "SpriteID" ).toString();
+			js.Type = srow.value( "Type" ).toString();
+			job->sprites.append( js );
+		}
+		m_jobs.insert( job->ID, job );
 	}
 }
 
@@ -625,4 +667,18 @@ QSharedPointer<DBS::Workshop> DB::workshop( QString id )
 		return DB::m_workshops.value( id );
 	}
 	return nullptr;
+}
+
+QSharedPointer<DBS::Job> DB::job( QString id )
+{
+	if( DB::m_jobs.contains( id ) )
+	{
+		return DB::m_jobs.value( id );
+	}
+	return nullptr;
+}
+
+QList<QString> DB::jobIds()
+{
+	return DB::m_jobs.keys();
 }

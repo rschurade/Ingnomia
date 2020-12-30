@@ -385,7 +385,22 @@ struct Items_Tiles {
 	QString Offset;
 };
 
-struct Jobs {
+struct Job_SpriteID {
+	Position Offset;
+	bool Rotate;
+	QString SpriteID;
+	QString Type;
+};
+
+struct Job_Task {
+	QString ConstructionID;
+	int Duration;
+	QString Material;
+	Position Offset;
+	QString Task;
+};
+
+struct Job {
 	QString ID;
 	QString ConstructionType;
 	bool MayTrapGnome;
@@ -394,24 +409,9 @@ struct Jobs {
 	QString SkillGain;
 	QString SkillID;
 	QString TechGain;
-	QString WorkPosition;
-};
-
-struct Jobs_SpriteID {
-	QString ID;
-	QString Offset;
-	bool Rotate;
-	QString SpriteID;
-	QString Type;
-};
-
-struct Jobs_Tasks {
-	QString ID;
-	QString ConstructionID;
-	QString Duration;
-	QString Material;
-	QString Offset;
-	QString Task;
+	QList<Position> WorkPositions;
+	QList<Job_Task> tasks;
+	QList<Job_SpriteID>sprites;
 };
 
 struct Lairs {
