@@ -79,7 +79,12 @@ QString Util::materialType( QString materialID )
 
 QString Util::requiredSkill( QString jobID )
 {
-	return DB::select( "SkillID", "Jobs", jobID ).toString();
+	auto dbjb = DB::job( jobID );
+	if( dbjb )
+	{
+		return dbjb->SkillID;
+	}
+	return "";
 }
 
 QString Util::requiredMagicSkill( QString spellID )
@@ -89,12 +94,22 @@ QString Util::requiredMagicSkill( QString spellID )
 
 QString Util::requiredTool( QString jobID )
 {
-	return DB::select( "RequiredToolItemID", "Jobs", jobID ).toString();
+	auto dbjb = DB::job( jobID );
+	if( dbjb )
+	{
+		return dbjb->RequiredToolItemID;
+	}
+	return "";
 }
 
 int Util::requiredToolLevel( QString jobID, Position pos )
 {
-	QString method = DB::select( "RequiredToolLevel", "Jobs", jobID ).toString();
+	auto dbjb = DB::job( jobID );
+	if( !dbjb )
+	{
+		return 0;
+	}
+	QString method = dbjb->RequiredToolLevel;
 	int level      = 0;
 
 	if ( method == "ByWallMaterial" )
