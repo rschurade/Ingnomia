@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - remove plants on the tile above when digging stairs up
 - gnomes forgetting their rooms on load
 - swapped items getting stuck as constructed when looking for a tool
+- seeds for leaf plants like tea, tobacco, woad and dyers weed
 
 ### Added
 - burn recipe for bones in the waste disposal
@@ -23,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - moved all job handling other than hauling jobs to central job manager instance
 - trees can no longer overlapp with each other
 - trees can no longer replace existing tiles
+- onions and potatos produces seeds again and use seeds to plant
 
 ### Removed
 
