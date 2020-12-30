@@ -4855,6 +4855,8 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BlueDye','blue dye')
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_PurpleDye','purple dye');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_CyanDye','cyan dye');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_DyeHair','dye hair');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_AlarmBellBase','alarm bell base');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_AlarmBellBell','alarm bell bell');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CategoryName_Materials','Materials');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CategoryName_Grown','Grown');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CategoryName_Workshop','Workshop');
