@@ -123,9 +123,11 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 #endif
 	}
 	static QPointer<QFile> outFile = openLog();
+	static std::mutex guard;
 
 	if ( outFile )
 	{
+		std::lock_guard<std::mutex> lock( guard );
 		QTextStream ts( outFile );
 		ts << filedate << " " << message << endl;
 	}
