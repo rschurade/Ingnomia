@@ -806,11 +806,11 @@ QSharedPointer<Job> Workshop::createButcherJob()
 	if ( m_properties.butcherCorpses )
 	{
 		QString itemID = "";
-		if ( g->inv()->itemCountInStockpile( "AnimalCorpse", "any" ) > 0 )
+		if ( g->inv()->itemCount( "AnimalCorpse", "any" ) > 0 )
 		{
 			itemID = "AnimalCorpse";
 		}
-		else if ( g->inv()->itemCountInStockpile( "GoblinCorpse", "any" ) > 0 )
+		else if ( g->inv()->itemCount( "GoblinCorpse", "any" ) > 0 )
 		{
 			itemID = "GoblinCorpse";
 		}

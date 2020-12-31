@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Fixed
+
+### Added
+
+### Changed
+- Allow corpses outside stockpiles to be butchered
+
+### Removed
+
+
 ## [0.8.6]
 
 ### Fixed
@@ -27,6 +39,7 @@ All notable changes to this project will be documented in this file.
 - onions and potatos produces seeds again and use seeds to plant
 
 ### Removed
+
 
 ## [0.8.5]
 
