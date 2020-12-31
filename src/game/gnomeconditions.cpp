@@ -285,7 +285,7 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 	{
 		for( const auto& prio : squad->priorities )
 		{
-			if ( prio.attitude == MilAttitude::HUNT )
+			if ( prio.attitude != MilAttitude::FLEE )
 			{
 				const auto& targetSet = g->cm()->animalsByType( prio.type );
 				for ( const auto& targetID : targetSet )
@@ -293,8 +293,35 @@ BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 					//!TODO Bucket targets by region cluster, so this can become amortized constant cost
 					if ( g->cm()->hasPathTo( m_position, targetID ) )
 					{
-						return BT_RESULT::SUCCESS;
+						if ( prio.attitude == MilAttitude::HUNT )
+						{
+							return BT_RESULT::SUCCESS;
+						}
+						const Creature* creature = g->cm()->creature( targetID );
+						const unsigned int dist  = m_position.distSquare( creature->getPos() );
+
+						if ( prio.attitude == MilAttitude::DEFEND && dist < 4 && g->cm()->hasLineOfSightTo( m_position, targetID ) )
+						{
+							return BT_RESULT::SUCCESS;
+						}
+
+						if ( prio.attitude == MilAttitude::ATTACK && dist < 100 && g->cm()->hasLineOfSightTo( m_position, targetID ) )
+						{
+							return BT_RESULT::SUCCESS;
+						}
 					}
+				}
+			}
+		}
+		for ( const auto& gnomeID : squad->gnomes )
+		{
+			const Gnome* gnome = g->gm()->gnome( gnomeID );
+			if ( gnome && gnome->m_currentAttackTarget )
+			{
+				const Creature* creature = g->cm()->creature( gnome->m_currentAttackTarget );
+				if ( creature && g->cm()->hasPathTo( m_position, creature->id() ) )
+				{
+					return BT_RESULT::SUCCESS;
 				}
 			}
 		}

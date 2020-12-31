@@ -37,6 +37,11 @@ Tile& World::getTile( const Position pos )
 	return m_world[pos.toInt()];
 }
 
+const Tile& World::getTile( const Position pos ) const
+{
+	return m_world[pos.toInt()];
+}
+
 Tile& World::getTile( const unsigned int id )
 {
 	return m_world[id];
@@ -412,6 +417,30 @@ unsigned int World::getFurnitureOnTile( Position pos )
 		}
 	}
 	return 0;
+}
+
+bool World::isLineOfSight( Position a, Position b ) const
+{
+	return testLine( a, b, [world = this]( const Position &current, const Position& previous ) -> bool {
+		const auto& tile = world->getTile( current );
+		if ( tile.wallType & WallType::WT_VIEWBLOCKING )
+		{
+			return false;
+		}
+		if ( current.z > previous.z && tile.floorType & FloorType::FT_SOLIDFLOOR )
+		{
+			return false;
+		}
+		if (current.z < previous.z)
+		{
+			const auto& tilePrev = world->getTile( current );
+			if ( tilePrev.floorType & FloorType::FT_SOLIDFLOOR )
+			{
+				return false;
+			}
+		}
+		return true;
+	} );
 }
 
 QString World::getDebugFloorConstruction( Position pos )

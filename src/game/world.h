@@ -283,6 +283,7 @@ public:
 	Tile& getTile( const unsigned short x, const unsigned short y, const unsigned short z );
 	//Tile& getTile( Position pos );
 	Tile& getTile( const Position pos );
+	const Tile& getTile( const Position pos ) const;
 	Tile& getTile( const unsigned int id );
 
 	bool noTree( const Position pos, const int xRange, const int yRange );
@@ -324,6 +325,8 @@ public:
 	QString getDebugFloorConstruction( Position pos );
 
 	unsigned int getFurnitureOnTile( Position pos );
+
+	bool isLineOfSight( Position a, Position b ) const;
 };
 
 #endif /* WORLD_H_ */

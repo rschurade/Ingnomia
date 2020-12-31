@@ -62,10 +62,10 @@ public:
 
 	QString getID() { return m_idString.Str(); }
 
-	bool getIgnore() const { return m_attitude == MilAttitude::_IGNORE; }
-	void setIgnore( bool value );
-	bool getAvoid() const { return m_attitude == MilAttitude::AVOID; }
-	void setAvoid( bool value );
+	bool getDefend() const { return m_attitude == MilAttitude::DEFEND; }
+	void setDefend( bool value );
+	bool getFlee() const { return m_attitude == MilAttitude::FLEE; }
+	void setFlee( bool value );
 	bool getAttack() const { return m_attitude == MilAttitude::ATTACK; }
 	void setAttack( bool value );
 	bool getHunt() const { return m_attitude == MilAttitude::HUNT; }
@@ -74,7 +74,7 @@ public:
 private:
 	Noesis::String m_idString;
 	Noesis::String m_name;
-	MilAttitude m_attitude = MilAttitude::_IGNORE;
+	MilAttitude m_attitude = MilAttitude::FLEE;
 
 	unsigned int m_squadID = 0;
 	MilitaryProxy* m_proxy = nullptr;

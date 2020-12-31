@@ -354,7 +354,7 @@ void Creature::setSkillLevel( QString id, int level )
 	m_skills[id] = level;
 }
 
-void Creature::forceMove( Position& to )
+void Creature::forceMove( const Position& to )
 {
 	//qDebug() << name() << " force move from " << m_position.toString() << " to " << to.toString();
 	g->w()->removeCreatureFromPosition( m_position, m_id );

@@ -165,7 +165,7 @@ Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 		{
 			if( !typeSet.contains( type ) )
 			{
-				TargetPriority tp { type, MilAttitude::_IGNORE };
+				TargetPriority tp { type, MilAttitude::FLEE };
 				priorities.append( tp );
 			}
 		}
@@ -174,7 +174,7 @@ Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 	{
 		for( auto type : types )
 		{
-			TargetPriority tp { type, MilAttitude::_IGNORE };
+			TargetPriority tp { type, MilAttitude::FLEE };
 			priorities.append( tp );
 		}
 	}
@@ -383,7 +383,7 @@ unsigned int MilitaryManager::addSquad()
 	auto types = g->m_creatureManager->types();
 	for( auto type : types )
 	{
-		TargetPriority tp { type, MilAttitude::_IGNORE };
+		TargetPriority tp { type, MilAttitude::DEFEND };
 		squad.priorities.append( tp );
 	}
 

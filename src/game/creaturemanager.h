@@ -63,12 +63,13 @@ public:
 	
 	PriorityQueue<Animal*, int> animalsByDistance( Position pos, QString type );
 	
-	void forceMoveAnimals( Position& from, Position& to );
+	void forceMoveAnimals( const Position& from, const Position& to );
 
 	QList<QString> types();
 	QList<unsigned int> animalsByType( QString type );
 
-	bool hasPathTo( Position& pos, unsigned int creatureID );
+	bool hasPathTo( const Position& pos, unsigned int creatureID );
+	bool hasLineOfSightTo( const Position& pos, unsigned int creatureID );
 
 private:
 	QPointer<Game> g;

@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 ### Added
+- Attack on sight combat behavior
+- Defend (hold position) combat behavior
 
 ### Changed
 - Allow corpses outside stockpiles to be butchered

@@ -359,7 +359,7 @@ QList<unsigned int> CreatureManager::animalsByType( QString type )
 	return m_creaturesPerType.value( type );
 }
 
-void CreatureManager::forceMoveAnimals( Position& from, Position& to )
+void CreatureManager::forceMoveAnimals( const Position& from, const Position& to )
 {
 	for ( auto& a : m_creatures )
 	{
@@ -419,7 +419,7 @@ void CreatureManager::updateLists()
 	m_dirty = false;
 }
 
-bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
+bool CreatureManager::hasPathTo( const Position& pos, unsigned int creatureID )
 {
 	if( m_creaturesByID.contains( creatureID ) )
 	{
@@ -427,6 +427,19 @@ bool CreatureManager::hasPathTo( Position& pos, unsigned int creatureID )
 		if( creature )
 		{
 			return g->m_world->regionMap().checkConnectedRegions( pos, creature->getPos() );
+		}
+	}
+	return false;
+}
+
+bool CreatureManager::hasLineOfSightTo( const Position& pos, unsigned int creatureID )
+{
+	if ( m_creaturesByID.contains( creatureID ) )
+	{
+		auto creature = m_creaturesByID[creatureID];
+		if ( creature )
+		{
+			return g->m_world->isLineOfSight( pos, creature->getPos() );
 		}
 	}
 	return false;

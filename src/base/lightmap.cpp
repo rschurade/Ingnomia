@@ -58,6 +58,8 @@ void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& worl
 
 	int range = intensity / decay;
 
+	visited.reserve( range * range * range );
+
 	while ( !wq.empty() )
 	{
 		QPair<Position, int> current = wq.dequeue();

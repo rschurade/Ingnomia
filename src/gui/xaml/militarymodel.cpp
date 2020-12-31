@@ -44,27 +44,27 @@ SquadPriority::SquadPriority( const GuiTargetPriority& prio, unsigned int squadI
 }
 
 
-void SquadPriority::setIgnore( bool value )
+void SquadPriority::setDefend( bool value )
 {
-	if( value && m_attitude != MilAttitude::_IGNORE )
+	if( value && m_attitude != MilAttitude::DEFEND )
 	{
-		m_attitude = MilAttitude::_IGNORE;
+		m_attitude = MilAttitude::DEFEND;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
-		OnPropertyChanged( "Ignore" );
-		OnPropertyChanged( "Avoid" );
+		OnPropertyChanged( "Flee" );
+		OnPropertyChanged( "Defend" );
 		OnPropertyChanged( "Attack" );
 		OnPropertyChanged( "Hunt" );
 	}
 }
 
-void SquadPriority::setAvoid( bool value )
+void SquadPriority::setFlee( bool value )
 {
-	if( value && m_attitude != MilAttitude::AVOID )
+	if( value && m_attitude != MilAttitude::FLEE )
 	{
-		m_attitude = MilAttitude::AVOID;
+		m_attitude = MilAttitude::FLEE;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
-		OnPropertyChanged( "Ignore" );
-		OnPropertyChanged( "Avoid" );
+		OnPropertyChanged( "Flee" );
+		OnPropertyChanged( "Defend" );
 		OnPropertyChanged( "Attack" );
 		OnPropertyChanged( "Hunt" );
 	}
@@ -76,8 +76,8 @@ void SquadPriority::setAttack( bool value )
 	{
 		m_attitude = MilAttitude::ATTACK;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
-		OnPropertyChanged( "Ignore" );
-		OnPropertyChanged( "Avoid" );
+		OnPropertyChanged( "Flee" );
+		OnPropertyChanged( "Defend" );
 		OnPropertyChanged( "Attack" );
 		OnPropertyChanged( "Hunt" );
 	}
@@ -89,8 +89,8 @@ void SquadPriority::setHunt( bool value )
 	{
 		m_attitude = MilAttitude::HUNT;
 		m_proxy->setAttitude( m_squadID, m_idString.Str(), m_attitude );
-		OnPropertyChanged( "Ignore" );
-		OnPropertyChanged( "Avoid" );
+		OnPropertyChanged( "Flee" );
+		OnPropertyChanged( "Defend" );
 		OnPropertyChanged( "Attack" );
 		OnPropertyChanged( "Hunt" );
 	}
@@ -636,8 +636,8 @@ NS_IMPLEMENT_REFLECTION( SquadPriority, "IngnomiaGUI.SquadPriority" )
 {
 	NsProp( "Name", &SquadPriority::getName );
 	NsProp( "ID", &SquadPriority::getIDString );
-	NsProp( "Ignore", &SquadPriority::getIgnore, &SquadPriority::setIgnore );
-	NsProp( "Avoid", &SquadPriority::getAvoid, &SquadPriority::setAvoid );
+	NsProp( "Flee", &SquadPriority::getFlee, &SquadPriority::setFlee );
+	NsProp( "Defend", &SquadPriority::getDefend, &SquadPriority::setDefend );
 	NsProp( "Attack", &SquadPriority::getAttack, &SquadPriority::setAttack );
 	NsProp( "Hunt", &SquadPriority::getHunt, &SquadPriority::setHunt );
 	NsProp( "MoveUpCmd", &SquadPriority::getMoveUpCmd );

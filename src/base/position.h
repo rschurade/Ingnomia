@@ -133,7 +133,7 @@ struct Position
 
 	constexpr unsigned int toHashBase() const
 	{
-		return (z << 20) + (y << 10) + x;
+		return ( z << 20 ) + ( y << 10 ) + x;
 	}
 
 	bool valid() const
@@ -223,3 +223,107 @@ struct hash<Position>
 };
 
 } // namespace std
+
+inline bool testLine( const Position& a, const Position& b, const std::function<bool( const Position& current, const Position& previous )>& callback )
+{
+	// Bresenham's Algorithm
+	const auto distX = std::abs( a.x - b.x );
+	const auto distY = std::abs( a.y - b.y );
+	const auto distZ = std::abs( a.z - b.z );
+
+	const auto dirX = a.x < b.x ? 1 : ( a.x > b.x ? -1 : 0 );
+	const auto dirY = a.y < b.y ? 1 : ( a.y > b.y ? -1 : 0 );
+	const auto dirZ = a.z < b.z ? 1 : ( a.z > b.z ? -1 : 0 );
+
+	const bool xIsMax = distX >= distY && distX >= distZ;
+	const bool yIsMax = distY >= distX && distY >= distZ;
+	const bool zIsMax = distZ >= distX && distZ >= distY;
+
+	auto current  = a;
+	auto previous = a;
+
+	if ( !callback( current, previous ) )
+	{
+		return false;
+	}
+
+	if ( xIsMax )
+	{
+		auto p1 = 2 * distY - distX;
+		auto p2 = 2 * distZ - distX;
+		while ( current.x != b.x )
+		{
+			previous = current;
+			current.x += dirX;
+			if ( p1 > 0 )
+			{
+				current.y += dirY;
+				p1 -= 2 * dirX;
+			}
+			if ( p2 > 0 )
+			{
+				current.z += dirZ;
+				p2 -= 2 * dirX;
+			}
+			p1 += 2 * dirY;
+			p2 += 2 * dirZ;
+			if ( !callback( current, previous ) )
+			{
+				return false;
+			}
+		}
+	}
+	else if ( yIsMax )
+	{
+		auto p1 = 2 * distX - distY;
+		auto p2 = 2 * distZ - distY;
+		while ( current.y != b.y )
+		{
+			previous = current;
+			current.y += dirY;
+			if ( p1 > 0 )
+			{
+				current.x += dirX;
+				p1 -= 2 * dirY;
+			}
+			if ( p2 > 0 )
+			{
+				current.z += dirZ;
+				p2 -= 2 * dirY;
+			}
+			p1 += 2 * dirX;
+			p2 += 2 * dirZ;
+			if ( !callback( current, previous ) )
+			{
+				return false;
+			}
+		}
+	}
+	else if ( zIsMax )
+	{
+		auto p1 = 2 * distX - distZ;
+		auto p2 = 2 * distY - distZ;
+		while ( current.z != b.z )
+		{
+			previous = current;
+			current.z += dirZ;
+			if ( p1 > 0 )
+			{
+				current.x += dirX;
+				p1 -= 2 * dirZ;
+			}
+			if ( p2 > 0 )
+			{
+				current.y += dirY;
+				p2 -= 2 * dirZ;
+			}
+			p1 += 2 * dirX;
+			p2 += 2 * dirY;
+			if ( !callback( current, previous ) )
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}

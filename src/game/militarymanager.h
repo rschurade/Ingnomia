@@ -78,8 +78,8 @@ struct MilitaryRole
 };
 
 enum class MilAttitude {
-	_IGNORE,
-	AVOID,
+	FLEE,
+	DEFEND,
 	ATTACK,
 	HUNT
 };

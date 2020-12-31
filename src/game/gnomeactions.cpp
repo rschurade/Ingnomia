@@ -2262,6 +2262,8 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 	if ( Global::debugMode )
 		log( "actionGetTarget" );
 
+	//!TODO Decide when else to invalidate current target, e.g. because there might a target of higher priority closer to us
+
 	// Unset current attack target if invalidated
 	if ( m_currentAttackTarget )
 	{
@@ -2308,7 +2310,7 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 				// Next search for hunting targets, anything we could reach
 				for ( const auto& prio : squad->priorities )
 				{
-					if ( prio.attitude == MilAttitude::HUNT )
+					if ( prio.attitude != MilAttitude::FLEE )
 					{
 						const auto& targetSet = g->cm()->animalsByType( prio.type );
 						//!TODO Sort huntTargets into buckets by regionm so hasPathTo will never fail
@@ -2318,6 +2320,16 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 							if ( creature && !creature->isDead() && g->cm()->hasPathTo( m_position, targetID ) )
 							{
 								const unsigned int dist = m_position.distSquare( creature->getPos() );
+								if ( prio.attitude == MilAttitude::ATTACK && ( dist >= 100 || !g->cm()->hasLineOfSightTo( m_position, targetID ) ) )
+								{
+									// Skip attack targets which we don't see ourselves
+									continue;
+								}
+								if ( prio.attitude == MilAttitude::DEFEND && ( dist >= 4 || !g->cm()->hasLineOfSightTo( m_position, targetID ) ) )
+								{
+									// Skip targets which are not adjacent
+									continue;
+								}
 								if ( dist < bestDistance )
 								{
 									bestDistance  = dist;
@@ -2334,7 +2346,6 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 				}
 			}
 		}
-		//!TODO Loop again to check for "attack on sight" target class
 
 		if ( !bestCandidate )
 		{
