@@ -205,7 +205,7 @@ BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 
 	for ( auto itemID : cil )
 	{
-		if ( !g->inv()->isPickedUp( itemID ) )
+		if ( g->inv()->isHeldBy( itemID ) == 0 )
 		{
 			pq.put( itemID, g->inv()->distanceSquare( itemID, m_position ) );
 		}

@@ -308,7 +308,7 @@ void CanWork::cleanUpJob( bool finished )
 		for ( auto itemID : claimedItems() )
 		{
 			g->inv()->setInJob( itemID, 0 );
-			if ( g->inv()->isPickedUp( itemID ) && !g->inv()->isConstructedOrEquipped( itemID ) )
+			if ( ( g->inv()->isHeldBy( itemID ) == m_id ) && !g->inv()->isConstructed( itemID ) )
 			{
 				g->inv()->putDownItem( itemID, m_position );
 			}
@@ -324,7 +324,7 @@ void CanWork::cleanUpJob( bool finished )
 
 	for ( auto itemID : m_carriedItems )
 	{
-		if ( g->inv()->isPickedUp( itemID ) && !g->inv()->isConstructedOrEquipped( itemID ) )
+		if ( ( g->inv()->isHeldBy( itemID ) == m_id ) && !g->inv()->isConstructed( itemID ) )
 		{
 			g->inv()->putDownItem( itemID, m_position );
 		}
@@ -541,7 +541,6 @@ bool CanWork::dropEquippedItem()
 		g->inv()->putDownItem( equippedItem, m_position );
 		g->inv()->gravity( m_position );
 		g->inv()->setInJob( equippedItem, 0 );
-		g->inv()->setConstructedOrEquipped( equippedItem, false );
 		m_equipment.rightHandHeld.itemID = 0;
 		m_equipment.rightHandHeld.item.clear();
 		m_equipment.rightHandHeld.materialID = 0;
@@ -956,7 +955,7 @@ bool CanWork::construct()
 		{
 			g->inv()->setInJob( itemUID, 0 );
 
-			if ( g->inv()->isConstructedOrEquipped( itemUID ) )
+			if ( g->inv()->isConstructed( itemUID ) )
 			{
 				/*
 				if( g->inv()->isContainer( itemUID ) )
@@ -971,7 +970,7 @@ bool CanWork::construct()
 			}
 			else
 			{
-				g->inv()->pickUpItem( itemUID );
+				g->inv()->pickUpItem( itemUID, m_id ); // update item sprites on tile
 				g->inv()->destroyObject( itemUID );
 			}
 		}
@@ -1091,7 +1090,7 @@ bool CanWork::plantTree()
 	if ( !claimedItems().empty() )
 	{
 		g->w()->plantTree( m_job->pos(), m_job->item() );
-		g->inv()->pickUpItem( claimedItems().first() );
+		g->inv()->pickUpItem( claimedItems().first(), m_id );
 		for ( auto ci : claimedItems() )
 		{
 			g->inv()->destroyObject( ci );
@@ -1107,7 +1106,7 @@ bool CanWork::plant()
 	if ( !claimedItems().empty() )
 	{
 		g->w()->plant( m_job->pos(), claimedItems().first() );
-		g->inv()->pickUpItem( claimedItems().first() );
+		g->inv()->pickUpItem( claimedItems().first(), m_id );
 		for ( auto ci : claimedItems() )
 		{
 			g->inv()->destroyObject( ci );
@@ -1206,8 +1205,7 @@ bool CanWork::craft()
 				//a->updateSprite();
 
 				g->gm()->addAutomaton( a );
-				g->inv()->pickUpItem( itemID );
-				g->inv()->setInJob( itemID, a->id() );
+				g->inv()->pickUpItem( itemID, a->id() );
 			}
 		}
 		else
@@ -1280,7 +1278,7 @@ bool CanWork::craft()
 
 	for ( auto item : claimedItems() )
 	{
-		g->inv()->pickUpItem( item );
+		g->inv()->pickUpItem( item, m_id );
 		g->inv()->destroyObject( item );
 	}
 	clearClaimedItems();
@@ -1332,7 +1330,7 @@ bool CanWork::butcherFish()
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "FishBone", materialSID );
 
-		g->inv()->pickUpItem( itemUID );
+		g->inv()->pickUpItem( itemUID, m_id );
 		g->inv()->destroyObject( itemUID );
 	}
 	clearClaimedItems();
@@ -1348,7 +1346,7 @@ bool CanWork::butcherCorpse()
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "Bone", materialSID );
 
-		g->inv()->pickUpItem( itemUID );
+		g->inv()->pickUpItem( itemUID, m_id );
 		g->inv()->destroyObject( itemUID );
 	}
 	clearClaimedItems();
@@ -1513,7 +1511,7 @@ bool CanWork::refuel()
 
 		for ( auto item : claimedItems() )
 		{
-			g->inv()->pickUpItem( item );
+			g->inv()->pickUpItem( item, m_id );
 			g->inv()->destroyObject( item );
 		}
 		clearClaimedItems();
@@ -1574,7 +1572,7 @@ bool CanWork::fillTrough()
 
 			for ( auto item : claimedItems() )
 			{
-				g->inv()->pickUpItem( item );
+				g->inv()->pickUpItem( item, m_id );
 				g->inv()->destroyObject( item );
 			}
 			clearClaimedItems();

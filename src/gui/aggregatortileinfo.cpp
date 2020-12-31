@@ -147,7 +147,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				QString itext = "";
 				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
 				
-				if( g->inv()->isConstructedOrEquipped( item ) )
+				if( g->inv()->isConstructed( item ) )
 				{
 					if( g->mcm()->hasMechanism( pos ) )
 					{

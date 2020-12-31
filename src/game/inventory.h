@@ -82,8 +82,10 @@ public:
 
 	void moveItemToPos( unsigned int item, const Position& newPos );
 
-	unsigned int pickUpItem( unsigned int id );
+	unsigned int pickUpItem( unsigned int id, unsigned int creatureID );
 	unsigned int putDownItem( unsigned int id, const Position& newPos );
+	unsigned int isHeldBy( unsigned int id );
+
 
 	QList<QString> categories();
 	QList<QString> groups( QString category );
@@ -120,10 +122,10 @@ public:
 	unsigned int isInContainer( unsigned int id );
 	void setInContainer( unsigned int id, unsigned int container );
 
-	bool isPickedUp( unsigned int id );
+	
 
-	bool isConstructedOrEquipped( unsigned int id );
-	void setConstructedOrEquipped( unsigned int id, bool status );
+	bool isConstructed( unsigned int id );
+	void setConstructed( unsigned int id, bool status );
 
 	void putItemInContainer( unsigned int id, unsigned int container );
 	void removeItemFromContainer( unsigned int id );

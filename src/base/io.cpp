@@ -447,26 +447,24 @@ void IO::sanitize()
 				item.setInJob( 0 );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
 			}
-			if ( item.isPickedUp() && !item.isConstructedOrEquipped() )
-			{
+			if ( item.isHeldBy() == 1 && !item.isConstructed() )
+			{ // old save with isPickedUp
 				const bool worn    = 0 != wornItems.count( item.id() );
 				const bool carried = 0 != carriedItems.count( item.id() );
 				if ( !worn && !carried )
 				{
-					item.setIsConstructedOrEquipped( false );
 					g->inv()->putDownItem( item.id(), item.getPos() );
 					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
 				}
-				else if ( worn xor item.isConstructedOrEquipped() )
+				else if ( worn xor item.isConstructed() )
 				{
-					item.setIsConstructedOrEquipped( false );
 					g->inv()->putDownItem( item.id(), item.getPos() );
 					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found being dragged along";
 				}
 			}
-			if ( !item.isPickedUp() && item.isConstructedOrEquipped() && constructedItems.count( item.id() ) == 0 )
+			if ( item.isHeldBy() == 0 && item.isConstructed() && constructedItems.count( item.id() ) == 0 )
 			{
-				item.setIsConstructedOrEquipped( false );
+				item.setIsConstructed( false );
 				g->inv()->putDownItem( item.id(), item.getPos() );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
 			}
@@ -475,7 +473,7 @@ void IO::sanitize()
 		{
 			for( auto& vitem : ws->sourceItems() )
 			{
-				g->inv()->pickUpItem( vitem.toUInt() );
+				g->inv()->pickUpItem( vitem.toUInt(), ws->id() );
 			}
 		}
 	}

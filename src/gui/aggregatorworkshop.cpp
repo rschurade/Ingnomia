@@ -609,7 +609,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					{
 						for( auto itemID : allItemsToSell )
 						{
-							g->inv()->pickUpItem( itemID );
+							g->inv()->pickUpItem( itemID, 1 );
 							g->inv()->destroyObject( itemID );
 						}
 						updatePlayerStock( workshopID );

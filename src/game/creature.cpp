@@ -1095,7 +1095,7 @@ void Creature::unclaimAll()
 		for ( auto item : m_claimedItems )
 		{
 			g->inv()->setInJob( item, 0 );
-			if ( g->inv()->isPickedUp( item ) )
+			if ( g->inv()->isHeldBy( item ) == m_id )
 			{
 				g->inv()->putDownItem( item, m_position );
 			}

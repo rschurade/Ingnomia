@@ -334,7 +334,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 	
 	Octree* ot = octree( itemID, materialID );
 
-	if ( !item->isPickedUp() )
+	if ( !item->isHeldBy() )
 	{
 		if ( m_positionHash.contains( item->getPos().toInt() ) )
 		{
@@ -350,12 +350,12 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		Position pos = item->getPos();
 		ot->insertItem( pos.x, pos.y, pos.z, item->id() );
 		
-		if ( !item->isConstructedOrEquipped() && !item->isInContainer() )
+		if ( !item->isConstructed() && !item->isInContainer() )
 		{
 			g->m_world->setItemSprite( item->getPos(), object.spriteID() );
 		}
 
-		if ( item->isConstructedOrEquipped() || item->isInStockpile() )
+		if ( item->isConstructed() || item->isInStockpile() )
 		{
 			addToWealth( item );
 		}
@@ -441,7 +441,7 @@ unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 		{
 			for ( auto itemUID : m_positionHash[pos.toInt()].values() )
 			{
-				if ( !isConstructedOrEquipped( itemUID ) && !isInContainer( itemUID ) )
+				if ( !isConstructed( itemUID ) && !isInContainer( itemUID ) )
 				{
 					return itemUID;
 				}
@@ -521,7 +521,7 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 	auto predicate = [&thisCount, this, allowInStockpile, pos, count]( unsigned int itemID ) -> bool {
 		auto item = getItem( itemID );
 
-		if ( item && ( allowInStockpile || !item->isInStockpile() ) && !item->isInJob() && !item->isConstructedOrEquipped() )
+		if ( item && ( allowInStockpile || !item->isInStockpile() ) && item->isFree() )
 		{
 			if ( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 6 )
 			{
@@ -567,7 +567,7 @@ unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile
 				auto item = getItem( itemID );
 				if ( item )
 				{
-					if ( itemSID == item->itemSID() && ( allowInStockpile || !item->isInStockpile() ) && !item->isInJob() && !item->isConstructedOrEquipped() )
+					if ( itemSID == item->itemSID() && ( allowInStockpile || !item->isInStockpile() ) && item->isFree() )
 					{
 						return itemID;
 					}
@@ -587,9 +587,7 @@ unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile
 				{
 					if ( item->itemSID() == itemSID &&
 						 item->materialSID() == materialSID &&
-						 ( allowInStockpile || !item->isInStockpile() ) &&
-						 !item->isInJob() &&
-						 !item->isConstructedOrEquipped() )
+						 ( allowInStockpile || !item->isInStockpile() ) && item->isFree() )
 					{
 						return itemID;
 					}
@@ -611,7 +609,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	auto predicate = [&out, this, allowInStockpile, pos, count]( unsigned int itemID ) -> bool {
 		auto item = getItem( itemID );
 
-		if ( item && ( allowInStockpile || !item->isInStockpile() ) && !item->isInJob() && !item->isConstructedOrEquipped() )
+		if ( item && ( allowInStockpile || !item->isInStockpile() ) && item->isFree() )
 		{
 			if ( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 6 )
 			{
@@ -687,7 +685,7 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 		{
 			auto item = getItem( itemID );
 
-			if ( item && !item->isInJob() && !item->isConstructedOrEquipped() )
+			if ( item && item->isFree() )
 			{
 				if ( item->isInStockpile() == stockpileID )
 				{
@@ -722,7 +720,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 		{
 			for ( auto item : m_hash[itemSID][materialSID] )
 			{
-				if ( item->isInStockpile() && !item->isInJob() && !item->isConstructedOrEquipped() )
+				if ( item->isInStockpile() && item->isFree() )
 				{
 					out.append( item->id() );
 				}
@@ -743,7 +741,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 		{
 			for ( auto item : m_hash[itemSID][materialSID] )
 			{
-				if ( item->isInStockpile() && !item->isInJob() && !item->isConstructedOrEquipped() && item->quality() == quality )
+				if ( item->isInStockpile() && item->isFree() && item->quality() == quality )
 				{
 					out.append( item->id() );
 				}
@@ -794,17 +792,17 @@ void Inventory::moveItemToPos( unsigned int id, const Position& newPos )
 {
 	//qDebug() << "move item from " << item( id].getPos().toString() << " to " << newPos.toString();
 	// remove from position hash
-	pickUpItem( id );
+	pickUpItem( id, 1 );
 
 	putDownItem( id, newPos );
 }
 
-unsigned int Inventory::pickUpItem( unsigned int id )
+unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 {
 	auto item = getItem( id );
 	if ( item )
 	{
-		item->setPickedUp( true );
+		item->setHeldBy( creatureID );
 
 		//remove from possible stockpile
 		unsigned int stockpileID = item->isInStockpile();
@@ -869,7 +867,7 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 	Item* item = getItem( id );
 	if ( item )
 	{
-		item->setPickedUp( false );
+		item->setHeldBy( 0 );
 		if ( m_positionHash.contains( newPos.toInt() ) )
 		{
 			m_positionHash[newPos.toInt()].insert( id );
@@ -928,12 +926,12 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 	return 0;
 }
 
-bool Inventory::isPickedUp( unsigned int id )
+unsigned int Inventory::isHeldBy( unsigned int id )
 {
 	Item* item = getItem( id );
 	if ( item )
 	{
-		return item->isPickedUp();
+		return item->isHeldBy();
 	}
 	return false;
 }
@@ -1008,7 +1006,7 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 			{
 				for ( auto item : it )
 				{
-					if ( ( !item->isInJob() || allowInJob ) && !item->isConstructedOrEquipped() )
+					if ( ( !item->isInJob() || allowInJob ) && !item->isConstructed() && ( item->isHeldBy() == 0 ) )
 					{
 						mats["any"]++;
 						if ( mats.contains( item->materialSID() ) )
@@ -1039,7 +1037,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 			{
 				for ( auto item : it )
 				{
-					if ( !item->isInJob() && !item->isConstructedOrEquipped() )
+					if ( item->isFree() )
 					{
 						++result;
 					}
@@ -1053,7 +1051,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 		{
 			for ( auto item : m_hash[itemID][materialID] )
 			{
-				if ( !item->isConstructedOrEquipped() && !item->isInJob() )
+				if ( item->isFree() )
 				{
 					++result;
 				}
@@ -1076,7 +1074,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 			{
 				for ( auto item : it )
 				{
-					if ( !item->isConstructedOrEquipped() )
+					if ( !item->isConstructed() )
 					{
 						++result;
 					}
@@ -1090,7 +1088,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 		{
 			for ( auto item : m_hash[itemID][materialID] )
 			{
-				if ( !item->isConstructedOrEquipped() )
+				if ( !item->isConstructed() )
 				{
 					++result;
 				}
@@ -1113,7 +1111,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 			{
 				for ( auto item : it )
 				{
-					if ( item->isInStockpile() && !item->isInJob() && !item->isConstructedOrEquipped() )
+					if ( item->isInStockpile() && !item->isInJob() && !item->isConstructed() )
 					{
 						++result;
 					}
@@ -1127,7 +1125,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 		{
 			for ( auto item : m_hash[itemID][materialID] )
 			{
-				if ( item->isInStockpile() && !item->isConstructedOrEquipped() && !item->isInJob() )
+				if ( item->isInStockpile() && item->isFree() )
 				{
 					result++;
 				}
@@ -1150,7 +1148,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 			{
 				for ( auto item : it )
 				{
-					if ( !item->isInStockpile() && !item->isInJob() && !item->isConstructedOrEquipped() )
+					if ( !item->isInStockpile() && item->isFree() )
 					{
 						++result;
 					}
@@ -1164,7 +1162,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 		{
 			for ( auto item : m_hash[itemID][materialID] )
 			{
-				if ( item->materialSID() == materialID && !item->isInStockpile() && !item->isConstructedOrEquipped() && !item->isInJob() )
+				if ( item->materialSID() == materialID && !item->isInStockpile() && item->isFree() )
 				{
 					result++;
 				}
@@ -1189,12 +1187,15 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 				{
 					result.total++;
 
-					if ( item->isConstructedOrEquipped() )
+					if ( item->isHeldBy() != 0 )
 					{
-						if ( item->isPickedUp() )
-							result.equipped++;
-						else
-							result.constructed++;
+						//TODO determine if the item is equipped or just carried
+						result.equipped++;
+					}
+
+					if ( item->isConstructed() )
+					{
+						result.constructed++;
 					}
 					else if ( item->isInStockpile() )
 						result.inStockpile++;
@@ -1219,12 +1220,14 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 				{
 					result.total++;
 
-					if ( item->isConstructedOrEquipped() )
+					if ( item->isHeldBy() != 0 )
 					{
-						if ( item->isPickedUp() )
-							result.equipped++;
-						else
-							result.constructed++;
+						//TODO determine if the item is equipped or just carried
+						result.equipped++;
+					}
+					if ( item->isConstructed() )
+					{
+						result.constructed++;
 					}
 					else if ( item->isInStockpile() )
 						result.inStockpile++;
@@ -1316,27 +1319,27 @@ void Inventory::setInContainer( unsigned int id, unsigned int container )
 	}
 }
 
-bool Inventory::isConstructedOrEquipped( unsigned int id )
+bool Inventory::isConstructed( unsigned int id )
 {
 	auto item = getItem( id );
 	if ( item )
 	{
-		return item->isConstructedOrEquipped();
+		return item->isConstructed();
 	}
 	return false;
 }
 
-void Inventory::setConstructedOrEquipped( unsigned int id, bool status )
+void Inventory::setConstructed( unsigned int id, bool status )
 {
 	auto item = getItem( id );
 	if ( item )
 	{
-		if ( item->isConstructedOrEquipped() && !status )
+		if ( item->isConstructed() && !status )
 		{
 			removeFromWealth( item );
 			emit signalRemoveItem( itemSID( id ), materialSID( id ) );
 		}
-		item->setIsConstructedOrEquipped( status );
+		item->setIsConstructed( status );
 		if ( status )
 		{
 			addToWealth( item );
@@ -1436,7 +1439,7 @@ void Inventory::removeItemFromContainer( unsigned int id )
 		if ( container )
 		{
 			container->removeItem( id );
-			if ( container->isConstructedOrEquipped() )
+			if ( container->isConstructed() )
 			{
 				g->m_spm->setInfiNotFull( container->getPos() );
 			}
@@ -1735,7 +1738,7 @@ bool Inventory::itemTradeAvailable( unsigned int itemUID )
 	auto item = getItem( itemUID );
 	if ( item )
 	{
-		return !item->isConstructedOrEquipped() && (bool)item->isInStockpile() && !(bool)item->isInJob();
+		return (bool)item->isInStockpile() && item->isFree();
 	}
 	return false;
 }

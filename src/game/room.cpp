@@ -170,7 +170,7 @@ void Room::addFurniture( unsigned int itemUID, Position pos )
 		m_fields[pos.toInt()]->furnitureID = itemUID;
 		if ( itemUID )
 		{
-			g->inv()->setConstructedOrEquipped( itemUID, true );
+			g->inv()->setConstructed( itemUID, true );
 			g->inv()->setItemPos( itemUID, pos );
 		}
 		if ( g->inv()->itemSID( itemUID ) == "AlarmBell" )

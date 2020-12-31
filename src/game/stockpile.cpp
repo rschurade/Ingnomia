@@ -916,7 +916,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 
 			field->capacity = g->inv()->capacity( containerID );
 
-			g->inv()->setConstructedOrEquipped( containerID, true );
+			g->inv()->setConstructed( containerID, true );
 
 			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
 			{

@@ -311,8 +311,7 @@ void Automaton::installCore( unsigned int itemID )
 		if ( itemSID.startsWith( "AutomatonCore" ) )
 		{
 			m_core = itemID;
-			g->inv()->pickUpItem( itemID );
-			g->inv()->setInJob( itemID, m_id );
+			g->inv()->pickUpItem( itemID, m_id );
 
 			auto row = DB::selectRow( "Automaton_Cores", itemSID );
 

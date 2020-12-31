@@ -1214,8 +1214,8 @@ void Workshop::setSourceItems( QVariantList items )
 {
 	for ( auto item : items )
 	{
-		g->inv()->pickUpItem( item.toUInt() );
-		g->inv()->setConstructedOrEquipped( item.toUInt(), true );
+		g->inv()->pickUpItem( item.toUInt(), m_id );
+		g->inv()->setConstructed( item.toUInt(), true );
 	}
 	m_properties.sourceItems = items;
 }

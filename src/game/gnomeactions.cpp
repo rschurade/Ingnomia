@@ -490,7 +490,7 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 		return BT_RESULT::FAILURE;
 	}
 
-	g->inv()->pickUpItem( m_itemToPickUp );
+	g->inv()->pickUpItem( m_itemToPickUp, m_id );
 
 	if ( m_btBlackBoard.contains( "ClaimedInventoryItem" ) )
 	{
@@ -1055,7 +1055,6 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 			// drop tool
 			g->inv()->putDownItem( equippedItem, m_position );
 			g->inv()->setInJob( equippedItem, 0 );
-			g->inv()->setConstructedOrEquipped( equippedItem, false );
 			m_equipment.rightHandHeld.itemID = 0;
 			m_equipment.rightHandHeld.item.clear();
 			m_equipment.rightHandHeld.materialID = 0;
@@ -1127,8 +1126,7 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 	{
 		if ( m_position == g->inv()->getItemPos( claimedTool ) )
 		{
-			g->inv()->pickUpItem( claimedTool );
-			g->inv()->setConstructedOrEquipped( claimedTool, true );
+			g->inv()->pickUpItem( claimedTool, m_id );
 			m_equipment.rightHandHeld.itemID     = claimedTool;
 			m_equipment.rightHandHeld.item       = g->inv()->itemSID( claimedTool );
 			m_equipment.rightHandHeld.materialID = g->inv()->materialUID( claimedTool );
@@ -1248,7 +1246,6 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 			dropped = true;
 			g->inv()->putDownItem( wornItem, m_position );
 			g->inv()->setInJob( wornItem, 0 );
-			g->inv()->setConstructedOrEquipped( wornItem, false );
 
 			if ( item == "none" || item.isEmpty() )
 			{
@@ -1932,7 +1929,7 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 
 		for ( auto item : claimedItems() )
 		{
-			g->inv()->pickUpItem( item );
+			g->inv()->pickUpItem( item, m_id );
 			g->inv()->destroyObject( item );
 		}
 		clearClaimedItems();
@@ -2574,9 +2571,8 @@ bool Gnome::equipItem()
 
 	if ( m_position == g->inv()->getItemPos( itemID ) )
 	{
-		g->inv()->pickUpItem( itemID );
+		g->inv()->pickUpItem( itemID, m_id );
 		g->inv()->setInJob( itemID, 0 );
-		g->inv()->setConstructedOrEquipped( itemID, true );
 
 		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
 		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
@@ -2593,7 +2589,6 @@ bool Gnome::equipItem()
 			qWarning() << "Trying to equip into occupied slot!";
 			g->inv()->putDownItem( itemSlot.itemID, m_position );
 			g->inv()->setInJob( itemSlot.itemID, 0 );
-			g->inv()->setConstructedOrEquipped( itemSlot.itemID, false );
 		}
 		itemSlot.itemID     = itemID;
 		itemSlot.item       = itemSID;

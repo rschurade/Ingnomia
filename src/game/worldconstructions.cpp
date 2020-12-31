@@ -398,7 +398,7 @@ bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workP
 	updatePipeSprite( decPos.westOf() );
 
 	unsigned itemID = constr.value( "Item" ).toUInt();
-	g->inv()->setConstructedOrEquipped( itemID, false );
+	g->inv()->setConstructed( itemID, false );
 	g->inv()->moveItemToPos( itemID, workPos );
 
 	QString itemSID = g->inv()->itemSID( constr.value( "Item" ).toUInt() );
@@ -956,7 +956,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		constr.insert( "FromParts", true );
 		for ( auto item : items )
 		{
-			g->inv()->setConstructedOrEquipped( item, true );
+			g->inv()->setConstructed( item, true );
 		}
 	}
 
@@ -994,7 +994,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 	}
 
-	g->inv()->setConstructedOrEquipped( itemID, true );
+	g->inv()->setConstructed( itemID, true );
 
 	unsigned int nextItem = g->inv()->getFirstObjectAtPosition( pos );
 	if ( nextItem )
@@ -1122,7 +1122,7 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 		for ( auto vItem : sourceItems )
 		{
 			g->inv()->putDownItem( vItem.toUInt(), workPos );
-			g->inv()->setConstructedOrEquipped( vItem.toUInt(), false );
+			g->inv()->setConstructed( vItem.toUInt(), false );
 		}
 
 		g->wsm()->deleteWorkshop( ws->id() );
@@ -1214,14 +1214,14 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		{
 			for ( auto vItem : constr.value( "Items" ).toList() )
 			{
-				g->inv()->setConstructedOrEquipped( vItem.toUInt(), false );
+				g->inv()->setConstructed( vItem.toUInt(), false );
 				g->inv()->moveItemToPos( vItem.toUInt(), workPos );
 			}
 			g->inv()->destroyObject( itemID );
 		}
 		else
 		{
-			g->inv()->setConstructedOrEquipped( itemID, false );
+			g->inv()->setConstructed( itemID, false );
 			g->inv()->moveItemToPos( itemID, workPos );
 		}
 
