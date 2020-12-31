@@ -407,6 +407,13 @@ void IO::sanitize()
 			{
 				constructedItems.insert( construction["Item"].toInt() );
 			}
+			if( construction.contains( "Items" ) )
+			{
+				for ( auto vItem : construction.value( "Items" ).toList() )
+				{
+					constructedItems.insert( vItem.toInt() );
+				}
+			}
 		}
 
 		for ( const auto& construction : g->w()->floorConstructions() )
@@ -414,6 +421,13 @@ void IO::sanitize()
 			if ( construction.contains( "Item" ) )
 			{
 				constructedItems.insert( construction["Item"].toInt() );
+			}
+			if( construction.contains( "Items" ) )
+			{
+				for ( auto vItem : construction.value( "Items" ).toList() )
+				{
+					constructedItems.insert( vItem.toInt() );
+				}
 			}
 		}
 
