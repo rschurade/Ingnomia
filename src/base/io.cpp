@@ -385,10 +385,18 @@ void IO::sanitize()
 			{
 				const auto& c = gnome->inventoryItems();
 				carriedItems.insert( c.cbegin(), c.cend() );
+				for ( const auto& itemID : c )
+				{
+					g->inv()->pickUpItem( itemID, gnome->id() );
+				}
 			}
 			{
 				const auto& c = gnome->carriedItems();
 				carriedItems.insert( c.cbegin(), c.cend() );
+				for ( const auto& itemID : c )
+				{
+					g->inv()->pickUpItem( itemID, gnome->id() );
+				}
 			}
 			for ( const auto& claim : gnome->claimedItems() )
 			{
@@ -399,6 +407,7 @@ void IO::sanitize()
 			for ( const auto& itemID : gnome->equipment().wornItems() )
 			{
 				wornItems.insert( itemID );
+				g->inv()->pickUpItem( itemID, gnome->id() );
 			}
 		}
 		for (const auto& construction : g->w()->wallConstructions())

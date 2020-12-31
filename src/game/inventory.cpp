@@ -1111,7 +1111,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 			{
 				for ( auto item : it )
 				{
-					if ( item->isInStockpile() && !item->isInJob() && !item->isConstructed() )
+					if ( item->isInStockpile() && item->isFree() )
 					{
 						++result;
 					}
