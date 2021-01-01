@@ -68,6 +68,7 @@ Item::Item( QVariantMap in ) :
 	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString() );
 	m_isInStockpile = in.value( "InStockpile" ).toUInt();
 	m_isInJob       = in.value( "InJob" ).toUInt();
+	m_isUsedBy      = in.value( "IsUsedBy" ).toUInt();
 	m_isInContainer = in.value( "InContainer" ).toUInt();
 	m_isConstructed = in.value( "Constructed" ).toBool();
 	if( in.contains( "IsHeldBy") )
@@ -187,6 +188,7 @@ QVariant Item::serialize() const
 	out.insert( "InContainer", m_isInContainer );
 	out.insert( "Constructed", m_isConstructed );
 	out.insert( "IsHeldBy", m_isHeldBy );
+	out.insert( "IsUsedBy", m_isUsedBy );
 	out.insert( "Value", m_value );
 	out.insert( "MadeBy", m_madeBy );
 	out.insert( "Quality", m_quality );
