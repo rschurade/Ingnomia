@@ -54,9 +54,9 @@ QMap<QString, QSet<QString>> Global::allowedInContainer;
 
 QHash<Qt::Key, Noesis::Key> Global::keyConvertMap;
 
-int Global::dimX     = 0;
-int Global::dimY     = 0;
-int Global::dimZ     = 0;
+int Global::dimX     = 100;
+int Global::dimY     = 100;
+int Global::dimZ     = 100;
 
 int Global::zWeight = 20;
 
