@@ -73,9 +73,10 @@ public:
 	void setInJob( unsigned int job );
 	unsigned int isInContainer() const;
 	void setInContainer( unsigned int container );
-
 	unsigned int isHeldBy() const;
 	void setHeldBy( unsigned int creatureID );
+	unsigned int isUsedBy() const;
+	void setUsedBy( unsigned int creatureID );
 
 	bool isConstructed() const;
 	void setIsConstructed( bool value );
@@ -121,9 +122,10 @@ private:
 	bool m_isConstructed = false;
 
 	unsigned int m_isInStockpile = 0;
-	unsigned int m_isInJob       = 0;
 	unsigned int m_isInContainer = 0;
+	unsigned int m_isInJob       = 0;
 	unsigned int m_isHeldBy      = 0; // indicates the item is carried or equipped by a creature
+	unsigned int m_isUsedBy      = 0;
 
 	unsigned short m_value = 0;
 	unsigned int m_madeBy  = 0;

@@ -1079,13 +1079,15 @@ void Creature::dropEquipment()
 
 void Creature::addClaimedItem( unsigned int item, unsigned int job )
 {
-	g->inv()->setInJob( item, job );
+	if( job == m_id )
+	{
+		g->inv()->setIsUsedBy( item, job );
+	}
+	else
+	{
+		g->inv()->setInJob( item, job );
+	}
 	m_claimedItems.append( item );
-}
-
-void Creature::removeClaimedItem( unsigned int item )
-{
-	m_claimedItems.removeAll( item );
 }
 
 void Creature::unclaimAll()
@@ -1095,17 +1097,23 @@ void Creature::unclaimAll()
 		for ( auto item : m_claimedItems )
 		{
 			g->inv()->setInJob( item, 0 );
+			g->inv()->setIsUsedBy( item, 0 );
 			if ( g->inv()->isHeldBy( item ) == m_id )
 			{
 				g->inv()->putDownItem( item, m_position );
 			}
 		}
 	}
-	clearClaimedItems();
+	m_claimedItems.clear();
 }
 
-void Creature::clearClaimedItems()
+void Creature::destroyClaimedItems()
 {
+	for ( auto item : m_claimedItems )
+	{
+		g->inv()->pickUpItem( item, m_id );
+		g->inv()->destroyObject( item );
+	}
 	m_claimedItems.clear();
 }
 

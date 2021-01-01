@@ -159,7 +159,7 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 		{
 			for ( auto bedID : beds )
 			{
-				if ( !g->inv()->isInJob( bedID ) )
+				if ( !g->inv()->isInJob( bedID ) && !g->inv()->isUsedBy( bedID ) )
 				{
 					if ( m_job )
 					{
@@ -333,7 +333,7 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 			{
 				for ( auto chairID : chairs )
 				{
-					if ( !g->inv()->isInJob( chairID ) )
+					if ( !g->inv()->isInJob( chairID ) && !g->inv()->isUsedBy( chairID ) )
 					{
 						int curDist = m_position.distSquare( g->inv()->getItemPos( chairID ), 5 );
 						if ( curDist < dist )
@@ -350,7 +350,10 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 	if ( closestChairID != 0 )
 	{
 		addClaimedItem( closestChairID, m_id );
-		setCurrentTarget( g->inv()->getItemPos( closestChairID ) );
+		auto chairPos = g->inv()->getItemPos( closestChairID );
+		setCurrentTarget( chairPos );
+
+		m_facingAfterMove = g->w()->getTile( chairPos ).wallRotation;
 
 		//m_log.append( "Found a dining room." );
 		return BT_RESULT::SUCCESS;
@@ -850,11 +853,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 	if ( claimedItems().size() )
 	{
 		qDebug() << "Error: no items should be claimed here.";
-		for ( auto vItemID : claimedItems() )
-		{
-			g->inv()->setInJob( vItemID, 0 );
-		}
-		clearClaimedItems();
+		unclaimAll();
 	}
 
 	if ( m_job->type() == "CraftAtWorkshop" )
@@ -1927,12 +1926,7 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 		a->setFollowID( 0 );
 		m_animal = 0;
 
-		for ( auto item : claimedItems() )
-		{
-			g->inv()->pickUpItem( item, m_id );
-			g->inv()->destroyObject( item );
-		}
-		clearClaimedItems();
+		destroyClaimedItems();
 
 		a->setDye( m_job->material() );
 		a->setInJob( 0 );

@@ -955,26 +955,14 @@ bool CanWork::construct()
 		{
 			g->inv()->setInJob( itemUID, 0 );
 
-			if ( g->inv()->isConstructed( itemUID ) )
+			if ( !g->inv()->isConstructed( itemUID ) )
 			{
-				/*
-				if( g->inv()->isContainer( itemUID ) )
-				{
-					for( auto iic : g->inv()->itemsInContainer( itemUID ) )
-					{
-						g->inv()->setInContainer( iic, 0 );
-						g->inv()->moveItemToPos( iic, m_position );
-					}
-				}
-				*/
-			}
-			else
-			{
+				qDebug() << "destroy items after construction";
 				g->inv()->pickUpItem( itemUID, m_id ); // update item sprites on tile
 				g->inv()->destroyObject( itemUID );
 			}
 		}
-		clearClaimedItems();
+		m_claimedItems.clear();
 		return true;
 	}
 	return false;
@@ -1091,11 +1079,7 @@ bool CanWork::plantTree()
 	{
 		g->w()->plantTree( m_job->pos(), m_job->item() );
 		g->inv()->pickUpItem( claimedItems().first(), m_id );
-		for ( auto ci : claimedItems() )
-		{
-			g->inv()->destroyObject( ci );
-		}
-		clearClaimedItems();
+		destroyClaimedItems();
 		return true;
 	}
 	return false;
@@ -1107,11 +1091,7 @@ bool CanWork::plant()
 	{
 		g->w()->plant( m_job->pos(), claimedItems().first() );
 		g->inv()->pickUpItem( claimedItems().first(), m_id );
-		for ( auto ci : claimedItems() )
-		{
-			g->inv()->destroyObject( ci );
-		}
-		clearClaimedItems();
+		destroyClaimedItems();
 		return true;
 	}
 	return false;
@@ -1276,12 +1256,7 @@ bool CanWork::craft()
 		}
 	}
 
-	for ( auto item : claimedItems() )
-	{
-		g->inv()->pickUpItem( item, m_id );
-		g->inv()->destroyObject( item );
-	}
-	clearClaimedItems();
+	destroyClaimedItems();
 	return true;
 }
 
@@ -1329,11 +1304,8 @@ bool CanWork::butcherFish()
 
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "FishBone", materialSID );
-
-		g->inv()->pickUpItem( itemUID, m_id );
-		g->inv()->destroyObject( itemUID );
 	}
-	clearClaimedItems();
+	destroyClaimedItems();
 	return true;
 }
 
@@ -1345,11 +1317,8 @@ bool CanWork::butcherCorpse()
 
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "Bone", materialSID );
-
-		g->inv()->pickUpItem( itemUID, m_id );
-		g->inv()->destroyObject( itemUID );
 	}
-	clearClaimedItems();
+	destroyClaimedItems();
 	return true;
 }
 
@@ -1509,12 +1478,7 @@ bool CanWork::refuel()
 			g->mcm()->refuel( m_job->mechanism(), burnValue );
 		}
 
-		for ( auto item : claimedItems() )
-		{
-			g->inv()->pickUpItem( item, m_id );
-			g->inv()->destroyObject( item );
-		}
-		clearClaimedItems();
+		destroyClaimedItems();
 
 		return true;
 	}
@@ -1536,7 +1500,7 @@ bool CanWork::install()
 				{
 					a->installCore( item );
 				}
-				clearClaimedItems();
+				m_claimedItems.clear();
 			}
 		}
 		return true;
@@ -1570,12 +1534,7 @@ bool CanWork::fillTrough()
 		{
 			pasture->addFood( m_claimedItems.first() );
 
-			for ( auto item : claimedItems() )
-			{
-				g->inv()->pickUpItem( item, m_id );
-				g->inv()->destroyObject( item );
-			}
-			clearClaimedItems();
+			destroyClaimedItems();
 			return true;
 		}
 		else
@@ -1585,7 +1544,7 @@ bool CanWork::fillTrough()
 			{
 				g->inv()->setInJob( item, 0 );
 			}
-			clearClaimedItems();
+			m_claimedItems.clear();
 			return false;
 		}
 	}

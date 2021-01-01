@@ -338,6 +338,16 @@ void Item::setHeldBy( unsigned int creatureID )
 	m_isHeldBy = creatureID;
 }
 
+unsigned int Item::isUsedBy() const
+{
+	return m_isUsedBy;
+}
+
+void Item::setUsedBy( unsigned int creatureID )
+{
+	m_isUsedBy = creatureID;
+}
+
 unsigned char Item::stackSize() const
 {
 	return DB::select( "StackSize", "Items", DBH::itemSID( m_itemUID ) ).toUInt();
@@ -501,5 +511,5 @@ bool Item::removeItem( unsigned int itemID )
 
 bool Item::isFree() const
 {
-	return !m_isConstructed && ( m_isInJob == 0 ) && ( m_isHeldBy == 0 );
+	return !m_isConstructed && ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
 }

@@ -427,9 +427,8 @@ protected:
 	void dropEquipment();
 
 	void addClaimedItem( unsigned int item, unsigned int job );
-	void removeClaimedItem( unsigned int item );
 	void unclaimAll();
-	void clearClaimedItems();
+	void destroyClaimedItems();
 
 	Creature* resolveTarget( unsigned int creatureId );
 };

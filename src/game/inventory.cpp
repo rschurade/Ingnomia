@@ -1348,6 +1348,25 @@ void Inventory::setConstructed( unsigned int id, bool status )
 	}
 }
 
+unsigned int Inventory::isUsedBy( unsigned int id )
+{
+	auto item = getItem( id );
+	if ( item )
+	{
+		return item->isUsedBy();
+	}
+	return 0;
+}
+	
+void Inventory::setIsUsedBy( unsigned int id, unsigned int creatureID )
+{
+	auto item = getItem( id );
+	if ( item )
+	{
+		item->setUsedBy( creatureID );
+	}
+}
+
 unsigned int Inventory::value( unsigned int id )
 {
 	auto item = getItem( id );

@@ -121,6 +121,8 @@ public:
 	void setInJob( unsigned int id, unsigned int job );
 	unsigned int isInContainer( unsigned int id );
 	void setInContainer( unsigned int id, unsigned int container );
+	unsigned int isUsedBy( unsigned int id );
+	void setIsUsedBy( unsigned int id, unsigned int creatureID );
 
 	
 
