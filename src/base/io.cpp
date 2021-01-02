@@ -23,11 +23,11 @@
 #include "../base/global.h"
 #include "../base/position.h"
 #include "../base/util.h"
-#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/fluidmanager.h"
+#include "../game/game.h"
 #include "../game/gnomefactory.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
@@ -59,7 +59,6 @@
 #include <QStandardPaths>
 
 #include <unordered_set>
-
 
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
@@ -203,7 +202,7 @@ QString IO::save( bool autosave )
 	}
 	int slot = 0;
 
-	if( autosave )
+	if ( autosave )
 	{
 		folder += "autosave";
 
@@ -218,7 +217,7 @@ QString IO::save( bool autosave )
 	}
 	else
 	{
-	
+
 		QDirIterator directories( folder, QDir::Dirs | QDir::NoDotAndDotDot );
 		QStringList dirs;
 		while ( directories.hasNext() )
@@ -377,25 +376,24 @@ void IO::sanitize()
 			legalJobs.emplace( job->id() );
 		}
 
-		std::unordered_set<unsigned int> carriedItems;
-		std::unordered_set<unsigned int> wornItems;
-		std::unordered_set<unsigned int> constructedItems;
+		std::unordered_map<unsigned int, unsigned int> carriedItems;
+		std::unordered_map<unsigned int, unsigned int> constructedItems;
 		for ( const auto& gnome : g->gm()->gnomes() )
 		{
 			{
 				const auto& c = gnome->inventoryItems();
-				carriedItems.insert( c.cbegin(), c.cend() );
 				for ( const auto& itemID : c )
 				{
-					g->inv()->pickUpItem( itemID, gnome->id() );
+					assert( carriedItems.count( itemID ) == 0 );
+					carriedItems[itemID] = gnome->id();
 				}
 			}
 			{
 				const auto& c = gnome->carriedItems();
-				carriedItems.insert( c.cbegin(), c.cend() );
 				for ( const auto& itemID : c )
 				{
-					g->inv()->pickUpItem( itemID, gnome->id() );
+					assert( carriedItems.count( itemID ) == 0 );
+					carriedItems[itemID] = gnome->id();
 				}
 			}
 			for ( const auto& claim : gnome->claimedItems() )
@@ -406,36 +404,52 @@ void IO::sanitize()
 
 			for ( const auto& itemID : gnome->equipment().wornItems() )
 			{
-				wornItems.insert( itemID );
-				g->inv()->pickUpItem( itemID, gnome->id() );
+				assert( carriedItems.count( itemID ) == 0 );
+				carriedItems[itemID] = gnome->id();
 			}
 		}
-		for (const auto& construction : g->w()->wallConstructions())
 		{
-			if ( construction.contains( "Item" ) )
+			const auto& constructions = g->w()->wallConstructions();
+			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
 			{
-				constructedItems.insert( construction["Item"].toInt() );
-			}
-			if( construction.contains( "Items" ) )
-			{
-				for ( auto vItem : construction.value( "Items" ).toList() )
+				const auto& construction = it.value();
+				if ( construction.contains( "Item" ) )
 				{
-					constructedItems.insert( vItem.toInt() );
+					auto itemId = construction["Item"].toInt();
+					assert( constructedItems.count( itemID ) == 0 );
+					constructedItems[itemId] = 0;
+				}
+				if ( construction.contains( "Items" ) )
+				{
+					for ( auto vItem : construction.value( "Items" ).toList() )
+					{
+						auto itemId = vItem.toInt();
+						assert( constructedItems.count( itemID ) == 0 );
+						constructedItems[itemId] = 0;
+					}
 				}
 			}
 		}
 
-		for ( const auto& construction : g->w()->floorConstructions() )
 		{
-			if ( construction.contains( "Item" ) )
+			const auto& constructions = g->w()->floorConstructions();
+			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
 			{
-				constructedItems.insert( construction["Item"].toInt() );
-			}
-			if( construction.contains( "Items" ) )
-			{
-				for ( auto vItem : construction.value( "Items" ).toList() )
+				const auto& construction = it.value();
+				if ( construction.contains( "Item" ) )
 				{
-					constructedItems.insert( vItem.toInt() );
+					auto itemId = construction["Item"].toInt();
+					assert( constructedItems.count( itemID ) == 0 );
+					constructedItems[itemId] = 0;
+				}
+				if ( construction.contains( "Items" ) )
+				{
+					for ( auto vItem : construction.value( "Items" ).toList() )
+					{
+						auto itemId = vItem.toInt();
+						assert( constructedItems.count( itemID ) == 0 );
+						constructedItems[itemId] = 0;
+					}
 				}
 			}
 		}
@@ -444,7 +458,7 @@ void IO::sanitize()
 		{
 			for ( const auto& item : workshop->sourceItems() )
 			{
-				constructedItems.insert( item.toInt() );
+				constructedItems[item.toInt()] = workshop->id();
 			}
 		}
 
@@ -456,31 +470,71 @@ void IO::sanitize()
 				item.setInJob( 0 );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
 			}
-			if ( item.isHeldBy() == 1 && !item.isConstructed() )
-			{ // old save with isPickedUp
-				const bool worn    = 0 != wornItems.count( item.id() );
-				const bool carried = 0 != carriedItems.count( item.id() );
-				if ( !worn && !carried )
+			const bool carried    = 0 != carriedItems.count( item.id() );
+			const bool construced = 0 != constructedItems.count( item.id() );
+
+			if ( carried && construced )
+			{
+				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " is both carried around and installed somewhere simultaniously";
+				continue;
+			}
+
+			// Items which should be in world
+			if ( item.isHeldBy() != 0 && !construced && !carried )
+			{
+				g->inv()->putDownItem( item.id(), item.getPos() );
+				item.setIsConstructed( false );
+				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
+			}
+			if ( carried )
+			{
+				auto realOwner = carriedItems[item.id()];
+				if ( item.isHeldBy() != realOwner )
 				{
-					g->inv()->putDownItem( item.id(), item.getPos() );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
+					g->inv()->pickUpItem( item.id(), realOwner );
 				}
-				else if ( worn xor item.isConstructed() )
+				if ( item.isConstructed() )
 				{
-					g->inv()->putDownItem( item.id(), item.getPos() );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found being dragged along";
+					g->inv()->setConstructed( item.id(), false );
+					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found constructed on a gnome";
 				}
 			}
-			if ( item.isHeldBy() == 0 && item.isConstructed() && constructedItems.count( item.id() ) == 0 )
+			// Items in world
+			if ( !carried && !construced )
 			{
-				item.setIsConstructed( false );
-				g->inv()->putDownItem( item.id(), item.getPos() );
-				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
+				if ( item.isConstructed() )
+				{
+					g->inv()->setConstructed( item.id(), false );
+					item.setIsConstructed( false );
+					g->inv()->putDownItem( item.id(), item.getPos() );
+					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
+				}
+			}
+			// Items in construction
+			if ( construced )
+			{
+				auto realOwner = constructedItems[item.id()];
+				if ( item.isHeldBy() != realOwner)
+				{
+					if (realOwner != 0)
+					{
+						g->inv()->pickUpItem( item.id(), realOwner );
+					}
+					else
+					{
+						g->inv()->putDownItem( item.id(), item.getPos() );
+					}
+				}
+				if ( !item.isConstructed() )
+				{
+					g->inv()->setConstructed( item.id(), true );
+					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found broken loose";
+				}
 			}
 		}
-		for( auto& ws : g->wsm()->workshops() )
+		for ( auto& ws : g->wsm()->workshops() )
 		{
-			for( auto& vitem : ws->sourceItems() )
+			for ( auto& vitem : ws->sourceItems() )
 			{
 				g->inv()->pickUpItem( vitem.toUInt(), ws->id() );
 			}
@@ -493,11 +547,11 @@ QString IO::versionString( QString folder )
 	QJsonDocument jd;
 	IO::loadFile( folder + "/game.json", jd );
 
-	if( jd.isArray() )
+	if ( jd.isArray() )
 	{
 		QJsonArray ja = jd.array();
-		auto vl = ja.toVariantList();
-		if( vl.size() > 0 )
+		auto vl       = ja.toVariantList();
+		if ( vl.size() > 0 )
 		{
 			QVariantMap vm = vl.first().toMap();
 
@@ -1121,7 +1175,7 @@ QJsonArray IO::jsonArrayJobSprites()
 
 bool IO::loadJobs( QJsonDocument& jd )
 {
-	QJsonArray ja  = jd.array();
+	QJsonArray ja = jd.array();
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->jm()->addLoadedJob( entry );
@@ -1213,7 +1267,7 @@ QJsonArray IO::jsonArrayDoors()
 
 bool IO::loadFarms( QJsonDocument& jd )
 {
-	QJsonArray ja      = jd.array();
+	QJsonArray ja = jd.array();
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->fm()->load( entry.toMap() );
@@ -1223,7 +1277,7 @@ bool IO::loadFarms( QJsonDocument& jd )
 
 bool IO::loadRooms( QJsonDocument& jd )
 {
-	QJsonArray ja   = jd.array();
+	QJsonArray ja = jd.array();
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->rm()->load( entry.toMap() );
@@ -1233,7 +1287,7 @@ bool IO::loadRooms( QJsonDocument& jd )
 
 bool IO::loadDoors( QJsonDocument& jd )
 {
-	QJsonArray ja   = jd.array();
+	QJsonArray ja = jd.array();
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->rm()->loadDoor( entry.toMap() );
@@ -1261,7 +1315,7 @@ QJsonArray IO::jsonArrayStockpiles()
 
 bool IO::loadStockpiles( QJsonDocument& jd )
 {
-	QJsonArray ja        = jd.array();
+	QJsonArray ja = jd.array();
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		g->spm()->load( entry.toMap() );
