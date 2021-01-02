@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - grape seed on start up
 - game pausing when in mainmenu
 - remove dead gnomes from squads
+- show number of trees in grove window
 
 ### Added
 - Attack on sight combat behavior

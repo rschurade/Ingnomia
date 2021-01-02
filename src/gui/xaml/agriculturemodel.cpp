@@ -551,11 +551,12 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	m_plantTrees = info.plantTrees;
 	m_fellTrees  = info.fellTrees;
 	m_pickFruits = info.pickFruits;
-	m_numPlants  = info.planted;
+	m_numPlants  = ( "Planted trees: " + QString::number( info.planted ) ).toStdString().c_str();
 
 	OnPropertyChanged( "PlantTrees" );
 	OnPropertyChanged( "FellTrees" );
 	OnPropertyChanged( "PickFruits" );
+	OnPropertyChanged( "NumPlants" );
 
 	m_bitmapSource = nullptr;
 	if ( !info.product.plantID.isEmpty() )

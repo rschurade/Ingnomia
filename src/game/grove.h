@@ -84,6 +84,8 @@ public:
 	bool removeTile( const Position & pos );
 	void addTile( const Position & pos );
 
+	int numTrees();
+
 private:
 	GroveProperties m_properties;
 

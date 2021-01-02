@@ -274,3 +274,19 @@ void Grove::addTile( const Position & pos )
 
 	g->w()->setTileFlag( pos, TileFlag::TF_GROVE );
 }
+
+int Grove::numTrees()
+{
+	int numTrees = 0;
+	for( auto& gf : m_fields )
+	{
+		if( g->w()->plants().contains( gf->pos.toInt() ) )
+		{
+			if( g->w()->plants()[gf->pos.toInt()].isTree() )
+			{
+				++numTrees;
+			}
+		}
+	}
+	return numTrees;
+}
