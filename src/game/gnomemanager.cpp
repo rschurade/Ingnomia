@@ -28,6 +28,7 @@
 #include "../game/gnometrader.h"
 #include "../game/inventory.h"
 #include "../game/jobmanager.h"
+#include "../game/militarymanager.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
 
@@ -235,6 +236,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					m_deadGnomes.append( dg );
 					m_gnomesByID.insert( dg->id(), m_deadGnomes.last() );
 					m_gnomes.removeAt( i );
+					g->mil()->removeGnome( gid );
 					emit signalGnomeDeath( dg->id() );
 					break;
 				}
