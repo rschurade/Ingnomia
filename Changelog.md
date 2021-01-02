@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+- grape seed on start up
+- game pausing when in mainmenu
 
 ### Added
 - Attack on sight combat behavior
@@ -11,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Allow corpses outside stockpiles to be butchered
+- can designate groves over existing trees
 
 ### Removed
 
