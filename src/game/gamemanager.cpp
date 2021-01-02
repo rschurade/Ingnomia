@@ -99,7 +99,13 @@ EventConnector* GameManager::eventConnector()
 
 void GameManager::setShowMainMenu( bool value )
 {
+	m_eventConnector->emitPause( true );
 	m_eventConnector->emitInMenu( value );
+	
+	if( m_game )
+	{
+		m_game->setPaused( true );
+	}
 }
 
 void GameManager::endCurrentGame()
