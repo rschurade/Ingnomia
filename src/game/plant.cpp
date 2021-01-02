@@ -601,8 +601,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 			g->w()->setTileFlag( pos, TileFlag::TF_OCCUPIED );
 			g->w()->setTileFlag( pos, TileFlag::TF_OVERSIZE );
 
-			// Solid wall (selectable) for the trunk only
-			g->w()->getTile( pos ).wallType = offset == Position() ? static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING | WT_SOLIDWALL ) : static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING );
+			g->w()->getTile( pos ).wallType = offset == Position() ? static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING ) : static_cast<WallType>( WT_MOVEBLOCKING | WT_VIEWBLOCKING );
 
 			g->gm()->forceMoveGnomes( pos, extractPos );
 			g->cm()->forceMoveAnimals( pos, extractPos );
