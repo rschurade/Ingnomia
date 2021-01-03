@@ -1118,6 +1118,12 @@ QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& w
 		tileAbove.floorSpriteUID = 0;
 		clearTileFlag( Position( pos.aboveOf() ), TileFlag::TF_WALKABLE );
 		removeGrass( pos );
+
+		if ( m_creaturePositions.contains(  pos.aboveOf().toInt() ) )
+		{
+			g->gm()->forceMoveGnomes( pos.aboveOf(), pos );
+		}
+		g->inv()->gravity( pos.aboveOf() );
 	}
 
 	tile.wallType         = WallType::WT_NOWALL;

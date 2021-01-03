@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - remove dead gnomes from squads
 - show number of trees in grove window
 - missing textures are loading the game
+- floating items when mining the ramp under a working gnome
 
 ### Added
 - Attack on sight combat behavior
