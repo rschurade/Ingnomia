@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - game pausing when in mainmenu
 - remove dead gnomes from squads
 - show number of trees in grove window
+- missing textures are loading the game
 
 ### Added
 - Attack on sight combat behavior
