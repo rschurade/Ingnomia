@@ -393,22 +393,12 @@ void MainWindowRenderer::initTextures()
 	qDebug() << "max array size: " << max_layers;
 	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
 
-	m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
-
 	int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
 
 	for ( int i = 0; i < 32; ++i )
 	{
 		createArrayTexture( i, maxArrayTextures );
 	}
-
-	for ( int i = 0; i < m_texesUsed; ++i )
-	{
-		uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
-	}
-
-
-	//qDebug() << "stored " << maxArrayTextures << " pixmaps in array texture";
 
 	m_texesInitialized = true;
 }
