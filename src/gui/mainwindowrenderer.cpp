@@ -531,6 +531,8 @@ void MainWindowRenderer::paintWorld()
 	timer.start();
 	updateTextures();
 
+	glMemoryBarrier( GL_SHADER_STORAGE_BARRIER_BIT | GL_TEXTURE_UPDATE_BARRIER_BIT );
+
 	QString msg = "render time: " + QString::number( timer.elapsed() ) + " ms";
 	//emit sendOverlayMessage( 1, msg );
 
@@ -829,7 +831,6 @@ void MainWindowRenderer::updateWorld()
 		{
 			uploadTileData( update );
 		}
-		glMemoryBarrier( GL_SHADER_STORAGE_BARRIER_BIT );
 		m_pendingUpdates.clear();
 	}
 }
