@@ -370,11 +370,7 @@ void IO::sanitize()
 {
 	// Migration for 0.7.5 games where gnomes had stored their own ID in job field of items
 	{
-		std::unordered_set<unsigned int> legalJobs;
-		for ( const auto& job : g->jm()->allJobs() )
-		{
-			legalJobs.emplace( job->id() );
-		}
+		std::unordered_set<unsigned int> legacyJobs;
 
 		std::unordered_map<unsigned int, unsigned int> carriedItems;
 		std::unordered_map<unsigned int, unsigned int> constructedItems;
@@ -399,7 +395,7 @@ void IO::sanitize()
 			for ( const auto& claim : gnome->claimedItems() )
 			{
 				// Special exemption in case this is legacy type reservation
-				legalJobs.emplace( gnome->id() );
+				legacyJobs.emplace( gnome->id() );
 			}
 
 			for ( const auto& itemID : gnome->equipment().wornItems() )
@@ -465,7 +461,7 @@ void IO::sanitize()
 		for ( auto& item : g->inv()->allItems() )
 		{
 			const auto job = item.isInJob();
-			if ( job && !legalJobs.count( job ) )
+			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
 			{
 				item.setInJob( 0 );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
