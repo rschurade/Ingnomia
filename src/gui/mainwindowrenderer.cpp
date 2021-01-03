@@ -521,6 +521,13 @@ void MainWindowRenderer::paintWorld()
 	}
 	updateWorld();
 
+	// Rebind correct textures to texture units
+	for ( auto unit = 0; unit < 32; ++unit )
+	{
+		glActiveTexture( GL_TEXTURE0 + unit );
+		glBindTexture( GL_TEXTURE_2D_ARRAY, m_textures[unit] );
+	}
+
 	timer.start();
 	updateTextures();
 
