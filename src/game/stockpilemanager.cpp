@@ -222,7 +222,7 @@ unsigned int StockpileManager::getJob()
 			return job;
 		}
 	}
-
+	/*
 	for ( auto stockpileID : m_stockpilesOrdered )
 	{
 		unsigned int job = m_stockpiles[stockpileID]->getCleanUpJob();
@@ -235,7 +235,7 @@ unsigned int StockpileManager::getJob()
 			return job;
 		}
 	}
-
+	*/
 	return 0;
 }
 
