@@ -63,9 +63,9 @@ namespace Ingnomia.Localization {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à FR_RES_MainPage_Continue.
         /// </summary>
-        public static string MainPage_Continue {
+        public static string MainPage_Continuex {
             get {
-                return ResourceManager.GetString("MainPage_Continue", resourceCulture);
+                return ResourceManager.GetString("MainPage_Continuex", resourceCulture);
             }
         }
         

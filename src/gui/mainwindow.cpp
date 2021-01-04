@@ -95,6 +95,7 @@
 static MainWindow* instance;
 
 static QSet<QString> m_noesisMessages;
+using namespace System::Globalization;
 
 MainWindow::MainWindow( QWidget* parent ) :
 	QOpenGLWindow()

@@ -53,7 +53,7 @@
 
 		<Viewbox Grid.Row="1" Grid.Column="1" StretchDirection="DownOnly">
 			<StackPanel>
-				<Button x:Name="MMContinue"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_Continue}" Command="{Binding ContinueGame}" />
+				<Button x:Name="MMContinue"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_Continuex}" Command="{Binding ContinueGame}" />
 				<Button x:Name="MMNewGame"   Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_NewGame}" Command="{Binding NewGame}" />
 				<Button x:Name="MMSetupGame" Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_SetUpGame}" Command="{Binding SetupGame}" />
 				<Button x:Name="MMLoadGame"  Style="{StaticResource MenuButtonStyle}" Content="{x:Static lang:Resources.MainPage_LoadGame}" Command="{Binding LoadGame}" />
