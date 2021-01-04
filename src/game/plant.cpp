@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -311,12 +311,12 @@ void Plant::updateState()
 		if ( !m_isMulti && isMulti && !testLayoutMulti( sm.value( "Layout" ).toString(), m_position, g ) )
 		{
 			m_state = qMax( 0, m_state - 1 );
-			
+
 			if( !m_sprite )
 			{
 				m_sprite = g->sf()->createSprite( "SolidSelectionWall", { "Purple" } );
 			}
-			
+
 			return;
 		}
 		m_isMulti        = isMulti;
@@ -489,8 +489,8 @@ bool Plant::harvest( Position& pos )
 				float chance = harvItem.value( "Chance" ).toFloat();
 				if ( chance > 0.0 )
 				{
-					int ra = rand() % 100;
-					if ( ra < chance * 100 )
+					float ra = (rand() % 100) / (float)100; // Type "ra" same as "chance"
+					while ( chance-- > ra ) // Eat 1 "chance" for every "ra" looped ; permits 1.5 chance to generate 1 + "maybe 1" depending on ra.
 					{
 						g->inv()->createItem( pos, itemID, materialID );
 					}
