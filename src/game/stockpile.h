@@ -153,6 +153,7 @@ public:
 	int itemCount( unsigned int tileID );
 	int reserved( unsigned int tileID );
 
+	bool canAccept( const QString& itemSID, const QString& materialSID );
 
 private:
 	bool m_pullOthers = false;
@@ -182,4 +183,9 @@ private:
 	bool allowedInStockpile( unsigned int itemID );
 
 	bool m_suspendStatusChanged = false;
+
+	QSet<QPair<QString, QString>> m_canAccept;
+
+	void updateCanAccept();
+	bool hasRoom( const QString& itemSID, const QString& materialSID );
 };

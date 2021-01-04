@@ -49,6 +49,7 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 			addTile( p.first );
 		}
 	}
+	updateCanAccept();
 }
 
 Stockpile::~Stockpile()
@@ -140,6 +141,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), vm.value( "Suspended" ).toBool() );
 		m_limits.insert( vm.value( "Key" ).toString(), limit );
 	}
+	updateCanAccept();
 }
 
 QVariant Stockpile::serialize()
@@ -227,6 +229,7 @@ void Stockpile::pasteSettings( QVariantMap vals )
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), false );
 		m_limits.insert( vm.value( "Key" ).toString(), limit );
 	}
+	updateCanAccept();
 }
 
 bool Stockpile::onTick( quint64 tick )
@@ -744,6 +747,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 			}
 		}
 		m_jobsOut.remove( jobID );
+		updateCanAccept();
 		return true;
 	}
 	return false;
@@ -756,6 +760,7 @@ void Stockpile::setInfiNotFull( Position pos )
 		InventoryField* field = m_fields.value( pos.toInt() );
 		field->isFull         = false;
 		m_isFull              = false;
+		updateCanAccept();
 	}
 }
 
@@ -804,6 +809,7 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 				m_suspendStatusChanged      = true;
 			}
 		}
+		updateCanAccept();
 		return true;
 	}
 
@@ -850,7 +856,7 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 					m_suspendStatusChanged = true;
 				}
 			}
-
+			updateCanAccept();
 			return true;
 		}
 	}
@@ -901,6 +907,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 			}
 		}
 	}
+	updateCanAccept();
 }
 
 void Stockpile::addContainer( unsigned int containerID, Position& pos )
@@ -961,6 +968,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 				}
 			}
 		}
+		updateCanAccept();
 	}
 }
 
@@ -979,6 +987,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 			field->capacity    = 1;
 			field->stackSize   = 1;
 			field->containerID = 0;
+			updateCanAccept();
 		}
 	}
 }
@@ -1030,7 +1039,7 @@ bool Stockpile::removeTile( Position& pos )
 	{
 		m_active = false;
 	}
-
+	updateCanAccept();
 	return m_fields.empty();
 }
 
@@ -1208,10 +1217,8 @@ int Stockpile::capacity( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )
 	{
-
 		InventoryField* field = m_fields.value( tileID );
 		return field->capacity;
-		
 	}
 	return 0;
 }
@@ -1220,10 +1227,8 @@ int Stockpile::itemCount( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )
 	{
-
 		InventoryField* field = m_fields.value( tileID );
 		return field->items.size();
-		
 	}
 	return 0;
 }
@@ -1232,10 +1237,86 @@ int Stockpile::reserved( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )
 	{
-
 		InventoryField* field = m_fields.value( tileID );
 		return field->reservedItems.size();
-		
 	}
 	return 0;
+}
+
+void Stockpile::updateCanAccept()
+{
+	m_canAccept.clear();
+	if( m_isFull || !m_active )
+	{
+		return;
+	}
+	for( const auto& fe : m_filter.getActive() )
+	{
+		if( hasRoom( fe.first, fe.second ) )
+		{
+			m_canAccept.insert( fe );
+		}
+	}
+}
+
+bool Stockpile::hasRoom( const QString& itemSID, const QString& materialSID )
+{
+	for( const auto& infi : m_fields )
+	{
+		if( !infi->isFull )
+		{
+			if( infi->containerID == 0 )
+			{
+				if( infi->items.size() == 0  )
+				{
+					if( infi->reservedItems.size() == 0 )
+						return true;
+				}
+				else
+				{
+					if( ( infi->items.size() + infi->reservedItems.size() ) < infi->stackSize )
+					{
+						auto item = *infi->items.begin();
+						if( g->inv()->itemSID( item ) == itemSID && g->inv()->materialSID( item ) == materialSID )
+						{
+							return true;
+						}
+					}
+				}
+			}
+			else
+			{
+				if ( infi->items.size() == 0 )
+				{
+					if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( itemSID ) )
+					{
+						return true;
+					}
+				}
+				else
+				{
+					if ( infi->requireSame )
+					{
+						auto item = *infi->items.begin();
+						if( g->inv()->itemSID( item ) == itemSID && g->inv()->materialSID( item ) == materialSID )
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( itemSID ) )
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+bool Stockpile::canAccept( const QString& itemSID, const QString& materialSID )
+{
+	return m_canAccept.contains( QPair<QString,QString>( itemSID, materialSID ) );
 }
