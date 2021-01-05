@@ -484,12 +484,23 @@ bool Plant::harvest( Position& pos )
 		{
 			QString itemID     = harvItem.value( "ItemID" ).toString();
 			QString materialID = harvItem.value( "MaterialID" ).toString();
-			if ( harvItem.contains( "Chance" ) )
+			if ( harvItem.contains( "Chance" ) || harvItem.contains( "MinChance" ) || harvItem.contains( "MaxChance" ) )
 			{
-				float chance = harvItem.value( "Chance" ).toFloat();
+				float chance = harvItem.contains( "Chance" ) ?
+						harvItem.value( "Chance" ).toFloat() // Raw chance?
+					: // Chances are processed!
+						( harvItem.contains( "MaxChance" ) ?
+							harvItem.value( "MaxChance" ).toFloat() // Chance buffed out?
+							: 1 // No buff today!
+						)
+						* ( rand() % 100 ) / 100
+						+ ( harvItem.contains( "MinChance" ) ?
+							harvItem.value( "MinChance" ).toFloat() // Something to add?
+							: 0 // Nothing to add.
+						);
 				if ( chance > 0.0 )
 				{
-					float ra = (rand() % 100) / (float)100; // Type "ra" same as "chance"
+					float ra = ( rand() % 100 ) / (float)100; // Type "ra" same as "chance"
 					while ( chance-- > ra ) // Eat 1 "chance" for every "ra" looped ; permits 1.5 chance to generate 1 + "maybe 1" depending on ra.
 					{
 						g->inv()->createItem( pos, itemID, materialID );
