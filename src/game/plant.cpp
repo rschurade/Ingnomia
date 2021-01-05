@@ -487,24 +487,19 @@ bool Plant::harvest( Position& pos )
 			auto chanceVal     = harvItem.value( "Chance" );
 			auto chanceValMax  = harvItem.value( "MaxChance" );
 
-			Noesis::Nullable<double> chance = nullptr;
-			if ( !chanceVal.isNull() )
-				chance = chanceVal.value<double>();
-
+			double chance = !chanceVal.isNull() ? chanceVal.value<double>() : 0;
 			if ( !chanceValMax.isNull() )
 			{
-				if ( !chance.HasValue() )
-					chance = 0.0;
-				chance = ( chanceValMax.value<double>() - chance.GetValue() ) * ( rand() % 100 ) / 100.0 + chance.GetValue();
+				chance = ( chanceValMax.value<double>() - chance ) * ( rand() % 100 ) / 100.0 + chance;
 			}
 
-			if ( chance.HasValue() )
+			if ( chance > 0.0 )
 			{
 				double ra = ( rand() % 100 ) / 100.0;
-				while ( chance.GetValue() > ra )
+				while ( chance > ra )
 				{
 					g->inv()->createItem( pos, itemID, materialID );
-					chance = chance.GetValue() - 1;
+					chance--;
 				}
 			}
 			else
