@@ -205,15 +205,6 @@ QString IO::save( bool autosave )
 	if ( autosave )
 	{
 		folder += "autosave";
-
-		/*
-		if ( QDir( folder ).exists() )
-		{
-			QDir dir( folder );
-			dir.removeRecursively();
-			QDir().mkdir( folder );
-		}
-		*/
 	}
 	else
 	{
@@ -245,13 +236,17 @@ QString IO::save( bool autosave )
 		folder += QString::number( slot );
 	}
 
-	folder += "/";
 	if ( Global::debugMode )
 		qDebug() << folder;
-	if ( !QDir( folder ).exists() )
+	QString oldFolder;
+	if ( QDir( folder ).exists() )
 	{
-		QDir().mkdir( folder );
+		oldFolder = folder + ".backup";
+		QDir().rename( folder, oldFolder );
 	}
+	QDir().mkdir( folder );
+	
+	folder += "/";
 
 	IO::saveWorld( folder );
 	IO::saveFile( folder + "sprites.json", IO::jsonArraySprites() );
@@ -287,6 +282,13 @@ QString IO::save( bool autosave )
 	IO::saveFile( folder + "pipes.json", IO::jsonArrayPipes() );
 
 	qDebug() << "saving game took: " + QString::number( timer.elapsed() ) + " ms";
+
+	if (!oldFolder.isEmpty())
+	{
+		QDir( oldFolder ).removeRecursively();
+		qDebug() << "Savegame backup removed";
+	}
+
 	return folder;
 }
 
