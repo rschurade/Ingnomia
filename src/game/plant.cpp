@@ -1,19 +1,19 @@
 /*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
-    Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
+	Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "plant.h"
 
@@ -484,23 +484,26 @@ bool Plant::harvest( Position& pos )
 		{
 			QString itemID     = harvItem.value( "ItemID" ).toString();
 			QString materialID = harvItem.value( "MaterialID" ).toString();
-			if ( harvItem.contains( "Chance" ) || harvItem.contains( "MinChance" ) || harvItem.contains( "MaxChance" ) )
+			auto chanceVal     = harvItem.value( "Chance" );
+			auto chanceValMin  = harvItem.value( "MinChance" );
+			auto chanceValMax  = harvItem.value( "MaxChance" );
+			if ( chanceVal.d.is_null == 0 || chanceValMin.d.is_null == 0 || chanceValMax.d.is_null == 0 )
 			{
-				float chance = harvItem.contains( "Chance" ) ?
-						harvItem.value( "Chance" ).toFloat() // Raw chance?
+				auto chance = chanceVal.d.is_null == 0 ?
+						chanceVal.d.data.d // Raw chance?
 					: // Chances are processed!
-						( harvItem.contains( "MaxChance" ) ?
-							harvItem.value( "MaxChance" ).toFloat() // Chance buffed out?
+						( chanceValMax.d.is_null == 0 ?
+							chanceValMax.d.data.d // Chance buffed out?
 							: 1 // No buff today!
 						)
-						* ( rand() % 100 ) / 100
-						+ ( harvItem.contains( "MinChance" ) ?
-							harvItem.value( "MinChance" ).toFloat() // Something to add?
+						* ( rand() % 100 ) / (double)100
+						+ ( chanceValMin.d.is_null == 0 ?
+							chanceValMin.d.data.d // Something to add?
 							: 0 // Nothing to add.
 						);
 				if ( chance > 0.0 )
 				{
-					float ra = ( rand() % 100 ) / (float)100; // Type "ra" same as "chance"
+					auto ra = ( rand() % 100 ) / (double)100; // Type "ra" same as "chance"
 					while ( chance-- > ra ) // Eat 1 "chance" for every "ra" looped ; permits 1.5 chance to generate 1 + "maybe 1" depending on ra.
 					{
 						g->inv()->createItem( pos, itemID, materialID );
