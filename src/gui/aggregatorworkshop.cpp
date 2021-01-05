@@ -201,9 +201,11 @@ void AggregatorWorkshop::onUpdateAfterTick()
 	if( !g ) return;
 	if ( m_info.workshopID && m_contentDirty )
 	{
-		auto sp = g->wsm()->workshop( m_info.workshopID );
-		emit signalUpdateContent( m_info );
-		m_contentDirty = false;
+		if ( aggregate( m_info.workshopID ) )
+		{
+			emit signalUpdateContent( m_info );
+			m_contentDirty = false;
+		}
 	}
 }
 
