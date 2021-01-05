@@ -373,7 +373,9 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	bool isSameWorkshop = ( m_workshopID == info.workshopID );
 	m_workshopID        = info.workshopID;
 	m_gui               = info.gui;
-
+	
+	m_proxy->blockWriteBack();
+	
 	SetName( info.name.toStdString().c_str() );
 	SetSuspended( info.suspended );
 	SetLinkStockpile( info.linkStockpile );
@@ -424,6 +426,8 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 		m_processFish = info.processFish;
 	}
 	qDebug() << m_gui;
+
+	m_proxy->unblockWriteBack();
 
 	OnPropertyChanged( "Priorities" );
 	OnPropertyChanged( "SelectedPrio" );
