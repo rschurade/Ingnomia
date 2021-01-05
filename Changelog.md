@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - game pausing when in mainmenu
 - remove dead gnomes from squads
 - show number of trees in grove window
-- missing textures are loading the game
+- missing textures when loading the game
 - floating items when mining the ramp under a working gnome
 - amount buttons in trader UI
 
@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - allow corpses outside stockpiles to be butchered
 - can designate groves over existing trees
 - allow jobs in mid-air to be selected
+- reduce number of item categories
 
 ### Removed
 
