@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - show number of trees in grove window
 - missing textures are loading the game
 - floating items when mining the ramp under a working gnome
+- amount buttons in trader UI
 
 ### Added
 - attack on sight combat behavior

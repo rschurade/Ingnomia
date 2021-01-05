@@ -224,10 +224,10 @@
 							<ColumnDefinition Width="1*" />
 						</Grid.ColumnDefinitions>
 
-						<ToggleButton x:Name="CB1" Grid.Column="1" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="1" IsChecked="{Binding Amount1, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="1" />
-						<ToggleButton x:Name="CB2" Grid.Column="2" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="10" IsChecked="{Binding Amount10, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="10" />
-						<ToggleButton x:Name="CB3" Grid.Column="3" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="100" IsChecked="{Binding Amount100, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="100" />
-						<ToggleButton x:Name="CB4" Grid.Column="4" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="{StaticResource WorkshopGui_Max}" IsChecked="{Binding AmountAll, Mode=OneWay}" Command="{Binding CmdAmount}" CommandParameter="All" />
+						<ToggleButton x:Name="CB1" Grid.Column="1" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="1" IsChecked="{Binding Amount1, Mode=TwoWay}" />
+						<ToggleButton x:Name="CB2" Grid.Column="2" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="10" IsChecked="{Binding Amount10, Mode=TwoWay}" />
+						<ToggleButton x:Name="CB3" Grid.Column="3" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="100" IsChecked="{Binding Amount100, Mode=TwoWay}" />
+						<ToggleButton x:Name="CB4" Grid.Column="4" Style="{StaticResource ButtonStyle1}" MinWidth="100" Content="{StaticResource WorkshopGui_Max}" IsChecked="{Binding AmountAll, Mode=TwoWay}" />
 					</Grid>
 					<Grid Grid.Row="2">
 						<Grid.RowDefinitions>
