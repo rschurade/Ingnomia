@@ -485,33 +485,26 @@ bool Plant::harvest( Position& pos )
 			QString itemID     = harvItem.value( "ItemID" ).toString();
 			QString materialID = harvItem.value( "MaterialID" ).toString();
 			auto chanceVal     = harvItem.value( "Chance" );
-			auto chanceValMin  = harvItem.value( "MinChance" );
 			auto chanceValMax  = harvItem.value( "MaxChance" );
-			if ( chanceVal.d.is_null == 0 || chanceValMin.d.is_null == 0 || chanceValMax.d.is_null == 0 )
+
+			Noesis::Nullable<double> chance = nullptr;
+			if ( !chanceVal.isNull() )
+				chance = chanceVal.value<double>();
+
+			if ( !chanceValMax.isNull() )
 			{
-				auto chance = chanceVal.d.is_null == 0 ?
-						chanceVal.d.data.d // Raw chance?
-					: // Chances are processed!
-						( chanceValMax.d.is_null == 0 ?
-							chanceValMax.d.data.d // Chance buffed out?
-							: 1 // No buff today!
-						)
-						* ( rand() % 100 ) / (double)100
-						+ ( chanceValMin.d.is_null == 0 ?
-							chanceValMin.d.data.d // Something to add?
-							: 0 // Nothing to add.
-						);
-				if ( chance > 0.0 )
-				{
-					auto ra = ( rand() % 100 ) / (double)100; // Type "ra" same as "chance"
-					while ( chance-- > ra ) // Eat 1 "chance" for every "ra" looped ; permits 1.5 chance to generate 1 + "maybe 1" depending on ra.
-					{
-						g->inv()->createItem( pos, itemID, materialID );
-					}
-				}
-				else
+				if ( !chance.HasValue() )
+					chance = 0.0;
+				chance = ( chanceValMax.value<double>() - chance.GetValue() ) * ( rand() % 100 ) / 100.0 + chance.GetValue();
+			}
+
+			if ( chance.HasValue() )
+			{
+				double ra = ( rand() % 100 ) / 100.0;
+				while ( chance.GetValue() > ra )
 				{
 					g->inv()->createItem( pos, itemID, materialID );
+					chance = chance.GetValue() - 1;
 				}
 			}
 			else
