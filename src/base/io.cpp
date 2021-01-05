@@ -415,7 +415,8 @@ void IO::sanitize()
 					assert( constructedItems.count( itemID ) == 0 );
 					constructedItems[itemID] = 0;
 				}
-				if ( construction.contains( "Items" ) )
+				// Items can be either item type IDs or actual item IDs
+				if ( construction.contains( "FromParts" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
@@ -438,7 +439,8 @@ void IO::sanitize()
 					assert( constructedItems.count( itemID ) == 0 );
 					constructedItems[itemID] = 0;
 				}
-				if ( construction.contains( "Items" ) )
+				// Items can be either item type IDs or actual item IDs
+				if ( construction.contains( "FromParts" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
