@@ -77,7 +77,7 @@ void WorkshopProxy::onUpdateInfo( const GuiWorkshopInfo& info )
 
 void WorkshopProxy::setBasicOptions( unsigned int WorkshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile )
 {
-	if( m_blockWriteBack )
+	if( !m_blockWriteBack )
 	{
 		emit signalSetBasicOptions( WorkshopID, name, priority, suspended, acceptGenerated, autoCraftMissing, connectStockpile );
 	}
