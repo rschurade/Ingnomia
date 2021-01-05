@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - missing textures when loading the game
 - floating items when mining the ramp under a working gnome
 - amount buttons in trader UI
+- partial write back while updating workshop settings
 
 ### Added
 - attack on sight combat behavior

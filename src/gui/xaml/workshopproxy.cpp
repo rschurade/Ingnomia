@@ -77,7 +77,10 @@ void WorkshopProxy::onUpdateInfo( const GuiWorkshopInfo& info )
 
 void WorkshopProxy::setBasicOptions( unsigned int WorkshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile )
 {
-	emit signalSetBasicOptions( WorkshopID, name, priority, suspended, acceptGenerated, autoCraftMissing, connectStockpile );
+	if( m_blockWriteBack )
+	{
+		emit signalSetBasicOptions( WorkshopID, name, priority, suspended, acceptGenerated, autoCraftMissing, connectStockpile );
+	}
 }
 
 void WorkshopProxy::craftItem( QString craftID, int mode, int number, QStringList mats )
@@ -190,5 +193,18 @@ void WorkshopProxy::trade( unsigned int workshopID )
 
 void WorkshopProxy::setFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish )
 {
-	emit signalSetFisherOptions( WorkshopID, catchFish, processFish );
+	if( m_blockWriteBack )
+	{
+		emit signalSetFisherOptions( WorkshopID, catchFish, processFish );
+	}
+}
+
+void WorkshopProxy::blockWriteBack()
+{
+	m_blockWriteBack = true;
+}
+	
+void WorkshopProxy::unblockWriteBack()
+{
+	m_blockWriteBack = false;
 }
