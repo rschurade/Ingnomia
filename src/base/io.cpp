@@ -514,9 +514,9 @@ void IO::sanitize()
 			if ( construced )
 			{
 				auto realOwner = constructedItems[item.id()];
-				if ( item.isHeldBy() != realOwner)
+				if ( item.isHeldBy() != realOwner )
 				{
-					if (realOwner != 0)
+					if ( realOwner != 0 )
 					{
 						g->inv()->pickUpItem( item.id(), realOwner );
 					}
@@ -537,6 +537,32 @@ void IO::sanitize()
 			for ( auto& vitem : ws->sourceItems() )
 			{
 				g->inv()->pickUpItem( vitem.toUInt(), ws->id() );
+			}
+		}
+	}
+	// Clean out orphaned watch list items
+	{
+		const auto categories = g->inv()->categories();
+		for ( auto it = GameState::watchedItemList.begin(); it != GameState::watchedItemList.end(); )
+		{
+			bool valid = true;
+
+			const auto groups    = g->inv()->groups( it->category );
+			const auto items     = g->inv()->items( it->category, it->group );
+			const auto materials = g->inv()->materials( it->category, it->group, it->item );
+
+			if (
+				!categories.contains( it->category ) ||
+				( !it->group.isEmpty() && !groups.contains( it->group ) ) ||
+				( !it->item.isEmpty() && !items.contains( it->item ) ) ||
+				( !it->material.isEmpty() && !materials.contains( it->material ) )
+			)
+			{
+				it = GameState::watchedItemList.erase( it );
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}
