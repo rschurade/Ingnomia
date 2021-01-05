@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -411,17 +411,17 @@ void IO::sanitize()
 				const auto& construction = it.value();
 				if ( construction.contains( "Item" ) )
 				{
-					auto itemId = construction["Item"].toInt();
+					auto itemID = construction["Item"].toInt();
 					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemId] = 0;
+					constructedItems[itemID] = 0;
 				}
 				if ( construction.contains( "Items" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
-						auto itemId = vItem.toInt();
+						auto itemID = vItem.toInt();
 						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemId] = 0;
+						constructedItems[itemID] = 0;
 					}
 				}
 			}
@@ -434,17 +434,17 @@ void IO::sanitize()
 				const auto& construction = it.value();
 				if ( construction.contains( "Item" ) )
 				{
-					auto itemId = construction["Item"].toInt();
+					auto itemID = construction["Item"].toInt();
 					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemId] = 0;
+					constructedItems[itemID] = 0;
 				}
 				if ( construction.contains( "Items" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
-						auto itemId = vItem.toInt();
+						auto itemID = vItem.toInt();
 						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemId] = 0;
+						constructedItems[itemID] = 0;
 					}
 				}
 			}
