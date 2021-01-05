@@ -16,23 +16,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "aggregatorselection.h"
-#include "eventconnector.h"
 
 #include "../base/db.h"
-#include "../base/global.h"
 #include "../base/gamestate.h"
+#include "../base/global.h"
 #include "../base/selection.h"
 #include "../base/util.h"
-
 #include "../game/game.h"
 #include "../game/world.h"
-
 #include "../gfx/spritefactory.h"
+#include "eventconnector.h"
 
 #include <QDebug>
 
 AggregatorSelection::AggregatorSelection( QObject* parent ) :
-	QObject(parent)
+	QObject( parent )
 {
 	qRegisterMetaType<SelectionData>();
 }
@@ -43,37 +41,37 @@ AggregatorSelection::~AggregatorSelection()
 
 void AggregatorSelection::onActionChanged( const QString action )
 {
-    emit signalAction( action );
+	emit signalAction( action );
 }
 
 void AggregatorSelection::onUpdateCursorPos( const QString pos )
 {
-    emit signalCursorPos( pos );
+	emit signalCursorPos( pos );
 }
 
 void AggregatorSelection::onUpdateFirstClick( const QString pos )
 {
-    emit signalFirstClick( pos );
+	emit signalFirstClick( pos );
 }
 
 void AggregatorSelection::onUpdateSize( const QString size )
 {
-    emit signalSize( size );
+	emit signalSize( size );
 }
 
 void AggregatorSelection::onRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation )
 {
-	m_width = width;
-    m_height = height;
-    m_moveX = moveX;
-    m_moveY = moveY;
-    m_scale = scale;
-    m_rotation = rotation;
+	m_width    = width;
+	m_height   = height;
+	m_moveX    = moveX;
+	m_moveY    = moveY;
+	m_scale    = scale;
+	m_rotation = rotation;
 }
 
 void AggregatorSelection::onMouse( int mouseX, int mouseY, bool shift, bool ctrl )
 {
-	if( Global::sel )
+	if ( Global::sel )
 	{
 		m_cursorPos = calcCursor( mouseX, mouseY, Global::sel->isFloor(), shift );
 		Global::sel->updateSelection( m_cursorPos, shift, ctrl );
@@ -86,11 +84,11 @@ void AggregatorSelection::onMouse( int mouseX, int mouseY, bool shift, bool ctrl
 
 void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 {
-	if( Global::sel )
+	if ( Global::sel )
 	{
 		if ( Global::sel->hasAction() )
 		{
-			Global::sel->leftClick( m_cursorPos, shift, ctrl );	
+			Global::sel->leftClick( m_cursorPos, shift, ctrl );
 			Global::sel->updateSelection( m_cursorPos, shift, ctrl );
 			updateSelection();
 		}
@@ -101,10 +99,10 @@ void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 		}
 	}
 }
-    
+
 void AggregatorSelection::onRightClick()
 {
-	if( Global::sel )
+	if ( Global::sel )
 	{
 		Global::sel->rightClick( m_cursorPos );
 		updateSelection();
@@ -113,16 +111,54 @@ void AggregatorSelection::onRightClick()
 
 void AggregatorSelection::onRotateSelection()
 {
-	if( Global::sel )
+	if ( Global::sel )
 	{
 		Global::sel->rotate();
 		updateSelection();
 	}
 }
 
+static bool isSelectableWall( const Position& pos )
+{
+	const auto w     = Global::eventConnector->game()->w();
+	const auto& tile = w->getTile( pos );
+	if ( tile.wallType & WallType::WT_SOLIDWALL )
+	{
+		return true;
+	}
+	if ( Global::showJobs && w->jobSprite( pos ).contains( "Wall" ) )
+	{
+		return true;
+	}
+	return false;
+}
+
+static bool isSelectableFloor( const Position& pos, bool snapToWallBelow )
+{
+	const auto w     = Global::eventConnector->game()->w();
+	const auto& tile = w->getTile( pos );
+	if ( tile.floorType != FloorType::FT_NOFLOOR )
+	{
+		return true;
+	}
+	const auto& tileBelow = w->getTile( pos.belowOf() );
+	if ( snapToWallBelow )
+	{
+		if ( isSelectableWall( pos.belowOf() ) )
+		{
+			return true;
+		}
+	}
+	if ( Global::showJobs && w->jobSprite( pos ).contains( "Floor" ) )
+	{
+		return true;
+	}
+	return false;
+}
+
 Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
-	if( !Global::sel || !Global::eventConnector || !Global::eventConnector->game() || !Global::eventConnector->game()->w() )
+	if ( !Global::sel || !Global::eventConnector || !Global::eventConnector->game() || !Global::eventConnector->game()->w() )
 	{
 		return Position( 0, 0, 0 );
 	}
@@ -217,7 +253,7 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 				cursorPos.y = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
 
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.seOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && isSelectableWall( cursorPos.seOf() ) )
 				{
 					cursorPos.x += 1;
 					cursorPos.y += 1;
@@ -228,7 +264,7 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 				cursorPos.x = qMin( qMax( 0, selY - zDiff - 1 ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.neOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && isSelectableWall( cursorPos.neOf() ) )
 				{
 					cursorPos.x += 1;
 					cursorPos.y -= 1;
@@ -238,7 +274,7 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 				cursorPos.x = qMin( qMax( 0, dim - selX + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.nwOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && isSelectableWall( cursorPos.nwOf() ) )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y -= 1;
@@ -248,7 +284,7 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 				cursorPos.x = qMin( qMax( 0, dim - selY + zDiff ), dim - 1 );
 				cursorPos.y = qMin( qMax( 0, selX - zDiff - 1 ), dim - 1 );
 				cursorPos.z = qMin( qMax( 0, viewLevel ), dimZ - 1 );
-				if ( !Global::wallsLowered && cursorPos.valid() && Global::eventConnector->game()->w()->getTile( cursorPos.swOf() ).wallType & WallType::WT_SOLIDWALL )
+				if ( !Global::wallsLowered && cursorPos.valid() && isSelectableWall( cursorPos.swOf() ) )
 				{
 					cursorPos.x -= 1;
 					cursorPos.y += 1;
@@ -256,15 +292,13 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 				break;
 		}
 
-		const Tile& tile = Global::eventConnector->game()->w()->getTile( cursorPos );
 		if ( cursorPos.z > 0 )
 		{
-			Tile& tileBelow = Global::eventConnector->game()->w()->getTile( cursorPos.x, cursorPos.y, cursorPos.z - 1 );
-			if( isFloor && tile.floorType == FloorType::FT_NOFLOOR && tileBelow.wallType != WallType::WT_NOWALL )
+			if ( isSelectableFloor(cursorPos, isFloor ) )
 			{
 				zFloorFound = true;
 			}
-			else if ( tile.floorType != FloorType::FT_NOFLOOR || tileBelow.wallType == WallType::WT_SOLIDWALL || useViewLevel )
+			else if ( useViewLevel )
 			{
 				zFloorFound = true;
 			}
