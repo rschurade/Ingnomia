@@ -441,6 +441,8 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	OnPropertyChanged( "ButcherCorpses" );
 	OnPropertyChanged( "CatchFish" );
 	OnPropertyChanged( "ProcessFish" );
+
+	m_proxy->unblockWriteBack();
 }
 
 void WorkshopModel::onUpdateCraftList( const GuiWorkshopInfo& info )
