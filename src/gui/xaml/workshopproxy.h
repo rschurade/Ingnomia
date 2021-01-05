@@ -50,10 +50,15 @@ public:
 
 	void trade( unsigned int workshopID );
 
+	void blockWriteBack();
+	void unblockWriteBack();
+
 private:
 	IngnomiaGUI::WorkshopModel* m_parent = nullptr;
 
 	unsigned int m_workshopID = 0;
+
+	bool m_blockWriteBack = false;
 
 private slots:
 	void onUpdateInfo( const GuiWorkshopInfo& info );

@@ -42,35 +42,32 @@ AggregatorLoadGame::~AggregatorLoadGame()
 
 void AggregatorLoadGame::onRequestKingdoms()
 {
-	QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
+	QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save";
 
 	m_kingdomList.clear();
 
 	QDir dir( sfolder );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
-	dir.setSorting( QDir::Time );
 
 	auto entryList = dir.entryList();
 
 	for ( auto sdir : entryList )
 	{
-		QString kingdomFolder = sfolder + sdir;
+		QString kingdomFolder = sfolder + "/" + sdir;
 
-		QDirIterator gdirectories( kingdomFolder, QDir::Dirs | QDir::NoDotAndDotDot );
-		QStringList gdirs;
-		while ( gdirectories.hasNext() )
-		{
-			gdirectories.next();
-			gdirs.push_back( gdirectories.filePath() );
-		}
+		QDir kdir( kingdomFolder );
+		kdir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
+		kdir.setSorting( QDir::Time );
+
+		auto gdirs = kdir.entryList();
+
 		if ( !gdirs.empty() )
 		{
-			for( int i = gdirs.size() - 1; i >= 0; --i )
+			for( const auto& gdir : gdirs )
 			{
-				QString gdir = gdirs[i];
-			
+				QString gameFolder = kingdomFolder + "/" + gdir;
 				QJsonDocument jd;
-				IO::loadFile( gdir + "/game.json", jd );
+				IO::loadFile( gameFolder + "/game.json", jd );
 
 				if ( jd.isArray() )
 				{
@@ -80,14 +77,14 @@ void AggregatorLoadGame::onRequestKingdoms()
 					{
 						QVariantMap vm = vl.first().toMap();
 
-						QFile file( gdir + "/game.json" );
+						QFile file( gameFolder + "/game.json" );
 						QFileInfo fi( file );
 
 						GuiSaveInfo gsk;
 						gsk.folder  = kingdomFolder;
 						gsk.name    = vm.value( "kingdomName" ).toString();
 						gsk.version = vm.value( "Version" ).toString();
-						gsk.date    = fi.lastModified().toString();
+						gsk.date    = fi.lastModified();
 
 						m_kingdomList.append( gsk );
 						break;
@@ -96,6 +93,9 @@ void AggregatorLoadGame::onRequestKingdoms()
 			}
 		}
 	}
+	std::sort( m_kingdomList.begin(), m_kingdomList.end(), []( const GuiSaveInfo& a, const GuiSaveInfo& b ) {
+		return a.date > b.date;
+	} );
 
 	emit signalKingdoms( m_kingdomList );
 }
@@ -106,11 +106,10 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 
 	QDir dir( path );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
-	dir.setSorting( QDir::Time );
 
-	auto dirs = dir.entryList();
+	auto sdirs = dir.entryList();
 
-	for ( auto sdir : dirs )
+	for ( auto sdir : sdirs )
 	{
 		GuiSaveInfo gsi;
 
@@ -141,12 +140,16 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 
 				QFile file( gsi.folder + "/game.json" );
 				QFileInfo fi( file );
-				gsi.date = fi.lastModified().toString();
+				gsi.date = fi.lastModified();
 
 				m_gameList.append( gsi );
 			}
 		}
 	}
+
+	std::sort( m_gameList.begin(), m_gameList.end(), []( const GuiSaveInfo& a, const GuiSaveInfo& b ) {
+		return a.date > b.date;
+	} );
 
 	emit signalSaveGames( m_gameList );
 }

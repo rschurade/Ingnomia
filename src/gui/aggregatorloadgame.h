@@ -18,6 +18,7 @@
 #pragma once
 
 #include <QObject>
+#include <QDateTime>
 
 struct GuiSaveInfo
 {
@@ -25,7 +26,7 @@ struct GuiSaveInfo
 	QString folder;
 	QString dir;
 	QString version;
-	QString date;
+	QDateTime date;
 	bool compatible = true;
 };
 

@@ -187,10 +187,10 @@ private:
 
 #pragma endregion CraftingListTab
 
-
 #pragma region TradeItems
 
-enum class CheckedAmount : unsigned char {
+enum class CheckedAmount : unsigned char
+{
 	Amount1,
 	Amount10,
 	Amount100,
@@ -212,25 +212,16 @@ public:
 	QString m_materialSID;
 
 	unsigned char m_quality = 0;
-	int m_count = 0;
-
+	int m_count             = 0;
 
 private:
 	Noesis::String m_name;
 	Noesis::String m_countString;
 
-	
-
-
 	NS_DECLARE_REFLECTION( WsTradeItem, NoesisApp::NotifyPropertyChangedBase )
 };
 
 #pragma endregion TradeItems
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class WorkshopModel final : public NoesisApp::NotifyPropertyChangedBase
@@ -243,7 +234,7 @@ public:
 
 	void updateTraderStock( const QList<GuiTradeItem>& items );
 	void updatePlayerStock( const QList<GuiTradeItem>& items );
-	
+
 	void updateTraderStockItem( const GuiTradeItem& item );
 	void updatePlayerStockItem( const GuiTradeItem& item );
 
@@ -296,7 +287,6 @@ private:
 	}
 	Noesis::Ptr<Noesis::ObservableCollection<WsCraftJob>> m_jobs;
 
-
 #pragma region TradeItemLists
 	Noesis::ObservableCollection<WsTradeItem>* GetTraderStock() const
 	{
@@ -306,7 +296,6 @@ private:
 	WsTradeItem* m_selectedTraderStock = nullptr;
 	void SetSelectedTraderStock( WsTradeItem* item );
 	WsTradeItem* GetSelectedTraderStock() const;
-
 
 	Noesis::ObservableCollection<WsTradeItem>* GetTraderOffer() const
 	{
@@ -337,17 +326,15 @@ private:
 
 	CheckedAmount m_amountToTransfer = CheckedAmount::Amount1;
 
-	void onAmountCmd( BaseComponent* param );
-	const NoesisApp::DelegateCommand* GetAmountCmd() const
-	{
-		return &m_amountCmd;
-	}
-	NoesisApp::DelegateCommand m_amountCmd;
-
-	bool GetAmount1Checked() const ;
+	bool GetAmount1Checked() const;
 	bool GetAmount10Checked() const;
 	bool GetAmount100Checked() const;
 	bool GetAmountAllChecked() const;
+
+	void SetAmount1Checked( bool checked );
+	void SetAmount10Checked( bool checked );
+	void SetAmount100Checked( bool checked );
+	void SetAmountAllChecked( bool checked );
 
 	void onTransferCmd( BaseComponent* param );
 	const NoesisApp::DelegateCommand* GetTransferCmd() const
@@ -378,8 +365,8 @@ private:
 	bool m_connectStockpile   = false;
 	bool m_butcherCorpses     = false;
 	bool m_butcherExcess      = false;
-	bool m_catchFish		  = false;
-	bool m_processFish		  = false;
+	bool m_catchFish          = false;
+	bool m_processFish        = false;
 
 	QString m_gui;
 

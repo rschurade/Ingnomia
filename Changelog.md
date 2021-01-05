@@ -1,23 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.8.7]
 
 ### Fixed
 - grape seed on start up
 - game pausing when in mainmenu
 - remove dead gnomes from squads
 - show number of trees in grove window
-- missing textures are loading the game
+- missing textures when loading the game
 - floating items when mining the ramp under a working gnome
+- amount buttons in trader UI
+- partial write back while updating workshop settings
 
 ### Added
-- Attack on sight combat behavior
-- Defend (hold position) combat behavior
+- attack on sight combat behavior
+- defend (hold position) combat behavior
 
 ### Changed
-- Allow corpses outside stockpiles to be butchered
+- allow corpses outside stockpiles to be butchered
 - can designate groves over existing trees
+- allow jobs in mid-air to be selected
+- reduce number of item categories
 
 ### Removed
 

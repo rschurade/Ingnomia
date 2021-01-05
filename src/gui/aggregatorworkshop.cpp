@@ -201,9 +201,11 @@ void AggregatorWorkshop::onUpdateAfterTick()
 	if( !g ) return;
 	if ( m_info.workshopID && m_contentDirty )
 	{
-		auto sp = g->wsm()->workshop( m_info.workshopID );
-		emit signalUpdateContent( m_info );
-		m_contentDirty = false;
+		if ( aggregate( m_info.workshopID ) )
+		{
+			emit signalUpdateContent( m_info );
+			m_contentDirty = false;
+		}
 	}
 }
 
@@ -516,7 +518,14 @@ void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString 
 	{
 		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
 		{
-			item.reserved = qMin( item.count, item.reserved + count );
+			if (count > 0)
+			{
+				item.reserved = qMin( item.count, item.reserved + count );
+			}
+			else
+			{
+				item.reserved = item.count;
+			}
 		
 			emit signalUpdatePlayerStockItem( item );
 			updatePlayerValue();
@@ -532,7 +541,14 @@ void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString 
 	{
 		if( item.itemSID == itemSID && item.materialSIDorGender == materialSID && item.quality == quality )
 		{
-			item.reserved = qMax( 0, item.reserved - count );
+			if (count > 0)
+			{
+				item.reserved = qMax( 0, item.reserved - count );
+			}
+			else
+			{
+				item.reserved = 0;
+			}
 		
 			emit signalUpdatePlayerStockItem( item );
 			updatePlayerValue();

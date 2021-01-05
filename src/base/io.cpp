@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -205,15 +205,6 @@ QString IO::save( bool autosave )
 	if ( autosave )
 	{
 		folder += "autosave";
-
-		/*
-		if ( QDir( folder ).exists() )
-		{
-			QDir dir( folder );
-			dir.removeRecursively();
-			QDir().mkdir( folder );
-		}
-		*/
 	}
 	else
 	{
@@ -245,13 +236,17 @@ QString IO::save( bool autosave )
 		folder += QString::number( slot );
 	}
 
-	folder += "/";
 	if ( Global::debugMode )
 		qDebug() << folder;
-	if ( !QDir( folder ).exists() )
+	QString oldFolder;
+	if ( QDir( folder ).exists() )
 	{
-		QDir().mkdir( folder );
+		oldFolder = folder + ".backup";
+		QDir().rename( folder, oldFolder );
 	}
+	QDir().mkdir( folder );
+	
+	folder += "/";
 
 	IO::saveWorld( folder );
 	IO::saveFile( folder + "sprites.json", IO::jsonArraySprites() );
@@ -287,6 +282,13 @@ QString IO::save( bool autosave )
 	IO::saveFile( folder + "pipes.json", IO::jsonArrayPipes() );
 
 	qDebug() << "saving game took: " + QString::number( timer.elapsed() ) + " ms";
+
+	if (!oldFolder.isEmpty())
+	{
+		QDir( oldFolder ).removeRecursively();
+		qDebug() << "Savegame backup removed";
+	}
+
 	return folder;
 }
 
@@ -411,17 +413,18 @@ void IO::sanitize()
 				const auto& construction = it.value();
 				if ( construction.contains( "Item" ) )
 				{
-					auto itemId = construction["Item"].toInt();
+					auto itemID = construction["Item"].toInt();
 					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemId] = 0;
+					constructedItems[itemID] = 0;
 				}
-				if ( construction.contains( "Items" ) )
+				// Items can be either item type IDs or actual item IDs
+				if ( construction.contains( "FromParts" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
-						auto itemId = vItem.toInt();
+						auto itemID = vItem.toInt();
 						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemId] = 0;
+						constructedItems[itemID] = 0;
 					}
 				}
 			}
@@ -434,17 +437,18 @@ void IO::sanitize()
 				const auto& construction = it.value();
 				if ( construction.contains( "Item" ) )
 				{
-					auto itemId = construction["Item"].toInt();
+					auto itemID = construction["Item"].toInt();
 					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemId] = 0;
+					constructedItems[itemID] = 0;
 				}
-				if ( construction.contains( "Items" ) )
+				// Items can be either item type IDs or actual item IDs
+				if ( construction.contains( "FromParts" ) )
 				{
 					for ( auto vItem : construction.value( "Items" ).toList() )
 					{
-						auto itemId = vItem.toInt();
+						auto itemID = vItem.toInt();
 						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemId] = 0;
+						constructedItems[itemID] = 0;
 					}
 				}
 			}
@@ -510,9 +514,9 @@ void IO::sanitize()
 			if ( construced )
 			{
 				auto realOwner = constructedItems[item.id()];
-				if ( item.isHeldBy() != realOwner)
+				if ( item.isHeldBy() != realOwner )
 				{
-					if (realOwner != 0)
+					if ( realOwner != 0 )
 					{
 						g->inv()->pickUpItem( item.id(), realOwner );
 					}
@@ -533,6 +537,32 @@ void IO::sanitize()
 			for ( auto& vitem : ws->sourceItems() )
 			{
 				g->inv()->pickUpItem( vitem.toUInt(), ws->id() );
+			}
+		}
+	}
+	// Clean out orphaned watch list items
+	{
+		const auto categories = g->inv()->categories();
+		for ( auto it = GameState::watchedItemList.begin(); it != GameState::watchedItemList.end(); )
+		{
+			bool valid = true;
+
+			const auto groups    = g->inv()->groups( it->category );
+			const auto items     = g->inv()->items( it->category, it->group );
+			const auto materials = g->inv()->materials( it->category, it->group, it->item );
+
+			if (
+				!categories.contains( it->category ) ||
+				( !it->group.isEmpty() && !groups.contains( it->group ) ) ||
+				( !it->item.isEmpty() && !items.contains( it->item ) ) ||
+				( !it->material.isEmpty() && !materials.contains( it->material ) )
+			)
+			{
+				it = GameState::watchedItemList.erase( it );
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}
