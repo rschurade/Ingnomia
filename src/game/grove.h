@@ -86,6 +86,8 @@ public:
 
 	int numTrees();
 
+	int numPlots() { return m_fields.size(); }
+
 private:
 	GroveProperties m_properties;
 

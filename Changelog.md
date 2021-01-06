@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Fixed
+
+### Added
+add num plots to grove info, 
+
+### Changed
+allow designating grove over existing plants
+
 ## [0.8.7]
 
 ### Fixed

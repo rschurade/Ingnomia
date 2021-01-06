@@ -238,7 +238,9 @@
 					</Button>
 					<StackPanel Grid.Column="1">
 						<Grid>
-							<TextBlock FontSize="16" Text="{StaticResource Agriculture_Trees}" Margin="10,5,10,5" />
+							<TextBlock FontSize="16" TextAlignment="Right" Text="{Binding NumPlots}" Margin="10,5,10,5" />
+						</Grid>
+						<Grid>
 							<TextBlock FontSize="16" TextAlignment="Right" Text="{Binding NumPlants}" Margin="10,5,10,5" />
 						</Grid>
 					</StackPanel>

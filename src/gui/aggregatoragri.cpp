@@ -357,6 +357,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 			m_groveInfo.fellTrees  = props.fell;
 			m_groveInfo.treeType   = props.treeType;
 			m_groveInfo.planted	   = grove->numTrees();
+			m_groveInfo.numPlots   = grove->numPlots();
 
 			if ( m_groveInfo.product.plantID != m_groveInfo.treeType )
 			{
