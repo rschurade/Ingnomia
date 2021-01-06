@@ -122,13 +122,6 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		}
 
 		m_fields.insert( infi->pos.toInt(), infi );
-
-		QVariantList vjl = vals.value( "Jobs" ).toList();
-		for ( auto vj : vjl )
-		{
-			QSharedPointer<Job> job( new Job( vj.toMap() ) );
-			m_jobsOut.insert( job->id(), job );
-		}
 	}
 
 	Filter filter( vals.value( "Filter" ).toMap() );
@@ -199,14 +192,7 @@ QVariant Stockpile::serialize()
 		limits.append( lima );
 	}
 	out.insert( "Limits", limits );
-
-	QVariantList jobs;
-	for ( auto job : m_jobsOut )
-	{
-		jobs.append( job->serialize() );
-	}
-	out.insert( "Jobs", jobs );
-
+	
 	out.insert( "Filter", m_filter.serialize() );
 
 	return out;
@@ -229,48 +215,18 @@ void Stockpile::pasteSettings( QVariantMap vals )
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), false );
 		m_limits.insert( vm.value( "Key" ).toString(), limit );
 	}
-	updateCanAccept();
 }
 
 bool Stockpile::onTick( quint64 tick )
 {
 	if ( !m_active )
 		return false;
-	bool lastUpdateLongAgo = ( tick - m_lastUpdateTick ) > 100;
-	if ( ( m_filterChanged || m_possibleItems.empty() ) && lastUpdateLongAgo )
+
+	if( tick - m_lastUpdateTick > 100 )
 	{
-		m_filterChanged = false;
-		if ( !m_fields.empty() )
-		{
-			auto possibleSloits     = freeSlots();
-			const auto activeFilter = m_filter.getActive();
-			QSet<QPair<QString, QString>> effectiveFilter;
-			if ( possibleSloits.contains( QPair<QString, QString> { "Any", "Any" } ) )
-			{
-				effectiveFilter = activeFilter;
-			}
-			else
-			{
-				for ( const auto& filter : activeFilter )
-				{
-					if ( possibleSloits.contains( filter ) || possibleSloits.contains( QPair<QString, QString> { filter.first, "Any" } ) )
-					{
-						effectiveFilter.insert( filter );
-					}
-				}
-			}
-
-			m_possibleItems = g->inv()->getClosestItemsForStockpile( m_id, m_fields.first()->pos, m_pullOthers, effectiveFilter );
-			if ( m_possibleItems.size() > 5000 )
-			{
-				qWarning() << "Excessive number of candidates for stockpile";
-			}
-		}
 		m_lastUpdateTick = tick;
-
-		return true;
+		updateCanAccept();
 	}
-	return false;
 }
 
 QSet<QPair<QString, QString>> Stockpile::freeSlots() const
@@ -314,445 +270,6 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 	return freeSlots;
 }
 
-unsigned int Stockpile::getJob()
-{
-	if ( m_isFull || !m_active || m_filter.getActive().isEmpty() || m_fields.empty() )
-		return 0;
-
-	int itemsChecked = 0;
-	while ( !m_possibleItems.empty() && itemsChecked < 50 )
-	{
-		++itemsChecked;
-		unsigned int item   = m_possibleItems.takeFirst();
-		QString itemSID     = g->inv()->itemSID( item );
-		QString materialSID = g->inv()->materialSID( item );
-		bool suspended      = false;
-
-		if ( m_limitWithmaterial )
-		{
-			if ( m_limits.contains( itemSID + materialSID ) )
-			{
-				suspended = m_limits[itemSID + materialSID].suspended;
-			}
-		}
-		else
-		{
-			if ( m_limits.contains( itemSID ) )
-			{
-				suspended = m_limits[itemSID].suspended;
-			}
-		}
-
-		if ( !suspended && !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id && g->w()->regionMap().checkConnectedRegions( m_fields.first()->pos, g->inv()->getItemPos( item ) ) )
-		{
-			m_isFull = true;
-			//loop over all stockpile fields
-			for ( auto infi : m_fields )
-			{
-				if ( !infi->isFull )
-				{
-					m_isFull = false;
-					if ( infi->reservedItems.size() > 0 )
-					{
-						unsigned int reservedItemID = *infi->reservedItems.begin();
-						if ( !g->inv()->itemExists( reservedItemID ) || g->inv()->isInJob( reservedItemID ) == 0 )
-						{
-							infi->reservedItems.remove( reservedItemID );
-						}
-					}
-
-					// start with tiles that have a container
-					if ( infi->containerID )
-					{
-						if ( infi->items.size() + infi->reservedItems.size() == 0 )
-						{
-							//container is empty
-							if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
-							{
-								return createJob( item, infi );
-							}
-						}
-						else // container not empty
-						{
-							if ( infi->requireSame )
-							{
-								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) && infi->capacity > infi->items.size() + infi->reservedItems.size() )
-								{
-									unsigned int firstItem = 0;
-									if ( g->inv()->itemsInContainer( infi->containerID ).size() )
-									{
-										firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
-									}
-									else if ( infi->reservedItems.size() )
-									{
-										firstItem = *infi->reservedItems.begin();
-									}
-									if ( ( firstItem != 0 && g->inv()->isSameTypeAndMaterial( item, firstItem ) ) )
-									{
-										return createJob( item, infi );
-									}
-								}
-								else
-								{
-									infi->isFull = true;
-								}
-							}
-							else
-							{
-								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) &&
-									 infi->capacity > infi->items.size() + infi->reservedItems.size() )
-								{
-									if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
-									{
-										return createJob( item, infi );
-									}
-								}
-								else
-								{
-									infi->isFull = true;
-								}
-							}
-						}
-					}
-				}
-			}
-			//loop over all stockpile fields
-			for ( auto infi : m_fields )
-			{
-				if ( !infi->isFull )
-				{
-					// now tiles without container
-					if ( !infi->containerID ) // no container
-					{
-						if ( infi->items.size() + infi->reservedItems.size() == 0 )
-						{
-							// field is empty
-							if ( !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id )
-							{
-								// create hauling job
-								return createJob( item, infi );
-							}
-						}
-						else
-						{
-							// field isn't empty, is the item stackable and same type and material as the one on the field
-							unsigned char newStackSize = infi->stackSize;
-							if ( infi->reservedItems.size() > 0 )
-							{
-								newStackSize = qMax( newStackSize, g->inv()->stackSize( *infi->reservedItems.begin() ) );
-							}
-
-							if ( newStackSize > 1 && ( ( infi->items.size() + infi->reservedItems.size() ) < newStackSize ) )
-							{
-								// get the stack defining item
-								// look if there are any items of that type that aren't in stockpiles yet
-								unsigned int itemID = 0;
-								if ( !infi->items.empty() )
-								{
-									itemID = *infi->items.begin();
-								}
-								else
-								{
-									itemID = *infi->reservedItems.begin();
-								}
-								if ( g->inv()->isSameTypeAndMaterial( itemID, item ) )
-								{
-									return createJob( item, infi );
-								}
-							}
-							else
-							{
-								infi->isFull = true;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
-{
-	QString itemSID        = g->inv()->itemSID( itemID );
-	QString materialSID    = g->inv()->materialSID( itemID );
-	int freeSpace          = 1;
-	int countItems         = infi->items.size();
-	int countReservedItems = infi->reservedItems.size();
-	if ( infi->containerID )
-	{
-		freeSpace = infi->capacity - ( countItems + countReservedItems );
-	}
-	else
-	{
-		if ( infi->items.size() == 0 && infi->reservedItems.size() == 0 )
-		{
-			freeSpace = g->inv()->stackSize( itemID );
-		}
-		else if ( infi->items.size() == 0 && infi->reservedItems.size() > 0 )
-		{
-			freeSpace = g->inv()->stackSize( *infi->reservedItems.begin() ) - ( countItems + countReservedItems );
-		}
-		else
-		{
-			freeSpace = infi->stackSize - ( countItems + countReservedItems );
-		}
-	}
-
-	// space for more than one item?
-	if ( freeSpace > 1 )
-	{
-		// there is more than one item of this type not in stockpiles already
-		int itemCount = g->inv()->itemCountNotInStockpile( itemSID, materialSID );
-		if ( itemCount > 1 )
-		{
-			// carry container exists?
-			QString carryContainer = Global::util->carryContainerForItem( itemSID );
-			freeSpace              = qMin( freeSpace, Global::util->capacity( carryContainer ) );
-
-			if ( !carryContainer.isEmpty() )
-			{
-				if ( g->inv()->itemCount( carryContainer, "any" ) > 0 )
-				{
-					QSharedPointer<Job> job( new Job );
-					job->setType( "HauleMultipleItems" );
-					job->setRequiredSkill( "Hauling" );
-					job->setRequiredTool( carryContainer, 0 );
-					job->setStockpile( m_id );
-					job->setPos( infi->pos );
-					job->setPosItemInput( infi->pos );
-					job->addPossibleWorkPosition( infi->pos );
-
-					job->addItemToHaul( itemID );
-					infi->reservedItems.insert( itemID );
-					g->inv()->setInJob( itemID, job->id() );
-					--freeSpace;
-
-					//auto possibleItems = g->inv()->getClosestItems( infi->pos, false, itemSID, materialSID );
-					// m_possible items are now sorted by item and material
-					//
-					while ( !m_possibleItems.empty() && freeSpace > 0 )
-					{
-						auto nextItem = m_possibleItems.takeFirst();
-						if ( materialSID != g->inv()->materialSID( nextItem ) || itemSID != g->inv()->itemSID( nextItem ) )
-						{
-							break;
-						}
-
-						if ( !g->inv()->isInJob( nextItem ) && g->inv()->isInStockpile( nextItem ) != m_id && g->w()->regionMap().checkConnectedRegions( infi->pos, g->inv()->getItemPos( nextItem ) ) )
-						{
-							job->addItemToHaul( nextItem );
-							infi->reservedItems.insert( nextItem );
-							g->inv()->setInJob( nextItem, job->id() );
-							--freeSpace;
-						}
-					}
-					m_jobsOut.insert( job->id(), job );
-					return job->id();
-				}
-			}
-		}
-	}
-
-	QSharedPointer<Job> job( new Job );
-	job->setType( "HauleItem" );
-	job->setRequiredSkill( "Hauling" );
-
-	job->setStockpile( m_id );
-
-	job->addItemToHaul( itemID );
-	g->inv()->setInJob( itemID, job->id() );
-
-	job->setPos( infi->pos );
-	job->setPosItemInput( infi->pos );
-	job->addPossibleWorkPosition( infi->pos );
-	job->setWorkPos( infi->pos );
-
-	infi->reservedItems.insert( itemID );
-
-	if ( m_limitWithmaterial )
-	{
-		int threshold = m_limits[itemSID + materialSID].suspendThreshold;
-		if ( threshold > 0 && countPlusReserved( itemSID, materialSID ) >= threshold )
-		{
-			m_limits[itemSID + materialSID].suspended = true;
-			m_suspendStatusChanged                    = true;
-		}
-	}
-	else
-	{
-		int threshold = m_limits[itemSID].suspendThreshold;
-		if ( threshold > 0 && countPlusReserved( itemSID ) >= threshold )
-		{
-			m_limits[itemSID].suspended = true;
-			m_suspendStatusChanged      = true;
-		}
-	}
-
-	m_jobsOut.insert( job->id(), job );
-	return job->id();
-}
-
-unsigned int Stockpile::getCleanUpJob()
-{
-	if ( !m_active || m_filter.getActive().isEmpty() )
-		return 0;
-
-	// cleaning up
-	//loop over all stockpile fields
-	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
-	{
-		InventoryField* infi = i.value();
-		//first tiles with container
-		if ( infi->containerID )
-		{
-			if ( infi->requireSame )
-			{
-				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
-				{
-					unsigned int firstItem = 0;
-					if ( g->inv()->itemsInContainer( infi->containerID ).size() )
-					{
-						firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
-					}
-					else if ( infi->reservedItems.size() )
-					{
-						firstItem = *infi->reservedItems.begin();
-					}
-					if ( firstItem != 0 )
-					{
-						if ( g->inv()->isInJob( firstItem ) )
-						{
-							return 0;
-						}
-
-						for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
-						{
-							InventoryField* infi2 = j.value();
-							if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
-							{
-								for ( auto oi : infi2->items )
-								{
-									if ( g->inv()->itemSID( oi ) == g->inv()->itemSID( firstItem ) &&
-										 g->inv()->materialSID( oi ) == g->inv()->materialSID( firstItem ) &&
-										 !g->inv()->isInJob( oi ) )
-									{
-										return createJob( oi, infi );
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
-				{
-					for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
-					{
-						InventoryField* infi2 = j.value();
-						if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
-						{
-							for ( auto oi : infi2->items )
-							{
-								if ( Global::util->itemAllowedInContainer( oi, infi->containerID ) && !g->inv()->isInJob( oi ) )
-								{
-									return createJob( oi, infi );
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
-	{
-		InventoryField* infi = i.value();
-		if ( !infi->containerID )
-		{
-			if ( infi->stackSize > 1 && ( infi->items.size() + infi->reservedItems.size() < infi->stackSize ) )
-			{
-				unsigned int firstItem = *infi->items.begin();
-				if ( g->inv()->isInJob( firstItem ) )
-				{
-					return 0;
-				}
-
-				auto iter = m_fields.end() - 1;
-				while ( iter != i )
-				{
-					InventoryField* infi2 = iter.value();
-					if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
-					{
-						for ( auto oi : infi2->items )
-						{
-							if ( g->inv()->itemSID( oi ) == g->inv()->itemSID( firstItem ) &&
-								 g->inv()->materialSID( oi ) == g->inv()->materialSID( firstItem ) &&
-								 !g->inv()->isInJob( oi ) &&
-								 infi2->items.size() < infi2->stackSize )
-							{
-								return createJob( oi, infi );
-							}
-						}
-					}
-					--iter;
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-bool Stockpile::finishJob( unsigned int jobID )
-{
-	return giveBackJob( jobID );
-}
-
-bool Stockpile::giveBackJob( unsigned int jobID )
-{
-	if ( m_jobsOut.contains( jobID ) )
-	{
-		QSharedPointer<Job> job = m_jobsOut[jobID];
-		for ( auto itemID : job->itemsToHaul() )
-		{
-			g->inv()->setInJob( itemID, 0 );
-			Position pos = job->pos();
-			if ( m_fields.contains( pos.toInt() ) )
-			{
-				m_fields[pos.toInt()]->reservedItems.remove( itemID );
-				m_fields[pos.toInt()]->isFull = false;
-				m_isFull                      = false;
-			}
-			QString itemSID     = g->inv()->itemSID( itemID );
-			QString materialSID = g->inv()->materialSID( itemID );
-			if ( m_limitWithmaterial )
-			{
-				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[itemSID + materialSID].activateThreshold )
-				{
-					m_limits[itemSID + materialSID].suspended = false;
-					m_suspendStatusChanged                    = true;
-				}
-			}
-			else
-			{
-				if ( countPlusReserved( itemSID ) <= m_limits[itemSID].activateThreshold )
-				{
-					m_limits[itemSID].suspended = false;
-					m_suspendStatusChanged      = true;
-				}
-			}
-		}
-		m_jobsOut.remove( jobID );
-		updateCanAccept();
-		return true;
-	}
-	return false;
-}
-
 void Stockpile::setInfiNotFull( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -760,7 +277,6 @@ void Stockpile::setInfiNotFull( Position pos )
 		InventoryField* field = m_fields.value( pos.toInt() );
 		field->isFull         = false;
 		m_isFull              = false;
-		updateCanAccept();
 	}
 }
 
@@ -809,7 +325,6 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 				m_suspendStatusChanged      = true;
 			}
 		}
-		updateCanAccept();
 		return true;
 	}
 
@@ -856,7 +371,6 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 					m_suspendStatusChanged = true;
 				}
 			}
-			updateCanAccept();
 			return true;
 		}
 	}
@@ -907,7 +421,6 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 			}
 		}
 	}
-	updateCanAccept();
 }
 
 void Stockpile::addContainer( unsigned int containerID, Position& pos )
@@ -968,7 +481,6 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 				}
 			}
 		}
-		updateCanAccept();
 	}
 }
 
@@ -987,7 +499,6 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 			field->capacity    = 1;
 			field->stackSize   = 1;
 			field->containerID = 0;
-			updateCanAccept();
 		}
 	}
 }
@@ -995,16 +506,6 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 bool Stockpile::allowedInStockpile( unsigned int itemID )
 {
 	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
-}
-
-QSharedPointer<Job> Stockpile::getJob( unsigned int jobID )
-{
-	return m_jobsOut[jobID];
-}
-
-bool Stockpile::hasJobID( unsigned int jobID ) const
-{
-	return m_jobsOut.contains( jobID );
 }
 
 bool Stockpile::removeTile( Position& pos )
@@ -1023,10 +524,6 @@ bool Stockpile::removeTile( Position& pos )
 		g->inv()->setInContainer( itemID, 0 );
 		g->inv()->setInStockpile( itemID, 0 );
 	}
-	if ( m_jobsOut.contains( pos.toInt() ) )
-	{
-		m_jobsOut[pos.toInt()]->setCanceled();
-	}
 
 	infi->items.clear();
 	infi->reservedItems.clear();
@@ -1039,7 +536,6 @@ bool Stockpile::removeTile( Position& pos )
 	{
 		m_active = false;
 	}
-	updateCanAccept();
 	return m_fields.empty();
 }
 
@@ -1191,11 +687,6 @@ bool Stockpile::suspendChanged()
 	bool out               = m_suspendStatusChanged;
 	m_suspendStatusChanged = false;
 	return out;
-}
-
-bool Stockpile::stillHasJobs()
-{
-	return !m_jobsOut.isEmpty();
 }
 
 int Stockpile::countFields()

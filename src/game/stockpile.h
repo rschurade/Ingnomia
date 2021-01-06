@@ -102,14 +102,6 @@ public:
 
 	void setCheckState( bool state, QString category, QString group = "", QString item = "", QString material = "" );
 
-	unsigned int getJob();
-	unsigned int getCleanUpJob();
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
-
 	// return true if last tile was removed
 	bool removeTile( Position& pos );
 	void addTile( Position& pos );
@@ -143,8 +135,6 @@ public:
 
 	bool suspendChanged();
 
-	bool stillHasJobs();
-
 	int countFields();
 
 	void setInfiNotFull( Position pos );
@@ -165,20 +155,15 @@ private:
 
 	QMap<unsigned int, InventoryField*> m_fields;
 
-	QList<unsigned int> m_possibleItems;
 	bool m_filterChanged = true;
 
 	Filter m_filter;
-
-	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
 
 	QList<unsigned int> m_linkedWorkshops;
 
 	QMap<QString, StockpileItemLimit> m_limits;
 
 	bool m_limitWithmaterial = false;
-
-	unsigned int createJob( unsigned int itemID, InventoryField* infi );
 
 	bool allowedInStockpile( unsigned int itemID );
 

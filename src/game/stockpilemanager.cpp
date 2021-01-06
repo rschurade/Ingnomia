@@ -44,20 +44,25 @@ void StockpileManager::onTick( quint64 tick )
 {
 	for ( auto& sp : m_stockpiles )
 	{
-		if ( sp->countFields() == 0 && !sp->stillHasJobs() )
+		if ( sp->countFields() == 0 )
 		{
 			removeStockpile( sp->id() );
 			break;
 		}
 	}
 
-	for ( auto& sp : m_stockpiles )
+
+	if( m_currentTickStockpile < m_stockpilesOrdered.size() )
 	{
-		if ( sp->onTick( tick ) )
+		auto sp = m_stockpiles.value( m_stockpilesOrdered[m_currentTickStockpile++] );
+		if( sp )
 		{
-			//stockpile updated its possible item list
-			break;
+			sp->onTick( tick );
 		}
+	}
+	else
+	{
+		m_currentTickStockpile = 0;
 	}
 }
 
@@ -127,14 +132,8 @@ void StockpileManager::removeTile( Position& pos )
 	if ( sp && sp->removeTile( pos ) )
 	{
 		unsigned int id = sp->id();
-		if ( !sp->stillHasJobs() )
-		{
-			removeStockpile( id );
-		}
-		else
-		{
-			emit signalStockpileDeleted( id );
-		}
+		removeStockpile( id );
+		emit signalStockpileDeleted( id );
 	}
 	m_allStockpileTiles.remove( pos.toInt() );
 }
@@ -208,86 +207,10 @@ void StockpileManager::removeItem( unsigned int stockpileID, Position pos, unsig
 	}
 }
 
-unsigned int StockpileManager::getJob()
+unsigned int StockpileManager::getJob( Position& gnomePos )
 {
-	for ( auto stockpileID : m_stockpilesOrdered )
-	{
-		unsigned int job = m_stockpiles[stockpileID]->getJob();
-		if ( job )
-		{
-			if ( m_stockpiles[stockpileID]->suspendChanged() )
-			{
-				emit signalSuspendStatusChanged( stockpileID );
-			}
-			return job;
-		}
-	}
-	/*
-	for ( auto stockpileID : m_stockpilesOrdered )
-	{
-		unsigned int job = m_stockpiles[stockpileID]->getCleanUpJob();
-		if ( job )
-		{
-			if ( m_stockpiles[stockpileID]->suspendChanged() )
-			{
-				emit signalSuspendStatusChanged( stockpileID );
-			}
-			return job;
-		}
-	}
-	*/
+
 	return 0;
-}
-
-bool StockpileManager::finishJob( unsigned int jobID )
-{
-	for ( auto& sp : m_stockpiles )
-	{
-		if ( sp->finishJob( jobID ) )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool StockpileManager::giveBackJob( unsigned int jobID )
-{
-	for ( auto& sp : m_stockpiles )
-	{
-		if ( sp->giveBackJob( jobID ) )
-		{
-			if ( sp->suspendChanged() )
-			{
-				emit signalSuspendStatusChanged( sp->id() );
-			}
-			return true;
-		}
-	}
-	return false;
-}
-
-QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
-{
-	for ( const auto& sp : m_stockpiles )
-	{
-		if ( sp->hasJobID( jobID ) )
-		{
-			return sp->getJob( jobID );
-		}
-	}
-}
-
-bool StockpileManager::hasJobID( unsigned int jobID ) const
-{
-	for ( const auto& sp : m_stockpiles )
-	{
-		if ( sp->hasJobID( jobID ) )
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 void StockpileManager::addContainer( unsigned int containerID, Position& pos )

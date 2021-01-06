@@ -484,7 +484,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		{
 			case SK_Hauling:
 			{
-				jobID = g->spm()->getJob();
+				jobID = g->spm()->getJob( gnomePos );
 				{
 					if ( jobID )
 					{
@@ -620,10 +620,6 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	{
 		return m_jobList.value( jobID );
 	}
-	if ( g->spm()->hasJobID( jobID ) )
-	{
-		return g->spm()->getJob( jobID );
-	}
 	return nullptr;
 }
 
@@ -749,12 +745,6 @@ void JobManager::finishJob( unsigned int jobID )
 		}
 		m_jobList.remove( jobID );
 	}
-
-	if ( g->spm()->finishJob( jobID ) )
-	{
-		return;
-	}
-
 }
 
 void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
@@ -963,11 +953,6 @@ void JobManager::giveBackJob( unsigned int jobID )
 		setJobSprites( jobID, false, false );
 
 		m_returnedJobQueue.enqueue( jobID );
-		return;
-	}
-
-	if ( g->spm()->giveBackJob( jobID ) )
-	{
 		return;
 	}
 }

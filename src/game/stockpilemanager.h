@@ -61,11 +61,8 @@ public:
 
 	void setInfiNotFull( Position pos );
 
-	unsigned int getJob();
-	bool finishJob( unsigned int jobID );
-	bool giveBackJob( unsigned int jobID );
-	QSharedPointer<Job> getJob( unsigned int jobID );
-	bool hasJobID( unsigned int jobID ) const;
+	unsigned int getJob( Position& gnomePos );
+	
 
 	QList<unsigned int> allStockpiles()
 	{
@@ -97,6 +94,8 @@ private:
 	QHash<unsigned int, unsigned int> m_allStockpileTiles;
 
 	unsigned int m_lastAdded = 0;
+
+	int m_currentTickStockpile = 0;
 
 signals:
 	void signalSuspendStatusChanged( unsigned int stockpileUID );
