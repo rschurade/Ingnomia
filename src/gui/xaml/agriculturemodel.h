@@ -284,6 +284,7 @@ private:
 	const char* GetManageAnimalsVisible() const;
 	const char* GetManageWindowVis() const;
 
+	const char* GetNumPlots() const;
 	const char* GetNumSeeds() const;
 	const char* GetNumItems() const;
 	const char* GetNumPlants() const;
@@ -379,6 +380,7 @@ private:
 	Noesis::String m_tilled     = "0/0";
 	Noesis::String m_planted    = "0/0";
 	Noesis::String m_ready      = "0/0";
+	Noesis::String m_numPlots   = "0";
 	Noesis::String m_numSeeds   = "0";
 	Noesis::String m_numItems   = "0";
 	Noesis::String m_numPlants  = "0";

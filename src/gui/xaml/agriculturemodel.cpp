@@ -552,11 +552,13 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	m_fellTrees  = info.fellTrees;
 	m_pickFruits = info.pickFruits;
 	m_numPlants  = ( "Planted trees: " + QString::number( info.planted ) ).toStdString().c_str();
+	m_numPlots   = ( "Num plots: " + QString::number( info.numPlots ) ).toStdString().c_str();
 
 	OnPropertyChanged( "PlantTrees" );
 	OnPropertyChanged( "FellTrees" );
 	OnPropertyChanged( "PickFruits" );
 	OnPropertyChanged( "NumPlants" );
+	OnPropertyChanged( "NumPlots" );
 
 	m_bitmapSource = nullptr;
 	if ( !info.product.plantID.isEmpty() )
@@ -863,6 +865,11 @@ const char* AgricultureModel::GetNumItems() const
 	return m_numItems.Str();
 }
 
+const char* AgricultureModel::GetNumPlots() const
+{
+	return m_numPlots.Str();
+}
+
 const char* AgricultureModel::GetNumPlants() const
 {
 	return m_numPlants.Str();
@@ -1063,6 +1070,8 @@ NS_IMPLEMENT_REFLECTION( AgricultureModel, "IngnomiaGUI.AgricultureModel" )
 
 	NsProp( "ProductSelection", &AgricultureModel::GetCmdSelectProduct );
 	NsProp( "SelectProduct", &AgricultureModel::GetSelectProduct );
+
+	NsProp( "NumPlots", &AgricultureModel::GetNumPlots );
 
 	NsProp( "Tilled", &AgricultureModel::GetTilled );
 	NsProp( "Planted", &AgricultureModel::GetPlanted );

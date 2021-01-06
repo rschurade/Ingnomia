@@ -159,7 +159,6 @@ void Grove::onTick( quint64 tick )
 
 			if( !g->w()->plants().contains( gf->pos.toInt() ) )
 			{
-			
 				if ( m_properties.plant && g->w()->noTree( gf->pos, 2, 2 ) && g->w()->isWalkable( gf->pos ) )
 				{
 					QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
