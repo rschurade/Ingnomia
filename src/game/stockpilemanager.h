@@ -61,8 +61,9 @@ public:
 
 	void setInfiNotFull( Position pos );
 
-	unsigned int getJob( Position& gnomePos );
+	unsigned int getJob( const Position& gnomePos );
 	
+	void unreserveItem( unsigned int stockpileID, unsigned int itemID );
 
 	QList<unsigned int> allStockpiles()
 	{
@@ -96,6 +97,13 @@ private:
 	unsigned int m_lastAdded = 0;
 
 	int m_currentTickStockpile = 0;
+
+	// bring unstockpiled item to closest accepting stockpile
+	unsigned int createStandardHaulingJob( const Position& gnomePos );
+	unsigned int createSingleHaulingJob( const Position& gnomePos, unsigned int itemID, Stockpile* sp );
+	unsigned int createMultiHaulingJob( const Position& gnomePos, unsigned int itemID );
+
+	Stockpile* getClosestAcceptingStockpile( unsigned int itemID );
 
 signals:
 	void signalSuspendStatusChanged( unsigned int stockpileUID );

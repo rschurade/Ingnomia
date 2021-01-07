@@ -312,6 +312,12 @@ void JobManager::addLoadedJob( QVariant vals )
 	setJobSprites( job->id(), job->isWorked(), false );
 }
 
+unsigned int JobManager::addHaulingJob( QSharedPointer<Job> job )
+{
+	m_jobList.insert( job->id(), job );
+	return job->id();
+}
+
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
 {
 	if ( g->w()->hasJob( pos ) || m_jobPositions.contains( pos ) )
@@ -932,6 +938,16 @@ void JobManager::giveBackJob( unsigned int jobID )
 	if ( m_jobList.contains( jobID ) )
 	{
 		QSharedPointer<Job> job = m_jobList.value( jobID );
+
+		if( job->type() == "HauleItem" /* && job->destroyOnAbort() */ )
+		{
+			m_jobList.remove( jobID );
+			auto items = job->itemsToHaul();
+			for( auto itemID : items )
+			{
+				g->spm()->unreserveItem( job->stockpile(), itemID );
+			}
+		}
 
 		if ( job->isCanceled() || job->destroyOnAbort() )
 		{

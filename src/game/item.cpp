@@ -258,6 +258,11 @@ QString Item::combinedSID() const
 	return DBH::itemSID( m_itemUID ) + "_" + DBH::materialSID( m_materialUID );
 }
 
+QPair<QString,QString> Item::pairSID() const
+{
+	return QPair<QString, QString>( itemSID(), materialSID() );
+}
+
 int Item::distanceSquare( const Position& pos, int zWeight ) const
 {
 	return ( m_position.x - pos.x ) * ( m_position.x - pos.x ) + ( m_position.y - pos.y ) * ( m_position.y - pos.y ) + ( m_position.z - pos.z ) * ( m_position.z - pos.z ) * zWeight;

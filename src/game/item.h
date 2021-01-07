@@ -59,6 +59,7 @@ public:
 	QString itemSID() const;
 	QString materialSID() const;
 	QString combinedSID() const;
+	QPair<QString,QString> pairSID() const;
 
 	bool insertItem( unsigned int itemID );
 	bool removeItem( unsigned int itemID );

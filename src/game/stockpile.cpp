@@ -811,3 +811,103 @@ bool Stockpile::canAccept( const QString& itemSID, const QString& materialSID )
 {
 	return m_canAccept.contains( QPair<QString,QString>( itemSID, materialSID ) );
 }
+
+bool Stockpile::canAccept( const QPair<QString, QString>& pair )
+{
+	return m_canAccept.contains( pair );
+}
+
+bool Stockpile::isConnectedTo( const Position& pos, int& dist )
+{
+	if( m_fields.size() ) 
+	{
+		if( g->w()->regionMap().checkConnectedRegions( pos, m_fields.first()->pos ) )
+		{
+			dist = pos.distSquare( m_fields.first()->pos );
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
+{
+	auto pairSID = g->inv()->getPairSID( itemID );
+	for( const auto& infi : m_fields )
+	{
+		if( !infi->isFull )
+		{
+			if( infi->containerID == 0 )
+			{
+				if( infi->items.size() == 0  )
+				{
+					if( infi->reservedItems.size() == 0 )
+					{
+						infi->reservedItems.insert( itemID );
+						pos = infi->pos;
+						return true;
+					}
+				}
+				else
+				{
+					if( ( infi->items.size() + infi->reservedItems.size() ) < infi->stackSize )
+					{
+						auto item = *infi->items.begin();
+						if( g->inv()->itemSID( item ) == pairSID.first && g->inv()->materialSID( item ) == pairSID.second )
+						{
+							infi->reservedItems.insert( itemID );
+							pos = infi->pos;
+							return true;
+						}
+					}
+				}
+			}
+			else
+			{
+				if ( infi->items.size() == 0 )
+				{
+					if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( pairSID.first ) )
+					{
+						infi->reservedItems.insert( itemID );
+						pos = infi->pos;
+						return true;
+					}
+				}
+				else
+				{
+					if ( infi->requireSame )
+					{
+						auto item = *infi->items.begin();
+						if( g->inv()->itemSID( item ) == pairSID.first && g->inv()->materialSID( item ) == pairSID.second )
+						{
+							infi->reservedItems.insert( itemID );
+							pos = infi->pos;
+							return true;
+						}
+					}
+					else
+					{
+						if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( pairSID.first ) )
+						{
+							infi->reservedItems.insert( itemID );
+							pos = infi->pos;
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void Stockpile::unreserveItem( unsigned int itemID )
+{
+	for( auto& infi : m_fields )
+	{
+		if( infi->reservedItems.remove( itemID ) )
+		{
+			return;
+		}
+	}
+}

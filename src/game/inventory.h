@@ -72,7 +72,8 @@ public:
 	*/
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count );
 	bool checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID = "any" );
-	QList<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, QSet<QPair<QString, QString>> filter );
+	
+	unsigned int getClosestUnstockpiledItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems );
 
 	unsigned int getFoodItem( Position& pos );
 	unsigned int getDrinkItem( Position& pos );
@@ -140,6 +141,7 @@ public:
 	unsigned int materialUID( unsigned int item );
 	QString combinedID( unsigned int item );
 	unsigned int spriteID( unsigned int item );
+	QPair<QString,QString> getPairSID( unsigned int item );
 
 	Position getItemPos( unsigned int item );
 	void setItemPos( unsigned int item, const Position& pos );
@@ -226,6 +228,7 @@ private:
 	PositionHash m_positionHash;
 	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
+	Octree* m_globalOctree = nullptr;
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;

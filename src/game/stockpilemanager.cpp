@@ -20,7 +20,9 @@
 
 #include "../base/config.h"
 #include "../base/global.h"
+#include "../game/inventory.h"
 #include "../game/job.h"
+#include "../game/jobmanager.h"
 #include "../game/stockpile.h"
 #include "../game/world.h"
 
@@ -207,11 +209,113 @@ void StockpileManager::removeItem( unsigned int stockpileID, Position pos, unsig
 	}
 }
 
-unsigned int StockpileManager::getJob( Position& gnomePos )
+unsigned int StockpileManager::getJob( const Position& gnomePos )
 {
+	unsigned int jobID =  createStandardHaulingJob( gnomePos );
+	if( jobID )
+	{
+		return jobID;
+	}
 
 	return 0;
 }
+
+unsigned int StockpileManager::createStandardHaulingJob( const Position& gnomePos )
+{
+	// get closest reachable item which is not in a stockpile for which an accepting
+	// stockpile exists and is reachable
+	QSet<QPair<QString, QString>> acceptedItems;
+	for( const auto& sp : m_stockpiles )
+	{
+		acceptedItems.unite( sp->canAcceptSet() );
+	}
+	unsigned int itemID = g->inv()->getClosestUnstockpiledItem( gnomePos, acceptedItems );
+	if( itemID )
+	{
+		// get the closest accepting stockpile for that item
+		auto sp = getClosestAcceptingStockpile( itemID );
+		if( sp )
+		{
+			// check multi: the order of these 3 checks has to be determined so it could be 
+			// aborted as soon as possible
+			// carry container exists
+			// more of that item/material combo in range of that item
+			// stockpile accepts more than one of that item
+			bool multiPossible = false;
+			if( multiPossible )
+			{
+				return createMultiHaulingJob( gnomePos, 0 );
+			}
+			// create single hauling job
+			return createSingleHaulingJob( gnomePos, itemID, sp );
+		}
+	}
+
+	return 0;
+}
+
+unsigned int StockpileManager::createSingleHaulingJob( const Position& gnomePos, unsigned int itemID, Stockpile* sp )
+{
+	QSharedPointer<Job> job( new Job );
+	job->setType( "HauleItem" );
+	job->setRequiredSkill( "Hauling" );
+
+	job->setStockpile( sp->id() );
+
+	job->addItemToHaul( itemID );
+	g->inv()->setInJob( itemID, job->id() );
+
+	Position targetPos;
+	if( sp->reserveItem( itemID, targetPos ) )
+	{
+		job->setPos( targetPos );
+		job->setPosItemInput( targetPos );
+		job->addPossibleWorkPosition( targetPos );
+		job->setWorkPos( targetPos );
+		job->setDestroyOnAbort( true );
+		job->setNoJobSprite( true );
+		return g->jm()->addHaulingJob( job );
+	}
+	return 0;
+}
+
+unsigned int StockpileManager::createMultiHaulingJob( const Position& gnomePos, unsigned int itemID )
+{
+	return 0;
+}
+
+Stockpile* StockpileManager::getClosestAcceptingStockpile( unsigned int itemID )
+{
+	Stockpile* out = nullptr;
+	int maxDist = 999999999;
+	auto itemPos = g->inv()->getItemPos( itemID );
+	auto pairSID = g->inv()->getPairSID( itemID );
+	for( const auto& sp : m_stockpiles )
+	{
+		if( sp->canAccept( pairSID ) )
+		{
+			int dist = 0;
+			if( sp->isConnectedTo( itemPos, dist ) )
+			{
+				if( dist < maxDist )
+				{
+					out = sp;
+					maxDist = dist;
+				}
+			}
+		}
+	}
+	return out;
+}
+
+void StockpileManager::unreserveItem( unsigned int stockpileID, unsigned int itemID )
+{
+	if( m_stockpiles.contains( stockpileID ) )
+	{
+		m_stockpiles.value( stockpileID )->unreserveItem( itemID );
+	}
+}
+
 
 void StockpileManager::addContainer( unsigned int containerID, Position& pos )
 {

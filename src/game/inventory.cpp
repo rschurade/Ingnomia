@@ -66,6 +66,10 @@ Inventory::~Inventory()
 			delete octree;
 		}
 	}
+	if( m_globalOctree )
+	{
+		delete m_globalOctree;
+	}
 }
 
 void Inventory::init()
@@ -73,6 +77,12 @@ void Inventory::init()
 	m_dimX = Global::dimX;
 	m_dimY = Global::dimY;
 	m_dimZ = Global::dimZ;
+
+	int x = Global::dimX / 2;
+	int y = Global::dimY / 2;
+	int z = Global::dimZ / 2;
+	m_globalOctree = new Octree( x, y, z, x, y, z );
+
 
 	for ( auto categoryMap : DB::selectRows( "ItemGrouping" ) )
 	{
@@ -349,6 +359,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 		Position pos = item->getPos();
 		ot->insertItem( pos.x, pos.y, pos.z, item->id() );
+		m_globalOctree->insertItem( pos.x, pos.y, pos.z, item->id() );
 		
 		if ( !item->isConstructed() && !item->isInContainer() )
 		{
@@ -416,6 +427,7 @@ void Inventory::destroyObject( unsigned int id )
 			Position pos = item->getPos();
 			Octree* ot = octree( itemSID, materialSID );
 			ot->removeItem( pos.x, pos.y, pos.z, id );
+			m_globalOctree->removeItem( pos.x, pos.y, pos.z, id );
 			
 			m_hash[itemSID][materialSID].remove( id );
 
@@ -640,6 +652,33 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	return out;
 }
 
+unsigned int Inventory::getClosestUnstockpiledItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems )
+{
+	unsigned int out = 0;
+
+	auto predicate = [&out, this, pos, acceptedItems]( unsigned int itemID ) -> bool {
+		auto item = getItem( itemID );
+
+		if ( item && !item->isInStockpile() && item->isFree() )
+		{
+			if ( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 5 )
+			{
+				if( acceptedItems.contains( item->pairSID()	) )
+				{
+					out = itemID;
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
+	m_globalOctree->visit( pos.x, pos.y, pos.z, predicate );
+
+	return out;
+}
+
+
 QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowInStockpile, QList<QPair<QString, QString>> filter, int count )
 {
 	QList<unsigned int> out;
@@ -650,62 +689,6 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 		auto& materialSID = filterItem.second;
 
 		out.append( getClosestItems( pos, allowInStockpile, itemSID, materialSID, count ) );
-	}
-	return out;
-}
-
-QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, QSet<QPair<QString, QString>> filter )
-{
-	QString itemSID;
-	QString materialSID;
-
-	QList<unsigned int> out;
-	QList<unsigned int> items;
-
-	for ( const auto& filterItem : filter )
-	{
-		itemSID     = filterItem.first;
-		materialSID = filterItem.second;
-
-		if ( materialSID == "any" )
-		{
-			for ( auto material : m_octrees[itemSID].keys() )
-			{
-				Octree* ot = octree( itemSID, material );
-				items += ot->query( pos.x, pos.y, pos.z );
-			}
-		}
-		else
-		{
-			Octree* ot = octree( itemSID, materialSID );
-			items += ot->query( pos.x, pos.y, pos.z );
-		}
-
-		for ( auto itemID : items )
-		{
-			auto item = getItem( itemID );
-
-			if ( item && item->isFree() )
-			{
-				if ( item->isInStockpile() == stockpileID )
-				{
-					//item is in this stockpile
-				}
-				else if ( !item->isInStockpile() )
-				{
-					//item isnt in stockpile
-					out.append( itemID );
-				}
-				else
-				{
-					// item is in stockpile so we need to check if we can pull from stockpiles and if the source stockpile allows it
-					if ( allowInStockpile && g->m_spm->hasPriority( stockpileID, item->isInStockpile() ) && g->m_spm->allowsPull( item->isInStockpile() ) )
-					{
-						out.append( itemID );
-					}
-				}
-			}
-		}
 	}
 	return out;
 }
@@ -827,6 +810,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
 		ot->removeItem( pos.x, pos.y, pos.z, item->id() );
+		m_globalOctree->removeItem( pos.x, pos.y, pos.z, item->id() );
 
 		if ( item->isContainer() )
 		{
@@ -841,6 +825,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 
 					Octree* ot2 = octree( inItemSID, inMatSID );
 					ot2->removeItem( pos.x, pos.y, pos.z, inItemID );
+					m_globalOctree->removeItem( pos.x, pos.y, pos.z, inItemID );
 					m_positionHash[pos.toInt()].remove( inItemID );
 				}
 			}
@@ -881,6 +866,7 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
 		ot->insertItem( newPos.x, newPos.y, newPos.z, item->id() );
+		m_globalOctree->insertItem( newPos.x, newPos.y, newPos.z, item->id() );
 			
 		if ( item->isContainer() )
 		{
@@ -900,6 +886,7 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 							if ( octree )
 							{
 								octree->insertItem( newPos.x, newPos.y, newPos.z, inItemID );
+								m_globalOctree->insertItem( newPos.x, newPos.y, newPos.z, inItemID );
 								m_positionHash[newPos.toInt()].insert( inItemID );
 							}
 						}
@@ -1538,6 +1525,17 @@ QString Inventory::combinedID( unsigned int id )
 	}
 	return "";
 }
+
+QPair<QString,QString> Inventory::getPairSID( unsigned int id )
+{
+	auto item = getItem( id );
+	if ( item )
+	{
+		return item->pairSID();
+	}
+	return QPair<QString,QString>( "", "" );
+}
+
 
 unsigned int Inventory::spriteID( unsigned int id )
 {

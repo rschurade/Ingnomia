@@ -83,6 +83,7 @@ public:
 
 	unsigned int addJob( QString type, Position pos, int rotation, bool noJobSprite = false );
 	unsigned int addJob( QString type, Position pos, QString item, QList<QString> materials, int rotation, bool noJobSprite = false );
+	unsigned int addHaulingJob( QSharedPointer<Job> job );
 
 	void setJobAvailable( unsigned int jobID );
 	void setJobBeingWorked( unsigned int jobID, bool hasNeededTool = false );

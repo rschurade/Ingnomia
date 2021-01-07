@@ -144,6 +144,12 @@ public:
 	int reserved( unsigned int tileID );
 
 	bool canAccept( const QString& itemSID, const QString& materialSID );
+	bool canAccept( const QPair<QString, QString>& pair );
+	const QSet<QPair<QString, QString>>& canAcceptSet() { return m_canAccept; }
+	bool isConnectedTo( const Position& pos, int& dist );
+
+	bool reserveItem( unsigned int itemID, Position& pos );
+	void unreserveItem( unsigned int itemID );
 
 private:
 	bool m_pullOthers = false;
