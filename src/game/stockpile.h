@@ -179,4 +179,6 @@ private:
 
 	void updateCanAccept();
 	bool hasRoom( const QString& itemSID, const QString& materialSID );
+
+	void updateFull();
 };

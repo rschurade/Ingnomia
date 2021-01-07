@@ -134,6 +134,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), vm.value( "Suspended" ).toBool() );
 		m_limits.insert( vm.value( "Key" ).toString(), limit );
 	}
+	updateFull();
 	updateCanAccept();
 }
 
@@ -287,8 +288,6 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 		InventoryField* field = m_fields.value( pos.toInt() );
 		field->reservedItems.remove( item );
 		field->items.insert( item );
-		field->isFull  = false;
-		m_isFull       = false;
 		g->inv()->setInStockpile( item, m_id );
 		g->inv()->setInJob( item, 0 );
 
@@ -325,6 +324,9 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 				m_suspendStatusChanged      = true;
 			}
 		}
+
+		updateFull();
+
 		return true;
 	}
 
@@ -480,6 +482,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 					field->items.insert( itemID );
 				}
 			}
+			updateFull();
 		}
 	}
 }
@@ -741,10 +744,12 @@ void Stockpile::updateCanAccept()
 	{
 		return;
 	}
+	m_isFull = true;
 	for( const auto& fe : m_filter.getActive() )
 	{
 		if( hasRoom( fe.first, fe.second ) )
 		{
+			m_isFull = false;
 			m_canAccept.insert( fe );
 		}
 	}
@@ -761,7 +766,9 @@ bool Stockpile::hasRoom( const QString& itemSID, const QString& materialSID )
 				if( infi->items.size() == 0  )
 				{
 					if( infi->reservedItems.size() == 0 )
+					{
 						return true;
+					}
 				}
 				else
 				{
@@ -805,16 +812,17 @@ bool Stockpile::hasRoom( const QString& itemSID, const QString& materialSID )
 			}
 		}
 	}
+	return false;
 }
 
 bool Stockpile::canAccept( const QString& itemSID, const QString& materialSID )
 {
-	return m_canAccept.contains( QPair<QString,QString>( itemSID, materialSID ) );
+	return !m_isFull && m_canAccept.contains( QPair<QString,QString>( itemSID, materialSID ) );
 }
 
 bool Stockpile::canAccept( const QPair<QString, QString>& pair )
 {
-	return m_canAccept.contains( pair );
+	return !m_isFull && m_canAccept.contains( pair );
 }
 
 bool Stockpile::isConnectedTo( const Position& pos, int& dist )
@@ -828,6 +836,45 @@ bool Stockpile::isConnectedTo( const Position& pos, int& dist )
 		}
 	}
 	return false;
+}
+
+void Stockpile::updateFull()
+{
+	m_isFull = true;
+	for( const auto& infi : m_fields )
+	{
+		infi->isFull = true;
+		if( infi->containerID == 0 )
+		{
+			if( infi->items.size() == 0  )
+			{
+				if( infi->reservedItems.size() == 0 )
+				{
+					infi->isFull = false;
+					m_isFull = false;
+					continue;
+				}
+			}
+			else
+			{
+				if( ( infi->items.size() + infi->reservedItems.size() ) < infi->stackSize )
+				{
+					infi->isFull = false;
+					m_isFull = false;
+					continue;
+				}
+			}
+		}
+		else
+		{
+			if ( ( infi->items.size() + infi->reservedItems.size() ) < infi->capacity )
+			{
+				infi->isFull = false;
+				m_isFull = false;
+				continue;
+			}
+		}
+	}
 }
 
 bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
