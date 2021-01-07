@@ -156,6 +156,7 @@ private:
 	bool m_isFull = false;
 
 	QMap<unsigned int, InventoryField*> m_fields;
+	QSet<InventoryField*> m_fieldsNotFull;
 
 	bool m_filterChanged = true;
 

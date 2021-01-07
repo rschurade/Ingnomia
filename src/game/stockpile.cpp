@@ -73,6 +73,7 @@ void Stockpile::addTile( Position& pos )
 	g->w()->setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
 
 	m_isFull = false;
+	m_fieldsNotFull.insert( infi );
 }
 
 Stockpile::Stockpile( QVariantMap vals, Game* game ) :
@@ -124,6 +125,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		}
 
 		m_fields.insert( infi->pos.toInt(), infi );
+		m_fieldsNotFull.insert( infi );
 	}
 
 	Filter filter( vals.value( "Filter" ).toMap() );
@@ -293,6 +295,7 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 		InventoryField* field = m_fields[pos.toInt()];
 		if ( field->items.remove( item ) )
 		{
+			m_fieldsNotFull.insert( field );
 			field->isFull = false;
 			m_isFull      = false;
 			g->inv()->setInStockpile( item, 0 );
@@ -479,6 +482,7 @@ bool Stockpile::removeTile( Position& pos )
 	infi->reservedItems.clear();
 	// remove tile and remove tile flag
 	m_fields.remove( pos.toInt() );
+	m_fieldsNotFull.remove( infi );
 	g->w()->clearTileFlag( pos, TileFlag::TF_STOCKPILE );
 	delete infi;
 	// if last tile deleted return true
@@ -704,49 +708,51 @@ void Stockpile::updateCanAccept()
 
 bool Stockpile::hasRoom( const QString& itemSID, const QString& materialSID )
 {
-	for( const auto& infi : m_fields )
+	for( const auto& infi : m_fieldsNotFull )
 	{
-		if( !infi->isFull )
+		if( infi->containerID == 0 )
 		{
-			if( infi->containerID == 0 )
+			if( infi->items.size() == 0  )
 			{
-				if( infi->items.size() == 0  )
+				if( infi->reservedItems.size() == 0 )
 				{
-					if( infi->reservedItems.size() == 0 )
-					{
-						return true;
-					}
-					else
-					{
-						infi->isFull = true;
-					}
+					return true;
 				}
 				else
 				{
-					if( ( infi->items.size() + infi->reservedItems.size() ) < infi->stackSize )
-					{
-						auto item = *infi->items.begin();
-						if( g->inv()->itemSID( item ) == itemSID && g->inv()->materialSID( item ) == materialSID )
-						{
-							return true;
-						}
-					}
-					else
-					{
-						infi->isFull = true;
-					}
+					m_fieldsNotFull.remove( infi );
+					infi->isFull = true;
 				}
 			}
 			else
 			{
-				if ( infi->items.size() == 0 )
+				if( ( infi->items.size() + infi->reservedItems.size() ) < infi->stackSize )
 				{
-					if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( itemSID ) )
+					auto item = *infi->items.begin();
+					if( g->inv()->itemSID( item ) == itemSID && g->inv()->materialSID( item ) == materialSID )
 					{
 						return true;
 					}
 				}
 				else
+				{
+					m_fieldsNotFull.remove( infi );
+					infi->isFull = true;
+				}
+			}
+		}
+		else
+		{
+			if ( infi->items.size() == 0 )
+			{
+				if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( itemSID ) )
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if( ( infi->items.size() + infi->reservedItems.size() ) < infi->capacity )
 				{
 					if ( infi->requireSame )
 					{
@@ -796,9 +802,9 @@ bool Stockpile::isConnectedTo( const Position& pos, int& dist )
 bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
 {
 	auto pairSID = g->inv()->getPairSID( itemID );
-	for( const auto& infi : m_fields )
+	for( const auto& infi : m_fieldsNotFull )
 	{
-		if( !infi->isFull && infi->containerID )
+		if( infi->containerID )
 		{
 			if ( infi->items.size() == 0 )
 			{
@@ -811,31 +817,38 @@ bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
 			}
 			else
 			{
-				if ( infi->requireSame )
+				if( ( infi->items.size() + infi->reservedItems.size() ) < infi->capacity )
 				{
-					auto item = *infi->items.begin();
-					if( g->inv()->itemSID( item ) == pairSID.first && g->inv()->materialSID( item ) == pairSID.second )
+					if ( infi->requireSame )
 					{
-						infi->reservedItems.insert( itemID );
-						pos = infi->pos;
-						return true;
+						auto item = *infi->items.begin();
+						if( g->inv()->itemSID( item ) == pairSID.first && g->inv()->materialSID( item ) == pairSID.second )
+						{
+							infi->reservedItems.insert( itemID );
+							pos = infi->pos;
+							return true;
+						}
+					}
+					else
+					{
+						if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( pairSID.first ) )
+						{
+							infi->reservedItems.insert( itemID );
+							pos = infi->pos;
+							return true;
+						}
 					}
 				}
 				else
 				{
-					if( Global::allowedInContainer.value( g->inv()->itemSID( infi->containerID ) ).contains( pairSID.first ) )
-					{
-						infi->reservedItems.insert( itemID );
-						pos = infi->pos;
-						return true;
-					}
+					m_fieldsNotFull.remove( infi );
 				}
 			}
 		}
 	}
-	for( const auto& infi : m_fields )
+	for( const auto& infi : m_fieldsNotFull )
 	{
-		if( !infi->isFull && !infi->containerID )
+		if( !infi->containerID )
 		{
 			if( infi->items.size() == 0  )
 			{
@@ -847,6 +860,7 @@ bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
 				}
 				else
 				{
+					m_fieldsNotFull.remove( infi );
 					infi->isFull = true;
 				}
 			}
@@ -864,6 +878,7 @@ bool Stockpile::reserveItem( unsigned int itemID, Position& pos )
 				}
 				else
 				{
+					m_fieldsNotFull.remove( infi );
 					infi->isFull = true;
 				}
 			}
@@ -878,6 +893,7 @@ void Stockpile::unreserveItem( unsigned int itemID )
 	{
 		if( infi->reservedItems.remove( itemID ) )
 		{
+			m_fieldsNotFull.insert( infi );
 			infi->isFull = false;
 			return;
 		}
