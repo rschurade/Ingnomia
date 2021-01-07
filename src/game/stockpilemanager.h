@@ -59,8 +59,6 @@ public:
 	void insertItem( unsigned int stockpileID, Position pos, unsigned int item );
 	void removeItem( unsigned int stockpileID, Position pos, unsigned int item );
 
-	void setInfiNotFull( Position pos );
-
 	unsigned int getJob( const Position& gnomePos );
 	
 	void unreserveItem( unsigned int stockpileID, unsigned int itemID );

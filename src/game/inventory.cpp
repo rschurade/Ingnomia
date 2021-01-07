@@ -1445,10 +1445,6 @@ void Inventory::removeItemFromContainer( unsigned int id )
 		if ( container )
 		{
 			container->removeItem( id );
-			if ( container->isConstructed() )
-			{
-				g->m_spm->setInfiNotFull( container->getPos() );
-			}
 		}
 	}
 }

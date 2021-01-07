@@ -524,15 +524,6 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 		m_carriedItems.append( m_itemToPickUp );
 	}
 
-	if ( g->inv()->isInStockpile( m_itemToPickUp ) )
-	{
-		g->spm()->removeItem( m_job->stockpile(), g->inv()->getItemPos( m_itemToPickUp ), m_itemToPickUp );
-	}
-	if ( g->inv()->isInContainer( m_itemToPickUp ) )
-	{
-		g->inv()->removeItemFromContainer( m_itemToPickUp );
-	}
-
 	m_itemToPickUp = 0;
 	log( "Picked up an item. " + g->inv()->materialSID( m_itemToPickUp ) + " " + g->inv()->itemSID( m_itemToPickUp ) );
 	return BT_RESULT::SUCCESS;
@@ -741,7 +732,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 								if ( item )
 								{
 									g->inv()->moveItemToPos( item, m_job->posItemInput() );
-									sp->setInfiNotFull( spf->pos );
 									addClaimedItem( item, m_job->id() );
 									++claimed;
 									break;
@@ -765,7 +755,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 							if ( item )
 							{
 								g->inv()->moveItemToPos( item, m_job->posItemInput() );
-								sp->setInfiNotFull( spf->pos );
 								addClaimedItem( item, m_job->id() );
 								++claimed;
 								break;
@@ -785,7 +774,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 							if ( item && restriction.contains( g->inv()->materialSID( item ) ) )
 							{
 								g->inv()->moveItemToPos( item, m_job->posItemInput() );
-								sp->setInfiNotFull( spf->pos );
 								addClaimedItem( item, m_job->id() );
 								++claimed;
 								break;
@@ -820,7 +808,6 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					if ( item )
 					{
 						g->inv()->moveItemToPos( item, m_job->posItemInput() );
-						sp->setInfiNotFull( spf->pos );
 						addClaimedItem( item, m_job->id() );
 						++claimed;
 						break;

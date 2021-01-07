@@ -83,8 +83,6 @@ public:
 	// returns true if the possible item list was updated
 	bool onTick( quint64 tick );
 
-	QSet<QPair<QString, QString>> freeSlots() const;
-
 	Filter filter()
 	{
 		return m_filter;
@@ -137,8 +135,6 @@ public:
 
 	int countFields();
 
-	void setInfiNotFull( Position pos );
-
 	int capacity( unsigned int tileID );
 	int itemCount( unsigned int tileID );
 	int reserved( unsigned int tileID );
@@ -179,6 +175,4 @@ private:
 
 	void updateCanAccept();
 	bool hasRoom( const QString& itemSID, const QString& materialSID );
-
-	void updateFull();
 };

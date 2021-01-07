@@ -426,12 +426,3 @@ QString StockpileManager::name( unsigned int id )
 	return "ERROR";
 }
 
-void StockpileManager::setInfiNotFull( Position pos )
-{
-	auto sp = getStockpileAtPos( pos );
-
-	if ( sp )
-	{
-		sp->setInfiNotFull( pos );
-	}
-}
