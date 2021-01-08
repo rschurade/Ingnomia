@@ -90,9 +90,11 @@ class Sprite:
             fr = [r for r in rotations if r[2] == "FR"]
             if len(fr) > 0:
                 rotations = fr
-            for (rbase, rsprite, rot) in rotations:
+            for (rbase, rsprite, rot, effect) in rotations:
                 variations.append(
-                    SpriteVariation(BaseSprite.get(rbase) if not empty(rbase) else Sprite.get(rsprite, export=False))
+                    SpriteVariation(
+                        BaseSprite.get(rbase) if not empty(rbase) else Sprite.get(rsprite, export=False), effect=effect
+                    )
                 )
                 break
 
@@ -253,7 +255,10 @@ class BaseSprite(Sprite):
             self.rect = sprite_rect(rect)
 
     def _render(self, **kwargs):
-        return [] if self.missing else [[RenderAlternative(self.id, self.tilesheet, self.rect, **kwargs)]]
+        return [] if self.missing else [[self.alternative(**kwargs)]]
+
+    def alternative(self, **kwargs):
+        return RenderAlternative(self.id, self.tilesheet, self.rect, **kwargs)
 
 
 class SpriteLayer(Sprite):

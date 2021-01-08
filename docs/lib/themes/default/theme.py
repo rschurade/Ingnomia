@@ -3,6 +3,7 @@ import os
 import shutil
 from jinja2 import Environment, FileSystemLoader
 
+from ...sprite import BaseSprite
 from ...util import DOCDIR, log, sort_translations, format_css
 from .sprites import generate_sprite_styles
 
@@ -14,6 +15,13 @@ CONTENT_PATH = os.path.realpath(os.path.join(DOCDIR, "..", "content"))
 class DefaultTheme:
     content_assets = ["icon.png"]
     assets = []
+    backgrounds = [
+        {"id": "plain", "base": BaseSprite("SolidSelectionFloor")},
+        {"id": "farm", "base": BaseSprite("TilledSoil"), "material": "Dirt"},
+        {"id": "stone", "base": BaseSprite("BlockStoneFloor"), "material": "Marble"},
+        {"id": "grass", "base": BaseSprite("Grass_1_5")},
+        {"id": "wood", "base": BaseSprite("LogFloor"), "material": "Pine"},
+    ]
 
     def __init__(self):
         self.assets = os.listdir(ASSET_PATH)
@@ -36,11 +44,13 @@ class DefaultTheme:
         tints = store.tints()
         workshops = store.workshops()
         constructions = store.constructions()
-
         sprites = store.sprites()
-        tilesheets = set([v["tilesheet"] for sprite in sprites for v in sprite["basesprites"].values()])
 
-        (sprite_anims, sprite_rules) = generate_sprite_styles(sprites)
+        tilesheets = set([v["tilesheet"] for sprite in sprites for v in sprite["basesprites"].values()]) | set(
+            [bg["base"].tilesheet for bg in self.backgrounds]
+        )
+
+        (sprite_anims, sprite_rules) = generate_sprite_styles(sprites, self.backgrounds)
 
         # Setup navigation table
         navtable = [
@@ -184,5 +194,5 @@ class DefaultTheme:
             shutil.copy(os.path.join(CONTENT_PATH, asset), os.path.join(output, "assets", asset))
         for asset in self.assets:
             shutil.copy(os.path.join(ASSET_PATH, asset), os.path.join(output, "assets", asset))
-        for asset in set(["terrain.png", "seasonalgrass.png"]) | tilesheets:
+        for asset in tilesheets:
             shutil.copy(os.path.join(CONTENT_PATH, "tilesheet", asset), os.path.join(output, "assets", asset))

@@ -40,7 +40,6 @@ jobs:
           pipenv run ./generate.py --build ${GITHUB_REF#refs/*/}
 
       - name: Deploy docs to gh-pages
-        if: success()
         uses: crazy-max/ghaction-github-pages@v2
         with:
           keep_history: true

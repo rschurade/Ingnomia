@@ -72,6 +72,8 @@ def sprite_style(alt, common={}):
 
     if alt.effect == "Rot90":
         props["transform"] = "rotate(-90deg)"
+    elif alt.effect == "FlipHorizontal":
+        props["transform"] = "rotateY(180deg)"
 
     return props
 
@@ -100,8 +102,16 @@ def common_style(common):
     return props
 
 
-def generate_sprite_styles(sprites):
+def generate_sprite_styles(sprites, backgrounds):
     """Generate style rules and keyframes, and deduplicate them"""
+
+    for bg in backgrounds:
+        if "material" in bg:
+            alt = bg["base"].alternative(tint="Material").tinted(bg["material"])
+        else:
+            alt = bg["base"].alternative()
+        StyleRule.get([f".bg-{bg['id']}"], sprite_style(alt))
+
     for sprite in sprites:
         for matset in sprite["material_sets"]:
             for layer in matset["layers"]:

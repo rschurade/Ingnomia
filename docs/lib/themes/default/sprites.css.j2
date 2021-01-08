@@ -34,33 +34,6 @@
   transform: translate(-50%, -50%) scale(2, 2) translate(50%, 50%);
 }
 
-.bg-plain {
-  background-image: url(terrain.png);
-  background-position: -32px 0;
-}
-
-.bg-stone {
-  background-image: url(terrain.png);
-  background-position: -128px -64px;
-  filter: url(tints.svg#Marble);
-}
-
-.bg-grass {
-  background-image: url(seasonalgrass.png);
-  background-position: -160px -20px;
-}
-
-.bg-farm {
-  background-image: url(terrain.png);
-  background-position: -256px -64px;
-}
-
-.bg-wood {
-  background-image: url(terrain.png);
-  background-position: -64px -64px;
-  filter: url(tints.svg#Pine);
-}
-
 {% for anim in sprite_anims %}
   @keyframes {{ anim.id() }} {
     {% for frame in anim.frames %}

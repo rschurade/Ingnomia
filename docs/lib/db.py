@@ -240,7 +240,9 @@ class Database:
         return self.conn.execute("SELECT basesprite, sprite FROM Sprites_Random WHERE id = ?", (id,))
 
     def sprite_rotations(self, id):
-        return self.conn.execute("SELECT basesprite, sprite, rotation FROM Sprites_Rotations WHERE id = ?", (id,))
+        return self.conn.execute(
+            "SELECT basesprite, sprite, rotation, effect FROM Sprites_Rotations WHERE id = ?", (id,)
+        )
 
     def sprite_seasons(self, id):
         return self.conn.execute("SELECT basesprite, season FROM Sprites_Seasons WHERE id = ?", (id,))
