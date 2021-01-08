@@ -6,14 +6,7 @@ from .material import MaterialSet
 
 
 # Sprites offset overrides for stuff that looks misplaced when using DB data
-# There is most likely an explanation and a better option :)
-offset_overrides = {
-    "Sapling": "0 0",
-    "SoilRampTop": "0 0",
-    "SoilStairsTop": "0 0",
-    "StoneRampTop": "0 0",
-    "StoneStairsTop": "0 0",
-}
+offset_overrides = {"Sapling": "0 0"}
 
 # Material set override for sprites that have no default material set
 materialset_overrides = {"Chest": "TWood"}
@@ -139,9 +132,9 @@ class Sprite:
             variations.append(SpriteVariation(BaseSprite.get(id if empty(base) else base)))
 
         if len(layers):
-            return LayeredSprite(id, layers, sprite_offset(offset), tint)
+            return LayeredSprite(id, layers, offset=sprite_offset(offset), tint=tint)
         else:
-            return VariationSprite(id, variations, sprite_offset(offset), tint, animation=animation)
+            return VariationSprite(id, variations, offset=sprite_offset(offset), tint=tint, animation=animation)
 
     def __init__(self, id):
         self.id = id
@@ -262,41 +255,30 @@ class BaseSprite(Sprite):
 
 
 class SpriteLayer(Sprite):
-    def __init__(self, sprite, offset):
+    def __init__(self, sprite, offset, z=0):
         self.sprite = sprite
         self.offset = offset
-        if offset is not None:
-            self.ox = offset["x"]
-            self.oy = offset["y"]
-            self.oz = offset["z"]
+        self.z = z
 
-    def _render(self, ox=0, oy=0, oz=0, **kwargs):
+    def _render(self, offset=None, z=0, **kwargs):
         if self.offset is not None:
-            ox += self.ox
-            oy += self.oy
-            oz += self.oz
-        return self.sprite._render(ox=ox, oy=oy, oz=oz, **kwargs)
+            offset = self.offset
+        return self.sprite._render(offset=offset, z=self.z, **kwargs)
 
 
 class LayeredSprite(Sprite):
-    def __init__(self, id, layers, offset, tint):
+    def __init__(self, id, layers, offset=None, tint=None):
         super().__init__(id)
         self.layers = layers
         self.tint = tint
         self.offset = offset
-        if offset is not None:
-            self.ox = offset["x"]
-            self.oy = offset["y"]
-            self.oz = offset["z"]
 
-    def _render(self, ox=0, oy=0, oz=0, tint=None, **kwargs):
+    def _render(self, offset=None, tint=None, **kwargs):
         if self.tint is not None:
             tint = self.tint
         if self.offset is not None:
-            ox += self.ox
-            oy += self.oy
-            oz += self.oz
-        return [l for layer in self.layers for l in layer._render(ox=ox, oy=oy, oz=oz, tint=tint, **kwargs)]
+            offset = self.offset
+        return [l for layer in self.layers for l in layer._render(offset=offset, tint=tint, **kwargs)]
 
 
 class SpriteVariation(Sprite):
@@ -314,28 +296,20 @@ class SpriteVariation(Sprite):
 
 
 class VariationSprite(Sprite):
-    def __init__(self, id, variations, offset, tint, animation=False):
+    def __init__(self, id, variations, offset=None, tint=None, animation=False):
         super().__init__(id)
         self.variations = variations
         self.tint = tint
         self.offset = offset
-        if offset is not None:
-            self.ox = offset["x"]
-            self.oy = offset["y"]
-            self.oz = offset["z"]
         self.animation = animation
 
-    def _render(self, ox=0, oy=0, oz=0, tint=None, animation=None, **kwargs):
+    def _render(self, offset=None, tint=None, animation=None, **kwargs):
         if self.tint is not None:
             tint = self.tint
         if self.offset is not None:
-            ox += self.ox
-            oy += self.oy
-            oz += self.oz
+            offset = self.offset
 
-        vlayers = [
-            v._render(ox=ox, oy=oy, oz=oz, tint=tint, animation=self.animation, **kwargs) for v in self.variations
-        ]
+        vlayers = [v._render(offset=offset, tint=tint, animation=self.animation, **kwargs) for v in self.variations]
         layers = []
         nlayers = max(map(len, vlayers))
         for l in range(nlayers):
@@ -363,8 +337,6 @@ class PlantSprite(Sprite):
             sprite = VariationSprite(
                 id,
                 [SpriteVariation(Sprite.get(spriteid, export=False)) for spriteid in spriteids],
-                None,
-                None,
             )
 
             sprite.uses_material_set(MaterialSet(material, None), is_default=True)
@@ -388,11 +360,10 @@ class ConstructionSprite(Sprite):
             sprite = LayeredSprite(
                 id,
                 [
-                    SpriteLayer(Sprite.get(spriteid, export=False), sprite_offset3d(offset))
-                    for (spriteid, offset) in sprites
+                    SpriteLayer(Sprite.get(spriteid, export=False), offset, offset["z"])
+                    for (spriteid, off) in sprites
+                    for offset in (sprite_offset3d(off),)
                 ],
-                None,
-                None,
             )
 
             return sprite
@@ -441,12 +412,23 @@ class RenderLayer:
 
 
 class RenderAlternative:
-    def __init__(self, base, tilesheet, rect, ox=0, oy=0, oz=0, tint=None, material=None, effect=None, animation=False):
+    def __init__(
+        self,
+        base,
+        tilesheet,
+        rect,
+        offset={"x": 0, "y": 0},
+        z=0,
+        tint=None,
+        material=None,
+        effect=None,
+        animation=False,
+    ):
         self.base = base
         self.tilesheet = tilesheet
         self.rect = rect
-        self.ox = ox
-        self.oy = oy - 20 * oz
+        self.ox = offset["x"]
+        self.oy = offset["y"] - 20 * z
         self.tint = tint
         self.material = material
         self.effect = effect
@@ -457,13 +439,11 @@ class RenderAlternative:
             self.base,
             self.tilesheet,
             self.rect,
-            self.ox,
-            self.oy,
-            0,
-            self.tint,
-            material,
-            self.effect,
-            self.animation,
+            offset={"x": self.ox, "y": self.oy},
+            tint=self.tint,
+            material=material,
+            effect=self.effect,
+            animation=self.animation,
         )
 
     def __eq__(self, other):

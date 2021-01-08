@@ -14,7 +14,7 @@ def sprite_rect(rect):
 
 def sprite_offset(offset):
     (x, y) = (0, 0) if empty(offset) else map(int, offset.replace(",", "").strip().split(" "))
-    return {"x": x, "y": y, "z": 0}
+    return {"x": x, "y": y}
 
 
 def sprite_offset3d(offset):
