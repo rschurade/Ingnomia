@@ -72,6 +72,35 @@ Inventory::~Inventory()
 	}
 }
 
+void Inventory::onTick( quint64 tick )
+{
+	const QSet<QPair<QString, QString>>& acceptedItems = g->spm()->allAcceptedItems();
+
+	int count = 0;
+	if( m_itemCheckOffset > m_items.size() )
+	{
+		m_itemCheckOffset = 0;
+	}
+	for( auto it = m_items.begin() + m_itemCheckOffset; it != m_items.end(); ++it )
+	{
+		auto item = (*it);
+		if( !item.isInStockpile() && !item.acceptingStockpileExists() && item.isFree() )
+		{
+			if( acceptedItems.contains( item.pairSID() ) )
+			{
+				item.setAcceptingStockpileExists( true );
+			}
+		}
+		++count;
+		if( count == 1000 )
+		{
+			break;
+		}
+	}
+	m_itemCheckOffset += count;
+	
+}
+
 void Inventory::init()
 {
 	m_dimX = Global::dimX;
@@ -652,22 +681,26 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	return out;
 }
 
-unsigned int Inventory::getClosestUnstockpiledItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems )
+unsigned int Inventory::getClosestUnstockedItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems )
 {
 	unsigned int out = 0;
 
 	auto predicate = [&out, this, pos, acceptedItems]( unsigned int itemID ) -> bool {
 		auto item = getItem( itemID );
 
-		if ( item && !item->isInStockpile() && item->isFree() )
+		if ( item && item->acceptingStockpileExists() && !item->isInStockpile() && item->isFree() )
 		{
-			if ( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 5 )
+			if ( acceptedItems.contains( item->pairSID() ) )
 			{
-				if( acceptedItems.contains( item->pairSID()	) )
+				if( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 5 )
 				{
 					out = itemID;
 					return false;
 				}
+			}
+			else
+			{
+				item->setAcceptingStockpileExists( false );
 			}
 		}
 		return true;

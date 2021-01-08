@@ -44,6 +44,8 @@ public:
 	Inventory() = delete;
 	Inventory( Game* parent );
 	~Inventory();
+	
+	void onTick( quint64 tick );
 
 	void saveFilter();
 	void loadFilter();
@@ -73,7 +75,7 @@ public:
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count );
 	bool checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID = "any" );
 	
-	unsigned int getClosestUnstockpiledItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems );
+	unsigned int getClosestUnstockedItem( const Position& pos, const QSet<QPair<QString, QString>>& acceptedItems );
 
 	unsigned int getFoodItem( Position& pos );
 	unsigned int getDrinkItem( Position& pos );
@@ -250,6 +252,7 @@ private:
 	int m_wealth = 0;
 
 	bool m_itemsChanged = false; //flag is used for updating the stock overview
+	int m_itemCheckOffset = 0;
 
 signals:
 	void signalAddItem( QString itemSID, QString materialSID );

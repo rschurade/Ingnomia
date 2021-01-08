@@ -85,6 +85,8 @@ public:
 
 	QString name( unsigned int id );
 
+	QSet<QPair<QString, QString>> allAcceptedItems();
+
 private:
 	QPointer<Game> g;
 

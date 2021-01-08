@@ -229,7 +229,7 @@ unsigned int StockpileManager::createStandardHaulingJob( const Position& gnomePo
 	{
 		acceptedItems.unite( sp->canAcceptSet() );
 	}
-	unsigned int itemID = g->inv()->getClosestUnstockpiledItem( gnomePos, acceptedItems );
+	unsigned int itemID = g->inv()->getClosestUnstockedItem( gnomePos, acceptedItems );
 	if( itemID )
 	{
 		// get the closest accepting stockpile for that item
@@ -426,3 +426,12 @@ QString StockpileManager::name( unsigned int id )
 	return "ERROR";
 }
 
+QSet<QPair<QString, QString>> StockpileManager::allAcceptedItems()
+{
+	QSet<QPair<QString, QString>> acceptedItems;
+	for( const auto& sp : m_stockpiles )
+	{
+		acceptedItems.unite( sp->canAcceptSet() );
+	}
+	return acceptedItems;
+}

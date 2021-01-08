@@ -116,6 +116,9 @@ public:
 
 	bool isFree() const;
 
+	void setAcceptingStockpileExists( bool value );
+	bool acceptingStockpileExists();
+
 private:
 	unsigned short m_materialUID = 0;
 	unsigned short m_itemUID     = 0;
@@ -130,6 +133,8 @@ private:
 
 	unsigned short m_value = 0;
 	unsigned int m_madeBy  = 0;
+
+	bool m_acceptingStockpileExists = true;
 
 	quint8 m_quality = 0; // 0 means item has no quality, quality is rowid of table Quality
 

@@ -433,6 +433,9 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 					field->items.insert( itemID );
 				}
 			}
+			//reset isFull, will be set next reservation request
+			field->isFull = false;
+			m_fieldsNotFull.insert( field );
 		}
 	}
 }
@@ -452,6 +455,9 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 			field->capacity    = 1;
 			field->stackSize   = 1;
 			field->containerID = 0;
+			//reset isFull, will be set next reservation request
+			field->isFull = false;
+			m_fieldsNotFull.insert( field );
 		}
 	}
 }

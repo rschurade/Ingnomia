@@ -520,3 +520,13 @@ bool Item::isFree() const
 {
 	return !m_isConstructed && ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
 }
+
+void Item::setAcceptingStockpileExists( bool value )
+{
+	m_acceptingStockpileExists = value;
+}
+	
+bool Item::acceptingStockpileExists()
+{
+	return m_acceptingStockpileExists;
+}
