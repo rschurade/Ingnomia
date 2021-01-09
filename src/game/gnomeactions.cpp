@@ -712,7 +712,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 	}
 	int claimed  = 0;
 	Workshop* ws = g->wsm()->workshopAt( m_job->pos() );
-	if ( ws->linkedStockpile() && g->spm()->getStockpile( ws->linkedStockpile() ) )
+	if ( ws && ws->linkedStockpile() && g->spm()->getStockpile( ws->linkedStockpile() ) )
 	{
 		Stockpile* sp = g->spm()->getStockpile( ws->linkedStockpile() );
 		// is the whole needed number in the stockpile?
