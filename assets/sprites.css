@@ -1998,193 +1998,146 @@
 @keyframes Vegetable-TVegetable-1 {
   0.0% {
     background-position: -32px -0px;
-    height: 20px;
   }
   4.35% {
     background-position: -64px -0px;
-    height: 20px;
   }
   8.7% {
     background-position: -96px -0px;
-    height: 20px;
   }
   13.04% {
     background-position: -128px -0px;
-    height: 36px;
   }
   17.39% {
     background-position: -160px -0px;
-    height: 20px;
   }
   21.74% {
     background-position: -192px -0px;
-    height: 20px;
   }
   26.09% {
     background-position: -224px -0px;
-    height: 20px;
   }
   30.43% {
     background-position: -256px -0px;
-    height: 20px;
   }
   34.78% {
     background-position: -0px -108px;
-    height: 36px;
   }
   39.13% {
     background-position: -32px -108px;
-    height: 36px;
   }
   43.48% {
     background-position: -64px -108px;
-    height: 36px;
   }
   47.83% {
     background-position: -96px -108px;
-    height: 36px;
   }
   52.17% {
     background-position: -128px -108px;
-    height: 36px;
   }
   56.52% {
     background-position: -192px -108px;
-    height: 36px;
   }
   60.87% {
     background-position: -256px -108px;
-    height: 36px;
   }
   65.22% {
     background-position: -288px -108px;
-    height: 36px;
   }
   69.57% {
     background-position: -96px -216px;
-    height: 36px;
   }
   73.91% {
     background-position: -128px -216px;
-    height: 36px;
   }
   78.26% {
     background-position: -160px -216px;
-    height: 36px;
   }
   82.61% {
     background-position: -224px -216px;
-    height: 36px;
   }
   86.96% {
     background-position: -256px -216px;
-    height: 36px;
   }
   91.3% {
     background-position: -0px -324px;
-    height: 36px;
   }
   95.65% {
     background-position: -32px -324px;
-    height: 36px;
   }
 }
 @keyframes Vegetable-any-1 {
   0.0% {
     background-position: -32px -0px;
-    height: 20px;
   }
   4.17% {
     background-position: -64px -0px;
-    height: 20px;
   }
   8.33% {
     background-position: -96px -0px;
-    height: 20px;
   }
   12.5% {
     background-position: -128px -0px;
-    height: 36px;
   }
   16.67% {
     background-position: -160px -0px;
-    height: 20px;
   }
   20.83% {
     background-position: -192px -0px;
-    height: 20px;
   }
   25.0% {
     background-position: -224px -0px;
-    height: 20px;
   }
   29.17% {
     background-position: -256px -0px;
-    height: 20px;
   }
   33.33% {
     background-position: -0px -108px;
-    height: 36px;
   }
   37.5% {
     background-position: -32px -108px;
-    height: 36px;
   }
   41.67% {
     background-position: -64px -108px;
-    height: 36px;
   }
   45.83% {
     background-position: -96px -108px;
-    height: 36px;
   }
   50.0% {
     background-position: -128px -108px;
-    height: 36px;
   }
   54.17% {
     background-position: -192px -108px;
-    height: 36px;
   }
   58.33% {
     background-position: -256px -108px;
-    height: 36px;
   }
   62.5% {
     background-position: -288px -108px;
-    height: 36px;
   }
   66.67% {
     background-position: -96px -216px;
-    height: 36px;
   }
   70.83% {
     background-position: -128px -216px;
-    height: 36px;
   }
   75.0% {
     background-position: -160px -216px;
-    height: 36px;
   }
   79.17% {
     background-position: -224px -216px;
-    height: 36px;
   }
   83.33% {
     background-position: -256px -216px;
-    height: 36px;
   }
   87.5% {
     background-position: -64px -324px;
-    height: 36px;
   }
   91.67% {
     background-position: -0px -324px;
-    height: 36px;
   }
   95.83% {
     background-position: -32px -324px;
-    height: 36px;
   }
 }
 @keyframes anim_64 {
@@ -2316,7 +2269,6 @@
   }
   50.0% {
     background-position: -320px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Carrot-MCarrot-1 {
@@ -2325,7 +2277,6 @@
   }
   50.0% {
     background-position: -32px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Onion-MOnion-1 {
@@ -2334,7 +2285,6 @@
   }
   50.0% {
     background-position: -64px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Potato-MPotato-1 {
@@ -2343,7 +2293,6 @@
   }
   50.0% {
     background-position: -96px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Cabbage-MCabbage-1 {
@@ -2352,7 +2301,6 @@
   }
   50.0% {
     background-position: -128px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Asparagus-MAsparagus-1 {
@@ -2361,7 +2309,6 @@
   }
   50.0% {
     background-position: -160px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Broccoli-MBroccoli-1 {
@@ -2370,7 +2317,6 @@
   }
   50.0% {
     background-position: -192px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Cauliflower-MCauliflower-1 {
@@ -2379,7 +2325,6 @@
   }
   50.0% {
     background-position: -224px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Cucumber-MCucumber-1 {
@@ -2388,7 +2333,6 @@
   }
   50.0% {
     background-position: -256px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Garlic-MGarlic-1 {
@@ -2397,7 +2341,6 @@
   }
   50.0% {
     background-position: -0px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Parsnip-MParsnip-1 {
@@ -2406,7 +2349,6 @@
   }
   50.0% {
     background-position: -32px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Radish-MRadish-1 {
@@ -2415,7 +2357,6 @@
   }
   50.0% {
     background-position: -64px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Turnip-MTurnip-1 {
@@ -2424,7 +2365,6 @@
   }
   50.0% {
     background-position: -96px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Lettuce-MLettuce-1 {
@@ -2433,7 +2373,6 @@
   }
   50.0% {
     background-position: -128px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Melon-MMelon-1 {
@@ -2442,7 +2381,6 @@
   }
   50.0% {
     background-position: -160px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Sugarbeet-MSugarbeet-1 {
@@ -2451,7 +2389,6 @@
   }
   50.0% {
     background-position: -192px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Pumpkin-MPumpkin-1 {
@@ -2460,7 +2397,6 @@
   }
   50.0% {
     background-position: -224px -180px;
-    top: 8px;
   }
 }
 @keyframes plant-Peas-MPeas-1 {
@@ -2469,14 +2405,6 @@
   }
   50.0% {
     background-position: -256px -180px;
-    top: 8px;
-  }
-}
-@keyframes plant-BeetRoot-MBeetRoot-1 {
-  0.0% {
-  }
-  50.0% {
-    top: 8px;
   }
 }
 @keyframes plant-Wheat-MWheat-1 {
@@ -2517,7 +2445,6 @@
   }
   50.0% {
     background-position: -352px -72px;
-    top: 8px;
   }
 }
 @keyframes plant-Tea-MTea-1 {
@@ -2696,7 +2623,7 @@
     background-position: -384px -288px;
   }
 }
-@keyframes anim_117 {
+@keyframes anim_116 {
   0.0% {
     background-position: -256px -252px;
   }
@@ -7865,49 +7792,49 @@
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Blue);
 }
 .s-Dye.m-MCyan .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Cyan);
 }
 .s-Dye.m-MGreen .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Green);
 }
 .s-Dye.m-MGrey .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Grey);
 }
 .s-Dye.m-MPurple .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Purple);
 }
 .s-Dye.m-MRed .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Red);
 }
 .s-Dye.m-MYellow .layer:nth-child(1)
 {
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
   filter: url(tints.svg#Yellow);
 }
 .s-Dye.m-any .layer:nth-child(1),
@@ -7916,7 +7843,7 @@
   animation: Dye-TDye-1 7s infinite step-end;
   background-image: url(furniture.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-GlassJar.m-any .layer:nth-child(1),
 .s-GlassJar.m-MGlass .layer:nth-child(1),
@@ -11913,14 +11840,16 @@
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(2)
+.s-Automaton.m-MBronze .layer:nth-child(2),
+.s-AutomatonFoot.m-MBronze .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(3)
+.s-Automaton.m-MBronze .layer:nth-child(3),
+.s-AutomatonTorso.m-MBronze .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -11934,7 +11863,8 @@
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(5)
+.s-Automaton.m-MBronze .layer:nth-child(5),
+.s-AutomatonArm.m-MBronze .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -11948,14 +11878,16 @@
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(2)
+.s-Automaton.m-MCopper .layer:nth-child(2),
+.s-AutomatonFoot.m-MCopper .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(3)
+.s-Automaton.m-MCopper .layer:nth-child(3),
+.s-AutomatonTorso.m-MCopper .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -11969,7 +11901,8 @@
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(5)
+.s-Automaton.m-MCopper .layer:nth-child(5),
+.s-AutomatonArm.m-MCopper .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -11983,14 +11916,16 @@
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(2)
+.s-Automaton.m-MGold .layer:nth-child(2),
+.s-AutomatonFoot.m-MGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(3)
+.s-Automaton.m-MGold .layer:nth-child(3),
+.s-AutomatonTorso.m-MGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12004,7 +11939,8 @@
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(5)
+.s-Automaton.m-MGold .layer:nth-child(5),
+.s-AutomatonArm.m-MGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12018,14 +11954,16 @@
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(2)
+.s-Automaton.m-MIron .layer:nth-child(2),
+.s-AutomatonFoot.m-MIron .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(3)
+.s-Automaton.m-MIron .layer:nth-child(3),
+.s-AutomatonTorso.m-MIron .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12039,7 +11977,8 @@
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(5)
+.s-Automaton.m-MIron .layer:nth-child(5),
+.s-AutomatonArm.m-MIron .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12053,14 +11992,16 @@
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(2)
+.s-Automaton.m-MLead .layer:nth-child(2),
+.s-AutomatonFoot.m-MLead .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(3)
+.s-Automaton.m-MLead .layer:nth-child(3),
+.s-AutomatonTorso.m-MLead .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12074,7 +12015,8 @@
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(5)
+.s-Automaton.m-MLead .layer:nth-child(5),
+.s-AutomatonArm.m-MLead .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12088,14 +12030,16 @@
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(2)
+.s-Automaton.m-MMalachite .layer:nth-child(2),
+.s-AutomatonFoot.m-MMalachite .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(3)
+.s-Automaton.m-MMalachite .layer:nth-child(3),
+.s-AutomatonTorso.m-MMalachite .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12109,7 +12053,8 @@
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(5)
+.s-Automaton.m-MMalachite .layer:nth-child(5),
+.s-AutomatonArm.m-MMalachite .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12123,14 +12068,16 @@
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(2)
+.s-Automaton.m-MPlatinum .layer:nth-child(2),
+.s-AutomatonFoot.m-MPlatinum .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(3)
+.s-Automaton.m-MPlatinum .layer:nth-child(3),
+.s-AutomatonTorso.m-MPlatinum .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12144,7 +12091,8 @@
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(5)
+.s-Automaton.m-MPlatinum .layer:nth-child(5),
+.s-AutomatonArm.m-MPlatinum .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12158,14 +12106,16 @@
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(2)
+.s-Automaton.m-MRoseGold .layer:nth-child(2),
+.s-AutomatonFoot.m-MRoseGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(3)
+.s-Automaton.m-MRoseGold .layer:nth-child(3),
+.s-AutomatonTorso.m-MRoseGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12179,7 +12129,8 @@
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(5)
+.s-Automaton.m-MRoseGold .layer:nth-child(5),
+.s-AutomatonArm.m-MRoseGold .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12193,14 +12144,16 @@
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(2)
+.s-Automaton.m-MSilver .layer:nth-child(2),
+.s-AutomatonFoot.m-MSilver .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(3)
+.s-Automaton.m-MSilver .layer:nth-child(3),
+.s-AutomatonTorso.m-MSilver .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12214,7 +12167,8 @@
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(5)
+.s-Automaton.m-MSilver .layer:nth-child(5),
+.s-AutomatonArm.m-MSilver .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12228,14 +12182,16 @@
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(2)
+.s-Automaton.m-MSteel .layer:nth-child(2),
+.s-AutomatonFoot.m-MSteel .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(3)
+.s-Automaton.m-MSteel .layer:nth-child(3),
+.s-AutomatonTorso.m-MSteel .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12249,7 +12205,8 @@
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(5)
+.s-Automaton.m-MSteel .layer:nth-child(5),
+.s-AutomatonArm.m-MSteel .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12263,14 +12220,16 @@
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(2)
+.s-Automaton.m-MTin .layer:nth-child(2),
+.s-AutomatonFoot.m-MTin .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(3)
+.s-Automaton.m-MTin .layer:nth-child(3),
+.s-AutomatonTorso.m-MTin .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12284,7 +12243,8 @@
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(5)
+.s-Automaton.m-MTin .layer:nth-child(5),
+.s-AutomatonArm.m-MTin .layer:nth-child(1)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12300,7 +12260,9 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(2),
-.s-Automaton.m-TMetal .layer:nth-child(2)
+.s-Automaton.m-TMetal .layer:nth-child(2),
+.s-AutomatonFoot.m-any .layer:nth-child(1),
+.s-AutomatonFoot.m-TMetal .layer:nth-child(1)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12308,7 +12270,9 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(3),
-.s-Automaton.m-TMetal .layer:nth-child(3)
+.s-Automaton.m-TMetal .layer:nth-child(3),
+.s-AutomatonTorso.m-any .layer:nth-child(1),
+.s-AutomatonTorso.m-TMetal .layer:nth-child(1)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12324,7 +12288,9 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(5),
-.s-Automaton.m-TMetal .layer:nth-child(5)
+.s-Automaton.m-TMetal .layer:nth-child(5),
+.s-AutomatonArm.m-any .layer:nth-child(1),
+.s-AutomatonArm.m-TMetal .layer:nth-child(1)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12436,7 +12402,7 @@
 {
   background-image: url(plants.png);
   background-position: -160px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MBeans .layer:nth-child(1)
 {
@@ -12444,6 +12410,8 @@
   background-position: -160px -216px;
   height: 36px;
 }
+.s-plant-BeetRoot.m-any .layer:nth-child(1),
+.s-plant-BeetRoot.m-MBeetRoot .layer:nth-child(1),
 .s-Vegetable.m-MBeetRoot .layer:nth-child(1)
 {
   background-image: url(plants.png);
@@ -12460,7 +12428,7 @@
 {
   background-image: url(plants.png);
   background-position: -192px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MCabbage .layer:nth-child(1)
 {
@@ -12478,13 +12446,13 @@
 {
   background-image: url(plants.png);
   background-position: -32px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MCauliflower .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -224px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MCorn .layer:nth-child(1)
 {
@@ -12496,7 +12464,7 @@
 {
   background-image: url(plants.png);
   background-position: -256px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MGarlic .layer:nth-child(1)
 {
@@ -12520,7 +12488,7 @@
 {
   background-image: url(plants.png);
   background-position: -64px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MParsnip .layer:nth-child(1)
 {
@@ -12538,7 +12506,7 @@
 {
   background-image: url(plants.png);
   background-position: -96px -0px;
-  height: 20px;
+  height: 36px;
 }
 .s-Vegetable.m-MRadish .layer:nth-child(1)
 {
@@ -12569,11 +12537,13 @@
 {
   animation: Vegetable-TVegetable-1 23s infinite step-end;
   background-image: url(plants.png);
+  height: 36px;
 }
 .s-Vegetable.m-any .layer:nth-child(1)
 {
   animation: Vegetable-any-1 24s infinite step-end;
   background-image: url(plants.png);
+  height: 36px;
 }
 .s-Berries.m-MBlackberry .layer:nth-child(1)
 {
@@ -15484,6 +15454,91 @@
   background-position: -544px -540px;
   height: 36px;
 }
+.s-AutomatonHead.m-MBronze .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Bronze);
+}
+.s-AutomatonHead.m-MCopper .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Copper);
+}
+.s-AutomatonHead.m-MGold .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Gold);
+}
+.s-AutomatonHead.m-MIron .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Iron);
+}
+.s-AutomatonHead.m-MLead .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Lead);
+}
+.s-AutomatonHead.m-MMalachite .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Malachite);
+}
+.s-AutomatonHead.m-MPlatinum .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Platinum);
+}
+.s-AutomatonHead.m-MRoseGold .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#RoseGold);
+}
+.s-AutomatonHead.m-MSilver .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Silver);
+}
+.s-AutomatonHead.m-MSteel .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Steel);
+}
+.s-AutomatonHead.m-MTin .layer:nth-child(1)
+{
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+  filter: url(tints.svg#Tin);
+}
+.s-AutomatonHead.m-any .layer:nth-child(1),
+.s-AutomatonHead.m-TMetal .layer:nth-child(1)
+{
+  animation: anim_4 11s infinite step-end;
+  background-image: url(automatons.png);
+  background-position: -32px -0px;
+  height: 36px;
+}
 .s-AutomatonCore.m-MBronze .layer:nth-child(1)
 {
   background-image: url(automatons.png);
@@ -16112,14 +16167,6 @@
   background-image: url(plants.png);
   height: 36px;
 }
-.s-plant-BeetRoot.m-any .layer:nth-child(1),
-.s-plant-BeetRoot.m-MBeetRoot .layer:nth-child(1)
-{
-  animation: plant-BeetRoot-MBeetRoot-1 2s infinite step-end;
-  background-image: url(plants.png);
-  background-position: -288px -108px;
-  height: 36px;
-}
 .s-plant-Wheat.m-any .layer:nth-child(1),
 .s-plant-Wheat.m-MWheat .layer:nth-child(1)
 {
@@ -16316,7 +16363,7 @@
 .s-plant-WillowTree.m-any .layer:nth-child(1),
 .s-plant-WillowTree.m-MWillow .layer:nth-child(1)
 {
-  animation: anim_117 2s infinite step-end;
+  animation: anim_116 2s infinite step-end;
   background-image: url(multitrees.png);
   height: 36px;
 }
