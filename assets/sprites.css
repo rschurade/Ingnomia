@@ -2316,6 +2316,7 @@
   }
   50.0% {
     background-position: -320px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Carrot-MCarrot-1 {
@@ -2324,6 +2325,7 @@
   }
   50.0% {
     background-position: -32px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Onion-MOnion-1 {
@@ -2332,6 +2334,7 @@
   }
   50.0% {
     background-position: -64px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Potato-MPotato-1 {
@@ -2340,6 +2343,7 @@
   }
   50.0% {
     background-position: -96px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Cabbage-MCabbage-1 {
@@ -2348,6 +2352,7 @@
   }
   50.0% {
     background-position: -128px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Asparagus-MAsparagus-1 {
@@ -2356,6 +2361,7 @@
   }
   50.0% {
     background-position: -160px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Broccoli-MBroccoli-1 {
@@ -2364,6 +2370,7 @@
   }
   50.0% {
     background-position: -192px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Cauliflower-MCauliflower-1 {
@@ -2372,6 +2379,7 @@
   }
   50.0% {
     background-position: -224px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Cucumber-MCucumber-1 {
@@ -2380,6 +2388,7 @@
   }
   50.0% {
     background-position: -256px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Garlic-MGarlic-1 {
@@ -2388,6 +2397,7 @@
   }
   50.0% {
     background-position: -0px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Parsnip-MParsnip-1 {
@@ -2396,6 +2406,7 @@
   }
   50.0% {
     background-position: -32px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Radish-MRadish-1 {
@@ -2404,6 +2415,7 @@
   }
   50.0% {
     background-position: -64px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Turnip-MTurnip-1 {
@@ -2412,6 +2424,7 @@
   }
   50.0% {
     background-position: -96px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Lettuce-MLettuce-1 {
@@ -2420,6 +2433,7 @@
   }
   50.0% {
     background-position: -128px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Melon-MMelon-1 {
@@ -2428,6 +2442,7 @@
   }
   50.0% {
     background-position: -160px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Sugarbeet-MSugarbeet-1 {
@@ -2436,6 +2451,7 @@
   }
   50.0% {
     background-position: -192px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Pumpkin-MPumpkin-1 {
@@ -2444,6 +2460,7 @@
   }
   50.0% {
     background-position: -224px -180px;
+    top: 8px;
   }
 }
 @keyframes plant-Peas-MPeas-1 {
@@ -2452,6 +2469,14 @@
   }
   50.0% {
     background-position: -256px -180px;
+    top: 8px;
+  }
+}
+@keyframes plant-BeetRoot-MBeetRoot-1 {
+  0.0% {
+  }
+  50.0% {
+    top: 8px;
   }
 }
 @keyframes plant-Wheat-MWheat-1 {
@@ -2492,6 +2517,7 @@
   }
   50.0% {
     background-position: -352px -72px;
+    top: 8px;
   }
 }
 @keyframes plant-Tea-MTea-1 {
@@ -2670,7 +2696,7 @@
     background-position: -384px -288px;
   }
 }
-@keyframes anim_116 {
+@keyframes anim_117 {
   0.0% {
     background-position: -256px -252px;
   }
@@ -4089,7 +4115,6 @@
   background-image: url(furniture.png);
   background-position: -96px -432px;
   height: 36px;
-  top: 4px;
   filter: url(tints.svg#Cotton);
 }
 .s-Mattress.m-MWool .layer:nth-child(1)
@@ -4097,7 +4122,6 @@
   background-image: url(furniture.png);
   background-position: -96px -432px;
   height: 36px;
-  top: 4px;
   filter: url(tints.svg#Wool);
 }
 .s-AlarmBellBase.m-MAppleWood .layer:nth-child(1)
@@ -5574,7 +5598,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Basalt);
 }
 .s-PetRock.m-MBauxite .layer:nth-child(1)
@@ -5582,7 +5605,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Bauxite);
 }
 .s-PetRock.m-MCeramic .layer:nth-child(1)
@@ -5590,7 +5612,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Ceramic);
 }
 .s-PetRock.m-MGranite .layer:nth-child(1)
@@ -5598,7 +5619,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Granite);
 }
 .s-PetRock.m-MLapisLazuli .layer:nth-child(1)
@@ -5606,7 +5626,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#LapisLazuli);
 }
 .s-PetRock.m-MMarble .layer:nth-child(1)
@@ -5614,7 +5633,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Marble);
 }
 .s-PetRock.m-MObsidian .layer:nth-child(1)
@@ -5622,7 +5640,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Obsidian);
 }
 .s-PetRock.m-MSandstone .layer:nth-child(1)
@@ -5630,7 +5647,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Sandstone);
 }
 .s-PetRock.m-MSerpentine .layer:nth-child(1)
@@ -5638,7 +5654,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
   filter: url(tints.svg#Serpentine);
 }
 .s-PetRock.m-any .layer:nth-child(1),
@@ -5648,7 +5663,6 @@
   background-image: url(default.png);
   background-position: -96px -360px;
   height: 36px;
-  top: 10px;
 }
 .s-PuzzleBox.m-MAppleWood .layer:nth-child(1)
 {
@@ -5939,8 +5953,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Basalt);
 }
 .s-Knife.m-MBauxite .layer:nth-child(1),
@@ -5949,8 +5961,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Bauxite);
 }
 .s-Knife.m-MBronze .layer:nth-child(1),
@@ -5959,8 +5969,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Bronze);
 }
 .s-Knife.m-MCeramic .layer:nth-child(1),
@@ -5969,8 +5977,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Ceramic);
 }
 .s-Knife.m-MCopper .layer:nth-child(1),
@@ -5979,8 +5985,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Copper);
 }
 .s-Knife.m-MGold .layer:nth-child(1),
@@ -5989,8 +5993,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Gold);
 }
 .s-Knife.m-MGranite .layer:nth-child(1),
@@ -5999,8 +6001,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Granite);
 }
 .s-Knife.m-MIron .layer:nth-child(1),
@@ -6009,8 +6009,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Iron);
 }
 .s-Knife.m-MLapisLazuli .layer:nth-child(1),
@@ -6019,8 +6017,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#LapisLazuli);
 }
 .s-Knife.m-MLead .layer:nth-child(1),
@@ -6029,8 +6025,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Lead);
 }
 .s-Knife.m-MMalachite .layer:nth-child(1),
@@ -6039,8 +6033,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Malachite);
 }
 .s-Knife.m-MMarble .layer:nth-child(1),
@@ -6049,8 +6041,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Marble);
 }
 .s-Knife.m-MObsidian .layer:nth-child(1),
@@ -6059,8 +6049,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Obsidian);
 }
 .s-Knife.m-MPlatinum .layer:nth-child(1),
@@ -6069,8 +6057,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Platinum);
 }
 .s-Knife.m-MRoseGold .layer:nth-child(1),
@@ -6079,8 +6065,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#RoseGold);
 }
 .s-Knife.m-MSandstone .layer:nth-child(1),
@@ -6089,8 +6073,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Sandstone);
 }
 .s-Knife.m-MSerpentine .layer:nth-child(1),
@@ -6099,8 +6081,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Serpentine);
 }
 .s-Knife.m-MSilver .layer:nth-child(1),
@@ -6109,8 +6089,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Silver);
 }
 .s-Knife.m-MSteel .layer:nth-child(1),
@@ -6119,8 +6097,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Steel);
 }
 .s-Knife.m-MTin .layer:nth-child(1),
@@ -6129,8 +6105,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
   filter: url(tints.svg#Tin);
 }
 .s-Knife.m-any .layer:nth-child(1),
@@ -6142,8 +6116,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
 }
 .s-KnifeBlade.m-TStone .layer:nth-child(1)
 {
@@ -6151,8 +6123,6 @@
   background-image: url(default.png);
   background-position: -128px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
 }
 .s-Knife.m-any .layer:nth-child(2),
 .s-Knife.m-MBasalt .layer:nth-child(2),
@@ -6188,8 +6158,6 @@
   background-image: url(default.png);
   background-position: -160px -288px;
   height: 36px;
-  left: 8px;
-  top: 16px;
 }
 .s-Pickaxe.m-MAppleWood .layer:nth-child(1),
 .s-PickaxeHead.m-MAppleWood .layer:nth-child(1)
@@ -7898,7 +7866,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Blue);
 }
 .s-Dye.m-MCyan .layer:nth-child(1)
@@ -7906,7 +7873,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Cyan);
 }
 .s-Dye.m-MGreen .layer:nth-child(1)
@@ -7914,7 +7880,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Green);
 }
 .s-Dye.m-MGrey .layer:nth-child(1)
@@ -7922,7 +7887,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Grey);
 }
 .s-Dye.m-MPurple .layer:nth-child(1)
@@ -7930,7 +7894,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Purple);
 }
 .s-Dye.m-MRed .layer:nth-child(1)
@@ -7938,7 +7901,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Red);
 }
 .s-Dye.m-MYellow .layer:nth-child(1)
@@ -7946,7 +7908,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
   filter: url(tints.svg#Yellow);
 }
 .s-Dye.m-any .layer:nth-child(1),
@@ -7956,7 +7917,6 @@
   background-image: url(furniture.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 8px;
 }
 .s-GlassJar.m-any .layer:nth-child(1),
 .s-GlassJar.m-MGlass .layer:nth-child(1),
@@ -8739,7 +8699,6 @@
   background-image: url(furniture.png);
   background-position: -64px -36px;
   height: 36px;
-  top: 8px;
 }
 .s-Bag.m-any .layer:nth-child(1),
 .s-Bag.m-MCotton .layer:nth-child(1),
@@ -10907,77 +10866,66 @@
   animation: anim_37 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MCopper .layer:nth-child(1)
 {
   animation: anim_38 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MGold .layer:nth-child(1)
 {
   animation: anim_39 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MIron .layer:nth-child(1)
 {
   animation: anim_40 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MLead .layer:nth-child(1)
 {
   animation: anim_41 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MMalachite .layer:nth-child(1)
 {
   animation: anim_42 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MPlatinum .layer:nth-child(1)
 {
   animation: anim_43 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MRoseGold .layer:nth-child(1)
 {
   animation: anim_44 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MSilver .layer:nth-child(1)
 {
   animation: anim_45 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MSteel .layer:nth-child(1)
 {
   animation: anim_46 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-MTin .layer:nth-child(1)
 {
   animation: anim_47 0.75s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-VerticalAxle.m-any .layer:nth-child(1),
 .s-VerticalAxle.m-TMetal .layer:nth-child(1)
@@ -10985,7 +10933,6 @@
   animation: anim_48 8.25s infinite step-end;
   background-image: url(traps_mechanism.png);
   height: 36px;
-  top: 4px;
 }
 .s-LeverBase.m-MBronze .layer:nth-child(1),
 .s-LeverOff.m-MBronze .layer:nth-child(1)
@@ -11966,16 +11913,14 @@
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(2),
-.s-AutomatonFoot.m-MBronze .layer:nth-child(1)
+.s-Automaton.m-MBronze .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(3),
-.s-AutomatonTorso.m-MBronze .layer:nth-child(1)
+.s-Automaton.m-MBronze .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -11989,8 +11934,7 @@
   height: 36px;
   filter: url(tints.svg#Bronze);
 }
-.s-Automaton.m-MBronze .layer:nth-child(5),
-.s-AutomatonArm.m-MBronze .layer:nth-child(1)
+.s-Automaton.m-MBronze .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12004,16 +11948,14 @@
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(2),
-.s-AutomatonFoot.m-MCopper .layer:nth-child(1)
+.s-Automaton.m-MCopper .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(3),
-.s-AutomatonTorso.m-MCopper .layer:nth-child(1)
+.s-Automaton.m-MCopper .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12027,8 +11969,7 @@
   height: 36px;
   filter: url(tints.svg#Copper);
 }
-.s-Automaton.m-MCopper .layer:nth-child(5),
-.s-AutomatonArm.m-MCopper .layer:nth-child(1)
+.s-Automaton.m-MCopper .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12042,16 +11983,14 @@
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(2),
-.s-AutomatonFoot.m-MGold .layer:nth-child(1)
+.s-Automaton.m-MGold .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(3),
-.s-AutomatonTorso.m-MGold .layer:nth-child(1)
+.s-Automaton.m-MGold .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12065,8 +12004,7 @@
   height: 36px;
   filter: url(tints.svg#Gold);
 }
-.s-Automaton.m-MGold .layer:nth-child(5),
-.s-AutomatonArm.m-MGold .layer:nth-child(1)
+.s-Automaton.m-MGold .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12080,16 +12018,14 @@
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(2),
-.s-AutomatonFoot.m-MIron .layer:nth-child(1)
+.s-Automaton.m-MIron .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(3),
-.s-AutomatonTorso.m-MIron .layer:nth-child(1)
+.s-Automaton.m-MIron .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12103,8 +12039,7 @@
   height: 36px;
   filter: url(tints.svg#Iron);
 }
-.s-Automaton.m-MIron .layer:nth-child(5),
-.s-AutomatonArm.m-MIron .layer:nth-child(1)
+.s-Automaton.m-MIron .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12118,16 +12053,14 @@
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(2),
-.s-AutomatonFoot.m-MLead .layer:nth-child(1)
+.s-Automaton.m-MLead .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(3),
-.s-AutomatonTorso.m-MLead .layer:nth-child(1)
+.s-Automaton.m-MLead .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12141,8 +12074,7 @@
   height: 36px;
   filter: url(tints.svg#Lead);
 }
-.s-Automaton.m-MLead .layer:nth-child(5),
-.s-AutomatonArm.m-MLead .layer:nth-child(1)
+.s-Automaton.m-MLead .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12156,16 +12088,14 @@
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(2),
-.s-AutomatonFoot.m-MMalachite .layer:nth-child(1)
+.s-Automaton.m-MMalachite .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(3),
-.s-AutomatonTorso.m-MMalachite .layer:nth-child(1)
+.s-Automaton.m-MMalachite .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12179,8 +12109,7 @@
   height: 36px;
   filter: url(tints.svg#Malachite);
 }
-.s-Automaton.m-MMalachite .layer:nth-child(5),
-.s-AutomatonArm.m-MMalachite .layer:nth-child(1)
+.s-Automaton.m-MMalachite .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12194,16 +12123,14 @@
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(2),
-.s-AutomatonFoot.m-MPlatinum .layer:nth-child(1)
+.s-Automaton.m-MPlatinum .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(3),
-.s-AutomatonTorso.m-MPlatinum .layer:nth-child(1)
+.s-Automaton.m-MPlatinum .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12217,8 +12144,7 @@
   height: 36px;
   filter: url(tints.svg#Platinum);
 }
-.s-Automaton.m-MPlatinum .layer:nth-child(5),
-.s-AutomatonArm.m-MPlatinum .layer:nth-child(1)
+.s-Automaton.m-MPlatinum .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12232,16 +12158,14 @@
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(2),
-.s-AutomatonFoot.m-MRoseGold .layer:nth-child(1)
+.s-Automaton.m-MRoseGold .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(3),
-.s-AutomatonTorso.m-MRoseGold .layer:nth-child(1)
+.s-Automaton.m-MRoseGold .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12255,8 +12179,7 @@
   height: 36px;
   filter: url(tints.svg#RoseGold);
 }
-.s-Automaton.m-MRoseGold .layer:nth-child(5),
-.s-AutomatonArm.m-MRoseGold .layer:nth-child(1)
+.s-Automaton.m-MRoseGold .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12270,16 +12193,14 @@
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(2),
-.s-AutomatonFoot.m-MSilver .layer:nth-child(1)
+.s-Automaton.m-MSilver .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(3),
-.s-AutomatonTorso.m-MSilver .layer:nth-child(1)
+.s-Automaton.m-MSilver .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12293,8 +12214,7 @@
   height: 36px;
   filter: url(tints.svg#Silver);
 }
-.s-Automaton.m-MSilver .layer:nth-child(5),
-.s-AutomatonArm.m-MSilver .layer:nth-child(1)
+.s-Automaton.m-MSilver .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12308,16 +12228,14 @@
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(2),
-.s-AutomatonFoot.m-MSteel .layer:nth-child(1)
+.s-Automaton.m-MSteel .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(3),
-.s-AutomatonTorso.m-MSteel .layer:nth-child(1)
+.s-Automaton.m-MSteel .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12331,8 +12249,7 @@
   height: 36px;
   filter: url(tints.svg#Steel);
 }
-.s-Automaton.m-MSteel .layer:nth-child(5),
-.s-AutomatonArm.m-MSteel .layer:nth-child(1)
+.s-Automaton.m-MSteel .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12346,16 +12263,14 @@
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(2),
-.s-AutomatonFoot.m-MTin .layer:nth-child(1)
+.s-Automaton.m-MTin .layer:nth-child(2)
 {
   background-image: url(automatons.png);
   background-position: -160px -0px;
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(3),
-.s-AutomatonTorso.m-MTin .layer:nth-child(1)
+.s-Automaton.m-MTin .layer:nth-child(3)
 {
   background-image: url(automatons.png);
   background-position: -64px -0px;
@@ -12369,8 +12284,7 @@
   height: 36px;
   filter: url(tints.svg#Tin);
 }
-.s-Automaton.m-MTin .layer:nth-child(5),
-.s-AutomatonArm.m-MTin .layer:nth-child(1)
+.s-Automaton.m-MTin .layer:nth-child(5)
 {
   background-image: url(automatons.png);
   background-position: -96px -0px;
@@ -12386,9 +12300,7 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(2),
-.s-Automaton.m-TMetal .layer:nth-child(2),
-.s-AutomatonFoot.m-any .layer:nth-child(1),
-.s-AutomatonFoot.m-TMetal .layer:nth-child(1)
+.s-Automaton.m-TMetal .layer:nth-child(2)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12396,9 +12308,7 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(3),
-.s-Automaton.m-TMetal .layer:nth-child(3),
-.s-AutomatonTorso.m-any .layer:nth-child(1),
-.s-AutomatonTorso.m-TMetal .layer:nth-child(1)
+.s-Automaton.m-TMetal .layer:nth-child(3)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12414,9 +12324,7 @@
   height: 36px;
 }
 .s-Automaton.m-any .layer:nth-child(5),
-.s-Automaton.m-TMetal .layer:nth-child(5),
-.s-AutomatonArm.m-any .layer:nth-child(1),
-.s-AutomatonArm.m-TMetal .layer:nth-child(1)
+.s-Automaton.m-TMetal .layer:nth-child(5)
 {
   animation: anim_4 11s infinite step-end;
   background-image: url(automatons.png);
@@ -12431,7 +12339,6 @@
   background-image: url(mushroom_biome_grass.png);
   background-position: -96px -180px;
   height: 36px;
-  top: -8px;
 }
 .s-Meat.m-any .layer:nth-child(1),
 .s-Meat.m-MBadger .layer:nth-child(1),
@@ -12481,42 +12388,36 @@
   background-image: url(plants.png);
   background-position: -256px -540px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-MMelon .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -160px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-MOrange .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -288px -540px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-MPineapple .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -64px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-MPumpkin .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -224px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-MStrawberry .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -320px -0px;
   height: 36px;
-  top: 12px;
 }
 .s-Fruit.m-any .layer:nth-child(1),
 .s-Fruit.m-TFruit .layer:nth-child(1)
@@ -12524,195 +12425,167 @@
   animation: anim_61 6s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MArtichoke .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -224px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MAsparagus .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -160px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MBeans .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -160px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MBeetRoot .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -288px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MBottlegourd .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -256px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MBroccoli .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -192px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MCabbage .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -128px -0px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MCapsicum .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -32px -324px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MCarrot .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -32px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MCauliflower .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -224px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MCorn .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -96px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MCucumber .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -256px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MGarlic .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -0px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MLeek .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -128px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MLettuce .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -128px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MOnion .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -64px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MParsnip .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -32px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MPeas .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -256px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MPotato .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -96px -0px;
   height: 20px;
-  top: 12px;
 }
 .s-Vegetable.m-MRadish .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -64px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MSugarbeet .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -192px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MTomato .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -0px -324px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-MTurnip .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -96px -108px;
   height: 36px;
-  top: 12px;
 }
 .s-Vegetable.m-any .layer:nth-child(1),
 .s-Vegetable.m-TVegetable .layer:nth-child(1)
 {
   animation: Vegetable-TVegetable-1 23s infinite step-end;
   background-image: url(plants.png);
-  top: 12px;
 }
 .s-Vegetable.m-any .layer:nth-child(1)
 {
   animation: Vegetable-any-1 24s infinite step-end;
   background-image: url(plants.png);
-  top: 12px;
 }
 .s-Berries.m-MBlackberry .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -192px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Berries.m-MGrape .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -288px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Berries.m-any .layer:nth-child(1),
 .s-Berries.m-TBerries .layer:nth-child(1)
@@ -12720,7 +12593,6 @@
   animation: anim_64 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 12px;
 }
 .s-MushroomItem.m-any .layer:nth-child(1),
 .s-MushroomItem.m-TMushroom .layer:nth-child(1)
@@ -12735,7 +12607,6 @@
   background-image: url(plants.png);
   background-position: -128px -324px;
   height: 36px;
-  top: 12px;
 }
 .s-Bread.m-any .layer:nth-child(1),
 .s-Bread.m-MBarley .layer:nth-child(1),
@@ -13186,21 +13057,18 @@
   background-image: url(plants.png);
   background-position: -96px -324px;
   height: 36px;
-  top: 12px;
 }
 .s-Leaves.m-MTea .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -0px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Leaves.m-MTobacco .layer:nth-child(1)
 {
   background-image: url(plants.png);
   background-position: -32px -216px;
   height: 36px;
-  top: 12px;
 }
 .s-Leaves.m-any .layer:nth-child(1),
 .s-Leaves.m-MWoad .layer:nth-child(1),
@@ -13209,7 +13077,6 @@
   animation: anim_65 3s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 12px;
 }
 .s-FlourSack.m-any .layer:nth-child(1),
 .s-FlourSack.m-MBarley .layer:nth-child(1),
@@ -15617,91 +15484,6 @@
   background-position: -544px -540px;
   height: 36px;
 }
-.s-AutomatonHead.m-MBronze .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Bronze);
-}
-.s-AutomatonHead.m-MCopper .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Copper);
-}
-.s-AutomatonHead.m-MGold .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Gold);
-}
-.s-AutomatonHead.m-MIron .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Iron);
-}
-.s-AutomatonHead.m-MLead .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Lead);
-}
-.s-AutomatonHead.m-MMalachite .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Malachite);
-}
-.s-AutomatonHead.m-MPlatinum .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Platinum);
-}
-.s-AutomatonHead.m-MRoseGold .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#RoseGold);
-}
-.s-AutomatonHead.m-MSilver .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Silver);
-}
-.s-AutomatonHead.m-MSteel .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Steel);
-}
-.s-AutomatonHead.m-MTin .layer:nth-child(1)
-{
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-  filter: url(tints.svg#Tin);
-}
-.s-AutomatonHead.m-any .layer:nth-child(1),
-.s-AutomatonHead.m-TMetal .layer:nth-child(1)
-{
-  animation: anim_4 11s infinite step-end;
-  background-image: url(automatons.png);
-  background-position: -32px -0px;
-  height: 36px;
-}
 .s-AutomatonCore.m-MBronze .layer:nth-child(1)
 {
   background-image: url(automatons.png);
@@ -15932,7 +15714,7 @@
   background-image: url(terrain.png);
   background-position: -128px -396px;
   height: 36px;
-  top: -14px;
+  top: -20px;
 }
 .s-constr-LogWall.m-TWood .layer:nth-child(1)
 {
@@ -16030,7 +15812,6 @@
 }
 .s-constr-PlankStairs.m-TWood .layer:nth-child(1)
 {
-  animation: anim_3 6s infinite step-end;
   background-image: url(terrain.png);
   background-position: -256px -324px;
   height: 36px;
@@ -16211,7 +15992,6 @@
   animation: plant-Strawberry-MStrawberry-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Carrot.m-any .layer:nth-child(1),
 .s-plant-Carrot.m-MCarrot .layer:nth-child(1)
@@ -16219,7 +15999,6 @@
   animation: plant-Carrot-MCarrot-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Onion.m-any .layer:nth-child(1),
 .s-plant-Onion.m-MOnion .layer:nth-child(1)
@@ -16227,7 +16006,6 @@
   animation: plant-Onion-MOnion-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Potato.m-any .layer:nth-child(1),
 .s-plant-Potato.m-MPotato .layer:nth-child(1)
@@ -16235,7 +16013,6 @@
   animation: plant-Potato-MPotato-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Cabbage.m-any .layer:nth-child(1),
 .s-plant-Cabbage.m-MCabbage .layer:nth-child(1)
@@ -16243,7 +16020,6 @@
   animation: plant-Cabbage-MCabbage-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Asparagus.m-any .layer:nth-child(1),
 .s-plant-Asparagus.m-MAsparagus .layer:nth-child(1)
@@ -16251,7 +16027,6 @@
   animation: plant-Asparagus-MAsparagus-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Broccoli.m-any .layer:nth-child(1),
 .s-plant-Broccoli.m-MBroccoli .layer:nth-child(1)
@@ -16259,7 +16034,6 @@
   animation: plant-Broccoli-MBroccoli-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Cauliflower.m-any .layer:nth-child(1),
 .s-plant-Cauliflower.m-MCauliflower .layer:nth-child(1)
@@ -16267,7 +16041,6 @@
   animation: plant-Cauliflower-MCauliflower-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Cucumber.m-any .layer:nth-child(1),
 .s-plant-Cucumber.m-MCucumber .layer:nth-child(1)
@@ -16275,7 +16048,6 @@
   animation: plant-Cucumber-MCucumber-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Garlic.m-any .layer:nth-child(1),
 .s-plant-Garlic.m-MGarlic .layer:nth-child(1)
@@ -16283,7 +16055,6 @@
   animation: plant-Garlic-MGarlic-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Parsnip.m-any .layer:nth-child(1),
 .s-plant-Parsnip.m-MParsnip .layer:nth-child(1)
@@ -16291,7 +16062,6 @@
   animation: plant-Parsnip-MParsnip-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Radish.m-any .layer:nth-child(1),
 .s-plant-Radish.m-MRadish .layer:nth-child(1)
@@ -16299,7 +16069,6 @@
   animation: plant-Radish-MRadish-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Turnip.m-any .layer:nth-child(1),
 .s-plant-Turnip.m-MTurnip .layer:nth-child(1)
@@ -16307,7 +16076,6 @@
   animation: plant-Turnip-MTurnip-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Lettuce.m-any .layer:nth-child(1),
 .s-plant-Lettuce.m-MLettuce .layer:nth-child(1)
@@ -16315,7 +16083,6 @@
   animation: plant-Lettuce-MLettuce-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Melon.m-any .layer:nth-child(1),
 .s-plant-Melon.m-MMelon .layer:nth-child(1)
@@ -16323,7 +16090,6 @@
   animation: plant-Melon-MMelon-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Sugarbeet.m-any .layer:nth-child(1),
 .s-plant-Sugarbeet.m-MSugarbeet .layer:nth-child(1)
@@ -16331,7 +16097,6 @@
   animation: plant-Sugarbeet-MSugarbeet-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Pumpkin.m-any .layer:nth-child(1),
 .s-plant-Pumpkin.m-MPumpkin .layer:nth-child(1)
@@ -16339,7 +16104,6 @@
   animation: plant-Pumpkin-MPumpkin-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Peas.m-any .layer:nth-child(1),
 .s-plant-Peas.m-MPeas .layer:nth-child(1)
@@ -16347,15 +16111,14 @@
   animation: plant-Peas-MPeas-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-BeetRoot.m-any .layer:nth-child(1),
 .s-plant-BeetRoot.m-MBeetRoot .layer:nth-child(1)
 {
+  animation: plant-BeetRoot-MBeetRoot-1 2s infinite step-end;
   background-image: url(plants.png);
   background-position: -288px -108px;
   height: 36px;
-  top: 8px;
 }
 .s-plant-Wheat.m-any .layer:nth-child(1),
 .s-plant-Wheat.m-MWheat .layer:nth-child(1)
@@ -16391,7 +16154,6 @@
   animation: plant-Cotton-MCotton-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Tea.m-any .layer:nth-child(1),
 .s-plant-Tea.m-MTea .layer:nth-child(1)
@@ -16497,7 +16259,6 @@
   animation: plant-Flower1-MFlower1-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Flower2.m-any .layer:nth-child(1),
 .s-plant-Flower2.m-MFlower2 .layer:nth-child(1)
@@ -16505,7 +16266,6 @@
   animation: plant-Flower2-MFlower2-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Flower3.m-any .layer:nth-child(1),
 .s-plant-Flower3.m-MFlower3 .layer:nth-child(1)
@@ -16513,7 +16273,6 @@
   animation: plant-Flower3-MFlower3-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Flower4.m-any .layer:nth-child(1),
 .s-plant-Flower4.m-MFlower4 .layer:nth-child(1)
@@ -16521,7 +16280,6 @@
   animation: plant-Flower4-MFlower4-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Flower5.m-any .layer:nth-child(1),
 .s-plant-Flower5.m-MFlower5 .layer:nth-child(1)
@@ -16529,7 +16287,6 @@
   animation: plant-Flower5-MFlower5-1 2s infinite step-end;
   background-image: url(plants.png);
   height: 36px;
-  top: 8px;
 }
 .s-plant-Flower6.m-any .layer:nth-child(1),
 .s-plant-Flower6.m-MFlower6 .layer:nth-child(1)
@@ -16559,7 +16316,7 @@
 .s-plant-WillowTree.m-any .layer:nth-child(1),
 .s-plant-WillowTree.m-MWillow .layer:nth-child(1)
 {
-  animation: anim_116 2s infinite step-end;
+  animation: anim_117 2s infinite step-end;
   background-image: url(multitrees.png);
   height: 36px;
 }
