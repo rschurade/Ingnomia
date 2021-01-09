@@ -9032,13 +9032,13 @@ INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Ti
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ZygSenior',0,NULL,1,'0 0',0,NULL,NULL,1);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ZygSeniorBlue',0,NULL,0,'0 0',0,NULL,NULL,1);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ZygSeniorRed',0,NULL,0,'0 0',0,NULL,NULL,1);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Fruit',0,NULL,0,'0, 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Fruit',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Vegetable',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Berries',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Leaves',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Mushroom',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Plant',0,NULL,0,'0 0',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PlantWithFruit',0,NULL,0,'0, 8',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PlantWithFruit',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PlantLarge',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PlantLargeWithFruit',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PlantGrowHelper1',0,NULL,0,'0 0',0,NULL,NULL,0);
@@ -9475,8 +9475,8 @@ INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Ti
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SoilCornerRampTop',0,NULL,0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SoilURamp',0,NULL,0,'0 0',0,'Material',NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('SoilURampTop',0,NULL,0,'0 0',0,'Material',NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Pentagram',0,'Pentagram1',0,'0 11',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PentagramAnim',1,NULL,0,'0 11',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Pentagram',0,'Pentagram1',0,'0 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('PentagramAnim',1,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('Sparkles',1,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('MushroomGrassWithDetail',0,NULL,1,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('MushroomGrass',0,NULL,0,'0 0',0,NULL,NULL,0);
