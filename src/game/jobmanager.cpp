@@ -950,6 +950,16 @@ void JobManager::giveBackJob( unsigned int jobID )
 			return;
 		}
 
+		if( job->type() == "LeadAnimalToPasture" || job->type() == "ButcherAnimal" || job->type() == "HarvestAnimal" )
+		{
+			if( job->animal() == 0 )
+			{
+				job->setIsWorked( false );
+				cancelJob( job->pos() );
+				return;
+			}
+		}
+
 		//TODO clear stockpile reserve
 		job->setIsWorked( false );
 		job->setWorkedBy( 0 );

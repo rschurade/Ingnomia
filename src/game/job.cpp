@@ -144,6 +144,7 @@ QVariant Job::serialize() const
 	out.insert( "Stockpile", m_stockpile );
 	out.insert( "Automaton", m_automaton );
 	out.insert( "Mechanism", m_mechanism );
+	out.insert( "Animal", m_animal );
 
 	out.insert( "ItemsToHaul", Global::util->uintList2Variant( m_itemsToHaul ) );
 	out.insert( "Spell", m_spell );
