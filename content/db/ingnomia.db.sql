@@ -8749,9 +8749,9 @@ INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Ti
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ThoughtBubbleThirsty',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ThoughtBubbleHungry',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('ThoughtBubbleCombat',0,NULL,0,'0 0',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusThirsty',0,'StatusThirsty',0,'15 0',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusHungry',0,'StatusHungry',0,'15 0',0,NULL,NULL,0);
-INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusCombat',0,'StatusCombat',0,'15 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusThirsty',0,'StatusThirsty',0,'0 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusHungry',0,'StatusHungry',0,'0 0',0,NULL,NULL,0);
+INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('StatusCombat',0,'StatusCombat',0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('LittleBlood1',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('LittleBlood2',0,NULL,0,'0 0',0,NULL,NULL,0);
 INSERT INTO "Sprites" ("ID","Anim","BaseSprite","HasRandom","Offset","Rot90","Tint","DefaultMaterial","HasTransp") VALUES ('BigBlood1',0,NULL,0,'0 0',0,NULL,NULL,0);
