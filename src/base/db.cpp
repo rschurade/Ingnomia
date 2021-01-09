@@ -424,6 +424,27 @@ int DB::numRows( QString table, QString id )
 	return 0;
 }
 
+int DB::numRows2( QString table, QString id )
+{
+	QMutexLocker lock( &DB::m_mutex );
+	++accessCounter;
+	QSqlQuery query( getDB() );
+	if ( query.exec( "SELECT COUNT(*) FROM " + table + " WHERE BaseSprite = \"" + id + "\"" ) )
+	{
+		m_counter.add( query.lastQuery() );
+		if ( query.next() )
+		{
+			return query.value( 0 ).toInt();
+		}
+	}
+	else
+	{
+		qDebug() << "sql error:  " << query.lastError();
+		qDebug() << "SELECT COUNT(*) FROM " + table + " WHERE BaseSprite = \"" + id + "\"";
+	}
+	return 0;
+}
+
 QVariantMap DB::selectRow( QString table, QString whereVal )
 {
 	QMutexLocker lock( &DB::m_mutex );

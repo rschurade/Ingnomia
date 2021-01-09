@@ -110,10 +110,57 @@ bool SpriteFactory::init()
 				}
 			}
 			m_pixmapSources.insert( tilesheet, pm );
+			/*
+			if( tilesheet == "default.png" )
+			{
+				QSet<QString>unused;
+				int count = 0;
+				for( auto r : DB::selectRows( "BaseSprites" ) )
+				{
+					if( r.value( "Tilesheet"  ).toString() == "default.png" )
+					if( DB::numRows( "Sprites", r.value( "ID" ).toString() ) == 0 )
+						if( DB::numRows2( "Sprites", r.value( "ID" ).toString() ) == 0 )
+							if( DB::numRows2( "Sprites_ByMaterialTypes", r.value( "ID" ).toString() ) == 0 )
+								if( DB::numRows2( "Sprites_ByMaterials", r.value( "ID" ).toString() ) == 0 )
+									if( DB::numRows2( "Sprites_Combine", r.value( "ID" ).toString() ) == 0 )
+										if( DB::numRows2( "Sprites_Frames", r.value( "ID" ).toString() ) == 0 )
+											if( DB::numRows2( "Sprites_Random", r.value( "ID" ).toString() ) == 0 )
+												if( DB::numRows2( "Sprites_Rotations", r.value( "ID" ).toString() ) == 0 )
+													if( DB::numRows2( "Sprites_Seasons", r.value( "ID" ).toString() ) == 0 )
+														if( DB::numRows2( "Sprites_Seasons_Rotations", r.value( "ID" ).toString() ) == 0 )
+														{
+															qDebug() << count++ << r.value( "ID" ).toString() << r.value( "Tilesheet" ).toString();
+															unused.insert( r.value( "ID" ).toString() );
+														}
+				}
+
+
+				int width = pm.width();
+				int height = pm.height();
+				QPixmap newPM( width, height );
+				
+				newPM.fill( Qt::transparent);
+				QPainter painter( &newPM );
+				
+				for( auto r : DB::selectRows( "BaseSprites" ) )
+				{
+					if( r.value( "Tilesheet" ).toString() == "default.png" )
+					{
+						if( !unused.contains( r.value( "ID" ).toString() ) )
+						{
+							auto p = r.value( "SourceRectangle" ).toString().split( " " );
+							auto sp = pm.copy( p[0].toInt(), p[1].toInt(), 32, 36 );
+							painter.drawPixmap( p[0].toInt(), p[1].toInt(), sp );
+						}
+					}
+				}
+				newPM.save( Global::cfg->get( "dataPath" ).toString() + "/tilesheet2/" + tilesheet );
+			}
+			*/
 		}
 		m_baseSprites.insert( row.value( "ID" ).toString(), extractPixmap( tilesheet, row ) );
 	}
-
+	
 	QList<QVariantMap> spriteList = DB::selectRows( "Sprites" );
 	for ( auto& sprite : spriteList )
 	{

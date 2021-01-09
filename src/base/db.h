@@ -54,6 +54,7 @@ public:
 	static QStringList ids( QString table, QString whereCol, QString whereVal );
 	static int numRows( QString table );
 	static int numRows( QString table, QString id );
+	static int numRows2( QString table, QString bsid );
 
 	static QVariantMap selectRow( QString table, QString whereVal );
 	static QList<QVariantMap> selectRows( QString table, QString whereCol, QString whereVal );
