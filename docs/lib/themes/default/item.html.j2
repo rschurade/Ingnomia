@@ -1,0 +1,150 @@
+{% extends "base.html.j2" %}
+{% import "macros.html.j2" as macros with context %}
+
+{% block title %}
+  {{ item.translation|title }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+  <h2>
+    <span class="type">Item</span>
+    {{ item.translation|title }}
+  </h2>
+
+  <table class="iteminfo">
+    <tr>
+      <th>Category</th>
+      <td>{{ item.category.translation|title }}</td>
+      <td rowspan="0">
+        {{ macros.sprite(item.sprite, zoom=true, background="grass") }}
+      </td>
+    </tr>
+    <tr>
+      <th>Group</th>
+      <td>{{ item.group.translation|title }}</td>
+    </tr>
+    <tr>
+      <th>Storage</th>
+      <td>
+        {% if item.stack %}
+          <div>
+            {% if item.stack == 1 %}
+              Does not stack
+            {% else %}
+              Stacks by {{ item.stack }}
+            {% endif %}
+
+            on the ground
+          </div>
+        {% endif %}
+        {% if item.container %}
+          <div>{{ macros.item(item.container) }} <i>(max. {{ item.container.capacity }}, in stockpiles)</i></div>
+        {% endif %}
+        {% if item.carry %}
+          <div>{{ macros.item(item.carry) }} <i>(max. {{ item.carry.capacity }}, for carrying)</i></div>
+        {% endif %}
+      </td>
+    </tr>
+    {% if item.capacity %}
+      <tr>
+        <th>Capacity</th>
+        <td>{{ item.capacity }} {% if item.same %}identical{% else %}varied{% endif %} items</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <th>Value</th>
+      <td>{{ item.value }}</td>
+    </tr>
+    {% if item.evalue %}
+      <tr>
+        <th>Eat value</th>
+        <td>{{ item.evalue }}</td>
+      </tr>
+    {% endif %}
+    {% if item.dvalue %}
+      <tr>
+        <th>Drink value</th>
+        <td>{{ item.dvalue }}</td>
+      </tr>
+    {% endif %}
+    {% if item.light %}
+      <tr>
+        <th>Light intensity</th>
+        <td>{{ item.light }}</td>
+      </tr>
+    {% endif %}
+  </table>
+
+  {% if item.materials|length %}
+    <h3>Materials</h3>
+
+    <table class="item-materials">
+      {% for type in item.materials %}
+        <tr>
+          <th>{{ type.id }}</th>
+          <td>
+            {% for mat in type.materials %}
+              <span class="entry">
+                {{ macros.sprite(item.sprite, matset="M" ~ mat.id) }}
+                {{ mat.translation|title }}
+                {% if not loop.last %}
+                  &bull;
+                {% endif %}
+              </span>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  {% if item.crafts|length %}
+    <h3>Crafting recipes</h3>
+
+    {{ macros.craftlist(item.crafts) }}
+  {% endif %}
+
+  {% if item.constructions|length %}
+    <h3>Construction recipes</h3>
+
+    {{ macros.constrlist(item.constructions) }}
+  {% endif %}
+
+  {% if item.rcrafts|length %}
+    <h3>Used to craft</h3>
+
+    {{ macros.craftlist(item.rcrafts) }}
+  {% endif %}
+
+  {% if item.wcrafts|length or item.rconstructions|length %}
+    <h3>Used to build</h3>
+
+    <div class="buildlist">
+      {% if item.rconstructions|length %}
+        {{ macros.constrlist(item.rconstructions) }}
+      {% endif %}
+
+      {% if item.wcrafts|length %}
+        <table class="workshops">
+          <tr>
+            <th>Workshop</th>
+          </tr>
+
+          {% for workshop in item.wcrafts %}
+            <tr>
+              <td>
+                <a href="{{ base }}workshop/{{ workshop.id }}.html">{{ workshop.translation|title }}</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if item.can_contain %}
+    <h3>Allowed items in container</h3>
+
+    {{ macros.nav_table(custom_data=item.can_contain, custom_path="item", class="") }}
+  {% endif %}
+{% endblock %}

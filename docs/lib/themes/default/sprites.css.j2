@@ -1,0 +1,62 @@
+.sprite {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: bottom;
+  position: relative;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.layers {
+  position: absolute;
+}
+
+.layer,
+.bg {
+  display: block;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+}
+
+.bg {
+  height: 20px;
+}
+
+.zoomed {
+  width: 64px;
+  height: 64px;
+}
+
+.zoomed .bg,
+.zoomed .layers {
+  transform: translate(-50%, -50%) scale(2, 2) translate(50%, 50%);
+}
+
+{% for anim in sprite_anims %}
+  @keyframes {{ anim.id() }} {
+    {% for frame in anim.frames %}
+      {{ (100 * loop.index0 / loop.length) | round(2) }}% {
+        {% for prop, value in frame.items() %}
+          {{ prop }}: {{ value }};
+        {% endfor %}
+      }
+    {% endfor %}
+  }
+{% endfor %}
+
+{% for rule in sprite_rules %}
+  {% for selector in rule.selectors|sort %}
+    {{ selector }}{% if not loop.last %},{% endif %}
+  {% endfor %}
+  {
+    {% for prop, value in rule.props.items() %}
+      {% if prop == "animation" %}
+        animation: {{ rule.props["animation-name"].id() }} {{ value }};
+      {% elif prop != "animation-name" %}
+        {{ prop }}: {{ value }};
+      {% endif %}
+    {% endfor %}
+  }
+{% endfor %}

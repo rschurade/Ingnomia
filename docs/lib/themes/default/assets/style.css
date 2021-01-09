@@ -1,0 +1,230 @@
+/* Global styles */
+
+:root {
+  --color-fade: #888;
+  --color-text: #444;
+  --color-hover: #111;
+  --color-bg: #eee;
+  --color-bg-alt: #f8f8f8;
+  --color-bg-tables: #fff;
+  --color-border: #aaa;
+
+  --layout-width: 1000px;
+  --layout-nav: 200px;
+
+  --font-size: 0.8rem;
+  --font-size-menu: calc(var(--font-size) * 1.25);
+
+  --margin-large: 1rem;
+  --margin-mid: calc(var(--margin-large) / 2);
+  --margin-small: calc(var(--margin-large) / 5);
+  --margin-tiny: calc(var(--margin-large) / 10);
+  --margin-icon: calc(3 * var(--margin-large));
+}
+
+body {
+  margin: 0;
+
+  font-family: sans-serif;
+  font-size: var(--font-size);
+
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+li {
+  list-style: square;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link,
+a:visited,
+a:active {
+  color: var(--color-text);
+  border-bottom: 1px dotted var(--color-text);
+}
+
+a:hover {
+  color: var(--color-hover);
+  border-bottom: 1px solid var(--color-hover);
+}
+
+a.hint,
+a.hint:hover {
+  color: var(--color-text);
+  border-bottom: 1px dotted var(--color-text);
+  cursor: help;
+}
+
+/* Layout */
+
+section.container,
+table.nav,
+footer {
+  margin: var(--margin-large) auto;
+  max-width: var(--layout-width);
+  width: 100%;
+}
+
+section.container {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+nav {
+  width: var(--layout-nav);
+  margin-right: var(--margin-large);
+}
+
+section.content,
+section.search-results {
+  flex-grow: 1;
+}
+
+section.search-results {
+  display: none;
+}
+
+footer {
+  color: var(--color-fade);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Navbar */
+
+nav .icon {
+  margin: var(--margin-large) var(--margin-icon);
+  max-width: calc(var(--layout-nav) - 2 * var(--margin-icon));
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+nav input {
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--margin-large);
+  width: 100%;
+}
+
+nav ul {
+  padding: 0;
+}
+
+nav li {
+  margin: var(--margin-mid) 0;
+  list-style: none;
+  font-weight: bold;
+  font-size: var(--font-size-menu);
+}
+
+/* Tables */
+
+table {
+  border-spacing: 0;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-tables);
+}
+
+td.number {
+  text-align: center;
+}
+
+td {
+  padding: var(--margin-small);
+}
+
+th {
+  background-color: var(--color-bg);
+  padding: var(--margin-tiny) var(--margin-small);
+  border: var(--margin-tiny) solid var(--color-bg-tables);
+
+  text-align: center;
+}
+
+/* Navtable */
+
+table.nav th.category,
+table.nav th.group {
+  white-space: nowrap;
+}
+
+table.nav th.group,
+table.nav th.group a {
+  color: var(--color-fade);
+}
+
+table.nav a.collapse-trigger {
+  margin-left: var(--margin-mid);
+  font-weight: normal;
+}
+
+/* Craft tables */
+
+table.workshop-components tr:nth-child(2n + 1),
+table.workshops tr:nth-child(2n + 1),
+table.crafts tr:nth-child(2n + 1),
+table.constructions tr:nth-child(2n + 1) {
+  background-color: var(--color-bg-alt);
+}
+
+table.crafts .single td {
+  vertical-align: bottom;
+}
+
+/* Plant tables */
+
+table.plants {
+  width: 100%;
+}
+
+table.plants tr:nth-child(2n + 1) {
+  background-color: var(--color-bg-alt);
+}
+
+table.plants td.seasons {
+  text-align: center;
+}
+
+/* Misc */
+
+h2 .sprite {
+  float: right;
+}
+
+h2 .type {
+  font-weight: normal;
+  font-style: italic;
+  color: var(--color-fade);
+}
+
+h2 .type:after {
+  content: ': ';
+}
+
+table.iteminfo {
+  width: 100%;
+}
+
+table.iteminfo th {
+  white-space: nowrap;
+}
+
+table.item-materials {
+  width: 100%;
+}
+
+.buildlist {
+  display: flex;
+  flex-flow: row;
+}
+
+.buildlist table + table {
+  margin-left: var(--margin-large);
+}
+
+.entry {
+  white-space: nowrap;
+}

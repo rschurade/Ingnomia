@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% import "macros.html.j2" as macros with context %}
+<head>
+  <title>{% block title %}Ingnomia docs{% endblock %}</title>
+
+  <link rel="stylesheet" type="text/css" href="{{ base }}assets/style.css" />
+  <link rel="stylesheet" type="text/css" href="{{ base }}assets/sprites.css" />
+  <link rel="shortcut icon" href="{{ base }}assets/icon.png" />
+</head>
+<body>
+  <section class="container">
+    <nav>
+      <a href="{{ base }}index.html">
+        <img class="icon" src="{{ base }}assets/icon.png">
+      </a>
+
+      <input type="search" placeholder="Quick search...">
+
+      <ul>
+        <li>
+          {{ macros.sprite("Crate", matset="MOak", background="plain") }}
+          <a href="{{ base }}items.html">Items</a>
+        </li>
+        <li>
+          {{ macros.sprite("ShepherdsPie", background="wood") }}
+          <a href="{{ base }}food.html">Food</a>
+        </li>
+        <li>
+          {{ macros.sprite("plant-Tomato", background="grass", step=2) }}
+          <a href="{{ base }}plants.html">Plants</a>
+        </li>
+        <li>
+          {{ macros.sprite("constr-BlockStairs", matset="TStone", step=7) }}
+          <a href="{{ base }}constructions.html">Constructions</a>
+        </li>
+        <li>
+          {{ macros.sprite("Workbench", matset="MPine", background="stone") }}
+          <a href="{{ base }}workshops.html">Workshops</a>
+        </li>
+      </ul>
+    </nav>
+
+    <section class="content">
+      {% block content %}{% endblock %}
+    </section>
+
+    <section class="search-results">
+      <h2>Search results for "<span class="search-query"></span>"</h2>
+
+      <span class="no-results">No results :(</span>
+
+      <ul>
+        {% for item in index %}
+          <li data-keywords="{{ item.kw }}"><a href="{{ base }}{{ item.href }}">{{ item.type|title }}: {{ item.label|title }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  </section>
+
+  {{ navtable_rendered }}
+
+  <footer>
+    <div>
+      Generated on {{ build.date }} UTC
+      {% if build.id %}from version {{ build.id }}{% endif %}
+    </div>
+  </footer>
+
+  <script src="{{ base }}assets/doc.js"></script>
+</body>

@@ -55,6 +55,25 @@ If no errors have occured, proceed by building the project with the chosen build
 cmake --build "<BUILD_DIR>"
 ```
 
+### Building the documentation ###
+
+Documentation building scripts are in the `docs/` directory. To rebuild documentation you will need:
+
+* Python 3.9
+* Pipenv
+* Tilesheets from an existing installation (in the `content/tilesheet` directory, as when building the game)
+
+From the `docs/` directory, run:
+
+```bash
+pipenv install
+pipenv run ./generate.py
+```
+
+Output is generated in `docs/html`. You can specify a different output by passing `--output path/to/dir` to the generation script.
+
+Generation will fail when the output directory exists. Use the `--overwrite` option in that case, but be warned that it will wipe the output directory completely.
+
 ### Forks on Github ###
 
 When forking the project on Github, you should add `NOESIS_LICENSE_KEY` and `NOESIS_LICENSE_NAME` as secrets in your repositories configuration under Settings/Secrets. If not provided, CI builds will fail for your fork.

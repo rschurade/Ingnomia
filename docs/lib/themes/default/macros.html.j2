@@ -1,0 +1,184 @@
+{% macro sprite(sprite, matset=None, background="plain", zoom=false, step=None) %}
+  {% if sprite is string %}
+    {% set sprite = sprites|selectattr("id", "equalto", sprite)|first %}
+  {% endif %}
+
+  {% if sprite %}
+    {% if not matset %}
+      {% set matset = "any" %}
+    {% endif %}
+
+    <span
+      class="
+        sprite
+        s-{{ sprite.id }}
+        m-{{ matset }}
+        {% if zoom %}zoomed{% endif %}
+      ">
+      {% if background %}
+        <span class="bg bg-{{ background }}"></span>
+      {% endif %}
+
+      <span class="layers">
+        {% for layer in range(sprite.layer_count) %}
+          <span
+            class="layer"
+            {% if step %}
+              style="animation-play-state: paused; animation-delay: -{{ step - 1 }}s;"
+            {% endif %}
+          ></span>
+        {% endfor %}
+      </span>
+    </span>
+  {% endif %}
+{% endmacro %}
+
+{% macro item(i) %}
+  {% if i.sprite %}
+    {% if i.material_set %}
+      {% set matset = i.material_set.id %}
+    {% else %}
+      {% set matset = "any" %}
+    {% endif %}
+    {{ sprite(i.sprite, matset=matset) }}
+  {% endif %}
+  <a href="{{ base }}item/{{ i.id }}.html">
+    {{ i.translation|title }}{% if i.material_set and i.material_set.labels|length and not i.material_set.covers(i.id) %}
+      ({{ i.material_set.labels|map("title")|join('/') }})
+    {% endif %}</a>
+{% endmacro %}
+
+{% macro itemamount(i) %}
+  {% if i.amount == 0 %}
+    <i>destroyed</i>
+  {% else %}
+    {% if i.amount_hint %}
+      <a class="hint" title="{{ i.amount_hint }}">{{ i.amount }}x</a>
+    {% else %}
+      {{ i.amount }}x
+    {% endif %}
+
+    {{ item(i) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro workshop(w) %}
+  <a href="{{ base }}workshop/{{ w.id }}.html">{{ w.translation|title }}</a>
+{% endmacro %}
+
+{% macro craftlist(crafts, show_workshop=true) %}
+  <table class="crafts">
+    <tr>
+      <th>Output</th>
+      <th>Components</th>
+      {% if show_workshop %}<th>Workshop</th>{% endif %}
+      <th>Time</th>
+      <th>Skill</th>
+    </tr>
+
+    {% for craft in crafts %}
+      <tr {% if craft.components|length == 1 %}class="single"{% endif %}>
+        <td>{{ itemamount(craft) }}</td>
+        <td>
+          {% for component in craft.components %}
+            <div>{{ itemamount(component) }}</div>
+          {% endfor %}
+        </td>
+        {% if show_workshop %}
+          <td>
+            {% for w in craft.workshops %}
+              <div>{{ workshop(w) }}</div>
+            {% endfor %}
+          </td>
+        {% endif %}
+        <td class="number">{{ craft.time }}</td>
+        <td>{{ craft.skill|title }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endmacro %}
+
+{% macro constrlist(constructions) %}
+  <table class="constructions">
+    <tr>
+      <th>Category</th>
+      <th>Construction</th>
+      <th>Components</th>
+    </tr>
+
+    {% for cat in constructions %}
+      {% for construction in cat.constructions %}
+        <tr>
+          {% if loop.index == 1 %}
+            <th rowspan="{{ loop.length }}">{{ cat.category }}</th>
+          {% endif %}
+
+          <td>
+            {% if construction.sprite %}
+              {{ macros.sprite(construction.sprite, matset=construction.material_set.id) }}
+            {% endif %}
+            {{ construction.translation|title }}</td>
+          <td>
+            {% for component in construction.components %}
+              <div>{{ macros.itemamount(component) }}</div>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  </table>
+{% endmacro %}
+
+{% macro nav_table(only_section=None, class="nav", custom_data=None, custom_path=None) %}
+  <table class="{{ class }}">
+    {% if not custom_data %}
+      {% set data = navtable %}
+    {% else %}
+      {% set only_section = "custom" %}
+      {% set data = [{"label":"custom", "path": custom_path, "categories": custom_data}] %}
+    {% endif %}
+
+    {% for section in data %}
+      {% if not only_section or only_section == section.label %}
+        {% if not only_section %}
+          <tr>
+            <th colspan="3" class="section" data-collapse="{{ section.label }}">{{ section.label }}</th>
+          </tr>
+        {% endif %}
+
+        {% for category in section.categories %}
+          {% for group in category.groups %}
+            <tr {% if not only_section %}data-collapse-group="{{ section.label }}"{% endif %}>
+              {% if loop.index == 1 %}
+                <th class="category" rowspan="{{ loop.length }}">
+                  {{ category.translation|title }}
+                </th>
+              {% endif %}
+
+              {% if not group.hide %}
+                <th class="group">
+                  {{ group.translation|title }}
+                </th>
+              {% endif %}
+
+              <td colspan="{% if group.hide %}2{% else %}1{% endif %}">
+                {% for item in group['items'] %}
+                  <span class="entry">
+                    {% if item.sprite %}
+                      {{ sprite(item.sprite) }}
+                    {% endif %}
+                    <a href="{{ base }}{{ section.path }}/{{ item.id }}.html">{{ item.translation|title }}</a>
+
+                    {% if not loop.last %}
+                      &bull;
+                    {% endif %}
+                  </span>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </table>
+{% endmacro %}

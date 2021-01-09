@@ -1,0 +1,50 @@
+name: Docs
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - uses: dschep/install-pipenv-action@v1
+      - uses: actions/checkout@v2
+
+      - name: Download Tilesheets
+        uses: carlosperate/download-file-action@v1.0.3
+        id: download-tilesheet
+        with:
+          file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip'
+
+      - name: Unpack Tilesheets
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
+          pathTarget: content
+
+      - name: Setup venv
+        working-directory: docs
+        run: |
+          pipenv install
+
+      - name: Generate docs
+        working-directory: docs
+        run: |
+          pipenv run ./generate.py --build ${GITHUB_REF#refs/*/}
+
+      - name: Deploy docs to gh-pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          keep_history: true
+          build_dir: docs/html
+          fqdn: ${{ secrets.DOCS_DOMAIN }}
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

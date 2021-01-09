@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  {% for tint in tints %}
+    <filter id="{{ tint.id }}" color-interpolation-filters="sRGB" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%">
+      <feColorMatrix
+        values="{{ tint.r / 255 }} 0 0 0 0
+                0 {{ tint.g / 255 }} 0 0 0
+                0 0 {{ tint.b / 255 }} 0 0
+                0 0 0 {{ tint.a / 255 }} 0" />
+    </filter>
+  {% endfor %}
+</svg>
