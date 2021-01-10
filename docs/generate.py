@@ -6,7 +6,6 @@ import sys
 
 from lib.util import DOCDIR
 from lib.render import render
-from lib.store import Store
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -28,4 +27,4 @@ if __name__ == "__main__":
         print(f"Error: output path {ns.output} exists, pass --overwrite to overwrite")
         sys.exit(1)
 
-    render(Store(), ns.theme, ns.output, ns.build)
+    render(ns.theme, ns.output, ns.build)

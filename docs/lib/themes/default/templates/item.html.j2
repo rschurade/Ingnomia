@@ -16,7 +16,7 @@
       <th>Category</th>
       <td>{{ item.category.translation|title }}</td>
       <td rowspan="0">
-        {{ macros.sprite(item.sprite, zoom=true, background="grass") }}
+        {{ macros.itemsprite(item.id, zoom=True) }}
       </td>
     </tr>
     <tr>
@@ -79,13 +79,13 @@
     <h3>Materials</h3>
 
     <table class="item-materials">
-      {% for type in item.materials %}
+      {% for type in item.material_tree %}
         <tr>
           <th>{{ type.id }}</th>
           <td>
             {% for mat in type.materials %}
               <span class="entry">
-                {{ macros.sprite(item.sprite, matset="M" ~ mat.id) }}
+                {{ macros.itemsprite(item.id, matset="M" ~ mat.id) }}
                 {{ mat.translation|title }}
                 {% if not loop.last %}
                   &bull;

@@ -48,10 +48,7 @@ class MaterialSet:
 
     def covers(self, itemid):
         (mats, mattypes) = db.item_materials(itemid)
-
-        mats = [] if empty(mats) else mats.split("|")
-        mattypes = [] if empty(mattypes) else mattypes.split("|")
-        all_materials = set([*mats, *[m for t in mattypes for m in db.materials_of_type(t)]])
+        all_materials = set(db.materials_flat(mats, mattypes))
 
         return all_materials == set(self.all_materials)
 

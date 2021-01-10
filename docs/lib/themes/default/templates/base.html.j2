@@ -17,26 +17,12 @@
       <input type="search" placeholder="Quick search...">
 
       <ul>
-        <li>
-          {{ macros.sprite("Crate", matset="MOak", background="plain") }}
-          <a href="{{ base }}items.html">Items</a>
-        </li>
-        <li>
-          {{ macros.sprite("ShepherdsPie", background="wood") }}
-          <a href="{{ base }}food.html">Food</a>
-        </li>
-        <li>
-          {{ macros.sprite("plant-Tomato", background="grass", step=2) }}
-          <a href="{{ base }}plants.html">Plants</a>
-        </li>
-        <li>
-          {{ macros.sprite("constr-BlockStairs", matset="TStone", step=7) }}
-          <a href="{{ base }}constructions.html">Constructions</a>
-        </li>
-        <li>
-          {{ macros.sprite("Workbench", matset="MPine", background="stone") }}
-          <a href="{{ base }}workshops.html">Workshops</a>
-        </li>
+        {% for item in menu %}
+          <li>
+            {{ macros.menusprite(item.label) }}
+            <a href="{{ base }}{{ item.href }}">{{ item.label }}</a>
+          </li>
+        {% endfor %}
       </ul>
     </nav>
 

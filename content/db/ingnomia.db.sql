@@ -8377,13 +8377,13 @@ INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUE
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('LeverOff',NULL,NULL,'LeverBase',NULL);
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('LeverOff','LeverOffFR',NULL,NULL,NULL);
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wrench',NULL,NULL,'WorkshopTable','Material');
-INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wrench','Wrench','0 6',NULL,'Material');
+INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wrench','Wrench','0 -8',NULL,'Material');
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Blueprint',NULL,NULL,'WorkshopTable','Material');
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Blueprint','BlueprintTableTop','0 -1',NULL,NULL);
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Bar',NULL,NULL,'WorkshopTable','Material');
-INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Bar','Bar','0 6',NULL,'Material');
+INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Bar','Bar','0 -8',NULL,'Material');
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wheel',NULL,NULL,'WorkshopTable','Material');
-INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wheel','Gear','0 8',NULL,'Material');
+INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('WorkshopTable_Wheel','Gear','0 -8',NULL,'Material');
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('AutomatonFR','AutomatonLeftFootFR',NULL,NULL,NULL);
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('AutomatonFR','AutomatonRightFootFR',NULL,NULL,NULL);
 INSERT INTO "Sprites_Combine" ("ID","BaseSprite","Offset","Sprite","Tint") VALUES ('AutomatonFR','AutomatonTorsoFR',NULL,NULL,NULL);
