@@ -600,6 +600,42 @@ void Workshop::cancelJob( unsigned int jobDefID )
 	}
 }
 
+bool Workshop::canCraft( QString itemSID, QString materialSID )
+{
+	if ( !m_active )
+		return false;
+	//test if workshop is able to build item
+	const auto possibleCrafts = DBH::workshopPossibleCraftResults( type() );
+	if ( !possibleCrafts.contains(itemSID) )
+	{
+		return false;
+	}
+
+	const auto& possibleMaterials = possibleCrafts[itemSID];
+
+	QString craftID;
+	if ( materialSID != "any" )
+	{
+		QString matType = Global::util->materialType( materialSID );
+		if ( !possibleMaterials.contains(matType ) )
+		{
+			return false;
+		}
+		craftID = possibleMaterials.value( matType );
+	}
+	else
+	{
+		craftID = possibleMaterials.first();
+	}
+
+	if ( craftID.isEmpty() )
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 {
 	if ( !m_active )

@@ -149,6 +149,7 @@ public:
 	bool moveJob( unsigned int jobDefID, QString moveCmd );
 	void moveJob( int pos, int newPos );
 	bool autoCraft( QString itemSID, QString materialSID, int amount );
+	bool canCraft( QString itemSID, QString materialSID );
 
 	bool setJobParams( unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );
 
@@ -268,6 +269,8 @@ public:
 	void cancelJob( unsigned int jobDefID );
 
 	bool hasCraftJob( const QString& itemSID, const QString& materialSID );
+
+	int numJobs() { return m_jobList.size(); }
 
 private:
 	//only access through workshop manager

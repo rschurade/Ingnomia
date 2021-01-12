@@ -129,15 +129,26 @@ bool WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int
 {
 	if( !craftJobExists( itemSID, materialSID ) )
 	{
+		QList<Workshop*> possibles;
 		for ( auto&& w : m_workshops )
 		{
 			if ( w->isAcceptingGenerated() )
 			{
-				if ( w->autoCraft( itemSID, materialSID, amount ) )
+				if( w->canCraft( itemSID, materialSID ) )
 				{
-					emit signalJobListChanged( w->id() );
-					return true;
+					possibles.append( w );
 				}
+			}
+		}
+		auto compare = []( Workshop* a, Workshop* b) { return a->numJobs() < b->numJobs(); };
+		std::sort( std::begin( possibles ), std::end( possibles ), compare );
+
+		for ( auto&& w : possibles )
+		{
+			if ( w->autoCraft( itemSID, materialSID, amount ) )
+			{
+				emit signalJobListChanged( w->id() );
+				return true;
 			}
 		}
 	}

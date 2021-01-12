@@ -11,6 +11,7 @@ add num plots to grove info,
 
 ### Changed
 allow designating grove over existing plants
+improve auto craft behavior
 
 ## [0.8.7]
 
