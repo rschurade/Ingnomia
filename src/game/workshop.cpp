@@ -350,6 +350,17 @@ void Workshop::onTick( quint64 tick )
 		return;
 	}
 
+	if ( !m_active )
+	{
+		if( m_job )
+		{
+			QSharedPointer<Job> spJob = m_job.toStrongRef();
+			g->jm()->deleteJob( spJob->id() );
+			m_currentCraftJobID = 0;
+		}
+		return;
+	}
+
 	checkLinkedStockpile();
 
 	// job has been finished in the job manager 

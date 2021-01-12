@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 
 ### Fixed
+suspending workshops
 
 ### Added
 add num plots to grove info, 
