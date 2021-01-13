@@ -60,7 +60,6 @@ class Store:
             return None
 
         matset = components[0]["material_set"]
-        sprite = self.construction_sprite(id, matset=matset)
 
         return {
             "id": id,
@@ -89,17 +88,6 @@ class Store:
 
     def construction_components(self, id):
         return [self.construction_component(*row) for row in db.construction_components(id)]
-
-    def construction_sprite(self, id, matset=None, matsets=None):
-        return None
-        sprite = ConstructionSprite.get(id)
-
-        if matset is not None:
-            sprite.uses_material_set(matset)
-        if matsets is not None:
-            sprite.uses_material_sets(matsets)
-
-        return sprite.id
 
     def constructions(self):
         constructions = [c for c in [self.construction(id) for id in db.constructions()] if c is not None]
@@ -327,15 +315,23 @@ class Store:
 
         return ([*mats, *[mat for type in mattypes for mat in db.materials_of_type(type)]], tree)
 
-    def plant_produce(self, chance, itemid, materialid):
+    def plant_produce(self, chance, itemid, materialid, fruits_per_season=0):
         matset = MaterialSet(materialid, None)
+
+        if fruits_per_season == 0:
+            amount = total_amount(chance)
+            hint = amount_hint(chance)
+        else:
+            amount = int(fruits_per_season)
+            hint = "Per season"
+
         return {
             "id": itemid,
             "translation": self.translate("item", itemid),
             "spriteid": self.item_spriteid(itemid),
             "material_set": matset,
-            "amount": total_amount(chance),
-            "amount_hint": amount_hint(chance),
+            "amount": amount,
+            "amount_hint": hint,
             "type": "harvest",
         }
 
@@ -357,11 +353,28 @@ class Store:
             "type": "fell",
         }
 
-    def plant_produces(self, id):
+    def plant_produces(self, id, fruits_per_season=0):
         return [
-            *[self.plant_produce(*row) for row in db.plant_produces(id)],
+            *[self.plant_produce(*row, fruits_per_season) for row in db.plant_produces(id)],
             *[self.plant_fell(id, *row) for row in db.plant_fell(id)],
         ]
+
+    def plant(self, id, growsin, growseason, killseason, loseseason, material, fruits):
+        harvest_action = db.plant_harvest_action(id)
+        fruits_per_season = 0
+        if harvest_action == "ReduceFruitCount":
+            fruits_per_season = fruits
+
+        return {
+            "id": id,
+            "sprites": db.plant_sprites(id),
+            "material": material,
+            "growsin": growsin,
+            "growseason": [] if growseason is None else growseason.split("|"),
+            "killseason": [] if killseason is None else killseason.split("|"),
+            "loseseason": [] if loseseason is None else loseseason.split("|"),
+            "harvestproduces": self.plant_produces(id, fruits_per_season),
+        }
 
     def plants(self):
         floors = {"Tree": "grass", "Mushroom": "grass"}
@@ -370,22 +383,7 @@ class Store:
             {
                 "type": type,
                 "floor": floors.get(type, "farm"),
-                "plants": sort_translations(
-                    [
-                        {
-                            "id": id,
-                            "sprites": db.plant_sprites(id),
-                            "material": material,
-                            "growsin": growsin,
-                            "growseason": [] if growseason is None else growseason.split("|"),
-                            "killseason": [] if killseason is None else killseason.split("|"),
-                            "loseseason": [] if loseseason is None else loseseason.split("|"),
-                            "harvestaction": db.plant_harvest_action(id),
-                            "harvestproduces": self.plant_produces(id),
-                        }
-                        for (id, growsin, growseason, killseason, loseseason, material) in db.plants(type)
-                    ]
-                ),
+                "plants": sort_translations([self.plant(*row) for row in db.plants(type)]),
             }
             for type in db.plant_types()
         ]

@@ -204,7 +204,7 @@ class Database:
 
     def plants(self, type):
         return self.conn.execute(
-            "SELECT id, growsin, growsinseason, iskilledinseason, losesfruitinseason, material FROM Plants WHERE type = ?",
+            "SELECT id, growsin, growsinseason, iskilledinseason, losesfruitinseason, material, numfruitsperseason FROM Plants WHERE type = ?",
             (type,),
         )
 
