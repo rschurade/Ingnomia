@@ -1,47 +1,63 @@
-{% macro sprite(sprite, matset=None, background="plain", zoom=false, step=None) %}
-  {% if sprite is string %}
-    {% set sprite = sprites|selectattr("id", "equalto", sprite)|first %}
-  {% endif %}
-
-  {% if sprite %}
-    {% if not matset %}
-      {% set matset = "any" %}
-    {% endif %}
-
-    <span
-      class="
-        sprite
-        s-{{ sprite.id }}
-        m-{{ matset }}
-        {% if zoom %}zoomed{% endif %}
-      ">
-      {% if background %}
-        <span class="bg bg-{{ background }}"></span>
-      {% endif %}
-
-      <span class="layers">
-        {% for layer in range(sprite.layer_count) %}
-          <span
-            class="layer"
-            {% if step %}
-              style="animation-play-state: paused; animation-delay: -{{ step - 1 }}s;"
-            {% endif %}
-          ></span>
-        {% endfor %}
-      </span>
+{% macro spritelayout(rendered, type, id, matset='any', zoom=False) %}
+  <span class="
+    layout
+    l-{{ rendered.bbox.width }}-{{ rendered.bbox.height }}
+    {{ type }}-{{ id }}
+    m-{{ matset }}
+    {% if zoom %}zoomed{% endif %}">
+    <span class="cells">
+      {% for cell in rendered.cells %}
+        <span class="
+          cell
+          cp-{{ cell.pos.x }}-{{ cell.pos.y }}-{{ cell.pos.z }}
+          cn-{{ loop.index }}">
+          {% for layer in cell.layers.layers %}
+            <span class="layer y-{{ loop.index }}"></span>
+          {% endfor %}
+        </span>
+      {% endfor %}
     </span>
+  </span>
+{% endmacro %}
+
+{% macro itemsprite(id, matset='any', zoom=False) %}
+  {% if sm.item_sprites[id] and sm.item_sprites[id].materials[matset] %}
+    {{ spritelayout(sm.item_sprites[id].materials[matset], 'i', id, matset, zoom) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro plantsprite(id) %}
+  {% if sm.plant_sprites[id] %}
+    {{ spritelayout(sm.plant_sprites[id].materials.any, 'p', id, 'any') }}
+  {% endif %}
+{% endmacro %}
+
+{% macro constrsprite(id) %}
+  {% if sm.construction_sprites[id] %}
+    {{ spritelayout(sm.construction_sprites[id].materials.any, 'k', id, 'any') }}
+  {% endif %}
+{% endmacro %}
+
+{% macro workshopsprite(id, zoom=False) %}
+  {% if sm.workshop_sprites[id] %}
+    {{ spritelayout(sm.workshop_sprites[id].materials.any, 'w', id, 'any', zoom) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro menusprite(id) %}
+  {% if sm.menu_sprites[id] %}
+    {{ spritelayout(sm.menu_sprites[id].materials.any, 'm', id, 'any') }}
   {% endif %}
 {% endmacro %}
 
 {% macro item(i) %}
-  {% if i.sprite %}
-    {% if i.material_set %}
-      {% set matset = i.material_set.id %}
-    {% else %}
-      {% set matset = "any" %}
-    {% endif %}
-    {{ sprite(i.sprite, matset=matset) }}
+  {% if i.material_set %}
+    {% set matset = i.material_set.id %}
+  {% else %}
+    {% set matset = "any" %}
   {% endif %}
+
+  {{ itemsprite(i.id, matset=matset) }}
   <a href="{{ base }}item/{{ i.id }}.html">
     {{ i.translation|title }}{% if i.material_set and i.material_set.labels|length and not i.material_set.covers(i.id) %}
       ({{ i.material_set.labels|map("title")|join('/') }})
@@ -114,9 +130,7 @@
           {% endif %}
 
           <td>
-            {% if construction.sprite %}
-              {{ macros.sprite(construction.sprite, matset=construction.material_set.id) }}
-            {% endif %}
+            {{ macros.constrsprite(construction.id) }}
             {{ construction.translation|title }}</td>
           <td>
             {% for component in construction.components %}
@@ -129,7 +143,7 @@
   </table>
 {% endmacro %}
 
-{% macro nav_table(only_section=None, class="nav", custom_data=None, custom_path=None) %}
+{% macro nav_table(only_section=None, class="nav", custom_data=None, custom_path=None, workshop_sprites=False) %}
   <table class="{{ class }}">
     {% if not custom_data %}
       {% set data = navtable %}
@@ -164,13 +178,21 @@
               <td colspan="{% if group.hide %}2{% else %}1{% endif %}">
                 {% for item in group['items'] %}
                   <span class="entry">
-                    {% if item.sprite %}
-                      {{ sprite(item.sprite) }}
-                    {% endif %}
-                    <a href="{{ base }}{{ section.path }}/{{ item.id }}.html">{{ item.translation|title }}</a>
+                    {% if workshop_sprites and section.path == 'workshop' %}
+                      <a class="workshop-with-sprite" href="{{ base }}{{ section.path }}/{{ item.id }}.html">
+                        {{ workshopsprite(item.id) }}
+                        <span class="link">{{ item.translation|title }}</span>
+                      </a>
+                    {% else %}
+                      {% if section.path == 'item' and item.spriteid %}
+                        {{ itemsprite(item.id) }}
+                      {% endif %}
 
-                    {% if not loop.last %}
-                      &bull;
+                      <a href="{{ base }}{{ section.path }}/{{ item.id }}.html">{{ item.translation|title }}</a>
+
+                      {% if not loop.last %}
+                        &bull;
+                      {% endif %}
                     {% endif %}
                   </span>
                 {% endfor %}

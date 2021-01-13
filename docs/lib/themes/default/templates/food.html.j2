@@ -19,8 +19,8 @@
             {% endif %}
 
             <td>
-              {% if item.sprite %}
-                {{ macros.sprite(item.sprite) }}
+              {% if item.spriteid %}
+                {{ macros.itemsprite(item.id) }}
               {% endif %}
               <a href="{{ base }}item/{{ item.id }}.html">{{ item.translation|title }}</a>
             </td>

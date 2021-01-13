@@ -8,30 +8,26 @@
 {% block content %}
   <h2>All Plants</h2>
 
-  {% for type in plants %}
-    <h3>{{ type.type }}s</h3>
-
-    <table class="plants">
+  <table class="plants">
+    {% for type in plants %}
       <tr>
-        <th rowspan="2">{{ type.type }}</th>
+        <th colspan="2" rowspan="2">{{ type.type }}</th>
         <th colspan="3">Seasons</th>
-        <th colspan="2">Harvesting</th>
+        <th rowspan="2">Harvest yield</th>
       </tr>
       <tr>
         <th>Grows</th>
         <th>Dies</th>
         <th>Loses fruit</th>
-        <th>Yield</th>
-        <th>Result</th>
       </tr>
 
       {% for plant in type.plants %}
         <tr>
           <td>
-            {% if plant.sprite %}
-              {{ macros.sprite(plant.sprite, background=type.floor) }}
-            {% endif %}
             {{ plant.id|title }}
+          </td>
+          <td>
+            {{ macros.plantsprite(plant.id) }}
           </td>
           <td class="seasons">
             {% for season in plant.growseason %}
@@ -49,23 +45,19 @@
             {% endfor %}
           </td>
           <td>
-            {% for produce in plant.harvestproduces %}
+            {% for produce in plant.harvestproduces if produce.type == "harvest" %}
+              <div>{{ macros.itemamount(produce) }}</div>
+            {% endfor %}
+
+            {% for produce in plant.harvestproduces if produce.type == "fell" %}
+              {% if loop.index == 1 %}
+                <div class="subsection">When felling:</div>
+              {% endif %}
               <div>{{ macros.itemamount(produce) }}</div>
             {% endfor %}
           </td>
-          <td>
-            <i>
-              {% if plant.harvestaction == 'Destroy' %}
-                Destroy plant
-              {% elif plant.harvestaction == 'StateOneBack' %}
-                Reduce growth stage
-              {% elif plant.harvestaction == 'ReduceFruitCount' %}
-                Reduce fruit count
-              {% endif %}
-            </i>
-          </td>
         </tr>
       {% endfor %}
-    </table>
-  {% endfor %}
+    {% endfor %}
+  </table>
 {% endblock %}

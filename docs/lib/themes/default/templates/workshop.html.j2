@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block content %}
+  <span class="workshop-sprite">{{ macros.workshopsprite(workshop.id, zoom=True) }}</span>
+
   <h2>
     <span class="type">{{ workshop.tab|title }} workshop</span>
     {{ workshop.translation|title }}

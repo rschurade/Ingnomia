@@ -36,7 +36,7 @@ class Database:
 
     def construction_sprites(self, id):
         return self.conn.execute(
-            "SELECT COALESCE(spriteidoverride, spriteid), offset FROM Constructions_Sprites WHERE id = ? ORDER BY offset",
+            "SELECT COALESCE(spriteidoverride, spriteid), offset FROM Constructions_Sprites WHERE id = ?",
             (id,),
         )
 
@@ -169,14 +169,14 @@ class Database:
     def materials_of_type(self, type):
         return [mat for (mat,) in self.conn.execute("SELECT id FROM Materials WHERE type = ?", (type,))]
 
+    def materials_flat(self, mats=None, mattypes=None):
+        mats = [] if empty(mats) else mats.split("|")
+        mattypes = [] if empty(mattypes) else mattypes.split("|")
+        return [*mats, *[m for t in mattypes for m in self.materials_of_type(t)]]
+
     def plant_harvest_action(self, id):
         for (action,) in self.conn.execute("SELECT action FROM Plants_OnHarvest WHERE id = ?", (id,)):
             return action
-        return None
-
-    def plant_material(self, id):
-        for (material,) in self.conn.execute("SELECT material FROM Plants WHERE id = ?", (id,)):
-            return material
         return None
 
     def plant_produces(self, id):
@@ -188,20 +188,23 @@ class Database:
             (id,),
         )
 
+    def plant_fell(self, id):
+        return self.conn.execute("SELECT itemid, materialid, random FROM Plants_OnFell WHERE id = ?", (id,))
+
     def plant_types(self):
         return [type for (type,) in self.conn.execute("SELECT DISTINCT type FROM Plants")]
 
     def plant_sprites(self, id):
         return [
-            spriteid
-            for (spriteid,) in self.conn.execute(
-                "SELECT DISTINCT spriteid FROM Plants_States WHERE id = ? AND spriteid != 'none'", (id,)
+            (spriteid, layout)
+            for (spriteid, layout) in self.conn.execute(
+                "SELECT DISTINCT spriteid, layout FROM Plants_States WHERE id = ?", (id,)
             )
         ]
 
     def plants(self, type):
         return self.conn.execute(
-            "SELECT id, growsin, growsinseason, iskilledinseason, losesfruitinseason FROM Plants WHERE type = ?",
+            "SELECT id, growsin, growsinseason, iskilledinseason, losesfruitinseason, material, numfruitsperseason FROM Plants WHERE type = ?",
             (type,),
         )
 
@@ -229,7 +232,7 @@ class Database:
 
     def sprite_combine(self, id):
         return self.conn.execute(
-            "SELECT basesprite, offset, sprite FROM Sprites_Combine WHERE id = ?",
+            "SELECT basesprite, offset, sprite, tint FROM Sprites_Combine WHERE id = ?",
             (id,),
         )
 
@@ -261,6 +264,11 @@ class Database:
             (key,),
         ):
             return text
+
+    def tree_layout(self, id):
+        return self.conn.execute(
+            "SELECT offset, rotation, spriteid, fruitpos FROM TreeLayouts_Layout WHERE id = ?", (id,)
+        )
 
     def uncraftable_items(self):
         return [id for (id,) in self.conn.execute("SELECT id FROM Items EXCEPT SELECT itemid FROM Crafts")]
@@ -302,6 +310,14 @@ class Database:
                 (craft,),
             )
         ]
+
+    def workshop_sprites(self, id):
+        return self.conn.execute(
+            """SELECT spriteid, offset, wallrotation, itemid, materialitem, amount, isfloor
+               FROM Workshops_Components
+               WHERE id = ?""",
+            (id,),
+        )
 
     def workshops_using_item(self, item):
         return [

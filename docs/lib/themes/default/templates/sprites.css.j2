@@ -1,37 +1,19 @@
-.sprite {
-  width: 32px;
-  height: 32px;
+.zoomed .cells {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(2, 2) translate(50%, 50%);
+}
+
+.layout {
   display: inline-block;
-  vertical-align: bottom;
   position: relative;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
+  vertical-align: text-bottom;
 }
 
-.layers {
-  position: absolute;
-}
-
-.layer,
-.bg {
+.cell, .layer {
   display: block;
   position: absolute;
-  width: 32px;
-  height: 32px;
-}
-
-.bg {
-  height: 20px;
-}
-
-.zoomed {
-  width: 64px;
-  height: 64px;
-}
-
-.zoomed .bg,
-.zoomed .layers {
-  transform: translate(-50%, -50%) scale(2, 2) translate(50%, 50%);
 }
 
 {% for anim in sprite_anims %}

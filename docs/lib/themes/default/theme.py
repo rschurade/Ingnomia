@@ -3,31 +3,25 @@ import os
 import shutil
 from jinja2 import Environment, FileSystemLoader
 
-from ...sprite import BaseSprite
+from ...store import store
 from ...util import DOCDIR, log, sort_translations, format_css
-from .sprites import generate_sprite_styles
+from .sprites import StyleManager
 
 THEME_PATH = os.path.dirname(__file__)
 ASSET_PATH = os.path.join(THEME_PATH, "assets")
+TEMPLATE_PATH = os.path.join(THEME_PATH, "templates")
 CONTENT_PATH = os.path.realpath(os.path.join(DOCDIR, "..", "content"))
 
 
 class DefaultTheme:
     content_assets = ["icon.png"]
     assets = []
-    backgrounds = [
-        {"id": "plain", "base": BaseSprite("SolidSelectionFloor")},
-        {"id": "farm", "base": BaseSprite("TilledSoil"), "material": "Dirt"},
-        {"id": "stone", "base": BaseSprite("BlockStoneFloor"), "material": "Marble"},
-        {"id": "grass", "base": BaseSprite("Grass_1_5")},
-        {"id": "wood", "base": BaseSprite("LogFloor"), "material": "Pine"},
-    ]
 
     def __init__(self):
         self.assets = os.listdir(ASSET_PATH)
-        self.env = Environment(loader=FileSystemLoader(THEME_PATH))
+        self.env = Environment(loader=FileSystemLoader(TEMPLATE_PATH))
 
-    def render(self, store, output, build_id):
+    def render(self, output, build_id):
         # Setup directories
         shutil.rmtree(output, ignore_errors=True)
 
@@ -44,15 +38,15 @@ class DefaultTheme:
         tints = store.tints()
         workshops = store.workshops()
         constructions = store.constructions()
-        sprites = store.sprites()
 
-        tilesheets = set([v["tilesheet"] for sprite in sprites for v in sprite["basesprites"].values()]) | set(
-            [bg["base"].tilesheet for bg in self.backgrounds]
-        )
+        menu = [
+            {"label": "Items", "href": "items.html"},
+            {"label": "Food", "href": "food.html"},
+            {"label": "Plants", "href": "plants.html"},
+            {"label": "Constructions", "href": "constructions.html"},
+            {"label": "Workshops", "href": "workshops.html"},
+        ]
 
-        (sprite_anims, sprite_rules) = generate_sprite_styles(sprites, self.backgrounds)
-
-        # Setup navigation table
         navtable = [
             {"label": "Items", "categories": categories, "path": "item"},
             {
@@ -70,7 +64,6 @@ class DefaultTheme:
             },
         ]
 
-        # Setup search index
         search_index = [
             *[
                 {
@@ -96,14 +89,55 @@ class DefaultTheme:
             ],
         ]
 
-        global_context = {
-            "navtable": navtable,
-            "index": search_index,
-            "sprites": sprites,
-            "build": {"id": build_id, "date": datetime.utcnow().isoformat(" ", timespec="minutes")},
-        }
+        log("Building sprites")
+
+        for item in items:
+            StyleManager.create_item_sprite(item)
+
+        for item in items:
+            for craft in [*item["crafts"], *item["rcrafts"]]:
+                if craft["id"]:
+                    StyleManager.add_item_materialset(craft["id"], craft["material_set"])
+                for component in craft["components"]:
+                    StyleManager.add_item_materialset(component["id"], component["material_set"])
+
+        for cat in constructions:
+            for constr in cat["constructions"]:
+                StyleManager.create_construction_sprite(constr)
+                for component in constr["components"]:
+                    StyleManager.add_item_materialset(component["id"], component["material_set"])
+
+        for workshop in workshops:
+            StyleManager.create_workshop_sprite(workshop)
+
+        for type in plants:
+            if type["type"] == "Plant":
+                floor = "farm"
+            elif type["type"] == "Tree":
+                floor = "grass"
+            elif type["type"] == "Mushroom":
+                floor = "mushroom"
+
+            for plant in type["plants"]:
+                StyleManager.create_plant_sprite(plant, floor=floor)
+
+        for item in menu:
+            StyleManager.create_menu_sprite(item)
+
+        for w in sorted(StyleManager.warnings):
+            log(w, "! ")
+
+        (sprite_anims, sprite_rules) = StyleManager.styles()
 
         log("Rendering")
+
+        global_context = {
+            "menu": menu,
+            "navtable": navtable,
+            "index": search_index,
+            "build": {"id": build_id, "date": datetime.utcnow().isoformat(" ", timespec="minutes")},
+            "sm": StyleManager,
+        }
 
         # Prerender navtable
         navtable_rendered_root = self.env.get_template("navtable.html.j2").render(**global_context)
@@ -114,7 +148,7 @@ class DefaultTheme:
             f.write(
                 format_css(
                     self.env.get_template("sprites.css.j2").render(
-                        tints=tints, sprites=sprites, sprite_anims=sprite_anims, sprite_rules=sprite_rules
+                        tints=tints, sprite_anims=sprite_anims, sprite_rules=sprite_rules
                     )
                 )
             )
@@ -194,5 +228,5 @@ class DefaultTheme:
             shutil.copy(os.path.join(CONTENT_PATH, asset), os.path.join(output, "assets", asset))
         for asset in self.assets:
             shutil.copy(os.path.join(ASSET_PATH, asset), os.path.join(output, "assets", asset))
-        for asset in tilesheets:
+        for asset in StyleManager.tilesheets:
             shutil.copy(os.path.join(CONTENT_PATH, "tilesheet", asset), os.path.join(output, "assets", asset))

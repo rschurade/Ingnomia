@@ -1,6 +1,5 @@
 from .db import db
 from .material import MaterialSet
-from .sprite import ConstructionSprite, PlantSprite, Sprite
 from .util import empty, log, sort_translations, total_amount, amount_hint
 
 
@@ -60,19 +59,13 @@ class Store:
             log(f"Empty construction {id}", "! ")
             return None
 
-        if len(components) == 1:
-            matset = components[0]["material_set"]
-            sprite = self.construction_sprite(id, matset=matset)
-        else:
-            matsets = [c["material_set"] for c in components]
-            sprite = self.construction_sprite(id, matsets=matsets)
-            matset = {"id": "any"}
+        matset = components[0]["material_set"]
 
         return {
             "id": id,
             "translation": self.translate("construction", id),
-            "sprite": sprite,
             "material_set": matset,
+            "components_unsorted": components,
             "components": sort_translations(components),
             "category": category,
             "type": type,
@@ -88,23 +81,13 @@ class Store:
         return {
             "id": itemid,
             "translation": self.translate("item", itemid),
-            "sprite": self.item_sprite(itemid, register=matset),
+            "spriteid": self.item_spriteid(itemid),
             "material_set": matset,
             "amount": int(amount),
         }
 
     def construction_components(self, id):
         return [self.construction_component(*row) for row in db.construction_components(id)]
-
-    def construction_sprite(self, id, matset=None, matsets=None):
-        sprite = ConstructionSprite.get(id)
-
-        if matset is not None:
-            sprite.uses_material_set(matset)
-        if matsets is not None:
-            sprite.uses_material_sets(matsets)
-
-        return sprite.id
 
     def constructions(self):
         constructions = [c for c in [self.construction(id) for id in db.constructions()] if c is not None]
@@ -127,7 +110,7 @@ class Store:
         return {
             "id": id,
             "translation": self.translate("item", id),
-            "sprite": self.item_sprite(id),
+            "spriteid": self.item_spriteid(id),
             "capacity": int(capacity),
             "same": int(same) == 1,
         }
@@ -140,7 +123,7 @@ class Store:
                     "cat": cat,
                     "group": group,
                     "translation": self.translate("item", item),
-                    "sprite": self.item_sprite(item),
+                    "spriteid": self.item_spriteid(item),
                 }
                 for (item, sprite, cat, group) in db.container_items(id)
             ]
@@ -151,7 +134,7 @@ class Store:
         return {
             "id": itemid,
             "translation": self.translate("item", itemid),
-            "sprite": self.item_sprite(itemid, register=matset),
+            "spriteid": self.item_spriteid(itemid),
             "material_set": matset,
             "amount": int(amount),
         }
@@ -169,7 +152,7 @@ class Store:
         return {
             "id": itemid,
             "translation": "none" if itemid is None else self.translate("item", itemid),
-            "sprite": None if itemid is None else self.item_sprite(itemid, register=matset),
+            "spriteid": None if itemid is None else self.item_spriteid(itemid),
             "material_set": matset,
             "time": int(time),
             "skill": self.translate("skill", skill),
@@ -186,7 +169,7 @@ class Store:
                     "cat": cat,
                     "group": group,
                     "translation": self.translate("item", item),
-                    "sprite": self.item_sprite(item),
+                    "spriteid": self.item_spriteid(item),
                     "drinkvalue": drinkval,
                 }
                 for (item, sprite, cat, group, drinkval) in db.drink_items()
@@ -201,7 +184,7 @@ class Store:
                     "cat": cat,
                     "group": group,
                     "translation": self.translate("item", item),
-                    "sprite": self.item_sprite(item),
+                    "spriteid": self.item_spriteid(item),
                     "eatvalue": eatval,
                 }
                 for (item, sprite, cat, group, eatval) in db.food_items()
@@ -211,8 +194,8 @@ class Store:
     def group_items(self, cat, group):
         return sort_translations(
             [
-                {"id": item, "translation": self.translate("item", item), "sprite": self.item_sprite(item)}
-                for (item, sprite, _, _) in db.group_items(cat, group)
+                {"id": item, "translation": self.translate("item", item), "spriteid": self.item_spriteid(item)}
+                for (item, _, _, _) in db.group_items(cat, group)
             ]
         )
 
@@ -221,6 +204,8 @@ class Store:
         if cat == "Containers":
             containerinfo = self.container(id)
             containerinfo["can_contain"] = self.container_items(id)
+
+        (materials, material_tree) = self.material_tree(mats, mattypes)
 
         return {
             "id": id,
@@ -236,8 +221,9 @@ class Store:
             "stack": stack,
             "container": self.container(cnt),
             "carry": self.container(ccnt),
-            "sprite": self.item_sprite(id),
-            "materials": self.material_tree(mats, mattypes),
+            "spriteid": self.item_spriteid(id),
+            "materials": materials,
+            "material_tree": material_tree,
             "value": value,
             "evalue": evalue,
             "dvalue": dvalue,
@@ -282,50 +268,32 @@ class Store:
     def item_wcrafts(self, item):
         return [{"id": id, "translation": self.translate("workshop", id)} for id in db.workshops_using_item(item)]
 
-    def item_sprite(self, item, register=None):
+    def item_spriteid(self, item):
         sprite = db.item_sprite(item)
-        (materials, mattypes) = db.item_materials(item)
-
-        spriteObj = Sprite.get(item if sprite is None else sprite)
-
-        matset = MaterialSet(materials, mattypes)
-        spriteObj.uses_material_set(matset, is_default=True)
-
-        # Register caller-specific material set
-        if register is not None:
-            spriteObj.uses_material_set(register)
-
         return item if sprite is None else sprite
 
     def items(self):
         return sort_translations([self.item(*row) for row in db.items()])
 
     def materials(self, mats, mattypes):
-        mats = [] if mats is None else mats.split("|")
-        mattypes = [] if mattypes is None else mattypes.split("|")
-
         return sort_translations(
-            [
-                {"id": id, "translation": self.translate("material", id)}
-                for id in [
-                    *mats,
-                    *[mat for type in mattypes for mat in db.materials_of_type(type)],
-                ]
-            ]
+            [{"id": id, "translation": self.translate("material", id)} for id in db.materials_flat(mats, mattypes)]
         )
 
     def material_tree(self, mats, mattypes):
+        mats = [] if mats is None else mats.split("|")
         mattypes = [] if mattypes is None else mattypes.split("|")
-        return sort_translations(
+
+        tree = sort_translations(
             [
                 *(
                     []
-                    if mats is None
+                    if len(mats) == 0
                     else [
                         {
                             "id": "Other",
                             "materials": sort_translations(
-                                [{"id": mat, "translation": self.translate("material", mat)} for mat in mats.split("|")]
+                                [{"id": mat, "translation": self.translate("material", mat)} for mat in mats]
                             ),
                         }
                     ]
@@ -345,23 +313,68 @@ class Store:
             ]
         )
 
-    def plant_produce(self, chance, itemid, materialid):
+        return ([*mats, *[mat for type in mattypes for mat in db.materials_of_type(type)]], tree)
+
+    def plant_produce(self, chance, itemid, materialid, fruits_per_season=0):
         matset = MaterialSet(materialid, None)
+
+        if fruits_per_season == 0:
+            amount = total_amount(chance)
+            hint = amount_hint(chance)
+        else:
+            amount = int(fruits_per_season)
+            hint = "Per season"
+
         return {
             "id": itemid,
             "translation": self.translate("item", itemid),
-            "sprite": self.item_sprite(itemid, register=matset),
+            "spriteid": self.item_spriteid(itemid),
             "material_set": matset,
-            "amount": total_amount(chance),
-            "amount_hint": amount_hint(chance),
+            "amount": amount,
+            "amount_hint": hint,
+            "type": "harvest",
         }
 
-    def plant_produces(self, id):
-        return [self.plant_produce(*row) for row in db.plant_produces(id)]
+    def plant_fell(self, plantid, itemid, materialid, random):
+        matset = MaterialSet(materialid, None)
 
-    def plant_sprite(self, id):
-        sprite = PlantSprite.get(id)
-        return sprite.id
+        if random > 0:
+            amount = f"1-{int(random)}"
+        else:
+            layout = list(db.tree_layout(plantid))
+            amount = 1 if len(layout) == 0 else len(layout)
+
+        return {
+            "id": itemid,
+            "translation": self.translate("item", itemid),
+            "spriteid": self.item_spriteid(itemid),
+            "material_set": matset,
+            "amount": amount,
+            "type": "fell",
+        }
+
+    def plant_produces(self, id, fruits_per_season=0):
+        return [
+            *[self.plant_produce(*row, fruits_per_season) for row in db.plant_produces(id)],
+            *[self.plant_fell(id, *row) for row in db.plant_fell(id)],
+        ]
+
+    def plant(self, id, growsin, growseason, killseason, loseseason, material, fruits):
+        harvest_action = db.plant_harvest_action(id)
+        fruits_per_season = 0
+        if harvest_action == "ReduceFruitCount":
+            fruits_per_season = fruits
+
+        return {
+            "id": id,
+            "sprites": db.plant_sprites(id),
+            "material": material,
+            "growsin": growsin,
+            "growseason": [] if growseason is None else growseason.split("|"),
+            "killseason": [] if killseason is None else killseason.split("|"),
+            "loseseason": [] if loseseason is None else loseseason.split("|"),
+            "harvestproduces": self.plant_produces(id, fruits_per_season),
+        }
 
     def plants(self):
         floors = {"Tree": "grass", "Mushroom": "grass"}
@@ -370,29 +383,10 @@ class Store:
             {
                 "type": type,
                 "floor": floors.get(type, "farm"),
-                "plants": sort_translations(
-                    [
-                        {
-                            "id": id,
-                            "sprite": self.plant_sprite(id),
-                            "growsin": growsin,
-                            "growseason": [] if growseason is None else growseason.split("|"),
-                            "killseason": [] if killseason is None else killseason.split("|"),
-                            "loseseason": [] if loseseason is None else loseseason.split("|"),
-                            "harvestaction": db.plant_harvest_action(id),
-                            "harvestproduces": self.plant_produces(id),
-                        }
-                        for (id, growsin, growseason, killseason, loseseason) in db.plants(type)
-                    ]
-                ),
+                "plants": sort_translations([self.plant(*row) for row in db.plants(type)]),
             }
             for type in db.plant_types()
         ]
-
-    def sprites(self):
-        """This method should be the last store method call made in themes, as other
-        store methods may register new sprites or register new materials on sprites."""
-        return Sprite.all()
 
     def tints(self):
         return [
@@ -416,7 +410,7 @@ class Store:
                 {
                     "id": itemid,
                     "translation": self.translate("item", itemid),
-                    "sprite": self.item_sprite(itemid),
+                    "spriteid": self.item_spriteid(itemid),
                     "amount": int(amount),
                     "workshops": sort_translations(
                         map(
@@ -464,3 +458,6 @@ class Store:
                 for (id, crafts, tab) in db.workshops()
             ]
         )
+
+
+store = Store()
