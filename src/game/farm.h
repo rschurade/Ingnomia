@@ -31,6 +31,9 @@ class Game;
 
 struct FarmField
 {
+	FarmField() = default;
+	FarmField(const Position& pos, const QSharedPointer<Job>& job) : pos(pos), job(job) {}
+
 	Position pos;
 	QWeakPointer<Job> job;
 };
@@ -82,11 +85,12 @@ public:
 
 	QVariant serialize() const;
 
-	QString plantType()
+	QString plantType() const
 	{
 		return m_properties.plantType;
 	}
-	bool harvest()
+
+	bool harvest() const
 	{
 		return m_properties.harvest;
 	}
@@ -107,7 +111,7 @@ public:
 private:
 	FarmProperties m_properties;
 
-	QMap<unsigned int, FarmField*> m_fields;
+	QMap<unsigned int, FarmField> m_fields;
 
 	void updateAutoFarmer();
 
