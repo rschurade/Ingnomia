@@ -39,13 +39,142 @@ public:
 
 	void removeCreature( unsigned int id );
 
-	QList<Creature*> creaturesAtPosition( Position& pos );
-	QList<Animal*> animalsAtPosition( Position& pos );
-	QList<Monster*> monstersAtPosition( Position& pos );
+	/**
+	 * Generic Method to get a creature by Id and automatically cast to a type. 
+	 * Be careful when using this method as passing in the wrong type combination will cause a crash.
+	 * Recommend to use methods CreatureManager::animal, CreatureManager::animal, and 
+	 * CreatureManager::monster as these are safer and use this function under the hood.
+	 * 
+	 * Below is a good and bad example of usage.
+	 * ex) 
+	 *  //GOOD Animal matches with CreatureType::Animal
+	 *  getCreature<Animal>(local_id, CreatureType::ANIMAL)
+	 * 
+	 * 	//BAD Animal does not match with CreatureType::Monster
+	 * 	getCreature<Animal>(local_id, CreatureType::MONSTER)
+	 * 
+	 * Eventually this should use QTs MetaTypes so passing the CreatureType would
+	 * be unnecessary and a call would look like getCreature<Animal>(id).
+	 * 
+	 * @param id - Creature id
+	 * @param type - CreatureType to look for
+	 * @return nullptr or creature cast to given type
+	 */
+	template<typename TCreatureClass>
+	TCreatureClass* getCreature(const unsigned int id, const CreatureType type) const{
+		if(m_creaturesByID.contains(id)){
+			auto creature = m_creaturesByID[id];
+			if(creature->type() == type){
+				return static_cast<TCreatureClass*>(creature);
+			}
+		}
+		return nullptr;
+	}
 
-	Creature* creature( unsigned int id );
-	Animal* animal( unsigned int id );
-	Monster* monster( unsigned int id );
+	/**
+	 * Template specilization for Creature to avoid a type check.
+	 */
+	template<>
+	Creature* getCreature<Creature>(const unsigned int id, const CreatureType type) const{
+		if(m_creaturesByID.contains(id)){
+			return m_creaturesByID[id];
+		}
+		return nullptr;
+	}
+
+	/**
+	 * @param id - Creature id
+	 * @return nullptr or Creature
+	 */
+	Creature* creature(const unsigned int id) const{
+		return getCreature<Creature>(id, CreatureType::UNDEFINED);
+	}
+
+	/**
+	 * @param id - Creature id
+	 * @return nullptr or Animal
+	 */
+	Animal* animal(const unsigned int id) const{
+		return getCreature<Animal>(id, CreatureType::ANIMAL);
+	}
+
+	/**
+	 * @param id - Creature id
+	 * @return nullptr or monster
+	 */
+	Monster* monster(const unsigned int id) const{
+		return getCreature<Monster>(id, CreatureType::MONSTER);
+	}
+
+	/**
+	 * Generic Method to get a list of creatures at a position and automatically cast to a type. 
+	 * Be careful when using this method as passing in the wrong type combination will cause a crash.
+	 * Recommend to use methods CreatureManager::creaturesAtPosition, CreatureManager::animalsAtPosition, 
+	 * and CreatureManager::monstersAtPosition as these are safer and use this function under the hood.
+	 * 
+	 * Below is a good and bad example of usage.
+	 * ex) 
+	 *  //GOOD Animal matches with CreatureType::Animal
+	 *  getCreaturesAtPosition<Animal>(local_pos, CreatureType::ANIMAL)
+	 * 
+	 * 	//BAD Animal does not match with CreatureType::Monster
+	 * 	getCreaturesAtPosition<Animal>(local_id, CreatureType::MONSTER)
+	 * 
+	 * Eventually this should use QTs MetaTypes so passing the CreatureType would
+	 * be unnecessary and a call would look like getCreaturesAtPosition<Animal>(pos).
+	 * 
+	 * @param pos - Position to search
+	 * @param type - CreatureType to look for
+	 * @return QList<TCreatureClass>
+	 */
+	template<typename TCreatureClass>
+	QList<TCreatureClass*> getCreaturesAtPosition(const Position& pos, const CreatureType type) const{
+		QList<TCreatureClass*> out;
+		for(Creature* creature : m_creatures){
+			if(creature->type() == type && creature->getPos() == pos){
+				out.push_back(static_cast<TCreatureClass*>(creature));
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * Template specilization for Creature to avoid a type check.
+	 */
+	template<>
+	QList<Creature*> getCreaturesAtPosition<Creature>(const Position& pos, const CreatureType type) const{
+		QList<Creature*> out;
+		for(Creature* creature : m_creatures){
+			if(creature->getPos() == pos){
+				out.push_back(creature);
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * @param pos - position to search
+	 * @return list of Creatures
+	 */
+	QList<Creature*> creaturesAtPosition(const Position& pos) const{
+		return getCreaturesAtPosition<Creature>(pos, CreatureType::UNDEFINED);
+	}
+
+		/**
+	 * @param pos - position to search
+	 * @return list of Animals
+	 */
+	QList<Animal*> animalsAtPosition(const Position& pos ) const{
+		return getCreaturesAtPosition<Animal>(pos, CreatureType::ANIMAL);
+	}
+
+	/**
+	 * @param pos - position to search
+	 * @return list of Monsters
+	 */
+	QList<Monster*> monstersAtPosition(const Position& pos ) const{
+		return getCreaturesAtPosition<Monster>(pos, CreatureType::MONSTER);
+	}
 
 	int count( QString type );
 
@@ -57,10 +186,10 @@ public:
 	{
 		return m_creatures;
 	}
-
 	QList<Animal*>& animals();
 	QList<Monster*>& monsters();
 	
+
 	PriorityQueue<Animal*, int> animalsByDistance( Position pos, QString type );
 	
 	void forceMoveAnimals( const Position& from, const Position& to );
