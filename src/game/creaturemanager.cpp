@@ -70,7 +70,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 			case CreatureTickResult::DEAD:
 				if( creature->type() == CreatureType::ANIMAL )
 				{
-					auto a = dynamic_cast<Animal*>( creature );
+					auto a = static_cast<Animal*>( creature );
 					g->inv()->createItem( a->getPos(), "AnimalCorpse", { a->species() } );
 				}
 				toDestroy.append( creature->id() );
@@ -102,49 +102,6 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 	{
 		
 	}
-}
-
-QList<Creature*> CreatureManager::creaturesAtPosition( Position& pos )
-{
-	QList<Creature*> out;
-	for ( int i = 0; i < m_creatures.size(); ++i )
-	{
-		if ( m_creatures[i]->getPos() == pos )
-		{
-			out.push_back( m_creatures[i] );
-		}
-	}
-	return out;
-}
-
-QList<Animal*> CreatureManager::animalsAtPosition( Position& pos )
-{
-	QList<Animal*> out;
-	for ( int i = 0; i < m_creatures.size(); ++i )
-	{
-		auto c = m_creatures[i];
-
-		if ( c->isAnimal() && c->getPos() == pos )
-		{
-			out.push_back( dynamic_cast<Animal*>( c ) );
-		}
-	}
-	return out;
-}
-	
-QList<Monster*> CreatureManager::monstersAtPosition( Position& pos )
-{
-	QList<Monster*> out;
-	for ( int i = 0; i < m_creatures.size(); ++i )
-	{
-		auto c = m_creatures[i];
-
-		if ( c->isMonster() && c->getPos() == pos )
-		{
-			out.push_back( dynamic_cast<Monster*>( c ) );
-		}
-	}
-	return out;
 }
 
 int CreatureManager::countWildAnimals()
@@ -231,41 +188,6 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 	return 0;
 }
 
-Creature* CreatureManager::creature( unsigned int id )
-{
-	if ( m_creaturesByID.contains( id ) )
-	{
-		return m_creaturesByID[id];
-	}
-	return nullptr;
-}
-
-Animal* CreatureManager::animal( unsigned int id )
-{
-	if ( m_creaturesByID.contains( id ) )
-	{
-		auto c = m_creaturesByID[id];
-		if( c->isAnimal() )
-		{
-			return dynamic_cast<Animal*>( c );
-		}
-	}
-	return nullptr;
-}
-	
-Monster* CreatureManager::monster( unsigned int id )
-{
-	if ( m_creaturesByID.contains( id ) )
-	{
-		auto c = m_creaturesByID[id];
-		if( c->isMonster() )
-		{
-			return dynamic_cast<Monster*>( c );
-		}
-	}
-	return nullptr;
-}
-
 int CreatureManager::count()
 {
 	return m_creatures.size();
@@ -286,7 +208,7 @@ void CreatureManager::removeCreature( unsigned int id )
 		{
 			case CreatureType::ANIMAL:
 			{
-				Animal* a = dynamic_cast<Animal*>( creature );
+				Animal* a = static_cast<Animal*>( creature );
 				if ( a )
 				{
 					if ( a->pastureID() )
@@ -340,7 +262,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 		Creature* creature = m_creaturesByID[id];
 		if( creature->isAnimal() )
 		{
-			Animal* a = dynamic_cast<Animal*>( creature );
+			Animal* a = static_cast<Animal*>( creature );
 			if ( a && !a->inJob() && !a->isDead() && !a->toDestroy() )
 			{
 				Position targetPos = a->getPos();
@@ -409,11 +331,11 @@ void CreatureManager::updateLists()
 	{
 		if( c->isAnimal() )
 		{
-			m_animals.append( dynamic_cast<Animal*>( c ) );
+			m_animals.append( static_cast<Animal*>( c ) );
 		}
 		else
 		{
-			m_monsters.append( dynamic_cast<Monster*>( c ) );
+			m_monsters.append( static_cast<Monster*>( c ) );
 		}
 	}
 	m_dirty = false;
