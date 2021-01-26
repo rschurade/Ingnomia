@@ -72,8 +72,11 @@ void AggregatorInventory::init( Game* game )
 		}
 	}
 	m_watchedItems.clear();
-	for( auto gwi : GameState::watchedItemList )
+	// Can't use iterator due to 2nd reference being created in updateWatchedItem
+	for( size_t i = 0; i < GameState::watchedItemList.size(); ++i )
 	{
+		// Reference is valid until first updateWatchedItem only
+		const auto& gwi = GameState::watchedItemList[i];
 		QString key = gwi.category + gwi.group + gwi.item + gwi.material;
 		m_watchedItems.insert( key );
 
