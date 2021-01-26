@@ -352,7 +352,7 @@ void GameState::load( QVariantMap& vals )
 	for( auto qval : qwil )
 	{
 		QVariantMap qwi = qval.toMap();
-		GuiWatchedItem gwi{ qwi.value( "category" ).toString(), qwi.value( "group" ).toString(), qwi.value( "item" ).toString(), qwi.value( "material" ).toString(), "" };
+		GuiWatchedItem gwi{ qwi.value( "category" ).toString(), qwi.value( "group" ).toString(), qwi.value( "item" ).toString(), qwi.value( "material" ).toString() };
 		GameState::watchedItemList.append( gwi );
 	}
 
