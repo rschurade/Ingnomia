@@ -4703,8 +4703,10 @@ INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Blunderbuss','blunde
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BlunderbussBarrel','blunderbuss barrel');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BlunderbussStock','blunderbuss stock');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Bolt','bolt');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BoneChair','bone chair');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BoneShirt','bone shirt');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BoneStatuette','bone statuette');
+INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_BoneTable','bone table');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Boot','boot');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Bread','bread');
 INSERT INTO "Translation" ("ID","Text") VALUES ('$CraftName_Breastplate','breastplate');
@@ -5678,8 +5680,8 @@ INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('AnimalTrader','Female','Rabbit',NULL,2,0,'Animal',150.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Strawberry',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Carrot',50,0,NULL,20.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Vegetable','Onion',50,0,NULL,20.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Vegetable','Potato',50,0,NULL,20.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Onion',50,0,NULL,20.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Potato',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Cabbage',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Asparagus',50,0,NULL,20.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('SeedTrader',NULL,'Seed','Broccoli',50,0,NULL,20.0);
