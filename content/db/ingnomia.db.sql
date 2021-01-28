@@ -5732,11 +5732,11 @@ INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWall
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Sand','RoughFloor',-3.0,-4.0,'RoughSoilWallShort','Soil','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Clay','RoughFloor',-5.0,-6.0,'RoughClayWallShort','Clay','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Sandstone','RoughFloor',-7.0,-14.0,'RoughStoneWallShort','Stone','RoughWall');
-INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Marble','RoughFloor',-15.0,-26.0,'RoughStoneWallShort','Stone','RoughWall');
+INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Granite','RoughFloor',-15.0,-26.0,'RoughStoneWallShort','Stone','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Bauxite','RoughFloor',-27.0,-42.0,'RoughStoneWallShort','Stone','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('LapisLazuli','RoughFloor',-43.0,-59.0,'RoughStoneWallShort','Stone','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Serpentine','RoughFloor',-60.0,-74.0,'RoughStoneWallShort','Stone','RoughWall');
-INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Granite','RoughFloor',-75.0,-88.0,'RoughStoneWallShort','Stone','RoughWall');
+INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Marble','RoughFloor',-75.0,-88.0,'RoughStoneWallShort','Stone','RoughWall');
 INSERT INTO "TerrainMaterials" ("ID","FloorSprite","Highest","Lowest","ShortWallSprite","Type","WallSprite") VALUES ('Basalt','RoughFloor',-89.0,-1000.0,'RoughStoneWallShort','Stone','RoughWall');
 INSERT INTO "Tech" ("ID") VALUES ('TechWood');
 INSERT INTO "Tech" ("ID") VALUES ('TechStone');
