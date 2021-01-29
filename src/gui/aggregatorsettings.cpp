@@ -45,6 +45,8 @@ void AggregatorSettings::onRequestSettings()
     m_settings.lightMin = Global::cfg->get( "lightMin" ).toFloat() * 100; 
 
     m_settings.toggleMouseWheel = Global::cfg->get( "toggleMouseWheel" ).toBool();
+	 
+	 m_settings.audioMasterVolume = Global::cfg->get( "audioMasterVolume" ).toFloat() * 100; 
 
     emit signalUpdateSettings( m_settings );
 }
@@ -91,4 +93,9 @@ void AggregatorSettings::onRequestVersion()
 {
     QString version = Global::cfg->get( "CurrentVersion" ).toString();
     emit signalVersion( version );
+}
+
+void AggregatorSettings::onSetAudioMasterVolume( float value )
+{
+    Global::cfg->set( "AudioMasterVolume", (float)value);
 }

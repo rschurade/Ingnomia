@@ -98,7 +98,9 @@ private:
 
     bool getMouseWheelBehavior() const;
 	void setMouseWheelBehavior( bool value );
-
+	
+	float getAudioMasterVolume() const;
+	void setAudioMasterVolume( float value );
 
     Noesis::Ptr<Noesis::ObservableCollection<LanguageEntry>> m_languages;
     LanguageEntry* m_selectedLanguage = nullptr;;
@@ -111,6 +113,7 @@ private:
     bool m_toggleMouseWheel = false;
     int m_keyboardSpeed = 20;
     int m_lightMin = 30;
+	 float m_audioMasterVolume = 100.0f;
 
 	NS_DECLARE_REFLECTION( SettingsModel, NotifyPropertyChangedBase )
 };

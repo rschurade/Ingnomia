@@ -103,6 +103,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
     m_keyboardSpeed = settings.keyboardSpeed;
     m_lightMin = settings.lightMin;
     m_toggleMouseWheel = settings.toggleMouseWheel;
+	 m_audioMasterVolume = settings.audioMasterVolume;
 
     OnPropertyChanged( "Languages" );
     OnPropertyChanged( "SelectedLanguage" );
@@ -112,6 +113,7 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
     OnPropertyChanged( "FullScreen" );
     OnPropertyChanged( "LightMin" );
     OnPropertyChanged( "MouseWheelBehavior" );
+	 OnPropertyChanged( "AudioMasterVolume" );
 }
 
     
@@ -214,6 +216,17 @@ void SettingsModel::setMouseWheelBehavior( bool value )
     }
 }
 
+float SettingsModel::getAudioMasterVolume() const
+{
+	return m_audioMasterVolume;
+}
+
+void SettingsModel::setAudioMasterVolume( float value )
+{
+	m_audioMasterVolume = value;
+	m_proxy->setAudioMasterVolume( value );
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 NS_BEGIN_COLD_REGION
 
@@ -227,6 +240,7 @@ NS_IMPLEMENT_REFLECTION( SettingsModel, "IngnomiaGUI.SettingsModel" )
     NsProp( "FullScreen", &SettingsModel::getFullScreen, &SettingsModel::setFullScreen );
     NsProp( "LightMin", &SettingsModel::getLightMin, &SettingsModel::setLightMin );
     NsProp( "MouseWheelBehavior", &SettingsModel::getMouseWheelBehavior, &SettingsModel::setMouseWheelBehavior );
+	 NsProp( "AudioMasterVolume", &SettingsModel::getAudioMasterVolume, &SettingsModel::setAudioMasterVolume );
 }
 
 NS_IMPLEMENT_REFLECTION( LanguageEntry )

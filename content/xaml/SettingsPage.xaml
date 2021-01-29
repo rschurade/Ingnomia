@@ -142,6 +142,30 @@
 					<TabItem Header="{StaticResource SettingsPage_Controls}">
 						<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_KeybindingsPlaceholder}" VerticalAlignment="Center"/>
 					</TabItem>
+					<TabItem Header="{StaticResource SettingsPage_Audio}">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="1*" />
+								<RowDefinition Height="6*" />
+								<RowDefinition Height="1*" />
+							</Grid.RowDefinitions>
+							<ScrollViewer HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="1">
+							<StackPanel >
+								<Grid Margin="0,20,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+										<ColumnDefinition Width="1*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock  Grid.Column="1" FontSize="10" Text="{StaticResource SettingsPage_AudioMasterVolume}" VerticalAlignment="Center"/>
+									<Slider     Grid.Column="2" Minimum="0" Maximum="100" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="1"
+												Value="{Binding AudioMasterVolume}" />
+								</Grid>
+							</StackPanel>
+							</ScrollViewer>
+						</Grid>
+					</TabItem>
 				</TabControl>
 
 				<Button Grid.Row="1" x:Name="Back"  Style="{StaticResource MenuButtonStyle}" Content="{StaticResource SettingsPage_Back}"

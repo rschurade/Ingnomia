@@ -29,6 +29,7 @@ struct GuiSettings
     int keyboardSpeed = 20;
     int lightMin = 30;
     bool toggleMouseWheel = false;
+    float audioMasterVolume = 100.0;
 };
 
 Q_DECLARE_METATYPE( GuiSettings )
@@ -56,6 +57,7 @@ public slots:
     void onSetFullScreen( bool value );
     void onSetLightMin( int value );
     void onSetToggleMouseWheel( bool value );
+	void onSetAudioMasterVolume( float value );
 
 signals:
 	void signalUpdateSettings( const GuiSettings& info );

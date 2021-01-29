@@ -22,6 +22,7 @@
 #include "../base/gamestate.h"
 #include "../base/position.h"
 #include "../base/db.h"
+#include "../base/config.h"
 
 
 
@@ -32,7 +33,7 @@ SoundManager::SoundManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	m_volume = 1.0;
+	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat();
 	m_effects.clear();
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
 	for ( auto& sound : soundList )
@@ -44,7 +45,7 @@ SoundManager::SoundManager( Game* parent ) :
 		effect->setSource(QUrl::fromLocalFile(filename));
 		effect->setLoopCount(1);
 		effect->setVolume(0.5f);
-		printf("loaded sound%s %s\n", soundID.toStdString().c_str(), filename.toStdString().c_str());
+		qDebug() << "loaded sound " << soundID << " " << filename;
 		m_effects.insert(soundID, effect);
 	}
 
@@ -57,6 +58,7 @@ SoundManager::~SoundManager()
 
 void SoundManager::onTick( quint64 tick )
 {
+	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat() /100.0;
 	while (!m_playQue.isEmpty()) {
 		QVariantMap playEffect = m_playQue.takeFirst();
 		if( m_effects.contains(playEffect.value("ID").toString()) )
@@ -64,12 +66,9 @@ void SoundManager::onTick( quint64 tick )
 			if (!m_effects[playEffect.value("ID").toString()]->isPlaying() )
 			{
 				float volume = playEffect.value("zvolume").toFloat()*m_volume;
-				printf("playing sound with volume %f\n", volume);
+				//printf("playing sound with volume %f\n", volume);
 				m_effects[playEffect.value("ID").toString()]->setVolume(volume);
 				m_effects[playEffect.value("ID").toString()]->play();
-			}else 
-			{
-				printf("sound playing already %s\n", playEffect.value("ID").toString().toStdString().c_str());
 			}
 			
 		}
@@ -86,17 +85,14 @@ void SoundManager::playEffect( QString type, Position& pos)
 		int distance = abs(pos.z - m_viewLevel);
 		if (distance < SOUND_FALLOFF) 
 		{
-			// EffectStruct newEffect;
-			// newEffect.id = type;
-			// float zvolume = 1.0-(distance/SOUND_FALLOFF);
-			// 
+
 			float zvolume = 1.0-((float)distance/(float)SOUND_FALLOFF);
 			QVariantMap newEffect;
 			newEffect.insert( "ID", type );
 			newEffect.insert( "zvolume", zvolume );
 			m_playQue.append( newEffect );
-			printf("play effect z%d %s volume %f distance:%d\n", pos.z, type.toStdString().c_str(), zvolume, distance);
-			//m_playQue.append(QVariant(newEffect));
+			//printf("play effect z%d %s volume %f distance:%d\n", pos.z, type.toStdString().c_str(), zvolume, distance);
+
 		}
 	}
 	
@@ -115,6 +111,5 @@ float SoundManager::getVolume( )
 }
 void SoundManager::changeViewLevel( int input) 
 {
-	//printf("viewlevel %d\n", input);
 	m_viewLevel = input;
 }
