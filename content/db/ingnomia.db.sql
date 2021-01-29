@@ -843,6 +843,11 @@ CREATE TABLE IF NOT EXISTS "Actions" (
 	"MultiZ"	BOOLEAN,
 	"Rotate"	BOOLEAN
 );
+DROP TABLE IF EXISTS "Sounds";
+CREATE TABLE IF NOT EXISTS "Sounds" (
+	"ID"	VARCHAR(30),
+	"SoundFile"	VARCHAR(30)
+);
 INSERT INTO "Workshops_Components" ("ID","Amount","ItemID","MaterialItem","Offset","Required","Forbidden","SpriteID","SpriteID2","Type","WallRotation","IsFloor") VALUES ('Crude',1.0,'RawWood',NULL,'1 0 0',NULL,NULL,'RawWood',NULL,NULL,NULL,NULL);
 INSERT INTO "Workshops_Components" ("ID","Amount","ItemID","MaterialItem","Offset","Required","Forbidden","SpriteID","SpriteID2","Type","WallRotation","IsFloor") VALUES ('Crude',1.0,'RawStone',NULL,'0 0 0',NULL,NULL,'GiantStoneBlock',NULL,NULL,NULL,NULL);
 INSERT INTO "Workshops_Components" ("ID","Amount","ItemID","MaterialItem","Offset","Required","Forbidden","SpriteID","SpriteID2","Type","WallRotation","IsFloor") VALUES ('Crude',0.0,NULL,NULL,'1 -1 0',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
@@ -16655,4 +16660,13 @@ INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFlo
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyWall','BuildWall','Wall',1,0,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyFloor','BuildFloor','Floor',1,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('FillHole','FillHole','Wall',1,0,1,0,0);
+
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('Mine','pickaxe1.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('ExplorativeMine','pickaxe1.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('HarvestHay','prassel1.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('Harvest','prassel1.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('CraftAtWorkshop','work1.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('FellTree','wood2.wav');
+INSERT INTO "Sounds" ("ID","SoundFile") VALUES ('Till','sand2.wav');
+
 COMMIT;

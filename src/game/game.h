@@ -41,6 +41,7 @@ class MechanismManager;
 class FluidManager;
 class NeighborManager;
 class MilitaryManager;
+class SoundManager;
 
 class PathFinder;
 class SpriteFactory;
@@ -64,6 +65,7 @@ class Game : public QObject
 	friend class FluidManager;
 	friend class NeighborManager;
 	friend class MilitaryManager;
+	friend class SoundManager;
 
 	friend class Gnome;
 	friend class GnomeTrader;
@@ -105,6 +107,7 @@ public:
 	NeighborManager* nm();
 	MilitaryManager* mil();
 	PathFinder* pf();
+	SoundManager* sm();
 
 private:
 	QScopedPointer<World> m_world;
@@ -144,6 +147,7 @@ private:
 	QPointer<FluidManager> m_fluidManager;
 	QPointer<NeighborManager> m_neighborManager;
 	QPointer<MilitaryManager> m_militaryManager;
+	QPointer<SoundManager> m_soundManager;
 
 public slots:
 	void loop();

@@ -40,6 +40,7 @@
 #include "../game/game.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
+#include "../game/soundmanager.h"
 #include "../game/plant.h"
 #include "../game/world.h"
 
@@ -100,6 +101,7 @@ void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, 
 void EventConnector::onViewLevel( int level )
 {
 	emit signalViewLevel( level );
+	g->sm()->changeViewLevel(level);
 }
 
 void EventConnector::onSetPause( bool paused )

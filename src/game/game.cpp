@@ -36,6 +36,7 @@
 #include "../game/militarymanager.h"
 #include "../game/newgamesettings.h"
 #include "../game/roommanager.h"
+#include "../game/soundmanager.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../gfx/spritefactory.h"
@@ -111,6 +112,8 @@ Game::Game( QObject* parent ) :
 	
 	m_neighborManager	= new NeighborManager( this );
 	m_eventManager		= new EventManager( this );
+	
+	m_soundManager	= new SoundManager( this );
 
 	qDebug() << "init game done";
 }
@@ -206,6 +209,8 @@ void Game::loop()
 		m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 		m_neighborManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+		
+		m_soundManager->onTick( GameState::tick );
 
 		m_world->processWater();
 
@@ -492,5 +497,6 @@ MechanismManager*	Game::mcm(){ return m_mechanismManager; }
 FluidManager*		Game::flm(){ return m_fluidManager; }
 NeighborManager*	Game::nm(){ return m_neighborManager; }
 MilitaryManager*	Game::mil(){ return m_militaryManager; }
+SoundManager*	Game::sm(){ return m_soundManager; }
 PathFinder*			Game::pf(){ return m_pf.get(); }
 World*				Game::world() { return m_world.get(); }

@@ -35,6 +35,7 @@
 #include "../game/roommanager.h"
 #include "../game/stockpile.h"
 #include "../game/stockpilemanager.h"
+#include "../game/soundmanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
@@ -1664,6 +1665,7 @@ BT_RESULT Gnome::actionWork( bool halt )
 			ticks                = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
 			m_taskFinishTick     = GameState::tick + ticks;
 			m_totalDurationTicks = ticks;
+			g->sm()->playEffect(m_job->type(), m_position);
 		}
 		else
 		{
