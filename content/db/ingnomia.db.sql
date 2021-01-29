@@ -5664,12 +5664,12 @@ INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','AppleWood',100,0,NULL,10.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','OrangeWood',100,0,NULL,10.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('WoodTrader',NULL,'RawWood','Birch',100,0,NULL,10.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Copper',50,0,NULL,24.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Tin',59,0,NULL,24.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Iron',20,0,NULL,40.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Lead',20,0,NULL,60.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Silver',10,0,NULL,200.0);
-INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Gold',10,0,NULL,300.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Copper',50,0,NULL,120.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Tin',59,0,NULL,120.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Iron',20,0,NULL,200.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Lead',20,0,NULL,300.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Silver',10,0,NULL,1000.0);
+INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('OreTrader',NULL,'RawOre','Gold',10,0,NULL,1500.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('AnimalTrader','Male','Cow',NULL,2,0,'Animal',150.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('AnimalTrader','Female','Cow',NULL,2,0,'Animal',150.0);
 INSERT INTO "Traders_Items" ("ID","Gender","Item","Material","Max_","Min_","Type","Value_") VALUES ('AnimalTrader','Male','Yak',NULL,2,0,'Animal',150.0);
@@ -11066,7 +11066,7 @@ INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Sand',
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Clay','144 88 78 255',0.5,'Clay',1.2);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Granite','128 128 128 255',0.7,'Stone',1.5);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Basalt','64 64 64 255',0.7,'Stone',1.8);
-INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Marble','255 255 255 255',0.7,'Stone',5.0);
+INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Marble','255 255 255 255',0.7,'Stone',1.3);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Sandstone','192 118 67 255',0.7,'Stone',1.2);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Bauxite','127 63 63 255',0.7,'Stone',1.3);
 INSERT INTO "Materials" ("ID","Color","Strength","Type","Value") VALUES ('Serpentine','137 168 106 255',0.7,'Stone',1.5);
