@@ -62,7 +62,7 @@ Config::Config()
 	}
 	*/
 	// add values to exisiting confings
-	if ( !m_settings.contains( "XpMod" ) || m_settings.value( "XpMod" ).toInt() != 250 )
+	if ( !m_settings.contains( "XpMod" ) )
 	{
 		m_settings.insert( "XpMod", 250. );
 	}
