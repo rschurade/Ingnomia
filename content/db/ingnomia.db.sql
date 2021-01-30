@@ -16674,5 +16674,6 @@ INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Till',NULL,'sand2.wa
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildFloor',NULL,'hammering3.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionDrink',NULL,'drink1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionEat',NULL,'eat1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildItem',NULL,'hammering1.wav');
 
 COMMIT;
