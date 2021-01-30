@@ -392,9 +392,17 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 						QMap<int, QList<unsigned int>> vlItems;
 						for( auto itemUID : itemList )
 						{
-							int qual = g->inv()->quality( itemUID );
-							counter.add( qual );
-							vlItems[qual].append( itemUID );
+							if( DB::select( "HasQuality", "Items", item ).toBool() )
+							{
+								int qual = g->inv()->quality( itemUID );
+								counter.add( qual );
+								vlItems[qual].append( itemUID );
+							}
+							else 
+							{
+								counter.add( 2 ); // Rank 2 is 1.0 modifier
+								vlItems[2].append( itemUID );
+							}
 						}
 						for( auto key : counter.keys() )
 						{
@@ -412,7 +420,7 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 							gti.materialSIDorGender = mat;
 							gti.value = g->inv()->getTradeValue( item, mat, key );
 							gti.quality = key; 
-							gti.count = count;
+							gti.count = vlItems[(int)key].size();
 
 							gti.name = qName + S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + item ) + " (" + QString::number( gti.value ) + ")";
 							
