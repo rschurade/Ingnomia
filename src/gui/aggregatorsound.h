@@ -23,7 +23,6 @@
 #include <QSoundEffect>
 
 #define SOUNDS_MAX 8
-#define SOUND_FALLOFF 4
 
 // struct EffectStruct
 // {

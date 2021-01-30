@@ -1692,6 +1692,10 @@ BT_RESULT Gnome::actionWork( bool halt )
 		{
 			m_taskFunctions[taskName + "Animate"]();
 		}
+		if ( (m_taskFinishTick-GameState::tick) % 60 == 0) {
+			// Play sound again
+			g->sm()->playEffect( m_job->type(), m_position, m_job->item() );
+		}
 		return BT_RESULT::RUNNING;
 	}
 

@@ -23,7 +23,7 @@
 #include <QSoundEffect>
 
 #define SOUNDS_MAX 8
-#define SOUND_FALLOFF 4
+#define SOUND_FALLOFF 10
 
 struct EffectStruct
 {
@@ -44,6 +44,7 @@ public:
 
 	void onTick( quint64 tick );
 	void playEffect( QString type, Position& pos, QString material);
+	void playEffect( QString type, Position& pos, QString material, int duration);
 	void setVolume( float newvol );
 	float getVolume( );
 	

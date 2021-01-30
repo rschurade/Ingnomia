@@ -47,6 +47,11 @@ void SoundManager::onTick( quint64 tick )
 
 void SoundManager::playEffect( QString type, Position& pos, QString material)
 {
+	playEffect(type, pos, material, 0);
+}
+
+void SoundManager::playEffect( QString type, Position& pos, QString material, int duration)
+{
 
 	int distance = abs(pos.z - m_viewLevel);
 	if (distance < SOUND_FALLOFF) 
