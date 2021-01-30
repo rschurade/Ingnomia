@@ -43,7 +43,7 @@ public:
 	~SoundManager();
 
 	void onTick( quint64 tick );
-	void playEffect( QString type, Position& pos);
+	void playEffect( QString type, Position& pos, QString material);
 	void setVolume( float newvol );
 	float getVolume( );
 	

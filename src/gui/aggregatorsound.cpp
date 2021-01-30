@@ -50,7 +50,9 @@ void AggregatorSound::init( Game* game )
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
 	for ( auto& sound : soundList )
 	{
-		QString soundID = sound.value( "ID" ).toString();
+		
+		QString soundID = sound.value( "ID" ).toString()+"."+sound.value( "Material" ).toString();
+		
 		QSoundEffect *effect = new QSoundEffect(this);
 		QString filename = sound.value( "SoundFile" ).toString();
 		filename = "content/audio/" + filename;
@@ -66,16 +68,30 @@ void AggregatorSound::init( Game* game )
 void AggregatorSound::onPlayEffect( QVariantMap effect)
 {
 	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat() /100.0;
-	if( m_effects.contains(effect.value("ID").toString()) )
+	QString soundID = effect.value("ID").toString()+".";
+	QString soundMaterial = effect.value("Material").toString();
+	if( m_effects.contains( soundID ) || m_effects.contains( soundID+soundMaterial ))
 	{
-		if (!m_effects[effect.value("ID").toString()]->isPlaying() )
+		if (m_effects.contains( soundID+soundMaterial ))
+		{
+			soundID = soundID + soundMaterial;
+		}
+		else {
+			QString mat = soundID+soundMaterial;
+			printf("Unknown sound material %s \n", mat.toStdString().c_str());
+		}
+		if (!m_effects[soundID]->isPlaying() )
 		{
 			float volume = effect.value("zvolume").toFloat()*m_volume;
 			//printf("playing sound with volume %f\n", volume);
-			m_effects[effect.value("ID").toString()]->setVolume(volume);
-			m_effects[effect.value("ID").toString()]->play();
+			m_effects[soundID]->setVolume(volume);
+			m_effects[soundID]->play();
 		}
 
+	}
+	else 
+	{
+		printf("Unknown sound %s \n", soundID.toStdString().c_str());
 	}
 }
 

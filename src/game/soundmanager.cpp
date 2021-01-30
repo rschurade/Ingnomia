@@ -42,26 +42,10 @@ SoundManager::~SoundManager()
 
 void SoundManager::onTick( quint64 tick )
 {
-	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat() /100.0;
-	while (!m_playQue.isEmpty()) {
-		QVariantMap playEffect = m_playQue.takeFirst();
-		if( m_effects.contains(playEffect.value("ID").toString()) )
-		{
-			if (!m_effects[playEffect.value("ID").toString()]->isPlaying() )
-			{
-				float volume = playEffect.value("zvolume").toFloat()*m_volume;
-				//printf("playing sound with volume %f\n", volume);
-				m_effects[playEffect.value("ID").toString()]->setVolume(volume);
-				m_effects[playEffect.value("ID").toString()]->play();
-			}
-			
-		}
-		playEffect.clear();
-	}
 	
 }
 
-void SoundManager::playEffect( QString type, Position& pos)
+void SoundManager::playEffect( QString type, Position& pos, QString material)
 {
 
 	int distance = abs(pos.z - m_viewLevel);
@@ -72,25 +56,17 @@ void SoundManager::playEffect( QString type, Position& pos)
 		QVariantMap newEffect;
 		newEffect.insert( "ID", type );
 		newEffect.insert( "zvolume", zvolume );
+		newEffect.insert( "Material", material );
 		//m_playQue.append( newEffect );
 		emit signalPlayEffect( newEffect );
-		//printf("play effect z%d %s volume %f distance:%d\n", pos.z, type.toStdString().c_str(), zvolume, distance);
+		//printf("play effect z%d %s material:%s volume %f distance:%d \n", pos.z, type.toStdString().c_str(), material.toStdString().c_str(), zvolume, distance);
 
 	}
 
 	return;
 }
 
-void SoundManager::setVolume( float newvol )
-{
-	m_volume = newvol;
-}
 
-float SoundManager::getVolume( )
-{
-	
-	return m_volume;
-}
 void SoundManager::changeViewLevel( int input) 
 {
 	m_viewLevel = input;
