@@ -61,4 +61,6 @@ private:
 public slots:
 	void changeViewLevel( int input);
 
+signals:
+	void signalPlayEffect( QVariantMap effect  );
 };

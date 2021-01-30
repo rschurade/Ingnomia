@@ -497,6 +497,6 @@ MechanismManager*	Game::mcm(){ return m_mechanismManager; }
 FluidManager*		Game::flm(){ return m_fluidManager; }
 NeighborManager*	Game::nm(){ return m_neighborManager; }
 MilitaryManager*	Game::mil(){ return m_militaryManager; }
-SoundManager*	Game::sm(){ return m_soundManager; }
+SoundManager*		Game::sm(){ return m_soundManager; }
 PathFinder*			Game::pf(){ return m_pf.get(); }
 World*				Game::world() { return m_world.get(); }

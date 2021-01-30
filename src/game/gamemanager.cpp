@@ -45,8 +45,10 @@
 #include "../game/gnomemanager.h"
 #include "../game/mechanismmanager.h"
 #include "../game/roommanager.h"
+#include "../game/soundmanager.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
+
 
 #include "../gui/aggregatoragri.h"
 #include "../gui/aggregatorcreatureinfo.h"
@@ -62,6 +64,7 @@
 #include "../gui/aggregatorsettings.h"
 #include "../gui/aggregatorloadgame.h"
 #include "../gui/aggregatorselection.h"
+#include "../gui/aggregatorsound.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -244,6 +247,7 @@ void GameManager::postCreationInit()
 	m_eventConnector->aggregatorStockpile()->init( m_game );
 	m_eventConnector->aggregatorTileInfo()->init( m_game );
 	m_eventConnector->aggregatorWorkshop()->init( m_game );
+	m_eventConnector->aggregatorSound()->init( m_game );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
@@ -259,6 +263,8 @@ void GameManager::postCreationInit()
 
 	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
 	connect( m_game, &Game::signalKingdomInfo, m_eventConnector, &EventConnector::onKingdomInfo );
+	
+	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
 
 	
 	Global::util->initAllowedInContainer();

@@ -33,22 +33,6 @@ SoundManager::SoundManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat();
-	m_effects.clear();
-	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
-	for ( auto& sound : soundList )
-	{
-		QString soundID = sound.value( "ID" ).toString();
-		QSoundEffect *effect = new QSoundEffect(this);
-		QString filename = sound.value( "SoundFile" ).toString();
-		filename = "content/audio/" + filename;
-		effect->setSource(QUrl::fromLocalFile(filename));
-		effect->setLoopCount(1);
-		effect->setVolume(0.5f);
-		qDebug() << "loaded sound " << soundID << " " << filename;
-		m_effects.insert(soundID, effect);
-	}
-
 	
 }
 
@@ -79,23 +63,21 @@ void SoundManager::onTick( quint64 tick )
 
 void SoundManager::playEffect( QString type, Position& pos)
 {
-	if ( m_playQue.size() < SOUNDS_MAX )
+
+	int distance = abs(pos.z - m_viewLevel);
+	if (distance < SOUND_FALLOFF) 
 	{
-		
-		int distance = abs(pos.z - m_viewLevel);
-		if (distance < SOUND_FALLOFF) 
-		{
 
-			float zvolume = 1.0-((float)distance/(float)SOUND_FALLOFF);
-			QVariantMap newEffect;
-			newEffect.insert( "ID", type );
-			newEffect.insert( "zvolume", zvolume );
-			m_playQue.append( newEffect );
-			//printf("play effect z%d %s volume %f distance:%d\n", pos.z, type.toStdString().c_str(), zvolume, distance);
+		float zvolume = 1.0-((float)distance/(float)SOUND_FALLOFF);
+		QVariantMap newEffect;
+		newEffect.insert( "ID", type );
+		newEffect.insert( "zvolume", zvolume );
+		//m_playQue.append( newEffect );
+		emit signalPlayEffect( newEffect );
+		//printf("play effect z%d %s volume %f distance:%d\n", pos.z, type.toStdString().c_str(), zvolume, distance);
 
-		}
 	}
-	
+
 	return;
 }
 
