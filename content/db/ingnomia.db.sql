@@ -16668,7 +16668,11 @@ INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('HarvestHay',NULL,'pr
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Harvest',NULL,'prassel1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop',NULL,'work1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop','Plank','saw1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop','Wine','pour1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('FellTree',NULL,'wood2.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Till',NULL,'sand2.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildFloor',NULL,'hammering3.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionDrink',NULL,'drink1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionEat',NULL,'eat1.wav');
 
 COMMIT;
