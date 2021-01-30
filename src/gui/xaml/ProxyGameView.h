@@ -64,6 +64,8 @@ private slots:
 	void onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
+	
+	void onHeartbeat( int value );
 
 	void onUpdatePause( bool value );
 	void onUpdateGameSpeed( GameSpeed speed );
@@ -104,4 +106,6 @@ signals:
 	void signalRequestBuildItems( BuildSelection buildSelection, QString category );
 	void signalRequestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
 	void signalSetSelectionAction( QString action );
+	
+	void signalHeartbeatResponse( int value );
 };

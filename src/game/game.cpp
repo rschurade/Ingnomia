@@ -64,6 +64,8 @@ Game::Game( QObject* parent ) :
 	QObject( parent )
 {
 	qDebug() << "init game...";
+	
+	m_fpstimer.start();
 
 	m_sf.reset( new SpriteFactory() );
 	
@@ -171,48 +173,60 @@ void Game::stop()
 
 void Game::loop()
 {
-	emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
-
 	QElapsedTimer timer;
 	timer.start();
-	int ms2 = 0;
-	if ( !m_paused )
-	{
-		sendClock();
+	if (m_guiHeartbeat <= m_guiHeartbeatResponse+10)
+	{	
+		m_fpscounter1++;
+		if ( m_fpstimer.elapsed() > 1000 ) 
+		{
+			m_fpstimer.restart();
+			//printf(" gameloop fps %d\n", m_fpscounter1);
+			m_fpscounter1 = 0;
+		}
+		
+		emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
+		//printf("   game tick %d\n",GameState::tick );
+		
+		int ms2 = 0;
+		
+		if ( !m_paused )
+		{
+			sendClock();
 
-		// process grass
-		m_world->processGrass();
-		// process plants
-		processPlants();
+			// process grass
+			m_world->processGrass();
+			// process plants
+			processPlants();
 
-		// process animals
+			// process animals
 
-		m_creatureManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			m_creatureManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
-		// process gnomes
-		QElapsedTimer timer2;
-		timer2.start();
-		m_gnomeManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		ms2 = timer2.elapsed();
-		// process jobs
-		m_jobManager->onTick();
-		// process stockpiles
-		m_spm->onTick( GameState::tick );
-		m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		m_workshopManager->onTick( GameState::tick );
-		m_roomManager->onTick( GameState::tick );
-		m_inv->itemHistory()->onTick( GameState::dayChanged );
-		m_eventManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
-		m_neighborManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			// process gnomes
+			QElapsedTimer timer2;
+			timer2.start();
+			m_gnomeManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			ms2 = timer2.elapsed();
+			// process jobs
+			m_jobManager->onTick();
+			// process stockpiles
+			m_spm->onTick( GameState::tick );
+			m_farmingManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			m_workshopManager->onTick( GameState::tick );
+			m_roomManager->onTick( GameState::tick );
+			m_inv->itemHistory()->onTick( GameState::dayChanged );
+			m_eventManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			m_mechanismManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			m_fluidManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
+			m_neighborManager->onTick( GameState::tick, GameState::seasonChanged, GameState::dayChanged, GameState::hourChanged, GameState::minuteChanged );
 
-		m_world->processWater();
+			m_world->processWater();
 
-		m_pf->findPaths();
+			m_pf->findPaths();
 
-		++GameState::tick;
-	}
+			++GameState::tick;
+		}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -220,42 +234,61 @@ void Game::loop()
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	auto updates = m_world->updatedTiles();
-	if ( !updates.empty() )
-	{
-		signalUpdateTileInfo( std::move( updates ) );
-	}
-	emit signalUpdateStockpile();
-
-	Global::eventConnector->aggregatorCreatureInfo()->update();
-
-	int ms        = timer.elapsed();
-	m_maxLoopTime = qMax( ms2, m_maxLoopTime );
-
-	auto numString = QString::number( ms );
-	while ( numString.size() < 5 )
-		numString.prepend( '0' );
-
-	QString msg = "game loop time: " + numString;
-	if ( Global::debugMode )
-		msg += " ms (max gnome time:" + QString::number( m_maxLoopTime ) + "ms)";
-	emit sendOverlayMessage( 3, msg );
-
 	
-	emit signalKingdomInfo( GameState::kingdomName, 
-		"Gnomes: " + QString::number( gm()->numGnomes() ), 
-		"Animals: " + QString::number( fm()->countAnimals() ),
-		"Items: "  + QString::number( inv()->numItems() ) );
+		auto updates = m_world->updatedTiles();
+		if ( !updates.empty() )
+		{
+			signalUpdateTileInfo( std::move( updates ) );
+		}
+		emit signalUpdateStockpile();
+	
+		Global::eventConnector->aggregatorCreatureInfo()->update();
+	
+		int ms        = timer.elapsed();
+		m_maxLoopTime = qMax( ms2, m_maxLoopTime );
+	
+		auto numString = QString::number( ms );
+		while ( numString.size() < 5 )
+			numString.prepend( '0' );
+	
+		QString msg = "game loop time: " + numString;
+		if ( Global::debugMode )
+			msg += " ms (max gnome time:" + QString::number( m_maxLoopTime ) + "ms)";
+		emit sendOverlayMessage( 3, msg );
+	
+		
+		emit signalKingdomInfo( GameState::kingdomName, 
+			"Gnomes: " + QString::number( gm()->numGnomes() ), 
+			"Animals: " + QString::number( fm()->countAnimals() ),
+			"Items: "  + QString::number( inv()->numItems() ) );
 
-	switch( m_gameSpeed )
-	{
-		case GameSpeed::Normal:
-			m_timer->start( m_millisecondsSlow );
-			break;
-		case GameSpeed::Fast:
-			m_timer->start( m_millisecondsFast );
-			break;
+		m_guiHeartbeat = m_guiHeartbeat + 1;
+		emit signalHeartbeat(m_guiHeartbeat);
 	}
+
+	int looptime = timer.elapsed();
+	int sleep = m_millisecondsSlow;
+	if (m_paused) 
+	{
+		m_timer->start( m_millisecondsSlow*2 );
+	}
+	else {
+		
+		switch( m_gameSpeed )
+		{
+			case GameSpeed::Normal:
+				sleep = m_millisecondsSlow - looptime;
+				break;
+			case GameSpeed::Fast:
+				sleep = m_millisecondsFast - looptime;
+				break;
+		}
+		if (sleep <0) {
+			sleep = 0;
+		}
+		m_timer->start( sleep );
+	}
+	
 }
 
 void Game::sendClock()
@@ -474,6 +507,11 @@ bool Game::paused()
 void Game::setPaused( bool value )
 {
 	m_paused = value;
+}
+void Game::setHeartbeatResponse( int value )
+{
+	//printf("heartbeatresponse %d", value);
+	m_guiHeartbeatResponse = value;
 }
 
 Inventory*			Game::inv(){ return m_inv; }

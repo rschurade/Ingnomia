@@ -96,6 +96,15 @@ void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, 
 	emit signalKingdomInfo( name, info1, info2, info3 );
 }
 
+void EventConnector::onHeartbeat( int value)
+{
+	emit signalHeartbeat( value );
+}
+
+void EventConnector::onHeartbeatResponse( int value)
+{
+	gm->setHeartbeatResponse( value );
+}
 
 void EventConnector::onViewLevel( int level )
 {
