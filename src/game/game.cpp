@@ -65,7 +65,7 @@ Game::Game( QObject* parent ) :
 {
 	qDebug() << "init game...";
 	
-	m_fpstimer.start();
+	m_upstimer.start();
 
 	m_sf.reset( new SpriteFactory() );
 	
@@ -176,22 +176,25 @@ void Game::loop()
 	QElapsedTimer timer;
 	timer.start();
 	if (m_guiHeartbeat <= m_guiHeartbeatResponse+10)
-	{	
-		m_fpscounter1++;
-		if ( m_fpstimer.elapsed() > 1000 ) 
+	{
+		m_upscounter1++;
+		if ( m_upstimer.elapsed() > 1000 ) 
 		{
-			m_fpstimer.restart();
-			//printf(" gameloop fps %d\n", m_fpscounter1);
-			m_fpscounter1 = 0;
+			m_upstimer.restart();
+			//printf(" gameloop ups %d avg ms %d\n", m_upscounter1, m_avgLoopTime/m_upscounter1);
+			m_upscounter = m_upscounter1;
+			m_upscounter1 = 0;
+			m_avgLoopTime = 0;
 		}
-		
-		emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
-		//printf("   game tick %d\n",GameState::tick );
-		
 		int ms2 = 0;
 		
 		if ( !m_paused )
 		{
+			
+			
+			emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
+			//printf("   game tick %d\n",GameState::tick );
+			
 			sendClock();
 
 			// process grass
@@ -257,7 +260,7 @@ void Game::loop()
 		emit sendOverlayMessage( 3, msg );
 	
 		
-		emit signalKingdomInfo( GameState::kingdomName, 
+		emit signalKingdomInfo( GameState::kingdomName +" "+QString::number( m_upscounter ), 
 			"Gnomes: " + QString::number( gm()->numGnomes() ), 
 			"Animals: " + QString::number( fm()->countAnimals() ),
 			"Items: "  + QString::number( inv()->numItems() ) );
@@ -266,28 +269,28 @@ void Game::loop()
 		emit signalHeartbeat(m_guiHeartbeat);
 	}
 
-	int looptime = timer.elapsed();
-	int sleep = m_millisecondsSlow;
+	
 	if (m_paused) 
 	{
-		m_timer->start( m_millisecondsSlow*2 );
+		m_timer->setInterval( m_millisecondsSlow*2 );
+		m_gameSpeedPrev = GameSpeed::Pause;
 	}
 	else {
+		if (m_gameSpeed != m_gameSpeedPrev) {
+			m_gameSpeedPrev = m_gameSpeed;
+			switch( m_gameSpeed )
+			{
+				case GameSpeed::Normal:
+					m_timer->setInterval( m_millisecondsSlow );
+					break;
+				case GameSpeed::Fast:
+					m_timer->setInterval( m_millisecondsFast );
+					break;
+			}
+		}
 		
-		switch( m_gameSpeed )
-		{
-			case GameSpeed::Normal:
-				sleep = m_millisecondsSlow - looptime;
-				break;
-			case GameSpeed::Fast:
-				sleep = m_millisecondsFast - looptime;
-				break;
-		}
-		if (sleep <0) {
-			sleep = 0;
-		}
-		m_timer->start( sleep );
 	}
+	m_avgLoopTime += timer.elapsed();
 	
 }
 
