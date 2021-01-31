@@ -175,7 +175,7 @@ void Game::loop()
 {
 	QElapsedTimer timer;
 	timer.start();
-	if (m_guiHeartbeat <= m_guiHeartbeatResponse+10)
+	if (m_guiHeartbeat <= m_guiHeartbeatResponse+20)
 	{
 		m_upscounter1++;
 		if ( m_upstimer.elapsed() > 1000 ) 
@@ -268,7 +268,10 @@ void Game::loop()
 		m_guiHeartbeat = m_guiHeartbeat + 1;
 		emit signalHeartbeat(m_guiHeartbeat);
 	}
-
+	// else {
+	// 	//printf("heartbeat %d %d \n", m_guiHeartbeat, m_guiHeartbeatResponse);
+	// 
+	// }
 	
 	if (m_paused) 
 	{
@@ -280,6 +283,9 @@ void Game::loop()
 			m_gameSpeedPrev = m_gameSpeed;
 			switch( m_gameSpeed )
 			{
+				case GameSpeed::Pause:
+					m_timer->setInterval( m_millisecondsSlow*2 );
+					break;
 				case GameSpeed::Normal:
 					m_timer->setInterval( m_millisecondsSlow );
 					break;
