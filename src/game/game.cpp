@@ -65,7 +65,7 @@ Game::Game( QObject* parent ) :
 {
 	qDebug() << "init game...";
 	
-	m_upstimer.start();
+	m_upsTimer.start();
 
 	m_sf.reset( new SpriteFactory() );
 	
@@ -177,13 +177,13 @@ void Game::loop()
 	timer.start();
 	if (m_guiHeartbeat <= m_guiHeartbeatResponse+20)
 	{
-		m_upscounter1++;
-		if ( m_upstimer.elapsed() > 1000 ) 
+		m_upsCounter1++;
+		if ( m_upsTimer.elapsed() > 1000 ) 
 		{
-			m_upstimer.restart();
-			//printf(" gameloop ups %d avg ms %d\n", m_upscounter1, m_avgLoopTime/m_upscounter1);
-			m_upscounter = m_upscounter1;
-			m_upscounter1 = 0;
+			m_upsTimer.restart();
+			//printf(" gameloop ups %d avg ms %d\n", m_upsCounter1, m_avgLoopTime/m_upsCounter1);
+			m_upsCounter = m_upsCounter1;
+			m_upsCounter1 = 0;
 			m_avgLoopTime = 0;
 		}
 		int ms2 = 0;
@@ -260,7 +260,7 @@ void Game::loop()
 		emit sendOverlayMessage( 3, msg );
 	
 		
-		emit signalKingdomInfo( GameState::kingdomName +" "+QString::number( m_upscounter ), 
+		emit signalKingdomInfo( GameState::kingdomName +" "+QString::number( m_upsCounter ), 
 			"Gnomes: " + QString::number( gm()->numGnomes() ), 
 			"Animals: " + QString::number( fm()->countAnimals() ),
 			"Items: "  + QString::number( inv()->numItems() ) );
@@ -268,34 +268,8 @@ void Game::loop()
 		m_guiHeartbeat = m_guiHeartbeat + 1;
 		emit signalHeartbeat(m_guiHeartbeat);
 	}
-	// else {
-	// 	//printf("heartbeat %d %d \n", m_guiHeartbeat, m_guiHeartbeatResponse);
-	// 
-	// }
+
 	
-	if (m_paused) 
-	{
-		m_timer->setInterval( m_millisecondsSlow*2 );
-		m_gameSpeedPrev = GameSpeed::Pause;
-	}
-	else {
-		if (m_gameSpeed != m_gameSpeedPrev) {
-			m_gameSpeedPrev = m_gameSpeed;
-			switch( m_gameSpeed )
-			{
-				case GameSpeed::Pause:
-					m_timer->setInterval( m_millisecondsSlow*2 );
-					break;
-				case GameSpeed::Normal:
-					m_timer->setInterval( m_millisecondsSlow );
-					break;
-				case GameSpeed::Fast:
-					m_timer->setInterval( m_millisecondsFast );
-					break;
-			}
-		}
-		
-	}
 	m_avgLoopTime += timer.elapsed();
 	
 }
@@ -506,6 +480,15 @@ GameSpeed Game::gameSpeed()
 void Game::setGameSpeed( GameSpeed speed )
 {
 	m_gameSpeed = speed;
+	switch( m_gameSpeed )
+	{
+		case GameSpeed::Normal:
+			m_timer->setInterval( m_millisecondsSlow );
+			break;
+		case GameSpeed::Fast:
+			m_timer->setInterval( m_millisecondsFast );
+			break;
+	}
 }
 
 bool Game::paused()
@@ -516,6 +499,22 @@ bool Game::paused()
 void Game::setPaused( bool value )
 {
 	m_paused = value;
+	if (m_paused) 
+	{
+		m_timer->setInterval( m_millisecondsSlow*2 );
+	}
+	else {
+		switch( m_gameSpeed )
+		{
+			case GameSpeed::Normal:
+				m_timer->setInterval( m_millisecondsSlow );
+				break;
+			case GameSpeed::Fast:
+				m_timer->setInterval( m_millisecondsFast );
+				break;
+		}
+	}
+	
 }
 void Game::setHeartbeatResponse( int value )
 {

@@ -114,9 +114,9 @@ private:
 
 	QPointer<QTimer> m_timer;
 	
-	QElapsedTimer m_upstimer;
-	int m_upscounter;
-	int m_upscounter1;
+	QElapsedTimer m_upsTimer;
+	int m_upsCounter;
+	int m_upsCounter1;
 	int m_avgLoopTime;
 
 	int m_millisecondsSlow = 50;
@@ -137,7 +137,6 @@ private:
 
 	bool m_paused         = true;
 	GameSpeed m_gameSpeed = GameSpeed::Normal;
-	GameSpeed m_gameSpeedPrev = GameSpeed::Pause;
 
 	QPointer<Inventory> m_inv;
 
