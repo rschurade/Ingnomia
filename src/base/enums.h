@@ -191,7 +191,6 @@ enum AnatomyStatus : unsigned int
 
 enum class GameSpeed
 {
-	Pause,
 	Normal,
 	Fast
 };
