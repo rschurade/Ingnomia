@@ -147,7 +147,7 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 {
 	for ( auto& bh : m_beehives )
 	{
-		bh->honey += (float)( 1.0 / 20. );
+		bh->honey += (float)( 1.0 / 200. );
 
 		if ( bh->honey >= 1.0 && !bh->hasJob )
 		{
@@ -655,7 +655,7 @@ void FarmingManager::setPasturePriority( unsigned int id, int prio )
 
 bool FarmingManager::isBeehive( Position pos )
 {
-	return m_beehives.contains( pos.toInt() );
+	return m_allBeehiveTiles.contains( pos.toInt() );
 }
 
 Beehive* FarmingManager::getBeehiveAtPos( Position pos )
