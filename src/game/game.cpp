@@ -260,7 +260,7 @@ void Game::loop()
 		emit sendOverlayMessage( 3, msg );
 	
 		
-		emit signalKingdomInfo( GameState::kingdomName +" "+QString::number( m_upsCounter ), 
+		emit signalKingdomInfo( GameState::kingdomName, 
 			"Gnomes: " + QString::number( gm()->numGnomes() ), 
 			"Animals: " + QString::number( fm()->countAnimals() ),
 			"Items: "  + QString::number( inv()->numItems() ) );
