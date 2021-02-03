@@ -19,6 +19,8 @@
 
 #include "game.h"
 
+#include "../gui/eventconnector.h"
+
 #include "../base/gamestate.h"
 #include "../base/position.h"
 #include "../base/db.h"
@@ -33,7 +35,7 @@ SoundManager::SoundManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	
+	connect( Global::eventConnector, &EventConnector::signalViewLevel, this, &SoundManager::changeViewLevel );
 }
 
 SoundManager::~SoundManager()

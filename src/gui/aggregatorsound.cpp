@@ -78,7 +78,11 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 		}
 		else {
 			QString mat = soundID+soundMaterial;
-			printf("Unknown sound material %s \n", mat.toStdString().c_str());
+			if (Global::debugSound)
+			{
+				qDebug() << "Unknown sound material " << mat;
+			}
+			//printf("Unknown sound material %s \n", mat.toStdString().c_str());
 		}
 		if (!m_effects[soundID]->isPlaying() )
 		{
@@ -91,7 +95,11 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 	}
 	else 
 	{
-		printf("Unknown sound %s \n", soundID.toStdString().c_str());
+		//printf("Unknown sound %s \n", soundID.toStdString().c_str());
+		if (Global::debugSound)
+		{
+			qDebug() << "Unknown sound " << soundID;
+		}
 	}
 }
 

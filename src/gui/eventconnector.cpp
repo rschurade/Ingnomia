@@ -112,7 +112,6 @@ void EventConnector::onHeartbeatResponse( int value)
 void EventConnector::onViewLevel( int level )
 {
 	emit signalViewLevel( level );
-	g->sm()->changeViewLevel(level);
 }
 
 void EventConnector::onSetPause( bool paused )

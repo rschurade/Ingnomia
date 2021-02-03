@@ -16662,18 +16662,23 @@ INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFlo
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyFloor','BuildFloor','Floor',1,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('FillHole','FillHole','Wall',1,0,1,0,0);
 
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Mine',NULL,'pickaxe1.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('ExplorativeMine',NULL,'pickaxe1.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('HarvestHay',NULL,'prassel1.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Harvest',NULL,'prassel1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionDrink',NULL,'drink1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionEat',NULL,'eat1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('DigStairsDown',NULL,'pickaxe1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildFloor',NULL,'hammering3.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildItem',NULL,'hammering1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildWorkshop',NULL,'hammering3.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop',NULL,'work1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop','Plank','saw1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('CraftAtWorkshop','Wine','pour1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('FellTree',NULL,'wood2.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Harvest',NULL,'prassel1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('HarvestHay',NULL,'prassel1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Mine',NULL,'pickaxe1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('ExplorativeMine',NULL,'pickaxe1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('PlantFarm',NULL,'sand1.wav');
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('PlantFarm','Plant','sand1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('Till',NULL,'sand2.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildFloor',NULL,'hammering3.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionDrink',NULL,'drink1.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionEat',NULL,'eat1.wav');
-INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('BuildItem',NULL,'hammering1.wav');
+
 
 COMMIT;

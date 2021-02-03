@@ -97,5 +97,5 @@ void AggregatorSettings::onRequestVersion()
 
 void AggregatorSettings::onSetAudioMasterVolume( float value )
 {
-    Global::cfg->set( "AudioMasterVolume", (float)value);
+	Global::cfg->set( "AudioMasterVolume", (float)value);
 }

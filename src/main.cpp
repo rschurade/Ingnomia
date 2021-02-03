@@ -194,6 +194,10 @@ int main( int argc, char* argv[] )
 		{
 			verbose = true;
 		}
+		if ( args.at( i ) == "-ds" )
+		{
+			Global::debugSound = true;
+		}
 	}
 
 	int width  = qMax( 1200, Global::cfg->get( "WindowWidth" ).toInt() );

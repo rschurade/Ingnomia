@@ -113,7 +113,7 @@ private:
     bool m_toggleMouseWheel = false;
     int m_keyboardSpeed = 20;
     int m_lightMin = 30;
-	 float m_audioMasterVolume = 100.0f;
+	 float m_audioMasterVolume = 50.0f;
 
 	NS_DECLARE_REFLECTION( SettingsModel, NotifyPropertyChangedBase )
 };

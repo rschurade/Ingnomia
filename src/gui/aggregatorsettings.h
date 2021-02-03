@@ -29,7 +29,7 @@ struct GuiSettings
     int keyboardSpeed = 20;
     int lightMin = 30;
     bool toggleMouseWheel = false;
-    float audioMasterVolume = 100.0;
+    float audioMasterVolume = 50.0;
 };
 
 Q_DECLARE_METATYPE( GuiSettings )
