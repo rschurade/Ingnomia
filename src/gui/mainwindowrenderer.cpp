@@ -81,6 +81,8 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
 	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
 
+	connect( this, &MainWindowRenderer::signalCameraPosition, Global::eventConnector, &EventConnector::onCameraPosition );
+
 	qDebug() << "initialize GL ...";
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
 	connect( this, &MainWindowRenderer::redrawRequired, m_parent, &MainWindow::redraw );
@@ -570,6 +572,8 @@ void MainWindowRenderer::onRenderParamsChanged()
 {
 	updateRenderParams();
 	emit redrawRequired();
+	emit signalCameraPosition(m_moveX, m_moveY, m_viewLevel, m_rotation);
+	
 }
 
 void MainWindowRenderer::setCommonUniforms( QOpenGLShaderProgram* shader )

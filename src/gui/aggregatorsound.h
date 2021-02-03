@@ -21,6 +21,7 @@
 
 #include <QList>
 #include <QSoundEffect>
+#include <SFML/Audio.hpp>
 
 #define SOUNDS_MAX 8
 
@@ -52,16 +53,23 @@ public:
 
 private:
 	QPointer<Game> g;
-	QMap<QString, QSoundEffect *> m_effects;
+	QMap<QString, sf::Sound *> m_effects;
+	QMap<QString, sf::SoundBuffer *> m_buffers;
 	
 	QList<QVariantMap> m_playQue;
 
 	float m_volume = 1.0f;
+	float m_zAttenuation = 100.0f;
 	int m_viewLevel;
+	
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
 	
 	
 public slots:
 	void changeViewLevel( int input);
+	void changeViewPosition();
+	void onCameraPosition(float x, float y, float z, int r);
 
 signals:
 	void signalPlayEffect( QVariantMap effect  );

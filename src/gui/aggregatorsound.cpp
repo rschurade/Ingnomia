@@ -24,7 +24,10 @@
 #include "../base/db.h"
 #include "../base/config.h"
 
+#include "../gui/mainwindowrenderer.h"
+#include "../gui/eventconnector.h"
 
+#include <SFML/Audio.hpp>
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -34,6 +37,13 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 {
 
 	m_effects.clear();
+	//sf::SoundBuffer buffer;
+	buffer.loadFromFile("content/audio/wood1.wav");
+	sound.setBuffer(buffer);
+	sound.play();
+	
+	//connect( parent, &MainWindowRenderer::redrawRequired, this, &AggregatorSound::onCameraPosition );
+	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
 
 }
 
@@ -53,21 +63,32 @@ void AggregatorSound::init( Game* game )
 		
 		QString soundID = sound.value( "ID" ).toString()+"."+sound.value( "Material" ).toString();
 		
-		QSoundEffect *effect = new QSoundEffect(this);
+		//QSoundEffect *effect = new QSoundEffect(this);
 		QString filename = sound.value( "SoundFile" ).toString();
+		sf::SoundBuffer* buffer = new sf::SoundBuffer();
 		filename = "content/audio/" + filename;
-		effect->setSource(QUrl::fromLocalFile(filename));
-		effect->setLoopCount(1);
-		effect->setVolume(0.5f);
-		qDebug() << "loaded sound " << soundID << " " << filename;
-		printf("new sound loaded %s \n", soundID.toStdString().c_str());
-		m_effects.insert(soundID, effect);
+		if (!buffer->loadFromFile(filename.toStdString()))
+		{
+			qDebug() << "unable to load sound" << soundID << " " << filename;
+		}
+		else{
+			sf::Sound *effect = new sf::Sound();
+			effect->setBuffer(*buffer);
+			qDebug() << "loaded sound " << soundID << " " << filename;
+			printf("new sound loaded %s \n", soundID.toStdString().c_str());
+			m_effects.insert(soundID, effect);
+			m_buffers.insert(soundID, buffer);
+		}
+		//effect->setSource(QUrl::fromLocalFile(filename));
+		//effect->setLoopCount(1);
+		//effect->setVolume(0.5f);
+		
 	}
 
 }
 void AggregatorSound::onPlayEffect( QVariantMap effect)
 {
-	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat() /100.0;
+	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat();
 	QString soundID = effect.value("ID").toString()+".";
 	QString soundMaterial = effect.value("Material").toString();
 	if( m_effects.contains( soundID ) || m_effects.contains( soundID+soundMaterial ))
@@ -84,12 +105,18 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 			}
 			//printf("Unknown sound material %s \n", mat.toStdString().c_str());
 		}
-		if (!m_effects[soundID]->isPlaying() )
+		if (m_effects[soundID]->getStatus() != sf::SoundSource::Status::Playing)
 		{
 			float volume = effect.value("zvolume").toFloat()*m_volume;
-			//printf("playing sound with volume %f\n", volume);
 			m_effects[soundID]->setVolume(volume);
+			m_effects[soundID]->setPosition(effect.value("x").toFloat(), effect.value("y").toFloat(), effect.value("z").toFloat()*m_zAttenuation);
+			m_effects[soundID]->setMinDistance(10.f);
+			m_effects[soundID]->setAttenuation(0.5f);
 			m_effects[soundID]->play();
+			if (Global::debugSound)
+			{
+				qDebug() << "playing sound " << soundID << " v " << volume;
+			}
 		}
 
 	}
@@ -107,6 +134,7 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 void AggregatorSound::setVolume( float newvol )
 {
 	m_volume = newvol;
+	sf::Listener::setGlobalVolume(newvol);
 }
 
 float AggregatorSound::getVolume( )
@@ -117,4 +145,62 @@ float AggregatorSound::getVolume( )
 void AggregatorSound::changeViewLevel( int input) 
 {
 	m_viewLevel = input;
+}
+void AggregatorSound::changeViewPosition() 
+{
+	
+	qDebug() << "changeViewPosition x" << GameState::moveX << " y" << GameState::moveY ;
+}
+void AggregatorSound::onCameraPosition(float x, float y, float z, int r)
+{
+	
+	sf::Listener::setUpVector(0.f, 0.f, 1.f);
+	float angle;
+	float x_rotated;
+	float y_rotated;
+	switch ( r )
+	{
+		case 0:
+			{
+				angle = ( (-45.) * 3.1415 ) / 180. ;
+				break;
+			}
+		case 1:
+			{
+				angle = ( (45.) * 3.1415 ) / 180. ;
+				break;
+			}
+		case 2:
+			{
+				angle = ( (-45.) * 3.1415 ) / 180. ;
+				break;
+			}
+		case 3:
+			{
+				angle = ( (-45.) * 3.1415 ) / 180. ;
+				break;
+			}
+	}
+	
+	x = -x / 32 + Global::dimX/2;
+	y = -y / 16;
+	x = x -Global::dimX/2;
+	y = y -Global::dimY/2;
+	x = x*1.41421; // sqrt(2)
+	y = y*1.41421;
+	
+	float s = sin(angle);
+	float c = cos(angle);
+
+	x_rotated = x;
+	y_rotated = y;
+
+	float xnew = x_rotated * c - y_rotated * s;
+	float ynew = x_rotated * s + y_rotated * c;
+
+	x_rotated = xnew + Global::dimX/2;
+	y_rotated = ynew + Global::dimY/2;
+	qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "globX" << Global::dimX;
+	sf::Listener::setPosition(x_rotated, y_rotated, z*m_zAttenuation);
+	sf::Listener::setDirection(1.f, 1.f, 0.f);
 }

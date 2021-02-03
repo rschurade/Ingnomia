@@ -62,6 +62,9 @@ void SoundManager::playEffect( QString type, Position& pos, QString material, in
 		float zvolume = 1.0-((float)distance/(float)SOUND_FALLOFF);
 		QVariantMap newEffect;
 		newEffect.insert( "ID", type );
+		newEffect.insert( "x", pos.x );
+		newEffect.insert( "y", pos.y );
+		newEffect.insert( "z", pos.z );
 		newEffect.insert( "zvolume", zvolume );
 		newEffect.insert( "Material", material );
 		//m_playQue.append( newEffect );
