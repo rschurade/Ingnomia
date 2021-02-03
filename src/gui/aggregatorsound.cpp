@@ -111,7 +111,7 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 			m_effects[soundID]->setVolume(volume);
 			m_effects[soundID]->setPosition(effect.value("x").toFloat(), effect.value("y").toFloat(), effect.value("z").toFloat()*m_zAttenuation);
 			m_effects[soundID]->setMinDistance(10.f);
-			m_effects[soundID]->setAttenuation(0.5f);
+			m_effects[soundID]->setAttenuation(0.05f);
 			m_effects[soundID]->play();
 			if (Global::debugSound)
 			{
@@ -155,7 +155,7 @@ void AggregatorSound::onCameraPosition(float x, float y, float z, int r)
 {
 	
 	sf::Listener::setUpVector(0.f, 0.f, 1.f);
-	float angle;
+	float angle = 0;
 	float x_rotated;
 	float y_rotated;
 	switch ( r )
@@ -163,21 +163,25 @@ void AggregatorSound::onCameraPosition(float x, float y, float z, int r)
 		case 0:
 			{
 				angle = ( (-45.) * 3.1415 ) / 180. ;
+				sf::Listener::setDirection(1.f, 1.f, 0.f);
 				break;
 			}
 		case 1:
 			{
-				angle = ( (45.) * 3.1415 ) / 180. ;
+				angle = ( (-45.-90) * 3.1415 ) / 180. ;
+				sf::Listener::setDirection(1.f, -1.f, 0.f);
 				break;
 			}
 		case 2:
 			{
-				angle = ( (-45.) * 3.1415 ) / 180. ;
+				angle = ( (-45.-90-90) * 3.1415 ) / 180. ;
+				sf::Listener::setDirection(-1.f, -1.f, 0.f);
 				break;
 			}
 		case 3:
 			{
-				angle = ( (-45.) * 3.1415 ) / 180. ;
+				angle = ( (-45.-90-90-90) * 3.1415 ) / 180. ;
+				sf::Listener::setDirection(-1.f, 1.f, 0.f);
 				break;
 			}
 	}
@@ -200,7 +204,7 @@ void AggregatorSound::onCameraPosition(float x, float y, float z, int r)
 
 	x_rotated = xnew + Global::dimX/2;
 	y_rotated = ynew + Global::dimY/2;
-	qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "globX" << Global::dimX;
+	qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "r" << r;
 	sf::Listener::setPosition(x_rotated, y_rotated, z*m_zAttenuation);
-	sf::Listener::setDirection(1.f, 1.f, 0.f);
+	
 }
