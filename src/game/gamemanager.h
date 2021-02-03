@@ -50,6 +50,8 @@ public:
 
 	bool paused();
 	void setPaused( bool value );
+	
+	void setHeartbeatResponse( int value );
 
 	EventConnector* eventConnector();
 

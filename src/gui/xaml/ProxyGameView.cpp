@@ -40,6 +40,8 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( Global::eventConnector, &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalKingdomInfo, this, &ProxyGameView::onKingdomInfo, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
+	
+	connect( Global::eventConnector, &EventConnector::signalHeartbeat, this, &ProxyGameView::onHeartbeat, Qt::QueuedConnection );
 
 	connect( Global::eventConnector, &EventConnector::signalUpdatePause, this, &ProxyGameView::onUpdatePause, Qt::QueuedConnection );
 	connect( Global::eventConnector, &EventConnector::signalUpdateGameSpeed, this, &ProxyGameView::onUpdateGameSpeed, Qt::QueuedConnection );
@@ -77,6 +79,8 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalWatchList, this,  &ProxyGameView::onWatchList, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalRequestCmdBuild, Global::eventConnector, &EventConnector::onCmdBuild, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalSetSelectionAction, Global::eventConnector, &EventConnector::onSetSelectionAction, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalHeartbeatResponse, Global::eventConnector, &EventConnector::onHeartbeatResponse, Qt::QueuedConnection );
+	
 }
 
 ProxyGameView::~ProxyGameView()
@@ -102,6 +106,12 @@ void ProxyGameView::onKingdomInfo( QString name, QString info1, QString info2, Q
 	{
 		m_parent->updateKingdomInfo( name, info1, info2, info3 );
 	}
+}
+
+void ProxyGameView::onHeartbeat( int value )
+{
+	emit signalHeartbeatResponse(value);
+
 }
 
 void ProxyGameView::onViewLevel( int level )

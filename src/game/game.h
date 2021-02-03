@@ -85,6 +85,7 @@ public:
 
 	bool paused();
 	void setPaused( bool value );
+	void setHeartbeatResponse( int value );
 
 	void generateWorld( NewGameSettings* ngs );
 	void setWorld( int dimX, int dimY, int dimZ );
@@ -115,11 +116,18 @@ private:
 	QScopedPointer<PathFinder> m_pf;
 
 	QPointer<QTimer> m_timer;
+	
+	QElapsedTimer m_upsTimer;
+	int m_upsCounter;
+	int m_upsCounter1;
+	int m_avgLoopTime;
 
 	int m_millisecondsSlow = 50;
 	int m_millisecondsFast = 5;
 
 	int m_maxLoopTime = 0;
+	int m_guiHeartbeat = 0;
+	int m_guiHeartbeatResponse = 0;
 
 	void processPlants();
 
@@ -159,6 +167,7 @@ signals:
 	void sendOverlayMessage( int id, QString text );
 	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
 	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
+	void signalHeartbeat( int value );
 	void signalPause( bool pause );
 	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	void signalStartAutoSave();

@@ -152,6 +152,9 @@ public slots:
 	void onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
 	void onKingdomInfo( QString name, QString info1, QString info2, QString info3 );
 	void onViewLevel( int level );
+	
+	void onHeartbeat( int value);
+	void onHeartbeatResponse( int value);
 
 	void onSetPause( bool paused );
 	void onSetGameSpeed( GameSpeed speed );
@@ -208,5 +211,6 @@ signals:
 
 	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	
+	void signalHeartbeat( int value );
 	void signalPlayEffect( QVariantMap effect );
 };

@@ -256,6 +256,8 @@ void GameManager::postCreationInit()
 	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
 	connect( m_game->wsm(), &WorkshopManager::signalJobListChanged, m_eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
 
+	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
+
 	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
 
 	connect( m_game->inv(), &Inventory::signalAddItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onAddItem, Qt::QueuedConnection );
@@ -263,8 +265,7 @@ void GameManager::postCreationInit()
 
 	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
 	connect( m_game, &Game::signalKingdomInfo, m_eventConnector, &EventConnector::onKingdomInfo );
-	
-	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
+	connect( m_game, &Game::signalHeartbeat, m_eventConnector, &EventConnector::onHeartbeat );
 
 	
 	Global::util->initAllowedInContainer();
@@ -349,6 +350,13 @@ void GameManager::setPaused( bool value )
 			m_game->setPaused( value );
 			m_eventConnector->emitPause( value );
 		}
+	}
+}
+void GameManager::setHeartbeatResponse( int value )
+{
+	if( m_game )
+	{
+		m_game->setHeartbeatResponse( value );
 	}
 }
 
