@@ -329,10 +329,19 @@
 						</CheckBox.ToolTip>
 					</CheckBox>
 					<CheckBox Content="Catch Fish" IsChecked="{Binding CatchFish, Mode=TwoWay}" Margin="10,5,10,5">
-						
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Gnomes will try to catch fish." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+							</StackPanel>
+						</CheckBox.ToolTip>
 					</CheckBox>
 					<CheckBox Content="Process Fish" IsChecked="{Binding ProcessFish, Mode=TwoWay}" Margin="10,5,10,5">
-						
+						<CheckBox.ToolTip>
+							<StackPanel Width="500" Background="#FF365264">
+								<TextBlock Text="Gnomes will cut and gut fish." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+								<TextBlock Text="Smelly business." FontSize="18" FontWeight="Bold" Foreground="#FF365264" Background="LightSkyBlue" Padding="0,2" TextAlignment="Center" />
+							</StackPanel>
+						</CheckBox.ToolTip>
 					</CheckBox>
 				</StackPanel>
 			</Border>

@@ -156,6 +156,8 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 				m_info.butcherExcess  = ws->butcherExcess();
 				m_info.butcherCorpses = ws->butcherCorpses();
 			}
+			m_info.catchFish = ws->fish();
+			m_info.processFish = ws->processFish();
 
 			m_info.jobList = ws->jobList();
 			return true;

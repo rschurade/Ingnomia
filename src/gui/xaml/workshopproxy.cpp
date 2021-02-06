@@ -193,7 +193,7 @@ void WorkshopProxy::trade( unsigned int workshopID )
 
 void WorkshopProxy::setFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish )
 {
-	if( m_blockWriteBack )
+	if( !m_blockWriteBack )
 	{
 		emit signalSetFisherOptions( WorkshopID, catchFish, processFish );
 	}
