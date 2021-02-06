@@ -98,7 +98,7 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 		}
 		if ( m_effects[soundID]->getStatus() != sf::SoundSource::Status::Playing )
 		{
-			float volume = effect.value( "zvolume" ).toFloat() * m_volume;
+			sf::Listener::setGlobalVolume( m_volume );
 			m_effects[soundID]->setVolume( 100.0f );
 			m_effects[soundID]->setPosition( effect.value( "x" ).toFloat(), effect.value( "y" ).toFloat(), effect.value( "z" ).toFloat() * m_zAttenuation );
 			m_effects[soundID]->setRelativeToListener( false );
@@ -140,7 +140,7 @@ void AggregatorSound::onPlayNotify( QVariantMap effect )
 			}
 		}
 
-		m_effects[soundID]->setVolume( 1.0 );
+		m_effects[soundID]->setVolume( m_volume );
 		m_effects[soundID]->setPosition( 0, 0, 0 );
 		m_effects[soundID]->setRelativeToListener( true );
 		m_effects[soundID]->play();
