@@ -35,6 +35,7 @@ class AggregatorSettings;
 class AggregatorInventory;    
 class AggregatorLoadGame;     
 class AggregatorSelection;
+class AggregatorSound;
 
 
 class Game;
@@ -106,6 +107,10 @@ public:
 	{
 		return m_selectionAggregator;
 	}
+	AggregatorSound* aggregatorSound()
+	{
+		return m_soundAggregator;
+	}
 
 	void emitStartGame();
 	void emitStopGame();
@@ -138,6 +143,7 @@ private:
 	AggregatorInventory* m_inventoryAggregator = nullptr;
 	AggregatorLoadGame* m_loadGameAggregator = nullptr;
 	AggregatorSelection* m_selectionAggregator = nullptr;
+	AggregatorSound* m_soundAggregator = nullptr;
 
 public slots:
 	void onExit();
@@ -180,6 +186,9 @@ public slots:
 
 	void onAnswer( unsigned int id, bool answer );
 	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
+	
+	void onPlayEffect( QVariantMap effect);
+	void onCameraPosition(float x, float y, float z, int r);
 
 signals:
 	void signalExit();
@@ -204,4 +213,7 @@ signals:
 	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	
 	void signalHeartbeat( int value );
+	void signalPlayEffect( QVariantMap effect );
+	
+	void signalCameraPosition(float x, float y, float z, int r);
 };

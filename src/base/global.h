@@ -68,6 +68,7 @@ public:
 	static double xpMod;
 	static bool debugMode;
 	static bool debugOpenGL;
+	static bool debugSound;
 
 	static QMap<QString, QSet<QString>> allowedInContainer;
 

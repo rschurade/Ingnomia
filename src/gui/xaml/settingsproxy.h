@@ -39,6 +39,7 @@ public:
     void setKeyboardSpeed( int value );
     void setLightMin( int value );
     void setToggleMouseWheel( bool value );
+	void setAudioMasterVolume( float value );
 
 private:
 	IngnomiaGUI::SettingsModel* m_parent = nullptr;
@@ -57,4 +58,5 @@ signals:
     void signalSetKeyboardSpeed( int value );
     void signalSetLightMin( int value );
     void signalSetToggleMouseWheel( bool value );
+	void signalSetAudioMasterVolume( float value );
 };

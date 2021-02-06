@@ -197,6 +197,7 @@
 	<system:String x:Key="SettingsPage_VideoContent">Video Settings</system:String>
 	<system:String x:Key="SettingsPage_Audio">Audio</system:String>
 	<system:String x:Key="SettingsPage_AudioContent">There is no audio yet.</system:String>
+	<system:String x:Key="SettingsPage_AudioMasterVolume">Master Volume</system:String>
 	<system:String x:Key="SettingsPage_Controls">Controls</system:String>
 	<system:String x:Key="SettingsPage_Back">Back</system:String>
 	<system:String x:Key="SettingsPage_Accept">Accept</system:String>

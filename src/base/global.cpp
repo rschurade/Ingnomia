@@ -64,6 +64,7 @@ double Global::xpMod = 250.;
 
 bool Global::debugMode = false;
 bool Global::debugOpenGL = false;
+bool Global::debugSound = false;
 
 QMap<QString, QDomElement> Global::m_behaviorTrees;
 
