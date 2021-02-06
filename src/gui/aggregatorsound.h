@@ -63,8 +63,13 @@ private:
 	float m_zAttenuation = 100.0f;
 	int m_viewLevel;
 	
+<<<<<<< HEAD
 	sf::SoundBuffer m_buffer;
 	sf::Sound m_sound;
+=======
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
+>>>>>>> Soundtest (#177)
 	
 	
 public slots:
