@@ -42,7 +42,6 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 	sound.setBuffer(buffer);
 	sound.play();
 	
-	//connect( parent, &MainWindowRenderer::redrawRequired, this, &AggregatorSound::onCameraPosition );
 	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
 
 }
@@ -54,7 +53,7 @@ AggregatorSound::~AggregatorSound()
 void AggregatorSound::init( Game* game )
 {
 	g = game;
-	printf("new sound loaded\n");
+	
 	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat();
 	m_effects.clear();
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
@@ -63,7 +62,6 @@ void AggregatorSound::init( Game* game )
 		
 		QString soundID = sound.value( "ID" ).toString()+"."+sound.value( "Material" ).toString();
 		
-		//QSoundEffect *effect = new QSoundEffect(this);
 		QString filename = sound.value( "SoundFile" ).toString();
 		sf::SoundBuffer* buffer = new sf::SoundBuffer();
 		filename = "content/audio/" + filename;
@@ -75,14 +73,10 @@ void AggregatorSound::init( Game* game )
 			sf::Sound *effect = new sf::Sound();
 			effect->setBuffer(*buffer);
 			qDebug() << "loaded sound " << soundID << " " << filename;
-			printf("new sound loaded %s \n", soundID.toStdString().c_str());
 			m_effects.insert(soundID, effect);
 			m_buffers.insert(soundID, buffer);
 		}
-		//effect->setSource(QUrl::fromLocalFile(filename));
-		//effect->setLoopCount(1);
-		//effect->setVolume(0.5f);
-		
+
 	}
 
 }
@@ -103,13 +97,13 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 			{
 				qDebug() << "Unknown sound material " << mat;
 			}
-			//printf("Unknown sound material %s \n", mat.toStdString().c_str());
 		}
 		if (m_effects[soundID]->getStatus() != sf::SoundSource::Status::Playing)
 		{
 			float volume = effect.value("zvolume").toFloat()*m_volume;
 			m_effects[soundID]->setVolume(volume);
 			m_effects[soundID]->setPosition(effect.value("x").toFloat(), effect.value("y").toFloat(), effect.value("z").toFloat()*m_zAttenuation);
+			m_effects[soundID]->setRelativeToListener(false);
 			m_effects[soundID]->setMinDistance(10.f);
 			m_effects[soundID]->setAttenuation(0.05f);
 			m_effects[soundID]->play();
@@ -122,7 +116,44 @@ void AggregatorSound::onPlayEffect( QVariantMap effect)
 	}
 	else 
 	{
-		//printf("Unknown sound %s \n", soundID.toStdString().c_str());
+		if (Global::debugSound)
+		{
+			qDebug() << "Unknown sound " << soundID;
+		}
+	}
+}
+
+void AggregatorSound::onPlayNotify( QVariantMap effect)
+{
+	QString soundID = effect.value("ID").toString()+".";
+	QString soundMaterial = effect.value("Material").toString();
+	if( m_effects.contains( soundID ) || m_effects.contains( soundID+soundMaterial ))
+	{
+		if (m_effects.contains( soundID+soundMaterial ))
+		{
+			soundID = soundID + soundMaterial;
+		}
+		else {
+			
+			if (Global::debugSound)
+			{
+				QString mat = soundID+soundMaterial;
+				qDebug() << "Unknown sound material " << mat;
+			}
+		}
+		
+		m_effects[soundID]->setVolume(1.0);
+		m_effects[soundID]->setPosition(0, 0, 0);
+		m_effects[soundID]->setRelativeToListener(true);
+		m_effects[soundID]->play();
+		if (Global::debugSound)
+		{
+			qDebug() << "playing sound " << soundID << " v " << volume;
+		}
+
+	}
+	else 
+	{
 		if (Global::debugSound)
 		{
 			qDebug() << "Unknown sound " << soundID;
@@ -142,10 +173,7 @@ float AggregatorSound::getVolume( )
 	
 	return m_volume;
 }
-void AggregatorSound::changeViewLevel( int input) 
-{
-	m_viewLevel = input;
-}
+
 void AggregatorSound::changeViewPosition() 
 {
 	

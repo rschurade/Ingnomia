@@ -35,7 +35,7 @@ SoundManager::SoundManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	connect( Global::eventConnector, &EventConnector::signalViewLevel, this, &SoundManager::changeViewLevel );
+	
 }
 
 SoundManager::~SoundManager()
@@ -55,29 +55,16 @@ void SoundManager::playEffect( QString type, Position& pos, QString material)
 void SoundManager::playEffect( QString type, Position& pos, QString material, int duration)
 {
 
-	int distance = abs(pos.z - m_viewLevel);
-	if (distance < SOUND_FALLOFF) 
-	{
-
-		float zvolume = 1.0-((float)distance/(float)SOUND_FALLOFF);
-		QVariantMap newEffect;
-		newEffect.insert( "ID", type );
-		newEffect.insert( "x", pos.x );
-		newEffect.insert( "y", pos.y );
-		newEffect.insert( "z", pos.z );
-		newEffect.insert( "zvolume", zvolume );
-		newEffect.insert( "Material", material );
-		//m_playQue.append( newEffect );
-		emit signalPlayEffect( newEffect );
-		//printf("play effect z%d %s material:%s volume %f distance:%d \n", pos.z, type.toStdString().c_str(), material.toStdString().c_str(), zvolume, distance);
-
-	}
+	
+	QVariantMap newEffect;
+	newEffect.insert( "ID", type );
+	newEffect.insert( "x", pos.x );
+	newEffect.insert( "y", pos.y );
+	newEffect.insert( "z", pos.z );
+	newEffect.insert( "Material", material );
+	
+	emit signalPlayEffect( newEffect );
+		
 
 	return;
-}
-
-
-void SoundManager::changeViewLevel( int input) 
-{
-	m_viewLevel = input;
 }

@@ -20,7 +20,7 @@
 #include "../base/position.h"
 
 #include <QList>
-#include <QSoundEffect>
+
 #include <SFML/Audio.hpp>
 
 #define SOUNDS_MAX 8
@@ -47,6 +47,7 @@ public:
 	void onTick( quint64 tick );
 	void playEffect( QString type, Position& pos);
 	void onPlayEffect( QVariantMap effect);
+	void onPlayNotify( QVariantMap effect);
 	void setVolume( float newvol );
 	float getVolume( );
 	
@@ -67,10 +68,8 @@ private:
 	
 	
 public slots:
-	void changeViewLevel( int input);
+	//void changeViewLevel( int input);
 	void changeViewPosition();
 	void onCameraPosition(float x, float y, float z, int r);
 
-signals:
-	void signalPlayEffect( QVariantMap effect  );
 };

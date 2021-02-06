@@ -16662,6 +16662,7 @@ INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFlo
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('ReplaceFancyFloor','BuildFloor','Floor',1,1,1,0,0);
 INSERT INTO "Actions" ("ID","Job","ConstructionType","ConstructionSelect","IsFloor","Multi","MultiZ","Rotate") VALUES ('FillHole','FillHole','Wall',1,0,1,0,0);
 
+INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('ButtonClick',NULL,'wood1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionDrink',NULL,'drink1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('actionEat',NULL,'eat1.wav');
 INSERT INTO "Sounds" ("ID","Material","SoundFile") VALUES ('DigStairsDown',NULL,'pickaxe1.wav');

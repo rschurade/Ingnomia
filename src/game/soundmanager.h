@@ -20,7 +20,6 @@
 #include "../base/position.h"
 
 #include <QList>
-#include <QSoundEffect>
 
 #define SOUNDS_MAX 8
 #define SOUND_FALLOFF 10
@@ -45,22 +44,11 @@ public:
 	void onTick( quint64 tick );
 	void playEffect( QString type, Position& pos, QString material);
 	void playEffect( QString type, Position& pos, QString material, int duration);
-	void setVolume( float newvol );
-	float getVolume( );
 	
 
 private:
 	QPointer<Game> g;
-	QMap<QString, QSoundEffect *> m_effects;
-	
-	QList<QVariantMap> m_playQue;
 
-	float m_volume = 1.0f;
-	int m_viewLevel;
-	
-	
-public slots:
-	void changeViewLevel( int input);
 
 signals:
 	void signalPlayEffect( QVariantMap effect  );
