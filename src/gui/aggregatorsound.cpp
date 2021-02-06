@@ -55,6 +55,7 @@
 AggregatorSound::AggregatorSound( QObject* parent ) :
 	QObject( parent )
 {
+<<<<<<< HEAD
 	m_effects.clear();
 	//sf::SoundBuffer buffer;
 	QString exePath         = QCoreApplication::applicationDirPath();
@@ -85,6 +86,12 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 >>>>>>> Soundtest (#177)
 =======
 	m_buffer.loadFromMemory( ba.data(), ba.size() );
+=======
+	m_effects.clear();
+	//sf::SoundBuffer buffer;
+	QString exePath         = QCoreApplication::applicationDirPath();
+	m_buffer.loadFromFile( ( exePath + "/content/audio/wood1.wav" ).toStdString() );
+>>>>>>> fix path
 	m_sound.setBuffer( m_buffer );
 	m_sound.play();
 
@@ -113,6 +120,7 @@ void AggregatorSound::init( Game* game )
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
 	for ( auto& sound : soundList )
 	{
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		QString soundID = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
@@ -163,28 +171,27 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 		QString filename        = sound.value( "SoundFile" ).toString();
 >>>>>>> wip
 		sf::SoundBuffer* buffer = new sf::SoundBuffer();
+=======
+		QString soundID = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
+		QString filename        = sound.value( "SoundFile" ).toString();
+		sf::SoundBuffer* buffer = new sf::SoundBuffer;
+>>>>>>> fix path
 		QString exePath         = QCoreApplication::applicationDirPath();
 		filename                = exePath + "/content/audio/" + filename;
-		qDebug() << filename;
-
-		QFile file( filename );
-		file.open( QIODevice::ReadOnly );
-		auto ba = file.readAll();
-		file.close();
 		
-		//if ( !buffer->loadFromFile( filename.toStdString() ) )
-		if( !buffer->loadFromMemory( ba.data(), ba.size() ) )
+		if ( !buffer->loadFromFile( filename.toStdString() ) )
 		{
 			qDebug() << "unable to load sound" << soundID << " " << filename;
 		}
 		else
 		{
-			sf::Sound* effect = new sf::Sound();
+			sf::Sound* effect = new sf::Sound;
 			effect->setBuffer( *buffer );
 			qDebug() << "loaded sound " << soundID << " " << filename;
 			m_effects.insert( soundID, effect );
 			m_buffers.insert( soundID, buffer );
 		}
+		
 	}
 }
 void AggregatorSound::onPlayEffect( QVariantMap effect )
@@ -240,7 +247,7 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 >>>>>>> wip
 		{
 			float volume = effect.value( "zvolume" ).toFloat() * m_volume;
-			m_effects[soundID]->setVolume( volume );
+			m_effects[soundID]->setVolume( 100.0f );
 			m_effects[soundID]->setPosition( effect.value( "x" ).toFloat(), effect.value( "y" ).toFloat(), effect.value( "z" ).toFloat() * m_zAttenuation );
 			m_effects[soundID]->setRelativeToListener( false );
 			m_effects[soundID]->setMinDistance( 10.f );
@@ -389,7 +396,7 @@ float AggregatorSound::getVolume()
 void AggregatorSound::changeViewPosition()
 {
 
-	qDebug() << "changeViewPosition x" << GameState::moveX << " y" << GameState::moveY;
+	//qDebug() << "changeViewPosition x" << GameState::moveX << " y" << GameState::moveY;
 }
 void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 {
@@ -517,7 +524,7 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 =======
 	x_rotated = xnew + Global::dimX / 2;
 	y_rotated = ynew + Global::dimY / 2;
-	qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "r" << r;
+	//qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "r" << r;
 	sf::Listener::setPosition( x_rotated, y_rotated, z * m_zAttenuation );
 >>>>>>> wip
 }
