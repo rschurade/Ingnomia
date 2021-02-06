@@ -35,6 +35,7 @@
 #include "../game/roommanager.h"
 #include "../game/stockpile.h"
 #include "../game/stockpilemanager.h"
+#include "../game/soundmanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
@@ -379,6 +380,10 @@ BT_RESULT Gnome::actionEat( bool halt )
 		//m_log.append( "Starting to eat." );
 		m_currentAction  = "eating";
 		m_taskFinishTick = GameState::tick + Global::util->ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+		unsigned int carriedItem = m_carriedItems.first();
+		//printf("eat %s \n", g->inv()->itemSID( carriedItem ).toStdString().c_str() );
+		g->sm()->playEffect("actionEat" , m_position, g->inv()->itemSID( carriedItem ) );
+		
 	}
 
 	if ( GameState::tick < m_taskFinishTick )
@@ -435,6 +440,10 @@ BT_RESULT Gnome::actionDrink( bool halt )
 		//m_log.append( "Starting to drink." );
 		m_currentAction  = "drinking";
 		m_taskFinishTick = GameState::tick + Global::util->ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
+		
+		unsigned int carriedItem = m_carriedItems.first();
+		//printf("drink %s %d\n", g->inv()->itemSID( carriedItem ).toStdString().c_str(), g->inv()->quality( carriedItem ) );
+		g->sm()->playEffect("actionDrink" , m_position, g->inv()->itemSID( carriedItem ) );
 	}
 
 	if ( GameState::tick < m_taskFinishTick )
@@ -1664,6 +1673,7 @@ BT_RESULT Gnome::actionWork( bool halt )
 			ticks                = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
 			m_taskFinishTick     = GameState::tick + ticks;
 			m_totalDurationTicks = ticks;
+			g->sm()->playEffect( m_job->type(), m_position, m_job->item() );
 		}
 		else
 		{
@@ -1681,6 +1691,10 @@ BT_RESULT Gnome::actionWork( bool halt )
 		if ( m_taskFunctions.contains( taskName + "Animate" ) )
 		{
 			m_taskFunctions[taskName + "Animate"]();
+		}
+		if ( (m_taskFinishTick-GameState::tick) % 60 == 0) {
+			// Play sound again
+			g->sm()->playEffect( m_job->type(), m_position, m_job->item() );
 		}
 		return BT_RESULT::RUNNING;
 	}

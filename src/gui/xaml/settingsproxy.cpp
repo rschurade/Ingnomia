@@ -32,6 +32,7 @@ SettingsProxy::SettingsProxy( QObject* parent ) :
     connect( this, &SettingsProxy::signalSetLanguage, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetLightMin, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLightMin, Qt::QueuedConnection );
     connect( this, &SettingsProxy::signalSetToggleMouseWheel, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetToggleMouseWheel, Qt::QueuedConnection );
+	 connect( this, &SettingsProxy::signalSetAudioMasterVolume, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetAudioMasterVolume, Qt::QueuedConnection );
     
     connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUpdateSettings, this, &SettingsProxy::onSettings, Qt::QueuedConnection );
 }
@@ -82,4 +83,9 @@ void SettingsProxy::setLightMin( int value )
 void SettingsProxy::setToggleMouseWheel( bool value )
 {
     emit signalSetToggleMouseWheel( value );
+}
+
+void SettingsProxy::setAudioMasterVolume( float value )
+{
+    emit signalSetAudioMasterVolume( value );
 }

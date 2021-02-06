@@ -23,6 +23,7 @@ find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
+find_package(SFML REQUIRED audio)
 
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
@@ -93,6 +94,7 @@ target_link_libraries(${PROJECT_NAME}
 		NoesisApp
 		fastnoise
 		exprtk
+		sfml-audio
 )
 
 # Noesis license

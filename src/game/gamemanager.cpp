@@ -45,8 +45,10 @@
 #include "../game/gnomemanager.h"
 #include "../game/mechanismmanager.h"
 #include "../game/roommanager.h"
+#include "../game/soundmanager.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
+
 
 #include "../gui/aggregatoragri.h"
 #include "../gui/aggregatorcreatureinfo.h"
@@ -62,6 +64,7 @@
 #include "../gui/aggregatorsettings.h"
 #include "../gui/aggregatorloadgame.h"
 #include "../gui/aggregatorselection.h"
+#include "../gui/aggregatorsound.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -244,6 +247,7 @@ void GameManager::postCreationInit()
 	m_eventConnector->aggregatorStockpile()->init( m_game );
 	m_eventConnector->aggregatorTileInfo()->init( m_game );
 	m_eventConnector->aggregatorWorkshop()->init( m_game );
+	m_eventConnector->aggregatorSound()->init( m_game );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );
@@ -251,6 +255,8 @@ void GameManager::postCreationInit()
 	connect( m_game->spm(), &StockpileManager::signalStockpileAdded, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onOpenStockpileInfo, Qt::QueuedConnection );
 	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
 	connect( m_game->wsm(), &WorkshopManager::signalJobListChanged, m_eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
+
+	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
 
 	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
 
@@ -268,6 +274,9 @@ void GameManager::postCreationInit()
 
 	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
 	connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
+	
+	connect( m_eventConnector, &EventConnector::signalCameraPosition, m_eventConnector->aggregatorSound(), &AggregatorSound::onCameraPosition, Qt::QueuedConnection );
+
 
 	qRegisterMetaType<QSet<unsigned int>>();
 	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );

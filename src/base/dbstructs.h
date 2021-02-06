@@ -630,6 +630,11 @@ struct Skills {
 	QString SkillGroup;
 };
 
+struct Sounds {
+	QString ID;
+	QString SoundFile;
+};
+
 struct Spells {
 	QString ID;
 	QString EffectRequirements;

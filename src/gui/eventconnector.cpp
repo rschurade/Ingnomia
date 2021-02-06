@@ -31,6 +31,7 @@
 #include "aggregatorsettings.h"
 #include "aggregatorloadgame.h"
 #include "aggregatorselection.h"
+#include "aggregatorsound.h"
 
 #include "../base/db.h"
 #include "../base/config.h"
@@ -40,6 +41,7 @@
 #include "../game/game.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
+#include "../game/soundmanager.h"
 #include "../game/plant.h"
 #include "../game/world.h"
 
@@ -63,6 +65,7 @@ EventConnector::EventConnector( GameManager* parent ) :
 	m_inventoryAggregator    = new AggregatorInventory( this );
 	m_loadGameAggregator	 = new AggregatorLoadGame( this );
 	m_selectionAggregator	 = new AggregatorSelection( this );
+	m_soundAggregator	 = new AggregatorSound( this );
 
 	connect( m_selectionAggregator, &AggregatorSelection::signalSelectTile, m_tiAggregator, &AggregatorTileInfo::onShowTileInfo );
 }
@@ -218,6 +221,16 @@ void EventConnector::onSetRenderOptions( bool designations, bool jobs, bool wall
 void EventConnector::onUpdateRenderOptions()
 {
 	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
+}
+
+void EventConnector::onPlayEffect( QVariantMap effect)
+{
+	emit signalPlayEffect( effect);
+}
+
+void EventConnector::onCameraPosition(float x, float y, float z, int r)
+{
+	emit signalCameraPosition(x, y, z, r);
 }
 
 void EventConnector::emitStartGame()
