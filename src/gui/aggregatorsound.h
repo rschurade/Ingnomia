@@ -64,12 +64,17 @@ private:
 	int m_viewLevel;
 	
 <<<<<<< HEAD
+<<<<<<< HEAD
 	sf::SoundBuffer m_buffer;
 	sf::Sound m_sound;
 =======
 	sf::SoundBuffer buffer;
 	sf::Sound sound;
 >>>>>>> Soundtest (#177)
+=======
+	sf::SoundBuffer m_buffer;
+	sf::Sound m_sound;
+>>>>>>> wip
 	
 	
 public slots:
