@@ -580,6 +580,7 @@ bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVari
 	}
 
 	QVariantMap constr;
+	constr.insert( "ConstructionID", con.value("ID") );
 	constr.insert( "Pos", pos.toString() );
 	constr.insert( "Positions", positions );
 	constr.insert( "Items", itemUIDs );
