@@ -50,6 +50,18 @@ jobs:
       with:
         pathSource: ${{ steps.download-steam.outputs.file-path }}
         pathTarget: steamworks_sdk
+        
+    - name: Download SFML
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-sfml
+      with:
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
+
+    - name: Unpack SFML
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-sfml.outputs.file-path }}
+        pathTarget: sfml_sdk
 
     - name: Download Noesis
       uses: carlosperate/download-file-action@v1.0.3
