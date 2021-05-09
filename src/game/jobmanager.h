@@ -99,6 +99,7 @@ public:
 
 	void cancelJob( const Position& pos );
 	void deleteJob( unsigned int jobID );
+	void deleteJobAt( const Position& pos );
 	void raisePrio( Position& pos );
 	void lowerPrio( Position& pos );
 };

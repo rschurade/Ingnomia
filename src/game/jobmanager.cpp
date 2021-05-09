@@ -1052,6 +1052,24 @@ void JobManager::deleteJob( unsigned int jobID )
 	}
 }
 
+void JobManager::deleteJobAt( const Position& pos )
+{
+	unsigned int jobID = 0;
+	if ( m_jobPositions.contains( pos ) )
+	{
+		jobID = m_jobPositions.value( pos );
+	}
+	else
+	{
+		jobID = g->w()->jobSprite( pos ).value( "JobID" ).toUInt();
+	}
+
+	if ( jobID != 0 && m_jobList.contains( jobID ) )
+	{
+		deleteJob( jobID );
+	}
+}
+
 QString JobManager::jobManagerInfo()
 {
 	QString out;

@@ -340,13 +340,25 @@ bool Farm::canDelete()
 
 bool Farm::removeTile( const Position & pos )
 {
-	m_fields.remove( pos.toInt() );
+	auto id = pos.toInt();
+	if( m_fields.contains( id ) )
+	{
+		auto gf = m_fields.value( id );
+		if( gf.job )
+		{
+			//qDebug() << "farm field still has a job";
+			g->jm()->deleteJobAt( pos );
+		}
+	}
+	m_fields.remove( id );
 	g->w()->clearTileFlag( pos, TileFlag::TF_FARM );
 
 	if (!m_fields.empty())
 	{
 		m_properties.firstPos = m_fields.first().pos;
-	}else{
+	}
+	else
+	{
 		m_properties.firstPos = Position();
 	}
 
