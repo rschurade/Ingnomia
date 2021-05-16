@@ -188,7 +188,7 @@ public slots:
 	void onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	
 	void onPlayEffect( QVariantMap effect);
-	void onCameraPosition(float x, float y, float z, int r);
+	void onCameraPosition( float x, float y, float z, int r, float scale );
 
 signals:
 	void signalExit();
@@ -215,5 +215,5 @@ signals:
 	void signalHeartbeat( int value );
 	void signalPlayEffect( QVariantMap effect );
 	
-	void signalCameraPosition(float x, float y, float z, int r);
+	void signalCameraPosition( float x, float y, float z, int r, float scale );
 };

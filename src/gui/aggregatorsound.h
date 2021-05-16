@@ -23,17 +23,18 @@
 
 #include <SFML/Audio.hpp>
 
-#define SOUNDS_MAX 8
-
-// struct EffectStruct
-// {
-// QString id;
-// float zvolume;
-// };
-// Q_DECLARE_METATYPE(EffectStruct)
 class Job;
 class Game;
+struct SoundEffect;
 
+struct ActiveEffect
+{
+	bool isAbsolute;
+	Position pos;
+	sf::Sound sound;
+};
+
+//TODO THe logic in this class doesn't belong in the "Aggregator" (server side!), it belongs with the UI
 class AggregatorSound : public QObject
 {
 	Q_OBJECT
@@ -44,24 +45,15 @@ public:
 
 	void init( Game* game );
 
-	void onTick( quint64 tick );
-	void playEffect( QString type, Position& pos);
-	void onPlayEffect( QVariantMap effect);
-	void onPlayNotify( QVariantMap effect);
 	void setVolume( float newvol );
-	float getVolume( );
-	
 
 private:
 	QPointer<Game> g;
-	QMap<QString, sf::Sound *> m_effects;
-	QMap<QString, sf::SoundBuffer *> m_buffers;
-	
-	QList<QVariantMap> m_playQue;
+	QList<ActiveEffect> m_activeEffects;
+	QMap<QString, sf::SoundBuffer> m_buffers;
 
-	float m_volume = 1.0f;
-	float m_zAttenuation = 100.0f;
 	int m_viewLevel;
+<<<<<<< HEAD
 	
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -77,9 +69,14 @@ private:
 >>>>>>> wip
 	
 	
-public slots:
-	//void changeViewLevel( int input);
-	void changeViewPosition();
-	void onCameraPosition(float x, float y, float z, int r);
+=======
 
+	void rebalanceSound( ActiveEffect& effect );
+	void garbageCollection();
+>>>>>>> 3D audio WIP
+public slots:
+	void onCameraPosition( float x, float y, float z, int r, float scale );
+
+	void onPlayEffect( const SoundEffect& effect );
+	void onPlayNotify( const SoundEffect& effect );
 };

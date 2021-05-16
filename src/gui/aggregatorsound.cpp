@@ -24,6 +24,7 @@
 #include "../base/gamestate.h"
 #include "../base/position.h"
 #include "../game/game.h"
+#include "../game/soundmanager.h"
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindowrenderer.h"
 =======
@@ -72,6 +73,7 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 AggregatorSound::AggregatorSound( QObject* parent ) :
 	QObject( parent )
 {
+<<<<<<< HEAD
 
 	m_effects.clear();
 	//sf::SoundBuffer buffer;
@@ -94,6 +96,10 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 >>>>>>> fix path
 	m_sound.setBuffer( m_buffer );
 	m_sound.play();
+=======
+	//sf::SoundBuffer buffer;
+	QString exePath = QCoreApplication::applicationDirPath();
+>>>>>>> 3D audio WIP
 
 	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
 >>>>>>> wip
@@ -114,6 +120,7 @@ void AggregatorSound::init( Game* game )
 >>>>>>> Soundtest (#177)
 =======
 
+<<<<<<< HEAD
 >>>>>>> wip
 	m_volume = Global::cfg->get( "AudioMasterVolume" ).toFloat();
 	m_effects.clear();
@@ -180,28 +187,39 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 		filename                = exePath + "/content/audio/" + filename;
 		
 		if ( !buffer->loadFromFile( filename.toStdString() ) )
+=======
+	setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
+	for ( auto& sound : soundList )
+	{
+		QString soundID  = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
+		QString filename = sound.value( "SoundFile" ).toString();
+		sf::SoundBuffer buffer;
+		QString exePath = QCoreApplication::applicationDirPath();
+		filename        = exePath + "/content/audio/" + filename;
+
+		if ( !buffer.loadFromFile( filename.toStdString() ) )
+>>>>>>> 3D audio WIP
 		{
 			qDebug() << "unable to load sound" << soundID << " " << filename;
 		}
 		else
 		{
-			sf::Sound* effect = new sf::Sound;
-			effect->setBuffer( *buffer );
 			qDebug() << "loaded sound " << soundID << " " << filename;
-			m_effects.insert( soundID, effect );
-			m_buffers.insert( soundID, buffer );
+			m_buffers.insert( soundID, std::move( buffer ) );
 		}
-		
 	}
 }
-void AggregatorSound::onPlayEffect( QVariantMap effect )
+
+void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 {
-	m_volume              = Global::cfg->get( "AudioMasterVolume" ).toFloat();
-	QString soundID       = effect.value( "ID" ).toString() + ".";
-	QString soundMaterial = effect.value( "Material" ).toString();
-	if ( m_effects.contains( soundID ) || m_effects.contains( soundID + soundMaterial ) )
+	garbageCollection();
+
+	QString soundID       = effectRequest.type + ".";
+	QString soundMaterial = effectRequest.material;
+	if ( m_buffers.contains( soundID ) || m_buffers.contains( soundID + soundMaterial ) )
 	{
-		if ( m_effects.contains( soundID + soundMaterial ) )
+		if ( m_buffers.contains( soundID + soundMaterial ) )
 		{
 			soundID = soundID + soundMaterial;
 		}
@@ -220,6 +238,7 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 				qDebug() << "Unknown sound material " << mat;
 			}
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		if ( m_effects[soundID]->getStatus() != sf::SoundSource::Status::Playing )
@@ -245,18 +264,21 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 =======
 		if ( m_effects[soundID]->getStatus() != sf::SoundSource::Status::Playing )
 >>>>>>> wip
+=======
+		m_activeEffects.append( ActiveEffect {
+			false,
+			effectRequest.origin,
+			sf::Sound( m_buffers[soundID] ) } );
+		auto& sound = m_activeEffects.back().sound;
+		sound.setPosition( effectRequest.origin.x, effectRequest.origin.y, effectRequest.origin.z );
+		sound.setRelativeToListener( false );
+		rebalanceSound( m_activeEffects.back() );
+		sound.play();
+
+		if ( Global::debugSound )
+>>>>>>> 3D audio WIP
 		{
-			sf::Listener::setGlobalVolume( m_volume );
-			m_effects[soundID]->setVolume( 100.0f );
-			m_effects[soundID]->setPosition( effect.value( "x" ).toFloat(), effect.value( "y" ).toFloat(), effect.value( "z" ).toFloat() * m_zAttenuation );
-			m_effects[soundID]->setRelativeToListener( false );
-			m_effects[soundID]->setMinDistance( 10.f );
-			m_effects[soundID]->setAttenuation( 0.05f );
-			m_effects[soundID]->play();
-			if ( Global::debugSound )
-			{
-				qDebug() << "playing sound " << soundID << " v " << m_volume;
-			}
+			qDebug() << "playing sound " << soundID;
 		}
 	}
 	else
@@ -275,13 +297,19 @@ void AggregatorSound::onPlayEffect( QVariantMap effect )
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void AggregatorSound::onPlayNotify( QVariantMap effect )
+=======
+void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
+>>>>>>> 3D audio WIP
 {
-	QString soundID       = effect.value( "ID" ).toString() + ".";
-	QString soundMaterial = effect.value( "Material" ).toString();
-	if ( m_effects.contains( soundID ) || m_effects.contains( soundID + soundMaterial ) )
+	garbageCollection();
+
+	QString soundID       = effectRequest.type + ".";
+	QString soundMaterial = effectRequest.material;
+	if ( m_buffers.contains( soundID ) || m_buffers.contains( soundID + soundMaterial ) )
 	{
-		if ( m_effects.contains( soundID + soundMaterial ) )
+		if ( m_buffers.contains( soundID + soundMaterial ) )
 		{
 			soundID = soundID + soundMaterial;
 		}
@@ -294,15 +322,27 @@ void AggregatorSound::onPlayNotify( QVariantMap effect )
 				qDebug() << "Unknown sound material " << mat;
 			}
 		}
+		m_activeEffects.append( ActiveEffect {
+			true,
+			Position(),
+			sf::Sound( m_buffers[soundID] ) } );
+		auto& sound = m_activeEffects.back().sound;
+		sound.setPosition( 0, 0, 0 );
+		sound.setRelativeToListener( true );
+		rebalanceSound( m_activeEffects.back() );
+		sound.play();
 
+<<<<<<< HEAD
 		m_effects[soundID]->setVolume( m_volume );
 <<<<<<< HEAD
 		m_effects[soundID]->setPosition( 0, 0, 0 );
 		m_effects[soundID]->setRelativeToListener( true );
 		m_effects[soundID]->play();
+=======
+>>>>>>> 3D audio WIP
 		if ( Global::debugSound )
 		{
-			qDebug() << "playing sound " << soundID << " v " << m_volume;
+			qDebug() << "playing sound " << soundID;
 		}
 	}
 	else
@@ -359,6 +399,7 @@ void AggregatorSound::onPlayNotify( QVariantMap effect )
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void AggregatorSound::setVolume( float newvol )
 {
 	m_volume = newvol;
@@ -385,35 +426,82 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 =======
 >>>>>>> wip
 void AggregatorSound::setVolume( float newvol )
+=======
+void AggregatorSound::rebalanceSound( ActiveEffect& effect )
+>>>>>>> 3D audio WIP
 {
-	m_volume = newvol;
+	//TODO Check if we can get OpenAL band pass and reverb filters somehow working with SFML
+	// Need them to properly do obstructed sound sources and "stone" environments
+	effect.sound.setRelativeToListener( effect.isAbsolute );
+	if ( !effect.isAbsolute )
+	{
+		if ( effect.pos.z > m_viewLevel )
+		{
+			effect.sound.setVolume( 0 );
+		}
+		else
+		{
+			//TODO Check for line-of-sight from camera, not just Z-cutoff
+			constexpr int zCutoff = 20;
+			auto diff             = std::min( m_viewLevel - effect.pos.z, zCutoff );
+			effect.sound.setVolume( 100 - ( 100 * diff / zCutoff ) );
+		}
+	}
+	else
+	{
+		effect.sound.setVolume( 100 );
+	}
+}
+
+void AggregatorSound::garbageCollection()
+{
+	//TODO Get the slot fed externally!
+	setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+
+	for ( auto it = m_activeEffects.begin(); it != m_activeEffects.end(); )
+	{
+		if ( it->sound.getStatus() == sf::SoundSource::Stopped )
+		{
+			it = m_activeEffects.erase( it );
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void AggregatorSound::setVolume( float newvol )
+{
 	sf::Listener::setGlobalVolume( newvol );
 }
 
-float AggregatorSound::getVolume()
+void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float scale )
 {
-
-	return m_volume;
-}
-
-void AggregatorSound::changeViewPosition()
-{
-
-	//qDebug() << "changeViewPosition x" << GameState::moveX << " y" << GameState::moveY;
-}
-void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
-{
+<<<<<<< HEAD
 <<<<<<< HEAD
 	
 	sf::Listener::setUpVector(0.f, 0.f, 1.f);
 >>>>>>> Soundtest (#177)
 =======
+=======
+	// Cull sounds according to new view level
+	m_viewLevel = z;
+	garbageCollection();
+	for ( auto& effect : m_activeEffects )
+	{
+		rebalanceSound( effect );
+	}
+>>>>>>> 3D audio WIP
 
+	// Compute new listener position
+	//TODO Untangle the calculations, there was no need for trigonometry
 	sf::Listener::setUpVector( 0.f, 0.f, 1.f );
 >>>>>>> wip
 	float angle = 0;
 	float x_rotated;
 	float y_rotated;
+	sf::Vector3f direction;
 	switch ( r )
 	{
 		case 0:
@@ -422,8 +510,8 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 =======
 >>>>>>> wip
 		{
-			angle = ( ( -45. ) * 3.1415 ) / 180.;
-			sf::Listener::setDirection( 1.f, 1.f, 0.f );
+			angle     = ( ( -45. ) * 3.1415 ) / 180.;
+			direction = { 1.f, 1.f, -1.f };
 			break;
 		}
 <<<<<<< HEAD
@@ -466,23 +554,24 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 >>>>>>> wip
 		case 1:
 		{
-			angle = ( ( -45. - 90 ) * 3.1415 ) / 180.;
-			sf::Listener::setDirection( 1.f, -1.f, 0.f );
+			angle     = ( ( -45. - 90 ) * 3.1415 ) / 180.;
+			direction = { 1.f, -1.f, -1.f };
 			break;
 		}
 		case 2:
 		{
-			angle = ( ( -45. - 90 - 90 ) * 3.1415 ) / 180.;
-			sf::Listener::setDirection( -1.f, -1.f, 0.f );
+			angle     = ( ( -45. - 90 - 90 ) * 3.1415 ) / 180.;
+			direction = { -1.f, -1.f, -1.f };
 			break;
 		}
 		case 3:
 		{
-			angle = ( ( -45. - 90 - 90 - 90 ) * 3.1415 ) / 180.;
-			sf::Listener::setDirection( -1.f, 1.f, 0.f );
+			angle     = ( ( -45. - 90 - 90 - 90 ) * 3.1415 ) / 180.;
+			direction = { -1.f, 1.f, -1.f };
 			break;
 		}
 	}
+	sf::Listener::setDirection( direction );
 
 	x = -x / 32 + Global::dimX / 2;
 	y = -y / 16;
@@ -527,7 +616,18 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r )
 =======
 	x_rotated = xnew + Global::dimX / 2;
 	y_rotated = ynew + Global::dimY / 2;
+<<<<<<< HEAD
 	//qDebug() << "changeViewPosition x" << x << x_rotated << " y" << y << y_rotated << "r" << r;
 	sf::Listener::setPosition( x_rotated, y_rotated, z * m_zAttenuation );
 >>>>>>> wip
+=======
+
+	// Center of view on the currently active top-most layer
+	sf::Vector3f centerOfView = { x_rotated, y_rotated, z };
+	// Virtual listener is actually floating above
+	sf::Vector3f listener = centerOfView - direction * 100.f / scale;
+
+	qDebug() << "changeViewPosition x " << listener.x << " y " << listener.y << " z " << listener.z;
+	sf::Listener::setPosition( centerOfView - direction * 100.f / scale );
+>>>>>>> 3D audio WIP
 }

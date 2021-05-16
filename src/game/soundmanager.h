@@ -19,17 +19,14 @@
 
 #include "../base/position.h"
 
-#include <QList>
-
-#define SOUNDS_MAX 8
-#define SOUND_FALLOFF 10
-
-struct EffectStruct
+struct SoundEffect
 {
-QString id;
-float zvolume;
+	QString type;
+	QString material;
+	Position origin;
 };
-Q_DECLARE_METATYPE(EffectStruct)
+Q_DECLARE_METATYPE( SoundEffect )
+
 class Job;
 class Game;
 
@@ -42,14 +39,12 @@ public:
 	~SoundManager();
 
 	void onTick( quint64 tick );
-	void playEffect( QString type, Position& pos, QString material);
-	void playEffect( QString type, Position& pos, QString material, int duration);
-	
+	void playEffect( QString type, Position& pos, QString material );
+	void playEffect( QString type, Position& pos, QString material, int duration );
 
 private:
 	QPointer<Game> g;
 
-
 signals:
-	void signalPlayEffect( QVariantMap effect  );
+	void signalPlayEffect( const SoundEffect& effect );
 };

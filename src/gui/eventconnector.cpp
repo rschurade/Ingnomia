@@ -228,9 +228,9 @@ void EventConnector::onPlayEffect( QVariantMap effect)
 	emit signalPlayEffect( effect);
 }
 
-void EventConnector::onCameraPosition(float x, float y, float z, int r)
+void EventConnector::onCameraPosition( float x, float y, float z, int r, float scale )
 {
-	emit signalCameraPosition(x, y, z, r);
+	emit signalCameraPosition( x, y, z, r, scale );
 }
 
 void EventConnector::emitStartGame()

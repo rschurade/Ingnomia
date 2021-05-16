@@ -572,7 +572,7 @@ void MainWindowRenderer::onRenderParamsChanged()
 {
 	updateRenderParams();
 	emit redrawRequired();
-	emit signalCameraPosition(m_moveX, m_moveY, m_viewLevel, m_rotation);
+	emit signalCameraPosition(m_moveX, m_moveY, m_viewLevel, m_rotation, m_scale);
 	
 }
 

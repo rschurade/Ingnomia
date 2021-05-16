@@ -168,5 +168,5 @@ public slots:
 signals:
 	void redrawRequired();
 	void fullDataRequired();
-	void signalCameraPosition(float x, float y, float z, int r);
+	void signalCameraPosition(float x, float y, float z, int r, float scale );
 };
