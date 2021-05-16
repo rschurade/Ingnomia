@@ -23,7 +23,17 @@ find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
-find_package(SFML REQUIRED audio)
+
+set(SFML_STATIC_LIBRARIES TRUE)
+find_package(SFML REQUIRED COMPONENTS audio)
+set_target_properties(sfml-system PROPERTIES
+	MAP_IMPORTED_CONFIG_MINSIZEREL Release
+	MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+)
+set_target_properties(sfml-audio PROPERTIES
+	MAP_IMPORTED_CONFIG_MINSIZEREL Release
+	MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+)
 
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
