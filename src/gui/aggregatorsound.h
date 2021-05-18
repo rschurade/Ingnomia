@@ -54,6 +54,7 @@ private:
 
 	int m_viewLevel;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -70,6 +71,9 @@ private:
 	
 	
 =======
+=======
+	Position m_viewDirection;
+>>>>>>> Add line of sight to audio
 
 	void rebalanceSound( ActiveEffect& effect );
 	void garbageCollection();

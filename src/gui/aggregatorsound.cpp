@@ -27,6 +27,7 @@
 #include "../game/soundmanager.h"
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindowrenderer.h"
+<<<<<<< HEAD
 =======
 #include "../game/game.h"
 
@@ -45,6 +46,9 @@
 =======
 #include "../gui/mainwindowrenderer.h"
 >>>>>>> wip
+=======
+#include "../game/world.h"
+>>>>>>> Add line of sight to audio
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -441,10 +445,25 @@ void AggregatorSound::rebalanceSound( ActiveEffect& effect )
 		}
 		else
 		{
-			//TODO Check for line-of-sight from camera, not just Z-cutoff
-			constexpr int zCutoff = 20;
-			auto diff             = std::min( m_viewLevel - effect.pos.z, zCutoff );
-			effect.sound.setVolume( 100 - ( 100 * diff / zCutoff ) );
+			// Simple line-of-sight check from viewing position
+			Position trace = effect.pos;
+			// Half loudness per floor, and even less per wall
+			constexpr short occlusionWeight = 1;
+			short occlusion                 = occlusionWeight;
+			while ( trace.valid() && trace.z < m_viewLevel )
+			{
+				trace = trace - m_viewDirection;
+				if(g->w()->wallType( trace ) & WT_SOLIDWALL)
+				{
+					occlusion += 2;
+				}
+				if(g->w()->floorType( trace ) & FT_SOLIDFLOOR)
+				{
+					occlusion += 1;
+				}
+			}
+			//TODO Bandpass for high occlusion would be appropiate
+			effect.sound.setVolume( 100.f / occlusion * occlusionWeight );
 		}
 	}
 	else
@@ -480,6 +499,7 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	sf::Listener::setUpVector(0.f, 0.f, 1.f);
 >>>>>>> Soundtest (#177)
@@ -493,6 +513,10 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 		rebalanceSound( effect );
 	}
 >>>>>>> 3D audio WIP
+=======
+	garbageCollection();
+	m_viewLevel = z;
+>>>>>>> Add line of sight to audio
 
 	// Compute new listener position
 	//TODO Untangle the calculations, there was no need for trigonometry
@@ -501,7 +525,6 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 	float angle = 0;
 	float x_rotated;
 	float y_rotated;
-	sf::Vector3f direction;
 	switch ( r )
 	{
 		case 0:
@@ -511,7 +534,7 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 >>>>>>> wip
 		{
 			angle     = ( ( -45. ) * 3.1415 ) / 180.;
-			direction = { 1.f, 1.f, -1.f };
+			m_viewDirection = { 1, 1, -1 };
 			break;
 		}
 <<<<<<< HEAD
@@ -555,22 +578,23 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 		case 1:
 		{
 			angle     = ( ( -45. - 90 ) * 3.1415 ) / 180.;
-			direction = { 1.f, -1.f, -1.f };
+			m_viewDirection = { 1, -1, -1 };
 			break;
 		}
 		case 2:
 		{
 			angle     = ( ( -45. - 90 - 90 ) * 3.1415 ) / 180.;
-			direction = { -1.f, -1.f, -1.f };
+			m_viewDirection = { -1, -1, -1 };
 			break;
 		}
 		case 3:
 		{
 			angle     = ( ( -45. - 90 - 90 - 90 ) * 3.1415 ) / 180.;
-			direction = { -1.f, 1.f, -1.f };
+			m_viewDirection = { -1, 1, -1 };
 			break;
 		}
 	}
+	auto direction = sf::Vector3f( m_viewDirection.x, m_viewDirection.y, m_viewDirection.z);
 	sf::Listener::setDirection( direction );
 
 	x = -x / 32 + Global::dimX / 2;
@@ -627,7 +651,17 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 	// Virtual listener is actually floating above
 	sf::Vector3f listener = centerOfView - direction * 100.f / scale;
 
+<<<<<<< HEAD
 	qDebug() << "changeViewPosition x " << listener.x << " y " << listener.y << " z " << listener.z;
 	sf::Listener::setPosition( centerOfView - direction * 100.f / scale );
 >>>>>>> 3D audio WIP
+=======
+	sf::Listener::setPosition( listener );
+
+	// Cull sounds according to new view
+	for ( auto& effect : m_activeEffects )
+	{
+		rebalanceSound( effect );
+	}
+>>>>>>> Add line of sight to audio
 }
