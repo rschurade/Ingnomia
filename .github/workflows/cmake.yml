@@ -99,6 +99,18 @@ jobs:
       with:
         pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
         pathTarget: content
+        
+    - name: Download Audio Files
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-audio
+      with:
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/audio.zip'
+
+    - name: Unpack Audio Files
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-audio.outputs.file-path }}
+        pathTarget: content
 
     - name: Fix permissions
       if: (!startsWith(matrix.os, 'windows'))
