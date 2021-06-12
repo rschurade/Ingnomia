@@ -46,7 +46,7 @@ void AggregatorSettings::onRequestSettings()
 
     m_settings.toggleMouseWheel = Global::cfg->get( "toggleMouseWheel" ).toBool();
 	 
-	 m_settings.audioMasterVolume = Global::cfg->get( "audioMasterVolume" ).toFloat() * 100; 
+	 m_settings.audioMasterVolume = Global::cfg->get( "AudioMasterVolume" ).toFloat() * 100; 
 
     emit signalUpdateSettings( m_settings );
 }
