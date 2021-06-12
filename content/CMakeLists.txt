@@ -9,6 +9,7 @@ file(
 	"*.otf"
 	"*.png"
 	"*.sql"
+	"*.wav"
 	"*License*"
 )
 
