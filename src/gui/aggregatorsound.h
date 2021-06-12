@@ -53,31 +53,10 @@ private:
 	QMap<QString, sf::SoundBuffer> m_buffers;
 
 	int m_viewLevel;
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-<<<<<<< HEAD
-<<<<<<< HEAD
-	sf::SoundBuffer m_buffer;
-	sf::Sound m_sound;
-=======
-	sf::SoundBuffer buffer;
-	sf::Sound sound;
->>>>>>> Soundtest (#177)
-=======
-	sf::SoundBuffer m_buffer;
-	sf::Sound m_sound;
->>>>>>> wip
-	
-	
-=======
-=======
 	Position m_viewDirection;
->>>>>>> Add line of sight to audio
 
 	void rebalanceSound( ActiveEffect& effect );
 	void garbageCollection();
->>>>>>> 3D audio WIP
 public slots:
 	void onCameraPosition( float x, float y, float z, int r, float scale );
 
