@@ -24,7 +24,9 @@ find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
 
-set(SFML_STATIC_LIBRARIES TRUE)
+if(WIN32)
+	set(SFML_STATIC_LIBRARIES TRUE)
+endif(WIN32)
 find_package(SFML REQUIRED COMPONENTS audio)
 set_target_properties(sfml-system PROPERTIES
 	MAP_IMPORTED_CONFIG_MINSIZEREL Release
