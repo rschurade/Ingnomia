@@ -15,8 +15,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, windows-2019]
-    runs-on: ${{ matrix.os }}
+        config:
+          - {
+            os: windows-2019
+            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
+          }
+          - {
+            os: ubuntu-18.04
+            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar'
+          }
+    runs-on: ${{ matrix.config.os }}
 
     steps:
     - uses: actions/checkout@v2
@@ -51,19 +59,11 @@ jobs:
         pathSource: ${{ steps.download-steam.outputs.file-path }}
         pathTarget: steamworks_sdk
 
-    - name: Download SFML Windows
-      if: (startsWith(matrix.os, 'windows'))
+    - name: Download SFML
       uses: carlosperate/download-file-action@v1.0.3
       id: download-sfml
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
-
-    - name: Download SFML Linux
-      if: (startsWith(matrix.os, 'ubuntu'))
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-sfml
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar'
+        file-url: ${{ matrix.config.sfml }}
 
     - name: Unpack SFML
       uses: DuckSoft/extract-7z-action@v1.0
@@ -107,7 +107,7 @@ jobs:
       with:
         pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
         pathTarget: content
-        
+
     - name: Download Audio Files
       uses: carlosperate/download-file-action@v1.0.3
       id: download-audio
@@ -121,7 +121,7 @@ jobs:
         pathTarget: content
 
     - name: Fix permissions
-      if: (!startsWith(matrix.os, 'windows'))
+      if: (!startsWith(matrix.config.os, 'windows'))
       shell: bash
       run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
 
@@ -151,12 +151,12 @@ jobs:
         cmake --install . --prefix ../install --config ${{env.BUILD_TYPE}}
 
     - name: Find msbuild
-      if: (startsWith(matrix.os, 'windows'))
+      if: (startsWith(matrix.config.os, 'windows'))
       uses: microsoft/setup-msbuild@v1.0.2
       id: msbuild
 
     - name: Build Blend project
-      if: (startsWith(matrix.os, 'windows'))
+      if: (startsWith(matrix.config.os, 'windows'))
       working-directory: ${{github.workspace}}/gui
       shell: pwsh
       # Ignore errors for now
@@ -166,7 +166,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: ${{matrix.os}}
+        name: ${{matrix.config.os}}
         path: |
           install/
           !**./*.iobj
