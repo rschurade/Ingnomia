@@ -17,12 +17,12 @@ jobs:
       matrix:
         config:
           - {
-            os: windows-2019
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
+            os: 'windows-2019',
+            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip',
           }
           - {
-            os: ubuntu-18.04
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar'
+            os: 'ubuntu-18.04',
+            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
           }
     runs-on: ${{ matrix.config.os }}
 
