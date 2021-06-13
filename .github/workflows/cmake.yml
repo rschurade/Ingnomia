@@ -52,16 +52,24 @@ jobs:
         pathTarget: steamworks_sdk
         
     - name: Download SFML
+      if: (startsWith(matrix.os, 'windows'))
       uses: carlosperate/download-file-action@v1.0.3
       id: download-sfml
       with:
         file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
 
     - name: Unpack SFML
+      if: (startsWith(matrix.os, 'windows'))
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-sfml.outputs.file-path }}
         pathTarget: sfml_sdk
+
+    - name: Install SFML
+      if: (startsWith(matrix.os, 'ubuntu'))
+      shell: bash
+      run: |
+        sudo apt-get -yq install libsfml-dev
 
     - name: Download Noesis
       uses: carlosperate/download-file-action@v1.0.3
