@@ -1,17 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.8.8]
 
 ### Fixed
-suspending workshops
+- remove job when deleting farm tile
+- fix deconstructing scaffold
+- fix beehive job
+- suspending workshops
+- XpMod can be read from config file (#173)
+- SeedTrader to trade potato & onion seeds.
+- Addded missing material name for Panda, Spider, Woodlouse
 
 ### Added
-add num plots to grove info, 
+- support for sound
+- add num plots to grove info, 
 
 ### Changed
-allow designating grove over existing plants
-improve auto craft behavior
+- update Noesis to 3.0.12
+- allow designating grove over existing plants
+- improve auto craft behavior
+- some rebalance of trade values for metal coin, bar and ores. (#171)
 
 ## [0.8.7]
 
