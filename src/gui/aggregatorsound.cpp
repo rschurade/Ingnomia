@@ -98,6 +98,9 @@ void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 		auto& sound = m_activeEffects.back().sound;
 		sound.setPosition( effectRequest.origin.x, effectRequest.origin.y, effectRequest.origin.z );
 		sound.setRelativeToListener( false );
+		auto pitchVariation = ( ( static_cast<float>( rand() ) / RAND_MAX ) - 0.5 ) * 2;
+		//TODO Factor 1.2 should be configurable per sound effect
+		sound.setPitch( pow( 1.2, pitchVariation ) );
 		rebalanceSound( m_activeEffects.back() );
 		sound.play();
 
@@ -143,6 +146,7 @@ void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 		auto& sound = m_activeEffects.back().sound;
 		sound.setPosition( 0, 0, 0 );
 		sound.setRelativeToListener( true );
+		sound.setPitch( 1 );
 		rebalanceSound( m_activeEffects.back() );
 		sound.play();
 
