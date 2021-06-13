@@ -34,6 +34,7 @@ Note! Building on Mac is currently not possible. Certain features in the rendere
 * [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.7\
   For using Noesis in a local development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
+* [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
 * CMake 3.16 or newer
 
 ### Build ###
@@ -47,6 +48,7 @@ cmake -S . -B "<BUILD_DIR>" \
 -DNOESIS_ROOT="<NOESISDIR>" \
 -DNOESIS_LICENSE_NAME="<NOESIS_TRIAL_LICENSE_NAME>" \
 -DNOESIS_LICENSE_KEY="<NOESIS_TRIAL_LICENSE_KEY>"
+-DSFML_DIR="<SFMLDIR>/lib/cmake/SFML"
 ```
 
 If no errors have occured, proceed by building the project with the chosen build system or open the generated project in an IDE of your choice.
