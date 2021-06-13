@@ -51,15 +51,15 @@ jobs:
         pathSource: ${{ steps.download-steam.outputs.file-path }}
         pathTarget: steamworks_sdk
 
-    - name: Download SFML
+    - name: Download SFML Windows
       if: (startsWith(matrix.os, 'windows'))
       uses: carlosperate/download-file-action@v1.0.3
       id: download-sfml
       with:
         file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip'
 
-    - name: Download SFML
-      if: (!startsWith(matrix.os, 'windows'))
+    - name: Download SFML Linux
+      if: (startsWith(matrix.os, 'ubuntu'))
       uses: carlosperate/download-file-action@v1.0.3
       id: download-sfml
       with:
