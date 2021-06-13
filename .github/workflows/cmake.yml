@@ -26,7 +26,7 @@ jobs:
             os: 'ubuntu-18.04',
             sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
             noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.0.12.zip',
-            steam: ''https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
+            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
           }
     runs-on: ${{ matrix.config.os }}
 
