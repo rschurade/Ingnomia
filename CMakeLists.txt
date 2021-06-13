@@ -182,6 +182,15 @@ get_target_property(NOESIS_DLL Noesis LOCATION)
 list(APPEND RUNTIME_DLLS ${STEAM_DLL})
 list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
 
+if(WIN32)
+	# Prebuilt SFML on Windows bundles OpenAL
+	get_filename_component(OPENAL_DLL "${SFML_DIR}" PATH)
+	get_filename_component(OPENAL_DLL "${OPENAL_DLL}" PATH)
+	get_filename_component(OPENAL_DLL "${OPENAL_DLL}" PATH)
+	set(OPENAL_DLL ${OPENAL_DLL}/bin/openal32.dll)
+	list(APPEND RUNTIME_DLLS ${OPENAL_DLL})
+endif(WIN32)
+
 install(
 	FILES
 		${RUNTIME_DLLS}
