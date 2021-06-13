@@ -175,7 +175,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: ${{matrix.config.os}}
+        name: "${{matrix.config.os}}-${{github.run_id}}"
         path: |
           install/
           !**./*.iobj
