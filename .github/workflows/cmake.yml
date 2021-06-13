@@ -19,10 +19,14 @@ jobs:
           - {
             os: 'windows-2019',
             sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip',
+            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-win-3.0.12.zip',
+            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
           }
           - {
             os: 'ubuntu-18.04',
             sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
+            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.0.12.zip',
+            steam: ''https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
           }
     runs-on: ${{ matrix.config.os }}
 
@@ -51,7 +55,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-steam
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip'
+        file-url: ${{ matrix.config.steam }}
 
     - name: Unpack Steam
       uses: DuckSoft/extract-7z-action@v1.0
@@ -75,7 +79,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-noesis
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-merged-3.0.7.zip'
+        file-url: ${{ matrix.config.noesis }}
 
     - name: Unpack Noesis
       uses: DuckSoft/extract-7z-action@v1.0

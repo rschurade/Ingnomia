@@ -31,7 +31,7 @@ Note! Building on Mac is currently not possible. Certain features in the rendere
 #### All Platforms ####
 * OpenGL 4.3 - Mac is not a supported compilation platform since it has deprecated OpenGL
 * Qt 5.14.1 or newer
-* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.7\
+* [Noesis Gui](https://www.noesisengine.com/developers/downloads.php) 3.0.12\
   For using Noesis in a local development build, you need to get a [trial license](https://www.noesisengine.com/trial/).
 * [Steam SDK](https://partner.steamgames.com/doc/sdk)
 * [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
