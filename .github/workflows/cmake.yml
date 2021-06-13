@@ -129,6 +129,11 @@ jobs:
       shell: bash
       run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
 
+    - name: Install OpenAL
+      if: (!startsWith(matrix.config.os, 'windows'))
+      shell: bash
+      run: sudo apt-get -yq install libopenal1
+
     - name: Create Build Environment
       run: cmake -E make_directory build
 
