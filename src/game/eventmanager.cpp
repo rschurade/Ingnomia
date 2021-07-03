@@ -293,7 +293,15 @@ void EventManager::executeEvent( Event& event )
 		qDebug() << key << data[key];
 	}
 	*/
-	Position location = Position( data.value( "Location" ) );
+	Position location;
+	if ( data.contains( "Location" ) )
+	{
+		location = Position( data.value( "Location" ) );
+	}
+	else 
+	{
+		location = getEventLocation( data );
+	}
 	int amount        = data.value( "Amount" ).toInt();
 
 	switch ( event.type )
@@ -320,7 +328,6 @@ void EventManager::executeEvent( Event& event )
 		break;
 		case EventType::INVASION:
 		{
-			location = getEventLocation( data );
 			spawnInvasion( location, amount, data );
 			emit signalCenterCamera( location.toString(), 4 );
 			return;
@@ -431,6 +438,20 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 	Position location;
 
 	if ( locationString == "RandomBorderTile" )
+	{
+		int tries  = 0;
+		bool found = false;
+		while ( tries < 20 )
+		{
+			location = Global::util->borderPos( found );
+			if ( found )
+			{
+				break;
+			}
+		}
+		++tries;
+	}
+	else 
 	{
 		int tries  = 0;
 		bool found = false;
