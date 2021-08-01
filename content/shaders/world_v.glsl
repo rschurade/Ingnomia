@@ -278,7 +278,8 @@ void main()
 	)
 	{
 		// ... if not, then skip projection and cull it
-		gl_Position = vec4(2,2,2,1);
+		const float NaN = 1 / 0;
+		gl_Position = vec4(NaN, NaN, NaN, NaN);
 	}
 	else
 	{
