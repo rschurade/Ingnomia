@@ -29,6 +29,7 @@
 #include "../game/gnomemanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
+#include "../game/world.h"
 
 #include "../gui/eventconnector.h"
 
@@ -293,7 +294,7 @@ void EventManager::executeEvent( Event& event )
 		qDebug() << key << data[key];
 	}
 	*/
-	Position location = Position( data.value( "Location" ) );
+	Position location = getEventLocation( data );
 	int amount        = data.value( "Amount" ).toInt();
 
 	switch ( event.type )
@@ -301,8 +302,6 @@ void EventManager::executeEvent( Event& event )
 		case EventType::MIGRATION:
 		{
 			spawnGnome( location, amount );
-			emit signalCenterCamera( location.toString(), 4 );
-			return;
 		}
 		break;
 		case EventType::TRADER:
@@ -314,19 +313,18 @@ void EventManager::executeEvent( Event& event )
 			}
 			else
 			{
-				qDebug() << "Spawn trader, marketStall = 0";
+				qDebug() << "Spawn trader failed, marketStall = 0";
+				return;
 			}
 		}
 		break;
 		case EventType::INVASION:
 		{
-			location = getEventLocation( data );
 			spawnInvasion( location, amount, data );
-			emit signalCenterCamera( location.toString(), 4 );
-			return;
 		}
 		break;
 	}
+	emit signalCenterCamera( location );
 }
 
 void EventManager::spawnGnome( Position location, int amount )
@@ -350,11 +348,8 @@ void EventManager::spawnTrader( Position location, unsigned int marketStall, QVa
 {
 	auto ws = g->m_workshopManager->workshop( marketStall );
 	// spawn trader"
-	srand( std::chrono::system_clock::now().time_since_epoch().count() );
 	QString type;
 	KingdomEconomy econ = (KingdomEconomy)data.value( "KingdomEconomy" ).toInt();
-
-	location = getEventLocation( data );
 
 	switch ( econ )
 	{
@@ -407,7 +402,6 @@ void EventManager::onAnswer( unsigned int id, bool answer )
 						return;
 					}
 				}
-				getEventLocation( eventMap );
 				e.data = eventMap;
 				m_eventList.removeAt( i );
 				executeEvent( e );
@@ -428,23 +422,18 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 
 	QString locationString = im.value( "Location" ).toString();
 
-	Position location;
+	Position location = Position(locationString);
 
-	if ( locationString == "RandomBorderTile" )
+	if ( locationString == "RandomBorderTile" || !g->w()->isWalkableGnome(location))
 	{
-		int tries  = 0;
 		bool found = false;
-		while ( tries < 20 )
+		location = Global::util->borderPos( found );
+		if (!found)
 		{
-			location = Global::util->borderPos( found );
-			if ( found )
-			{
-				break;
-			}
+			//TODO Use a different spawn location if no edge position was valid
+			location = Position();
 		}
-		++tries;
 	}
-	eventMap.insert( "Location", location.toString() );
 	return location;
 }
 
@@ -491,38 +480,8 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 		em.insert( "Amount", amount );
 	}
 	em.insert( "Species", args.value( "Type" ).toString() );
-	auto location = getEventLocation( em );
 	e.data        = em;
 	m_eventList.append( e );
-
-	if ( location.isZero() )
-	{
-		if ( em.contains( "OnFailure" ) )
-		{
-			QString msg   = em.value( "OnFailure" ).toMap().value( "Message" ).toString();
-			QString title = em.value( "OnFailure" ).toMap().value( "Title" ).toString();
-			if ( !msg.isEmpty() )
-			{
-				Global::eventConnector->onEvent( GameState::createID(), title, msg, false, false );
-			}
-		}
-		m_eventList.removeLast();
-		return;
-	}
-
-	if ( checkRequirements( e ) )
-	{
-		QString msg = em.value( "OnSuccess" ).toMap().value( "Message" ).toString();
-		if ( !msg.isEmpty() )
-		{
-			int amount2 = em.value( "Amount" ).toInt();
-			msg.replace( "$Num", QString::number( amount2 ) );
-			QString title = em.value( "OnSuccess" ).toMap().value( "Title" ).toString();
-			Global::eventConnector->onEvent( 0, title, msg, true, false );
-		}
-		executeEvent( e );
-		m_eventList.removeLast();
-	}
 }
 
 QList<Mission>& EventManager::missions()

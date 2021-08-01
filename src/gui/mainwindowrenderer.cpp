@@ -72,6 +72,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
 	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
 	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
+	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalCenterCamera, this, &MainWindowRenderer::onCenterCameraPosition );
 	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
 
 	connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalUpdateSelection, this, &MainWindowRenderer::onUpdateSelection, Qt::QueuedConnection );
@@ -868,26 +869,12 @@ void MainWindowRenderer::onUpdateSelection( const QMap<unsigned int, SelectionDa
 	m_selectionNoDepthTest = noDepthTest;
 }
 
-unsigned int MainWindowRenderer::posToInt( Position pos, quint8 rotation )
+void MainWindowRenderer::onCenterCameraPosition( const Position& target )
 {
-	//return x + Global::dimX * y + Global::dimX * Global::dimX * z;
-
-	switch ( rotation )
-	{
-		case 0:
-			return pos.toInt();
-			break;
-		case 1:
-			return pos.x + Global::dimX * ( Global::dimX - pos.y ) + Global::dimX * Global::dimX * pos.z;
-			break;
-		case 2:
-			return ( Global::dimX - pos.x ) + Global::dimX * ( Global::dimX - pos.y ) + Global::dimX * Global::dimX * pos.z;
-			break;
-		case 3:
-			return ( Global::dimX - pos.x ) + Global::dimX * pos.y + Global::dimX * Global::dimX * pos.z;
-			break;
-	}
-	return 0;
+	m_moveX     = 16 * (-target.x + target.y);
+	m_moveY     = 8 * ( -target.x - target.y );
+	m_viewLevel = target.z;
+	onRenderParamsChanged();
 }
 
 void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
@@ -895,7 +882,6 @@ void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 	constexpr int tileHeight = 8; //tiles are assumed to be 8 pixels high (and twice as wide)
 	int tmp = x;
 	x = -2 * ( Global::dimX * tileHeight + y );
-	//y = -Global::dimY * tileHeight + tmp/2;
 	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
 }
 

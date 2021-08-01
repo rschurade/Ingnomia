@@ -338,6 +338,12 @@ void AggregatorRenderer::onAxleDataUpdate()
 	emit signalAxleData( data );
 }
 
+void AggregatorRenderer::onCenterCamera( const Position& location )
+{
+	if ( !g ) return;
+	emit signalCenterCamera( location );
+}
+
 void AggregatorRenderer::onWorldParametersChanged()
 {
 	if( !g ) return;

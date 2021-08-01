@@ -115,10 +115,12 @@ public slots:
 	void onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet );
 	void onThoughtBubbleUpdate();
 	void onAxleDataUpdate();
+	void onCenterCamera( const Position& location );
 
 signals:
 	void signalWorldParametersChanged();
 	void signalTileUpdates( const TileDataUpdateInfo& updates );
 	void signalThoughtBubbles( const ThoughtBubbleInfo& bubbles );
 	void signalAxleData( const AxleDataInfo& data );
+	void signalCenterCamera( const Position& location );
 };

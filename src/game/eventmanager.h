@@ -170,7 +170,7 @@ private:
 	QList<Mission> m_missions;
 
 signals:
-	void signalCenterCamera( QString pos, int zOffset );
+	void signalCenterCamera( const Position& location );
 	void signalUpdateMission( const Mission& mission );
 
 public slots:

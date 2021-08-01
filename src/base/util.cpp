@@ -586,35 +586,90 @@ Position Util::reachableBorderPos( Position fromPos, bool& found )
 
 Position Util::borderPos( bool& found )
 {
-	int randPos = qMax( 2, rand() % ( Global::dimX - 2 ) );
-
-	Position pos( randPos, randPos, Global::dimZ - 1 );
+	Position pos;
 	int border = rand() % 4;
 	switch ( border )
 	{
 		case 0: //north
+			pos.x = qMax( 2, rand() % ( Global::dimX - 2 ) );
 			pos.y = 1;
 			break;
 		case 1: //east
 			pos.x = Global::dimX - 2;
+			pos.y = qMax( 2, rand() % ( Global::dimY - 2 ) );
 			break;
 		case 2: //south
-			pos.y = Global::dimX - 2;
+			pos.x = qMax( 2, rand() % ( Global::dimX - 2 ) );
+			pos.y = Global::dimY - 2;
 			break;
 		case 3: // west
 			pos.x = 1;
+			pos.y = qMax( 2, rand() % ( Global::dimY - 2 ) );
 			break;
 		default:
 			break;
 	}
-	g->w()->getFloorLevelBelow( pos, false );
-
-	if ( g->w()->fluidLevel( pos ) == 0 )
+	const size_t maxTries = ( Global::dimX - 4 ) * ( Global::dimY - 4 );
+	size_t nTries         = 0;
+	// walk the edge till a legal position is found
+	while ( ++nTries < maxTries )
 	{
-		found = true;
-		return pos;
+		pos.z = Global::dimZ - 1;
+		// project position onto ground
+		g->w()->getFloorLevelBelow( pos, false );
+		if ( g->w()->isWalkableGnome(pos) )
+		{
+			found = true;
+			return pos;
+		}
+		switch (border)
+		{
+			case 0:
+				if ( pos.x >= Global::dimX - 2 )
+				{
+					border = 1;
+					++pos.y;
+				}
+				else
+				{
+					++pos.x;
+				}
+				break;
+			case 1:
+				if ( pos.y >= Global::dimY - 2 )
+				{
+					border = 2;
+					--pos.x;
+				}
+				else
+				{
+					++pos.y;
+				}
+				break;
+			case 2:
+				if ( pos.x <= 2 )
+				{
+					border = 3;
+					--pos.y;
+				}
+				else
+				{
+					--pos.x;
+				}
+				break;
+			case 3:
+				if ( pos.y <= 2 )
+				{
+					border = 0;
+					++pos.x;
+				}
+				else
+				{
+					--pos.y;
+				}
+				break;
+		}
 	}
-	return pos;
 }
 
 QList<Position> Util::neighbors8( Position pos )

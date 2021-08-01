@@ -71,8 +71,6 @@ private:
 	QOpenGLShaderProgram* initComputeShader( QString name );
 	bool initShaders();
 
-	unsigned int posToInt( Position pos, quint8 rotation );
-
 	void initTextures();
 	void initWorld();
 
@@ -164,6 +162,8 @@ public slots:
 	void onSetInMenu( bool value );
 
 	void onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest );
+
+	void onCenterCameraPosition( const Position& target );
 
 signals:
 	void redrawRequired();

@@ -259,6 +259,7 @@ void GameManager::postCreationInit()
 	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
 
 	connect( m_game->em(), &EventManager::signalUpdateMission, m_eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onUpdateMission, Qt::QueuedConnection );
+	connect( m_game->em(), &EventManager::signalCenterCamera, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onCenterCamera, Qt::QueuedConnection );
 
 	connect( m_game->inv(), &Inventory::signalAddItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onAddItem, Qt::QueuedConnection );
 	connect( m_game->inv(), &Inventory::signalRemoveItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onRemoveItem, Qt::QueuedConnection );

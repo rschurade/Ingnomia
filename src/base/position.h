@@ -206,6 +206,7 @@ struct Position
 	short z = 0;
 };
 Q_DECLARE_TYPEINFO( Position, Q_PRIMITIVE_TYPE );
+Q_DECLARE_METATYPE( Position );
 
 constexpr uint qHash( const Position& key, uint seed )
 {
