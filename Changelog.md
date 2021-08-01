@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.8.9]
+
+### Fixed
+- fix trading of items without quality
+- fix data inconsitencies in trader UI
+- fixed potential failure of event spawns
+
+### Added
+- center camera on event notifications
+
 ## [0.8.8]
 
 ### Fixed
@@ -10,7 +20,7 @@ All notable changes to this project will be documented in this file.
 - suspending workshops
 - XpMod can be read from config file (#173)
 - SeedTrader to trade potato & onion seeds.
-- Addded missing material name for Panda, Spider, Woodlouse
+- addded missing material name for Panda, Spider, Woodlouse
 
 ### Added
 - support for sound
