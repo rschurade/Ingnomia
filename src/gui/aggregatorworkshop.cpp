@@ -499,7 +499,7 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 					
 				for( auto& item : items )
 				{
-					if( item.itemSID == itemSID && item.materialSID == materialSID && item.quality == quality )
+					if( item.itemSID == itemSID && (item.materialSID == materialSID || item.gender == materialSID) && item.quality == quality )
 					{
 						item.reserved = qMax( 0, item.reserved - count );
 
@@ -610,20 +610,30 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					QList<unsigned int> allItemsToSell;
 					for( auto& item : m_playerStock )
 					{
-						auto sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
-
-						if( sellItems.size() >= item.reserved )
+						if ( item.reserved > 0 )
 						{
-							for( int i = 0; i < item.reserved; ++i )
+							QList<unsigned int> sellItems;
+							if ( DB::select( "HasQuality", "Items", item.itemSID ).toBool() )
 							{
-								allItemsToSell.append( sellItems[i] );
+								sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
 							}
-				
-						}
-						else
-						{
-							item.reserved = sellItems.size();
-							emit signalUpdatePlayerStockItem( item );
+							else
+							{
+								sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender );
+							}
+
+							if ( sellItems.size() >= item.reserved )
+							{
+								for ( int i = 0; i < item.reserved; ++i )
+								{
+									allItemsToSell.append( sellItems[i] );
+								}
+							}
+							else
+							{
+								item.reserved = sellItems.size();
+								emit signalUpdatePlayerStockItem( item );
+							}
 						}
 					}
 					int currentValue = 0;

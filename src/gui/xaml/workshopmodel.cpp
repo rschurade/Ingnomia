@@ -702,17 +702,8 @@ void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 		auto item = m_traderStock->Get( i );
 		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
-			if ( gti.count - gti.reserved > 0 )
-			{
-				item->SetCount( gti.count - gti.reserved );
-				break;
-			}
-			else
-			{
-				m_traderStock->RemoveAt( i );
-				OnPropertyChanged( "TraderStock" );
-				break;
-			}
+			item->SetCount( gti.count - gti.reserved );
+			break;
 		}
 	}
 	bool found = false;
@@ -750,17 +741,8 @@ void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 		auto item = m_playerStock->Get( i );
 		if ( item->m_itemSID == gti.itemSID && item->m_materialSID == gti.materialSIDorGender && item->m_quality == gti.quality )
 		{
-			if ( gti.count - gti.reserved > 0 )
-			{
-				item->SetCount( gti.count - gti.reserved );
-				break;
-			}
-			else
-			{
-				m_playerStock->RemoveAt( i );
-				OnPropertyChanged( "PlayerStock" );
-				break;
-			}
+			item->SetCount( gti.count - gti.reserved );
+			break;
 		}
 	}
 	bool found = false;
