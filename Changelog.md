@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.8.10]
+
+### Fixed
+- fix workshop getting stuck if job prerequisites are used elsewhere (#182)
+- fix half-height walls being completely flat
+
 ## [0.8.9]
 
 ### Fixed

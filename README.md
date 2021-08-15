@@ -5,6 +5,8 @@ Just looking for the game itself?
 Prebuilt binaries are available in the [release section](https://github.com/rschurade/Ingnomia/releases) or on 
 [Steam](https://store.steampowered.com/app/709240/Ingnomia/).
 
+The active community for this game can be found on our [Discord server](https://discord.gg/y5GygwY).
+
 ## What is this? ##
 
 Ingnomia started out as an independent remake of the older [Gnomoria](https://store.steampowered.com/app/224500/Gnomoria/) colony simulator, from which it was permitted to borrow some of the assets.

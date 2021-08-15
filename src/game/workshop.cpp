@@ -352,9 +352,9 @@ void Workshop::onTick( quint64 tick )
 
 	if ( !m_active )
 	{
-		if( m_job )
+		QSharedPointer<Job> spJob = m_job.toStrongRef();
+		if ( spJob )
 		{
-			QSharedPointer<Job> spJob = m_job.toStrongRef();
 			g->jm()->deleteJob( spJob->id() );
 			m_currentCraftJobID = 0;
 		}
@@ -379,6 +379,26 @@ void Workshop::onTick( quint64 tick )
 		m_jobList.push_front( cj );
 	}
 	m_autoCraftList.clear();
+
+	// check if the emitted job is still possible
+	// ressources may have been consumed by 3rd party
+	{
+		QSharedPointer<Job> spJob = m_job.toStrongRef();
+		if ( spJob && !spJob->isWorked() )
+		{
+			for ( auto& cj : m_jobList )
+			{
+				if ( cj.id == m_currentCraftJobID )
+				{
+					if ( !checkItemsAvailable( cj ) )
+					{
+						g->jm()->deleteJob( spJob->id() );
+						m_currentCraftJobID = 0;
+					}
+				}
+			}
+		}
+	}
 
 	if ( !m_job && !m_jobList.empty() && outputTileFree() )
 	{
