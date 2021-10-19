@@ -422,9 +422,23 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 
 	QString locationString = im.value( "Location" ).toString();
 
-	Position location = Position(locationString);
+	Position location;
 
-	if ( locationString == "RandomBorderTile" || !g->w()->isWalkableGnome(location))
+	if ( locationString == "RandomBorderTile")
+	{
+		bool found = false;
+		location = Global::util->borderPos( found );
+		if (!found)
+		{
+			//TODO Use a different spawn location if no edge position was valid
+			location = Position();
+		}
+	}
+	else
+	{
+		location = Position(locationString);
+	}
+	if ( !g->w()->isWalkableGnome(location))
 	{
 		bool found = false;
 		location = Global::util->borderPos( found );
