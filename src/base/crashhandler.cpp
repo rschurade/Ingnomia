@@ -1,6 +1,7 @@
 #include "crashhandler.h"
 
 #include "../version.h"
+#include "io.h"
 
 #if defined( PROJECT_VERSION) && defined( BUILD_ID )
 #define BUILD_VERSION PROJECT_VERSION "-" BUILD_ID
@@ -29,7 +30,7 @@ void setupCrashHandler()
 	mpSender->setGuardByteBufferSize( 20 * 1024 * 1024 );
 
 	// Include main log file
-	QString logFile = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/log.txt";
+	QString logFile = IO::getDataFolder() + "/log.txt";
 	mpSender->sendAdditionalFile( logFile.replace( '/', '\\' ).toStdWString().c_str() );
 }
 #else

@@ -94,7 +94,7 @@ void NewGameSettings::save()
 	embarkMap.insert( "startingItems", startItems );
 
 	QJsonDocument sd = QJsonDocument::fromVariant( embarkMap );
-	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd );
+	IO::saveFile( IO::getDataFolder() + "/settings/newgame.json", sd );
 
 	savePreset( startItems );
 }
@@ -152,12 +152,12 @@ void NewGameSettings::loadEmbarkMap()
 	m_checkableItems.clear();
 
 	QJsonDocument sd;
-	if ( !IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd ) )
+	if ( !IO::loadFile( IO::getDataFolder() + "/settings/newgame.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
 		if ( IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/newgame.json", sd ) )
 		{
-			IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/" + "settings/newgame.json", sd );
+			IO::saveFile( IO::getDataFolder() + "/settings/newgame.json", sd );
 		}
 		else
 		{
@@ -510,7 +510,7 @@ void NewGameSettings::loadPresets()
 		m_standardPresets = sd.toVariant().toList();
 	}
 
-	ok = IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/userpresets.json", sd );
+	ok = IO::loadFile( IO::getDataFolder() + "/settings/userpresets.json", sd );
 	if ( ok )
 	{
 		m_userPresets.clear();
@@ -529,7 +529,7 @@ void NewGameSettings::saveUserPresets()
 		up.append( pm );
 	}
 	QJsonDocument sd = QJsonDocument::fromVariant( up );
-	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/userpresets.json", sd );
+	IO::saveFile( IO::getDataFolder() + "/settings/userpresets.json", sd );
 }
 
 void NewGameSettings::setPreset( QString name )

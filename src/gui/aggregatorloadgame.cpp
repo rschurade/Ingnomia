@@ -42,7 +42,7 @@ AggregatorLoadGame::~AggregatorLoadGame()
 
 void AggregatorLoadGame::onRequestKingdoms()
 {
-	QString sfolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save";
+	QString sfolder = IO::getDataFolder() + "/save";
 
 	m_kingdomList.clear();
 

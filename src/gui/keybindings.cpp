@@ -104,7 +104,7 @@ KeyBindings::~KeyBindings()
 
 void KeyBindings::update()
 {
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/";
+	QString folder = IO::getDataFolder() + "/settings/";
 	QJsonDocument jd;
 	IO::loadFile( folder + "keybindings.json", jd );
 	qDebug() << "Load key bindings...";
