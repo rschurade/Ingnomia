@@ -32,6 +32,7 @@ public:
 	IO( Game* g, QObject* parent );
 	~IO();
 
+	static QString getDataFolder();
 	static bool createFolders();
 	static bool saveConfig();
 	static bool loadOriginalConfig( QJsonDocument& jd );

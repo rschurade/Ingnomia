@@ -17,6 +17,7 @@
 */
 #include "base/config.h"
 #include "base/db.h"
+#include "base/io.h"
 #include "base/crashhandler.h"
 #include "base/global.h"
 
@@ -47,12 +48,12 @@ bool verbose     = false;
 
 void clearLog()
 {
-	QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
+	QString folder   = IO::getDataFolder();
 	bool ok          = true;
 	QString fileName = "log.txt";
 	if ( QDir( folder ).exists() )
 	{
-		fileName = folder + fileName;
+		fileName = folder + "/" + fileName;
 	}
 
 	QFile file( fileName );
@@ -62,12 +63,12 @@ void clearLog()
 
 QPointer<QFile> openLog()
 {
-	QString folder   = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
+	QString folder   = IO::getDataFolder();
 	bool ok          = true;
 	QString fileName = "log.txt";
 	if ( QDir( folder ).exists() )
 	{
-		fileName = folder + fileName;
+		fileName = folder + "/" + fileName;
 	}
 
 	QPointer<QFile> outFile(new QFile( fileName ));

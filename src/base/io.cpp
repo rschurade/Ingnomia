@@ -82,7 +82,7 @@ bool IO::saveCompatible( QString folder )
 
 bool IO::saveGameExists()
 {
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
+	QString folder = getDataFolder() + "/save/";
 
 	if ( !QDir( folder ).exists() || QDir( folder ).isEmpty() )
 	{
@@ -93,7 +93,7 @@ bool IO::saveGameExists()
 
 bool IO::saveConfig()
 {
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/";
+	QString folder = getDataFolder() + "/settings/";
 
 	QVariantMap cm   = Global::cfg->object();
 	QJsonDocument jd = QJsonDocument::fromVariant( cm );
@@ -103,22 +103,27 @@ bool IO::saveConfig()
 	return true;
 }
 
+QString IO::getDataFolder()
+{
+#ifdef _WIN32
+	return QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia";
+#else
+	// corresponds to ~/.local/share/<APPNAME> on Linux
+	return QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ) + "/Ingnomia";
+#endif
+}
+
 QString IO::getTempFolder()
 {
-	return QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/tmp/";
+	return getDataFolder() + "/tmp/";
 }
 
 bool IO::createFolders()
 {
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/";
+	QString folder = getDataFolder() + "/";
 	if ( !QDir( folder ).exists() )
 	{
-		QDir().mkdir( folder );
-	}
-	folder += "Ingnomia/";
-	if ( !QDir( folder ).exists() )
-	{
-		QDir().mkdir( folder );
+		QDir().mkpath( folder );
 	}
 	QString modFolder = folder + "mods/";
 	if ( !QDir( modFolder ).exists() )
@@ -167,7 +172,7 @@ bool IO::createFolders()
 	}
 	*/
 
-	folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
+	folder = getDataFolder() + "/save/";
 
 	return QDir( folder ).exists();
 }
@@ -184,7 +189,7 @@ QString IO::save( bool autosave )
 	QElapsedTimer timer;
 	timer.start();
 
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/save/";
+	QString folder = getDataFolder() + "/save/";
 
 	if ( !QDir( folder ).exists() )
 	{

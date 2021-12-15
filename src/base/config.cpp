@@ -32,7 +32,7 @@ Config::Config()
 	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
-	QString folder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/";
+	QString folder = IO::getDataFolder();
 	bool ok        = true;
 	QJsonDocument jd;
 

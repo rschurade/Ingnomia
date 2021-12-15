@@ -402,18 +402,18 @@ void GnomeManager::saveProfessions()
 	}
 
 	QJsonDocument sd = QJsonDocument::fromVariant( pl );
-	IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd );
+	IO::saveFile( IO::getDataFolder() + "/settings/profs.json", sd );
 }
 
 void GnomeManager::loadProfessions()
 {
 	QJsonDocument sd;
-	if ( !IO::loadFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd ) )
+	if ( !IO::loadFile( IO::getDataFolder() + "/settings/profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
 		if ( IO::loadFile( Global::cfg->get( "dataPath" ).toString() + "/JSON/profs.json", sd ) )
 		{
-			IO::saveFile( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia/settings/profs.json", sd );
+			IO::saveFile( IO::getDataFolder() + "/settings/profs.json", sd );
 		}
 		else
 		{
