@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## [0.8.11]
+
+### Fixed
+- traders now pay the announced price for player owned goods
+
 ## [0.8.10]
 
 ### Fixed

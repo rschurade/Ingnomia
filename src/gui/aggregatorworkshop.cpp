@@ -608,6 +608,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 				if( m_playerOfferValue >= m_traderOfferValue )
 				{
 					QList<unsigned int> allItemsToSell;
+					int currentValue = 0;
 					for( auto& item : m_playerStock )
 					{
 						if ( item.reserved > 0 )
@@ -622,24 +623,20 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 								sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender );
 							}
 
-							if ( sellItems.size() >= item.reserved )
-							{
-								for ( int i = 0; i < item.reserved; ++i )
-								{
-									allItemsToSell.append( sellItems[i] );
-								}
-							}
-							else
+							auto valuePerItem = g->inv()->getTradeValue( item.itemSID, item.materialSIDorGender, item.quality );
+
+							if ( sellItems.size() < item.reserved )
 							{
 								item.reserved = sellItems.size();
 								emit signalUpdatePlayerStockItem( item );
 							}
+
+							for ( int i = 0; i < item.reserved; ++i )
+							{
+								allItemsToSell.append( sellItems[i] );
+								currentValue += valuePerItem;
+							}
 						}
-					}
-					int currentValue = 0;
-					for( auto itemID : allItemsToSell )
-					{
-						currentValue += g->inv()->value( itemID );
 					}
 					if( currentValue >= m_traderOfferValue )
 					{
@@ -649,6 +646,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							g->inv()->destroyObject( itemID );
 						}
 						updatePlayerStock( workshopID );
+						updatePlayerValue();
 
 						auto& traderItems = gt->inventory();
 						for( auto& item : traderItems )
