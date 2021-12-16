@@ -21,7 +21,7 @@
 
 #include <QList>
 
-#include <SFML/Audio.hpp>
+#include "openalwrapper.h"
 
 class Job;
 class Game;
@@ -31,7 +31,7 @@ struct ActiveEffect
 {
 	bool isAbsolute;
 	Position pos;
-	sf::Sound sound;
+	std::shared_ptr<AL::Source> sound;
 };
 
 //TODO THe logic in this class doesn't belong in the "Aggregator" (server side!), it belongs with the UI
@@ -45,17 +45,19 @@ public:
 
 	void init( Game* game );
 
-	void setVolume( float newvol );
-
 private:
 	QPointer<Game> g;
 	QList<ActiveEffect> m_activeEffects;
-	QMap<QString, sf::SoundBuffer> m_buffers;
+	QMap<QString, std::shared_ptr<AL::Buffer>> m_buffers;
+	std::shared_ptr<AL::Context> m_audioContext;
+	std::shared_ptr<AL::Listener> m_audioListener;
+	static constexpr size_t maxOcclusion = 8;
+	std::vector<std::shared_ptr<AL::Filter>> m_occlusionFilter;
 
-	int m_viewLevel;
+	int m_viewLevel = 100;
 	Position m_viewDirection;
 
-	void rebalanceSound( ActiveEffect& effect );
+	bool rebalanceSound( ActiveEffect& effect );
 	void garbageCollection();
 public slots:
 	void onCameraPosition( float x, float y, float z, int r, float scale );

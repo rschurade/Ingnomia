@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo CACHE STRING INTERNAL FORCE)
 
 # Project version, 4 numbers representation
-set(DEFAULT_VERSION "0.8.10.0" CACHE STRING "Version" FORCE)
+set(DEFAULT_VERSION "0.8.11.0" CACHE STRING "Version" FORCE)
 # Set from CI only
 set(BUILD_ID "0" CACHE INTERNAL "")
 set(GIT_REPO "" CACHE INTERNAL "")
@@ -23,20 +23,7 @@ find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
-
-if(WIN32)
-	set(SFML_STATIC_LIBRARIES TRUE)
-endif(WIN32)
-find_package(SFML REQUIRED COMPONENTS audio)
-set_target_properties(sfml-system PROPERTIES
-	MAP_IMPORTED_CONFIG_MINSIZEREL Release
-	MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-)
-set_target_properties(sfml-audio PROPERTIES
-	MAP_IMPORTED_CONFIG_MINSIZEREL Release
-	MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-)
-
+find_package(OpenAL REQUIRED)
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
 set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
@@ -106,7 +93,7 @@ target_link_libraries(${PROJECT_NAME}
 		NoesisApp
 		fastnoise
 		exprtk
-		sfml-audio
+		OpenAL
 )
 
 # Noesis license
@@ -183,12 +170,7 @@ list(APPEND RUNTIME_DLLS ${STEAM_DLL})
 list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
 
 if(WIN32)
-	# Prebuilt SFML on Windows bundles OpenAL
-	get_filename_component(OPENAL_DLL "${SFML_DIR}" REALPATH)
-	get_filename_component(OPENAL_DLL "${OPENAL_DLL}" PATH)
-	get_filename_component(OPENAL_DLL "${OPENAL_DLL}" PATH)
-	get_filename_component(OPENAL_DLL "${OPENAL_DLL}" PATH)
-	set(OPENAL_DLL ${OPENAL_DLL}/bin/openal32.dll)
+	# On Windows, we want to use bundled OpenAL for guaranteed OpenAL Soft support
 	list(APPEND RUNTIME_DLLS ${OPENAL_DLL})
 endif(WIN32)
 
