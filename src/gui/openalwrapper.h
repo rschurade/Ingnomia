@@ -2,10 +2,8 @@
 
 #include <memory>
 #include <cstdint>
+#include <alc.h>
 #include <efx-presets.h>
-
-struct ALCdevice;
-struct ALCcontext;
 
 namespace AL
 {
