@@ -63,18 +63,6 @@ jobs:
         pathSource: ${{ steps.download-steam.outputs.file-path }}
         pathTarget: steamworks_sdk
 
-    - name: Download SFML
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-sfml
-      with:
-        file-url: ${{ matrix.config.sfml }}
-
-    - name: Unpack SFML
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-sfml.outputs.file-path }}
-        pathTarget: sfml_sdk
-
     - name: Download Noesis
       uses: carlosperate/download-file-action@v1.0.3
       id: download-noesis
@@ -99,6 +87,24 @@ jobs:
         pathSource: ${{ steps.download-bugsplat.outputs.file-path }}
         pathTarget: bugsplat_sdk
 
+    - name: Install OpenAL Linux
+      if: (!startsWith(matrix.config.os, 'windows'))
+      shell: bash
+      run: sudo apt-get -yq install libopenal-dev
+
+    - name: Download OpenAL Windows
+      if: (startsWith(matrix.config.os, 'windows'))
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-openal
+      with:
+        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/openal.zip'
+
+    - name: Unpack OpenAL Windows
+      if: (startsWith(matrix.config.os, 'windows'))
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-openal.outputs.file-path }}
+        pathTarget: openal_sdk
 
     - name: Download Tilesheets
       uses: carlosperate/download-file-action@v1.0.3
@@ -129,11 +135,6 @@ jobs:
       shell: bash
       run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
 
-    - name: Install OpenAL
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: sudo apt-get -yq install libopenal1
-
     - name: Create Build Environment
       run: cmake -E make_directory build
 
@@ -145,7 +146,7 @@ jobs:
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
         BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
       run: |
-        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSFML_DIR=sfml_sdk/SFML-2.5.1/lib/cmake/SFML -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DOPENAL_ROOT=../openal_sdk -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
