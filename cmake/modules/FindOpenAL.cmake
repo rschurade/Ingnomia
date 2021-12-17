@@ -96,6 +96,8 @@ if(WIN32)
 			${OPENAL_ROOT}
 		PATH_SUFFIXES libx32 lib64 lib libs64 libs bin/${_OpenAL_ARCH_DIR}
 	)
+else()
+	set(OPENAL_DLL ${OPENAL_LIBRARY})
 endif()
 
 unset(_OpenAL_ARCH_DIR)
@@ -103,7 +105,7 @@ unset(_OpenAL_ARCH_DIR)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   OpenAL
-  REQUIRED_VARS OPENAL_LIBRARY OPENAL_INCLUDE_DIR
+  REQUIRED_VARS OPENAL_LIBRARY OPENAL_INCLUDE_DIR OPENAL_DLL
   VERSION_VAR OPENAL_VERSION_STRING
   )
 
