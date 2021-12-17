@@ -80,7 +80,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: qt5/
-        key: Qt5Cache-${{ matrix.os }}-${{ matrix.qt_version }}
+        key: Qt5Cache-v1-${{ matrix.os }}-${{ matrix.qt_version }}
       if: matrix.os == 'steamrt_soldier' || matrix.os == 'windows'
 
     - name: Compile Qt5 from source
@@ -88,10 +88,10 @@ jobs:
         apt-get build-dep -y qt5-default
         test -d qt5 || git clone https://code.qt.io/qt/qt5.git
         ( cd qt5 && git checkout ${{ matrix.qt_version }} && ./init-repository -q --module-subset=qtbase ;)
-        ( mkdir -p qt5/build && cd qt5/build && ../configure -developer-build -opensource -nomake examples -nomake tests -confirm-license ;)
-        ( cd qt5/build && make -j$(nproc) module-qtbase ;)
-        echo "Qt5_Dir=$(pwd)/qt5/build/qtbase/lib/cmake/Qt5" >> $GITHUB_ENV
-        echo "Qt5_DIR=$(pwd)/qt5/build/qtbase/lib/cmake/Qt5" >> $GITHUB_ENV
+        ( mkdir -p qt5/build && cd qt5/build &&  ../configure -opensource -nomake examples -nomake tests -confirm-license -force-debug-info -no-gif -no-libjpeg -no-harfbuzz -no-openssl -no-libproxy -no-cups -no-evdev -no-tslib -no-icu -no-fontconfig -no-dbus  -no-eglfs -no-linuxfb -no-kms  -opengl desktop -no-avx -no-avx2 -qt-libpng -qt-sqlite -no-sql-tds -no-sql-mysql -no-sql-odbc -no-sql-psql -qt-freetype ;)
+        ( cd qt5/build && make -j$(nproc) module-qtbase && make install ;)
+        echo "Qt5_Dir=/usr/local/Qt-${{ matrix.qt_version }}" >> $GITHUB_ENV
+        echo "Qt5_DIR=/usr/local/Qt-${{ matrix.qt_version }}" >> $GITHUB_ENV
       if: matrix.os == 'steamrt_soldier'
 
     - name: Install Qt
