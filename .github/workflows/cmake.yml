@@ -5,106 +5,162 @@ on: [push, workflow_dispatch]
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
+  DEBIAN_FRONTEND: noninteractive
+  BUGSPLAT_SDK_ROOT: bugsplat_sdk
+  NOESIS_ROOT: noesis_sdk
+  SFML_SDK_ROOT: sfml_sdk
+  STEAM_SDK_ROOT: steamworks_sdk
+  IngnomiaBuildDepsRepo: https://github.com/rschurade/IngnomiaBuildDeps/raw/master
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {
-            os: 'windows-2019',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-win-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
-          }
-          - {
-            os: 'ubuntu-18.04',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
-          }
-    runs-on: ${{ matrix.config.os }}
+        os: ['windows', 'ubuntu', 'steamrt_soldier']
+        include:
+          - os: windows
+            runs-on: windows-2019
+            container: ''
+            noesis: NoesisGUI-NativeSDK-win-3.0.12.zip
+            sfml: SFML-2.5.1-windows-vc15-64-bit.zip
+            sfml_version: 2.5.1
+            steamworks: steamworks_sdk_150.zip
+            qt_version: 5.14.2
+          - os: ubuntu
+            runs-on: ubuntu-latest
+            container: 'ubuntu:21.04'
+            noesis: NoesisGUI-NativeSDK-linux-3.0.12.zip
+            sfml: SFML-2.5.1-linux-gcc-64-bit.tar
+            sfml_version: 2.5.1
+            steamworks: steamworks_sdk_150.zip
+          - os: steamrt_soldier
+            runs-on: ubuntu-latest
+            container: 'registry.gitlab.steamos.cloud/steamrt/soldier/sdk'
+            noesis: NoesisGUI-NativeSDK-linux-3.0.12.zip
+            sfml: SFML-2.5.1-linux-gcc-64-bit.tar
+            sfml_version: 2.5.1
+            steamworks: steamworks_sdk_150.zip
+            qt_version: 5.14.2
+    runs-on: ${{ matrix.runs-on }}
+    container: ${{ matrix.container }}
 
     steps:
-    - uses: actions/checkout@v2
+
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Install prerequisites from distribution
+      run: |
+        apt-get update
+        apt-get upgrade -y
+        apt-get install -y cmake g++ libvorbis-dev libqt5opengl5-dev libopenal1 unzip wget
+      if: matrix.os != 'windows'
 
     - name: Get latest CMake
       # Using 'latest' branch, the latest CMake is installed.
       uses: lukka/get-cmake@latest
+      if: matrix.os == 'windows'
+
+    - name: Get cmake from debian-backports
+      run: |
+        echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list
+        cat > /etc/apt/preferences.d/99backports <<EOF
+        Explanation: Restore default backports pinning
+        Package: *
+        Pin: release a=buster-backports
+        Pin-Priority: 100
+        EOF
+        apt-get update
+        apt-get -t buster-backports install -y cmake
+      if: matrix.os == 'steamrt_soldier'
 
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
-        path: '${{ github.workspace }}/Qt/'
-        key: ${{ runner.os }}-QtCache
+        path: qt5/
+        key: Qt5Cache-v1-${{ matrix.os }}-${{ matrix.qt_version }}
+      if: matrix.os == 'steamrt_soldier' || matrix.os == 'windows'
+
+    - name: Compile Qt5 from source
+      run: |
+        apt-get build-dep -y qt5-default
+        test -d qt5 || git clone https://code.qt.io/qt/qt5.git
+        ( cd qt5 && git checkout ${{ matrix.qt_version }} && ./init-repository -q --module-subset=qtbase ;)
+        ( mkdir -p qt5/build && cd qt5/build &&  ../configure -opensource -nomake examples -nomake tests -confirm-license -force-debug-info -no-gif -no-libjpeg -no-harfbuzz -no-openssl -no-libproxy -no-cups -no-evdev -no-tslib -no-icu -no-fontconfig -no-dbus  -no-eglfs -no-linuxfb -no-kms  -opengl desktop -no-avx -no-avx2 -qt-libpng -qt-sqlite -no-sql-tds -no-sql-mysql -no-sql-odbc -no-sql-psql -qt-freetype ;)
+        ( cd qt5/build && make -j$(nproc) module-qtbase && make install ;)
+        echo "Qt5_Dir=/usr/local/Qt-${{ matrix.qt_version }}" >> $GITHUB_ENV
+        echo "Qt5_DIR=/usr/local/Qt-${{ matrix.qt_version }}" >> $GITHUB_ENV
+      if: matrix.os == 'steamrt_soldier'
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: '5.14.2'
-        dir: '${{ github.workspace }}/Qt/'
+        version: ${{ matrix.qt_version }}
+        dir: '${{ github.workspace }}/qt5/'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
-
-    - name: Download Steam
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-steam
-      with:
-        file-url: ${{ matrix.config.steam }}
-
-    - name: Unpack Steam
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-steam.outputs.file-path }}
-        pathTarget: steamworks_sdk
+      if: matrix.os == 'windows'
 
     - name: Download SFML
       uses: carlosperate/download-file-action@v1.0.3
       id: download-sfml
       with:
-        file-url: ${{ matrix.config.sfml }}
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/${{ matrix.sfml }}
 
     - name: Unpack SFML
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-sfml.outputs.file-path }}
-        pathTarget: sfml_sdk
+        pathTarget: ${{ env.SFML_SDK_ROOT }}
+
+    - name: Download SteamWorks
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-steam
+      with:
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/${{ matrix.steamworks }}
+
+    - name: Unpack SteamWorks
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ${{ steps.download-steam.outputs.file-path }}
+        pathTarget: ${{ env.STEAM_SDK_ROOT }}
 
     - name: Download Noesis
       uses: carlosperate/download-file-action@v1.0.3
       id: download-noesis
       with:
-        file-url: ${{ matrix.config.noesis }}
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/${{ matrix.noesis }}
 
     - name: Unpack Noesis
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-noesis.outputs.file-path }}
-        pathTarget: noesis_sdk
+        pathTarget: ${{ env.NOESIS_ROOT }}
+
+    - name: Fix permissions and interpreter
+      run: |
+        chmod +x ${{ env.NOESIS_ROOT }}/Src/Tools/Bin2h/bin2h.py
+        sed -e 's/env python/env python3/' -i ${{ env.NOESIS_ROOT }}/Src/Tools/Bin2h/bin2h.py
+      if: matrix.os != 'windows'
 
     - name: Download BugSplat
       uses: carlosperate/download-file-action@v1.0.3
       id: download-bugsplat
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/BugSplatNative.zip'
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/BugSplatNative.zip
 
     - name: Unpack BugSplat
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: ${{ steps.download-bugsplat.outputs.file-path }}
-        pathTarget: bugsplat_sdk
-
+        pathTarget: ${{ env.BUGSPLAT_SDK_ROOT }}
 
     - name: Download Tilesheets
       uses: carlosperate/download-file-action@v1.0.3
       id: download-tilesheet
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip'
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/tilesheet.zip
 
     - name: Unpack Tilesheets
       uses: DuckSoft/extract-7z-action@v1.0
@@ -116,7 +172,7 @@ jobs:
       uses: carlosperate/download-file-action@v1.0.3
       id: download-audio
       with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/audio.zip'
+        file-url: ${{ env.IngnomiaBuildDepsRepo }}/audio.zip
 
     - name: Unpack Audio Files
       uses: DuckSoft/extract-7z-action@v1.0
@@ -124,59 +180,76 @@ jobs:
         pathSource: ${{ steps.download-audio.outputs.file-path }}
         pathTarget: content
 
-    - name: Fix permissions
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
+    - name: Set environment
+      shell: pwsh
+      run: |
+        echo 'SOURCE_DIR=${{ github.workspace }}' | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo 'BUILD_DIR=build' | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo 'INSTALL_DIR=install' | Out-File -FilePath $env:GITHUB_ENV -Append
+      if: matrix.os == 'windows'
 
-    - name: Install OpenAL
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: sudo apt-get -yq install libopenal1
+    - name: Set environment
+      run: |
+        echo SOURCE_DIR="." >> $GITHUB_ENV
+        echo BUILD_DIR="build" >> $GITHUB_ENV
+        echo INSTALL_DIR="install" >> $GITHUB_ENV
+      if: matrix.os != 'windows'
 
     - name: Create Build Environment
-      run: cmake -E make_directory build
+      run: cmake -E make_directory ${{ env.BUILD_DIR }}
+      if: matrix.os == 'windows'
 
     - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      shell: bash
       env:
-        NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
-        NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
-        BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
-      run: |
-        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSFML_DIR=sfml_sdk/SFML-2.5.1/lib/cmake/SFML -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        SFML_DIR: ${{ env.SOURCE_DIR}}/${{ env.SFML_SDK_ROOT }}/SFML-${{ matrix.sfml_version }}/lib/cmake/SFML
+      run: >
+        cmake -S ${{ env.SOURCE_DIR }} -B ${{ env.BUILD_DIR }}
+        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_INSTALL_BINDIR="."
+        -DNOESIS_ROOT=${{ env.NOESIS_ROOT }}
+        -DNOESIS_LICENSE_KEY=${{ secrets.NOESIS_LICENSE_KEY }}
+        -DNOESIS_LICENSE_NAME=${{ secrets.NOESIS_LICENSE_NAME }}
+        -DBUGSPLAT_DB=${{ secrets.BUGSPLAT_DB }}
+        -DBUGSPLAT_SDK_ROOT=${{ env.BUGSPLAT_SDK_ROOT }}/bugsplat
+        -DSTEAM_SDK_ROOT=${{ env.STEAM_SDK_ROOT }}/sdk
+        -DGIT_REPO=${{ github.repository }}
+        -DGIT_REF=${{ github.ref }}
+        -DGIT_SHA=${{ github.sha }}
+        -DBUILD_ID=${{ github.run_id }}
 
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: |
-        cmake --build . --config ${{env.BUILD_TYPE}} --target Ingnomia
-        
-    - name: Install
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: |
-        cmake --install . --prefix ../install --config ${{env.BUILD_TYPE}}
+    - name: Build Ingnomia
+      run: >
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --config ${{ env.BUILD_TYPE }}
+        --target Ingnomia
+
+    - name: Install Ingnomia
+      run: >
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --prefix ${{ env.INSTALL_DIR }}
+        --config ${{ env.BUILD_TYPE }}
 
     - name: Find msbuild
-      if: (startsWith(matrix.config.os, 'windows'))
       uses: microsoft/setup-msbuild@v1.0.2
       id: msbuild
+      if: matrix.os == 'windows'
 
     - name: Build Blend project
-      if: (startsWith(matrix.config.os, 'windows'))
-      working-directory: ${{github.workspace}}/gui
+      working-directory: ${{ github.workspace }}/gui
       shell: pwsh
       # Ignore errors for now
       run: |
         MSBuild.exe -t:restore gui.csproj
         MSBuild.exe gui.csproj
+      if: matrix.os == 'windows'
 
-    - uses: actions/upload-artifact@v2
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
       with:
-        name: "${{matrix.config.os}}-${{github.run_id}}"
+        name: ${{ matrix.os }}_${{ github.run_id }}
         path: |
-          install/
+          ${{ env.INSTALL_DIR }}
           !**./*.iobj
           !**./*.ipdb
