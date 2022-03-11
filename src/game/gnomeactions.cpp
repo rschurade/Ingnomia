@@ -970,7 +970,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 
 			if ( materialID == "any" && !restrictions.empty() )
 			{
-				QSet<QString> matTypes;
+				std::set<QString> matTypes;
 				for ( auto type : restrictions )
 				{
 					matTypes.insert( type );

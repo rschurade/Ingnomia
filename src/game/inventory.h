@@ -28,7 +28,7 @@
 #include <QMap>
 #include <QString>
 
-typedef QSet<unsigned int> PositionEntry;
+typedef std::set<unsigned int> PositionEntry;
 typedef QHash<unsigned int, PositionEntry> PositionHash;
 
 class ItemHistory;
@@ -63,7 +63,7 @@ public:
 
 	unsigned int getClosestItem( const Position& pos, bool allowInStockpile, QString itemID, QString materialID = "any" );
 	//from construction dialog with materialTypes selected any
-	unsigned int getClosestItem2( const Position& pos, bool allowInStockpile, QString itemID, QSet<QString> materialTypes );
+	unsigned int getClosestItem2( const Position& pos, bool allowInStockpile, QString itemID, std::set<QString> materialTypes );
 	unsigned int getItemAtPos( const Position& pos, bool allowInStockpile, QString itemID, QString materialID = "any" );
 
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QList<QPair<QString, QString>> filter, int count );
@@ -73,7 +73,7 @@ public:
 	*/
 	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count );
 	bool checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID = "any" );
-	QList<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, QSet<QPair<QString, QString>> filter );
+	QList<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, std::set<QPair<QString, QString>> filter );
 
 	unsigned int getFoodItem( Position& pos );
 	unsigned int getDrinkItem( Position& pos );

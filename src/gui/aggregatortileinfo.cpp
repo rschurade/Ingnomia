@@ -64,7 +64,7 @@ void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 	onUpdateTileInfo( tileID );
 }
 
-void AggregatorTileInfo::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
+void AggregatorTileInfo::onUpdateAnyTileInfo( const std::set<unsigned int>& changeSet )
 {
 	if( !g ) return;
 	if ( changeSet.contains( m_currentTileID ) )

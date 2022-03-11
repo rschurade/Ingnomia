@@ -113,7 +113,7 @@ private:
 public slots:
 	void onWorldParametersChanged();
 	void onAllTileInfo();
-	void onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet );
+	void onUpdateAnyTileInfo( const std::set<unsigned int>& changeSet );
 	void onThoughtBubbleUpdate();
 	void onAxleDataUpdate();
 	void onCenterCamera( const Position& location );

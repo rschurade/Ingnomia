@@ -280,7 +280,6 @@ void GameManager::postCreationInit()
 	connect( m_eventConnector, &EventConnector::signalCameraPosition, m_eventConnector->aggregatorSound(), &AggregatorSound::onCameraPosition, Qt::QueuedConnection );
 
 
-	qRegisterMetaType<QSet<unsigned int>>();
 	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
 	connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
 	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );

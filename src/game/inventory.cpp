@@ -398,7 +398,7 @@ void Inventory::destroyObject( unsigned int id )
 			unsigned int tileID = item->getPos().toInt();
 			if ( m_positionHash.contains( tileID ) )
 			{
-				m_positionHash[tileID].remove( id );
+				m_positionHash[tileID].erase( id );
 				if ( m_positionHash[tileID].empty() )
 				{
 					m_positionHash.remove( tileID );
@@ -439,7 +439,7 @@ unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 	{
 		if ( !m_positionHash[pos.toInt()].empty() )
 		{
-			for ( auto itemUID : m_positionHash[pos.toInt()].values() )
+			for ( auto itemUID : m_positionHash[pos.toInt()] )
 			{
 				if ( !isConstructed( itemUID ) && !isInContainer( itemUID ) )
 				{
@@ -497,7 +497,7 @@ unsigned int Inventory::getClosestItem( const Position& pos, bool allowInStockpi
 	return 0;
 }
 
-unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, QString itemSID, QSet<QString> materialTypes )
+unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, QString itemSID, std::set<QString> materialTypes )
 {
 	for ( auto matType : materialTypes )
 	{
@@ -574,7 +574,7 @@ unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile
 				}
 				else
 				{
-					m_positionHash[pos.toInt()].remove( itemID );
+					m_positionHash[pos.toInt()].erase( itemID );
 				}
 			}
 		}
@@ -594,7 +594,7 @@ unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile
 				}
 				else
 				{
-					m_positionHash[pos.toInt()].remove( itemID );
+					m_positionHash[pos.toInt()].erase( itemID );
 				}
 			}
 		}
@@ -654,7 +654,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	return out;
 }
 
-QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, QSet<QPair<QString, QString>> filter )
+QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, std::set<QPair<QString, QString>> filter )
 {
 	QString itemSID;
 	QString materialSID;
@@ -818,7 +818,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 		const Position& pos = item->getPos();
 		if ( m_positionHash.contains( pos.toInt() ) )
 		{
-			m_positionHash[pos.toInt()].remove( id );
+			m_positionHash[pos.toInt()].erase( id );
 		}
 		if ( m_positionHash[pos.toInt()].empty() )
 		{
@@ -841,7 +841,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 
 					Octree* ot2 = octree( inItemSID, inMatSID );
 					ot2->removeItem( pos.x, pos.y, pos.z, inItemID );
-					m_positionHash[pos.toInt()].remove( inItemID );
+					m_positionHash[pos.toInt()].erase( inItemID );
 				}
 			}
 		}

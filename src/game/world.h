@@ -27,7 +27,6 @@
 #include <QPointer>
 #include <QMutex>
 #include <QPixmap>
-#include <QSet>
 
 #include <set>
 #include <vector>
@@ -92,14 +91,14 @@ private:
 	QMap<unsigned int, QList<unsigned int>> m_creaturePositions;
 	QMap<unsigned int, QVariantMap> m_wallConstructions;
 	QMap<unsigned int, QVariantMap> m_floorConstructions;
-	QSet<Position> m_grass;
-	QSet<unsigned int> m_grassCandidatePositions;
+	std::set<Position> m_grass;
+	std::set<unsigned int> m_grassCandidatePositions;
 	QMap<unsigned int, QVariantMap> m_jobSprites;
 	std::set<unsigned int> m_water;
 	QList<Position> m_aquifiers;
 	QList<Position> m_deaquifiers;
 
-	QSet<unsigned int> m_updatedTiles;
+	std::set<unsigned int> m_updatedTiles;
 
 	QMap<QString, CONSTRUCTION_ID> m_constructionSID2ENUM;
 	QMap<QString, CONSTR_ITEM_ID> m_constrItemSID2ENUM;
@@ -290,12 +289,12 @@ public:
 	bool noTree( const Position pos, const int xRange, const int yRange );
 	bool noShroom( const Position pos, const int xRange, const int yRange );
 
-	QSet<unsigned int> updatedTiles();
+	std::set<unsigned int> updatedTiles();
 	void addToUpdateList( const unsigned int uID );
 	void addToUpdateList( const Position pos );
 	void addToUpdateList( const unsigned short x, const unsigned short y, const unsigned short z );
 	void addToUpdateList( const QVector<unsigned int>& ul );
-	void addToUpdateList( const QSet<unsigned int>& ul );
+	void addToUpdateList( const std::set<unsigned int>& ul );
 
 	void setDoorLocked( unsigned int tileUID, bool lockGnome, bool lockMonster, bool lockAnimal );
 

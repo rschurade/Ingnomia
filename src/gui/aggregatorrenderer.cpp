@@ -261,7 +261,7 @@ void AggregatorRenderer::onAllTileInfo()
 	}
 }
 
-void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
+void AggregatorRenderer::onUpdateAnyTileInfo( const std::set<unsigned int>& changeSet )
 {
 	if( !g ) return;
 	// Bake tile updates

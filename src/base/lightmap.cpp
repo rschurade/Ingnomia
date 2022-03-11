@@ -44,7 +44,7 @@ void LightMap::init()
 	m_dimZ = Global::dimZ;
 }
 
-void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id, Position pos, int intensity )
+void LightMap::addLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id, Position pos, int intensity )
 {
 	Light light;
 	light.id        = id;
@@ -52,13 +52,13 @@ void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& worl
 	light.intensity = intensity;
 
 	QQueue<QPair<Position, int>> wq;
-	QSet<unsigned int> visited;
+	std::set<unsigned int> visited;
 	wq.enqueue( QPair<Position, int>( pos, 0 ) );
 	int decay = Global::cfg->get( "lightDecay" ).toInt();
 
 	int range = intensity / decay;
 
-	visited.reserve( range * range * range );
+	// visited.reserve( range * range * range );    // Not in std::set
 
 	while ( !wq.empty() )
 	{
@@ -152,7 +152,7 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 	}
 }
 
-void LightMap::removeLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id )
+void LightMap::removeLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id )
 {
 	if ( m_lights.contains( id ) )
 	{
@@ -170,7 +170,7 @@ void LightMap::removeLight( QSet<unsigned int>& updateList, std::vector<Tile>& w
 	}
 }
 
-void LightMap::updateLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, Position pos )
+void LightMap::updateLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, Position pos )
 {
 	unsigned int posID = pos.toInt();
 	if ( m_lightMap.contains( posID ) )

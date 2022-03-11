@@ -85,7 +85,7 @@ QString Strings::randomKingdomName()
 
 QString Strings::replaceNamePart( QString part )
 {
-	QSet<QString> noReplaceables = { "The", "of", "Land", "Kingdom" };
+	std::set<QString> noReplaceables = { "The", "of", "Land", "Kingdom" };
 	if ( noReplaceables.contains( part ) )
 	{
 		return part;
