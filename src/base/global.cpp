@@ -50,7 +50,7 @@ QVariantMap Global::copiedStockpileSettings;
 
 QMap<QString, QVariantMap> Global::m_windowParams;
 
-QMap<QString, QSet<QString>> Global::allowedInContainer;
+QMap<QString, std::set<QString>> Global::allowedInContainer;
 
 QHash<Qt::Key, Noesis::Key> Global::keyConvertMap;
 
@@ -76,7 +76,7 @@ unsigned int Global::dirtUID = 0;
 QMap<QString, CreaturePart> Global::creaturePartLookUp;
 QMap<CreaturePart, QString> Global::creaturePartToString;
 
-QSet<QString> Global::craftable;
+std::set<QString> Global::craftable;
 
 void Global::reset()
 {

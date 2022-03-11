@@ -167,7 +167,7 @@ public:
 	void setColor( unsigned int item, QString color );
 	unsigned int color( unsigned int item );
 
-	const QSet<unsigned int>& itemsInContainer( unsigned int container );
+	const std::set<unsigned int>& itemsInContainer( unsigned int container );
 
 	int countItemsAtPos( Position& pos );
 

@@ -1599,14 +1599,14 @@ bool Inventory::requireSame( unsigned int id )
 	return false;
 }
 
-const QSet<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
+const std::set<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
 {
 	auto container = getItem( containerID );
 	if ( container )
 	{
 		return container->containedItems();
 	}
-	static const QSet<unsigned int> nullopt;
+	static const std::set<unsigned int> nullopt;
 	return nullopt;
 }
 
