@@ -19,7 +19,6 @@
 
 #include "../base/enums.h"
 
-#include <QSet>
 #include <QString>
 #include <QVariantMap>
 
