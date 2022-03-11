@@ -17,12 +17,6 @@
 */
 #include "region.h"
 
-#include <unordered_map>
-#include "../base/global.h"
-#include "../game/world.h"
-
-#include <QDebug>
-
 Region::Region( unsigned int id ) :
 	m_id( id )
 {
@@ -42,7 +36,7 @@ void Region::addConnectionTo( unsigned int toRegion, const Position& pos )
 }
 void Region::removeConnectionFrom( unsigned int toRegion, const Position& pos )
 {
-	m_connectionsFrom[toRegion].remove( pos.toString() );
+	m_connectionsFrom[toRegion].erase( pos.toString() );
 	if ( m_connectionsFrom[toRegion].empty() )
 	{
 		m_connectionsFrom.remove( toRegion );
@@ -50,7 +44,7 @@ void Region::removeConnectionFrom( unsigned int toRegion, const Position& pos )
 }
 void Region::removeConnectionTo( unsigned int toRegion, const Position& pos )
 {
-	m_connectionsTo[toRegion].remove( pos.toString() );
+	m_connectionsTo[toRegion].erase( pos.toString() );
 	if ( m_connectionsTo[toRegion].empty() )
 	{
 		m_connectionsTo.remove( toRegion );
@@ -67,7 +61,7 @@ void Region::addConnectionTo( unsigned int toRegion, QString pos )
 }
 void Region::removeConnectionFrom( unsigned int toRegion, QString pos )
 {
-	m_connectionsFrom[toRegion].remove( pos );
+	m_connectionsFrom[toRegion].erase( pos );
 	if ( m_connectionsFrom[toRegion].empty() )
 	{
 		m_connectionsFrom.remove( toRegion );
@@ -75,7 +69,7 @@ void Region::removeConnectionFrom( unsigned int toRegion, QString pos )
 }
 void Region::removeConnectionTo( unsigned int toRegion, QString pos )
 {
-	m_connectionsTo[toRegion].remove( pos );
+	m_connectionsTo[toRegion].erase( pos );
 	if ( m_connectionsTo[toRegion].empty() )
 	{
 		m_connectionsTo.remove( toRegion );
