@@ -71,8 +71,8 @@ bool Octree::removeItem( int x, int y, int z, unsigned int item )
 {
 	if ( m_isLeaf )
 	{
-		m_items.remove( item );
-		return m_items.isEmpty();
+		m_items.erase( item );
+		return m_items.empty();
 	}
 	else
 	{
@@ -105,7 +105,7 @@ QList<unsigned int> Octree::query( int x, int y, int z, int limit ) const
 {
 	if ( m_isLeaf )
 	{
-		return m_items.values();
+		return {m_items.begin(), m_items.end()};
 	}
 	else
 	{
