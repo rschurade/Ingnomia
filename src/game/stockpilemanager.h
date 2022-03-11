@@ -20,8 +20,6 @@
 #include "../base/position.h"
 #include "../game/stockpile.h"
 
-#include <QSet>
-
 class Job;
 class Stockpile;
 class Inventory;
