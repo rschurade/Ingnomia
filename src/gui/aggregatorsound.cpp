@@ -23,14 +23,12 @@
 #include "../base/position.h"
 #include "../game/game.h"
 #include "../game/soundmanager.h"
+#include "../game/world.h"
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindowrenderer.h"
-#include "../game/world.h"
 
 #include <QDebug>
 #include <QJsonDocument>
-
-#include <SFML/Audio.hpp>
 
 AggregatorSound::AggregatorSound( QObject* parent ) :
 	QObject( parent )
@@ -39,6 +37,22 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 	QString exePath = QCoreApplication::applicationDirPath();
 
 	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
+	auto device    = std::make_shared<AL::Device>();
+	m_audioContext = std::make_shared<AL::Context>( device );
+	AL::Context::Lock lock( m_audioContext );
+	m_audioListener = std::make_shared<AL::Listener>( m_audioContext );
+	try
+	{
+		for ( size_t i = 0; i < maxOcclusion; ++i )
+		{
+			m_occlusionFilter.push_back( std::make_shared<AL::Filter>( m_audioContext ) );
+			m_occlusionFilter.back()->setGain( pow( 0.75, i ), pow( 0.75, i ), pow( 0.5, i ) );
+		}
+	}
+	catch ( const std::exception& e )
+	{
+		qInfo() << "No OpenAL filter support - falling back to pure volume hacks: " << e.what();
+	}
 }
 
 AggregatorSound::~AggregatorSound()
@@ -49,31 +63,31 @@ void AggregatorSound::init( Game* game )
 {
 	g = game;
 
-	setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+	AL::Context::Lock lock( m_audioContext );
+	m_audioListener->setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
 	for ( auto& sound : soundList )
 	{
 		QString soundID  = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
 		QString filename = sound.value( "SoundFile" ).toString();
-		sf::SoundBuffer buffer;
-		QString exePath = QCoreApplication::applicationDirPath();
-		filename        = exePath + "/content/audio/" + filename;
+		QString exePath  = QCoreApplication::applicationDirPath();
+		filename         = exePath + "/content/audio/" + filename;
 
-		if ( !buffer.loadFromFile( filename.toStdString() ) )
+		try
+		{
+			m_buffers.insert( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename.toStdString() ) );
+			qDebug() << "loaded sound " << soundID << " " << filename;
+		}
+		catch ( ... )
 		{
 			qDebug() << "unable to load sound" << soundID << " " << filename;
-		}
-		else
-		{
-			qDebug() << "loaded sound " << soundID << " " << filename;
-			m_buffers.insert( soundID, std::move( buffer ) );
 		}
 	}
 }
 
 void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 {
-	garbageCollection();
+	AL::Context::Lock lock( m_audioContext );
 
 	QString soundID       = effectRequest.type + ".";
 	QString soundMaterial = effectRequest.material;
@@ -94,33 +108,28 @@ void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 		m_activeEffects.append( ActiveEffect {
 			false,
 			effectRequest.origin,
-			sf::Sound( m_buffers[soundID] ) } );
+			std::make_shared<AL::Source>( m_audioContext, m_buffers[soundID] ) } );
 		auto& sound = m_activeEffects.back().sound;
-		sound.setPosition( effectRequest.origin.x, effectRequest.origin.y, effectRequest.origin.z );
-		sound.setRelativeToListener( false );
+		sound->setPosition( effectRequest.origin.x, effectRequest.origin.y, effectRequest.origin.z );
+		sound->setRelativeToListener( false );
 		auto pitchVariation = ( ( static_cast<float>( rand() ) / RAND_MAX ) - 0.5 ) * 2;
 		//TODO Factor 1.2 should be configurable per sound effect
-		sound.setPitch( pow( 1.2, pitchVariation ) );
-		rebalanceSound( m_activeEffects.back() );
-		sound.play();
-
-		if ( Global::debugSound )
+		sound->setPitch( pow( 1.2, pitchVariation ) );
+		if ( rebalanceSound( m_activeEffects.back() ) )
 		{
-			qDebug() << "playing sound " << soundID;
+			sound->play();
+		}
+		else
+		{
+			m_activeEffects.pop_back();
 		}
 	}
-	else
-	{
-		if ( Global::debugSound )
-		{
-			qDebug() << "Unknown sound " << soundID;
-		}
-	}
+	garbageCollection();
 }
 
 void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 {
-	garbageCollection();
+	AL::Context::Lock lock( m_audioContext );
 
 	QString soundID       = effectRequest.type + ".";
 	QString soundMaterial = effectRequest.material;
@@ -142,76 +151,88 @@ void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 		m_activeEffects.append( ActiveEffect {
 			true,
 			Position(),
-			sf::Sound( m_buffers[soundID] ) } );
+			std::make_shared<AL::Source>( m_audioContext, m_buffers[soundID] ) } );
 		auto& sound = m_activeEffects.back().sound;
-		sound.setPosition( 0, 0, 0 );
-		sound.setRelativeToListener( true );
-		sound.setPitch( 1 );
-		rebalanceSound( m_activeEffects.back() );
-		sound.play();
-
-		if ( Global::debugSound )
+		sound->setPosition( 0, 0, 0 );
+		sound->setRelativeToListener( true );
+		sound->setPitch( 1 );
+		if ( rebalanceSound( m_activeEffects.back() ) )
 		{
-			qDebug() << "playing sound " << soundID;
-		}
-	}
-	else
-	{
-		if ( Global::debugSound )
-		{
-			qDebug() << "Unknown sound " << soundID;
-		}
-	}
-}
-
-void AggregatorSound::rebalanceSound( ActiveEffect& effect )
-{
-	//TODO Check if we can get OpenAL band pass and reverb filters somehow working with SFML
-	// Need them to properly do obstructed sound sources and "stone" environments
-	effect.sound.setRelativeToListener( effect.isAbsolute );
-	if ( !effect.isAbsolute )
-	{
-		if ( effect.pos.z > m_viewLevel )
-		{
-			effect.sound.setVolume( 0 );
+			sound->play();
 		}
 		else
 		{
-			// Simple line-of-sight check from viewing position
-			Position trace = effect.pos;
-			// Half loudness per floor, and even less per wall
-			constexpr short occlusionWeight = 1;
-			short occlusion                 = occlusionWeight;
-			while ( trace.valid() && trace.z < m_viewLevel )
-			{
-				trace = trace - m_viewDirection;
-				if(g->w()->wallType( trace ) & WT_SOLIDWALL)
-				{
-					occlusion += 2;
-				}
-				if(g->w()->floorType( trace ) & FT_SOLIDFLOOR)
-				{
-					occlusion += 1;
-				}
-			}
-			//TODO Bandpass for high occlusion would be appropiate
-			effect.sound.setVolume( 100.f / occlusion * occlusionWeight );
+			m_activeEffects.pop_back();
 		}
 	}
-	else
+	garbageCollection();
+}
+
+bool AggregatorSound::rebalanceSound( ActiveEffect& effect )
+{
+	//TODO Check if we can get OpenAL band pass and reverb filters somehow working
+	// Need them to properly do obstructed sound sources and "stone" environments
+	effect.sound->setRelativeToListener( effect.isAbsolute );
+	if ( !effect.isAbsolute )
 	{
-		effect.sound.setVolume( 100 );
+		if ( m_viewDirection.z == 0 )
+		{
+			//TODO Camera parameters are not known until changed at least once
+			return true;
+		}
+		// Simple line-of-sight check from viewing position
+		Position trace = effect.pos;
+		// Half loudness per floor, and even less per wall
+		short occlusion = 0;
+		// Always tone down sounds out of view
+		if ( trace.z > m_viewLevel )
+		{
+			occlusion += 1;
+		}
+		while ( trace.valid() && trace.z != m_viewLevel )
+		{
+			if ( trace.z < m_viewLevel )
+			{
+				trace = trace - m_viewDirection;
+			}
+			else
+			{
+				trace = trace + m_viewDirection;
+			}
+			if ( g->w()->wallType( trace ) & WT_SOLIDWALL )
+			{
+				occlusion += 2;
+			}
+			if ( g->w()->floorType( trace ) & FT_SOLIDFLOOR )
+			{
+				occlusion += 1;
+			}
+		}
+		if ( m_occlusionFilter.empty() && occlusion < maxOcclusion )
+		{
+			// Without filter support, apply plain loudness reduction
+			effect.sound->setVolume( std::pow( 0.75, occlusion ) );
+		}
+		else if ( occlusion < m_occlusionFilter.size() )
+		{
+			effect.sound->setDryPathFilter( m_occlusionFilter[occlusion] );
+		}
+		else
+		{
+			return false;
+		}
 	}
+	return true;
 }
 
 void AggregatorSound::garbageCollection()
 {
 	//TODO Get the slot fed externally!
-	setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+	m_audioListener->setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
 
 	for ( auto it = m_activeEffects.begin(); it != m_activeEffects.end(); )
 	{
-		if ( it->sound.getStatus() == sf::SoundSource::Stopped )
+		if ( it->sound->getPlayState() == AL::Source::STOPPED )
 		{
 			it = m_activeEffects.erase( it );
 		}
@@ -222,19 +243,18 @@ void AggregatorSound::garbageCollection()
 	}
 }
 
-void AggregatorSound::setVolume( float newvol )
-{
-	sf::Listener::setGlobalVolume( newvol );
-}
-
 void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float scale )
 {
+	AL::Context::Lock lock( m_audioContext );
 	garbageCollection();
 	m_viewLevel = z;
 
 	// Compute new listener position
-	//TODO Untangle the calculations, there was no need for trigonometry
-	sf::Listener::setUpVector( 0.f, 0.f, 1.f );
+	static constexpr QVector3D up = {
+		0.f,
+		0.f,
+		1.f
+	};
 	float angle = 0;
 	float x_rotated;
 	float y_rotated;
@@ -242,31 +262,38 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 	{
 		case 0:
 		{
-			angle     = ( ( -45. ) * 3.1415 ) / 180.;
+			angle           = ( ( -45. ) * 3.1415 ) / 180.;
 			m_viewDirection = { 1, 1, -1 };
 			break;
 		}
 		case 1:
 		{
-			angle     = ( ( -45. - 90 ) * 3.1415 ) / 180.;
+			angle           = ( ( -45. - 90 ) * 3.1415 ) / 180.;
 			m_viewDirection = { 1, -1, -1 };
 			break;
 		}
 		case 2:
 		{
-			angle     = ( ( -45. - 90 - 90 ) * 3.1415 ) / 180.;
+			angle           = ( ( -45. - 90 - 90 ) * 3.1415 ) / 180.;
 			m_viewDirection = { -1, -1, -1 };
 			break;
 		}
 		case 3:
 		{
-			angle     = ( ( -45. - 90 - 90 - 90 ) * 3.1415 ) / 180.;
+			angle           = ( ( -45. - 90 - 90 - 90 ) * 3.1415 ) / 180.;
 			m_viewDirection = { -1, 1, -1 };
 			break;
 		}
 	}
-	auto direction = sf::Vector3f( m_viewDirection.x, m_viewDirection.y, m_viewDirection.z);
-	sf::Listener::setDirection( direction );
+	QVector3D direction = { static_cast<float>( m_viewDirection.x ), static_cast<float>( m_viewDirection.y ), static_cast<float>( m_viewDirection.z ) };
+	direction.normalize();
+
+	auto right = QVector3D::crossProduct( up, direction );
+	auto relUp = -QVector3D::crossProduct( right, direction ).normalized();
+
+	const float up3f[3]        = { relUp.x(), relUp.y(), relUp.z() };
+	const float direction3f[3] = { direction.x(), direction.y(), direction.z() };
+	m_audioListener->setOrientation( direction3f, up3f );
 
 	x = -x / 32 + Global::dimX / 2;
 	y = -y / 16;
@@ -288,15 +315,17 @@ void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float 
 	y_rotated = ynew + Global::dimY / 2;
 
 	// Center of view on the currently active top-most layer
-	sf::Vector3f centerOfView = { x_rotated, y_rotated, z };
+	QVector3D centerOfView = { x_rotated, y_rotated, z };
 	// Virtual listener is actually floating above
-	sf::Vector3f listener = centerOfView - direction * 100.f / scale;
+	QVector3D listener = centerOfView - direction * 100.f / scale;
 
-	sf::Listener::setPosition( listener );
+	const float position3f[3] = { listener.x(), listener.y(), listener.z() };
+	m_audioListener->setPosition( position3f );
 
 	// Cull sounds according to new view
-	for ( auto& effect : m_activeEffects )
-	{
-		rebalanceSound( effect );
-	}
+	auto newEnd = std::remove_if(
+		m_activeEffects.begin(), m_activeEffects.end(),
+		[this]( ActiveEffect& effect )
+		{ return !rebalanceSound( effect ); } );
+	m_activeEffects.erase( newEnd, m_activeEffects.end() );
 }
