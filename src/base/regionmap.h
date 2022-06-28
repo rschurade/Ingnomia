@@ -22,6 +22,7 @@
 #include <QSet>
 
 #include <vector>
+#include <unordered_map>
 
 struct Tile;
 class Region;

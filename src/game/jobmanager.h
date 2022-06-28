@@ -27,6 +27,7 @@
 #include <QMap>
 #include <QQueue>
 #include <QString>
+#include <QPointer>
 
 class Game;
 

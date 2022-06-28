@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <alc.h>
 #include <efx-presets.h>
+#include <unordered_map>
 
 namespace AL
 {

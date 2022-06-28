@@ -24,6 +24,7 @@
 #include "../base/regionmap.h"
 #include "../base/tile.h"
 
+#include <QPointer>
 #include <QMutex>
 #include <QPixmap>
 #include <QSet>

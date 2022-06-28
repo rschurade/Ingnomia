@@ -66,6 +66,7 @@
 #include "../gui/aggregatorselection.h"
 #include "../gui/aggregatorsound.h"
 
+#include <QPointer>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>

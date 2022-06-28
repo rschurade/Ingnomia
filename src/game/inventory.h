@@ -22,6 +22,7 @@
 #include "../base/priorityqueue.h"
 #include "../game/item.h"
 
+#include <QPointer>
 #include <QHash>
 #include <QList>
 #include <QMap>

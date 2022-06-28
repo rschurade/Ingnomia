@@ -47,6 +47,7 @@
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QDirIterator>

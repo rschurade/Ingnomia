@@ -19,6 +19,7 @@
 
 #include "../base/enums.h"
 
+#include <QPointer>
 #include <QObject>
 #include <QString>
 #include <QThread>

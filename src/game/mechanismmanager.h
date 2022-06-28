@@ -18,6 +18,7 @@
 #pragma once
 
 
+#include <QPointer>
 #include "../base/position.h"
 #include "../base/tile.h"
 #include "../game/job.h"

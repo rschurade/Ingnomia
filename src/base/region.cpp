@@ -17,6 +17,7 @@
 */
 #include "region.h"
 
+#include <unordered_map>
 #include "../base/global.h"
 #include "../game/world.h"
 

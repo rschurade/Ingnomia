@@ -17,7 +17,11 @@
 */
 #pragma once
 
+#include "../base/enums.h"
+
 #include <QObject>
+#include <QPointer>
+#include <QPointer>
 
 class GameManager;
 

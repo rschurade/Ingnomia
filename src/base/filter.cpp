@@ -34,6 +34,7 @@
 */
 #include "filter.h"
 
+#include <QElapsedTimer>
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../game/game.h"

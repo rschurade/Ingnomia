@@ -20,7 +20,9 @@
 
 #include "../base/enums.h"
 
+#include <QPointer>
 #include <QObject>
+#include <QElapsedTimer>
 
 class Config;
 class NewGameSettings;

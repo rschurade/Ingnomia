@@ -19,6 +19,7 @@
 
 #include "creature.h"
 
+#include <QPointer>
 #include <QString>
 #include <QtGlobal>
 

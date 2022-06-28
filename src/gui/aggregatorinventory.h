@@ -19,9 +19,12 @@
 
 #include "../base/enums.h"
 
+#include <QPointer>
 #include <QObject>
 #include <QList>
 #include <QHash>
+#include <QMap>
+#include <QSet>
 
 class Game;
 

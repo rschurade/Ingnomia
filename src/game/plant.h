@@ -20,6 +20,7 @@
 #include "object.h"
 
 #include <QString>
+#include <QPointer>
 
 class Game;
 

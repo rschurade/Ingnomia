@@ -17,6 +17,7 @@
 */
 #include "dbhelper.h"
 
+#include <QDebug>
 #include "../base/db.h"
 #include "../base/gamestate.h"
 

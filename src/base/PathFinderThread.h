@@ -23,6 +23,7 @@
 #include <functional>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 class World;
 

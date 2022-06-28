@@ -22,6 +22,7 @@
 #include "../game/job.h"
 
 #include <QSet>
+#include <QPointer>
 
 class Game;
 

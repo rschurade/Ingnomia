@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QPointer>
 
 class Game;
 
