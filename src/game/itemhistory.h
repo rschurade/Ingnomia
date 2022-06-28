@@ -19,7 +19,7 @@
 
 #include <QMap>
 #include <QObject>
-#include <set>
+#include <absl/container/btree_set.h>
 
 struct IH_values
 {
@@ -64,7 +64,7 @@ public:
 		m_startUp = false;
 	}
 
-	QMap<QString, std::set<QString>> allItems()
+	QMap<QString, absl::btree_set<QString>> allItems()
 	{
 		return m_itemsPresent;
 	}
@@ -79,7 +79,7 @@ private:
 	QList<IH_day> m_data;
 	IH_day m_currentDay;
 
-	QMap<QString, std::set<QString>> m_itemsPresent;
+	QMap<QString, absl::btree_set<QString>> m_itemsPresent;
 
 	bool m_startUp = true;
 };

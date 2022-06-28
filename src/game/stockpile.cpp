@@ -241,7 +241,7 @@ bool Stockpile::onTick( quint64 tick )
 		{
 			auto possibleSloits     = freeSlots();
 			const auto activeFilter = m_filter.getActive();
-			std::set<QPair<QString, QString>> effectiveFilter;
+			absl::btree_set<QPair<QString, QString>> effectiveFilter;
 			if ( possibleSloits.contains( QPair<QString, QString> { "Any", "Any" } ) )
 			{
 				effectiveFilter = activeFilter;
@@ -270,9 +270,9 @@ bool Stockpile::onTick( quint64 tick )
 	return false;
 }
 
-std::set<QPair<QString, QString>> Stockpile::freeSlots() const
+absl::btree_set<QPair<QString, QString>> Stockpile::freeSlots() const
 {
-	std::set<QPair<QString, QString>> freeSlots;
+	absl::btree_set<QPair<QString, QString>> freeSlots;
 	for ( auto infi : m_fields )
 	{
 		if ( !infi->isFull )
@@ -882,7 +882,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 	if ( !state )
 	{
 		// unchecked some items, need to expel it from the stockpile
-		std::set<QString> filter = m_filter.getActiveSimple();
+		absl::btree_set<QString> filter = m_filter.getActiveSimple();
 
 		for ( auto infi : m_fields )
 		{

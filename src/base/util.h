@@ -57,7 +57,7 @@ public:
 	int toolLevel( unsigned int itemUID );
 	int toolLevel( QString materialSID );
 
-	std::set<QString> itemsAllowedInContainer( unsigned int container );
+	absl::btree_set<QString> itemsAllowedInContainer( unsigned int container );
 	bool itemAllowedInContainer( unsigned int item, unsigned int container );
 	void initAllowedInContainer();
 	QString carryContainerForItem( QString itemSID );

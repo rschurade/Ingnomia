@@ -21,7 +21,10 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
+
+find_package(Abseil REQUIRED)
 
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
@@ -98,6 +101,7 @@ target_link_libraries(${PROJECT_NAME}
 		fastnoise
 		exprtk
 		OpenAL
+		absl::hash
 )
 
 # Noesis license

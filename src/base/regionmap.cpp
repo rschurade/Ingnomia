@@ -740,7 +740,7 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 	}
 	//qDebug() << "check connection between " << start << goal;
 	QQueue<unsigned int> floodQueue;
-	std::set<unsigned int> visited;
+	absl::btree_set<unsigned int> visited;
 	for ( auto con : region( start ).connectionsTo() )
 	{
 		floodQueue.enqueue( con );

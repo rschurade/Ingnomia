@@ -20,7 +20,7 @@
 #include "../base/position.h"
 
 #include <QMap>
-#include <set>
+#include <absl/container/btree_set.h>
 
 class Region
 {
@@ -50,16 +50,16 @@ public:
 	void removeAllConnectionsFrom( unsigned int id );
 	void removeAllConnectionsTo( unsigned int id );
 
-	QMap<unsigned int, std::set<QString>> connectionSetFrom()
+	QMap<unsigned int, absl::btree_set<QString>> connectionSetFrom()
 	{
 		return m_connectionsFrom;
 	};
-	QMap<unsigned int, std::set<QString>> connectionSetTo()
+	QMap<unsigned int, absl::btree_set<QString>> connectionSetTo()
 	{
 		return m_connectionsTo;
 	}
 
-	std::set<QString> connectionsToRegion( unsigned int region )
+	absl::btree_set<QString> connectionsToRegion( unsigned int region )
 	{
 		return m_connectionsTo.value( region );
 	}
@@ -79,6 +79,6 @@ public:
 
 private:
 	unsigned int m_id = 0;
-	QMap<unsigned int, std::set<QString>> m_connectionsFrom;
-	QMap<unsigned int, std::set<QString>> m_connectionsTo;
+	QMap<unsigned int, absl::btree_set<QString>> m_connectionsFrom;
+	QMap<unsigned int, absl::btree_set<QString>> m_connectionsTo;
 };

@@ -151,7 +151,7 @@ Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 
 	if( in.contains( "Priorities" ) )
 	{
-		std::set<QString> typeSet;
+		absl::btree_set<QString> typeSet;
 		auto vl = in.value( "Priorities" ).toList();
 		for( auto vEntry : vl )
 		{

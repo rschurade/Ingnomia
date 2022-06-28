@@ -120,7 +120,7 @@ void ItemHistory::deserialize( const QVariantMap& in )
 	for ( auto entry : vlItems )
 	{
 		QString itemSID = entry.toMap().value( "ID" ).toString();
-		std::set<QString> mats;
+		absl::btree_set<QString> mats;
 		for ( auto vmat : entry.toMap().value( "Mats" ).toList() )
 		{
 			mats.insert( vmat.toString() );
@@ -286,7 +286,7 @@ void ItemHistory::plusItem( QString itemSID, QString materialSID )
 			matEntry.insert( materialSID, IH_values { 1, 1, 0 } );
 			m_currentDay.dayData.data.insert( itemSID, matEntry );
 		}
-		std::set<QString> mats;
+		absl::btree_set<QString> mats;
 		mats.insert( materialSID );
 		m_itemsPresent.insert( itemSID, mats );
 	}
@@ -313,7 +313,7 @@ QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 {
 	QMap<QString, QVector<IH_values>> out;
 
-	std::set<QString> mats = m_itemsPresent.value( itemSID );
+	absl::btree_set<QString> mats = m_itemsPresent.value( itemSID );
 	out.insert( "all", QVector<IH_values>() );
 	for ( auto mat : mats )
 	{

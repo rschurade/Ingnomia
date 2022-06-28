@@ -245,13 +245,13 @@ bool World::noShroom( const Position pos, const int xRange, const int yRange )
 	return true;
 }
 
-std::set<unsigned int> World::updatedTiles()
+absl::btree_set<unsigned int> World::updatedTiles()
 {
 	QMutexLocker lock( &m_updateMutex );
-	std::set<unsigned int> ret;
+	absl::btree_set<unsigned int> ret;
 	std::swap(ret, m_updatedTiles);
 	// Assume next update batch is going to be similar in size
-	// m_updatedTiles.reserve( ret.size() );    // Not in std::set
+	// m_updatedTiles.reserve( ret.size() );    // Not in absl::btree_set
 	return ret;
 }
 

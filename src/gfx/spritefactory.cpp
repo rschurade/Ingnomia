@@ -113,7 +113,7 @@ bool SpriteFactory::init()
 			/*
 			if( tilesheet == "default.png" )
 			{
-				std::set<QString>unused;
+				absl::btree_set<QString>unused;
 				int count = 0;
 				for( auto r : DB::selectRows( "BaseSprites" ) )
 				{

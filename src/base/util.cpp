@@ -206,7 +206,7 @@ int Util::toolLevel( QString materialSID )
 	return 0;
 }
 
-std::set<QString> Util::itemsAllowedInContainer( unsigned int containerID )
+absl::btree_set<QString> Util::itemsAllowedInContainer( unsigned int containerID )
 {
 	return Global::allowedInContainer.value( g->inv()->itemSID( containerID ) );
 }

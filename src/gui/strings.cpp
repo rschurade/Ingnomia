@@ -25,6 +25,8 @@
 #include <QJsonDocument>
 #include <QVariantMap>
 
+#include <absl/container/btree_set.h>
+
 QMap<QString, QString> Strings::m_table = QMap<QString, QString>();
 QString Strings::m_language             = "";
 
@@ -85,7 +87,7 @@ QString Strings::randomKingdomName()
 
 QString Strings::replaceNamePart( QString part )
 {
-	std::set<QString> noReplaceables = { "The", "of", "Land", "Kingdom" };
+	absl::btree_set<QString> noReplaceables = { "The", "of", "Land", "Kingdom" };
 	if ( noReplaceables.contains( part ) )
 	{
 		return part;

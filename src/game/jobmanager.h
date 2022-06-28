@@ -49,7 +49,7 @@ private:
 
 	QHash<QString, QStringList> m_jobIDs;
 
-	std::set<QString> m_workshopSkills;
+	absl::btree_set<QString> m_workshopSkills;
 
 	int m_startIndex;
 

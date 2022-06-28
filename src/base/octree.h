@@ -18,7 +18,7 @@
 #pragma once
 
 #include <QList>
-#include <set>
+#include <absl/container/btree_set.h>
 
 #include <functional>
 
@@ -47,5 +47,5 @@ private:
 	const bool m_isLeaf;
 
 	Octree* m_children[8] = { 0 };
-	std::set<unsigned int> m_items;
+	absl::btree_set<unsigned int> m_items;
 };

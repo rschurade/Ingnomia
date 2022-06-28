@@ -19,7 +19,7 @@
 
 #include <QMap>
 #include <QObject>
-#include <set>
+#include <absl/container/btree_set.h>
 
 struct TTNode
 {
@@ -27,8 +27,8 @@ struct TTNode
 	QString itemSID;
 	QString craftID;
 
-	std::set<QString> parents;
-	std::set<QString> childs;
+	absl::btree_set<QString> parents;
+	absl::btree_set<QString> childs;
 };
 
 class TechTree : public QObject

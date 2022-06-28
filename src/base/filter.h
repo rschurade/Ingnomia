@@ -20,7 +20,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QString>
-#include <set>
+#include <absl/container/btree_set.h>
 
 class FilterItem
 {
@@ -101,8 +101,8 @@ public:
 
 	bool getCheckState( QString category, QString group, QString item, QString material );
 
-	const std::set<QPair<QString, QString>>& getActive();
-	std::set<QString> getActiveSimple();
+	const absl::btree_set<QPair<QString, QString>>& getActive();
+	absl::btree_set<QString> getActiveSimple();
 	void setActiveSimple( QString val );
 
 	void update();
@@ -112,6 +112,6 @@ private:
 
 	bool m_activeDirty       = true;
 	bool m_activeSimpleDirty = true;
-	std::set<QPair<QString, QString>> m_active;
-	std::set<QString> m_activeSimple;
+	absl::btree_set<QPair<QString, QString>> m_active;
+	absl::btree_set<QString> m_activeSimple;
 };

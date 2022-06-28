@@ -49,7 +49,7 @@ PastureProperties::PastureProperties( QVariantMap& in )
 	troughContent     = in.value( "TroughContent" ).toInt();
 
 	const auto &listFood = in.value( "Food" ).toStringList();
-	foodSettings = std::set(listFood.begin(), listFood.end());
+	foodSettings = absl::btree_set<QString>(listFood.begin(), listFood.end());
 
 	animalSize = DB::select( "PastureSize", "Animals", animalType ).toInt();
 }
@@ -692,7 +692,7 @@ Position Pasture::findShed()
 	return Position();
 }
 
-std::set<QString>& Pasture::foodSettings()
+absl::btree_set<QString>& Pasture::foodSettings()
 {
 	return m_properties.foodSettings;
 }

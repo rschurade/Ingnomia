@@ -39,8 +39,8 @@ struct InventoryField
 	unsigned char capacity   = 1;
 	unsigned char stackSize  = 1;
 	unsigned int containerID = 0;
-	std::set<unsigned int> items;
-	std::set<unsigned int> reservedItems;
+	absl::btree_set<unsigned int> items;
+	absl::btree_set<unsigned int> reservedItems;
 
 	bool requireSame = false;
 };
@@ -83,7 +83,7 @@ public:
 	// returns true if the possible item list was updated
 	bool onTick( quint64 tick );
 
-	std::set<QPair<QString, QString>> freeSlots() const;
+	absl::btree_set<QPair<QString, QString>> freeSlots() const;
 
 	Filter filter()
 	{

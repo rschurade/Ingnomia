@@ -497,7 +497,7 @@ unsigned int Inventory::getClosestItem( const Position& pos, bool allowInStockpi
 	return 0;
 }
 
-unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, QString itemSID, std::set<QString> materialTypes )
+unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, QString itemSID, absl::btree_set<QString> materialTypes )
 {
 	for ( auto matType : materialTypes )
 	{
@@ -654,7 +654,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	return out;
 }
 
-QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, std::set<QPair<QString, QString>> filter )
+QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, absl::btree_set<QPair<QString, QString>> filter )
 {
 	QString itemSID;
 	QString materialSID;
@@ -1599,14 +1599,14 @@ bool Inventory::requireSame( unsigned int id )
 	return false;
 }
 
-const std::set<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
+const absl::btree_set<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
 {
 	auto container = getItem( containerID );
 	if ( container )
 	{
 		return container->containedItems();
 	}
-	static const std::set<unsigned int> nullopt;
+	static const absl::btree_set<unsigned int> nullopt;
 	return nullopt;
 }
 

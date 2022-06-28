@@ -852,8 +852,8 @@ struct Neighbors
 void World::processWaterFlow()
 {
 	// Batch newly tracked water tiles
-	std::set<unsigned int> newWater;
-	std::set<unsigned int> removedWater;
+	absl::btree_set<unsigned int> newWater;
+	absl::btree_set<unsigned int> removedWater;
 
 	QVector<unsigned int> drain;
 	QVector<unsigned int> flood;
@@ -1699,7 +1699,7 @@ void World::addToUpdateList( const QVector<unsigned int>& ul )
 	}
 }
 
-void World::addToUpdateList( const std::set<unsigned int>& ul )
+void World::addToUpdateList( const absl::btree_set<unsigned int>& ul )
 {
 	QMutexLocker lock( &m_updateMutex );
 	m_updatedTiles.insert(ul.begin(), ul.end());
@@ -1752,21 +1752,21 @@ void World::putLight( const unsigned short x, const unsigned short y, const unsi
 
 void World::addLight( unsigned int id, Position pos, int intensity )
 {
-	std::set<unsigned int> ul;
+	absl::btree_set<unsigned int> ul;
 	m_lightMap.addLight( ul, m_world, id, pos, intensity );
 	addToUpdateList( ul );
 }
 
 void World::removeLight( unsigned int id )
 {
-	std::set<unsigned int> ul;
+	absl::btree_set<unsigned int> ul;
 	m_lightMap.removeLight( ul, m_world, id );
 	addToUpdateList( ul );
 }
 
 void World::moveLight( unsigned int id, Position pos, int intensity )
 {
-	std::set<unsigned int> ul;
+	absl::btree_set<unsigned int> ul;
 	m_lightMap.removeLight( ul, m_world, id );
 	m_lightMap.addLight( ul, m_world, id, pos, intensity );
 	addToUpdateList( ul );
@@ -1774,7 +1774,7 @@ void World::moveLight( unsigned int id, Position pos, int intensity )
 
 void World::updateLightsInRange( Position pos )
 {
-	std::set<unsigned int> ul;
+	absl::btree_set<unsigned int> ul;
 	m_lightMap.updateLight( ul, m_world, pos );
 	addToUpdateList( ul );
 }

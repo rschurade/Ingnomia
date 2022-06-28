@@ -38,9 +38,9 @@ public:
 
 	void init();
 
-	void addLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id, Position pos, int intensity );
-	void removeLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id );
-	void updateLight( std::set<unsigned int>& updateList, std::vector<Tile>& world, Position pos );
+	void addLight( absl::btree_set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id, Position pos, int intensity );
+	void removeLight( absl::btree_set<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id );
+	void updateLight( absl::btree_set<unsigned int>& updateList, std::vector<Tile>& world, Position pos );
 
 private:
 	QMap<unsigned int, QMap<unsigned int, unsigned char>> m_lightMap;

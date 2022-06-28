@@ -81,8 +81,8 @@ struct MechanismNetwork
 	unsigned int produce = 0;
 	unsigned int consume = 0;
 
-	std::set<unsigned int> producers;
-	std::set<unsigned int> consumers;
+	absl::btree_set<unsigned int> producers;
+	absl::btree_set<unsigned int> consumers;
 };
 
 class MechanismManager : public QObject

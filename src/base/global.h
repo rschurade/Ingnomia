@@ -24,7 +24,7 @@
 
 #include <QDomElement>
 #include <QMap>
-#include <set>
+#include <absl/container/btree_set.h>
 #include <QString>
 #include <QVariant>
 #include <QtGlobal>
@@ -70,7 +70,7 @@ public:
 	static bool debugOpenGL;
 	static bool debugSound;
 
-	static QMap<QString, std::set<QString>> allowedInContainer;
+	static QMap<QString, absl::btree_set<QString>> allowedInContainer;
 
 	static QStringList needIDs;
 	static QMap<QString, float> needDecays;
@@ -86,7 +86,7 @@ public:
 
 	static Noesis::Key keyConvert( Qt::Key key );
 
-	static std::set<QString> craftable;
+	static absl::btree_set<QString> craftable;
 
 	static EventConnector* eventConnector;
 	static Util* util;

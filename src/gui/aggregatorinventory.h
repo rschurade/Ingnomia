@@ -24,7 +24,7 @@
 #include <QList>
 #include <QHash>
 #include <QMap>
-#include <set>
+#include <absl/container/btree_set.h>
 
 class Game;
 
@@ -153,7 +153,7 @@ private:
     
     QList<GuiBuildItem> m_buildItems;
 
-    std::set<QString> m_watchedItems;
+    absl::btree_set<QString> m_watchedItems;
 
     QMap<BuildSelection, QString> m_buildSelection2String;
     QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;

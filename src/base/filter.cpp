@@ -180,7 +180,7 @@ bool Filter::getCheckState( QString category, QString group, QString item, QStri
 	return m_categories[category].getCheckState( group, item, material );
 }
 
-const std::set<QPair<QString, QString>>& Filter::getActive()
+const absl::btree_set<QPair<QString, QString>>& Filter::getActive()
 {
 	if ( m_activeDirty )
 	{
@@ -208,7 +208,7 @@ const std::set<QPair<QString, QString>>& Filter::getActive()
 	return m_active;
 }
 
-std::set<QString> Filter::getActiveSimple()
+absl::btree_set<QString> Filter::getActiveSimple()
 {
 	if ( m_activeSimpleDirty )
 	{

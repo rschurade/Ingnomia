@@ -86,7 +86,7 @@
 
 static MainWindow* instance;
 
-static std::set<QString> m_noesisMessages;
+static absl::btree_set<QString> m_noesisMessages;
 
 MainWindow::MainWindow( QWidget* parent ) :
 	QOpenGLWindow()

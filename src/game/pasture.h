@@ -61,7 +61,7 @@ struct PastureProperties
 
 	QList<qint8> jobPriorities;
 
-	std::set<QString> foodSettings;
+	absl::btree_set<QString> foodSettings;
 
 	void serialize( QVariantMap& out ) const;
 	PastureProperties() {};
@@ -107,7 +107,7 @@ public:
 	Position randomFieldPos();
 	Position findShed();
 
-	std::set<QString>& foodSettings();
+	absl::btree_set<QString>& foodSettings();
 	void addFoodSetting( QString itemSID, QString materialSID );
 	void removeFoodSetting( QString itemSID, QString materialSID );
 	void addFood( unsigned int itemID );
