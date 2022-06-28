@@ -138,6 +138,13 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory build
 
+    - name: Use GCC-10 on Linux
+      if: (!startsWith(matrix.config.os, 'windows'))
+      shell: bash
+      run: |
+        echo "CC=gcc-10" >> $GITHUB_ENV
+        echo "CXX=g++-10" >> $GITHUB_ENV
+
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
       shell: bash
