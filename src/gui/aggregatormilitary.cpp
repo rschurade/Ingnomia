@@ -24,6 +24,8 @@
 
 #include "../gui/strings.h"
 
+#include <ranges>
+
 AggregatorMilitary::AggregatorMilitary( QObject* parent ) :
 	QObject(parent)
 {
@@ -107,7 +109,7 @@ void AggregatorMilitary::sendRoleUpdate()
 
 	auto uniformSlots = DB::ids( "Uniform" );
 
-	for( auto& role : g->mil()->roles() )
+	for( auto& role : g->mil()->roles() | std::views::values )
 	{
 		GuiMilRole gmr;
 		gmr.name = role.name;

@@ -66,8 +66,8 @@ void AggregatorInventory::init( Game* game )
 		{
 			for ( const auto& item : g->inv()->items( cat, group ) )
 			{
-				m_itemToCategoryCache.insert( item, cat );
-				m_itemToGroupCache.insert( item, group );
+				m_itemToCategoryCache.insert_or_assign( item, cat );
+				m_itemToGroupCache.insert_or_assign( item, group );
 			}
 		}
 	}
@@ -374,8 +374,8 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
     
 void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
 {
-	QString cat = m_itemToCategoryCache.value( itemSID );
-	QString group = m_itemToGroupCache.value( itemSID );
+	QString cat = m_itemToCategoryCache.at( itemSID );
+	QString group = m_itemToGroupCache.at( itemSID );
 
 	if( m_watchedItems.contains( cat ) )
 	{
@@ -397,8 +397,8 @@ void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
 
 void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
 {
-	QString cat = m_itemToCategoryCache.value( itemSID );
-	QString group = m_itemToGroupCache.value( itemSID );
+	QString cat = m_itemToCategoryCache.at( itemSID );
+	QString group = m_itemToGroupCache.at( itemSID );
 
 	if( m_watchedItems.contains( cat ) )
 	{

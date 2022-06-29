@@ -22,7 +22,7 @@
 #include "../game/job.h"
 
 #include <QColor>
-#include <QHash>
+#include <absl/container/flat_hash_map.h>
 #include <QList>
 #include <QMap>
 #include <QQueue>
@@ -38,16 +38,16 @@ class JobManager : public QObject
 private:
 	QPointer<Game> g;
 
-	QHash<unsigned int, QSharedPointer<Job>> m_jobList;
-	QHash<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
+	absl::flat_hash_map<unsigned int, QSharedPointer<Job>> m_jobList;
+	absl::flat_hash_map<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
 
-	QHash<QString, int> m_skillToInt;
+	absl::flat_hash_map<QString, int> m_skillToInt;
 
-	QHash<Position, unsigned int> m_jobPositions;
+	absl::flat_hash_map<Position, unsigned int> m_jobPositions;
 
 	QQueue<unsigned int> m_returnedJobQueue;
 
-	QHash<QString, QStringList> m_jobIDs;
+	absl::flat_hash_map<QString, QStringList> m_jobIDs;
 
 	absl::btree_set<QString> m_workshopSkills;
 
@@ -93,7 +93,7 @@ public:
 
 	void addLoadedJob( QVariant vals );
 
-	const QHash<unsigned int, QSharedPointer<Job>>& allJobs()
+	const absl::flat_hash_map<unsigned int, QSharedPointer<Job>>& allJobs()
 	{
 		return m_jobList;
 	}

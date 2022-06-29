@@ -28,6 +28,8 @@
 #include <QSqlDatabase>
 #include <QVariant>
 
+#include <vector>
+
 typedef DBHelper DBH;
 
 class Item;
@@ -75,7 +77,7 @@ public:
 
 	static QSharedPointer<DBS::Workshop> workshop( QString id );
 	static QSharedPointer<DBS::Job> job( QString id );
-	static QList<QString> jobIds();
+	static std::vector<QString> jobIds();
 
 private:
 	static QSqlDatabase& getDB();
@@ -88,8 +90,8 @@ private:
 
 	static QMap<Qt::HANDLE, QSqlDatabase> m_connections;
 
-	static QHash<QString, QSharedPointer<DBS::Workshop>> m_workshops;
-	static QHash<QString, QSharedPointer<DBS::Job>> m_jobs;
+	static absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> m_workshops;
+	static absl::flat_hash_map<QString, QSharedPointer<DBS::Job>> m_jobs;
 
 	DB()  = delete;
 	~DB() = delete;

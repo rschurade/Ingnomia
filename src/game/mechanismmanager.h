@@ -94,7 +94,7 @@ public:
 	MechanismManager( Game* parent );
 	~MechanismManager();
 
-	QHash<unsigned int, MechanismData>& mechanisms()
+	absl::flat_hash_map<unsigned int, MechanismData>& mechanisms()
 	{
 		return m_mechanisms;
 	};
@@ -118,7 +118,7 @@ public:
 	void uninstallItem( unsigned int itemID );
 
 	bool axlesChanged();
-	QHash<unsigned int, AxleData> axleData();
+	absl::flat_hash_map<unsigned int, AxleData> axleData();
 
 	MechanismData mechanismData( unsigned int itemID );
 
@@ -152,16 +152,16 @@ private:
 	quint64 m_lastTick       = 0;
 	bool m_needNetworkUpdate = false;
 
-	QHash<unsigned int, MechanismData> m_mechanisms;
+	absl::flat_hash_map<unsigned int, MechanismData> m_mechanisms;
 
-	QHash<unsigned int, unsigned int> m_floorPositions;
-	QHash<unsigned int, unsigned int> m_wallPositions;
+	absl::flat_hash_map<unsigned int, unsigned int> m_floorPositions;
+	absl::flat_hash_map<unsigned int, unsigned int> m_wallPositions;
 
-	QHash<unsigned int, AxleData> m_axleData;
+	absl::flat_hash_map<unsigned int, AxleData> m_axleData;
 
 	bool m_axlesChanged = false;
 
-	QHash<unsigned int, MechanismNetwork> m_networks;
+	absl::flat_hash_map<unsigned int, MechanismNetwork> m_networks;
 
-	QHash<QString, MechanismType> m_string2Type;
+	absl::flat_hash_map<QString, MechanismType> m_string2Type;
 };

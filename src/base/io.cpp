@@ -61,6 +61,8 @@
 
 #include <unordered_set>
 
+#include <ranges>
+
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
 	QObject( parent )
@@ -468,7 +470,7 @@ void IO::sanitize()
 			}
 		}
 
-		for ( auto& item : g->inv()->allItems() )
+		for ( auto& item : g->inv()->allItems() | std::views::values )
 		{
 			const auto job = item.isInJob();
 			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
@@ -561,7 +563,7 @@ void IO::sanitize()
 				!categories.contains( it->category ) ||
 				( !it->group.isEmpty() && !groups.contains( it->group ) ) ||
 				( !it->item.isEmpty() && !items.contains( it->item ) ) ||
-				( !it->material.isEmpty() && !materials.contains( it->material ) )
+				( !it->material.isEmpty() && std::find( materials.begin(), materials.end(), it->material ) == std::end(materials) )
 			)
 			{
 				it = GameState::watchedItemList.erase( it );
@@ -1080,7 +1082,12 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 
 	QJsonArray ja;
 	auto& items = g->inv()->allItems();
-	auto keys   = items.keys();
+
+	// FIXME: Original code was also creating a copy of the keys to iterate, but this seems wasteful in any case
+	std::vector<unsigned int> keys;
+	for (const auto &key : items | std::views::keys) {
+		keys.push_back(key);
+	}
 
 	int i = startIndex;
 
@@ -1102,8 +1109,6 @@ bool IO::saveItems( QString folder )
 	g->inv()->sanityCheck();
 
 	QByteArray out;
-
-	auto& items = g->inv()->allItems();
 
 	int i          = 1;
 	int startIndex = 0;
@@ -1175,7 +1180,7 @@ QJsonArray IO::jsonArrayJobs()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayJobs";
 	QJsonArray ja;
-	for ( const auto& job : g->jm()->allJobs() )
+	for ( const auto& job : g->jm()->allJobs() | std::views::values )
 	{
 		if ( !job->type().isEmpty() )
 		{
@@ -1233,22 +1238,22 @@ QJsonArray IO::jsonArrayFarms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFarms";
 	QJsonArray ja;
-	for ( const auto& farm : g->fm()->allFarms() )
+	for ( const auto& farm : g->fm()->allFarms() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( farm->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& grove : g->fm()->allGroves() )
+	for ( const auto& grove : g->fm()->allGroves() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( grove->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& pasture : g->fm()->allPastures() )
+	for ( const auto& pasture : g->fm()->allPastures() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( pasture->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& beehive : g->fm()->allBeeHives() )
+	for ( const auto& beehive : g->fm()->allBeeHives() | std::views::values )
 	{
 		QVariantMap vm;
 		beehive->serialize( vm );
@@ -1264,7 +1269,7 @@ QJsonArray IO::jsonArrayRooms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayRooms";
 	QJsonArray ja;
-	for ( const auto& room : g->rm()->allRooms() )
+	for ( const auto& room : g->rm()->allRooms() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( room->serialize() );
 		ja.append( jv );
@@ -1278,7 +1283,7 @@ QJsonArray IO::jsonArrayDoors()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayDoors";
 	QJsonArray ja;
-	for ( const auto& door : g->rm()->allDoors() )
+	for ( const auto& door : g->rm()->allDoors() | std::views::values )
 	{
 		QVariantMap out;
 
@@ -1496,7 +1501,7 @@ QJsonDocument IO::jsonArrayMechanisms()
 		qDebug() << "jsonArrayMechanisms";
 	QVariantList ol;
 
-	for ( const auto& md : g->mcm()->mechanisms() )
+	for ( const auto& md : g->mcm()->mechanisms() | std::views::values )
 	{
 		auto vmd = md.serialize();
 		ol.append( vmd );
@@ -1520,7 +1525,7 @@ QJsonDocument IO::jsonArrayPipes()
 		qDebug() << "jsonArrayPipes";
 	QVariantList ol;
 
-	for ( const auto& fp : g->flm()->pipes() )
+	for ( const auto& fp : g->flm()->pipes() | std::views::values )
 	{
 		auto vfp = fp.serialize();
 		/*

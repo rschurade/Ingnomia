@@ -21,7 +21,6 @@
 #include "../game/worldobject.h"
 #include "../game/job.h"
 
-#include <QHash>
 #include <QList>
 #include <QMap>
 #include <QPair>

@@ -33,6 +33,8 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 
+#include <ranges>
+
 QVariantMap UniformItem::serialize()
 {
 	QVariantMap out;
@@ -211,7 +213,7 @@ void MilitaryManager::init()
 	for ( auto entry : pl )
 	{
 		MilitaryRole pos( entry.toMap() );
-		m_roles.insert( pos.id, pos );
+		m_roles.insert_or_assign( pos.id, pos );
 	}
 	if ( m_roles.empty() )
 	{
@@ -229,7 +231,7 @@ void MilitaryManager::init()
 
 			for( auto gnome : squad.gnomes )
 			{
-				m_gnome2Squad.insert( gnome, squad.id );
+				m_gnome2Squad.insert_or_assign( gnome, squad.id );
 			}
 		}
 	}
@@ -252,7 +254,7 @@ QVariantMap MilitaryManager::serialize()
 	QVariantMap military;
 
 	QVariantList vRoles;
-	for ( auto pos : m_roles )
+	for ( auto pos : m_roles | std::views::values )
 	{
 		vRoles.append( pos.serialize() );
 	}
@@ -280,7 +282,7 @@ unsigned int MilitaryManager::addRole()
 
 	
 
-	m_roles.insert( pos.id, pos );
+	m_roles.insert_or_assign( pos.id, pos );
 
 	return pos.id;
 }
@@ -289,7 +291,7 @@ bool MilitaryManager::removeRole( unsigned int id )
 {
 	if ( m_roles.contains( id ) )
 	{
-		m_roles.remove( id );
+		m_roles.erase( id );
 		return true;
 	}
 	return false;
@@ -496,7 +498,7 @@ Squad* MilitaryManager::getSquadForGnome( unsigned int gnomeID )
 {
 	if ( m_gnome2Squad.contains( gnomeID ) )
 	{
-		unsigned int squadID = m_gnome2Squad.value( gnomeID );
+		unsigned int squadID = m_gnome2Squad.at( gnomeID );
 		for( int i = 0; i < m_squads.size(); ++i )
 		{
 			if( m_squads[i].id == squadID )
@@ -551,7 +553,7 @@ bool MilitaryManager::removeGnome( unsigned int gnomeID )
 	if( squad )
 	{
 		squad->gnomes.removeAll( gnomeID );
-		m_gnome2Squad.remove( gnomeID );
+		m_gnome2Squad.erase( gnomeID );
 		return true;
 	}
 	return false;
@@ -568,7 +570,7 @@ bool MilitaryManager::moveGnomeUp( unsigned int gnomeID )
 			{
 				m_squads[i].gnomes.removeAll( gnomeID );
 				m_squads[i-1].gnomes.append( gnomeID );
-				m_gnome2Squad.insert( gnomeID, m_squads[i-1].id );
+				m_gnome2Squad.insert_or_assign( gnomeID, m_squads[i-1].id );
 				return true;
 			}
 		}
@@ -588,7 +590,7 @@ bool MilitaryManager::moveGnomeDown( unsigned int gnomeID )
 			{
 				m_squads[i].gnomes.removeAll( gnomeID );
 				m_squads[i+1].gnomes.append( gnomeID );
-				m_gnome2Squad.insert( gnomeID, m_squads[i+1].id );
+				m_gnome2Squad.insert_or_assign( gnomeID, m_squads[i+1].id );
 				return true;
 			}
 		}
@@ -596,7 +598,7 @@ bool MilitaryManager::moveGnomeDown( unsigned int gnomeID )
 	if( m_squads.size() )
 	{
 		m_squads[0].gnomes.append( gnomeID );
-		m_gnome2Squad.insert( gnomeID, m_squads[0].id );
+		m_gnome2Squad.insert_or_assign( gnomeID, m_squads[0].id );
 		return true;
 	}
 	return false;

@@ -1688,9 +1688,10 @@ BT_RESULT Gnome::actionWork( bool halt )
 
 	if ( GameState::tick < m_taskFinishTick )
 	{
-		if ( m_taskFunctions.contains( taskName + "Animate" ) )
+		const auto taskFunctionKey = (taskName + "Animate").toStdString();
+		if ( m_taskFunctions.contains( taskFunctionKey ) )
 		{
-			m_taskFunctions[taskName + "Animate"]();
+			m_taskFunctions.at(taskFunctionKey)();
 		}
 		if ( (m_taskFinishTick-GameState::tick) % 60 == 0) {
 			// Play sound again
@@ -1699,9 +1700,10 @@ BT_RESULT Gnome::actionWork( bool halt )
 		return BT_RESULT::RUNNING;
 	}
 
-	if ( m_taskFunctions.contains( taskName ) )
+	const auto taskNameKey = taskName.toStdString();
+	if ( m_taskFunctions.contains( taskNameKey ) )
 	{
-		if ( !m_taskFunctions[taskName]() )
+		if ( !m_taskFunctions.at(taskNameKey)() )
 		{
 			return BT_RESULT::FAILURE;
 		}

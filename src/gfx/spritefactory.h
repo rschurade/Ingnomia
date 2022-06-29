@@ -95,7 +95,7 @@ private:
 	unsigned char rotationToChar( QString suffix );
 
 	// base sprites and sources for creation
-	QHash<QString, QPixmap> m_pixmapSources;
+	absl::flat_hash_map<QString, QPixmap> m_pixmapSources;
 	QMap<QString, QPixmap> m_baseSprites;
 	QMap<QString, DefNode*> m_spriteDefinitions;
 	QMap<QString, QVariantMap> m_spriteDefVMs;
@@ -145,7 +145,6 @@ private:
 	
 	void printDebug();
 
-	QStringList pixmaps();
 	QPixmap pixmap( QString name );
 
 	QPixmap baseSprite( QString id );

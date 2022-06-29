@@ -248,50 +248,50 @@ void Animal::updateMoveSpeed()
 void Animal::initTaskMap()
 {
 	using namespace std::placeholders;
-	//m_behaviors.insert( "", std::bind( &Animal::condition, this, _1 ) );
-	//m_behaviors.insert( "", std::bind( &Animal::action, this, _1 ) );
-	m_behaviors.insert( "IsMale", std::bind( &Animal::conditionIsMale, this, _1 ) );
-	m_behaviors.insert( "IsFemale", std::bind( &Animal::conditionIsFemale, this, _1 ) );
-	m_behaviors.insert( "IsDay", std::bind( &Animal::conditionIsDay, this, _1 ) );
-	m_behaviors.insert( "IsNight", std::bind( &Animal::conditionIsNight, this, _1 ) );
-	m_behaviors.insert( "IsEgg", std::bind( &Animal::conditionIsEgg, this, _1 ) );
-	m_behaviors.insert( "IsAdult", std::bind( &Animal::conditionIsAdult, this, _1 ) );
-	m_behaviors.insert( "IsYoung", std::bind( &Animal::conditionIsYoung, this, _1 ) );
-	m_behaviors.insert( "IsCarnivore", std::bind( &Animal::conditionIsCarnivore, this, _1 ) );
-	m_behaviors.insert( "IsHerbivore", std::bind( &Animal::conditionIsHerbivore, this, _1 ) );
-	m_behaviors.insert( "IsHungry", std::bind( &Animal::conditionIsHungry, this, _1 ) );
-	m_behaviors.insert( "IsEggLayer", std::bind( &Animal::conditionIsEggLayer, this, _1 ) );
-	m_behaviors.insert( "IsProducer", std::bind( &Animal::conditionIsProducer, this, _1 ) );
-	m_behaviors.insert( "IsPregnant", std::bind( &Animal::conditionIsPregnant, this, _1 ) );
-	m_behaviors.insert( "IsReadyToGiveBirth", std::bind( &Animal::conditionIsReadyToGiveBirth, this, _1 ) );
-	m_behaviors.insert( "IsWoodVermin", std::bind( &Animal::conditionIsWoodVermin, this, _1 ) );
-	m_behaviors.insert( "IsInShed", std::bind( &Animal::conditionIsInShed, this, _1 ) );
-	m_behaviors.insert( "IsOnPasture", std::bind( &Animal::conditionIsOnPasture, this, _1 ) );
-	m_behaviors.insert( "TargetAdjacent", std::bind( &Animal::conditionTargetAdjacent, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Animal::condition, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Animal::action, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsMale", std::bind( &Animal::conditionIsMale, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsFemale", std::bind( &Animal::conditionIsFemale, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsDay", std::bind( &Animal::conditionIsDay, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsNight", std::bind( &Animal::conditionIsNight, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsEgg", std::bind( &Animal::conditionIsEgg, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsAdult", std::bind( &Animal::conditionIsAdult, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsYoung", std::bind( &Animal::conditionIsYoung, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsCarnivore", std::bind( &Animal::conditionIsCarnivore, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsHerbivore", std::bind( &Animal::conditionIsHerbivore, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsHungry", std::bind( &Animal::conditionIsHungry, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsEggLayer", std::bind( &Animal::conditionIsEggLayer, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsProducer", std::bind( &Animal::conditionIsProducer, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsPregnant", std::bind( &Animal::conditionIsPregnant, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsReadyToGiveBirth", std::bind( &Animal::conditionIsReadyToGiveBirth, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsWoodVermin", std::bind( &Animal::conditionIsWoodVermin, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsInShed", std::bind( &Animal::conditionIsInShed, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsOnPasture", std::bind( &Animal::conditionIsOnPasture, this, _1 ) );
+	m_behaviors.insert_or_assign( "TargetAdjacent", std::bind( &Animal::conditionTargetAdjacent, this, _1 ) );
 
-	m_behaviors.insert( "LayEgg", std::bind( &Animal::actionLayEgg, this, _1 ) );
-	m_behaviors.insert( "Produce", std::bind( &Animal::actionProduce, this, _1 ) );
-	m_behaviors.insert( "RandomMove", std::bind( &Animal::actionRandomMove, this, _1 ) );
-	m_behaviors.insert( "TryHaveSex", std::bind( &Animal::actionTryHaveSex, this, _1 ) );
-	m_behaviors.insert( "GiveBirth", std::bind( &Animal::actionGiveBirth, this, _1 ) );
-	m_behaviors.insert( "FindPrey", std::bind( &Animal::actionFindPrey, this, _1 ) );
-	m_behaviors.insert( "KillPrey", std::bind( &Animal::actionKillPrey, this, _1 ) );
-	m_behaviors.insert( "EatPrey", std::bind( &Animal::actionEatPrey, this, _1 ) );
-	m_behaviors.insert( "Move", std::bind( &Animal::actionMove, this, _1 ) );
-	m_behaviors.insert( "FindRetreat", std::bind( &Animal::actionFindRetreat, this, _1 ) );
-	m_behaviors.insert( "Sleep", std::bind( &Animal::actionSleep, this, _1 ) );
-	m_behaviors.insert( "FindShed", std::bind( &Animal::actionFindShed, this, _1 ) );
-	m_behaviors.insert( "EnterShed", std::bind( &Animal::actionEnterShed, this, _1 ) );
-	m_behaviors.insert( "LeaveShed", std::bind( &Animal::actionLeaveShed, this, _1 ) );
-	m_behaviors.insert( "FindRandomPastureField", std::bind( &Animal::actionFindRandomPastureField, this, _1 ) );
+	m_behaviors.insert_or_assign( "LayEgg", std::bind( &Animal::actionLayEgg, this, _1 ) );
+	m_behaviors.insert_or_assign( "Produce", std::bind( &Animal::actionProduce, this, _1 ) );
+	m_behaviors.insert_or_assign( "RandomMove", std::bind( &Animal::actionRandomMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "TryHaveSex", std::bind( &Animal::actionTryHaveSex, this, _1 ) );
+	m_behaviors.insert_or_assign( "GiveBirth", std::bind( &Animal::actionGiveBirth, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindPrey", std::bind( &Animal::actionFindPrey, this, _1 ) );
+	m_behaviors.insert_or_assign( "KillPrey", std::bind( &Animal::actionKillPrey, this, _1 ) );
+	m_behaviors.insert_or_assign( "EatPrey", std::bind( &Animal::actionEatPrey, this, _1 ) );
+	m_behaviors.insert_or_assign( "Move", std::bind( &Animal::actionMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindRetreat", std::bind( &Animal::actionFindRetreat, this, _1 ) );
+	m_behaviors.insert_or_assign( "Sleep", std::bind( &Animal::actionSleep, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindShed", std::bind( &Animal::actionFindShed, this, _1 ) );
+	m_behaviors.insert_or_assign( "EnterShed", std::bind( &Animal::actionEnterShed, this, _1 ) );
+	m_behaviors.insert_or_assign( "LeaveShed", std::bind( &Animal::actionLeaveShed, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindRandomPastureField", std::bind( &Animal::actionFindRandomPastureField, this, _1 ) );
 
-	m_behaviors.insert( "GuardDogGetTarget", std::bind( &Animal::actionGuardDogGetTarget, this, _1 ) );
-	m_behaviors.insert( "GetTarget", std::bind( &Animal::actionGetTarget, this, _1 ) );
-	m_behaviors.insert( "AttackTarget", std::bind( &Animal::actionAttackTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "GuardDogGetTarget", std::bind( &Animal::actionGuardDogGetTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetTarget", std::bind( &Animal::actionGetTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "AttackTarget", std::bind( &Animal::actionAttackTarget, this, _1 ) );
 
-	m_behaviors.insert( "Graze", std::bind( &Animal::actionGraze, this, _1 ) );
+	m_behaviors.insert_or_assign( "Graze", std::bind( &Animal::actionGraze, this, _1 ) );
 
-	m_behaviors.insert( "RandomMoveBig", std::bind( &Animal::actionRandomMoveBig, this, _1 ) );
+	m_behaviors.insert_or_assign( "RandomMoveBig", std::bind( &Animal::actionRandomMoveBig, this, _1 ) );
 }
 
 void Animal::setState( int state )

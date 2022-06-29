@@ -28,6 +28,8 @@
 #include <QDebug>
 #include <QQueue>
 
+#include <ranges>
+
 QVariantMap NetworkPipe::serialize() const
 {
 	QVariantMap out;
@@ -65,7 +67,7 @@ void FluidManager::loadPipes( QVariantList data )
 
 		np.deserialize( vnp );
 
-		m_allPipes.insert( np.pos.toInt(), np );
+		m_allPipes.insert_or_assign( np.pos.toInt(), np );
 		switch ( np.type )
 		{
 			case PT_PIPE:
@@ -128,7 +130,7 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		}
 		else
 		{
-			m_allPipes.remove( outPos.toInt() );
+			m_allPipes.erase( outPos.toInt() );
 		}
 	}
 	while ( !workQueue.isEmpty() )
@@ -167,7 +169,7 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		}
 		else
 		{
-			m_allPipes.remove( pos.toInt() );
+			m_allPipes.erase( pos.toInt() );
 		}
 	}
 	for ( auto inPos : m_inputs )
@@ -198,7 +200,7 @@ void FluidManager::addInput( Position pos, unsigned int itemUID )
 	pipe.pos     = pos;
 	pipe.itemUID = itemUID;
 	pipe.type    = PT_INPUT;
-	m_allPipes.insert( pos.toInt(), pipe );
+	m_allPipes.insert_or_assign( pos.toInt(), pipe );
 	m_inputs.append( pos );
 	updateNetwork();
 }
@@ -209,7 +211,7 @@ void FluidManager::addPipe( Position pos, unsigned int itemUID )
 	pipe.pos     = pos;
 	pipe.itemUID = itemUID;
 	pipe.type    = PT_PIPE;
-	m_allPipes.insert( pos.toInt(), pipe );
+	m_allPipes.insert_or_assign( pos.toInt(), pipe );
 	updateNetwork();
 }
 
@@ -219,14 +221,14 @@ void FluidManager::addOutput( Position pos, unsigned int itemUID )
 	pipe.pos     = pos;
 	pipe.itemUID = itemUID;
 	pipe.type    = PT_OUTPUT;
-	m_allPipes.insert( pos.toInt(), pipe );
+	m_allPipes.insert_or_assign( pos.toInt(), pipe );
 	m_outputs.append( pos );
 	updateNetwork();
 }
 
 void FluidManager::removeAt( Position pos )
 {
-	m_allPipes.remove( pos.toInt() );
+	m_allPipes.erase( pos.toInt() );
 	m_inputs.removeAll( pos );
 	m_outputs.removeAll( pos );
 	updateNetwork();
@@ -234,7 +236,7 @@ void FluidManager::removeAt( Position pos )
 
 void FluidManager::updateNetwork()
 {
-	for ( auto& nw : m_allPipes )
+	for ( auto& nw : m_allPipes | std::views::values)
 	{
 		nw.ins.clear();
 		nw.outs.clear();

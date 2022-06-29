@@ -86,7 +86,7 @@ Q_DECLARE_METATYPE( ThoughtBubbleInfo );
 
 struct AxleDataInfo
 {
-	QHash<unsigned int, AxleData> data;
+	absl::flat_hash_map<unsigned int, AxleData> data;
 };
 Q_DECLARE_METATYPE( AxleDataInfo );
 
@@ -107,7 +107,7 @@ public:
 private:
 	QPointer<Game> g;
 
-	QHash<unsigned int, unsigned int> collectCreatures();
+	absl::flat_hash_map<unsigned int, unsigned int> collectCreatures();
 	TileDataUpdate aggregateTile( unsigned int tileID ) const;
 
 public slots:

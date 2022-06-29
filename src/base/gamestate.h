@@ -22,7 +22,7 @@
 #include "../base/position.h"
 #include "../gui/aggregatorinventory.h"
 
-#include <QHash>
+#include <absl/container/flat_hash_map.h>
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
@@ -120,10 +120,10 @@ public:
 
 	static QList<GuiWatchedItem> watchedItemList;
 
-	static QHash<QString, int> materialSID2ID;
-	static QHash<int, QString> materialID2SID;
-	static QHash<QString, int> itemSID2ID;
-	static QHash<int, QString> itemID2SID;
+	static absl::flat_hash_map<QString, int> materialSID2ID;
+	static absl::flat_hash_map<int, QString> materialID2SID;
+	static absl::flat_hash_map<QString, int> itemSID2ID;
+	static absl::flat_hash_map<int, QString> itemID2SID;
 
 private:
 	static unsigned int nextID;

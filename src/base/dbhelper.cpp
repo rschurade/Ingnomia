@@ -109,17 +109,17 @@ int DBH::materialUID( QString material )
 {
 	if( !GameState::materialSID2ID.contains( material ) )
 	{
-		GameState::materialID2SID.insert( GameState::materialSID2ID.size(), material );
-		GameState::materialSID2ID.insert( material, GameState::materialSID2ID.size() );
+		GameState::materialID2SID.insert_or_assign( GameState::materialSID2ID.size(), material );
+		GameState::materialSID2ID.insert_or_assign( material, GameState::materialSID2ID.size() );
 	}
-	return GameState::materialSID2ID.value( material );
+	return GameState::materialSID2ID.at( material );
 }
 
 QString DBH::materialSID( int material )
 {
 	if ( GameState::materialID2SID.contains( material ) )
 	{
-		return GameState::materialID2SID.value( material );
+		return GameState::materialID2SID.at( material );
 	}
 	qDebug() << "***ERROR*** DBH::materialSID : no entry for material:" << material;
 	return "NONE";
@@ -129,17 +129,17 @@ int DBH::itemUID( QString item )
 {
 	if( !GameState::itemSID2ID.contains( item ) )
 	{
-		GameState::itemID2SID.insert( GameState::itemSID2ID.size(), item );
-		GameState::itemSID2ID.insert( item, GameState::itemSID2ID.size() );
+		GameState::itemID2SID.insert_or_assign( GameState::itemSID2ID.size(), item );
+		GameState::itemSID2ID.insert_or_assign( item, GameState::itemSID2ID.size() );
 	}
-	return GameState::itemSID2ID.value( item );
+	return GameState::itemSID2ID.at( item );
 }
 
 QString DBH::itemSID( int item )
 {
 	if ( GameState::itemID2SID.contains( item ) )
 	{
-		return GameState::itemID2SID.value( item );
+		return GameState::itemID2SID.at( item );
 	}
 	qDebug() << "***ERROR*** DBH::itemSID : no entry for item:" << item;
 	return "NONE";

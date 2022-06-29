@@ -19,7 +19,6 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#include <QHash>
 #include <QMutex>
 #include <QString>
 #include <QVariant>

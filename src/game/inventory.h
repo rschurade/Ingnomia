@@ -23,13 +23,15 @@
 #include "../game/item.h"
 
 #include <QPointer>
-#include <QHash>
+#include <absl/container/flat_hash_map.h>
 #include <QList>
 #include <QMap>
 #include <QString>
 
+#include <vector>
+
 typedef absl::btree_set<unsigned int> PositionEntry;
-typedef QHash<unsigned int, PositionEntry> PositionHash;
+typedef absl::flat_hash_map<unsigned int, PositionEntry> PositionHash;
 
 class ItemHistory;
 class Octree;
@@ -91,7 +93,7 @@ public:
 	QList<QString> categories();
 	QList<QString> groups( QString category );
 	QList<QString> items( QString category, QString group );
-	QList<QString> materials( QString category, QString group, QString item );
+	std::vector<QString> materials( QString category, QString group, QString item );
 
 	bool isInGroup( QString category, QString group, unsigned int itemUID );
 
@@ -171,7 +173,7 @@ public:
 
 	int countItemsAtPos( Position& pos );
 
-	QHash<unsigned int, Item>& allItems()
+	absl::flat_hash_map<unsigned int, Item>& allItems()
 	{
 		return m_items;
 	}
@@ -222,17 +224,17 @@ private:
 	int m_dimY;
 	int m_dimZ;
 
-	QHash<unsigned int, Item> m_items;
+	absl::flat_hash_map<unsigned int, Item> m_items;
 
 	PositionHash m_positionHash;
-	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
-	QHash<QString, QHash<QString, Octree*>> m_octrees;
+	absl::flat_hash_map<QString, absl::flat_hash_map<QString, absl::flat_hash_map<unsigned int, Item*>>> m_hash;
+	absl::flat_hash_map<QString, absl::flat_hash_map<QString, Octree*>> m_octrees;
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;
 	QMap<QString, QMap<QString, QList<QString>>> m_itemsSorted;
 
-	QHash<QString, QStringList> m_materialsInTypes;
+	absl::flat_hash_map<QString, QStringList> m_materialsInTypes;
 
 	QStringList m_foodItemLookup;
 	QStringList m_drinkItemLookup;

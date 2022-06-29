@@ -65,13 +65,13 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 {
 	if ( m_allStockpileTiles.contains( firstClick.toInt() ) )
 	{
-		unsigned int spID = m_allStockpileTiles.value( firstClick.toInt() );
+		unsigned int spID = m_allStockpileTiles.at( firstClick.toInt() );
 		Stockpile* sp     = m_stockpiles[spID];
 		for ( auto p : fields )
 		{
 			if ( p.second && !m_allStockpileTiles.contains( p.first.toInt() ) )
 			{
-				m_allStockpileTiles.insert( p.first.toInt(), spID );
+				m_allStockpileTiles.insert_or_assign( p.first.toInt(), spID );
 				sp->addTile( p.first );
 			}
 		}
@@ -84,7 +84,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 		{
 			if ( p.second )
 			{
-				m_allStockpileTiles.insert( p.first.toInt(), sp->id() );
+				m_allStockpileTiles.insert_or_assign( p.first.toInt(), sp->id() );
 			}
 		}
 		sp->setPriority( m_stockpilesOrdered.size() );
@@ -102,7 +102,7 @@ void StockpileManager::load( QVariantMap vals )
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();
-		m_allStockpileTiles.insert( Position( sfm.value( "Pos" ) ).toInt(), sp->id() );
+		m_allStockpileTiles.insert_or_assign( Position( sfm.value( "Pos" ) ).toInt(), sp->id() );
 	}
 	sp->setPriority( m_stockpilesOrdered.size() );
 	m_stockpiles.insert( sp->id(), sp );
@@ -136,7 +136,7 @@ void StockpileManager::removeTile( Position& pos )
 			emit signalStockpileDeleted( id );
 		}
 	}
-	m_allStockpileTiles.remove( pos.toInt() );
+	m_allStockpileTiles.erase( pos.toInt() );
 }
 
 Stockpile* StockpileManager::getStockpileAtPos( Position& pos )

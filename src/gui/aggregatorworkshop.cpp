@@ -381,8 +381,8 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 		{
 			for( auto item : g->inv()->items( category, group ) )
 			{
-				QList<QString> mats = g->inv()->materials( category, group, item );
-				for( auto mat : mats )
+				const auto &mats = g->inv()->materials( category, group, item );
+				for( const auto& mat : mats )
 				{
 					int count = g->inv()->itemCountInStockpile( item, mat );
 					if( count > 0 )

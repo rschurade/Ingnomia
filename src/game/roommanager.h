@@ -21,6 +21,9 @@
 #include "../base/position.h"
 #include "../game/room.h"
 
+#include <unordered_map>
+#include <absl/container/flat_hash_map.h>
+
 class Job;
 class Room;
 class Game;
@@ -64,8 +67,8 @@ public:
 	Room* getRoomAtPos( Position pos );
 	Room* getRoom( unsigned int id );
 
-	const QHash<unsigned int, Room*>& allRooms();
-	const QHash<Position, Door>& allDoors();
+	const absl::flat_hash_map<unsigned int, Room*>& allRooms();
+	const absl::flat_hash_map<Position, Door>& allDoors();
 
 	QList<unsigned int> getDorms();
 	QList<unsigned int> getDinings();
@@ -87,10 +90,10 @@ public:
 private:
 	QPointer<Game> g;
 
-	QHash<unsigned int, Room*> m_rooms;
-	QHash<Position, unsigned int> m_allRoomTiles;
+	absl::flat_hash_map<unsigned int, Room*> m_rooms;
+	std::unordered_map<Position, unsigned int> m_allRoomTiles;
 
-	QHash<Position, Door> m_doors;
+	absl::flat_hash_map<Position, Door> m_doors;
 
 	Door m_errorDoor;
 };

@@ -22,6 +22,8 @@
 #include <QDir>
 #include <QFile>
 
+#include <ranges>
+
 int GameState::alarm        = 0;
 unsigned int GameState::alarmRoomID = 0;
 
@@ -100,10 +102,10 @@ int GameState::viewLevel = 100;
 
 QList<GuiWatchedItem> GameState::watchedItemList;
 
-QHash<QString, int> GameState::materialSID2ID;
-QHash<int, QString> GameState::materialID2SID;
-QHash<QString, int> GameState::itemSID2ID;
-QHash<int, QString> GameState::itemID2SID;
+absl::flat_hash_map<QString, int> GameState::materialSID2ID;
+absl::flat_hash_map<int, QString> GameState::materialID2SID;
+absl::flat_hash_map<QString, int> GameState::itemSID2ID;
+absl::flat_hash_map<int, QString> GameState::itemID2SID;
 
 
 bool GameState::init()
@@ -209,16 +211,16 @@ void GameState::serialize( QVariantMap& out )
 	out.insert( "watchedItems", qwil );
 
 	QVariantMap vmIDs;
-	for( auto key : GameState::materialSID2ID.keys() )
+	for( auto key : GameState::materialSID2ID | std::views::keys )
 	{
-		vmIDs.insert( key, materialSID2ID.value( key ) );
+		vmIDs.insert( key, materialSID2ID.at( key ) );
 	}
 	out.insert( "mats2ids", vmIDs );
 
 	QVariantMap viIDs;
-	for( auto key : GameState::itemSID2ID.keys() )
+	for( auto key : GameState::itemSID2ID | std::views::keys )
 	{
-		viIDs.insert( key, itemSID2ID.value( key ) );
+		viIDs.insert( key, itemSID2ID.at( key ) );
 	}
 	out.insert( "items2ids", viIDs );
 
@@ -365,16 +367,16 @@ void GameState::load( QVariantMap& vals )
 		for( auto id : DB::ids( "Items" ) )
 		{
 			int rowid = DBH::rowID( "Items", id );
-			itemID2SID.insert( rowid, id );
-			itemSID2ID.insert( id, rowid );
+			itemID2SID.insert_or_assign( rowid, id );
+			itemSID2ID.insert_or_assign( id, rowid );
 		}
 	}
 	else
 	{
 		for( auto key : viIDs.keys() )
 		{
-			itemID2SID.insert( viIDs.value( key ).toInt(), key );
-			itemSID2ID.insert( key, viIDs.value( key ).toInt() );
+			itemID2SID.insert_or_assign( viIDs.value( key ).toInt(), key );
+			itemSID2ID.insert_or_assign( key, viIDs.value( key ).toInt() );
 		}
 	}
 
@@ -387,16 +389,16 @@ void GameState::load( QVariantMap& vals )
 		for( auto id : DB::ids( "Materials" ) )
 		{
 			int rowid = DBH::rowID( "Materials", id );
-			materialID2SID.insert( rowid, id );
-			materialSID2ID.insert( id, rowid );
+			materialID2SID.insert_or_assign( rowid, id );
+			materialSID2ID.insert_or_assign( id, rowid );
 		}
 	}
 	else
 	{
 		for( auto key : vmIDs.keys() )
 		{
-			materialID2SID.insert( vmIDs.value( key ).toInt(), key );
-			materialSID2ID.insert( key, vmIDs.value( key ).toInt() );
+			materialID2SID.insert_or_assign( vmIDs.value( key ).toInt(), key );
+			materialSID2ID.insert_or_assign( key, vmIDs.value( key ).toInt() );
 		}
 	}
 }

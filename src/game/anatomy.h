@@ -21,6 +21,7 @@
 
 #include <QString>
 #include <QVariantMap>
+#include <absl/container/flat_hash_map.h>
 
 struct Equipment;
 
@@ -77,5 +78,5 @@ private:
 	bool m_statusChanged   = false;
 	AnatomyStatus m_status = AS_HEALTHY;
 
-	QHash<CreaturePart, AnatomyPart> m_parts;
+	absl::flat_hash_map<CreaturePart, AnatomyPart> m_parts;
 };

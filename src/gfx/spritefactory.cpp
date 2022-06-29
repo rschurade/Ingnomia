@@ -25,7 +25,6 @@
 
 #include <QDebug>
 #include <QElapsedTimer>
-#include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QPainter>
@@ -109,7 +108,7 @@ bool SpriteFactory::init()
 					return false;
 				}
 			}
-			m_pixmapSources.insert( tilesheet, pm );
+			m_pixmapSources.insert_or_assign( tilesheet, pm );
 			/*
 			if( tilesheet == "default.png" )
 			{
@@ -382,7 +381,7 @@ void SpriteFactory::addPixmapSource( QString name, QString path )
 		bool loaded = pm.load( path );
 		if ( loaded )
 		{
-			m_pixmapSources.insert( name, pm );
+			m_pixmapSources.insert_or_assign( name, pm );
 		}
 	}
 }
@@ -932,7 +931,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		SpriteSeasons* ss = new SpriteSeasons;
 		for ( auto child : node->childs )
 		{
-			ss->m_sprites.insert( child->value, getBaseSprite( child, itemSID, materialSIDs ) );
+			ss->m_sprites.insert_or_assign( child->value, getBaseSprite( child, itemSID, materialSIDs ) );
 		}
 		ss->applyEffect( node->effect );
 		ss->applyTint( node->tint, materialSID );
@@ -1644,11 +1643,6 @@ void SpriteFactory::tintPixmap( QPixmap& pm, QColor color )
 		}
 	}
 	pm = QPixmap::fromImage( img );
-}
-
-QStringList SpriteFactory::pixmaps()
-{
-	return m_pixmapSources.keys();
 }
 
 QPixmap SpriteFactory::pixmap( QString name )

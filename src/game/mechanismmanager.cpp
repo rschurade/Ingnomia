@@ -32,6 +32,8 @@
 #include <QDebug>
 #include <QQueue>
 
+#include <ranges>
+
 QVariantMap MechanismData::serialize() const
 {
 	QVariantMap out;
@@ -82,15 +84,15 @@ MechanismManager::MechanismManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	m_string2Type.insert( "None", MT_NONE );
-	m_string2Type.insert( "Axle", MT_AXLE );
-	m_string2Type.insert( "Lever", MT_LEVER );
-	m_string2Type.insert( "VerticalAxle", MT_VERTICALAXLE );
-	m_string2Type.insert( "GearBox", MT_GEARBOX );
-	m_string2Type.insert( "SteamEngine", MT_ENGINE );
-	m_string2Type.insert( "Pump", MT_PUMP );
-	m_string2Type.insert( "MechanicalWall", MT_WALL );
-	m_string2Type.insert( "PressurePlate", MT_PRESSUREPLATE );
+	m_string2Type.insert_or_assign( "None", MT_NONE );
+	m_string2Type.insert_or_assign( "Axle", MT_AXLE );
+	m_string2Type.insert_or_assign( "Lever", MT_LEVER );
+	m_string2Type.insert_or_assign( "VerticalAxle", MT_VERTICALAXLE );
+	m_string2Type.insert_or_assign( "GearBox", MT_GEARBOX );
+	m_string2Type.insert_or_assign( "SteamEngine", MT_ENGINE );
+	m_string2Type.insert_or_assign( "Pump", MT_PUMP );
+	m_string2Type.insert_or_assign( "MechanicalWall", MT_WALL );
+	m_string2Type.insert_or_assign( "PressurePlate", MT_PRESSUREPLATE );
 }
 
 MechanismManager::~MechanismManager()
@@ -125,7 +127,7 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 		updateNetWorks();
 	}
 
-	for ( auto& network : m_networks )
+	for ( auto& network : m_networks | std::views::values )
 	{
 		network.produce = 0;
 		network.consume = 0;
@@ -176,7 +178,7 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 			}
 		}
 	}
-	for( auto& md : m_mechanisms )
+	for( auto& md : m_mechanisms | std::views::values )
 	{
 		if( !md.job )
 		{
@@ -222,7 +224,7 @@ bool MechanismManager::axlesChanged()
 	return out;
 }
 
-QHash<unsigned int, AxleData> MechanismManager::axleData()
+absl::flat_hash_map<unsigned int, AxleData> MechanismManager::axleData()
 {
 	return m_axleData;
 }
@@ -318,7 +320,7 @@ void MechanismManager::installItem( MechanismData md )
 	QString itemSID = g->m_inv->itemSID( md.itemID );
 	if ( itemSID == "Axle" )
 	{
-		m_floorPositions.insert( md.pos.toInt(), md.itemID );
+		m_floorPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 
 		AxleData ad;
 		ad.itemID   = md.itemID;
@@ -327,28 +329,28 @@ void MechanismManager::installItem( MechanismData md )
 		ad.pos      = md.pos;
 		ad.spriteID = g->m_inv->spriteID( md.itemID );
 
-		m_axleData.insert( md.pos.toInt(), ad );
+		m_axleData.insert_or_assign( md.pos.toInt(), ad );
 	}
 	else if ( itemSID == "GearBox" )
 	{
-		m_floorPositions.insert( md.pos.toInt(), md.itemID );
+		m_floorPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 	}
 	else if ( itemSID == "SteamEngine" )
 	{
-		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		m_wallPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 		g->m_world->setWallSpriteAnim( md.pos, md.active );
 	}
 	else if ( itemSID == "Lever" )
 	{
-		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		m_wallPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 	}
 	else if ( itemSID == "PressurePlate" )
 	{
-		m_floorPositions.insert( md.pos.toInt(), md.itemID );
+		m_floorPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 	}
 	else if ( itemSID == "VerticalAxle" )
 	{
-		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		m_wallPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 
 		AxleData ad;
 		ad.itemID     = md.itemID;
@@ -358,19 +360,19 @@ void MechanismManager::installItem( MechanismData md )
 		ad.isVertical = true;
 		ad.spriteID   = g->m_inv->spriteID( md.itemID );
 
-		m_axleData.insert( md.pos.toInt(), ad );
+		m_axleData.insert_or_assign( md.pos.toInt(), ad );
 	}
 	else if ( itemSID == "MechanicalWall" )
 	{
-		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		m_wallPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 	}
 	else if ( itemSID == "Pump" )
 	{
-		m_wallPositions.insert( md.pos.toInt(), md.itemID );
+		m_wallPositions.insert_or_assign( md.pos.toInt(), md.itemID );
 		g->flm()->addInput( md.pos, md.itemID );
 	}
 
-	m_mechanisms.insert( md.itemID, md );
+	m_mechanisms.insert_or_assign( md.itemID, md );
 }
 
 void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
@@ -392,7 +394,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 
 	md.anim = row.value( "Anim" ).toBool();
 
-	md.type = m_string2Type.value( itemSID );
+	md.type = m_string2Type.at( itemSID );
 
 	switch ( md.type )
 	{
@@ -409,7 +411,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 				md.connectsTo.append( pos.southOf() );
 			}
 
-			m_floorPositions.insert( pos.toInt(), itemID );
+			m_floorPositions.insert_or_assign( pos.toInt(), itemID );
 
 			AxleData ad;
 			ad.itemID   = itemID;
@@ -418,7 +420,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.pos      = pos;
 			ad.spriteID = g->m_inv->spriteID( itemID );
 
-			m_axleData.insert( pos.toInt(), ad );
+			m_axleData.insert_or_assign( pos.toInt(), ad );
 		}
 		break;
 		case MT_GEARBOX:
@@ -430,7 +432,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			md.connectsTo.append( pos.belowOf() );
 			md.connectsTo.append( pos );
 
-			m_floorPositions.insert( pos.toInt(), itemID );
+			m_floorPositions.insert_or_assign( pos.toInt(), itemID );
 		}
 		break;
 		case MT_ENGINE:
@@ -440,14 +442,14 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			md.connectsTo.append( pos.northOf() );
 			md.connectsTo.append( pos.southOf() );
 
-			m_wallPositions.insert( pos.toInt(), itemID );
+			m_wallPositions.insert_or_assign( pos.toInt(), itemID );
 		}
 		break;
 		case MT_LEVER:
 		{
 			md.active = false;
 
-			m_wallPositions.insert( pos.toInt(), itemID );
+			m_wallPositions.insert_or_assign( pos.toInt(), itemID );
 		}
 		break;
 		case MT_PRESSUREPLATE:
@@ -455,13 +457,13 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			md.active       = true;
 			md.isInvertable = true;
 
-			m_floorPositions.insert( pos.toInt(), itemID );
+			m_floorPositions.insert_or_assign( pos.toInt(), itemID );
 		}
 		break;
 		case MT_PUMP:
 		{
 			g->flm()->addInput( pos, itemID );
-			m_wallPositions.insert( pos.toInt(), itemID );
+			m_wallPositions.insert_or_assign( pos.toInt(), itemID );
 
 			md.connectsTo.append( md.pos.eastOf() );
 			md.connectsTo.append( md.pos.westOf() );
@@ -475,7 +477,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			md.connectsTo.append( pos );
 			md.connectsTo.append( pos.aboveOf() );
 
-			m_wallPositions.insert( pos.toInt(), itemID );
+			m_wallPositions.insert_or_assign( pos.toInt(), itemID );
 
 			AxleData ad;
 			ad.itemID     = itemID;
@@ -485,7 +487,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.isVertical = true;
 			ad.spriteID   = g->m_inv->spriteID( itemID );
 
-			m_axleData.insert( pos.toInt(), ad );
+			m_axleData.insert_or_assign( pos.toInt(), ad );
 		}
 		break;
 		case MT_WALL:
@@ -496,12 +498,12 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			md.connectsTo.append( pos.southOf() );
 			md.active       = true;
 			md.isInvertable = true;
-			m_wallPositions.insert( pos.toInt(), itemID );
+			m_wallPositions.insert_or_assign( pos.toInt(), itemID );
 		}
 		break;
 	}
 
-	m_mechanisms.insert( itemID, md );
+	m_mechanisms.insert_or_assign( itemID, md );
 
 	g->m_world->setWallSpriteAnim( md.pos, false );
 
@@ -515,11 +517,11 @@ void MechanismManager::uninstallItem( unsigned int itemID )
 		auto md = m_mechanisms[itemID];
 
 		unsigned int posID = md.pos.toInt();
-		m_wallPositions.remove( posID );
-		m_floorPositions.remove( posID );
-		m_axleData.remove( posID );
+		m_wallPositions.erase( posID );
+		m_floorPositions.erase( posID );
+		m_axleData.erase( posID );
 
-		m_mechanisms.remove( itemID );
+		m_mechanisms.erase( itemID );
 
 		switch ( md.type )
 		{
@@ -690,7 +692,7 @@ void MechanismManager::updateNetWorks()
 	QQueue<MechanismData> workQueue;
 	m_networks.clear();
 
-	for ( auto& md : m_mechanisms )
+	for ( auto& md : m_mechanisms | std::views::values )
 	{
 		md.networkID = 0;
 		md.hasPower  = false;
@@ -701,7 +703,7 @@ void MechanismManager::updateNetWorks()
 		}
 	}
 
-	for ( auto md : m_mechanisms )
+	for ( auto md : m_mechanisms | std::views::values )
 	{
 		if ( md.producePower > 0 && md.networkID == 0 )
 		{
@@ -746,11 +748,11 @@ void MechanismManager::updateNetWorks()
 					}
 				}
 			}
-			m_networks.insert( mn.id, mn );
+			m_networks.insert_or_assign( mn.id, mn );
 		}
 	}
 
-	for ( auto& ad : m_axleData )
+	for ( auto& ad : m_axleData | std::views::values )
 	{
 		unsigned int networkID = m_mechanisms[ad.itemID].networkID;
 		if ( m_networks[networkID].produce > 0 && m_networks[networkID].produce >= m_networks[networkID].consume )

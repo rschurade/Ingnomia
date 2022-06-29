@@ -23,6 +23,8 @@
 #include <QQueue>
 #include <QSqlQuery>
 
+#include <ranges>
+
 TechTree::TechTree( QObject* parent ) :
 	QObject( parent )
 {
@@ -34,11 +36,11 @@ TechTree::~TechTree()
 
 void TechTree::create()
 {
-	QHash<QString, int> itemLevels;
+	absl::flat_hash_map<QString, int> itemLevels;
 
-	for ( auto id : DB::ids( "BaseItems" ) )
+	for ( const auto& id : DB::ids( "BaseItems" ) )
 	{
-		itemLevels.insert( id, 1 );
+		itemLevels.insert_or_assign( id, 1 );
 	}
 
 	QList<QString> crafts = DB::ids( "Crafts" );
@@ -57,7 +59,7 @@ void TechTree::create()
 		if ( compsLowerLevel( id, itemLevels ) )
 		{
 			int level = levelPlusOne( id, itemLevels );
-			itemLevels.insert( craft.value( "ItemID" ).toString(), level );
+			itemLevels.insert_or_assign( craft.value( "ItemID" ).toString(), level );
 		}
 		else
 		{
@@ -78,18 +80,21 @@ void TechTree::create()
 	}
 	qDebug() << "####################################################";
 	int maxLevel = 0;
-	for ( auto key : itemLevels.keys() )
+	for ( const auto& value : itemLevels | std::views::values )
 	{
-		maxLevel = qMax( maxLevel, itemLevels[key] );
+		maxLevel = qMax( maxLevel, value );
 	}
 	int currentLevel = 1;
-	auto keys        = itemLevels.keys();
-	keys.sort();
+	std::vector<QString> keys;
+	for ( const auto& key : itemLevels | std::views::keys ) {
+		keys.push_back(key);
+	}
+	std::sort(keys.begin(), keys.end());
 
 	while ( currentLevel <= maxLevel )
 	{
 		//qDebug() << "-->" << currentLevel;
-		for ( auto key : keys )
+		for ( const auto& key : keys )
 		{
 			if ( currentLevel == itemLevels[key] )
 			{
@@ -99,7 +104,7 @@ void TechTree::create()
 		++currentLevel;
 	}
 	qDebug() << "####################################################";
-	for ( auto key : keys )
+	for ( const auto& key : keys )
 	{
 		qDebug() << itemLevels[key] << key;
 
@@ -109,9 +114,9 @@ void TechTree::create()
 	qDebug() << "####################################################";
 }
 
-bool TechTree::compsLowerLevel( QString craftID, QHash<QString, int>& itemLevels )
+bool TechTree::compsLowerLevel( QString craftID, absl::flat_hash_map<QString, int>& itemLevels )
 {
-	for ( auto row : DB::selectRows( "Crafts_Components", craftID ) )
+	for ( const auto& row : DB::selectRows( "Crafts_Components", craftID ) )
 	{
 		if ( !itemLevels.contains( row.value( "ItemID" ).toString() ) )
 		{
@@ -121,12 +126,12 @@ bool TechTree::compsLowerLevel( QString craftID, QHash<QString, int>& itemLevels
 	return true;
 }
 
-int TechTree::levelPlusOne( QString craftID, QHash<QString, int>& itemLevels )
+int TechTree::levelPlusOne( QString craftID, absl::flat_hash_map<QString, int>& itemLevels )
 {
 	int level = 0;
 	for ( auto row : DB::selectRows( "Crafts_Components", craftID ) )
 	{
-		level = qMax( level, itemLevels.value( row.value( "ItemID" ).toString() ) * row.value( "Amount" ).toInt() );
+		level = qMax( level, itemLevels.at( row.value( "ItemID" ).toString() ) * row.value( "Amount" ).toInt() );
 	}
 	return level + 1;
 }

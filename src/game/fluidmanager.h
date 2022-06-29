@@ -22,6 +22,7 @@
 #include "../game/job.h"
 
 #include <QPointer>
+#include <absl/container/flat_hash_map.h>
 
 class Game;
 
@@ -59,7 +60,7 @@ public:
 	FluidManager( Game* parent );
 	~FluidManager();
 
-	QHash<unsigned int, NetworkPipe>& pipes()
+	absl::flat_hash_map<unsigned int, NetworkPipe>& pipes()
 	{
 		return m_allPipes;
 	};
@@ -88,5 +89,5 @@ private:
 	QList<Position> m_inputs;
 	QList<Position> m_outputs;
 
-	QHash<unsigned int, NetworkPipe> m_allPipes;
+	absl::flat_hash_map<unsigned int, NetworkPipe> m_allPipes;
 };

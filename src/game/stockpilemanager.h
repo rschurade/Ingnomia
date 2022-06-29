@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 #include "../game/stockpile.h"
+#include <absl/container/flat_hash_map.h>
 
 class Job;
 class Stockpile;
@@ -92,7 +93,7 @@ private:
 
 	QMap<unsigned int, Stockpile*> m_stockpiles;
 	QList<unsigned int> m_stockpilesOrdered;
-	QHash<unsigned int, unsigned int> m_allStockpileTiles;
+	absl::flat_hash_map<unsigned int, unsigned int> m_allStockpileTiles;
 
 	unsigned int m_lastAdded = 0;
 

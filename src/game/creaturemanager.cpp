@@ -170,7 +170,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 	{
 		m_creatures.append( creature );
 		unsigned int id = m_creatures.last()->id();
-		m_creaturesByID.insert( id, m_creatures.last() );
+		m_creaturesByID.insert_or_assign( id, m_creatures.last() );
 
 		int count = m_countPerType.value( type );
 	
@@ -209,7 +209,7 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 	{
 		m_creatures.append( creature );
 		unsigned int id = m_creatures.last()->id();
-		m_creaturesByID.insert( id, m_creatures.last() );
+		m_creaturesByID.insert_or_assign( id, m_creatures.last() );
 
 		QString type = creature->species();
 		int count    = m_countPerType.value( type );
@@ -306,7 +306,7 @@ void CreatureManager::removeCreature( unsigned int id )
 		auto& perTypeList = m_creaturesPerType[creature->species()];
 		perTypeList.removeAll( id );
 
-		m_creaturesByID.remove( id );
+		m_creaturesByID.erase( id );
 		m_creatures.removeAll( creature );
 
 		int count = m_countPerType.value( creature->species() );

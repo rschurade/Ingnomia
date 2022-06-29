@@ -9,92 +9,94 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+#include <ranges>
+
 KeyBindings::KeyBindings(QObject *parent)
 	: QObject(parent)
 {
-	m_stringToCommand.insert( "WorldScrollLeft",     WorldScrollLeft );
-	m_stringToCommand.insert( "WorldScrollRight",    WorldScrollRight );
-	m_stringToCommand.insert( "WorldScrollUp",       WorldScrollUp );
-	m_stringToCommand.insert( "WorldScrollDown",     WorldScrollDown );
-	m_stringToCommand.insert( "OpenBugReportWindow", OpenBugReportWindow );
-	m_stringToCommand.insert( "OpenLogWindow",       OpenLogWindow );
-	m_stringToCommand.insert( "OpenDebugWindow",     OpenDebugWindow );
-	m_stringToCommand.insert( "PrintDebug",          PrintDebug );
-	m_stringToCommand.insert( "ToggleDebugOverlay",  ToggleDebugOverlay );
-	m_stringToCommand.insert( "ToggleDebugMode",     ToggleDebugMode );
-	m_stringToCommand.insert( "ToggleFullScreen",    ToggleFullScreen );
-	m_stringToCommand.insert( "OpenGnomeList",       OpenGnomeList );
-	m_stringToCommand.insert( "ToggleWalls",         ToggleWalls );
-	m_stringToCommand.insert( "ToggleOverlay",       ToggleOverlay );
-	m_stringToCommand.insert( "ToggleAxles",         ToggleAxles );
-	m_stringToCommand.insert( "ReloadShaders",       ReloadShaders );
-	m_stringToCommand.insert( "ReloadCSS",			 ReloadCSS );
-	m_stringToCommand.insert( "OpenLastActionWindow",OpenLastActionWindow );
-	m_stringToCommand.insert( "TogglePause",         TogglePause );
-	m_stringToCommand.insert( "RotateSelection",     RotateSelection );
-	m_stringToCommand.insert( "RotateWorldCW",       RotateWorldCW );
-	m_stringToCommand.insert( "RotateWorldCCW",      RotateWorldCCW );
-	m_stringToCommand.insert( "ZMinus",              ZMinus );
-	m_stringToCommand.insert( "ZPlus",               ZPlus );
-	m_stringToCommand.insert( "ZoomIn",              ZoomIn );
-	m_stringToCommand.insert( "ZoomOut",             ZoomOut );
-	m_stringToCommand.insert( "MenuButtonKey1",      MenuButtonKey1 );
-	m_stringToCommand.insert( "MenuButtonKey2",      MenuButtonKey2 );
-	m_stringToCommand.insert( "MenuButtonKey3",      MenuButtonKey3 );
-	m_stringToCommand.insert( "MenuButtonKey4",      MenuButtonKey4 );
-	m_stringToCommand.insert( "MenuButtonKey5",      MenuButtonKey5 );
-	m_stringToCommand.insert( "MenuButtonKey6",      MenuButtonKey6 );
-	m_stringToCommand.insert( "MenuButtonKey7",      MenuButtonKey7 );
-	m_stringToCommand.insert( "MenuButtonKey8",      MenuButtonKey8 );
-	m_stringToCommand.insert( "MenuButtonKey9",      MenuButtonKey9 );
-	m_stringToCommand.insert( "MenuButtonKey0",      MenuButtonKey0 );
+	m_stringToCommand.insert_or_assign( "WorldScrollLeft",     WorldScrollLeft );
+	m_stringToCommand.insert_or_assign( "WorldScrollRight",    WorldScrollRight );
+	m_stringToCommand.insert_or_assign( "WorldScrollUp",       WorldScrollUp );
+	m_stringToCommand.insert_or_assign( "WorldScrollDown",     WorldScrollDown );
+	m_stringToCommand.insert_or_assign( "OpenBugReportWindow", OpenBugReportWindow );
+	m_stringToCommand.insert_or_assign( "OpenLogWindow",       OpenLogWindow );
+	m_stringToCommand.insert_or_assign( "OpenDebugWindow",     OpenDebugWindow );
+	m_stringToCommand.insert_or_assign( "PrintDebug",          PrintDebug );
+	m_stringToCommand.insert_or_assign( "ToggleDebugOverlay",  ToggleDebugOverlay );
+	m_stringToCommand.insert_or_assign( "ToggleDebugMode",     ToggleDebugMode );
+	m_stringToCommand.insert_or_assign( "ToggleFullScreen",    ToggleFullScreen );
+	m_stringToCommand.insert_or_assign( "OpenGnomeList",       OpenGnomeList );
+	m_stringToCommand.insert_or_assign( "ToggleWalls",         ToggleWalls );
+	m_stringToCommand.insert_or_assign( "ToggleOverlay",       ToggleOverlay );
+	m_stringToCommand.insert_or_assign( "ToggleAxles",         ToggleAxles );
+	m_stringToCommand.insert_or_assign( "ReloadShaders",       ReloadShaders );
+	m_stringToCommand.insert_or_assign( "ReloadCSS",			 ReloadCSS );
+	m_stringToCommand.insert_or_assign( "OpenLastActionWindow",OpenLastActionWindow );
+	m_stringToCommand.insert_or_assign( "TogglePause",         TogglePause );
+	m_stringToCommand.insert_or_assign( "RotateSelection",     RotateSelection );
+	m_stringToCommand.insert_or_assign( "RotateWorldCW",       RotateWorldCW );
+	m_stringToCommand.insert_or_assign( "RotateWorldCCW",      RotateWorldCCW );
+	m_stringToCommand.insert_or_assign( "ZMinus",              ZMinus );
+	m_stringToCommand.insert_or_assign( "ZPlus",               ZPlus );
+	m_stringToCommand.insert_or_assign( "ZoomIn",              ZoomIn );
+	m_stringToCommand.insert_or_assign( "ZoomOut",             ZoomOut );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey1",      MenuButtonKey1 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey2",      MenuButtonKey2 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey3",      MenuButtonKey3 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey4",      MenuButtonKey4 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey5",      MenuButtonKey5 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey6",      MenuButtonKey6 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey7",      MenuButtonKey7 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey8",      MenuButtonKey8 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey9",      MenuButtonKey9 );
+	m_stringToCommand.insert_or_assign( "MenuButtonKey0",      MenuButtonKey0 );
 
-	m_stringToCommand.insert( "Mine",								ActionMine );
-	m_stringToCommand.insert( "DigHole",                        	ActionDigHole );
-	m_stringToCommand.insert( "ExplorativeMine",                	ActionExplorativeMine );
-	m_stringToCommand.insert( "RemoveRamp",                     	ActionRemoveRamp );
-	m_stringToCommand.insert( "RemoveFloor",                    	ActionRemoveFloor );
-	m_stringToCommand.insert( "RemovePlant",                    	ActionRemovePlant );
-	m_stringToCommand.insert( "MineStairsUp",                   	ActionMineStairsUp );
-	m_stringToCommand.insert( "DigStairsDown",                  	ActionDigStairsDown );
-	m_stringToCommand.insert( "DigRampDown",                    	ActionDigRampDown );
-	m_stringToCommand.insert( "CreateRoom",                     	ActionCreateRoom );
-	m_stringToCommand.insert( "CreateStockpile",                	ActionCreateStockpile );
-	m_stringToCommand.insert( "CreateGrove",                    	ActionCreateGrove );
-	m_stringToCommand.insert( "CreateFarm",                     	ActionCreateFarm );
-	m_stringToCommand.insert( "CreatePasture",                  	ActionCreatePasture );
-	m_stringToCommand.insert( "CreateNoPass",                   	ActionCreateNoPass );
-	m_stringToCommand.insert( "BuildWall",                      	ActionBuildWall );
-	m_stringToCommand.insert( "ReplaceWall",                    	ActionReplaceWall );
-	m_stringToCommand.insert( "BuildWallFloor",                 	ActionBuildWallFloor );
-	m_stringToCommand.insert( "BuildFancyWall",                 	ActionBuildFancyWall );
-	m_stringToCommand.insert( "BuildFloor",                     	ActionBuildFloor );
-	m_stringToCommand.insert( "ReplaceFloor",                   	ActionReplaceFloor );
-	m_stringToCommand.insert( "BuildFancyFloor",                	ActionBuildFancyFloor );
-	m_stringToCommand.insert( "BuildScaffold",                  	ActionBuildScaffold );
-	m_stringToCommand.insert( "BuildFence",                     	ActionBuildFence );
-	m_stringToCommand.insert( "BuildWorkshop",                  	ActionBuildWorkshop );
-	m_stringToCommand.insert( "BuildStairs",                    	ActionBuildStairs );
-	m_stringToCommand.insert( "BuildRamp",                      	ActionBuildRamp );
-	m_stringToCommand.insert( "BuildRampCorner",                	ActionBuildRampCorner );
-	m_stringToCommand.insert( "CutClipping",                    	ActionCutClipping );
-	m_stringToCommand.insert( "BuildItem",                      	ActionBuildItem );
-	m_stringToCommand.insert( "PlantTree",                      	ActionPlantTree );
-	m_stringToCommand.insert( "FellTree",                       	ActionFellTree );
-	m_stringToCommand.insert( "Forage",                         	ActionForage );
-	m_stringToCommand.insert( "HarvestTree",                    	ActionHarvestTree );
-	m_stringToCommand.insert( "RemoveDesignation",              	ActionRemoveDesignation );
-	m_stringToCommand.insert( "Deconstruct",                    	ActionDeconstruct );
-	m_stringToCommand.insert( "CancelJob",                      	ActionCancelJob );
-	m_stringToCommand.insert( "RaisePrio",                      	ActionRaisePrio );
-	m_stringToCommand.insert( "LowerPrio",                      	ActionLowerPrio );
-	m_stringToCommand.insert( "MagicNatureSpeedGrowth",         	ActionMagicNatureSpeedGrowth );
-	m_stringToCommand.insert( "MagicGeomancyRevealOre",         	ActionMagicGeomancyRevealOre );
+	m_stringToCommand.insert_or_assign( "Mine",								ActionMine );
+	m_stringToCommand.insert_or_assign( "DigHole",                        	ActionDigHole );
+	m_stringToCommand.insert_or_assign( "ExplorativeMine",                	ActionExplorativeMine );
+	m_stringToCommand.insert_or_assign( "RemoveRamp",                     	ActionRemoveRamp );
+	m_stringToCommand.insert_or_assign( "RemoveFloor",                    	ActionRemoveFloor );
+	m_stringToCommand.insert_or_assign( "RemovePlant",                    	ActionRemovePlant );
+	m_stringToCommand.insert_or_assign( "MineStairsUp",                   	ActionMineStairsUp );
+	m_stringToCommand.insert_or_assign( "DigStairsDown",                  	ActionDigStairsDown );
+	m_stringToCommand.insert_or_assign( "DigRampDown",                    	ActionDigRampDown );
+	m_stringToCommand.insert_or_assign( "CreateRoom",                     	ActionCreateRoom );
+	m_stringToCommand.insert_or_assign( "CreateStockpile",                	ActionCreateStockpile );
+	m_stringToCommand.insert_or_assign( "CreateGrove",                    	ActionCreateGrove );
+	m_stringToCommand.insert_or_assign( "CreateFarm",                     	ActionCreateFarm );
+	m_stringToCommand.insert_or_assign( "CreatePasture",                  	ActionCreatePasture );
+	m_stringToCommand.insert_or_assign( "CreateNoPass",                   	ActionCreateNoPass );
+	m_stringToCommand.insert_or_assign( "BuildWall",                      	ActionBuildWall );
+	m_stringToCommand.insert_or_assign( "ReplaceWall",                    	ActionReplaceWall );
+	m_stringToCommand.insert_or_assign( "BuildWallFloor",                 	ActionBuildWallFloor );
+	m_stringToCommand.insert_or_assign( "BuildFancyWall",                 	ActionBuildFancyWall );
+	m_stringToCommand.insert_or_assign( "BuildFloor",                     	ActionBuildFloor );
+	m_stringToCommand.insert_or_assign( "ReplaceFloor",                   	ActionReplaceFloor );
+	m_stringToCommand.insert_or_assign( "BuildFancyFloor",                	ActionBuildFancyFloor );
+	m_stringToCommand.insert_or_assign( "BuildScaffold",                  	ActionBuildScaffold );
+	m_stringToCommand.insert_or_assign( "BuildFence",                     	ActionBuildFence );
+	m_stringToCommand.insert_or_assign( "BuildWorkshop",                  	ActionBuildWorkshop );
+	m_stringToCommand.insert_or_assign( "BuildStairs",                    	ActionBuildStairs );
+	m_stringToCommand.insert_or_assign( "BuildRamp",                      	ActionBuildRamp );
+	m_stringToCommand.insert_or_assign( "BuildRampCorner",                	ActionBuildRampCorner );
+	m_stringToCommand.insert_or_assign( "CutClipping",                    	ActionCutClipping );
+	m_stringToCommand.insert_or_assign( "BuildItem",                      	ActionBuildItem );
+	m_stringToCommand.insert_or_assign( "PlantTree",                      	ActionPlantTree );
+	m_stringToCommand.insert_or_assign( "FellTree",                       	ActionFellTree );
+	m_stringToCommand.insert_or_assign( "Forage",                         	ActionForage );
+	m_stringToCommand.insert_or_assign( "HarvestTree",                    	ActionHarvestTree );
+	m_stringToCommand.insert_or_assign( "RemoveDesignation",              	ActionRemoveDesignation );
+	m_stringToCommand.insert_or_assign( "Deconstruct",                    	ActionDeconstruct );
+	m_stringToCommand.insert_or_assign( "CancelJob",                      	ActionCancelJob );
+	m_stringToCommand.insert_or_assign( "RaisePrio",                      	ActionRaisePrio );
+	m_stringToCommand.insert_or_assign( "LowerPrio",                      	ActionLowerPrio );
+	m_stringToCommand.insert_or_assign( "MagicNatureSpeedGrowth",         	ActionMagicNatureSpeedGrowth );
+	m_stringToCommand.insert_or_assign( "MagicGeomancyRevealOre",         	ActionMagicGeomancyRevealOre );
 
-	m_stringToCommand.insert( "ToggleRenderCreatures",         		ToggleRenderCreatures );
+	m_stringToCommand.insert_or_assign( "ToggleRenderCreatures",         		ToggleRenderCreatures );
 
-	m_stringToCommand.insert( "QuickSave",         					QuickSave );
-	m_stringToCommand.insert( "QuickLoad",         					QuickLoad );
+	m_stringToCommand.insert_or_assign( "QuickSave",         					QuickSave );
+	m_stringToCommand.insert_or_assign( "QuickLoad",         					QuickLoad );
 
 }
 
@@ -119,10 +121,10 @@ void KeyBindings::update()
 			QString cmd = kmap.value( "Command" ).toString();
 			QVariantMap km1 = kmap.value( "Key1" ).toMap();
 			QString keyCode = km1.value( "Key" ).toString() + km1.value( "Ctrl" ).toString() + km1.value( "Alt" ).toString() + km1.value( "Shift" ).toString();
-			m_keyCodeToCmd.insert( keyCode, m_stringToCommand.value( cmd) );
+			m_keyCodeToCmd.insert_or_assign( keyCode, m_stringToCommand.at( cmd) );
 			QVariantMap km2 = kmap.value( "Key2" ).toMap();
 			keyCode = km2.value( "Key" ).toString() + km2.value( "Ctrl" ).toString() + km2.value( "Alt" ).toString() + km2.value( "Shift" ).toString();
-			m_keyCodeToCmd.insert( keyCode, m_stringToCommand.value( cmd) );
+			m_keyCodeToCmd.insert_or_assign( keyCode, m_stringToCommand.at( cmd) );
 		}
 	}
 }
@@ -139,14 +141,14 @@ UserKeyboardAction KeyBindings::getCommand( QKeyEvent* event )
 	keyCode += shift ? "true" : "false";
 	if( m_keyCodeToCmd.contains( keyCode ) )
 	{
-		return m_keyCodeToCmd.value( keyCode );
+		return m_keyCodeToCmd.at( keyCode );
 	}
 	return NoAction;
 }
 
 QString KeyBindings::getStringForCommand( UserKeyboardAction cmd )
 {
-	for( auto key : m_stringToCommand.keys() )
+	for( auto key : m_stringToCommand | std::views::keys )
 	{
 		if( m_stringToCommand[key] == cmd )
 		{

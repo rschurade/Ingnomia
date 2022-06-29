@@ -443,137 +443,137 @@ void Gnome::initTaskMap()
 {
 	using namespace std::placeholders;
 
-	m_behaviors.insert( "IsSleepy", std::bind( &Gnome::conditionIsSleepy, this, _1 ) );
-	m_behaviors.insert( "IsHungry", std::bind( &Gnome::conditionIsHungry, this, _1 ) );
-	m_behaviors.insert( "IsVeryHungry", std::bind( &Gnome::conditionIsVeryHungry, this, _1 ) );
-	m_behaviors.insert( "IsThirsty", std::bind( &Gnome::conditionIsThirsty, this, _1 ) );
-	m_behaviors.insert( "IsVeryThirsty", std::bind( &Gnome::conditionIsVeryThirsty, this, _1 ) );
-	m_behaviors.insert( "AllItemsInPlaceForJob", std::bind( &Gnome::conditionAllItemsInPlaceForJob, this, _1 ) );
-	m_behaviors.insert( "IsButcherJobJob", std::bind( &Gnome::conditionIsButcherJob, this, _1 ) );
-	m_behaviors.insert( "AllPickedUp", std::bind( &Gnome::conditionAllPickedUp, this, _1 ) );
-	m_behaviors.insert( "IsFull", std::bind( &Gnome::conditionIsFull, this, _1 ) );
-	m_behaviors.insert( "IsDrinkFull", std::bind( &Gnome::conditionIsDrinkFull, this, _1 ) );
-	m_behaviors.insert( "IsCivilian", std::bind( &Gnome::conditionIsCivilian, this, _1 ) );
-	m_behaviors.insert( "Alarm", std::bind( &Gnome::conditionAlarm, this, _1 ) );
-	m_behaviors.insert( "IsInSafeRoom", std::bind( &Gnome::conditionIsInSafeRoom, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsSleepy", std::bind( &Gnome::conditionIsSleepy, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsHungry", std::bind( &Gnome::conditionIsHungry, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsVeryHungry", std::bind( &Gnome::conditionIsVeryHungry, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsThirsty", std::bind( &Gnome::conditionIsThirsty, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsVeryThirsty", std::bind( &Gnome::conditionIsVeryThirsty, this, _1 ) );
+	m_behaviors.insert_or_assign( "AllItemsInPlaceForJob", std::bind( &Gnome::conditionAllItemsInPlaceForJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsButcherJobJob", std::bind( &Gnome::conditionIsButcherJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "AllPickedUp", std::bind( &Gnome::conditionAllPickedUp, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsFull", std::bind( &Gnome::conditionIsFull, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsDrinkFull", std::bind( &Gnome::conditionIsDrinkFull, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsCivilian", std::bind( &Gnome::conditionIsCivilian, this, _1 ) );
+	m_behaviors.insert_or_assign( "Alarm", std::bind( &Gnome::conditionAlarm, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsInSafeRoom", std::bind( &Gnome::conditionIsInSafeRoom, this, _1 ) );
 
 	// combat conditions
-	m_behaviors.insert( "TargetAdjacent", std::bind( &Gnome::conditionTargetAdjacent, this, _1 ) );
-	m_behaviors.insert( "IsInCombat", std::bind( &Gnome::conditionIsInCombat, this, _1 ) );
-	m_behaviors.insert( "IsTrainingTime", std::bind( &Gnome::conditionIsTrainingTime, this, _1 ) );
-	m_behaviors.insert( "IsTrainer", std::bind( &Gnome::conditionIsTrainer, this, _1 ) );
+	m_behaviors.insert_or_assign( "TargetAdjacent", std::bind( &Gnome::conditionTargetAdjacent, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsInCombat", std::bind( &Gnome::conditionIsInCombat, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsTrainingTime", std::bind( &Gnome::conditionIsTrainingTime, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsTrainer", std::bind( &Gnome::conditionIsTrainer, this, _1 ) );
 
-	m_behaviors.insert( "HasHuntTarget", std::bind( &Gnome::conditionHasHuntTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "HasHuntTarget", std::bind( &Gnome::conditionHasHuntTarget, this, _1 ) );
 
-	m_behaviors.insert( "IsOnMission", std::bind( &Gnome::conditionIsOnMission, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsOnMission", std::bind( &Gnome::conditionIsOnMission, this, _1 ) );
 
-	//m_behaviors.insert( "", std::bind( &Gnome::condition, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Gnome::condition, this, _1 ) );
 
-	m_behaviors.insert( "Sleep", std::bind( &Gnome::actionSleep, this, _1 ) );
-	m_behaviors.insert( "FindBed", std::bind( &Gnome::actionFindBed, this, _1 ) );
+	m_behaviors.insert_or_assign( "Sleep", std::bind( &Gnome::actionSleep, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindBed", std::bind( &Gnome::actionFindBed, this, _1 ) );
 
-	m_behaviors.insert( "FindFood", std::bind( &Gnome::actionFindFood, this, _1 ) );
-	m_behaviors.insert( "FindDining", std::bind( &Gnome::actionFindDining, this, _1 ) );
-	m_behaviors.insert( "Eat", std::bind( &Gnome::actionEat, this, _1 ) );
-	m_behaviors.insert( "FindDrink", std::bind( &Gnome::actionFindDrink, this, _1 ) );
-	m_behaviors.insert( "Drink", std::bind( &Gnome::actionDrink, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindFood", std::bind( &Gnome::actionFindFood, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindDining", std::bind( &Gnome::actionFindDining, this, _1 ) );
+	m_behaviors.insert_or_assign( "Eat", std::bind( &Gnome::actionEat, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindDrink", std::bind( &Gnome::actionFindDrink, this, _1 ) );
+	m_behaviors.insert_or_assign( "Drink", std::bind( &Gnome::actionDrink, this, _1 ) );
 
-	m_behaviors.insert( "Move", std::bind( &Gnome::actionMove, this, _1 ) );
-	m_behaviors.insert( "RandomMove", std::bind( &Gnome::actionRandomMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "Move", std::bind( &Gnome::actionMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "RandomMove", std::bind( &Gnome::actionRandomMove, this, _1 ) );
 
-	m_behaviors.insert( "PickUpItem", std::bind( &Gnome::actionPickUpItem, this, _1 ) );
+	m_behaviors.insert_or_assign( "PickUpItem", std::bind( &Gnome::actionPickUpItem, this, _1 ) );
 
-	m_behaviors.insert( "ClaimItems", std::bind( &Gnome::actionClaimItems, this, _1 ) );
-	m_behaviors.insert( "DropItem", std::bind( &Gnome::actionDropItem, this, _1 ) );
-	m_behaviors.insert( "EquipTool", std::bind( &Gnome::actionEquipTool, this, _1 ) );
-	m_behaviors.insert( "FindTool", std::bind( &Gnome::actionFindTool, this, _1 ) );
+	m_behaviors.insert_or_assign( "ClaimItems", std::bind( &Gnome::actionClaimItems, this, _1 ) );
+	m_behaviors.insert_or_assign( "DropItem", std::bind( &Gnome::actionDropItem, this, _1 ) );
+	m_behaviors.insert_or_assign( "EquipTool", std::bind( &Gnome::actionEquipTool, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindTool", std::bind( &Gnome::actionFindTool, this, _1 ) );
 
-	m_behaviors.insert( "CheckUniform", std::bind( &Gnome::actionCheckUniform, this, _1 ) );
-	m_behaviors.insert( "CheckBandages", std::bind( &Gnome::actionCheckBandages, this, _1 ) );
-	m_behaviors.insert( "UniformCleanUp", std::bind( &Gnome::actionUniformCleanUp, this, _1 ) );
+	m_behaviors.insert_or_assign( "CheckUniform", std::bind( &Gnome::actionCheckUniform, this, _1 ) );
+	m_behaviors.insert_or_assign( "CheckBandages", std::bind( &Gnome::actionCheckBandages, this, _1 ) );
+	m_behaviors.insert_or_assign( "UniformCleanUp", std::bind( &Gnome::actionUniformCleanUp, this, _1 ) );
 
-	m_behaviors.insert( "GetItemDropPosition", std::bind( &Gnome::actionGetItemDropPosition, this, _1 ) );
-	m_behaviors.insert( "GetWorkPosition", std::bind( &Gnome::actionGetWorkPosition, this, _1 ) );
-	m_behaviors.insert( "GetSafeRoomPosition", std::bind( &Gnome::actionGetSafeRoomPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetItemDropPosition", std::bind( &Gnome::actionGetItemDropPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetWorkPosition", std::bind( &Gnome::actionGetWorkPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetSafeRoomPosition", std::bind( &Gnome::actionGetSafeRoomPosition, this, _1 ) );
 
-	m_behaviors.insert( "GetJob", std::bind( &Gnome::actionGetJob, this, _1 ) );
-	m_behaviors.insert( "InitJob", std::bind( &Gnome::actionInitJob, this, _1 ) );
-	m_behaviors.insert( "FinishJob", std::bind( &Gnome::actionFinishJob, this, _1 ) );
-	m_behaviors.insert( "AbortJob", std::bind( &Gnome::actionAbortJob, this, _1 ) );
-	m_behaviors.insert( "Work", std::bind( &Gnome::actionWork, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetJob", std::bind( &Gnome::actionGetJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "InitJob", std::bind( &Gnome::actionInitJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "FinishJob", std::bind( &Gnome::actionFinishJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "AbortJob", std::bind( &Gnome::actionAbortJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "Work", std::bind( &Gnome::actionWork, this, _1 ) );
 
-	m_behaviors.insert( "InitAnimalJob", std::bind( &Gnome::actionInitAnimalJob, this, _1 ) );
-	m_behaviors.insert( "GrabAnimal", std::bind( &Gnome::actionGrabAnimal, this, _1 ) );
-	m_behaviors.insert( "ReleaseAnimal", std::bind( &Gnome::actionReleaseAnimal, this, _1 ) );
-	m_behaviors.insert( "ButcherAnimal", std::bind( &Gnome::actionButcherAnimal, this, _1 ) );
-	m_behaviors.insert( "DyeAnimal", std::bind( &Gnome::actionDyeAnimal, this, _1 ) );
-	m_behaviors.insert( "HarvestAnimal", std::bind( &Gnome::actionHarvestAnimal, this, _1 ) );
-	m_behaviors.insert( "TameAnimal", std::bind( &Gnome::actionTameAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "InitAnimalJob", std::bind( &Gnome::actionInitAnimalJob, this, _1 ) );
+	m_behaviors.insert_or_assign( "GrabAnimal", std::bind( &Gnome::actionGrabAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "ReleaseAnimal", std::bind( &Gnome::actionReleaseAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "ButcherAnimal", std::bind( &Gnome::actionButcherAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "DyeAnimal", std::bind( &Gnome::actionDyeAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "HarvestAnimal", std::bind( &Gnome::actionHarvestAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "TameAnimal", std::bind( &Gnome::actionTameAnimal, this, _1 ) );
 
-	m_behaviors.insert( "FinalMoveAnimal", std::bind( &Gnome::actionFinalMoveAnimal, this, _1 ) );
+	m_behaviors.insert_or_assign( "FinalMoveAnimal", std::bind( &Gnome::actionFinalMoveAnimal, this, _1 ) );
 
-	m_behaviors.insert( "DropAllItems", std::bind( &Gnome::actionDropAllItems, this, _1 ) );
-	m_behaviors.insert( "ReturnAlwaysRunning", std::bind( &Gnome::actionAlwaysRunning, this, _1 ) );
+	m_behaviors.insert_or_assign( "DropAllItems", std::bind( &Gnome::actionDropAllItems, this, _1 ) );
+	m_behaviors.insert_or_assign( "ReturnAlwaysRunning", std::bind( &Gnome::actionAlwaysRunning, this, _1 ) );
 
-	m_behaviors.insert( "GetTarget", std::bind( &Gnome::actionGetTarget, this, _1 ) );
-	m_behaviors.insert( "AttackTarget", std::bind( &Gnome::actionAttackTarget, this, _1 ) );
-	m_behaviors.insert( "FindTrainingGround", std::bind( &Gnome::actionFindTrainingGround, this, _1 ) );
-	m_behaviors.insert( "Train", std::bind( &Gnome::actionTrain, this, _1 ) );
-	m_behaviors.insert( "FindTrainerPosition", std::bind( &Gnome::actionFindTrainerPosition, this, _1 ) );
-	m_behaviors.insert( "SuperviseTraining", std::bind( &Gnome::actionSuperviseTraining, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetTarget", std::bind( &Gnome::actionGetTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "AttackTarget", std::bind( &Gnome::actionAttackTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindTrainingGround", std::bind( &Gnome::actionFindTrainingGround, this, _1 ) );
+	m_behaviors.insert_or_assign( "Train", std::bind( &Gnome::actionTrain, this, _1 ) );
+	m_behaviors.insert_or_assign( "FindTrainerPosition", std::bind( &Gnome::actionFindTrainerPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "SuperviseTraining", std::bind( &Gnome::actionSuperviseTraining, this, _1 ) );
 
-	m_behaviors.insert( "GetExitPosition", std::bind( &Gnome::actionGetExitPosition, this, _1 ) );
-	m_behaviors.insert( "LeaveMap", std::bind( &Gnome::actionLeaveMap, this, _1 ) );
-	m_behaviors.insert( "EnterMap", std::bind( &Gnome::actionEnterMap, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetExitPosition", std::bind( &Gnome::actionGetExitPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "LeaveMap", std::bind( &Gnome::actionLeaveMap, this, _1 ) );
+	m_behaviors.insert_or_assign( "EnterMap", std::bind( &Gnome::actionEnterMap, this, _1 ) );
 
-	m_behaviors.insert( "DoMission", std::bind( &Gnome::actionDoMission, this, _1 ) );
-	m_behaviors.insert( "LeaveForMission", std::bind( &Gnome::actionLeaveForMission, this, _1 ) );
-	m_behaviors.insert( "ReturnFromMission", std::bind( &Gnome::actionReturnFromMission, this, _1 ) );
+	m_behaviors.insert_or_assign( "DoMission", std::bind( &Gnome::actionDoMission, this, _1 ) );
+	m_behaviors.insert_or_assign( "LeaveForMission", std::bind( &Gnome::actionLeaveForMission, this, _1 ) );
+	m_behaviors.insert_or_assign( "ReturnFromMission", std::bind( &Gnome::actionReturnFromMission, this, _1 ) );
 
-	//m_behaviors.insert( "", std::bind( &Gnome::action, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Gnome::action, this, _1 ) );
 
-	m_taskFunctions.insert( "Deconstruct", std::bind( &Gnome::deconstruct, this ) );
+	m_taskFunctions.insert_or_assign( "Deconstruct", std::bind( &Gnome::deconstruct, this ) );
 
-	m_taskFunctions.insert( "MineWall", std::bind( &Gnome::mineWall, this ) );
-	m_taskFunctions.insert( "MineFloor", std::bind( &Gnome::mineFloor, this ) );
-	m_taskFunctions.insert( "DigHole", std::bind( &Gnome::digHole, this ) );
-	m_taskFunctions.insert( "ExplorativeMineWall", std::bind( &Gnome::explorativeMineWall, this ) );
-	m_taskFunctions.insert( "RemoveWall", std::bind( &Gnome::removeWall, this ) );
-	m_taskFunctions.insert( "RemoveRamp", std::bind( &Gnome::removeRamp, this ) );
-	m_taskFunctions.insert( "RemoveFloor", std::bind( &Gnome::removeFloor, this ) );
+	m_taskFunctions.insert_or_assign( "MineWall", std::bind( &Gnome::mineWall, this ) );
+	m_taskFunctions.insert_or_assign( "MineFloor", std::bind( &Gnome::mineFloor, this ) );
+	m_taskFunctions.insert_or_assign( "DigHole", std::bind( &Gnome::digHole, this ) );
+	m_taskFunctions.insert_or_assign( "ExplorativeMineWall", std::bind( &Gnome::explorativeMineWall, this ) );
+	m_taskFunctions.insert_or_assign( "RemoveWall", std::bind( &Gnome::removeWall, this ) );
+	m_taskFunctions.insert_or_assign( "RemoveRamp", std::bind( &Gnome::removeRamp, this ) );
+	m_taskFunctions.insert_or_assign( "RemoveFloor", std::bind( &Gnome::removeFloor, this ) );
 
-	m_taskFunctions.insert( "Construct", std::bind( &Gnome::construct, this ) );
-	m_taskFunctions.insert( "ConstructAnimate", std::bind( &Gnome::constructAnimate, this ) );
-	m_taskFunctions.insert( "ConstructDugStairs", std::bind( &Gnome::constructDugStairs, this ) );
-	m_taskFunctions.insert( "ConstructDugRamp", std::bind( &Gnome::constructDugRamp, this ) );
+	m_taskFunctions.insert_or_assign( "Construct", std::bind( &Gnome::construct, this ) );
+	m_taskFunctions.insert_or_assign( "ConstructAnimate", std::bind( &Gnome::constructAnimate, this ) );
+	m_taskFunctions.insert_or_assign( "ConstructDugStairs", std::bind( &Gnome::constructDugStairs, this ) );
+	m_taskFunctions.insert_or_assign( "ConstructDugRamp", std::bind( &Gnome::constructDugRamp, this ) );
 
-	m_taskFunctions.insert( "CreateItem", std::bind( &Gnome::createItem, this ) );
-	m_taskFunctions.insert( "PlantTree", std::bind( &Gnome::plantTree, this ) );
-	m_taskFunctions.insert( "FellTree", std::bind( &Gnome::fellTree, this ) );
-	m_taskFunctions.insert( "Harvest", std::bind( &Gnome::harvest, this ) );
-	m_taskFunctions.insert( "HarvestHay", std::bind( &Gnome::harvestHay, this ) );
-	m_taskFunctions.insert( "Plant", std::bind( &Gnome::plant, this ) );
-	m_taskFunctions.insert( "RemovePlant", std::bind( &Gnome::removePlant, this ) );
-	m_taskFunctions.insert( "Till", std::bind( &Gnome::till, this ) );
-	m_taskFunctions.insert( "Craft", std::bind( &Gnome::craft, this ) );
+	m_taskFunctions.insert_or_assign( "CreateItem", std::bind( &Gnome::createItem, this ) );
+	m_taskFunctions.insert_or_assign( "PlantTree", std::bind( &Gnome::plantTree, this ) );
+	m_taskFunctions.insert_or_assign( "FellTree", std::bind( &Gnome::fellTree, this ) );
+	m_taskFunctions.insert_or_assign( "Harvest", std::bind( &Gnome::harvest, this ) );
+	m_taskFunctions.insert_or_assign( "HarvestHay", std::bind( &Gnome::harvestHay, this ) );
+	m_taskFunctions.insert_or_assign( "Plant", std::bind( &Gnome::plant, this ) );
+	m_taskFunctions.insert_or_assign( "RemovePlant", std::bind( &Gnome::removePlant, this ) );
+	m_taskFunctions.insert_or_assign( "Till", std::bind( &Gnome::till, this ) );
+	m_taskFunctions.insert_or_assign( "Craft", std::bind( &Gnome::craft, this ) );
 
-	m_taskFunctions.insert( "Fish", std::bind( &Gnome::fish, this ) );
-	m_taskFunctions.insert( "ButcherFish", std::bind( &Gnome::butcherFish, this ) );
-	m_taskFunctions.insert( "ButcherCorpse", std::bind( &Gnome::butcherCorpse, this ) );
-	m_taskFunctions.insert( "FillTrough", std::bind( &Gnome::fillTrough, this ) );
+	m_taskFunctions.insert_or_assign( "Fish", std::bind( &Gnome::fish, this ) );
+	m_taskFunctions.insert_or_assign( "ButcherFish", std::bind( &Gnome::butcherFish, this ) );
+	m_taskFunctions.insert_or_assign( "ButcherCorpse", std::bind( &Gnome::butcherCorpse, this ) );
+	m_taskFunctions.insert_or_assign( "FillTrough", std::bind( &Gnome::fillTrough, this ) );
 
-	m_taskFunctions.insert( "PrepareSpell", std::bind( &Gnome::prepareSpell, this ) );
-	m_taskFunctions.insert( "CastSpell", std::bind( &Gnome::castSpell, this ) );
-	m_taskFunctions.insert( "CastSpellAnimate", std::bind( &Gnome::castSpellAnimate, this ) );
-	m_taskFunctions.insert( "FinishSpell", std::bind( &Gnome::finishSpell, this ) );
+	m_taskFunctions.insert_or_assign( "PrepareSpell", std::bind( &Gnome::prepareSpell, this ) );
+	m_taskFunctions.insert_or_assign( "CastSpell", std::bind( &Gnome::castSpell, this ) );
+	m_taskFunctions.insert_or_assign( "CastSpellAnimate", std::bind( &Gnome::castSpellAnimate, this ) );
+	m_taskFunctions.insert_or_assign( "FinishSpell", std::bind( &Gnome::finishSpell, this ) );
 
-	m_taskFunctions.insert( "SwitchMechanism", std::bind( &Gnome::switchMechanism, this ) );
-	m_taskFunctions.insert( "InvertMechanism", std::bind( &Gnome::invertMechanism, this ) );
-	m_taskFunctions.insert( "Refuel", std::bind( &Gnome::refuel, this ) );
-	m_taskFunctions.insert( "Install", std::bind( &Gnome::install, this ) );
-	m_taskFunctions.insert( "Uninstall", std::bind( &Gnome::uninstall, this ) );
-	m_taskFunctions.insert( "SoundAlarm", std::bind( &Gnome::soundAlarm, this ) );
-	m_taskFunctions.insert( "EquipItem", std::bind( &Gnome::equipItem, this ) );
+	m_taskFunctions.insert_or_assign( "SwitchMechanism", std::bind( &Gnome::switchMechanism, this ) );
+	m_taskFunctions.insert_or_assign( "InvertMechanism", std::bind( &Gnome::invertMechanism, this ) );
+	m_taskFunctions.insert_or_assign( "Refuel", std::bind( &Gnome::refuel, this ) );
+	m_taskFunctions.insert_or_assign( "Install", std::bind( &Gnome::install, this ) );
+	m_taskFunctions.insert_or_assign( "Uninstall", std::bind( &Gnome::uninstall, this ) );
+	m_taskFunctions.insert_or_assign( "SoundAlarm", std::bind( &Gnome::soundAlarm, this ) );
+	m_taskFunctions.insert_or_assign( "EquipItem", std::bind( &Gnome::equipItem, this ) );
 }
 
 void Gnome::addNeed( QString id, int level )

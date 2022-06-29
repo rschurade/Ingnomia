@@ -43,6 +43,8 @@
 #include <QOpenGLTexture>
 #include <QTimer>
 
+#include <ranges>
+
 namespace
 {
 class DebugScope
@@ -727,7 +729,7 @@ void MainWindowRenderer::paintAxles()
 		m_axleShader->setUniformValue( texNum.toStdString().c_str(), i );
 	}
 
-	for ( const auto& ad : m_axleData.data )
+	for ( const auto& ad : m_axleData.data | std::views::values )
 	{
 		if ( !ad.isVertical && ad.pos.z <= m_viewLevel )
 		{

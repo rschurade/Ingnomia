@@ -22,6 +22,7 @@
 #include "../game/creature.h"
 
 #include <QDebug>
+#include <ranges>
 
 Anatomy::Anatomy()
 {
@@ -76,7 +77,7 @@ void Anatomy::init( QString type, bool isAquatic )
 		ap.hp       = row.value( "HP" ).toInt();
 		ap.maxHP    = row.value( "HP" ).toInt();
 
-		m_parts.insert( ap.id, ap );
+		m_parts.insert_or_assign( ap.id, ap );
 	}
 
 	for ( auto row : rows )
@@ -100,7 +101,7 @@ QVariantMap Anatomy::serialize() const
 
 	QVariantList vlParts;
 
-	for ( auto part : m_parts )
+	for ( const auto& part : m_parts | std::views::values)
 	{
 		QVariantMap vm;
 		vm.insert( "ID", part.id );
@@ -387,7 +388,7 @@ void Anatomy::heal()
 	{
 		bool stillWounded = false;
 
-		for ( auto& part : m_parts )
+		for ( auto& part : m_parts | std::views::values)
 		{
 			if ( part.hp > 0 && part.hp < part.maxHP )
 			{

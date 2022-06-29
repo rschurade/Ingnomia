@@ -27,6 +27,7 @@
 #include "../gfx/spritefactory.h"
 
 #include <QDebug>
+#include <ranges>
 
 RoomManager::RoomManager( Game* parent ) :
 	g( parent ),
@@ -37,7 +38,7 @@ RoomManager::RoomManager( Game* parent ) :
 
 RoomManager::~RoomManager()
 {
-	for ( const auto& room : m_rooms )
+	for ( const auto& room : m_rooms | std::views::values )
 	{
 		delete room;
 	}
@@ -45,7 +46,7 @@ RoomManager::~RoomManager()
 
 void RoomManager::onTick( quint64 tick )
 {
-	for ( const auto& room : m_rooms )
+	for ( const auto& room : m_rooms | std::views::values )
 	{
 		room->onTick( tick );
 	}
@@ -55,13 +56,13 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 {
 	if ( m_allRoomTiles.contains( firstClick ) )
 	{
-		unsigned int spID = m_allRoomTiles.value( firstClick );
+		unsigned int spID = m_allRoomTiles.at( firstClick );
 		Room& sp          = *m_rooms[spID];
 		for ( auto p : fields )
 		{
 			if ( p.second && !m_allRoomTiles.contains( p.first ) )
 			{
-				m_allRoomTiles.insert( p.first, spID );
+				m_allRoomTiles.insert_or_assign( p.first, spID );
 				sp.addTile( p.first );
 			}
 		}
@@ -73,7 +74,7 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 		{
 			if ( p.second )
 			{
-				m_allRoomTiles.insert( p.first, sp->id() );
+				m_allRoomTiles.insert_or_assign( p.first, sp->id() );
 			}
 		}
 		sp->setType( type );
@@ -94,7 +95,7 @@ void RoomManager::addRoom( Position firstClick, QList<QPair<Position, bool>> fie
 				break;
 		}
 
-		m_rooms.insert( sp->id(), sp );
+		m_rooms.insert_or_assign( sp->id(), sp );
 	}
 }
 
@@ -116,14 +117,14 @@ void RoomManager::load( QVariantMap vals )
 	for ( auto sf : vals.value( "Fields" ).toList() )
 	{
 		auto sfm = sf.toMap();
-		m_allRoomTiles.insert( Position( sfm.value( "Pos" ) ), sp->id() );
+		m_allRoomTiles.insert_or_assign( Position( sfm.value( "Pos" ) ), sp->id() );
 		auto furID = sfm.value( "FurID" ).toUInt();
 		if ( g->m_inv->itemSID( furID ) == "AlarmBell" )
 		{
 			sp->setHasAlarmBell( true );
 		}
 	}
-	m_rooms.insert( sp->id(), sp );
+	m_rooms.insert_or_assign( sp->id(), sp );
 }
 
 void RoomManager::removeRoom( unsigned int id )
@@ -133,9 +134,9 @@ void RoomManager::removeRoom( unsigned int id )
 	{
 		for ( auto field = m_allRoomTiles.begin(); field != m_allRoomTiles.end(); )
 		{
-			if ( field.value() == it.value()->id() )
+			if ( field->second == it->second->id() )
 			{
-				it.value()->removeTile( field.key() );
+				it->second->removeTile( field->first );
 				field = m_allRoomTiles.erase( field );
 			}
 			else
@@ -143,7 +144,7 @@ void RoomManager::removeRoom( unsigned int id )
 				++field;
 			}
 		}
-		delete it.value();
+		delete it->second;
 		m_rooms.erase( it );
 	}
 }
@@ -155,10 +156,10 @@ void RoomManager::removeTile( Position pos )
 	{
 		if ( sp->removeTile( pos ) )
 		{
-			m_rooms.remove( sp->id() );
+			m_rooms.erase( sp->id() );
 		}
 	}
-	m_allRoomTiles.remove( pos );
+	m_allRoomTiles.erase( pos );
 }
 
 Room* RoomManager::getRoomAtPos( Position pos )
@@ -179,12 +180,12 @@ Room* RoomManager::getRoom( unsigned int id )
 	return nullptr;
 }
 
-const QHash<unsigned int, Room*>& RoomManager::allRooms()
+const absl::flat_hash_map<unsigned int, Room*>& RoomManager::allRooms()
 {
 	return m_rooms;
 }
 
-const QHash<Position, Door>& RoomManager::allDoors()
+const absl::flat_hash_map<Position, Door>& RoomManager::allDoors()
 {
 	return m_doors;
 }
@@ -213,12 +214,12 @@ void RoomManager::addDoor( Position pos, unsigned int itemUID, unsigned int mate
 	door.pos         = pos;
 	door.itemUID     = itemUID;
 	door.materialUID = materialUID;
-	m_doors.insert( pos, door );
+	m_doors.insert_or_assign( pos, door );
 }
 
 void RoomManager::removeDoor( Position pos )
 {
-	m_doors.remove( pos );
+	m_doors.erase( pos );
 }
 
 void RoomManager::loadDoor( QVariantMap vm )
@@ -231,7 +232,7 @@ void RoomManager::loadDoor( QVariantMap vm )
 	door.blockGnomes   = vm.value( "BlockGnomes" ).toBool();
 	door.blockAnimals  = vm.value( "BlockAnimals" ).toBool();
 	door.blockMonsters = vm.value( "BlockMonsters" ).toBool();
-	m_doors.insert( door.pos, door );
+	m_doors.insert_or_assign( door.pos, door );
 
 	g->m_world->getTile( door.pos ).wallSpriteUID = g->m_inv->spriteID( door.itemUID );
 	unsigned int nextItem                         = g->m_inv->getFirstObjectAtPosition( door.pos );
@@ -258,7 +259,7 @@ QList<unsigned int> RoomManager::getDorms()
 {
 	QList<unsigned int> out;
 
-	for ( const auto& room : m_rooms)
+	for ( const auto& room : m_rooms | std::views::values )
 	{
 		if ( room->type() == RoomType::Dorm )
 		{
@@ -273,7 +274,7 @@ QList<unsigned int> RoomManager::getDinings()
 {
 	QList<unsigned int> out;
 
-	for ( const auto& room : m_rooms )
+	for ( const auto& room : m_rooms | std::views::values )
 	{
 		if ( room->type() == RoomType::Dining )
 		{

@@ -154,19 +154,19 @@ void Monster::updateMoveSpeed()
 void Monster::initTaskMap()
 {
 	using namespace std::placeholders;
-	//m_behaviors.insert( "", std::bind( &Monster::condition, this, _1 ) );
-	//m_behaviors.insert( "", std::bind( &Monster::action, this, _1 ) );
-	m_behaviors.insert( "IsMale", std::bind( &Monster::conditionIsMale, this, _1 ) );
-	m_behaviors.insert( "IsFemale", std::bind( &Monster::conditionIsFemale, this, _1 ) );
-	m_behaviors.insert( "IsDay", std::bind( &Monster::conditionIsDay, this, _1 ) );
-	m_behaviors.insert( "IsNight", std::bind( &Monster::conditionIsNight, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Monster::condition, this, _1 ) );
+	//m_behaviors.insert_or_assign( "", std::bind( &Monster::action, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsMale", std::bind( &Monster::conditionIsMale, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsFemale", std::bind( &Monster::conditionIsFemale, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsDay", std::bind( &Monster::conditionIsDay, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsNight", std::bind( &Monster::conditionIsNight, this, _1 ) );
 
-	m_behaviors.insert( "TargetAdjacent", std::bind( &Monster::conditionTargetAdjacent, this, _1 ) );
+	m_behaviors.insert_or_assign( "TargetAdjacent", std::bind( &Monster::conditionTargetAdjacent, this, _1 ) );
 
-	m_behaviors.insert( "RandomMove", std::bind( &Monster::actionRandomMove, this, _1 ) );
-	m_behaviors.insert( "Move", std::bind( &Monster::actionMove, this, _1 ) );
-	m_behaviors.insert( "GetTarget", std::bind( &Monster::actionGetTarget, this, _1 ) );
-	m_behaviors.insert( "AttackTarget", std::bind( &Monster::actionAttackTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "RandomMove", std::bind( &Monster::actionRandomMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "Move", std::bind( &Monster::actionMove, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetTarget", std::bind( &Monster::actionGetTarget, this, _1 ) );
+	m_behaviors.insert_or_assign( "AttackTarget", std::bind( &Monster::actionAttackTarget, this, _1 ) );
 }
 
 void Monster::generateAggroList()

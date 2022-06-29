@@ -96,10 +96,10 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 	return TileDataUpdate { tileID, td };
 }
 
-QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
+absl::flat_hash_map<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 {
-	if( !g ) return QHash<unsigned int, unsigned int>();
-	QHash<unsigned int, unsigned int> creatures;
+	if( !g ) return absl::flat_hash_map<unsigned int, unsigned int>();
+	absl::flat_hash_map<unsigned int, unsigned int> creatures;
 
 	Sprite* sprite    = nullptr;
 
@@ -226,10 +226,10 @@ void AggregatorRenderer::onAllTileInfo()
 	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
-	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
-	{
-		//tiles.insert(*tile);
-	}
+//	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
+//	{
+//		//tiles.insert(*tile);
+//	}
 	constexpr size_t batchSize = 1 << 16;
 	TileDataUpdateInfo tileUpdates;
 	tileUpdates.updates.reserve( batchSize );
@@ -241,7 +241,7 @@ void AggregatorRenderer::onAllTileInfo()
 		const auto creatureSprite = creatures.find( tileUID );
 		if ( creatureSprite != creatures.end() )
 		{
-			update.tile.creatureSpriteUID = creatureSprite.value();
+			update.tile.creatureSpriteUID = creatureSprite->second;
 		}
 
 		tileUpdates.updates.push_back( update );
@@ -266,10 +266,10 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const absl::btree_set<unsigned int
 	if( !g ) return;
 	// Bake tile updates
 	auto creatures = collectCreatures();
-	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
-	{
-		//tiles.insert(*tile);
-	}
+//	for ( auto tile = creatures.keyBegin(); tile != creatures.keyEnd(); ++tile )
+//	{
+//		//tiles.insert(*tile);
+//	}
 	constexpr size_t batchSize = 1 << 16;
 	TileDataUpdateInfo tileUpdates;
 	tileUpdates.updates.reserve( batchSize );
@@ -280,7 +280,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const absl::btree_set<unsigned int
 		const auto creatureSprite = creatures.find( tileUID );
 		if ( creatureSprite != creatures.end() )
 		{
-			update.tile.creatureSpriteUID = creatureSprite.value();
+			update.tile.creatureSpriteUID = creatureSprite->second;
 		}
 
 		tileUpdates.updates.push_back( update );

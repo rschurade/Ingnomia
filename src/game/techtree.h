@@ -20,6 +20,7 @@
 #include <QMap>
 #include <QObject>
 #include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_map.h>
 
 struct TTNode
 {
@@ -42,8 +43,8 @@ public:
 	void create();
 
 private:
-	bool compsLowerLevel( QString craftID, QHash<QString, int>& itemLevels );
-	int levelPlusOne( QString craftID, QHash<QString, int>& itemLevels );
+	bool compsLowerLevel( QString craftID, absl::flat_hash_map<QString, int>& itemLevels );
+	int levelPlusOne( QString craftID, absl::flat_hash_map<QString, int>& itemLevels );
 
 	QMap<QString, TTNode> m_items;
 };

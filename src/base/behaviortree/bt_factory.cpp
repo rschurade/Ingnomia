@@ -51,7 +51,7 @@ public:
 };
 }
 
-BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::load( const QString id, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement root = Global::behaviorTree( id );
 	QString mainTree = root.attribute( "main_tree_to_execute" );
@@ -66,7 +66,7 @@ BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RES
 	return behaviorTree;
 }
 
-BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = documentRoot.firstChildElement();
 	while ( !treeElement.isNull() )
@@ -105,7 +105,7 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QS
 	return nullptr;
 }
 
-void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = root.firstChildElement();
 	while ( !treeElement.isNull() )
@@ -121,27 +121,28 @@ void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& docum
 	}
 }
 
-BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QString nodeName = domElement.nodeName();
 	BT_Node* bn      = nullptr;
+	const std::string& idKey = domElement.attribute( "ID" ).toStdString();
 	if ( nodeName == "Action" )
 	{
-		if ( !actions.contains( domElement.attribute( "ID" ) ) )
+		if ( !actions.contains( idKey ) )
 		{
 			qCritical() << "Action " << domElement.attribute( "ID" ) << " doesn't exist in behaviorMap";
 			abort();
 		}
-		bn = parent->addAction( domElement.attribute( "ID" ), actions[domElement.attribute( "ID" )] );
+		bn = parent->addAction( domElement.attribute( "ID" ), actions[idKey] );
 	}
 	else if ( nodeName == "Condition" )
 	{
-		if ( !actions.contains( domElement.attribute( "ID" ) ) )
+		if ( !actions.contains( idKey ) )
 		{
 			qCritical() << "Condition doesn't exist in behaviorMap:" << domElement.attribute( "ID" );
 			abort();
 		}
-		bn = parent->addConditional( domElement.attribute( "ID" ), actions[domElement.attribute( "ID" )] );
+		bn = parent->addConditional( domElement.attribute( "ID" ), actions[idKey] );
 	}
 	else if ( nodeName == "Fallback" )
 	{

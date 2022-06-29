@@ -25,6 +25,7 @@
 #include <QDomElement>
 #include <QMap>
 #include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_map.h>
 #include <QString>
 #include <QVariant>
 #include <QtGlobal>
@@ -79,7 +80,7 @@ public:
 
 	static bool addBehaviorTree( QString id, QString path );
 
-	static QHash<Qt::Key, Noesis::Key> keyConvertMap;
+	static absl::flat_hash_map<Qt::Key, Noesis::Key> keyConvertMap;
 
 	static QMap<QString, CreaturePart> creaturePartLookUp;
 	static QMap<CreaturePart, QString> creaturePartToString;

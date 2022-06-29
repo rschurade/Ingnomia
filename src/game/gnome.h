@@ -20,8 +20,6 @@
 #include "../base/behaviortree/bt_node.h"
 #include "canwork.h"
 
-#include <QHash>
-
 #include <functional>
 #include <string>
 #include <unordered_map>

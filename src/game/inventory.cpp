@@ -36,6 +36,8 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
+#include <ranges>
+
 Inventory::Inventory( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -59,9 +61,9 @@ Inventory::~Inventory()
 	m_foodItems.clear();
 	m_drinkItems.clear();
 
-	for ( const auto& octtreeGroup : m_octrees )
+	for ( const auto& octtreeGroup : m_octrees | std::views::values)
 	{
-		for (const auto& octree : octtreeGroup)
+		for (const auto& octree : octtreeGroup | std::views::values)
 		{
 			delete octree;
 		}
@@ -101,7 +103,7 @@ void Inventory::init()
 
 				for ( auto materialID : Global::util->possibleMaterialsForItem( itemID ) )
 				{
-					m_hash[itemID].insert( materialID, QHash<unsigned int, Item*>() );
+					m_hash[itemID].insert_or_assign( materialID, absl::flat_hash_map<unsigned int, Item*>() );
 				}
 			}
 		}
@@ -139,9 +141,9 @@ void Inventory::init()
 void Inventory::saveFilter()
 {
 	QVariantList filter;
-	for ( auto itemID : m_hash.keys() )
+	for ( const auto& itemID : m_hash | std::views::keys )
 	{
-		for ( auto materialID : m_hash[itemID].keys() )
+		for ( const auto& materialID : m_hash[itemID] | std::views::keys )
 		{
 			filter.append( itemID + "_" + materialID );
 		}
@@ -158,12 +160,12 @@ void Inventory::loadFilter()
 		auto comp  = entry.split( "_" );
 		if ( comp.size() == 2 )
 		{
-			m_hash[comp[0]].insert( comp[1], QHash<unsigned int, Item*>() );
+			m_hash[comp[0]].insert_or_assign( comp[1], absl::flat_hash_map<unsigned int, Item*>() );
 
 			int x = Global::dimX / 2;
 			int y = Global::dimY / 2;
 			int z = Global::dimZ / 2;
-			m_octrees[comp[0]].insert( comp[1], new Octree( x, y, z, x, y, z ) );
+			m_octrees[comp[0]].insert_or_assign( comp[1], new Octree( x, y, z, x, y, z ) );
 		}
 	}
 }
@@ -173,7 +175,7 @@ Item* Inventory::getItem( unsigned int itemUID )
 	auto it = m_items.find( itemUID );
 	if ( it != m_items.end() )
 	{
-		return &(*it);
+		return &it->second;
 	}
 	return nullptr;
 }
@@ -322,14 +324,14 @@ Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
 		int x = Global::dimX / 2;
 		int y = Global::dimY / 2;
 		int z = Global::dimZ / 2;
-		m_octrees[itemSID].insert( materialSID, new Octree( x, y, z, x, y, z ) );
+		m_octrees[itemSID].insert_or_assign( materialSID, new Octree( x, y, z, x, y, z ) );
 	}
 	return m_octrees[itemSID][materialSID];
 }
 
 void Inventory::addObject( Item& object, const QString& itemID, const QString& materialID )
 {
-	m_items.insert( object.id(), object );
+	m_items.insert_or_assign( object.id(), object );
 	Item* item = getItem( object.id() );
 	
 	Octree* ot = octree( itemID, materialID );
@@ -344,7 +346,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		{
 			PositionEntry entry;
 			entry.insert( item->id() );
-			m_positionHash.insert( item->getPos().toInt(), entry );
+			m_positionHash.insert_or_assign( item->getPos().toInt(), entry );
 		}
 
 		Position pos = item->getPos();
@@ -372,12 +374,12 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 	if ( m_hash[itemID].contains( materialID ) )
 	{
-		m_hash[itemID][materialID].insert( item->id(), item );
+		m_hash[itemID][materialID].insert_or_assign( item->id(), item );
 	}
 	else
 	{
-		m_hash[itemID].insert( materialID, QHash<unsigned int, Item*>() );
-		m_hash[itemID][materialID].insert( item->id(), item );
+		m_hash[itemID].insert_or_assign( materialID, absl::flat_hash_map<unsigned int, Item*>() );
+		m_hash[itemID][materialID].insert_or_assign( item->id(), item );
 	}
 
 	m_itemHistory->plusItem( itemID, materialID );
@@ -401,7 +403,7 @@ void Inventory::destroyObject( unsigned int id )
 				m_positionHash[tileID].erase( id );
 				if ( m_positionHash[tileID].empty() )
 				{
-					m_positionHash.remove( tileID );
+					m_positionHash.erase( tileID );
 				}
 			}
 
@@ -417,12 +419,12 @@ void Inventory::destroyObject( unsigned int id )
 			Octree* ot = octree( itemSID, materialSID );
 			ot->removeItem( pos.x, pos.y, pos.z, id );
 			
-			m_hash[itemSID][materialSID].remove( id );
+			m_hash[itemSID][materialSID].erase( id );
 
 			m_foodItems.remove( id );
 			m_drinkItems.remove( id );
 			// finally remove object
-			m_items.remove( id );
+			m_items.erase( id );
 
 			m_itemHistory->minusItem( itemSID, materialSID );
 
@@ -449,7 +451,7 @@ unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 		}
 		else
 		{
-			m_positionHash.remove( pos.toInt() );
+			m_positionHash.erase( pos.toInt() );
 		}
 	}
 
@@ -465,7 +467,7 @@ bool Inventory::getObjectsAtPosition( const Position& pos, PositionEntry& pe )
 	}
 	else
 	{
-		m_positionHash.remove( pos.toInt() );
+		m_positionHash.erase( pos.toInt() );
 		return false;
 	}
 }
@@ -480,7 +482,7 @@ int Inventory::countItemsAtPos( Position& pos )
 			return size;
 		}
 
-		m_positionHash.remove( pos.toInt() );
+		m_positionHash.erase( pos.toInt() );
 		return 0;
 	}
 	return 0;
@@ -537,7 +539,7 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 	
 	if ( materialSID == "any" )
 	{
-		for ( auto material : m_octrees[itemSID].keys() )
+		for ( auto material : m_octrees[itemSID] | std::views::keys )
 		{
 			Octree* ot = octree( itemSID, material );
 			ot->visit( pos.x, pos.y, pos.z, predicate );
@@ -625,7 +627,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 
 	if ( materialSID == "any" )
 	{
-		for ( auto material : m_octrees[itemSID].keys() )
+		for ( auto material : m_octrees[itemSID] | std::views::keys )
 		{
 			Octree* ot = octree( itemSID, material );
 			ot->visit( pos.x, pos.y, pos.z, predicate );
@@ -669,7 +671,7 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 
 		if ( materialSID == "any" )
 		{
-			for ( auto material : m_octrees[itemSID].keys() )
+			for ( auto material : m_octrees[itemSID] | std::views::keys )
 			{
 				Octree* ot = octree( itemSID, material );
 				items += ot->query( pos.x, pos.y, pos.z );
@@ -718,7 +720,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 	{
 		if ( !m_hash[itemSID].empty() )
 		{
-			for ( auto item : m_hash[itemSID][materialSID] )
+			for ( auto item : m_hash[itemSID][materialSID] | std::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() )
 				{
@@ -739,7 +741,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 	{
 		if ( !m_hash[itemSID].empty() )
 		{
-			for ( auto item : m_hash[itemSID][materialSID] )
+			for ( auto item : m_hash[itemSID][materialSID] | std::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() && item->quality() == quality )
 				{
@@ -822,7 +824,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 		}
 		if ( m_positionHash[pos.toInt()].empty() )
 		{
-			m_positionHash.remove( pos.toInt() );
+			m_positionHash.erase( pos.toInt() );
 		}
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
@@ -876,7 +878,7 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 		{
 			PositionEntry entry;
 			entry.insert( id );
-			m_positionHash.insert( newPos.toInt(), entry );
+			m_positionHash.insert_or_assign( newPos.toInt(), entry );
 		}
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
@@ -961,13 +963,16 @@ QList<QString> Inventory::items( QString category, QString group )
 	return QList<QString>();
 }
 
-QList<QString> Inventory::materials( QString category, QString group, QString item )
+std::vector<QString> Inventory::materials( QString category, QString group, QString item )
 {
+	std::vector<QString> result;
 	if ( m_hash.contains( item ) )
 	{
-		return m_hash[item].keys();
+		for (const auto &key : m_hash[item] | std::views::keys) {
+			result.push_back(key);
+		}
 	}
-	return QList<QString>();
+	return result;
 }
 
 bool Inventory::isInGroup( QString category, QString group, unsigned int itemID )
@@ -995,7 +1000,7 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 
 	if ( m_hash.contains( itemSID ) )
 	{
-		QList<QString> matKeys = m_hash[itemSID].keys();
+		const auto matKeys = m_hash[itemSID] | std::views::keys;
 		for ( auto mk : matKeys )
 		{
 			mats.insert( mk, 0 );
@@ -1004,7 +1009,7 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 		{
 			for ( auto it : m_hash[itemSID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					if ( ( !item->isInJob() || allowInJob ) && !item->isConstructed() && ( item->isHeldBy() == 0 ) )
 					{
@@ -1035,7 +1040,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					if ( item->isFree() )
 					{
@@ -1049,7 +1054,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] )
+			for ( auto item : m_hash[itemID][materialID] | std::views::values )
 			{
 				if ( item->isFree() )
 				{
@@ -1072,7 +1077,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					if ( !item->isConstructed() )
 					{
@@ -1086,7 +1091,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] )
+			for ( auto item : m_hash[itemID][materialID] | std::views::values )
 			{
 				if ( !item->isConstructed() )
 				{
@@ -1109,7 +1114,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					if ( item->isInStockpile() && item->isFree() )
 					{
@@ -1123,7 +1128,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] )
+			for ( auto item : m_hash[itemID][materialID] | std::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() )
 				{
@@ -1146,7 +1151,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					if ( !item->isInStockpile() && item->isFree() )
 					{
@@ -1160,7 +1165,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] )
+			for ( auto item : m_hash[itemID][materialID] | std::views::values )
 			{
 				if ( item->materialSID() == materialID && !item->isInStockpile() && item->isFree() )
 				{
@@ -1183,7 +1188,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it )
+				for ( auto item : it.second | std::views::values )
 				{
 					result.total++;
 
@@ -1214,7 +1219,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] )
+			for ( auto item : m_hash[itemID][materialID] | std::views::values )
 			{
 				if ( item->materialSID() == materialID )
 				{
@@ -1721,7 +1726,7 @@ void Inventory::gravity( Position pos )
 			{
 				return;
 			}
-			auto items = m_positionHash.value( pos.toInt() );
+			auto items = m_positionHash.at( pos.toInt() );
 			for ( auto item : items )
 			{
 				moveItemToPos( item, newPos );
@@ -1781,7 +1786,7 @@ void Inventory::sanityCheck()
 	int removed = 0;
 	for ( auto it : m_hash["Crate"] )
 	{
-		for ( auto crate : it )
+		for ( auto crate : it.second | std::views::values )
 		{
 			auto items = crate->containedItems();
 
@@ -1801,7 +1806,7 @@ void Inventory::sanityCheck()
 	removed = 0;
 	for ( auto it : m_hash["Barrel"] )
 	{
-		for ( auto barrel : it )
+		for ( auto barrel : it.second | std::views::values )
 		{
 			auto items = barrel->containedItems();
 
@@ -1820,7 +1825,7 @@ void Inventory::sanityCheck()
 	removed = 0;
 	for ( auto it : m_hash["Sack"] )
 	{
-		for ( auto sack : it )
+		for ( auto sack : it.second | std::views::values )
 		{
 			auto items = sack->containedItems();
 

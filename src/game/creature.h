@@ -25,6 +25,7 @@
 
 #include <QPointer>
 #include <QPixmap>
+#include <absl/container/flat_hash_map.h>
 
 class QPainter;
 class Game;
@@ -391,8 +392,8 @@ protected:
 
 	bool m_hasTransparency = false;
 
-	QHash<QString, std::function<BT_RESULT( bool )>> m_behaviors;
-	QHash<QString, std::function<bool( void )>> m_taskFunctions;
+	absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>> m_behaviors;
+	absl::flat_hash_map<std::string, std::function<bool( void )>> m_taskFunctions;
 
 	QList<AggroEntry> m_aggroList;
 

@@ -2,7 +2,7 @@
 
 #include <QKeyEvent>
 #include <QObject>
-#include <QHash>
+#include <absl/container/flat_hash_map.h>
 
 enum UserKeyboardAction : unsigned int {
 	NoAction,
@@ -112,6 +112,6 @@ public:
 	QString getStringForCommand( UserKeyboardAction cmd );
 
 private:
-	QHash<QString, UserKeyboardAction>m_stringToCommand;
-	QHash<QString, UserKeyboardAction>m_keyCodeToCmd;
+	absl::flat_hash_map<QString, UserKeyboardAction>m_stringToCommand;
+	absl::flat_hash_map<QString, UserKeyboardAction>m_keyCodeToCmd;
 };

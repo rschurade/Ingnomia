@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QRandomGenerator>
 #include <QVariantMap>
+#include <absl/container/flat_hash_map.h>
 
 class Game;
 
@@ -136,7 +137,7 @@ public:
 	Squad* squad( unsigned int id );
 	Squad* getSquadForGnome( unsigned int gnomeID );
 
-	QHash<unsigned int, MilitaryRole>& roles()
+	absl::flat_hash_map<unsigned int, MilitaryRole>& roles()
 	{
 		return m_roles;
 	}
@@ -161,10 +162,10 @@ private:
 
 	int m_startIndex = 0;
 
-	QHash<unsigned int, MilitaryRole> m_roles;
+	absl::flat_hash_map<unsigned int, MilitaryRole> m_roles;
 	QList<Squad> m_squads;
 
-	QHash<unsigned int, unsigned int> m_gnome2Squad;
+	absl::flat_hash_map<unsigned int, unsigned int> m_gnome2Squad;
 
 	void removeGnomeFromOtherSquad( unsigned int squadID, unsigned int gnomeID );
 

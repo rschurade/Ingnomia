@@ -29,14 +29,16 @@
 #include <QThread>
 #include <QFile>
 
+#include <ranges>
+
 QMutex DB::m_mutex;
 int DB::accessCounter = 0;
 Counter<QString> DB::m_counter;
 QMap<Qt::HANDLE, QSqlDatabase> DB::m_connections;
 
 
-QHash<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
-QHash<QString, QSharedPointer<DBS::Job>> DB::m_jobs;
+absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
+absl::flat_hash_map<QString, QSharedPointer<DBS::Job>> DB::m_jobs;
 
 void DB::init()
 {
@@ -94,7 +96,7 @@ void DB::initStructs()
 			ws->components.append( wsc );
 		}
 		
-		m_workshops.insert( ws->ID, ws );
+		m_workshops.insert_or_assign( ws->ID, ws );
 	}
 
 	m_jobs.clear();
@@ -135,7 +137,7 @@ void DB::initStructs()
 			js.Type = srow.value( "Type" ).toString();
 			job->sprites.append( js );
 		}
-		m_jobs.insert( job->ID, job );
+		m_jobs.insert_or_assign( job->ID, job );
 	}
 }
 
@@ -686,7 +688,7 @@ QSharedPointer<DBS::Workshop> DB::workshop( QString id )
 {
 	if( DB::m_workshops.contains( id ) )
 	{
-		return DB::m_workshops.value( id );
+		return DB::m_workshops.at( id );
 	}
 	return nullptr;
 }
@@ -695,12 +697,16 @@ QSharedPointer<DBS::Job> DB::job( QString id )
 {
 	if( DB::m_jobs.contains( id ) )
 	{
-		return DB::m_jobs.value( id );
+		return DB::m_jobs.at( id );
 	}
 	return nullptr;
 }
 
-QList<QString> DB::jobIds()
+std::vector<QString> DB::jobIds()
 {
-	return DB::m_jobs.keys();
+	std::vector<QString> keys;
+	for ( const auto& key : DB::m_jobs | std::views::keys ) {
+		keys.push_back(key);
+	}
+	return keys;
 }

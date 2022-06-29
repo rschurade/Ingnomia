@@ -77,7 +77,7 @@ private:
 	QList<Animal*> m_animals;
 	QList<Monster*> m_monsters;
 
-	QHash<unsigned int, Creature*> m_creaturesByID;
+	absl::flat_hash_map<unsigned int, Creature*> m_creaturesByID;
 
 	QMap<QString, unsigned int> m_countPerType;
 	QMap<QString, QList<unsigned int>> m_creaturesPerType;

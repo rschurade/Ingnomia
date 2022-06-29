@@ -180,12 +180,12 @@ void GnomeTrader::initTaskMapTrader()
 {
 	using namespace std::placeholders;
 
-	m_behaviors.insert( "IsTimeToLeave", std::bind( &GnomeTrader::conditionIsTimeToLeave, this, _1 ) );
+	m_behaviors.insert_or_assign( "IsTimeToLeave", std::bind( &GnomeTrader::conditionIsTimeToLeave, this, _1 ) );
 
-	m_behaviors.insert( "GetExitPosition", std::bind( &GnomeTrader::actionGetExitPosition, this, _1 ) );
-	m_behaviors.insert( "LeaveMap", std::bind( &GnomeTrader::actionLeaveMap, this, _1 ) );
-	m_behaviors.insert( "GetMarketStallPosition", std::bind( &GnomeTrader::actionGetMarketStallPosition, this, _1 ) );
-	m_behaviors.insert( "Trade", std::bind( &GnomeTrader::actionTrade, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetExitPosition", std::bind( &GnomeTrader::actionGetExitPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "LeaveMap", std::bind( &GnomeTrader::actionLeaveMap, this, _1 ) );
+	m_behaviors.insert_or_assign( "GetMarketStallPosition", std::bind( &GnomeTrader::actionGetMarketStallPosition, this, _1 ) );
+	m_behaviors.insert_or_assign( "Trade", std::bind( &GnomeTrader::actionTrade, this, _1 ) );
 }
 
 BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )

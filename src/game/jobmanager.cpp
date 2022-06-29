@@ -37,6 +37,8 @@
 #include <QElapsedTimer>
 #include <QVariantMap>
 
+#include <ranges>
+
 JobManager::JobManager( Game* parent ) :
 	m_startIndex( 0 ),
 	g( parent ),
@@ -44,55 +46,55 @@ JobManager::JobManager( Game* parent ) :
 {
 	for ( auto job : DB::jobIds() )
 	{
-		m_jobsPerType.insert( job, QMultiHash<int, unsigned int>() );
+		m_jobsPerType.insert_or_assign( job, QMultiHash<int, unsigned int>() );
 	}
 
-	m_skillToInt.insert( "Mining", SK_Mining );
-	m_skillToInt.insert( "Masonry", SK_Masonry );
-	m_skillToInt.insert( "Stonecarving", SK_Stonecarving );
-	m_skillToInt.insert( "Woodcutting", SK_Woodcutting );
-	m_skillToInt.insert( "Carpentry", SK_Carpentry );
-	m_skillToInt.insert( "Woodcarving", SK_Woodcarving );
-	m_skillToInt.insert( "Smelting", SK_Smelting );
-	m_skillToInt.insert( "Blacksmithing", SK_Blacksmithing );
-	m_skillToInt.insert( "Metalworking", SK_Metalworking );
-	m_skillToInt.insert( "WeaponCrafting", SK_WeaponCrafting );
-	m_skillToInt.insert( "ArmorCrafting", SK_ArmorCrafting );
-	m_skillToInt.insert( "Gemcutting", SK_Gemcutting );
-	m_skillToInt.insert( "JewelryMaking", SK_JewelryMaking );
-	m_skillToInt.insert( "Weaving", SK_Weaving );
-	m_skillToInt.insert( "Tailoring", SK_Tailoring );
-	m_skillToInt.insert( "Dyeing", SK_Dyeing );
-	m_skillToInt.insert( "Pottery", SK_Pottery );
-	m_skillToInt.insert( "Leatherworking", SK_Leatherworking );
-	m_skillToInt.insert( "Bonecarving", SK_Bonecarving );
-	m_skillToInt.insert( "Prospecting", SK_Prospecting );
-	m_skillToInt.insert( "Tinkering", SK_Tinkering );
-	m_skillToInt.insert( "Machining", SK_Machining );
-	m_skillToInt.insert( "Engineering", SK_Engineering );
-	m_skillToInt.insert( "Mechanic", SK_Mechanic );
-	m_skillToInt.insert( "AnimalHusbandry", SK_AnimalHusbandry );
-	m_skillToInt.insert( "Butchery", SK_Butchery );
-	m_skillToInt.insert( "Fishing", SK_Fishing );
-	m_skillToInt.insert( "Horticulture", SK_Horticulture );
-	m_skillToInt.insert( "Farming", SK_Farming );
-	m_skillToInt.insert( "Cooking", SK_Cooking );
-	m_skillToInt.insert( "Brewing", SK_Brewing );
-	m_skillToInt.insert( "Construction", SK_Construction );
-	m_skillToInt.insert( "Hauling", SK_Hauling );
-	m_skillToInt.insert( "Unarmed", SK_Unarmed );
-	m_skillToInt.insert( "Melee", SK_Melee );
-	m_skillToInt.insert( "Ranged", SK_Ranged );
-	m_skillToInt.insert( "Thrown", SK_Thrown );
-	m_skillToInt.insert( "Dodge", SK_Dodge );
-	m_skillToInt.insert( "Block", SK_Block );
-	m_skillToInt.insert( "Armor", SK_Armor );
-	m_skillToInt.insert( "Crossbow", SK_Crossbow );
-	m_skillToInt.insert( "Gun", SK_Gun );
-	m_skillToInt.insert( "Medic", SK_Medic );
-	m_skillToInt.insert( "Caretaking", SK_Caretaking );
-	m_skillToInt.insert( "MagicNature", SK_MagicNature );
-	m_skillToInt.insert( "MagicGeomancy", SK_MagicGeomancy );
+	m_skillToInt.insert_or_assign( "Mining", SK_Mining );
+	m_skillToInt.insert_or_assign( "Masonry", SK_Masonry );
+	m_skillToInt.insert_or_assign( "Stonecarving", SK_Stonecarving );
+	m_skillToInt.insert_or_assign( "Woodcutting", SK_Woodcutting );
+	m_skillToInt.insert_or_assign( "Carpentry", SK_Carpentry );
+	m_skillToInt.insert_or_assign( "Woodcarving", SK_Woodcarving );
+	m_skillToInt.insert_or_assign( "Smelting", SK_Smelting );
+	m_skillToInt.insert_or_assign( "Blacksmithing", SK_Blacksmithing );
+	m_skillToInt.insert_or_assign( "Metalworking", SK_Metalworking );
+	m_skillToInt.insert_or_assign( "WeaponCrafting", SK_WeaponCrafting );
+	m_skillToInt.insert_or_assign( "ArmorCrafting", SK_ArmorCrafting );
+	m_skillToInt.insert_or_assign( "Gemcutting", SK_Gemcutting );
+	m_skillToInt.insert_or_assign( "JewelryMaking", SK_JewelryMaking );
+	m_skillToInt.insert_or_assign( "Weaving", SK_Weaving );
+	m_skillToInt.insert_or_assign( "Tailoring", SK_Tailoring );
+	m_skillToInt.insert_or_assign( "Dyeing", SK_Dyeing );
+	m_skillToInt.insert_or_assign( "Pottery", SK_Pottery );
+	m_skillToInt.insert_or_assign( "Leatherworking", SK_Leatherworking );
+	m_skillToInt.insert_or_assign( "Bonecarving", SK_Bonecarving );
+	m_skillToInt.insert_or_assign( "Prospecting", SK_Prospecting );
+	m_skillToInt.insert_or_assign( "Tinkering", SK_Tinkering );
+	m_skillToInt.insert_or_assign( "Machining", SK_Machining );
+	m_skillToInt.insert_or_assign( "Engineering", SK_Engineering );
+	m_skillToInt.insert_or_assign( "Mechanic", SK_Mechanic );
+	m_skillToInt.insert_or_assign( "AnimalHusbandry", SK_AnimalHusbandry );
+	m_skillToInt.insert_or_assign( "Butchery", SK_Butchery );
+	m_skillToInt.insert_or_assign( "Fishing", SK_Fishing );
+	m_skillToInt.insert_or_assign( "Horticulture", SK_Horticulture );
+	m_skillToInt.insert_or_assign( "Farming", SK_Farming );
+	m_skillToInt.insert_or_assign( "Cooking", SK_Cooking );
+	m_skillToInt.insert_or_assign( "Brewing", SK_Brewing );
+	m_skillToInt.insert_or_assign( "Construction", SK_Construction );
+	m_skillToInt.insert_or_assign( "Hauling", SK_Hauling );
+	m_skillToInt.insert_or_assign( "Unarmed", SK_Unarmed );
+	m_skillToInt.insert_or_assign( "Melee", SK_Melee );
+	m_skillToInt.insert_or_assign( "Ranged", SK_Ranged );
+	m_skillToInt.insert_or_assign( "Thrown", SK_Thrown );
+	m_skillToInt.insert_or_assign( "Dodge", SK_Dodge );
+	m_skillToInt.insert_or_assign( "Block", SK_Block );
+	m_skillToInt.insert_or_assign( "Armor", SK_Armor );
+	m_skillToInt.insert_or_assign( "Crossbow", SK_Crossbow );
+	m_skillToInt.insert_or_assign( "Gun", SK_Gun );
+	m_skillToInt.insert_or_assign( "Medic", SK_Medic );
+	m_skillToInt.insert_or_assign( "Caretaking", SK_Caretaking );
+	m_skillToInt.insert_or_assign( "MagicNature", SK_MagicNature );
+	m_skillToInt.insert_or_assign( "MagicGeomancy", SK_MagicGeomancy );
 
 	for ( auto skillID : DB::ids( "Skills" ) )
 	{
@@ -105,7 +107,7 @@ JobManager::JobManager( Game* parent ) :
 				jobs.append( jobID );
 			}
 		}
-		m_jobIDs.insert( skillID, jobs );
+		m_jobIDs.insert_or_assign( skillID, jobs );
 	}
 
 	auto skillList = DB::execQuery2( "SELECT DISTINCT \"SkillID\" FROM Crafts" );
@@ -135,7 +137,7 @@ void JobManager::onTick()
 	{
 		jobID = m_returnedJobQueue.dequeue();
 		--queueSize;
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 
 		if( job )
 		{
@@ -170,7 +172,7 @@ void JobManager::onTick()
 // information without querying the game state
 bool JobManager::requiredItemsAvail( unsigned int jobID )
 {
-	QSharedPointer<Job> job       = m_jobList.value( jobID );
+	QSharedPointer<Job> job       = m_jobList.at( jobID );
 	bool found_all = true;
 	for ( auto rim : job->requiredItems() )
 	{
@@ -204,7 +206,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList.value( jobID );
+		QSharedPointer<Job> job     = m_jobList.at( jobID );
 		Position pos = job->pos();
 
 		job->clearPossibleWorkPositions();
@@ -226,7 +228,7 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 
 bool JobManager::requiredToolExists( unsigned int jobID )
 {
-	QSharedPointer<Job> job = m_jobList.value( jobID );
+	QSharedPointer<Job> job = m_jobList.at( jobID );
 	auto rt  = job->requiredTool();
 
 	// need to figure out how to check rt 'inuse' & 'reachable'
@@ -264,14 +266,14 @@ bool JobManager::insertIntoPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( m_jobPositions.contains( job->pos() ) )
 		{
 			return false;
 		}
 		else
 		{
-			m_jobPositions.insert( job->pos(), job->id() );
+			m_jobPositions.insert_or_assign( job->pos(), job->id() );
 		}
 	}
 	return true;
@@ -281,10 +283,10 @@ void JobManager::removeFromPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( m_jobPositions.contains( job->pos() ) )
 		{
-			m_jobPositions.remove( job->pos() );
+			m_jobPositions.erase( job->pos() );
 		}
 	}
 }
@@ -293,7 +295,7 @@ void JobManager::addLoadedJob( QVariant vals )
 {
 	QSharedPointer<Job> job( new Job( vals.toMap() ) );
 
-	m_jobList.insert( job->id(), job );
+	m_jobList.insert_or_assign( job->id(), job );
 
 	if ( !insertIntoPositionHash( job->id() ) )
 	{
@@ -334,7 +336,7 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
 	}
 
-	m_jobList.insert( job->id(), job );
+	m_jobList.insert_or_assign( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
 
@@ -435,7 +437,7 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 		job->setComponentMissing( true );
 	}
 
-	m_jobList.insert( job->id(), job );
+	m_jobList.insert_or_assign( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
 
@@ -450,7 +452,7 @@ void JobManager::setJobAvailable( unsigned int jobID )
 	setJobSprites( jobID, false, false );
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 		job->setIsWorked( false );
 	}
 }
@@ -459,7 +461,7 @@ void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 
 		if ( !job->noJobSprite() )
 		{
@@ -477,27 +479,32 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 	for ( auto skillID : skills )
 	{
 		unsigned int jobID = 0;
+		const auto& strKey = skillID.toStdString();
 
-		int skillInt = m_skillToInt.value( skillID );
-
-		switch ( skillInt )
+		const auto& skillToIntIt = m_skillToInt.find( skillID );
+		if (skillToIntIt != m_skillToInt.end())
 		{
-			case SK_Hauling:
+			int skillInt = skillToIntIt->second;
+
+			switch ( skillInt )
 			{
-				jobID = g->spm()->getJob();
+				case SK_Hauling:
 				{
-					if ( jobID )
+					jobID = g->spm()->getJob();
 					{
-						return jobID;
+						if ( jobID )
+						{
+							return jobID;
+						}
 					}
 				}
+				break;
 			}
-			break;
 		}
 		QElapsedTimer et;
 		et.start();
 
-		auto possibleJobIDs = m_jobIDs.value( skillID );
+		auto possibleJobIDs = m_jobIDs.at( skillID );
 		if( m_workshopSkills.contains( skillID ) )
 		{
 			possibleJobIDs.push_front( "CraftAtWorkshop" );
@@ -535,7 +542,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								}
 								else
 								{
-									for ( auto& type : m_jobsPerType )
+									for ( auto& type : m_jobsPerType | std::views::values )
 									{
 										type.remove( prio, job->id() );
 									}
@@ -571,7 +578,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 									}
 									else
 									{
-										for ( auto& type : m_jobsPerType )
+										for ( auto& type : m_jobsPerType | std::views::values )
 										{
 											type.remove( prio, job->id() );
 										}
@@ -598,7 +605,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								}
 								else
 								{
-									for ( auto& type : m_jobsPerType )
+									for ( auto& type : m_jobsPerType | std::views::values )
 									{
 										type.remove( prio, job->id() );
 									}
@@ -618,7 +625,7 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		return m_jobList.value( jobID );
+		return m_jobList.at( jobID );
 	}
 	if ( g->spm()->hasJobID( jobID ) )
 	{
@@ -631,8 +638,8 @@ QSharedPointer<Job> JobManager::getJobAtPos( Position pos )
 {
 	if ( m_jobPositions.contains( pos ) )
 	{
-		unsigned jobID = m_jobPositions.value( pos );
-		return m_jobList.value( jobID );
+		unsigned jobID = m_jobPositions.at( pos );
+		return m_jobList.at( jobID );
 	}
 
 	return nullptr;
@@ -642,7 +649,7 @@ bool JobManager::isEnclosedBySameType( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList.value( jobID );
+		QSharedPointer<Job> job     = m_jobList.at( jobID );
 		Position pos = job->pos();
 		QString type = job->type();
 		if ( m_jobPositions.contains( pos.northOf() ) )
@@ -678,7 +685,7 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList.value( jobID );
+		QSharedPointer<Job> job     = m_jobList.at( jobID );
 		Position pos = job->pos();
 		job->clearPossibleWorkPositions();
 		// jobs on same tile
@@ -713,7 +720,7 @@ void JobManager::finishJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 
 		QString type = job->type();
 		setJobSprites( jobID, false, true );
@@ -732,7 +739,7 @@ void JobManager::finishJob( unsigned int jobID )
 		{
 			if ( m_jobPositions.contains( p ) )
 			{
-				unsigned int j = m_jobPositions.value( p );
+				unsigned int j = m_jobPositions.at( p );
 
 				if ( isReachable( j, 0 ) && !m_jobList[j]->componentMissing() )
 				{
@@ -743,11 +750,11 @@ void JobManager::finishJob( unsigned int jobID )
 
 		removeFromPositionHash( jobID );
 
-		for ( auto& mtype : m_jobsPerType )
+		for ( auto& mtype : m_jobsPerType | std::views::values )
 		{
 			mtype.remove( job->priority(), jobID );
 		}
-		m_jobList.remove( jobID );
+		m_jobList.erase( jobID );
 	}
 
 	if ( g->spm()->finishJob( jobID ) )
@@ -761,7 +768,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job     = m_jobList.value( jobID );
+		QSharedPointer<Job> job     = m_jobList.at( jobID );
 		if( !job || job->noJobSprite() )
 		{
 			return;
@@ -941,7 +948,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 
 		if ( job->isCanceled() || job->destroyOnAbort() )
 		{
@@ -966,7 +973,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 		job->clearPossibleWorkPositions();
 		job->setComponentMissing( true );
 
-		for ( auto& type : m_jobsPerType )
+		for ( auto& type : m_jobsPerType | std::views::values )
 		{
 			type.remove( job->priority(), jobID );
 		}
@@ -987,7 +994,7 @@ void JobManager::cancelJob( const Position& pos )
 	unsigned int jobID = 0;
 	if ( m_jobPositions.contains( pos ) )
 	{
-		jobID = m_jobPositions.value( pos );
+		jobID = m_jobPositions.at( pos );
 	}
 	else
 	{
@@ -996,13 +1003,13 @@ void JobManager::cancelJob( const Position& pos )
 
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
 	{
-		if ( m_jobList.value( jobID )->isWorked() )
+		if ( m_jobList.at( jobID )->isWorked() )
 		{
-			m_jobList.value( jobID )->setCanceled();
+			m_jobList.at( jobID )->setCanceled();
 		}
 		else
 		{
-			QSharedPointer<Job> job = m_jobList.value( jobID );
+			QSharedPointer<Job> job = m_jobList.at( jobID );
 
 			if ( job->type() == "SoundAlarm" )
 			{
@@ -1013,11 +1020,11 @@ void JobManager::cancelJob( const Position& pos )
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
-			for ( auto& type : m_jobsPerType )
+			for ( auto& type : m_jobsPerType | std::views::values )
 			{
 				type.remove( job->priority(), jobID );
 			}
-			m_jobList.remove( jobID );
+			m_jobList.erase( jobID );
 		}
 	}
 }
@@ -1026,13 +1033,13 @@ void JobManager::deleteJob( unsigned int jobID )
 {
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
 	{
-		if ( m_jobList.value( jobID )->isWorked() )
+		if ( m_jobList.at( jobID )->isWorked() )
 		{
-			m_jobList.value( jobID )->setCanceled();
+			m_jobList.at( jobID )->setCanceled();
 		}
 		else
 		{
-			QSharedPointer<Job> job = m_jobList.value( jobID );
+			QSharedPointer<Job> job = m_jobList.at( jobID );
 
 			if ( job->type() == "SoundAlarm" )
 			{
@@ -1043,11 +1050,11 @@ void JobManager::deleteJob( unsigned int jobID )
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
-			for ( auto& type : m_jobsPerType )
+			for ( auto& type : m_jobsPerType | std::views::values )
 			{
 				type.remove( job->priority(), jobID );
 			}
-			m_jobList.remove( jobID );
+			m_jobList.erase( jobID );
 		}
 	}
 }
@@ -1057,7 +1064,7 @@ void JobManager::deleteJobAt( const Position& pos )
 	unsigned int jobID = 0;
 	if ( m_jobPositions.contains( pos ) )
 	{
-		jobID = m_jobPositions.value( pos );
+		jobID = m_jobPositions.at( pos );
 	}
 	else
 	{
@@ -1083,7 +1090,7 @@ void JobManager::raisePrio( Position& pos )
 	unsigned int jobID = 0;
 	if ( m_jobPositions.contains( pos ) )
 	{
-		jobID = m_jobPositions.value( pos );
+		jobID = m_jobPositions.at( pos );
 	}
 	else
 	{
@@ -1092,7 +1099,7 @@ void JobManager::raisePrio( Position& pos )
 
 	if ( jobID != 0 )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( job->priority() < 9 )
 		{
 			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )
@@ -1111,7 +1118,7 @@ void JobManager::lowerPrio( Position& pos )
 	unsigned int jobID = 0;
 	if ( m_jobPositions.contains( pos ) )
 	{
-		jobID = m_jobPositions.value( pos );
+		jobID = m_jobPositions.at( pos );
 	}
 	else
 	{
@@ -1120,7 +1127,7 @@ void JobManager::lowerPrio( Position& pos )
 
 	if ( jobID != 0 )
 	{
-		QSharedPointer<Job> job = m_jobList.value( jobID );
+		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( job->priority() > 0 )
 		{
 			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )

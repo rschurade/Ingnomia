@@ -90,7 +90,7 @@ public:
 
 	void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep );
 
-	QHash<QString, Sprite*> m_sprites;
+	absl::flat_hash_map<QString, Sprite*> m_sprites;
 };
 
 class SpriteRotations : public Sprite

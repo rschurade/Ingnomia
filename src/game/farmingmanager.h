@@ -22,7 +22,8 @@
 #include "grove.h"
 #include "pasture.h"
 
-#include <QHash>
+#include <unordered_map>
+#include <absl/container/flat_hash_map.h>
 
 class Game;
 class Inventory;
@@ -85,10 +86,10 @@ public:
 	int countPastures();
 	void setPasturePriority( unsigned int id, int prio );
 
-	const QHash<unsigned int, Grove*>& allGroves();
-	const QHash<unsigned int, Farm*>& allFarms();
-	const QHash<unsigned int, Pasture*>& allPastures();
-	const QHash<unsigned int, Beehive*>& allBeeHives();
+	const absl::flat_hash_map<unsigned int, Grove*>& allGroves();
+	const absl::flat_hash_map<unsigned int, Farm*>& allFarms();
+	const absl::flat_hash_map<unsigned int, Pasture*>& allPastures();
+	const absl::flat_hash_map<unsigned int, Beehive*>& allBeeHives();
 
 	void removeTile( Position pos, bool includeFarm, bool includePasture, bool includeGrove );
 
@@ -119,17 +120,17 @@ private:
 	void onTickPasture( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 	void onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
-	QHash<unsigned int, Grove*> m_groves;
-	QHash<Position, unsigned int> m_allGroveTiles;
+	absl::flat_hash_map<unsigned int, Grove*> m_groves;
+	std::unordered_map<Position, unsigned int> m_allGroveTiles;
 
-	QHash<unsigned int, Farm*> m_farms;
-	QHash<Position, unsigned int> m_allFarmTiles;
+	absl::flat_hash_map<unsigned int, Farm*> m_farms;
+	std::unordered_map<Position, unsigned int> m_allFarmTiles;
 
-	QHash<unsigned int, Pasture*> m_pastures;
-	QHash<Position, unsigned int> m_allPastureTiles;
+	absl::flat_hash_map<unsigned int, Pasture*> m_pastures;
+	absl::flat_hash_map<Position, unsigned int> m_allPastureTiles;
 
-	QHash<unsigned int, Beehive*> m_beehives;
-	QHash<Position, unsigned int> m_allBeehiveTiles;
+	absl::flat_hash_map<unsigned int, Beehive*> m_beehives;
+	absl::flat_hash_map<Position, unsigned int> m_allBeehiveTiles;
 
 	int m_totalCountAnimals = 0;
 

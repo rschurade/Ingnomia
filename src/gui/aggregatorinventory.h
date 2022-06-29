@@ -22,9 +22,9 @@
 #include <QPointer>
 #include <QObject>
 #include <QList>
-#include <QHash>
 #include <QMap>
 #include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_map.h>
 
 class Game;
 
@@ -161,8 +161,8 @@ private:
     void setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection );
     void setAvailableMats( GuiBuildRequiredItem& gbri );
     
-    QHash<QString, QString> m_itemToGroupCache;
-    QHash<QString, QString> m_itemToCategoryCache;
+    absl::flat_hash_map<QString, QString> m_itemToGroupCache;
+    absl::flat_hash_map<QString, QString> m_itemToCategoryCache;
 
     void updateWatchedItem( QString cat );
     void updateWatchedItem( QString cat, QString group );

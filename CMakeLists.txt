@@ -102,6 +102,7 @@ target_link_libraries(${PROJECT_NAME}
 		exprtk
 		OpenAL
 		absl::hash
+		absl::flat_hash_map
 )
 
 # Noesis license

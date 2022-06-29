@@ -40,6 +40,8 @@
 #include <QDebug>
 #include <QJsonDocument>
 
+#include <ranges>
+
 WorkshopProperties::WorkshopProperties( QVariantMap& in )
 {
 	type     = in.value( "Type" ).toString();
@@ -814,7 +816,7 @@ bool Workshop::createJobFromCraftJob( CraftJob& cj )
 
 QSharedPointer<Job> Workshop::createButcherJob()
 {
-	for ( auto& pasture : g->fm()->allPastures() )
+	for ( auto& pasture : g->fm()->allPastures() | std::views::values )
 	{
 		if ( g->pf()->checkConnectedRegions( pasture->firstPos(), m_properties.pos ) )
 		{

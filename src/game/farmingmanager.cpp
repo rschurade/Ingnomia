@@ -28,6 +28,8 @@
 #include <QDebug>
 #include <QVariantMap>
 
+#include <ranges>
+
 void Beehive::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "beehive" );
@@ -61,22 +63,22 @@ FarmingManager::FarmingManager( Game* parent ) :
 
 FarmingManager::~FarmingManager()
 {
-	for (const auto& pa : m_pastures)
+	for (const auto& pa : m_pastures | std::views::values)
 	{
 		delete pa;
 	}
 	m_pastures.clear();
-	for (const auto& fa : m_farms)
+	for (const auto& fa : m_farms | std::views::values)
 	{
 		delete fa;
 	}
 	m_farms.clear();
-	for (const auto& gr : m_groves)
+	for (const auto& gr : m_groves | std::views::values)
 	{
 		delete gr;
 	}
 	m_groves.clear();
-	for ( const auto& bh : m_beehives )
+	for (const auto& bh : m_beehives | std::views::values)
 	{
 		delete bh;
 	}
@@ -89,22 +91,22 @@ bool FarmingManager::load( QVariantMap vm )
 	if ( type == "farm" )
 	{
 		auto fa = new Farm( vm, g );
-		m_farms.insert( fa->id(), fa );
+		m_farms.insert_or_assign( fa->id(), fa );
 		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
-			m_allFarmTiles.insert( Position( fm.value( "Pos" ).toString() ), fa->id() );
+			m_allFarmTiles.insert_or_assign( Position( fm.value( "Pos" ).toString() ), fa->id() );
 		}
 		return true;
 	}
 	if ( type == "grove" )
 	{
 		auto gr = new Grove( vm, g );
-		m_groves.insert( gr->id(), gr );
+		m_groves.insert_or_assign( gr->id(), gr );
 		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
-			m_allGroveTiles.insert( Position( fm.value( "Pos" ).toString() ), gr->id() );
+			m_allGroveTiles.insert_or_assign( Position( fm.value( "Pos" ).toString() ), gr->id() );
 		}
 
 		return true;
@@ -112,11 +114,11 @@ bool FarmingManager::load( QVariantMap vm )
 	if ( type == "pasture" )
 	{
 		auto pa = new Pasture( vm, g );
-		m_pastures.insert( pa->id(), pa );
+		m_pastures.insert_or_assign( pa->id(), pa );
 		for ( const auto& f : vm.value( "Fields" ).toList() )
 		{
 			QVariantMap fm = f.toMap();
-			m_allPastureTiles.insert( Position( fm.value( "Pos" ).toString() ), pa->id() );
+			m_allPastureTiles.insert_or_assign( Position( fm.value( "Pos" ).toString() ), pa->id() );
 		}
 		return true;
 	}
@@ -124,8 +126,8 @@ bool FarmingManager::load( QVariantMap vm )
 	if ( type == "beehive" )
 	{
 		auto bh = new Beehive( vm );
-		m_beehives.insert( bh->id, bh );
-		m_allBeehiveTiles.insert( bh->pos, bh->id );
+		m_beehives.insert_or_assign( bh->id, bh );
+		m_allBeehiveTiles.insert_or_assign( bh->pos, bh->id );
 		return true;
 	}
 
@@ -145,7 +147,7 @@ void FarmingManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCha
 
 void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
-	for ( auto& bh : m_beehives )
+	for ( auto& bh : m_beehives | std::views::values )
 	{
 		bh->honey += (float)( 1.0 / 200. );
 
@@ -158,7 +160,7 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 
 void FarmingManager::onTickGrove( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
-	for ( auto&& gr : m_groves )
+	for ( auto&& gr : m_groves | std::views::values )
 	{
 		gr->onTick( tickNumber );
 	}
@@ -168,7 +170,7 @@ void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool da
 {
 	if ( hourChanged )
 	{
-		for ( auto&& fa : m_farms )
+		for ( auto&& fa : m_farms | std::views::values )
 		{
 			if ( fa->countTiles() == 0 && fa->canDelete() )
 			{
@@ -178,7 +180,7 @@ void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool da
 		}
 	}
 
-	for ( auto& fa : m_farms )
+	for ( auto& fa : m_farms | std::views::values )
 	{
 		fa->onTick( tickNumber );
 	}
@@ -188,7 +190,7 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 {
 	if ( hourChanged )
 	{
-		for ( auto& pa : m_pastures )
+		for ( auto& pa : m_pastures | std::views::values )
 		{
 			if ( pa->countTiles() == 0 && pa->canDelete() )
 			{
@@ -202,7 +204,7 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 	{
 		m_totalCountAnimals = 0;
 		int count = 0;
-		for ( auto& pa : m_pastures )
+		for ( auto& pa : m_pastures | std::views::values )
 		{
 			pa->onTick( tickNumber, count );
 			m_totalCountAnimals += count;
@@ -214,7 +216,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 {
 	if ( m_allGroveTiles.contains( firstClick ) )
 	{
-		unsigned int grID = m_allGroveTiles.value( firstClick );
+		unsigned int grID = m_allGroveTiles.at( firstClick );
 
 		Grove* gr = getGroveAtPos( firstClick );
 		if ( gr )
@@ -223,7 +225,7 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 			{
 				if ( p.second && !m_allGroveTiles.contains( p.first ) )
 				{
-					m_allGroveTiles.insert( p.first, grID );
+					m_allGroveTiles.insert_or_assign( p.first, grID );
 					gr->addTile( p.first );
 				}
 			}
@@ -236,11 +238,11 @@ void FarmingManager::addGrove( Position firstClick, QList<QPair<Position, bool>>
 		{
 			if ( p.second && !m_allGroveTiles.contains(p.first) )
 			{
-				m_allGroveTiles.insert( p.first, gr->id() );
+				m_allGroveTiles.insert_or_assign( p.first, gr->id() );
 				gr->addTile( p.first );
 			}
 		}
-		m_groves.insert( gr->id(), gr );
+		m_groves.insert_or_assign( gr->id(), gr );
 	}
 }
 
@@ -251,9 +253,9 @@ void FarmingManager::removeGrove( unsigned int id )
 	{
 		for ( auto field = m_allGroveTiles.begin(); field != m_allGroveTiles.end(); )
 		{
-			if ( field.value() == id )
+			if ( field->second == id )
 			{
-				it.value()->removeTile( field.key() );
+				it->second->removeTile( field->first );
 				field = m_allGroveTiles.erase( field );
 			}
 			else
@@ -261,7 +263,7 @@ void FarmingManager::removeGrove( unsigned int id )
 				++field;
 			}
 		}
-		delete it.value();
+		delete it->second;
 		m_groves.erase( it );
 	}
 }
@@ -271,7 +273,7 @@ Grove* FarmingManager::getGroveAtPos( Position pos )
 	auto it = m_allGroveTiles.find( pos );
 	if (it != m_allGroveTiles.end())
 	{
-		return getGrove( it.value() );
+		return getGrove( it->second );
 	}
 	return nullptr;
 }
@@ -281,7 +283,7 @@ Grove* FarmingManager::getGrove( unsigned int id )
 	auto it = m_groves.find( id );
 	if (it != m_groves.end())
 	{
-		return it.value();
+		return it->second;
 	}
 	return nullptr;
 }
@@ -295,7 +297,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 {
 	if ( m_allFarmTiles.contains( firstClick) )
 	{
-		unsigned int faID = m_allFarmTiles.value( firstClick );
+		unsigned int faID = m_allFarmTiles.at( firstClick );
 
 		Farm* fa = getFarmAtPos( firstClick );
 		if ( fa )
@@ -304,7 +306,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 			{
 				if ( p.second && !m_allFarmTiles.contains( p.first ) )
 				{
-					m_allFarmTiles.insert( p.first, faID );
+					m_allFarmTiles.insert_or_assign( p.first, faID );
 					fa->addTile( p.first );
 				}
 			}
@@ -318,11 +320,11 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 		{
 			if ( p.second && !m_allFarmTiles.contains( p.first ) )
 			{
-				m_allFarmTiles.insert( p.first, fa->id() );
+				m_allFarmTiles.insert_or_assign( p.first, fa->id() );
 				fa->addTile( p.first );
 			}
 		}
-		m_farms.insert( fa->id(), fa );
+		m_farms.insert_or_assign( fa->id(), fa );
 		emit signalFarmChanged( fa->id() );
 	}
 }
@@ -334,9 +336,9 @@ void FarmingManager::removeFarm( unsigned int id )
 	{
 		for ( auto field = m_allFarmTiles.begin(); field != m_allFarmTiles.end(); )
 		{
-			if ( field.value() == id )
+			if ( field->second == id )
 			{
-				it.value()->removeTile( field.key() );
+				it->second->removeTile( field->first );
 				field = m_allFarmTiles.erase( field );
 			}
 			else
@@ -344,7 +346,7 @@ void FarmingManager::removeFarm( unsigned int id )
 				++field;
 			}
 		}
-		delete it.value();
+		delete it->second;
 		m_farms.erase( it );
 	}
 }
@@ -354,7 +356,7 @@ Farm* FarmingManager::getFarmAtPos( Position pos )
 	auto it = m_allFarmTiles.find( pos );
 	if ( it != m_allFarmTiles.end() )
 	{
-		return getFarm( it.value() );
+		return getFarm( it->second );
 	}
 	return nullptr;
 }
@@ -364,7 +366,7 @@ Farm* FarmingManager::getFarm( unsigned int id )
 	auto it = m_farms.find( id );
 	if ( it != m_farms.end() )
 	{
-		return it.value();
+		return it->second;
 	}
 	return nullptr;
 }
@@ -378,7 +380,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 {
 	if ( m_allPastureTiles.contains( firstClick ) )
 	{
-		unsigned int paID = m_allPastureTiles.value( firstClick );
+		unsigned int paID = m_allPastureTiles.at( firstClick );
 
 		Pasture* pa = getPastureAtPos( firstClick );
 		if ( pa )
@@ -387,7 +389,7 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 			{
 				if ( p.second && !m_allPastureTiles.contains( p.first ) )
 				{
-					m_allPastureTiles.insert( p.first, paID );
+					m_allPastureTiles.insert_or_assign( p.first, paID );
 					pa->addTile( p.first );
 				}
 			}
@@ -400,11 +402,11 @@ void FarmingManager::addPasture( Position firstClick, QList<QPair<Position, bool
 		{
 			if ( p.second && !m_allPastureTiles.contains( p.first ) )
 			{
-				m_allPastureTiles.insert( p.first, pa->id() );
+				m_allPastureTiles.insert_or_assign( p.first, pa->id() );
 				pa->addTile( p.first );
 			}
 		}
-		m_pastures.insert( pa->id(), pa );
+		m_pastures.insert_or_assign( pa->id(), pa );
 	}
 }
 
@@ -415,9 +417,9 @@ void FarmingManager::removePasture( unsigned int id )
 	{
 		for ( auto field = m_allFarmTiles.begin(); field != m_allFarmTiles.end(); )
 		{
-			if ( field.value() == id )
+			if ( field->second == id )
 			{
-				it.value()->removeTile( field.key() );
+				it->second->removeTile( field->first );
 				field = m_allFarmTiles.erase( field );
 			}
 			else
@@ -425,8 +427,8 @@ void FarmingManager::removePasture( unsigned int id )
 				++field;
 			}
 		}
-		it.value()->removeAllAnimals();
-		delete it.value();
+		it->second->removeAllAnimals();
+		delete it->second;
 		m_pastures.erase( it );
 	}
 }
@@ -436,7 +438,7 @@ Pasture* FarmingManager::getPastureAtPos( Position pos )
 	auto it = m_allPastureTiles.find( pos );
 	if ( it != m_allPastureTiles.end() )
 	{
-		return getPasture( it.value() );
+		return getPasture( it->second );
 	}
 	return nullptr;
 }
@@ -446,7 +448,7 @@ Pasture* FarmingManager::getPasture( unsigned int id )
 	auto it = m_pastures.find( id );
 	if ( it != m_pastures.end() )
 	{
-		return it.value();
+		return it->second;
 	}
 	return nullptr;
 }
@@ -456,22 +458,22 @@ bool FarmingManager::isPasture( Position pos ) const
 	return m_allPastureTiles.contains( pos );
 }
 
-const QHash<unsigned int, Grove*>& FarmingManager::allGroves()
+const absl::flat_hash_map<unsigned int, Grove*>& FarmingManager::allGroves()
 {
 	return m_groves;
 }
 
-const QHash<unsigned int, Farm*>& FarmingManager::allFarms()
+const absl::flat_hash_map<unsigned int, Farm*>& FarmingManager::allFarms()
 {
 	return m_farms;
 }
 
-const QHash<unsigned int, Pasture*>& FarmingManager::allPastures()
+const absl::flat_hash_map<unsigned int, Pasture*>& FarmingManager::allPastures()
 {
 	return m_pastures;
 }
 
-const QHash<unsigned int, Beehive*>& FarmingManager::allBeeHives()
+const absl::flat_hash_map<unsigned int, Beehive*>& FarmingManager::allBeeHives()
 {
 	return m_beehives;
 }
@@ -484,7 +486,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 		if ( farm )
 		{
 			unsigned int id = farm->id();
-			m_allFarmTiles.remove( pos );
+			m_allFarmTiles.erase( pos );
 			if ( farm->removeTile( pos ) && farm->canDelete() )
 			{
 				removeFarm( id );
@@ -497,7 +499,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 		Grove* grove = getGroveAtPos( pos );
 		if ( grove )
 		{
-			m_allGroveTiles.remove( pos );
+			m_allGroveTiles.erase( pos );
 			if ( grove->removeTile( pos ) && grove->canDelete() )
 			{
 				removeGrove( grove->id() );
@@ -509,7 +511,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 		Pasture* pasture = getPastureAtPos( pos );
 		if ( pasture )
 		{
-			m_allPastureTiles.remove( pos );
+			m_allPastureTiles.erase( pos );
 			if ( pasture->removeTile( pos ) && pasture->canDelete() )
 			{
 				removePasture( pasture->id() );
@@ -539,8 +541,8 @@ bool FarmingManager::addUtil( Position pos, unsigned int itemID )
 			bh->id  = itemID;
 			bh->pos = pos;
 
-			m_beehives.insert( bh->id, bh );
-			m_allBeehiveTiles.insert( bh->pos, bh->id );
+			m_beehives.insert_or_assign( bh->id, bh );
+			m_allBeehiveTiles.insert_or_assign( bh->pos, bh->id );
 		}
 		else
 		{
@@ -555,8 +557,8 @@ bool FarmingManager::removeUtil( Position pos )
 {
 	if ( auto bh = getBeehiveAtPos(pos) )
 	{
-		m_beehives.remove( bh->id );
-		m_allBeehiveTiles.remove( bh->pos );
+		m_beehives.erase( bh->id );
+		m_allBeehiveTiles.erase( bh->pos );
 		delete bh;
 		return true;
 	}
@@ -663,7 +665,7 @@ Beehive* FarmingManager::getBeehiveAtPos( Position pos )
 	auto it = m_allBeehiveTiles.find( pos );
 	if ( it != m_allBeehiveTiles.end() )
 	{
-		return getBeehive( it.value() );
+		return getBeehive( it->second );
 	}
 	return nullptr;
 }
@@ -673,7 +675,7 @@ Beehive* FarmingManager::getBeehive( unsigned int id )
 	auto it = m_beehives.find( id );
 	if ( it != m_beehives.end() )
 	{
-		return it.value();
+		return it->second;
 	}
 	return nullptr;
 }

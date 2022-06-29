@@ -22,7 +22,6 @@
 
 #include "../game/worldobject.h"
 
-#include <QHash>
 #include <QList>
 #include <QMap>
 #include <QPair>
