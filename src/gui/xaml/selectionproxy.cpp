@@ -26,10 +26,10 @@
 SelectionProxy::SelectionProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalAction, this, &SelectionProxy::onAction, Qt::QueuedConnection );
-    connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalCursorPos, this, &SelectionProxy::onCursor, Qt::QueuedConnection );
-    connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalFirstClick, this, &SelectionProxy::onFirstClick, Qt::QueuedConnection );
-    connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalSize, this, &SelectionProxy::onSize, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorSelection()->signalAction.connect(&SelectionProxy::onAction, this);   // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorSelection()->signalCursorPos.connect(&SelectionProxy::onCursor, this);   // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorSelection()->signalFirstClick.connect(&SelectionProxy::onFirstClick, this);   // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorSelection()->signalSize.connect(&SelectionProxy::onSize, this);   // TODO: Qt::QueuedConnection
 }
 
 void SelectionProxy::setParent( IngnomiaGUI::SelectionModel* parent )

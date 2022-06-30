@@ -61,14 +61,13 @@ public slots:
     void onRightClick();
     void onRotateSelection();
 
-signals:
-    void signalAction( const QString action );
-    void signalCursorPos( const QString pos );
-    void signalFirstClick( const QString pos );
-    void signalSize( const QString size );
-
-    void signalSelectTile( unsigned int );
-
 public: // Signals
+	sigslot::signal<const QString & /*action*/> signalAction;
+	sigslot::signal<const QString & /*pos*/> signalCursorPos;
+	sigslot::signal<const QString & /*pos*/> signalFirstClick;
+	sigslot::signal<const QString & /*pos*/> signalSize;
+
+	sigslot::signal<unsigned int /*tileID*/> signalSelectTile;
+
 	sigslot::signal<const absl::btree_map<unsigned int, SelectionData>& /*data*/, bool /*noDepthTest*/> signalUpdateSelection;
 };

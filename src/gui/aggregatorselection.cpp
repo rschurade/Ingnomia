@@ -41,22 +41,22 @@ AggregatorSelection::~AggregatorSelection()
 
 void AggregatorSelection::onActionChanged( const QString action )
 {
-	emit signalAction( action );
+	signalAction( action );
 }
 
 void AggregatorSelection::onUpdateCursorPos( const QString pos )
 {
-	emit signalCursorPos( pos );
+	signalCursorPos( pos );
 }
 
 void AggregatorSelection::onUpdateFirstClick( const QString pos )
 {
-	emit signalFirstClick( pos );
+	signalFirstClick( pos );
 }
 
 void AggregatorSelection::onUpdateSize( const QString size )
 {
-	emit signalSize( size );
+	signalSize( size );
 }
 
 void AggregatorSelection::onRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation )
@@ -95,7 +95,7 @@ void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 		else
 		{
 			unsigned int tileID = m_cursorPos.toInt();
-			emit signalSelectTile( tileID );
+			signalSelectTile( tileID );
 		}
 	}
 }
