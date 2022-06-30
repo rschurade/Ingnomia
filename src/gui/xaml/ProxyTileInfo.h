@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class ProxyTileInfo : public QObject
 {
 	Q_OBJECT
@@ -53,15 +55,15 @@ private slots:
 	void onUpdateTileInfo( const GuiTileInfo& info );
 	void onUpdateStockpileInfo( const GuiStockpileInfo& info );
 
-signals:
-	void signalTerrainCommand( unsigned int tileID, QString cmd );
-	void signalManageCommand( unsigned int tileID );
-	void signalRequestStockpileItems( unsigned int tileID );
-	void signalSetTennant( unsigned int designationID, unsigned int gnomeID );
-	void signalSetAlarm( unsigned int designationID, bool value );
-	void signalToggleMechActive( unsigned int id );
-	void signalToggleMechInvert( unsigned int id );
+public: // signals:
+	sigslot::signal<unsigned int /*tileID*/, QString /*cmd*/> signalTerrainCommand;
+	sigslot::signal<unsigned int /*tileID*/> signalManageCommand;
+	sigslot::signal<unsigned int /*tileID*/> signalRequestStockpileItems;
+	sigslot::signal<unsigned int /*designationID*/, unsigned int /*gnomeID*/> signalSetTennant;
+	sigslot::signal<unsigned int /*designationID*/, bool /*value*/> signalSetAlarm;
+	sigslot::signal<unsigned int /*id*/> signalToggleMechActive;
+	sigslot::signal<unsigned int /*id*/> signalToggleMechInvert;
 
-	void signalSetAutomatonRefuel( unsigned int id, bool refuel );
-	void signalSetAutomatonCore( unsigned int id, QString core );
+	sigslot::signal<unsigned int /*id*/, bool /*refuel*/> signalSetAutomatonRefuel;
+	sigslot::signal<unsigned int /*id*/, QString /*core*/> signalSetAutomatonCore;
 };

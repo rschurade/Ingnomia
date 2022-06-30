@@ -175,13 +175,13 @@ void AggregatorNeighbors::onRequestNeighborsUpdate()
 		m_neighborsInfo.append( gni );
 	}
 
-	emit signalNeighborsUpdate( m_neighborsInfo );
+	signalNeighborsUpdate( m_neighborsInfo );
 }
 
 void AggregatorNeighbors::onRequestMissions()
 {
 	if( !g ) return;
-	emit signalMissions( g->em()->missions() );
+	signalMissions( g->em()->missions() );
 }
 
 void AggregatorNeighbors::onRequestAvailableGnomes()
@@ -197,7 +197,7 @@ void AggregatorNeighbors::onRequestAvailableGnomes()
 		}
 	}
 
-	emit signalAvailableGnomes( m_availableGnomes );
+	signalAvailableGnomes( m_availableGnomes );
 }
 
 void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID )
@@ -205,11 +205,11 @@ void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action
 	if( !g ) return;
 	g->em()->startMission( type, action, targetKingdom, gnomeID );
 
-	emit signalMissions( g->em()->missions() );
+	signalMissions( g->em()->missions() );
 }
 
 void AggregatorNeighbors::onUpdateMission( const Mission& mission )
 {
 	if( !g ) return;
-	emit signalUpdateMission( mission );
+	signalUpdateMission( mission );
 }

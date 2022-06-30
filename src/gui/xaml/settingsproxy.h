@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class SettingsProxy : public QObject
 {
 	Q_OBJECT
@@ -49,14 +51,14 @@ private:
 private slots:
 	void onSettings( const GuiSettings& settings );
 
-signals:
-	void signalRequestSettings();
+public: // signals:
+	sigslot::signal<> signalRequestSettings;
 
-    void signalSetLanguage( QString language );
-    void signalSetUIScale( float scale );
-    void signalSetFullScreen( bool value );
-    void signalSetKeyboardSpeed( int value );
-    void signalSetLightMin( int value );
-    void signalSetToggleMouseWheel( bool value );
-	void signalSetAudioMasterVolume( float value );
+    sigslot::signal<QString /*language*/> signalSetLanguage;
+    sigslot::signal<float /*scale*/> signalSetUIScale;
+    sigslot::signal<bool /*value*/> signalSetFullScreen;
+    sigslot::signal<int /*value*/> signalSetKeyboardSpeed;
+    sigslot::signal<int /*value*/> signalSetLightMin;
+    sigslot::signal<bool /*value*/> signalSetToggleMouseWheel;
+	sigslot::signal<float /*value*/> signalSetAudioMasterVolume;
 };

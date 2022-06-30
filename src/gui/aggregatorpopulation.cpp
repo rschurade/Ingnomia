@@ -59,7 +59,7 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 	if( !g ) return;
 
 	const auto professions = g->gm()->professions();
-	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( QStringList(professions.begin(), professions.end()) );
 
 	m_populationInfo.gnomes.clear();
 
@@ -118,7 +118,7 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 		} );
 	}
 
-	emit signalPopulationUpdate( m_populationInfo );
+	signalPopulationUpdate( m_populationInfo );
 }
 
 void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
@@ -144,7 +144,7 @@ void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 
 			ggi.skills.append( gsi );
 		}
-		emit signalUpdateSingleGnome( ggi );
+		signalUpdateSingleGnome( ggi );
 	}
 }
 
@@ -226,7 +226,7 @@ void AggregatorPopulation::onRequestSchedules()
 		m_scheduleInfo.schedules.append( ggs );
 	}
 
-	emit signalScheduleUpdate( m_scheduleInfo );
+	signalScheduleUpdate( m_scheduleInfo );
 }
 	
 void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, ScheduleActivity activity )
@@ -242,7 +242,7 @@ void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, Schedu
 		ggs.name = gnome->name();
 		ggs.schedule = gnome->schedule();
 
-		emit signalScheduleUpdateSingleGnome( ggs );
+		signalScheduleUpdateSingleGnome( ggs );
 	}
 }
 
@@ -262,7 +262,7 @@ void AggregatorPopulation::onSetAllHours( unsigned int gnomeID, ScheduleActivity
 		ggs.name = gnome->name();
 		ggs.schedule = gnome->schedule();
 
-		emit signalScheduleUpdateSingleGnome( ggs );
+		signalScheduleUpdateSingleGnome( ggs );
 	}
 }
 	
@@ -280,7 +280,7 @@ void AggregatorPopulation::onRequestProfessions()
 {
 	if( !g ) return;
 	const auto professions = g->gm()->professions();
-	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 	
 void AggregatorPopulation::onRequestSkills( QString profession )
@@ -298,7 +298,7 @@ void AggregatorPopulation::onRequestSkills( QString profession )
 		m_profSkills.append( gsi );
 	}
 
-	emit signalProfessionSkills( profession, m_profSkills );
+	signalProfessionSkills( profession, m_profSkills );
 }
 
 void AggregatorPopulation::onUpdateProfession( QString name, QString newName, QStringList skills )
@@ -312,7 +312,7 @@ void AggregatorPopulation::onDeleteProfession( QString name )
 	if( !g ) return;
 	g->gm()->removeProfession( name );
 	const auto professions = g->gm()->professions();
-	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 	
 void AggregatorPopulation::onNewProfession()
@@ -320,6 +320,6 @@ void AggregatorPopulation::onNewProfession()
 	if( !g ) return;
 	QString name = g->gm()->addProfession();
 	const auto professions = g->gm()->professions();
-	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
-	emit signalSelectEditProfession( name );
+	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalSelectEditProfession( name );
 }

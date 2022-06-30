@@ -26,6 +26,8 @@
 #include <absl/container/btree_set.h>
 #include <absl/container/flat_hash_map.h>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiWatchedItem
@@ -179,10 +181,10 @@ public slots:
     void onAddItem( QString itemSID, QString materialSID );
     void onRemoveItem( QString itemSID, QString materialSID );
 
-signals:
-	void signalInventoryCategories( const QList<GuiInventoryCategory>& categories );
+public: // signals:
+	sigslot::signal<const QList<GuiInventoryCategory>& /*categories*/> signalInventoryCategories;
     
-    void signalBuildItems( const QList<GuiBuildItem>& items );
+    sigslot::signal<const QList<GuiBuildItem>& /*items*/> signalBuildItems;
 
-    void signalWatchList( const QList<GuiWatchedItem>& watchedItemList );
+    sigslot::signal<const QList<GuiWatchedItem>& /*watchedItemList*/> signalWatchList;
 };

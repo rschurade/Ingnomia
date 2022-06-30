@@ -183,22 +183,22 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 			}
 		}
 	}
-	emit signalShowAgri( tileID );
+	signalShowAgri( tileID );
 }
 
 void AggregatorAgri::onRequestGlobalPlantInfo()
 {
-	emit signalGlobalPlantInfo( m_globalPlantInfo );
+	signalGlobalPlantInfo( m_globalPlantInfo );
 }
 
 void AggregatorAgri::onRequestGlobalTreeInfo()
 {
-	emit signalGlobalTreeInfo( m_globalTreeInfo );
+	signalGlobalTreeInfo( m_globalTreeInfo );
 }
 
 void AggregatorAgri::onRequestGlobalAnimalInfo()
 {
-	emit signalGlobalAnimalInfo( m_globalAnimalInfo );
+	signalGlobalAnimalInfo( m_globalAnimalInfo );
 }
 
 void AggregatorAgri::onUpdate( unsigned int designationID )
@@ -247,7 +247,7 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 			}
 			else
 			{
-				emit signalUpdateFarm( m_farmInfo );
+				signalUpdateFarm( m_farmInfo );
 			}
 		}
 	}
@@ -365,7 +365,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 			}
 			else
 			{
-				emit signalUpdateGrove( m_groveInfo );
+				signalUpdateGrove( m_groveInfo );
 			}
 		}
 	}
@@ -540,7 +540,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.sprite = Global::util->smallPixmap( g->sf()->createSprite( gp.harvestedItem, { gp.materialID } ), GameState::seasonString, 0 );
 					}
 					m_farmInfo.product = gp;
-					emit signalUpdateFarm( m_farmInfo );
+					signalUpdateFarm( m_farmInfo );
 				}
 			}
 			break;
@@ -595,7 +595,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 
 					}
 					m_pastureInfo.product = ga;
-					emit signalUpdatePasture( m_pastureInfo );
+					signalUpdatePasture( m_pastureInfo );
 				}
 			}
 			break;
@@ -622,7 +622,7 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 						gp.sprite = pm;
 					}
 					m_groveInfo.product = gp;
-					emit signalUpdateGrove( m_groveInfo );
+					signalUpdateGrove( m_groveInfo );
 				}
 			}
 			break;

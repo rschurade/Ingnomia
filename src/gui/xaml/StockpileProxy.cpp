@@ -31,11 +31,11 @@
 StockpileProxy::StockpileProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateInfo, this, &StockpileProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalUpdateContent, this, &StockpileProxy::onUpdateContent, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorStockpile()->signalUpdateInfo.connect(&StockpileProxy::onUpdateInfo, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorStockpile()->signalUpdateContent.connect(&StockpileProxy::onUpdateContent, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &StockpileProxy::signalSetBasicOptions, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &StockpileProxy::signalSetActive, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onSetActive, Qt::QueuedConnection );
+	this->signalSetBasicOptions.connect(&AggregatorStockpile::onSetBasicOptions, Global::eventConnector->aggregatorStockpile()); // TODO: Qt::QueuedConnection
+	this->signalSetActive.connect(&AggregatorStockpile::onSetActive, Global::eventConnector->aggregatorStockpile()); // TODO: Qt::QueuedConnection
 }
 
 StockpileProxy::~StockpileProxy()
@@ -65,10 +65,10 @@ void StockpileProxy::onUpdateContent( const GuiStockpileInfo& info )
 
 void StockpileProxy::setBasicOptions( unsigned int stockpileID, QString name, int priority, bool suspended, bool pull, bool allowPull )
 {
-	emit signalSetBasicOptions( stockpileID, name, priority, suspended, pull, allowPull );
+	signalSetBasicOptions( stockpileID, name, priority, suspended, pull, allowPull );
 }
 
 void StockpileProxy::setActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
-	emit signalSetActive( stockpileID, active, category, group, item, material );
+	signalSetActive( stockpileID, active, category, group, item, material );
 }

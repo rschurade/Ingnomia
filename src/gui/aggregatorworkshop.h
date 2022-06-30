@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 struct TraderItem;
 
@@ -155,18 +157,18 @@ public slots:
 	void onTrade( unsigned int workshopID );
 
 	void onCloseWindow();
-signals:
-	void signalOpenWorkshopWindow( unsigned int workshopID );
-	void signalUpdateInfo( const GuiWorkshopInfo& info );
-	void signalUpdateContent( const GuiWorkshopInfo& info );
-	void signalUpdateCraftList( const GuiWorkshopInfo& info );
+public: // signals:
+	sigslot::signal<unsigned int /*workshopID*/> signalOpenWorkshopWindow;
+	sigslot::signal<const GuiWorkshopInfo& /*info*/> signalUpdateInfo;
+	sigslot::signal<const GuiWorkshopInfo& /*info*/> signalUpdateContent;
+	sigslot::signal<const GuiWorkshopInfo& /*info*/> signalUpdateCraftList;
 
-	void signalTraderStock( const QList<GuiTradeItem>& items );
-	void signalPlayerStock( const QList<GuiTradeItem>& items );
+	sigslot::signal<const QList<GuiTradeItem>& /*items*/> signalTraderStock;
+	sigslot::signal<const QList<GuiTradeItem>& /*items*/> signalPlayerStock;
 	
-	void signalUpdateTraderStockItem( const GuiTradeItem& item );
-	void signalUpdatePlayerStockItem( const GuiTradeItem& item );
+	sigslot::signal<const GuiTradeItem& /*item*/> signalUpdateTraderStockItem;
+	sigslot::signal<const GuiTradeItem& /*item*/> signalUpdatePlayerStockItem;
 
-	void signalUpdateTraderValue( int value );
-	void signalUpdatePlayerValue( int value );
+	sigslot::signal<int /*value*/> signalUpdateTraderValue;
+	sigslot::signal<int /*value*/> signalUpdatePlayerValue;
 };

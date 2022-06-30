@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class ProxyGameView : public QObject
 {
 	Q_OBJECT
@@ -87,25 +89,25 @@ private slots:
 
 	void onWatchList( const QList<GuiWatchedItem>& watchedItemList );
 
-signals:
-	void signalCloseStockpileWindow();
-	void signalCloseWorkshopWindow();
-	void signalCloseAgricultureWindow();
-	void signalRequestPopulationUpdate();
-	void signalRequestNeighborsUpdate();
-	void signalRequestMissionsUpdate();
-	void signalRequestCreatureUpdate( unsigned int id );
-	void signalEventAnswer( unsigned int eventID, bool answer );
-	void signalRequestMilitaryUpdate();
-	void signalRequestInventoryUpdate();
-	void signalPropagateEscape();
-	void signalSetGameSpeed( GameSpeed speed );
-	void signalSetPaused( bool paused );
-	void signalSetRenderOptions( bool designations, bool jobs, bool walls, bool axles );
+public: // signals:
+	sigslot::signal<> signalCloseStockpileWindow;
+	sigslot::signal<> signalCloseWorkshopWindow;
+	sigslot::signal<> signalCloseAgricultureWindow;
+	sigslot::signal<> signalRequestPopulationUpdate;
+	sigslot::signal<> signalRequestNeighborsUpdate;
+	sigslot::signal<> signalRequestMissionsUpdate;
+	sigslot::signal<unsigned int /*id*/> signalRequestCreatureUpdate;
+	sigslot::signal<unsigned int /*eventID*/, bool /*answer*/> signalEventAnswer;
+	sigslot::signal<> signalRequestMilitaryUpdate;
+	sigslot::signal<> signalRequestInventoryUpdate;
+	sigslot::signal<> signalPropagateEscape;
+	sigslot::signal<GameSpeed /*speed*/> signalSetGameSpeed;
+	sigslot::signal<bool /*paused*/> signalSetPaused;
+	sigslot::signal<bool /*designations*/, bool /*jobs*/, bool /*walls*/, bool /*axles*/> signalSetRenderOptions;
 
-	void signalRequestBuildItems( BuildSelection buildSelection, QString category );
-	void signalRequestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
-	void signalSetSelectionAction( QString action );
+	sigslot::signal<BuildSelection /*buildSelection*/, QString /*category*/> signalRequestBuildItems;
+	sigslot::signal<BuildItemType /*type*/, QString /*param*/, QString /*item*/, QStringList /*mats*/> signalRequestCmdBuild;
+	sigslot::signal<QString /*action*/> signalSetSelectionAction;
 	
-	void signalHeartbeatResponse( int value );
+	sigslot::signal<int /*value*/> signalHeartbeatResponse;
 };

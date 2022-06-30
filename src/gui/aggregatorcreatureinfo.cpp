@@ -119,7 +119,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 			}
 		}
 
-		emit signalCreatureUpdate( m_info );
+		signalCreatureUpdate( m_info );
 		return;
 	}
 	else
@@ -144,7 +144,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 			m_info.happiness = 100; //monster->need( "Happiness" );
 			
 			m_info.activity = "Doing something. tbi";
-			emit signalCreatureUpdate( m_info );
+			signalCreatureUpdate( m_info );
 			return;
 		}
 		else
@@ -169,7 +169,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 				m_info.happiness = 100; //animal->need( "Happiness" );
 			
 				m_info.activity = "Doing something. tbi";
-				emit signalCreatureUpdate( m_info );
+				signalCreatureUpdate( m_info );
 				return;
 			}
 		}
@@ -183,7 +183,7 @@ void AggregatorCreatureInfo::onRequestProfessionList()
 {
 	if( !g ) return;
 	const auto professions = g->gm()->professions();
-	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
@@ -304,5 +304,5 @@ void AggregatorCreatureInfo::onRequestEmptySlotImages()
 	createEmptyUniformImg( "UIEmptySlotRing" );
 	createEmptyUniformImg( "UIEmptySlotRing" );
 
-	emit signalEmptyPics( m_emptyPics );
+	signalEmptyPics( m_emptyPics );
 }

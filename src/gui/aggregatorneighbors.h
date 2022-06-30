@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 struct GuiNeighborInfo
 {
 	unsigned int id          = 0;
@@ -73,9 +75,9 @@ public slots:
 	void onStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
 	void onUpdateMission( const Mission& mission );
 
-signals:
-	void signalNeighborsUpdate( const QList<GuiNeighborInfo>& infos );
-	void signalMissions( const QList<Mission>& missions );
-	void signalAvailableGnomes( const QList<GuiAvailableGnome>& gnomes );
-	void signalUpdateMission( const Mission& mission );
+public: // signals:
+	sigslot::signal<const QList<GuiNeighborInfo>& /*infos*/> signalNeighborsUpdate;
+	sigslot::signal<const QList<Mission>& /*missions*/> signalMissions;
+	sigslot::signal<const QList<GuiAvailableGnome>& /*gnomes*/> signalAvailableGnomes;
+	sigslot::signal<const Mission& /*mission*/> signalUpdateMission;
 };

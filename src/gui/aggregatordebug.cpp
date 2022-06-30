@@ -34,23 +34,23 @@ void AggregatorDebug::onSpawnCreature( QString type )
 	qDebug() << "spawn creature:" << type;
 	if( type == "Gnome" )
 	{
-		emit signalTriggerEvent( EventType::MIGRATION, QVariantMap() );
+		signalTriggerEvent( EventType::MIGRATION, QVariantMap() );
 	}
 	else if( type == "Trader" )
 	{
-		emit signalTriggerEvent( EventType::TRADER, QVariantMap() );
+		signalTriggerEvent( EventType::TRADER, QVariantMap() );
 	}
 	else if( type == "Goblin" )
 	{
 		QVariantMap args; 
 		args.insert( "Amount", 1 );
 		args.insert( "Type", "Goblin" );
-		emit signalTriggerEvent( EventType::INVASION, args );
+		signalTriggerEvent( EventType::INVASION, args );
 	}
 }
 
 
 void AggregatorDebug::onSetWindowSize( int width, int height )
 {
-	emit signalSetWindowSize( width, height );
+	signalSetWindowSize( width, height );
 }

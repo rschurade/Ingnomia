@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class PopulationProxy : public QObject
 {
 	Q_OBJECT
@@ -68,22 +70,22 @@ private slots:
 	void onScheduleUpdateSingleGnome( const GuiGnomeScheduleInfo& info );
 	void onSelectEditProfession( const QString name );
 
-signals:
-	void signalSetSkillActive( unsigned int gnomeID, QString skillID, bool value );
+public: // signals:
+	sigslot::signal<unsigned int /*gnomeID*/, QString /*skillID*/, bool /*value*/> signalSetSkillActive;
 
-	void signalSetAllSkills( unsigned int gnomeID, bool value );
-	void signalSetAllGnomes( QString skillID, bool value );
-	void signalSetProfession( unsigned int gnomeID, QString profession );
-	void signalSortGnomes( QString mode );
+	sigslot::signal<unsigned int /*gnomeID*/, bool /*value*/> signalSetAllSkills;
+	sigslot::signal<QString /*skillID*/, bool /*value*/> signalSetAllGnomes;
+	sigslot::signal<unsigned int /*gnomeID*/, QString /*profession*/> signalSetProfession;
+	sigslot::signal<QString /*mode*/> signalSortGnomes;
 
-	void signalRequestSchedules();
-	void signalRequestProfessions();
-	void signalRequestSkills( QString profession );
-	void signalSetSchedule( unsigned int gnomeID, int hour, ScheduleActivity activitiy );
-	void signalSetAllHours( unsigned int gnomeID, ScheduleActivity activitiy );
-	void signalSetHourForAll( int hour, ScheduleActivity activitiy );
+	sigslot::signal<> signalRequestSchedules;
+	sigslot::signal<> signalRequestProfessions;
+	sigslot::signal<QString /*profession*/> signalRequestSkills;
+	sigslot::signal<unsigned int /*gnomeID*/, int /*hour*/, ScheduleActivity /*activitiy*/> signalSetSchedule;
+	sigslot::signal<unsigned int /*gnomeID*/, ScheduleActivity /*activitiy*/> signalSetAllHours;
+	sigslot::signal<int /*hour*/, ScheduleActivity /*activitiy*/> signalSetHourForAll;
 
-	void signalUpdateProfession( QString name, QString newName, QStringList skills );
-	void signalDeleteProfession( QString name );
-	void signalNewProfession();
+	sigslot::signal<QString /*name*/, QString /*newName*/, QStringList /*skills*/> signalUpdateProfession;
+	sigslot::signal<QString /*name*/> signalDeleteProfession;
+	sigslot::signal<> signalNewProfession;
 };

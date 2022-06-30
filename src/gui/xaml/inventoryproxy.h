@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class InventoryProxy : public QObject
 {
 	Q_OBJECT
@@ -42,7 +44,7 @@ private:
 private slots:
     void onCategoryUpdate( const QList<GuiInventoryCategory>& categories );
 
-signals:
-    void signalRequestCategories();
-    void signalSetActive( bool active, const GuiWatchedItem& gwi );
+public: // signals:
+    sigslot::signal<> signalRequestCategories;
+    sigslot::signal<bool /*active*/, const GuiWatchedItem& /*gwi*/> signalSetActive;
 };

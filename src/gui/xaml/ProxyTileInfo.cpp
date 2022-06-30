@@ -31,21 +31,21 @@
 ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateTileInfo, this, &ProxyTileInfo::onUpdateTileInfo, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalTerrainCommand, Global::eventConnector, &EventConnector::onTerrainCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalManageCommand, Global::eventConnector, &EventConnector::onManageCommand, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalRequestStockpileItems, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onRequestStockpileItems, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorTileInfo()->signalUpdateTileInfo.connect(&ProxyTileInfo::onUpdateTileInfo, this); // TODO: Qt::QueuedConnection
+	this->signalTerrainCommand.connect(&EventConnector::onTerrainCommand, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalManageCommand.connect(&EventConnector::onManageCommand, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalRequestStockpileItems.connect(&AggregatorTileInfo::onRequestStockpileItems, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyTileInfo::signalSetTennant, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetTennant, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalSetAlarm, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAlarm, Qt::QueuedConnection );
+	this->signalSetTennant.connect(&AggregatorTileInfo::onSetTennant, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
+	this->signalSetAlarm.connect(&AggregatorTileInfo::onSetAlarm, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalUpdateSPInfo, this,  &ProxyTileInfo::onUpdateStockpileInfo, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorTileInfo()->signalUpdateSPInfo.connect(&ProxyTileInfo::onUpdateStockpileInfo, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyTileInfo::signalToggleMechActive, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechActive, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalToggleMechInvert, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onToggleMechInvert, Qt::QueuedConnection );
+	this->signalToggleMechActive.connect(&AggregatorTileInfo::onToggleMechActive, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
+	this->signalToggleMechInvert.connect(&AggregatorTileInfo::onToggleMechInvert, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyTileInfo::signalSetAutomatonRefuel, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAutomatonRefuel, Qt::QueuedConnection );
-	connect( this, &ProxyTileInfo::signalSetAutomatonCore, Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onSetAutomatonCore, Qt::QueuedConnection );
+	this->signalSetAutomatonRefuel.connect(&AggregatorTileInfo::onSetAutomatonRefuel, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
+	this->signalSetAutomatonCore.connect(&AggregatorTileInfo::onSetAutomatonCore, Global::eventConnector->aggregatorTileInfo()); // TODO: Qt::QueuedConnection
 }
 
 ProxyTileInfo::~ProxyTileInfo()
@@ -67,17 +67,17 @@ void ProxyTileInfo::onUpdateTileInfo( const GuiTileInfo& info )
 
 void ProxyTileInfo::sendTerrainCommand( unsigned int tileID, QString cmd )
 {
-	emit signalTerrainCommand( tileID, cmd );
+	signalTerrainCommand( tileID, cmd );
 }
 
 void ProxyTileInfo::sendManageCommand( unsigned int tileID )
 {
-	emit signalManageCommand( tileID );
+	signalManageCommand( tileID );
 }
 
 void ProxyTileInfo::requestStockpileItems( unsigned int tileID )
 {
-	emit signalRequestStockpileItems( tileID );
+	signalRequestStockpileItems( tileID );
 }
 
 void ProxyTileInfo::onUpdateStockpileInfo( const GuiStockpileInfo& info )
@@ -90,31 +90,31 @@ void ProxyTileInfo::onUpdateStockpileInfo( const GuiStockpileInfo& info )
 
 void ProxyTileInfo::setTennant( unsigned int designationID, unsigned int gnomeID )
 {
-	emit signalSetTennant( designationID, gnomeID );
+	signalSetTennant( designationID, gnomeID );
 }
 
 void ProxyTileInfo::setAlarm( unsigned int designationID, bool value )
 {
-	emit signalSetAlarm( designationID, value );
+	signalSetAlarm( designationID, value );
 }
 
 void ProxyTileInfo::toggleMechActive( unsigned int id )
 {
-	emit signalToggleMechActive( id );
+	signalToggleMechActive( id );
 }
 	
 void ProxyTileInfo::toggleMechInvert( unsigned int id )
 {
-	emit signalToggleMechInvert( id );
+	signalToggleMechInvert( id );
 }
 
 void ProxyTileInfo::setAutomatonRefuel( unsigned int id, bool refuel )
 {
 
-	emit signalSetAutomatonRefuel( id, refuel );
+	signalSetAutomatonRefuel( id, refuel );
 }
 	
 void ProxyTileInfo::setAutomatonCore( unsigned int id, QString core )
 {
-	emit signalSetAutomatonCore( id, core );
+	signalSetAutomatonCore( id, core );
 }

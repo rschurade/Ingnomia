@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class WorkshopProxy : public QObject
 {
 	Q_OBJECT
@@ -73,19 +75,19 @@ private slots:
 	void onUpdateTraderValue( int value );
 	void onUpdatePlayerValue( int value );
 
-signals:
-	void signalSetBasicOptions( unsigned int WorkshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile );
-	void signalSetButcherOptions( unsigned int WorkshopID, bool butcherCorpses, bool butcherExcess );
-	void signalSetFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish );
-	void signalCraftItem( unsigned int WorkshopID, QString craftID, int mode, int number, QStringList mats );
-	void signalCraftJobCommand( unsigned int workshopID, unsigned int craftJobID, QString command );
-	void signalCraftJobParams( unsigned int workshopID, unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack );
-	void signalRequestAllTradeItems( unsigned int workshopID );
+public: // signals:
+	sigslot::signal<unsigned int /*WorkshopID*/, QString /*name*/, int /*priority*/, bool /*suspended*/, bool /*acceptGenerated*/, bool /*autoCraftMissing*/, bool /*connectStockpile*/> signalSetBasicOptions;
+	sigslot::signal<unsigned int /*WorkshopID*/, bool /*butcherCorpses*/, bool /*butcherExcess*/> signalSetButcherOptions;
+	sigslot::signal<unsigned int /*WorkshopID*/, bool /*catchFish*/, bool /*processFish*/> signalSetFisherOptions;
+	sigslot::signal<unsigned int /*WorkshopID*/, QString /*craftID*/, int /*mode*/, int /*number*/, QStringList /*mats*/> signalCraftItem;
+	sigslot::signal<unsigned int /*workshopID*/, unsigned int /*craftJobID*/, QString /*command*/> signalCraftJobCommand;
+	sigslot::signal<unsigned int /*workshopID*/, unsigned int /*craftJobID*/, int /*mode*/, int /*numToCraft*/, bool /*suspended*/, bool /*moveBack*/> signalCraftJobParams;
+	sigslot::signal<unsigned int /*workshopID*/> signalRequestAllTradeItems;
 
-	void signalTraderStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count );
-	void signalTraderOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count );
-	void signalPlayerStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count );
-	void signalPlayerOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count );
+	sigslot::signal<unsigned int /*workshopID*/, QString /*itemSID*/, QString /*materialSID*/, unsigned char /*quality*/, int /*count*/> signalTraderStocktoOffer;
+	sigslot::signal<unsigned int /*workshopID*/, QString /*itemSID*/, QString /*materialSID*/, unsigned char /*quality*/, int /*count*/> signalTraderOffertoStock;
+	sigslot::signal<unsigned int /*workshopID*/, QString /*itemSID*/, QString /*materialSID*/, unsigned char /*quality*/, int /*count*/> signalPlayerStocktoOffer;
+	sigslot::signal<unsigned int /*workshopID*/, QString /*itemSID*/, QString /*materialSID*/, unsigned char /*quality*/, int /*count*/> signalPlayerOffertoStock;
 
-	void signalTrade( unsigned int workshopID );
+	sigslot::signal<unsigned int /*workshopID*/> signalTrade;
 };

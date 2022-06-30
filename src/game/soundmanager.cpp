@@ -48,5 +48,5 @@ void SoundManager::playEffect( QString type, Position& pos, QString material )
 
 void SoundManager::playEffect( QString type, Position& pos, QString material, int duration )
 {
-	emit signalPlayEffect( SoundEffect { type, material, pos } );
+	signalPlayEffect( SoundEffect { type, material, pos } );
 }

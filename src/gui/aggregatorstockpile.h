@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct ItemsSummary
@@ -84,8 +86,8 @@ public slots:
 	void onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material );
 
 	void onCloseWindow();
-signals:
-	void signalOpenStockpileWindow( unsigned int stockpileID );
-	void signalUpdateInfo( const GuiStockpileInfo& info );
-	void signalUpdateContent( const GuiStockpileInfo& info );
+public: // signals:
+	sigslot::signal<unsigned int /*stockpileID*/> signalOpenStockpileWindow;
+	sigslot::signal<const GuiStockpileInfo& /*info*/> signalUpdateInfo;
+	sigslot::signal<const GuiStockpileInfo& /*info*/> signalUpdateContent;
 };

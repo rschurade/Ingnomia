@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class DebugProxy : public QObject
 {
 	Q_OBJECT
@@ -41,7 +43,7 @@ private:
 
 private slots:
 
-signals:
-	void signalSpawnCreature( QString type );
-    void signalSetWindowSize( int width, int height );
+public: // signals:
+	sigslot::signal<QString /*type*/> signalSpawnCreature;
+    sigslot::signal<int /*width*/, int /*height*/> signalSetWindowSize;
 };

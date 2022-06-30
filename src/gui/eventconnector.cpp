@@ -81,27 +81,27 @@ EventConnector::~EventConnector()
 
 void EventConnector::onExit()
 {
-	emit signalExit();
+	signalExit();
 }
 
 void EventConnector::onWindowSize( int w, int h )
 {
-	emit signalWindowSize( w, h );
+	signalWindowSize( w, h );
 }
 
 void EventConnector::onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )
 {
-	emit signalTimeAndDate( minute, hour, day, season, year, sunStatus );
+	signalTimeAndDate( minute, hour, day, season, year, sunStatus );
 }
 
 void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, QString info3 )
 {
-	emit signalKingdomInfo( name, info1, info2, info3 );
+	signalKingdomInfo( name, info1, info2, info3 );
 }
 
 void EventConnector::onHeartbeat( int value)
 {
-	emit signalHeartbeat( value );
+	signalHeartbeat( value );
 }
 
 void EventConnector::onHeartbeatResponse( int value)
@@ -111,7 +111,7 @@ void EventConnector::onHeartbeatResponse( int value)
 
 void EventConnector::onViewLevel( int level )
 {
-	emit signalViewLevel( level );
+	signalViewLevel( level );
 }
 
 void EventConnector::onSetPause( bool paused )
@@ -129,24 +129,24 @@ void EventConnector::onKeyPress( int key )
 	switch ( key )
 	{
 		case Qt::Key_Escape:
-			emit signalKeyEsc();
+			signalKeyEsc();
 			break;
 	}
 }
 
 void EventConnector::onTogglePause()
 {
-	emit signalUpdatePause( !gm->paused() );
+	signalUpdatePause( !gm->paused() );
 }
 
 void EventConnector::onPropagateEscape()
 {
-	emit signalPropagateKeyEsc();
+	signalPropagateKeyEsc();
 }
 
 void EventConnector::onBuild()
 {
-	emit signalBuild();
+	signalBuild();
 }
 
 void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
@@ -220,37 +220,37 @@ void EventConnector::onSetRenderOptions( bool designations, bool jobs, bool wall
 
 void EventConnector::onUpdateRenderOptions()
 {
-	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
+	signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
 }
 
 void EventConnector::onPlayEffect( QVariantMap effect)
 {
-	emit signalPlayEffect( effect);
+	signalPlayEffect( effect);
 }
 
 void EventConnector::onCameraPosition( float x, float y, float z, int r, float scale )
 {
-	emit signalCameraPosition( x, y, z, r, scale );
+	signalCameraPosition( x, y, z, r, scale );
 }
 
 void EventConnector::emitStartGame()
 {
-	emit startGame();
+	startGame();
 }
 	
 void EventConnector::emitStopGame()
 {
-	emit stopGame();
+	stopGame();
 }
 
 void EventConnector::emitInitView()
 {
-	emit signalInitView();
+	signalInitView();
 }
 
 void EventConnector::emitInMenu( bool value )
 {
-	emit signalInMenu( value );
+	signalInMenu( value );
 }
 	
 void EventConnector::onStartNewGame()
@@ -285,22 +285,22 @@ void EventConnector::onEndGame()
 
 void EventConnector::sendResume()
 {
-	emit signalResume();
+	signalResume();
 }
 	
 void EventConnector::sendLoadGameDone( bool value )
 {
-	emit signalLoadGameDone( value );
+	signalLoadGameDone( value );
 }
 
 void EventConnector::emitPause( bool paused )
 {
-	emit signalUpdatePause( paused );
+	signalUpdatePause( paused );
 }
 	
 void EventConnector::emitGameSpeed( GameSpeed speed )
 {
-	emit signalUpdateGameSpeed( speed );
+	signalUpdateGameSpeed( speed );
 }
 
 void EventConnector::onSetSelectionAction( QString action )
@@ -365,12 +365,12 @@ void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item
 	Global::sel->setMaterials( mats );
 	Global::sel->setItemID( item );
 
-	emit signalBuild();
+	signalBuild();
 }
 
 void EventConnector::onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno )
 {
-	emit signalEvent( id, title, msg, pause, yesno );
+	signalEvent( id, title, msg, pause, yesno );
 }
 
 void EventConnector::onAnswer( unsigned int id, bool answer )

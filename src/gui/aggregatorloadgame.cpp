@@ -97,7 +97,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 		return a.date > b.date;
 	} );
 
-	emit signalKingdoms( m_kingdomList );
+	signalKingdoms( m_kingdomList );
 }
 
 void AggregatorLoadGame::onRequestSaveGames( const QString path )
@@ -151,5 +151,5 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 		return a.date > b.date;
 	} );
 
-	emit signalSaveGames( m_gameList );
+	signalSaveGames( m_gameList );
 }

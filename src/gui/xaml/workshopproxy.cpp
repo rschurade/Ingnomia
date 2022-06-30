@@ -29,32 +29,32 @@
 WorkshopProxy::WorkshopProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateInfo, this, &WorkshopProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateCraftList, this, &WorkshopProxy::onUpdateCraftList, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorWorkshop()->signalUpdateInfo.connect(&WorkshopProxy::onUpdateInfo, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalUpdateCraftList.connect(&WorkshopProxy::onUpdateCraftList, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &WorkshopProxy::signalSetBasicOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalSetButcherOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetButcherOptions, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalSetFisherOptions, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onSetFisherOptions, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftItem, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftItem, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftJobCommand, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobCommand, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalCraftJobParams, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftJobParams, Qt::QueuedConnection );
+	this->signalSetBasicOptions.connect(&AggregatorWorkshop::onSetBasicOptions, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalSetButcherOptions.connect(&AggregatorWorkshop::onSetButcherOptions, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalSetFisherOptions.connect(&AggregatorWorkshop::onSetFisherOptions, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalCraftItem.connect(&AggregatorWorkshop::onCraftItem, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalCraftJobCommand.connect(&AggregatorWorkshop::onCraftJobCommand, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalCraftJobParams.connect(&AggregatorWorkshop::onCraftJobParams, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
 
-	connect( this, &WorkshopProxy::signalRequestAllTradeItems, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onRequestAllTradeItems, Qt::QueuedConnection );
+	this->signalRequestAllTradeItems.connect(&AggregatorWorkshop::onRequestAllTradeItems, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalTraderStock, this, &WorkshopProxy::onUpdateTraderStock, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalPlayerStock, this, &WorkshopProxy::onUpdatePlayerStock, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorWorkshop()->signalTraderStock.connect(&WorkshopProxy::onUpdateTraderStock, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalPlayerStock.connect(&WorkshopProxy::onUpdatePlayerStock, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderStockItem, this, &WorkshopProxy::onUpdateTraderStockItem, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerStockItem, this, &WorkshopProxy::onUpdatePlayerStockItem, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdateTraderValue, this, &WorkshopProxy::onUpdateTraderValue, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalUpdatePlayerValue, this, &WorkshopProxy::onUpdatePlayerValue, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorWorkshop()->signalUpdateTraderStockItem.connect(&WorkshopProxy::onUpdateTraderStockItem, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalUpdatePlayerStockItem.connect(&WorkshopProxy::onUpdatePlayerStockItem, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalUpdateTraderValue.connect(&WorkshopProxy::onUpdateTraderValue, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalUpdatePlayerValue.connect(&WorkshopProxy::onUpdatePlayerValue, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &WorkshopProxy::signalTraderStocktoOffer, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onTraderStocktoOffer, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalTraderOffertoStock, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onTraderOffertoStock, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalPlayerStocktoOffer, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onPlayerStocktoOffer, Qt::QueuedConnection );
-	connect( this, &WorkshopProxy::signalPlayerOffertoStock, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onPlayerOffertoStock, Qt::QueuedConnection );
+	this->signalTraderStocktoOffer.connect(&AggregatorWorkshop::onTraderStocktoOffer, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalTraderOffertoStock.connect(&AggregatorWorkshop::onTraderOffertoStock, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalPlayerStocktoOffer.connect(&AggregatorWorkshop::onPlayerStocktoOffer, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalPlayerOffertoStock.connect(&AggregatorWorkshop::onPlayerOffertoStock, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
 	
-	connect( this, &WorkshopProxy::signalTrade, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onTrade, Qt::QueuedConnection );
+	this->signalTrade.connect(&AggregatorWorkshop::onTrade, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
 }
 
 WorkshopProxy::~WorkshopProxy()
@@ -79,13 +79,13 @@ void WorkshopProxy::setBasicOptions( unsigned int WorkshopID, QString name, int 
 {
 	if( !m_blockWriteBack )
 	{
-		emit signalSetBasicOptions( WorkshopID, name, priority, suspended, acceptGenerated, autoCraftMissing, connectStockpile );
+		signalSetBasicOptions( WorkshopID, name, priority, suspended, acceptGenerated, autoCraftMissing, connectStockpile );
 	}
 }
 
 void WorkshopProxy::craftItem( QString craftID, int mode, int number, QStringList mats )
 {
-	emit signalCraftItem( m_workshopID, craftID, mode, number, mats );
+	signalCraftItem( m_workshopID, craftID, mode, number, mats );
 }
 
 void WorkshopProxy::onUpdateCraftList( const GuiWorkshopInfo& info )
@@ -98,23 +98,23 @@ void WorkshopProxy::onUpdateCraftList( const GuiWorkshopInfo& info )
 
 void WorkshopProxy::craftJobCommand( unsigned int craftJobID, QString command )
 {
-	emit signalCraftJobCommand( m_workshopID, craftJobID, command );
+	signalCraftJobCommand( m_workshopID, craftJobID, command );
 }
 
 void WorkshopProxy::craftJobParams( unsigned int craftJobID, int mode, QString numString, bool suspended, bool moveBack )
 {
 	int num = qMax( 1, numString.toInt() );
-	emit signalCraftJobParams( m_workshopID, craftJobID, mode, num, suspended, moveBack );
+	signalCraftJobParams( m_workshopID, craftJobID, mode, num, suspended, moveBack );
 }
 
 void WorkshopProxy::setButcherOptions( unsigned int workshopID, bool butcherCorpses, bool butcherExcess )
 {
-	emit signalSetButcherOptions( workshopID, butcherCorpses, butcherExcess );
+	signalSetButcherOptions( workshopID, butcherCorpses, butcherExcess );
 }
 
 void WorkshopProxy::requestAllTradeItems( unsigned int workshopID )
 {
-	emit signalRequestAllTradeItems( workshopID );
+	signalRequestAllTradeItems( workshopID );
 }
 
 void WorkshopProxy::onUpdateTraderStock( const QList<GuiTradeItem>& items )
@@ -135,22 +135,22 @@ void WorkshopProxy::onUpdatePlayerStock( const QList<GuiTradeItem>& items )
 
 void WorkshopProxy::traderStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	emit signalTraderStocktoOffer( workshopID, itemSID, materialSID, quality, count );
+	signalTraderStocktoOffer( workshopID, itemSID, materialSID, quality, count );
 }
 	
 void WorkshopProxy::traderOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	emit signalTraderOffertoStock( workshopID, itemSID, materialSID, quality, count );
+	signalTraderOffertoStock( workshopID, itemSID, materialSID, quality, count );
 }
 
 void WorkshopProxy::playerStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	emit signalPlayerStocktoOffer( workshopID, itemSID, materialSID, quality, count );
+	signalPlayerStocktoOffer( workshopID, itemSID, materialSID, quality, count );
 }
 
 void WorkshopProxy::playerOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
-	emit signalPlayerOffertoStock( workshopID, itemSID, materialSID, quality, count );
+	signalPlayerOffertoStock( workshopID, itemSID, materialSID, quality, count );
 }
 
 void WorkshopProxy::onUpdateTraderStockItem( const GuiTradeItem& item )
@@ -188,14 +188,14 @@ void WorkshopProxy::onUpdatePlayerValue( int value )
 
 void WorkshopProxy::trade( unsigned int workshopID )
 {
-	emit signalTrade( workshopID );
+	signalTrade( workshopID );
 }
 
 void WorkshopProxy::setFisherOptions( unsigned int WorkshopID, bool catchFish, bool processFish )
 {
 	if( !m_blockWriteBack )
 	{
-		emit signalSetFisherOptions( WorkshopID, catchFish, processFish );
+		signalSetFisherOptions( WorkshopID, catchFish, processFish );
 	}
 }
 

@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class ProxyMainView : public QObject
 {
 	Q_OBJECT
@@ -56,16 +58,16 @@ private slots:
 	void onLoadGameDone( bool value );
 	void onVersion( QString version );
 
-signals:
-	void signalRequestLoadScreenUpdate();
-	void signalRequestUIScale();
-	void signalRequestVersion();
+public: // signals:
+	sigslot::signal<> signalRequestLoadScreenUpdate;
+	sigslot::signal<> signalRequestUIScale;
+	sigslot::signal<> signalRequestVersion;
 
-	void signalStartNewGame();
-	void signalContinueLastGame();
-	void signalLoadGame( QString param );
-	void signalSaveGame();
-	void signalSetShowMainMenu( bool value );
-	void signalEndGame();
+	sigslot::signal<> signalStartNewGame;
+	sigslot::signal<> signalContinueLastGame;
+	sigslot::signal<QString /*param*/> signalLoadGame;
+	sigslot::signal<> signalSaveGame;
+	sigslot::signal<bool /*value*/> signalSetShowMainMenu;
+	sigslot::signal<> signalEndGame;
 	
 };

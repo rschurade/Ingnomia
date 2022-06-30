@@ -49,7 +49,7 @@ void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 	auto sp = g->spm()->getStockpileAtPos( pos );
 	if ( sp )
 	{
-		emit signalOpenStockpileWindow( sp->id() );
+		signalOpenStockpileWindow( sp->id() );
 		onUpdateStockpileInfo( sp->id() );
 	}
 }
@@ -57,7 +57,7 @@ void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 void AggregatorStockpile::onOpenStockpileInfo( unsigned int stockpileID )
 {
 	if( !g ) return;
-	emit signalOpenStockpileWindow( stockpileID );
+	signalOpenStockpileWindow( stockpileID );
 	onUpdateStockpileInfo( stockpileID );
 }
 
@@ -66,7 +66,7 @@ void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 	if( !g ) return;
 	if ( aggregate( stockpileID ) )
 	{
-		emit signalUpdateInfo( m_info );
+		signalUpdateInfo( m_info );
 	}
 }
 
@@ -141,7 +141,7 @@ void AggregatorStockpile::onUpdateAfterTick()
 				m_info.summary.append( is );
 			}
 		}
-		emit signalUpdateContent( m_info );
+		signalUpdateContent( m_info );
 		m_contentDirty = false;
 	}
 }

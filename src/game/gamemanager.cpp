@@ -252,32 +252,31 @@ void GameManager::postCreationInit()
 
 	m_game->fm()->signalFarmChanged.connect(&AggregatorAgri::onUpdateFarm, m_eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
 	m_game->fm()->signalPastureChanged.connect(&AggregatorAgri::onUpdatePasture, m_eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
-	connect( m_eventConnector->aggregatorDebug(), &AggregatorDebug::signalTriggerEvent, m_game->em(), &EventManager::onDebugEvent );
-	connect( m_game->spm(), &StockpileManager::signalStockpileAdded, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onOpenStockpileInfo, Qt::QueuedConnection );
-	connect( m_game->spm(), &StockpileManager::signalStockpileContentChanged, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateStockpileContent, Qt::QueuedConnection );
-	connect( m_game->wsm(), &WorkshopManager::signalJobListChanged, m_eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCraftListChanged, Qt::QueuedConnection );
+	m_eventConnector->aggregatorDebug()->signalTriggerEvent.connect(&EventManager::onDebugEvent, m_game->em());
+	m_game->spm()->signalStockpileAdded.connect(&AggregatorStockpile::onOpenStockpileInfo, m_eventConnector->aggregatorStockpile()); // TODO: Qt::QueuedConnection
+	m_game->spm()->signalStockpileContentChanged.connect(&AggregatorStockpile::onUpdateStockpileContent, m_eventConnector->aggregatorStockpile()); // TODO: Qt::QueuedConnection
+	m_game->wsm()->signalJobListChanged.connect(&AggregatorWorkshop::onCraftListChanged, m_eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
 
-	connect( m_game->sm(), &SoundManager::signalPlayEffect, m_eventConnector->aggregatorSound(), &AggregatorSound::onPlayEffect, Qt::QueuedConnection );
+	m_game->sm()->signalPlayEffect.connect(&AggregatorSound::onPlayEffect, m_eventConnector->aggregatorSound()); // TODO: Qt::QueuedConnection
 
 	m_game->em()->signalUpdateMission.connect( &AggregatorNeighbors::onUpdateMission, m_eventConnector->aggregatorNeighbors() ); // TODO: Qt::QueuedConnection
 	m_game->em()->signalCenterCamera.connect( &AggregatorRenderer::onCenterCamera, m_eventConnector->aggregatorRenderer() );    // TODO: Qt::QueuedConnection
 
-	connect( m_game->inv(), &Inventory::signalAddItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onAddItem, Qt::QueuedConnection );
-	connect( m_game->inv(), &Inventory::signalRemoveItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onRemoveItem, Qt::QueuedConnection );
+	m_game->inv()->signalAddItem.connect(&AggregatorInventory::onAddItem, m_eventConnector->aggregatorInventory()); // TODO: Qt::QueuedConnection
+	m_game->inv()->signalRemoveItem.connect(&AggregatorInventory::onRemoveItem, m_eventConnector->aggregatorInventory()); // TODO: Qt::QueuedConnection
 
 	m_game->signalTimeAndDate.connect(&EventConnector::onTimeAndDate, m_eventConnector);
 	m_game->signalKingdomInfo.connect(&EventConnector::onKingdomInfo, m_eventConnector);
 	m_game->signalHeartbeat.connect(&EventConnector::onHeartbeat, m_eventConnector);
 
-	
 	Global::util->initAllowedInContainer();
 	m_eventConnector->onViewLevel( GameState::viewLevel );
 	m_eventConnector->emitInMenu( false );
 
-	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
-	connect( m_eventConnector, &EventConnector::startGame, m_game, &Game::start );
-	
-	connect( m_eventConnector, &EventConnector::signalCameraPosition, m_eventConnector->aggregatorSound(), &AggregatorSound::onCameraPosition, Qt::QueuedConnection );
+	m_eventConnector->stopGame.connect(&AggregatorRenderer::onWorldParametersChanged, m_eventConnector->aggregatorRenderer());
+	m_eventConnector->startGame.connect(&Game::start, m_game);
+
+	m_eventConnector->signalCameraPosition.connect(&AggregatorSound::onCameraPosition, m_eventConnector->aggregatorSound()); // TODO: Qt::QueuedConnection
 
 
 	m_game->signalUpdateTileInfo.connect(&AggregatorTileInfo::onUpdateAnyTileInfo, m_eventConnector->aggregatorTileInfo());

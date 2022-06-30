@@ -94,7 +94,7 @@ void AggregatorMilitary::sendSquadUpdate()
 
 	}
 
-	emit signalSquads( m_squads );
+	signalSquads( m_squads );
 }
 
 void AggregatorMilitary::onRequestRoles()
@@ -127,7 +127,7 @@ void AggregatorMilitary::sendRoleUpdate()
 
 		m_roles.append( gmr );
 	}
-	emit signalRoles( m_roles );
+	signalRoles( m_roles );
 }
 
 GuiUniformItem AggregatorMilitary::createUniformItem( QString slot, QVariantMap uniVM )
@@ -166,7 +166,7 @@ void AggregatorMilitary::sendPriorityUpdate( unsigned int squadID )
 			m_tmpPriorities.append( gtp );
 		}
 
-		emit signalPriorities( squadID, m_tmpPriorities );
+		signalPriorities( squadID, m_tmpPriorities );
 	}
 }
 
@@ -293,7 +293,7 @@ void AggregatorMilitary::onSetArmorType( unsigned int roleID, QString slot, QStr
 		}
 	}
 
-	emit signalPossibleMaterials( roleID, slot, mats );
+	signalPossibleMaterials( roleID, slot, mats );
 }
 
 void AggregatorMilitary::onSetRole( unsigned int gnomeID, unsigned int roleID )

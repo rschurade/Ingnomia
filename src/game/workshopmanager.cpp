@@ -147,7 +147,7 @@ bool WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int
 		{
 			if ( w->autoCraft( itemSID, materialSID, amount ) )
 			{
-				emit signalJobListChanged( w->id() );
+				signalJobListChanged( w->id() );
 				return true;
 			}
 		}
@@ -216,5 +216,5 @@ QList<Workshop*> WorkshopManager::getTrainingGrounds()
 
 void WorkshopManager::emitJobListChanged( unsigned int workshopID )
 {
-	emit signalJobListChanged( workshopID );
+	signalJobListChanged( workshopID );
 }

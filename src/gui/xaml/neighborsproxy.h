@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class NeighborsProxy : public QObject
 {
 	Q_OBJECT
@@ -45,7 +47,7 @@ private slots:
 	void onAvailableGnomes( const QList<GuiAvailableGnome>& gnomes );
 	void onUpdateMission( const Mission& mission );
 
-signals:
-	void signalRequestAvailableGnomes();
-	void signalStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
+public: // signals:
+	sigslot::signal<> signalRequestAvailableGnomes;
+	sigslot::signal<MissionType /*type*/, MissionAction /*action*/, unsigned int /*targetKingdom*/, unsigned int /*gnomeID*/> signalStartMission;
 };

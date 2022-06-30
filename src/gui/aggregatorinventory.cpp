@@ -170,7 +170,7 @@ void AggregatorInventory::onRequestCategories()
 		m_categories.append( gic );
 	}
 
-	emit signalInventoryCategories( m_categories );
+	signalInventoryCategories( m_categories );
 }
 
 void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QString category )
@@ -221,7 +221,7 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 			m_buildItems.append( gbi );
 		}
 	}
-	emit signalBuildItems( m_buildItems );
+	signalBuildItems( m_buildItems );
 }
 
 void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection )
@@ -441,7 +441,7 @@ void AggregatorInventory::updateWatchedItem( QString cat )
 			break;
 		}
 	}
-	emit signalWatchList( GameState::watchedItemList );
+	signalWatchList( GameState::watchedItemList );
 }
     
 void AggregatorInventory::updateWatchedItem( QString cat, QString group )
@@ -464,7 +464,7 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 			break;
 		}
 	}
-	emit signalWatchList( GameState::watchedItemList );
+	signalWatchList( GameState::watchedItemList );
 }
 
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item )
@@ -482,7 +482,7 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 			break;
 		}
 	}
-	emit signalWatchList( GameState::watchedItemList );
+	signalWatchList( GameState::watchedItemList );
 }
 
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item, QString mat )
@@ -496,12 +496,12 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 			break;
 		}
 	}
-	emit signalWatchList( GameState::watchedItemList );
+	signalWatchList( GameState::watchedItemList );
 }
 
 void AggregatorInventory::update()
 {
 	onRequestCategories();
 
-	emit signalWatchList( GameState::watchedItemList );
+	signalWatchList( GameState::watchedItemList );
 }

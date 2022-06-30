@@ -26,6 +26,8 @@
 
 #include <vector>
 
+#include <sigslot/signal.hpp>
+
 class Grass;
 struct Tile;
 struct EmbeddedMaterial;
@@ -125,6 +127,6 @@ private:
 
 	World* w = nullptr;
 	NewGameSettings* ngs = nullptr;
-signals:
-	void signalStatus( QString msg );
+public: // signals:
+	sigslot::signal<QString /*msg*/> signalStatus;
 };

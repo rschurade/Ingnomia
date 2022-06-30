@@ -27,26 +27,26 @@
 ProxyMainView::ProxyMainView( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector, &EventConnector::signalWindowSize, this, &ProxyMainView::onWindowSize, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalPropagateKeyEsc, this, &ProxyMainView::onKeyEsc, Qt::QueuedConnection );
+	Global::eventConnector->signalWindowSize.connect(&ProxyMainView::onWindowSize, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalPropagateKeyEsc.connect(&ProxyMainView::onKeyEsc, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUIScale, this, &ProxyMainView::onUIScale, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorSettings()->signalUIScale.connect(&ProxyMainView::onUIScale, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyMainView::signalRequestLoadScreenUpdate, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms );
+	this->signalRequestLoadScreenUpdate.connect(&AggregatorLoadGame::onRequestKingdoms, Global::eventConnector->aggregatorLoadGame());
 
-	connect( this, &ProxyMainView::signalRequestUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestUIScale, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalRequestVersion, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestVersion, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalVersion, this, &ProxyMainView::onVersion, Qt::QueuedConnection );
+	this->signalRequestUIScale.connect(&AggregatorSettings::onRequestUIScale, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+	this->signalRequestVersion.connect(&AggregatorSettings::onRequestVersion, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorSettings()->signalVersion.connect(&ProxyMainView::onVersion, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyMainView::signalStartNewGame, Global::eventConnector, &EventConnector::onStartNewGame, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalContinueLastGame, Global::eventConnector, &EventConnector::onContinueLastGame, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalLoadGame, Global::eventConnector, &EventConnector::onLoadGame, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalSaveGame, Global::eventConnector, &EventConnector::onSaveGame, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalSetShowMainMenu, Global::eventConnector, &EventConnector::onSetShowMainMenu, Qt::QueuedConnection );
-	connect( this, &ProxyMainView::signalEndGame, Global::eventConnector, &EventConnector::onEndGame, Qt::QueuedConnection );
+	this->signalStartNewGame.connect(&EventConnector::onStartNewGame, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalContinueLastGame.connect(&EventConnector::onContinueLastGame, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalLoadGame.connect(&EventConnector::onLoadGame, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalSaveGame.connect(&EventConnector::onSaveGame, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalSetShowMainMenu.connect(&EventConnector::onSetShowMainMenu, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalEndGame.connect(&EventConnector::onEndGame, Global::eventConnector); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector, &EventConnector::signalResume, this, &ProxyMainView::onResume, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalLoadGameDone, this, &ProxyMainView::onLoadGameDone, Qt::QueuedConnection );
+	Global::eventConnector->signalResume.connect(&ProxyMainView::onResume, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalLoadGameDone.connect(&ProxyMainView::onLoadGameDone, this); // TODO: Qt::QueuedConnection
 }
 
 ProxyMainView::~ProxyMainView()
@@ -84,37 +84,37 @@ void ProxyMainView::onUIScale( float value )
 
 void ProxyMainView::requestLoadScreenUpdate()
 {
-	emit signalRequestLoadScreenUpdate();
+	signalRequestLoadScreenUpdate();
 }
 
 void ProxyMainView::requestUIScale()
 {
-	emit signalRequestUIScale();
+	signalRequestUIScale();
 }
 
 void ProxyMainView::startNewGame()
 {
-	emit signalStartNewGame();
+	signalStartNewGame();
 }
 	
 void ProxyMainView::continueLastGame()
 {
-	emit signalContinueLastGame();
+	signalContinueLastGame();
 }
 
 void ProxyMainView::loadGame( QString param )
 {
-	emit signalLoadGame( param );
+	signalLoadGame( param );
 }
 
 void ProxyMainView::saveGame()
 {
-	emit signalSaveGame();
+	signalSaveGame();
 }
 
 void ProxyMainView::setShowMainMenu( bool value )
 {
-	emit signalSetShowMainMenu( value );
+	signalSetShowMainMenu( value );
 }
 
 void ProxyMainView::onResume()
@@ -135,12 +135,12 @@ void ProxyMainView::onLoadGameDone( bool value )
 
 void ProxyMainView::endGame()
 {
-	emit signalEndGame();
+	signalEndGame();
 }
 
 void ProxyMainView::requestVersion()
 {
-	emit signalRequestVersion();
+	signalRequestVersion();
 }
 
 void ProxyMainView::onVersion( QString version )

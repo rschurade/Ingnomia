@@ -34,52 +34,52 @@
 ProxyGameView::ProxyGameView( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector, &EventConnector::signalKeyEsc, this, &ProxyGameView::onKeyEscape, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalPropagateEscape, Global::eventConnector, &EventConnector::onPropagateEscape );
+	Global::eventConnector->signalKeyEsc.connect(&ProxyGameView::onKeyEscape, this); // TODO: Qt::QueuedConnection
+this->signalPropagateEscape.connect(&EventConnector::onPropagateEscape, Global::eventConnector);
 
-	connect( Global::eventConnector, &EventConnector::signalTimeAndDate, this, &ProxyGameView::onTimeAndDate, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalKingdomInfo, this, &ProxyGameView::onKingdomInfo, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalViewLevel, this, &ProxyGameView::onViewLevel, Qt::QueuedConnection );
+	Global::eventConnector->signalTimeAndDate.connect(&ProxyGameView::onTimeAndDate, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalKingdomInfo.connect(&ProxyGameView::onKingdomInfo, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalViewLevel.connect(&ProxyGameView::onViewLevel, this); // TODO: Qt::QueuedConnection
 	
-	connect( Global::eventConnector, &EventConnector::signalHeartbeat, this, &ProxyGameView::onHeartbeat, Qt::QueuedConnection );
+	Global::eventConnector->signalHeartbeat.connect(&ProxyGameView::onHeartbeat, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector, &EventConnector::signalUpdatePause, this, &ProxyGameView::onUpdatePause, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalUpdateGameSpeed, this, &ProxyGameView::onUpdateGameSpeed, Qt::QueuedConnection );
+	Global::eventConnector->signalUpdatePause.connect(&ProxyGameView::onUpdatePause, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalUpdateGameSpeed.connect(&ProxyGameView::onUpdateGameSpeed, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector, &EventConnector::signalBuild, this, &ProxyGameView::onBuild, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::signalShowTileInfo, this, &ProxyGameView::onShowTileInfo, Qt::QueuedConnection );
+	Global::eventConnector->signalBuild.connect(&ProxyGameView::onBuild, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorTileInfo()->signalShowTileInfo.connect(&ProxyGameView::onShowTileInfo, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::signalOpenStockpileWindow, this, &ProxyGameView::onOpenStockpileWindow, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::signalOpenWorkshopWindow, this, &ProxyGameView::onOpenWorkshopWindow, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorStockpile()->signalOpenStockpileWindow.connect(&ProxyGameView::onOpenStockpileWindow, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorWorkshop()->signalOpenWorkshopWindow.connect(&ProxyGameView::onOpenWorkshopWindow, this); // TODO: Qt::QueuedConnection
 	//connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalShowAgri, this, &ProxyGameView::onOpenAgriWindow, Qt::QueuedConnection );
 
-	connect( this, &ProxyGameView::signalCloseStockpileWindow, Global::eventConnector->aggregatorStockpile(), &AggregatorStockpile::onCloseWindow, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalCloseWorkshopWindow, Global::eventConnector->aggregatorWorkshop(), &AggregatorWorkshop::onCloseWindow, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalCloseAgricultureWindow, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onCloseWindow, Qt::QueuedConnection );
+	this->signalCloseStockpileWindow.connect(&AggregatorStockpile::onCloseWindow, Global::eventConnector->aggregatorStockpile()); // TODO: Qt::QueuedConnection
+	this->signalCloseWorkshopWindow.connect(&AggregatorWorkshop::onCloseWindow, Global::eventConnector->aggregatorWorkshop()); // TODO: Qt::QueuedConnection
+	this->signalCloseAgricultureWindow.connect(&AggregatorAgri::onCloseWindow, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyGameView::signalRequestPopulationUpdate, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestPopulationUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestCreatureUpdate, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestCreatureUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestNeighborsUpdate, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onRequestNeighborsUpdate, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestMissionsUpdate, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onRequestMissions, Qt::QueuedConnection );
+	this->signalRequestPopulationUpdate.connect(&AggregatorPopulation::onRequestPopulationUpdate, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalRequestCreatureUpdate.connect(&AggregatorCreatureInfo::onRequestCreatureUpdate, Global::eventConnector->aggregatorCreatureInfo()); // TODO: Qt::QueuedConnection
+	this->signalRequestNeighborsUpdate.connect(&AggregatorNeighbors::onRequestNeighborsUpdate, Global::eventConnector->aggregatorNeighbors()); // TODO: Qt::QueuedConnection
+	this->signalRequestMissionsUpdate.connect(&AggregatorNeighbors::onRequestMissions, Global::eventConnector->aggregatorNeighbors()); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyGameView::signalRequestMilitaryUpdate, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestMilitary, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestInventoryUpdate, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
+	this->signalRequestMilitaryUpdate.connect(&AggregatorMilitary::onRequestMilitary, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRequestInventoryUpdate.connect(&AggregatorInventory::onRequestCategories, Global::eventConnector->aggregatorInventory()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector, &EventConnector::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalEventAnswer, Global::eventConnector, &EventConnector::onAnswer, Qt::QueuedConnection );
+	Global::eventConnector->signalEvent.connect(&ProxyGameView::onEvent, this); // TODO: Qt::QueuedConnection
+	this->signalEventAnswer.connect(&EventConnector::onAnswer, Global::eventConnector); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyGameView::signalSetPaused, Global::eventConnector, &EventConnector::onSetPause, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalSetGameSpeed, Global::eventConnector, &EventConnector::onSetGameSpeed, Qt::QueuedConnection );
+	this->signalSetPaused.connect(&EventConnector::onSetPause, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalSetGameSpeed.connect(&EventConnector::onSetGameSpeed, Global::eventConnector); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyGameView::signalSetRenderOptions, Global::eventConnector, &EventConnector::onSetRenderOptions, Qt::QueuedConnection );
-	connect( Global::eventConnector, &EventConnector::signalUpdateRenderOptions, this, &ProxyGameView::onUpdateRenderOptions, Qt::QueuedConnection );
+	this->signalSetRenderOptions.connect(&EventConnector::onSetRenderOptions, Global::eventConnector); // TODO: Qt::QueuedConnection
+	Global::eventConnector->signalUpdateRenderOptions.connect(&ProxyGameView::onUpdateRenderOptions, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &ProxyGameView::signalRequestBuildItems, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestBuildItems, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalBuildItems, this,  &ProxyGameView::onBuildItems, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorInventory(), &AggregatorInventory::signalWatchList, this,  &ProxyGameView::onWatchList, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalRequestCmdBuild, Global::eventConnector, &EventConnector::onCmdBuild, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalSetSelectionAction, Global::eventConnector, &EventConnector::onSetSelectionAction, Qt::QueuedConnection );
-	connect( this, &ProxyGameView::signalHeartbeatResponse, Global::eventConnector, &EventConnector::onHeartbeatResponse, Qt::QueuedConnection );
+	this->signalRequestBuildItems.connect(&AggregatorInventory::onRequestBuildItems, Global::eventConnector->aggregatorInventory()); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorInventory()->signalBuildItems.connect(&ProxyGameView::onBuildItems, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorInventory()->signalWatchList.connect(&ProxyGameView::onWatchList, this); // TODO: Qt::QueuedConnection
+	this->signalRequestCmdBuild.connect(&EventConnector::onCmdBuild, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalSetSelectionAction.connect(&EventConnector::onSetSelectionAction, Global::eventConnector); // TODO: Qt::QueuedConnection
+	this->signalHeartbeatResponse.connect(&EventConnector::onHeartbeatResponse, Global::eventConnector); // TODO: Qt::QueuedConnection
 	
 }
 
@@ -110,7 +110,7 @@ void ProxyGameView::onKingdomInfo( QString name, QString info1, QString info2, Q
 
 void ProxyGameView::onHeartbeat( int value )
 {
-	emit signalHeartbeatResponse(value);
+	signalHeartbeatResponse(value);
 
 }
 
@@ -180,37 +180,37 @@ void ProxyGameView::onOpenAgriWindow( unsigned int ID )
 
 void ProxyGameView::closeStockpileWindow()
 {
-	emit signalCloseStockpileWindow();
+	signalCloseStockpileWindow();
 }
 
 void ProxyGameView::closeWorkshopWindow()
 {
-	emit signalCloseWorkshopWindow();
+	signalCloseWorkshopWindow();
 }
 
 void ProxyGameView::closeAgricultureWindow()
 {
-	emit signalCloseAgricultureWindow();
+	signalCloseAgricultureWindow();
 }
 
 void ProxyGameView::requestPopulationUpdate()
 {
-	emit signalRequestPopulationUpdate();
+	signalRequestPopulationUpdate();
 }
 
 void ProxyGameView::requestNeighborsUpdate()
 {
-	emit signalRequestNeighborsUpdate();
+	signalRequestNeighborsUpdate();
 }
 
 void ProxyGameView::requestMissionsUpdate()
 {
-	emit signalRequestMissionsUpdate();
+	signalRequestMissionsUpdate();
 }
 
 void ProxyGameView::requestCreatureUpdate( unsigned int id )
 {
-	emit signalRequestCreatureUpdate( id );
+	signalRequestCreatureUpdate( id );
 }
 
 void ProxyGameView::onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno )
@@ -223,17 +223,17 @@ void ProxyGameView::onEvent( unsigned int id, QString title, QString msg, bool p
 
 void ProxyGameView::sendEventAnswer( unsigned int eventID, bool answer )
 {
-	emit signalEventAnswer( eventID, answer );
+	signalEventAnswer( eventID, answer );
 }
 
 void ProxyGameView::requestMilitaryUpdate()
 {
-	emit signalRequestMilitaryUpdate();
+	signalRequestMilitaryUpdate();
 }
 
 void ProxyGameView::requestInventoryUpdate()
 {
-	emit signalRequestInventoryUpdate();
+	signalRequestInventoryUpdate();
 }
 
 
@@ -247,22 +247,22 @@ void ProxyGameView::onKeyEscape()
 	
 void ProxyGameView::propagateEscape()
 {
-	emit signalPropagateEscape();
+	signalPropagateEscape();
 }
 
 void ProxyGameView::setGameSpeed( GameSpeed speed )
 {
-	emit signalSetGameSpeed( speed );
+	signalSetGameSpeed( speed );
 }
 	
 void ProxyGameView::setPaused( bool paused )
 {
-	emit signalSetPaused( paused );
+	signalSetPaused( paused );
 }
 
 void ProxyGameView::setRenderOptions( bool designations, bool jobs, bool walls, bool axles )
 {
-	emit signalSetRenderOptions( designations, jobs, walls, axles );
+	signalSetRenderOptions( designations, jobs, walls, axles );
 }
 
 void ProxyGameView::onUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles )
@@ -275,7 +275,7 @@ void ProxyGameView::onUpdateRenderOptions( bool designation, bool jobs, bool wal
 
 void ProxyGameView::requestBuildItems( BuildSelection buildSelection, QString category )
 {
-	emit signalRequestBuildItems( buildSelection, category );
+	signalRequestBuildItems( buildSelection, category );
 }
 
 void ProxyGameView::onBuildItems( const QList<GuiBuildItem>& items )
@@ -288,12 +288,12 @@ void ProxyGameView::onBuildItems( const QList<GuiBuildItem>& items )
 
 void ProxyGameView::requestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
 {
-	emit signalRequestCmdBuild( type, param, item, mats );
+	signalRequestCmdBuild( type, param, item, mats );
 }
 
 void ProxyGameView::setSelectionAction( QString action )
 {
-	emit signalSetSelectionAction( action );
+	signalSetSelectionAction( action );
 }
 
 void ProxyGameView::onWatchList( const QList<GuiWatchedItem>& watchlist )

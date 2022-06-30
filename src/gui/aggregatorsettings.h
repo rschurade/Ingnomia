@@ -19,6 +19,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 
 struct GuiSettings
 {
@@ -59,11 +61,11 @@ public slots:
     void onSetToggleMouseWheel( bool value );
 	void onSetAudioMasterVolume( float value );
 
-signals:
-	void signalUpdateSettings( const GuiSettings& info );
+public: // signals:
+	sigslot::signal<const GuiSettings& /*info*/> signalUpdateSettings;
 
-    void signalFullScreen( bool value );
-    void signalUIScale( float value );
-    void signalSetLanguage( QString language );
-    void signalVersion( QString version );
+    sigslot::signal<bool /*value*/> signalFullScreen;
+    sigslot::signal<float /*value*/> signalUIScale;
+    sigslot::signal<QString /*language*/> signalSetLanguage;
+    sigslot::signal<QString /*version*/> signalVersion;
 };

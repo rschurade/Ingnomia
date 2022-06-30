@@ -75,20 +75,20 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	Global::eventConnector->aggregatorRenderer()->signalAxleData.connect( &MainWindowRenderer::onAxelData, this );
 	Global::eventConnector->aggregatorRenderer()->signalThoughtBubbles.connect( &MainWindowRenderer::onThoughtBubbles, this );
 	Global::eventConnector->aggregatorRenderer()->signalCenterCamera.connect( &MainWindowRenderer::onCenterCameraPosition, this );
-	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
+	Global::eventConnector->signalInMenu.connect( &MainWindowRenderer::onSetInMenu, this );
 
 	Global::eventConnector->aggregatorSelection()->signalUpdateSelection.connect(&MainWindowRenderer::onUpdateSelection, this); // TODO: This was Qt::QueuedConnection
 
 	// Full polling of initial state on load
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onThoughtBubbleUpdate );
-	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAxleDataUpdate );
+	this->fullDataRequired.connect(&AggregatorRenderer::onAllTileInfo, Global::eventConnector->aggregatorRenderer());
+	this->fullDataRequired.connect(&AggregatorRenderer::onThoughtBubbleUpdate, Global::eventConnector->aggregatorRenderer());
+	this->fullDataRequired.connect(&AggregatorRenderer::onAxleDataUpdate, Global::eventConnector->aggregatorRenderer());
 
-	connect( this, &MainWindowRenderer::signalCameraPosition, Global::eventConnector, &EventConnector::onCameraPosition );
+	this->signalCameraPosition.connect(&EventConnector::onCameraPosition, Global::eventConnector);
 
 	qDebug() << "initialize GL ...";
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
-	connect( this, &MainWindowRenderer::redrawRequired, m_parent, &MainWindow::redraw );
+	this->redrawRequired.connect(&MainWindow::redraw, m_parent);
 
 	if ( !initializeOpenGLFunctions() )
 	{
@@ -234,19 +234,19 @@ void MainWindowRenderer::cleanupWorld()
 void MainWindowRenderer::onTileUpdates( const TileDataUpdateInfo& updates )
 {
 	m_pendingUpdates.push_back( updates.updates );
-	emit redrawRequired();
+	redrawRequired();
 }
 
 void MainWindowRenderer::onThoughtBubbles( const ThoughtBubbleInfo& bubbles )
 {
 	m_thoughBubbles = bubbles;
-	emit redrawRequired();
+	redrawRequired();
 }
 
 void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 {
 	m_axleData = data;
-	emit redrawRequired();
+	redrawRequired();
 }
 
 QString MainWindowRenderer::copyShaderToString( QString name )
@@ -431,7 +431,7 @@ void MainWindowRenderer::initWorld()
 
 	m_rotation = 0;
 
-	emit fullDataRequired();
+	fullDataRequired();
 }
 
 void MainWindowRenderer::updateRenderParams()
@@ -574,8 +574,8 @@ void MainWindowRenderer::paintWorld()
 void MainWindowRenderer::onRenderParamsChanged()
 {
 	updateRenderParams();
-	emit redrawRequired();
-	emit signalCameraPosition(m_moveX, m_moveY, m_viewLevel, m_rotation, m_scale);
+	redrawRequired();
+	signalCameraPosition(m_moveX, m_moveY, m_viewLevel, m_rotation, m_scale);
 	
 }
 

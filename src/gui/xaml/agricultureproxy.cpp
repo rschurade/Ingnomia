@@ -29,27 +29,27 @@
 AgricultureProxy::AgricultureProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalUpdateFarm, this, &AgricultureProxy::onUpdateFarm, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalUpdatePasture, this, &AgricultureProxy::onUpdatePasture, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalUpdateGrove, this, &AgricultureProxy::onUpdateGrove, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalGlobalPlantInfo, this, &AgricultureProxy::onUpdateGlobalPlants, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalGlobalAnimalInfo, this, &AgricultureProxy::onUpdateGlobalAnimals, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorAgri(), &AggregatorAgri::signalGlobalTreeInfo, this, &AgricultureProxy::onUpdateGlobalTrees, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorAgri()->signalUpdateFarm.connect(&AgricultureProxy::onUpdateFarm, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorAgri()->signalUpdatePasture.connect(&AgricultureProxy::onUpdatePasture, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorAgri()->signalUpdateGrove.connect(&AgricultureProxy::onUpdateGrove, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorAgri()->signalGlobalPlantInfo.connect(&AgricultureProxy::onUpdateGlobalPlants, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorAgri()->signalGlobalAnimalInfo.connect(&AgricultureProxy::onUpdateGlobalAnimals, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorAgri()->signalGlobalTreeInfo.connect(&AgricultureProxy::onUpdateGlobalTrees, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &AgricultureProxy::signalSetBasicOptions, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetBasicOptions, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSelectProduct, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSelectProduct, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSetHarvestOptions, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetHarvestOptions, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSetGroveOptions, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetGroveOptions, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalRequestGlobalPlantInfo, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onRequestGlobalPlantInfo, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalRequestGlobalAnimalInfo, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onRequestGlobalAnimalInfo, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalRequestGlobalTreeInfo, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onRequestGlobalTreeInfo, Qt::QueuedConnection );
+	this->signalSetBasicOptions.connect(&AggregatorAgri::onSetBasicOptions, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSelectProduct.connect(&AggregatorAgri::onSelectProduct, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSetHarvestOptions.connect(&AggregatorAgri::onSetHarvestOptions, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSetGroveOptions.connect(&AggregatorAgri::onSetGroveOptions, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalRequestGlobalPlantInfo.connect(&AggregatorAgri::onRequestGlobalPlantInfo, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalRequestGlobalAnimalInfo.connect(&AggregatorAgri::onRequestGlobalAnimalInfo, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalRequestGlobalTreeInfo.connect(&AggregatorAgri::onRequestGlobalTreeInfo, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
 
-	connect( this, &AgricultureProxy::signalSetMaxMale, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetMaxMale, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSetMaxFemale, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetMaxFemale, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSetButchering, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetButchering, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalRequestPastureAnimalInfo, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onRequestPastureAnimalInfo, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalRequestPastureFoodInfo, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onRequestPastureFoodInfo, Qt::QueuedConnection );
-	connect( this, &AgricultureProxy::signalSetFoodItemChecked, Global::eventConnector->aggregatorAgri(), &AggregatorAgri::onSetFoodItemChecked, Qt::QueuedConnection );
+	this->signalSetMaxMale.connect(&AggregatorAgri::onSetMaxMale, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSetMaxFemale.connect(&AggregatorAgri::onSetMaxFemale, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSetButchering.connect(&AggregatorAgri::onSetButchering, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalRequestPastureAnimalInfo.connect(&AggregatorAgri::onRequestPastureAnimalInfo, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalRequestPastureFoodInfo.connect(&AggregatorAgri::onRequestPastureFoodInfo, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
+	this->signalSetFoodItemChecked.connect(&AggregatorAgri::onSetFoodItemChecked, Global::eventConnector->aggregatorAgri()); // TODO: Qt::QueuedConnection
 }
 
 AgricultureProxy::~AgricultureProxy()
@@ -93,22 +93,22 @@ void AgricultureProxy::onUpdateGrove( const GuiGroveInfo& info )
 
 void AgricultureProxy::setBasicOptions( unsigned int agricultureID, QString name, int priority, bool suspended )
 {
-	emit signalSetBasicOptions( m_type, agricultureID, name, priority, suspended );
+	signalSetBasicOptions( m_type, agricultureID, name, priority, suspended );
 }
 
 void AgricultureProxy::selectProduct( unsigned int agricultureID, QString product )
 {
-	emit signalSelectProduct( m_type, agricultureID, product );
+	signalSelectProduct( m_type, agricultureID, product );
 }
 
 void AgricultureProxy::setHarvestOptions( unsigned int agricultureID, bool harvest, bool harvestHay, bool tame )
 {
-	emit signalSetHarvestOptions( m_type, agricultureID, harvest, harvestHay, tame );
+	signalSetHarvestOptions( m_type, agricultureID, harvest, harvestHay, tame );
 }
 
 void AgricultureProxy::setGroveOptions( unsigned int designationID, bool pick, bool plant, bool fell )
 {
-	emit signalSetGroveOptions( designationID, pick, plant, fell );
+	signalSetGroveOptions( designationID, pick, plant, fell );
 }
 
 void AgricultureProxy::onUpdateGlobalPlants( const QList<GuiPlant>& plants )
@@ -137,45 +137,45 @@ void AgricultureProxy::onUpdateGlobalTrees( const QList<GuiPlant>& trees )
 
 void AgricultureProxy::requestGlobalPlantInfo()
 {
-	emit signalRequestGlobalPlantInfo();
+	signalRequestGlobalPlantInfo();
 }
 
 void AgricultureProxy::requestGlobalAnimalInfo()
 {
-	emit signalRequestGlobalAnimalInfo();
+	signalRequestGlobalAnimalInfo();
 }
 
 void AgricultureProxy::requestGlobalTreeInfo()
 {
-	emit signalRequestGlobalTreeInfo();
+	signalRequestGlobalTreeInfo();
 }
 
 void AgricultureProxy::setMaxMale( unsigned int designationID, int max )
 {
-	emit signalSetMaxMale( designationID, max );
+	signalSetMaxMale( designationID, max );
 }
 	
 void AgricultureProxy::setMaxFemale( unsigned int designationID, int max )
 {
-	emit signalSetMaxFemale( designationID, max );
+	signalSetMaxFemale( designationID, max );
 }
 
 void AgricultureProxy::setButchering( unsigned int animalId, bool value )
 {
-	emit signalSetButchering( animalId, value );
+	signalSetButchering( animalId, value );
 }
 
 void AgricultureProxy::requestPastureAnimalInfo()
 {
-	emit signalRequestPastureAnimalInfo( m_AgricultureID );
+	signalRequestPastureAnimalInfo( m_AgricultureID );
 }
 
 void AgricultureProxy::requestPastureFoodInfo()
 {
-	emit signalRequestPastureFoodInfo( m_AgricultureID );
+	signalRequestPastureFoodInfo( m_AgricultureID );
 }
 
 void AgricultureProxy::setFoodItemChecked( QString itemSID, QString materialSID, bool checked )
 {
-	emit signalSetFoodItemChecked( m_AgricultureID, itemSID, materialSID, checked );
+	signalSetFoodItemChecked( m_AgricultureID, itemSID, materialSID, checked );
 }

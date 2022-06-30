@@ -25,16 +25,16 @@
 SettingsProxy::SettingsProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &SettingsProxy::signalRequestSettings, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onRequestSettings, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetUIScale, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetUIScale, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetKeyboardSpeed, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetKeyboardSpeed, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetFullScreen, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetFullScreen, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetLanguage, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLanguage, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetLightMin, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetLightMin, Qt::QueuedConnection );
-    connect( this, &SettingsProxy::signalSetToggleMouseWheel, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetToggleMouseWheel, Qt::QueuedConnection );
-	 connect( this, &SettingsProxy::signalSetAudioMasterVolume, Global::eventConnector->aggregatorSettings(), &AggregatorSettings::onSetAudioMasterVolume, Qt::QueuedConnection );
+	this->signalRequestSettings.connect(&AggregatorSettings::onRequestSettings, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetUIScale.connect(&AggregatorSettings::onSetUIScale, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetKeyboardSpeed.connect(&AggregatorSettings::onSetKeyboardSpeed, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetFullScreen.connect(&AggregatorSettings::onSetFullScreen, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetLanguage.connect(&AggregatorSettings::onSetLanguage, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetLightMin.connect(&AggregatorSettings::onSetLightMin, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+    this->signalSetToggleMouseWheel.connect(&AggregatorSettings::onSetToggleMouseWheel, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
+	 this->signalSetAudioMasterVolume.connect(&AggregatorSettings::onSetAudioMasterVolume, Global::eventConnector->aggregatorSettings()); // TODO: Qt::QueuedConnection
     
-    connect( Global::eventConnector->aggregatorSettings(), &AggregatorSettings::signalUpdateSettings, this, &SettingsProxy::onSettings, Qt::QueuedConnection );
+    Global::eventConnector->aggregatorSettings()->signalUpdateSettings.connect(&SettingsProxy::onSettings, this); // TODO: Qt::QueuedConnection
 }
 
 void SettingsProxy::setParent( IngnomiaGUI::SettingsModel* parent )
@@ -44,7 +44,7 @@ void SettingsProxy::setParent( IngnomiaGUI::SettingsModel* parent )
 
 void SettingsProxy::requestSettings()
 {
-    emit signalRequestSettings();
+    signalRequestSettings();
 }
 
 void SettingsProxy::onSettings( const GuiSettings& settings )
@@ -57,35 +57,35 @@ void SettingsProxy::onSettings( const GuiSettings& settings )
 
 void SettingsProxy::setLanguage( QString language )
 {
-    emit signalSetLanguage( language );
+    signalSetLanguage( language );
 }
     
 void SettingsProxy::setUIScale( float scale )
 {
-    emit signalSetUIScale( scale );
+    signalSetUIScale( scale );
 }
 
 void SettingsProxy::setFullScreen( bool value )
 {
-    emit signalSetFullScreen( value );
+    signalSetFullScreen( value );
 }
 
 void SettingsProxy::setKeyboardSpeed( int value )
 {
-    emit signalSetKeyboardSpeed( value );
+    signalSetKeyboardSpeed( value );
 }
 
 void SettingsProxy::setLightMin( int value )
 {
-    emit signalSetLightMin( value );
+    signalSetLightMin( value );
 }
 
 void SettingsProxy::setToggleMouseWheel( bool value )
 {
-    emit signalSetToggleMouseWheel( value );
+    signalSetToggleMouseWheel( value );
 }
 
 void SettingsProxy::setAudioMasterVolume( float value )
 {
-    emit signalSetAudioMasterVolume( value );
+    signalSetAudioMasterVolume( value );
 }

@@ -31,13 +31,13 @@
 #include <QJsonDocument>
 #include <QCoreApplication>
 
-AggregatorSound::AggregatorSound( QObject* parent ) :
+AggregatorSound::AggregatorSound( EventConnector* parent ) :
 	QObject( parent )
 {
 	//sf::SoundBuffer buffer;
 	QString exePath = QCoreApplication::applicationDirPath();
 
-	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
+	parent->signalCameraPosition.connect( &AggregatorSound::onCameraPosition, this );
 	auto device    = std::make_shared<AL::Device>();
 	m_audioContext = std::make_shared<AL::Context>( device );
 	AL::Context::Lock lock( m_audioContext );

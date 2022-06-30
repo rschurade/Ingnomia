@@ -25,14 +25,14 @@
 NeighborsProxy::NeighborsProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &NeighborsProxy::signalRequestAvailableGnomes, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onRequestAvailableGnomes, Qt::QueuedConnection );
-	connect( this, &NeighborsProxy::signalStartMission, Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::onStartMission, Qt::QueuedConnection );
+	this->signalRequestAvailableGnomes.connect(&AggregatorNeighbors::onRequestAvailableGnomes, Global::eventConnector->aggregatorNeighbors()); // TODO: Qt::QueuedConnection
+	this->signalStartMission.connect(&AggregatorNeighbors::onStartMission, Global::eventConnector->aggregatorNeighbors()); // TODO: Qt::QueuedConnection
 	
-	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalNeighborsUpdate, this, &NeighborsProxy::onNeighborsUpdate, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalAvailableGnomes, this, &NeighborsProxy::onAvailableGnomes, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalMissions, this, &NeighborsProxy::onMissions, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorNeighbors()->signalNeighborsUpdate.connect(&NeighborsProxy::onNeighborsUpdate, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorNeighbors()->signalAvailableGnomes.connect(&NeighborsProxy::onAvailableGnomes, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorNeighbors()->signalMissions.connect(&NeighborsProxy::onMissions, this); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorNeighbors(), &AggregatorNeighbors::signalUpdateMission, this, &NeighborsProxy::onUpdateMission, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorNeighbors()->signalUpdateMission.connect(&NeighborsProxy::onUpdateMission, this); // TODO: Qt::QueuedConnection
 }
 
 void NeighborsProxy::setParent( IngnomiaGUI::NeighborsModel* parent )
@@ -58,7 +58,7 @@ void NeighborsProxy::onMissions( const QList<Mission>& missions )
 
 void NeighborsProxy::requestAvailableGnomes()
 {
-	emit signalRequestAvailableGnomes();
+	signalRequestAvailableGnomes();
 }
 
 void NeighborsProxy::onAvailableGnomes( const QList<GuiAvailableGnome>& gnomes )
@@ -71,7 +71,7 @@ void NeighborsProxy::onAvailableGnomes( const QList<GuiAvailableGnome>& gnomes )
 
 void NeighborsProxy::startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID )
 {
-	emit signalStartMission( type, action, targetKingdom, gnomeID );
+	signalStartMission( type, action, targetKingdom, gnomeID );
 }
 
 void NeighborsProxy::onUpdateMission( const Mission& mission )

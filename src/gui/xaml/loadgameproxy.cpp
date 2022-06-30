@@ -25,11 +25,11 @@
 LoadGameProxy::LoadGameProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &LoadGameProxy::signalRequestKingdoms, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestKingdoms, Qt::QueuedConnection );
-	connect( this, &LoadGameProxy::signalRequestSaveGames, Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::onRequestSaveGames, Qt::QueuedConnection );
+	this->signalRequestKingdoms.connect(&AggregatorLoadGame::onRequestKingdoms, Global::eventConnector->aggregatorLoadGame()); // TODO: Qt::QueuedConnection
+	this->signalRequestSaveGames.connect(&AggregatorLoadGame::onRequestSaveGames, Global::eventConnector->aggregatorLoadGame()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::signalKingdoms, this, &LoadGameProxy::onKingdoms, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorLoadGame()->signalKingdoms.connect(&LoadGameProxy::onKingdoms, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorLoadGame()->signalSaveGames.connect(&LoadGameProxy::onSaveGames, this); // TODO: Qt::QueuedConnection
 }
 
 void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )
@@ -39,7 +39,7 @@ void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )
 
 void LoadGameProxy::requestKingdoms()
 {
-	emit signalRequestKingdoms();
+	signalRequestKingdoms();
 }
 
 void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
@@ -52,7 +52,7 @@ void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
 
 void LoadGameProxy::requestSaveGames( const QString path )
 {
-	emit signalRequestSaveGames( path );
+	signalRequestSaveGames( path );
 }
 
 void LoadGameProxy::onSaveGames( const QList<GuiSaveInfo>& saveGames )

@@ -25,6 +25,8 @@
 #include <QVariantMap>
 #include <absl/container/flat_hash_map.h>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 enum class UniformItemQuality : unsigned char
@@ -169,7 +171,7 @@ private:
 
 	void removeGnomeFromOtherSquad( unsigned int squadID, unsigned int gnomeID );
 
-signals:
+public: // signals:
 	void sendOverlayMessage( int id, QString text );
 
 public slots:

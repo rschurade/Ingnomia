@@ -23,6 +23,8 @@
 #include <QPointer>
 #include <QPointer>
 
+#include <sigslot/signal.hpp>
+
 class GameManager;
 
 class AggregatorTileInfo;     
@@ -194,30 +196,30 @@ public slots:
 	void onPlayEffect( QVariantMap effect);
 	void onCameraPosition( float x, float y, float z, int r, float scale );
 
-signals:
-	void signalExit();
-	void signalWindowSize( int w, int h );
-	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
-	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
-	void signalViewLevel( int level );
-	void signalUpdatePause( bool paused );
-	void signalUpdateGameSpeed( GameSpeed speed );
-	void signalKeyEsc();
-	void signalPropagateKeyEsc();
-	void signalBuild();
-	void signalUpdateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
+public: // signals:
+	sigslot::signal<> signalExit;
+	sigslot::signal<int /*w*/, int /*h*/> signalWindowSize;
+	sigslot::signal<int /*minute*/, int /*hour*/, int /*day*/, QString /*season*/, int /*year*/, QString /*sunStatus*/> signalTimeAndDate;
+	sigslot::signal<QString /*name*/, QString /*info1*/, QString /*info2*/, QString /*info3*/> signalKingdomInfo;
+	sigslot::signal<int /*level*/> signalViewLevel;
+	sigslot::signal<bool /*paused*/> signalUpdatePause;
+	sigslot::signal<GameSpeed /*speed*/> signalUpdateGameSpeed;
+	sigslot::signal<> signalKeyEsc;
+	sigslot::signal<> signalPropagateKeyEsc;
+	sigslot::signal<> signalBuild;
+	sigslot::signal<bool /*designation*/, bool /*jobs*/, bool /*walls*/, bool /*axles*/> signalUpdateRenderOptions;
 
-	void startGame();
-	void stopGame();
-	void signalInitView();
-	void signalInMenu( bool value );
-	void signalResume();
-	void signalLoadGameDone( bool value );
+	sigslot::signal<> startGame;
+	sigslot::signal<> stopGame;
+	sigslot::signal<> signalInitView;
+	sigslot::signal<bool /*value*/> signalInMenu;
+	sigslot::signal<> signalResume;
+	sigslot::signal<bool /*value*/> signalLoadGameDone;
 
-	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
+	sigslot::signal<unsigned int /*id*/, QString /*title*/, QString /*msg*/, bool /*pause*/, bool /*yesno*/> signalEvent;
 	
-	void signalHeartbeat( int value );
-	void signalPlayEffect( QVariantMap effect );
+	sigslot::signal<int /*value*/> signalHeartbeat;
+	sigslot::signal<QVariantMap /*effect*/> signalPlayEffect;
 	
-	void signalCameraPosition( float x, float y, float z, int r, float scale );
+	sigslot::signal<float /*x*/, float /*y*/, float /*z*/, int /*r*/, float /*scale*/> signalCameraPosition;
 };

@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class CreatureInfoProxy : public QObject
 {
 	Q_OBJECT
@@ -44,9 +46,9 @@ private slots:
 	void onUpdateInfo( const GuiCreatureInfo& info );
 	void onProfessionList( const QStringList& profs );
 	void onEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics );
-signals:
-	void signalRequestCreatureUpdate( unsigned int creatureID );
-	void signalRequestProfessionList();
-	void signalSetProfession( unsigned int gnomeID, QString profession );
-	void signalRequestEmptySlotImages();
+public: // signals:
+	sigslot::signal<unsigned int /*creatureID*/> signalRequestCreatureUpdate;
+	sigslot::signal<> signalRequestProfessionList;
+	sigslot::signal<unsigned int /*gnomeID*/, QString /*profession*/> signalSetProfession;
+	sigslot::signal<> signalRequestEmptySlotImages;
 };

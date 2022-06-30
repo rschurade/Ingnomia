@@ -32,15 +32,15 @@
 CreatureInfoProxy::CreatureInfoProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalCreatureUpdate, this, &CreatureInfoProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalProfessionList, this, &CreatureInfoProxy::onProfessionList, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorCreatureInfo()->signalCreatureUpdate.connect(&CreatureInfoProxy::onUpdateInfo, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorCreatureInfo()->signalProfessionList.connect(&CreatureInfoProxy::onProfessionList, this); // TODO: Qt::QueuedConnection
 	
-	connect( this, &CreatureInfoProxy::signalRequestProfessionList, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestProfessionList, Qt::QueuedConnection );
-	connect( this, &CreatureInfoProxy::signalSetProfession, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onSetProfession, Qt::QueuedConnection );
+	this->signalRequestProfessionList.connect(&AggregatorCreatureInfo::onRequestProfessionList, Global::eventConnector->aggregatorCreatureInfo()); // TODO: Qt::QueuedConnection
+	this->signalSetProfession.connect(&AggregatorCreatureInfo::onSetProfession, Global::eventConnector->aggregatorCreatureInfo()); // TODO: Qt::QueuedConnection
 	
-	connect( this, &CreatureInfoProxy::signalRequestEmptySlotImages, Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::onRequestEmptySlotImages, Qt::QueuedConnection );
+	this->signalRequestEmptySlotImages.connect(&AggregatorCreatureInfo::onRequestEmptySlotImages, Global::eventConnector->aggregatorCreatureInfo()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalEmptyPics, this, &CreatureInfoProxy::onEmptyPics, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorCreatureInfo()->signalEmptyPics.connect(&CreatureInfoProxy::onEmptyPics, this); // TODO: Qt::QueuedConnection
 }
 
 CreatureInfoProxy::~CreatureInfoProxy()
@@ -62,7 +62,7 @@ void CreatureInfoProxy::onUpdateInfo( const GuiCreatureInfo& info )
 
 void CreatureInfoProxy::requestProfessionList()
 {
-	emit signalRequestProfessionList();
+	signalRequestProfessionList();
 }
 
 void CreatureInfoProxy::onProfessionList( const QStringList& profs )
@@ -75,12 +75,12 @@ void CreatureInfoProxy::onProfessionList( const QStringList& profs )
 
 void CreatureInfoProxy::setProfession( unsigned int gnomeID, QString profession )
 {
-	emit signalSetProfession( gnomeID, profession );
+	signalSetProfession( gnomeID, profession );
 }
 
 void CreatureInfoProxy::requestEmptySlotImages()
 {
-	emit signalRequestEmptySlotImages();
+	signalRequestEmptySlotImages();
 }
 
 void CreatureInfoProxy::onEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics )

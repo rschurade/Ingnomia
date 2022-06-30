@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiAnimal
@@ -207,12 +209,12 @@ public slots:
 
 	void onSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked );
 
-signals:
-	void signalShowAgri( unsigned int id );
-	void signalUpdateFarm( const GuiFarmInfo& info );
-	void signalUpdatePasture( const GuiPastureInfo& info );
-	void signalUpdateGrove( const GuiGroveInfo& info );
-	void signalGlobalPlantInfo( const QList<GuiPlant>& info );
-	void signalGlobalAnimalInfo( const QList<GuiAnimal>& info );
-	void signalGlobalTreeInfo( const QList<GuiPlant>& info );
+public: // signals:
+	sigslot::signal<unsigned int /*id*/> signalShowAgri;
+	sigslot::signal<const GuiFarmInfo& /*info*/> signalUpdateFarm;
+	sigslot::signal<const GuiPastureInfo& /*info*/> signalUpdatePasture;
+	sigslot::signal<const GuiGroveInfo& /*info*/> signalUpdateGrove;
+	sigslot::signal<const QList<GuiPlant>& /*info*/> signalGlobalPlantInfo;
+	sigslot::signal<const QList<GuiAnimal>& /*info*/> signalGlobalAnimalInfo;
+	sigslot::signal<const QList<GuiPlant>& /*info*/> signalGlobalTreeInfo;
 };

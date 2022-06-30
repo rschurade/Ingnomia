@@ -23,6 +23,8 @@
 
 #include <ranges>
 
+#include <sigslot/signal.hpp>
+
 class Job;
 class Stockpile;
 class Inventory;
@@ -99,9 +101,9 @@ private:
 
 	unsigned int m_lastAdded = 0;
 
-signals:
-	void signalSuspendStatusChanged( unsigned int stockpileUID );
-	void signalStockpileDeleted( unsigned int stockpileUID );
-	void signalStockpileAdded( unsigned int stockpileUID );
-	void signalStockpileContentChanged( unsigned int stockpileUID );
+public: // signals:
+	sigslot::signal<unsigned int /*stockpileUID*/> signalSuspendStatusChanged;
+	sigslot::signal<unsigned int /*stockpileUID*/> signalStockpileDeleted;
+	sigslot::signal<unsigned int /*stockpileUID*/> signalStockpileAdded;
+	sigslot::signal<unsigned int /*stockpileUID*/> signalStockpileContentChanged;
 };

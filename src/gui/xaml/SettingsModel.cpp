@@ -62,11 +62,11 @@ SettingsModel::SettingsModel()
 {
     m_proxy = new SettingsProxy;
 	m_proxy->setParent( this );
+
+    m_scales = *new ObservableCollection<ScaleEntry>();
      
     m_languages = *new ObservableCollection<LanguageEntry>();
     m_proxy->requestSettings();
-
-    m_scales = *new ObservableCollection<ScaleEntry>();
 }
 
 void SettingsModel::updateSettings( const GuiSettings& settings )

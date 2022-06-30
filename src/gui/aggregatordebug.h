@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class AggregatorDebug : public QObject
 {
 	Q_OBJECT
@@ -37,7 +39,7 @@ public slots:
 	void onSpawnCreature( QString type );
     void onSetWindowSize( int width, int height );
 
-signals:
-	void signalTriggerEvent( EventType type, QVariantMap args );
-    void signalSetWindowSize( int width, int height );
+public: // signals:
+	sigslot::signal<EventType /*type*/, QVariantMap /*args*/> signalTriggerEvent;
+    sigslot::signal<int /*width*/, int /*height*/> signalSetWindowSize;
 };

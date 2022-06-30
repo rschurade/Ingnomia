@@ -26,6 +26,8 @@
 
 #include <ranges>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 class GnomeManager : public QObject
@@ -123,7 +125,7 @@ private:
 	void getInstallJob( Automaton* a );
 	void getUninstallJob( Automaton* a );
 
-signals:
-	void signalGnomeActivity( unsigned int id, QString skillID );
-	void signalGnomeDeath( unsigned int id );
+public: // signals:
+	sigslot::signal<unsigned int /*id*/, QString /*skillID*/> signalGnomeActivity;
+	sigslot::signal<unsigned int /*id*/> signalGnomeDeath;
 };

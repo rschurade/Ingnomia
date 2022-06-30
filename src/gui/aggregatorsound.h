@@ -41,7 +41,7 @@ class AggregatorSound : public QObject
 	Q_OBJECT
 
 public:
-	AggregatorSound( QObject* parent = nullptr );
+	AggregatorSound( EventConnector* parent = nullptr );
 	~AggregatorSound();
 
 	void init( Game* game );

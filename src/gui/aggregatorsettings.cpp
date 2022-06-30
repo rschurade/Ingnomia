@@ -49,7 +49,7 @@ void AggregatorSettings::onRequestSettings()
 	 
 	 m_settings.audioMasterVolume = Global::cfg->get( "AudioMasterVolume" ).toFloat() * 100; 
 
-    emit signalUpdateSettings( m_settings );
+    signalUpdateSettings( m_settings );
 }
 
 void AggregatorSettings::onSetLanguage( QString language )
@@ -61,13 +61,13 @@ void AggregatorSettings::onSetLanguage( QString language )
 void AggregatorSettings::onSetUIScale( float scale )
 {
     Global::cfg->set( "uiscale", scale );
-    emit signalUIScale( scale );
+    signalUIScale( scale );
 }
 
 void AggregatorSettings::onSetFullScreen( bool value )
 {
     Global::cfg->set( "fullscreen", value );
-    emit signalFullScreen( value );
+    signalFullScreen( value );
 }
 
 void AggregatorSettings::onSetKeyboardSpeed( int value )
@@ -88,12 +88,12 @@ void AggregatorSettings::onSetToggleMouseWheel( bool value )
 void AggregatorSettings::onRequestUIScale()
 {
     float scale = Global::cfg->get( "uiscale" ).toFloat();
-    emit signalUIScale( scale );
+    signalUIScale( scale );
 }
 void AggregatorSettings::onRequestVersion()
 {
     QString version = Global::cfg->get( "CurrentVersion" ).toString();
-    emit signalVersion( version );
+    signalVersion( version );
 }
 
 void AggregatorSettings::onSetAudioMasterVolume( float value )

@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class MilitaryProxy : public QObject
 {
 	Q_OBJECT
@@ -64,23 +66,23 @@ private slots:
 	void onRoles( const QList<GuiMilRole> roles );
 	void onPossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats );
 
-signals:
-	void signalAddSquad();
-	void signalRemoveSquad( unsigned int id );
-	void signalRenameSquad( unsigned int id, QString newName );
-	void signalMoveSquadLeft( unsigned int id );
-	void signalMoveSquadRight( unsigned int id );
-	void signalRemoveGnomeFromSquad( unsigned int gnomeID );
-	void signalMoveGnomeLeft( unsigned int id );
-	void signalMoveGnomeRight( unsigned int id );
-	void signalSetAttitude( unsigned int squadID, QString type, MilAttitude attitude );
-	void signalMovePrioUp( unsigned int squadID, QString type );
-	void signalMovePrioDown( unsigned int squadID, QString type );
-	void signalRequestRoles();
-	void signalAddRole();
-	void signalRemoveRole( unsigned int id );
-	void signalRenameRole( unsigned int id, QString newName );
-	void signalSetArmorType( unsigned int roleID, QString slot, QString type, QString material );
-	void signalSetRole( unsigned int gnomeID, unsigned int roleID );
-	void signalSetRoleCivilian( unsigned int roleID, bool value );
+public: // signals:
+	sigslot::signal<> signalAddSquad;
+	sigslot::signal<unsigned int /*id*/> signalRemoveSquad;
+	sigslot::signal<unsigned int /*id*/, QString /*newName*/> signalRenameSquad;
+	sigslot::signal<unsigned int /*id*/> signalMoveSquadLeft;
+	sigslot::signal<unsigned int /*id*/> signalMoveSquadRight;
+	sigslot::signal<unsigned int /*gnomeID*/> signalRemoveGnomeFromSquad;
+	sigslot::signal<unsigned int /*id*/> signalMoveGnomeLeft;
+	sigslot::signal<unsigned int /*id*/> signalMoveGnomeRight;
+	sigslot::signal<unsigned int /*squadID*/, QString /*type*/, MilAttitude /*attitude*/> signalSetAttitude;
+	sigslot::signal<unsigned int /*squadID*/, QString /*type*/> signalMovePrioUp;
+	sigslot::signal<unsigned int /*squadID*/, QString /*type*/> signalMovePrioDown;
+	sigslot::signal<> signalRequestRoles;
+	sigslot::signal<> signalAddRole;
+	sigslot::signal<unsigned int /*id*/> signalRemoveRole;
+	sigslot::signal<unsigned int /*id*/, QString /*newName*/> signalRenameRole;
+	sigslot::signal<unsigned int /*roleID*/, QString /*slot*/, QString /*type*/, QString /*material*/> signalSetArmorType;
+	sigslot::signal<unsigned int /*gnomeID*/, unsigned int /*roleID*/> signalSetRole;
+	sigslot::signal<unsigned int /*roleID*/, bool /*value*/> signalSetRoleCivilian;
 };

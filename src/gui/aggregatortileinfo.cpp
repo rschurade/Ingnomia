@@ -62,7 +62,7 @@ void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 		m_currentTileID = tileID;
 		m_tileInfoDirty = true;
 	}
-	emit signalShowTileInfo( tileID );
+	signalShowTileInfo( tileID );
 	onUpdateTileInfo( tileID );
 }
 
@@ -379,7 +379,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 		}
 
-		emit signalUpdateTileInfo( m_tileInfo );
+		signalUpdateTileInfo( m_tileInfo );
 	}
 }
 
@@ -420,7 +420,7 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 				m_spInfo.summary.append( is );
 			}
 		}
-		emit signalUpdateSPInfo( m_spInfo );
+		signalUpdateSPInfo( m_spInfo );
 	}
 }
 

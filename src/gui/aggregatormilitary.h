@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiSquadGnome
@@ -133,9 +135,9 @@ public slots:
 
 	void onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude );
 
-signals:
-	void signalSquads( const QList<GuiSquad>& squads );
-	void signalPriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities );
-	void signalRoles( const QList<GuiMilRole>& roles );
-	void signalPossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats );
+public: // signals:
+	sigslot::signal<const QList<GuiSquad>& /*squads*/> signalSquads;
+	sigslot::signal<unsigned int /*squadID*/, const QList<GuiTargetPriority>& /*priorities*/> signalPriorities;
+	sigslot::signal<const QList<GuiMilRole>& /*roles*/> signalRoles;
+	sigslot::signal<unsigned int /*roleID*/, const QString /*slot*/, const QStringList /*mats*/> signalPossibleMaterials;
 };

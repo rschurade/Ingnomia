@@ -24,6 +24,8 @@
 #include "../game/gnome.h"
 #include "../game/militarymanager.h"
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiCreatureInfo
@@ -83,10 +85,10 @@ public slots:
 
 	void onRequestEmptySlotImages();
 
-signals:
-	void signalCreatureUpdate( const GuiCreatureInfo& info );
-	void signalProfessionList( const QStringList& profs );
+public: // signals:
+	sigslot::signal<const GuiCreatureInfo& /*info*/> signalCreatureUpdate;
+	sigslot::signal<const QStringList& /*profs*/> signalProfessionList;
 	
-	void signalEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics );
+	sigslot::signal<const absl::btree_map< QString, std::vector<unsigned char> >& /*emptyPics*/> signalEmptyPics;
 
 };

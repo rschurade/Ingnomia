@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiTICreatureInfo
@@ -127,8 +129,8 @@ public slots:
 	void onSetAutomatonRefuel( unsigned int id, bool refuel );
 	void onSetAutomatonCore( unsigned int id, QString core );
 
-signals:
-	void signalShowTileInfo( unsigned int id );
-	void signalUpdateTileInfo( const GuiTileInfo& info );
-	void signalUpdateSPInfo( const GuiStockpileInfo& info );
+public: // signals:
+	sigslot::signal<unsigned int /*id*/> signalShowTileInfo;
+	sigslot::signal<const GuiTileInfo& /*info*/> signalUpdateTileInfo;
+	sigslot::signal<const GuiStockpileInfo& /*info*/> signalUpdateSPInfo;
 };

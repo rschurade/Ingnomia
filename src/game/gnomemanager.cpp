@@ -187,7 +187,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			case CreatureTickResult::OK:
 				break;
 			case CreatureTickResult::JOBCHANGED:
-				emit signalGnomeActivity( gn->id(), gn->getActivity() );
+				signalGnomeActivity( gn->id(), gn->getActivity() );
 				break;
 			case CreatureTickResult::TODESTROY:
 				break;
@@ -237,7 +237,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					m_gnomesByID.insert_or_assign( dg->id(), m_deadGnomes.last() );
 					m_gnomes.removeAt( i );
 					g->mil()->removeGnome( gid );
-					emit signalGnomeDeath( dg->id() );
+					signalGnomeDeath( dg->id() );
 					break;
 				}
 			}

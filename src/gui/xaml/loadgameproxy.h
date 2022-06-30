@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class LoadGameProxy : public QObject
 {
 	Q_OBJECT
@@ -40,7 +42,7 @@ private slots:
 	void onKingdoms( const QList<GuiSaveInfo>& kingdoms );
 	void onSaveGames( const QList<GuiSaveInfo>& saveGames );
 
-signals:
-	void signalRequestKingdoms();
-	void signalRequestSaveGames( const QString path );
+public: // signals:
+	sigslot::signal<> signalRequestKingdoms;
+	sigslot::signal<const QString /*path*/> signalRequestSaveGames;
 };

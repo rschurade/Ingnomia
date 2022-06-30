@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct GuiSkillInfo
@@ -110,14 +112,14 @@ public slots:
 	void onUpdateProfession( QString name, QString newName, QStringList skills );
 	void onDeleteProfession( QString name );
 	void onNewProfession();
-signals:
-	void signalPopulationUpdate( const GuiPopulationInfo& info );
-	void signalProfessionList( const QStringList& professions );
-	void signalProfessionSkills( QString profession, const QList<GuiSkillInfo>& skills );
+public: // signals:
+	sigslot::signal<const GuiPopulationInfo& /*info*/> signalPopulationUpdate;
+	sigslot::signal<const QStringList& /*professions*/> signalProfessionList;
+	sigslot::signal<const QString /*profession*/, const QList<GuiSkillInfo>& /*skills*/> signalProfessionSkills;
 
-	void signalUpdateSingleGnome( const GuiGnomeInfo& gnome );
+	sigslot::signal<const GuiGnomeInfo& /*gnome*/> signalUpdateSingleGnome;
 
-	void signalScheduleUpdate( const GuiScheduleInfo& info );
-	void signalScheduleUpdateSingleGnome( const GuiGnomeScheduleInfo& info );
-	void signalSelectEditProfession( const QString name );
+	sigslot::signal<const GuiScheduleInfo& /*info*/> signalScheduleUpdate;
+	sigslot::signal<const GuiGnomeScheduleInfo& /*info*/> signalScheduleUpdateSingleGnome;
+	sigslot::signal<const QString /*name*/> signalSelectEditProfession;
 };

@@ -30,6 +30,8 @@
 
 #include <vector>
 
+#include <sigslot/signal.hpp>
+
 typedef absl::btree_set<unsigned int> PositionEntry;
 typedef absl::flat_hash_map<unsigned int, PositionEntry> PositionHash;
 
@@ -251,7 +253,7 @@ private:
 
 	bool m_itemsChanged = false; //flag is used for updating the stock overview
 
-signals:
-	void signalAddItem( QString itemSID, QString materialSID );
-	void signalRemoveItem( QString itemSID, QString materialSID );
+public: // signals:
+	sigslot::signal<QString /*itemSID*/, QString /*materialSID*/> signalAddItem;
+	sigslot::signal<QString /*itemSID*/, QString /*materialSID*/> signalRemoveItem;
 };

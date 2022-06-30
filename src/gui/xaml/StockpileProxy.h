@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class StockpileProxy : public QObject
 {
 	Q_OBJECT
@@ -43,7 +45,7 @@ private slots:
 	void onUpdateInfo( const GuiStockpileInfo& info );
 	void onUpdateContent( const GuiStockpileInfo& info );
 
-signals:
-	void signalSetBasicOptions( unsigned int stockpileID, QString name, int priority, bool suspended, bool pull, bool allowPull );
-	void signalSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material );
+public: // signals:
+	sigslot::signal<unsigned int /*stockpileID*/, QString /*name*/, int /*priority*/, bool /*suspended*/, bool /*pull*/, bool /*allowPull*/> signalSetBasicOptions;
+	sigslot::signal<unsigned int /*stockpileID*/, bool /*active*/, QString /*category*/, QString /*group*/, QString /*item*/, QString /*material*/> signalSetActive;
 };

@@ -386,7 +386,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 	m_itemsChanged = true;
 
-	emit signalAddItem( itemID, materialID );
+	signalAddItem( itemID, materialID );
 }
 
 void Inventory::destroyObject( unsigned int id )
@@ -428,7 +428,7 @@ void Inventory::destroyObject( unsigned int id )
 
 			m_itemHistory->minusItem( itemSID, materialSID );
 
-			emit signalRemoveItem( itemSID, materialSID );
+			signalRemoveItem( itemSID, materialSID );
 		}
 
 		m_itemsChanged = true;
@@ -1342,13 +1342,13 @@ void Inventory::setConstructed( unsigned int id, bool status )
 		if ( item->isConstructed() && !status )
 		{
 			removeFromWealth( item );
-			emit signalRemoveItem( itemSID( id ), materialSID( id ) );
+			signalRemoveItem( itemSID( id ), materialSID( id ) );
 		}
 		item->setIsConstructed( status );
 		if ( status )
 		{
 			addToWealth( item );
-			emit signalAddItem( itemSID( id ), materialSID( id ) );
+			signalAddItem( itemSID( id ), materialSID( id ) );
 		}
 	}
 }

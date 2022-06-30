@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class AgricultureProxy : public QObject
 {
 	Q_OBJECT
@@ -67,18 +69,18 @@ private slots:
 	void onUpdateGlobalAnimals( const QList<GuiAnimal>& animals );
 	void onUpdateGlobalTrees( const QList<GuiPlant>& trees );
 
-signals:
-	void signalSetBasicOptions( AgriType type, unsigned int designationID, QString name, int priority, bool suspended );
-	void signalSelectProduct( AgriType type, unsigned int designationID, QString product );
-	void signalSetHarvestOptions( AgriType type, unsigned int designationID, bool harvest, bool harvestHay, bool tame );
-	void signalSetGroveOptions( unsigned int designationID, bool pick, bool plant, bool fell );
-	void signalRequestGlobalPlantInfo();
-	void signalRequestGlobalAnimalInfo();
-	void signalRequestGlobalTreeInfo();
-	void signalSetMaxMale( unsigned int designationID, int max );
-	void signalSetMaxFemale( unsigned int designationID, int max );
-	void signalSetButchering( unsigned int animalId, bool value );
-	void signalRequestPastureAnimalInfo( unsigned int pastureID );
-	void signalRequestPastureFoodInfo( unsigned int pastureID );
-	void signalSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked );
+public: // signals:
+	sigslot::signal<AgriType /*type*/, unsigned int /*designationID*/, QString /*name*/, int /*priority*/, bool /*suspended*/> signalSetBasicOptions;
+	sigslot::signal<AgriType /*type*/, unsigned int /*designationID*/, QString /*product*/> signalSelectProduct;
+	sigslot::signal<AgriType /*type*/, unsigned int /*designationID*/, bool /*harvest*/, bool /*harvestHay*/, bool /*tame*/> signalSetHarvestOptions;
+	sigslot::signal<unsigned int /*designationID*/, bool /*pick*/, bool /*plant*/, bool /*fell*/> signalSetGroveOptions;
+	sigslot::signal<> signalRequestGlobalPlantInfo;
+	sigslot::signal<> signalRequestGlobalAnimalInfo;
+	sigslot::signal<> signalRequestGlobalTreeInfo;
+	sigslot::signal<unsigned int /*designationID*/, int /*max*/> signalSetMaxMale;
+	sigslot::signal<unsigned int /*designationID*/, int /*max*/> signalSetMaxFemale;
+	sigslot::signal<unsigned int /*animalId*/, bool /*value*/> signalSetButchering;
+	sigslot::signal<unsigned int /*pastureID*/> signalRequestPastureAnimalInfo;
+	sigslot::signal<unsigned int /*pastureID*/> signalRequestPastureFoodInfo;
+	sigslot::signal<unsigned int /*pastureID*/, QString /*itemSID*/, QString /*materialSID*/, bool /*checked*/> signalSetFoodItemChecked;
 };

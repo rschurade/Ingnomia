@@ -32,6 +32,8 @@
 
 #include <QOpenGLFunctions_4_3_Core>
 
+#include <sigslot/signal.hpp>
+
 struct Position;
 class QOpenGLTexture;
 class MainWindow;
@@ -165,8 +167,8 @@ public slots:
 
 	void onCenterCameraPosition( const Position& target );
 
-signals:
-	void redrawRequired();
-	void fullDataRequired();
-	void signalCameraPosition(float x, float y, float z, int r, float scale );
+public: // signals:
+	sigslot::signal<> redrawRequired;
+	sigslot::signal<> fullDataRequired;
+	sigslot::signal<float /*x*/, float /*y*/, float /*z*/, int /*r*/, float /*scale*/> signalCameraPosition;
 };

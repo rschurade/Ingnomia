@@ -26,6 +26,8 @@
 #include <QOpenGLWindow>
 #include <QTimer>
 
+#include <sigslot/signal.hpp>
+
 enum class KeyboardMove : unsigned char
 {
 	None  = 0,
@@ -140,18 +142,18 @@ public slots:
 
 	void onInitViewAfterLoad();
 
-signals:
-	void signalWindowSize( int w, int h );
-	void signalViewLevel( int level );
+public: // signals:
+	sigslot::signal<int /*w*/, int /*h*/> signalWindowSize;
+	sigslot::signal<int /*level*/> signalViewLevel;
 	
 
-	void signalKeyPress( int key );
-	void signalUpdateRenderOptions();
-	void signalTogglePause();
+	sigslot::signal<int /*key*/> signalKeyPress;
+	sigslot::signal<> signalUpdateRenderOptions;
+	sigslot::signal<> signalTogglePause;
 
-	void signalRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation );
-	void signalRotateSelection();
-	void signalMouse( int mouseX, int mouseY, bool shift, bool ctrl );
-	void signalLeftClick( bool shift, bool ctrl );
-	void signalRightClick();
+	sigslot::signal<int /*width*/, int /*height*/, int /*moveX*/, int /*moveY*/, float /*scale*/, int /*rotation*/> signalRenderParams;
+	sigslot::signal<> signalRotateSelection;
+	sigslot::signal<int /*mouseX*/, int /*mouseY*/, bool /*shift*/, bool /*ctrl*/> signalMouse;
+	sigslot::signal<bool /*shift*/, bool /*ctrl*/> signalLeftClick;
+	sigslot::signal<> signalRightClick;
 };

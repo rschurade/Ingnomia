@@ -101,7 +101,7 @@ void AggregatorWorkshop::onOpenWorkshopInfoOnTile( unsigned int tileID )
 	if ( ws )
 	{
 		m_info.workshopID = ws->id();
-		emit signalOpenWorkshopWindow( ws->id() );
+		signalOpenWorkshopWindow( ws->id() );
 		onUpdateWorkshopInfo( ws->id() );
 	}
 }
@@ -110,7 +110,7 @@ void AggregatorWorkshop::onOpenWorkshopInfo( unsigned int workshopID )
 {
 	if( !g ) return;
 	m_info.workshopID = workshopID;
-	emit signalOpenWorkshopWindow( workshopID );
+	signalOpenWorkshopWindow( workshopID );
 	onUpdateWorkshopInfo( workshopID );
 }
 
@@ -119,7 +119,7 @@ void AggregatorWorkshop::onUpdateWorkshopInfo( unsigned int workshopID )
 	if( !g ) return;
 	if ( aggregate( workshopID ) )
 	{
-		emit signalUpdateInfo( m_info );
+		signalUpdateInfo( m_info );
 	}
 }
 
@@ -177,7 +177,7 @@ bool AggregatorWorkshop::updateCraftList( unsigned int workshopID )
 		if ( ws )
 		{
 			m_info.jobList = ws->jobList();
-			emit signalUpdateCraftList( m_info );
+			signalUpdateCraftList( m_info );
 
 			return true;
 		}
@@ -207,7 +207,7 @@ void AggregatorWorkshop::onUpdateAfterTick()
 	{
 		if ( aggregate( m_info.workshopID ) )
 		{
-			emit signalUpdateContent( m_info );
+			signalUpdateContent( m_info );
 			m_contentDirty = false;
 		}
 	}
@@ -327,7 +327,7 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 					
 				updateTraderStock( items );
 
-				emit signalTraderStock( m_traderStock );
+				signalTraderStock( m_traderStock );
 
 				updateTraderValue();
 			}
@@ -435,7 +435,7 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 			}
 		}
 	}
-	emit signalPlayerStock( m_playerStock );
+	signalPlayerStock( m_playerStock );
 
 }
 
@@ -468,7 +468,7 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 							if( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
 							{
 								gti.reserved = item.reserved;
-								emit signalUpdateTraderStockItem( gti );
+								signalUpdateTraderStockItem( gti );
 								updateTraderValue();
 								break;
 							}
@@ -510,7 +510,7 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 							if( gti.itemSID == itemSID && gti.materialSIDorGender == materialSID && gti.quality == quality )
 							{
 								gti.reserved = item.reserved;
-								emit signalUpdateTraderStockItem( gti );
+								signalUpdateTraderStockItem( gti );
 								updateTraderValue();
 								break;
 							}
@@ -539,7 +539,7 @@ void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString 
 				item.reserved = item.count;
 			}
 		
-			emit signalUpdatePlayerStockItem( item );
+			signalUpdatePlayerStockItem( item );
 			updatePlayerValue();
 			break;
 		}
@@ -562,7 +562,7 @@ void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString 
 				item.reserved = 0;
 			}
 		
-			emit signalUpdatePlayerStockItem( item );
+			signalUpdatePlayerStockItem( item );
 			updatePlayerValue();
 			break;
 		}
@@ -577,7 +577,7 @@ void AggregatorWorkshop::updateTraderValue()
 	{
 		m_traderOfferValue += item.reserved * item.value;
 	}
-	emit signalUpdateTraderValue( m_traderOfferValue );
+	signalUpdateTraderValue( m_traderOfferValue );
 }
 	
 void AggregatorWorkshop::updatePlayerValue()
@@ -588,7 +588,7 @@ void AggregatorWorkshop::updatePlayerValue()
 	{
 		m_playerOfferValue += item.reserved * item.value;
 	}
-	emit signalUpdatePlayerValue( m_playerOfferValue );
+	signalUpdatePlayerValue( m_playerOfferValue );
 }
 
 void AggregatorWorkshop::onTrade( unsigned int workshopID )
@@ -630,7 +630,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							if ( sellItems.size() < item.reserved )
 							{
 								item.reserved = sellItems.size();
-								emit signalUpdatePlayerStockItem( item );
+								signalUpdatePlayerStockItem( item );
 							}
 
 							for ( int i = 0; i < item.reserved; ++i )
@@ -675,7 +675,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 
 						updateTraderStock( traderItems );
 
-						emit signalTraderStock( m_traderStock );
+						signalTraderStock( m_traderStock );
 
 						updateTraderValue();
 					}

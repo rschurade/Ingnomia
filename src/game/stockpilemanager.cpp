@@ -93,7 +93,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 		m_lastAdded = sp->id();
 	}
 	qDebug() << "StockpileManager::addStockpile";
-	emit signalStockpileAdded( m_lastAdded );
+	signalStockpileAdded( m_lastAdded );
 }
 
 void StockpileManager::load( QVariantMap vals )
@@ -118,7 +118,7 @@ void StockpileManager::removeStockpile( unsigned int id )
 	}
 	m_stockpiles.erase( id );
 	m_stockpilesOrdered.removeAll( id );
-	emit signalStockpileDeleted( id );
+	signalStockpileDeleted( id );
 }
 
 void StockpileManager::removeTile( Position& pos )
@@ -133,7 +133,7 @@ void StockpileManager::removeTile( Position& pos )
 		}
 		else
 		{
-			emit signalStockpileDeleted( id );
+			signalStockpileDeleted( id );
 		}
 	}
 	m_allStockpileTiles.erase( pos.toInt() );
@@ -186,10 +186,10 @@ void StockpileManager::insertItem( unsigned int stockpileID, Position pos, unsig
 		}
 		else
 		{
-			emit signalStockpileContentChanged( stockpileID );
+			signalStockpileContentChanged( stockpileID );
 			if ( m_stockpiles[stockpileID]->suspendChanged() )
 			{
-				emit signalSuspendStatusChanged( stockpileID );
+				signalSuspendStatusChanged( stockpileID );
 			}
 		}
 	}
@@ -200,10 +200,10 @@ void StockpileManager::removeItem( unsigned int stockpileID, Position pos, unsig
 	if ( m_stockpiles.contains( stockpileID ) )
 	{
 		m_stockpiles[stockpileID]->removeItem( pos, item );
-		emit signalStockpileContentChanged( stockpileID );
+		signalStockpileContentChanged( stockpileID );
 		if ( m_stockpiles[stockpileID]->suspendChanged() )
 		{
-			emit signalSuspendStatusChanged( stockpileID );
+			signalSuspendStatusChanged( stockpileID );
 		}
 	}
 }
@@ -217,7 +217,7 @@ unsigned int StockpileManager::getJob()
 		{
 			if ( m_stockpiles[stockpileID]->suspendChanged() )
 			{
-				emit signalSuspendStatusChanged( stockpileID );
+				signalSuspendStatusChanged( stockpileID );
 			}
 			return job;
 		}
@@ -230,7 +230,7 @@ unsigned int StockpileManager::getJob()
 		{
 			if ( m_stockpiles[stockpileID]->suspendChanged() )
 			{
-				emit signalSuspendStatusChanged( stockpileID );
+				signalSuspendStatusChanged( stockpileID );
 			}
 			return job;
 		}
@@ -259,7 +259,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 		{
 			if ( sp->suspendChanged() )
 			{
-				emit signalSuspendStatusChanged( sp->id() );
+				signalSuspendStatusChanged( sp->id() );
 			}
 			return true;
 		}

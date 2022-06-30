@@ -25,29 +25,29 @@
 MilitaryProxy::MilitaryProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &MilitaryProxy::signalAddSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onAddSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRenameSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRenameSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveSquadLeft, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadLeft, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveSquadRight, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveSquadRight, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveGnomeFromSquad, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveGnomeFromSquad, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveGnomeLeft, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeLeft, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMoveGnomeRight, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMoveGnomeRight, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetAttitude, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetAttitude, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMovePrioUp, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioUp, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalMovePrioDown, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onMovePrioDown, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRequestRoles, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestRoles, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalAddRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onAddRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRemoveRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRemoveRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalRenameRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRenameRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetArmorType, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetArmorType, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetRole, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetRole, Qt::QueuedConnection );
-	connect( this, &MilitaryProxy::signalSetRoleCivilian, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onSetRoleCivilian, Qt::QueuedConnection );
+	this->signalAddSquad.connect(&AggregatorMilitary::onAddSquad, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRemoveSquad.connect(&AggregatorMilitary::onRemoveSquad, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRenameSquad.connect(&AggregatorMilitary::onRenameSquad, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMoveSquadLeft.connect(&AggregatorMilitary::onMoveSquadLeft, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMoveSquadRight.connect(&AggregatorMilitary::onMoveSquadRight, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRemoveGnomeFromSquad.connect(&AggregatorMilitary::onRemoveGnomeFromSquad, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMoveGnomeLeft.connect(&AggregatorMilitary::onMoveGnomeLeft, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMoveGnomeRight.connect(&AggregatorMilitary::onMoveGnomeRight, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalSetAttitude.connect(&AggregatorMilitary::onSetAttitude, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMovePrioUp.connect(&AggregatorMilitary::onMovePrioUp, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalMovePrioDown.connect(&AggregatorMilitary::onMovePrioDown, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRequestRoles.connect(&AggregatorMilitary::onRequestRoles, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalAddRole.connect(&AggregatorMilitary::onAddRole, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRemoveRole.connect(&AggregatorMilitary::onRemoveRole, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalRenameRole.connect(&AggregatorMilitary::onRenameRole, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalSetArmorType.connect(&AggregatorMilitary::onSetArmorType, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalSetRole.connect(&AggregatorMilitary::onSetRole, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
+	this->signalSetRoleCivilian.connect(&AggregatorMilitary::onSetRoleCivilian, Global::eventConnector->aggregatorMilitary()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalSquads, this, &MilitaryProxy::onSquads, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalPriorities, this, &MilitaryProxy::onPriorities, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalRoles, this, &MilitaryProxy::onRoles, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::signalPossibleMaterials, this, &MilitaryProxy::onPossibleMaterials, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorMilitary()->signalSquads.connect(&MilitaryProxy::onSquads, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorMilitary()->signalPriorities.connect(&MilitaryProxy::onPriorities, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorMilitary()->signalRoles.connect(&MilitaryProxy::onRoles, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorMilitary()->signalPossibleMaterials.connect(&MilitaryProxy::onPossibleMaterials, this); // TODO: Qt::QueuedConnection
 
 
 }
@@ -67,60 +67,60 @@ void MilitaryProxy::onSquads( const QList<GuiSquad>& squads )
 
 void MilitaryProxy::addSquad()
 {
-	emit signalAddSquad();
+	signalAddSquad();
 }
 
 void MilitaryProxy::removeSquad( unsigned int id )
 {
-	emit signalRemoveSquad( id );
+	signalRemoveSquad( id );
 }
 
 void MilitaryProxy::renameSquad( unsigned int id, QString newName )
 {
-	emit signalRenameSquad( id, newName );
+	signalRenameSquad( id, newName );
 }
 
 void MilitaryProxy::moveSquadLeft( unsigned int id )
 {
-	emit signalMoveSquadLeft( id );
+	signalMoveSquadLeft( id );
 }
 	
 void MilitaryProxy::moveSquadRight( unsigned int id )
 {
-	emit signalMoveSquadRight( id );
+	signalMoveSquadRight( id );
 }
 
 void MilitaryProxy::removeGnomeFromSquad( unsigned int gnomeID )
 {
-	emit signalRemoveGnomeFromSquad( gnomeID );
+	signalRemoveGnomeFromSquad( gnomeID );
 	
 }
 	
 void MilitaryProxy::moveGnomeLeft( unsigned int gnomeID )
 {
-	emit signalMoveGnomeLeft( gnomeID );
+	signalMoveGnomeLeft( gnomeID );
 	
 }
 
 void MilitaryProxy::moveGnomeRight( unsigned int gnomeID )
 {
 	
-	emit signalMoveGnomeRight( gnomeID );
+	signalMoveGnomeRight( gnomeID );
 }
 
 void MilitaryProxy::setAttitude( unsigned int squadID, QString type, MilAttitude attitude )
 {
-	emit signalSetAttitude( squadID, type, attitude );
+	signalSetAttitude( squadID, type, attitude );
 }
 
 void MilitaryProxy::movePrioUp( unsigned int squadID, QString type )
 {
-	emit signalMovePrioUp( squadID, type );
+	signalMovePrioUp( squadID, type );
 }
 	
 void MilitaryProxy::movePrioDown( unsigned int squadID, QString type )
 {
-	emit signalMovePrioDown( squadID, type );
+	signalMovePrioDown( squadID, type );
 }
 
 void MilitaryProxy::onPriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities )
@@ -133,7 +133,7 @@ void MilitaryProxy::onPriorities( unsigned int squadID, const QList<GuiTargetPri
 
 void MilitaryProxy::requestRoles()
 {
-	emit signalRequestRoles();
+	signalRequestRoles();
 }
 
 void MilitaryProxy::onRoles( const QList<GuiMilRole> roles )
@@ -146,22 +146,22 @@ void MilitaryProxy::onRoles( const QList<GuiMilRole> roles )
 
 void MilitaryProxy::addRole()
 {
-	emit signalAddRole();
+	signalAddRole();
 }
 
 void MilitaryProxy::removeRole( unsigned int id )
 {
-	emit signalRemoveRole( id );
+	signalRemoveRole( id );
 }
 
 void MilitaryProxy::renameRole( unsigned int id, QString newName )
 {
-	emit signalRenameRole( id, newName );
+	signalRenameRole( id, newName );
 }
 
 void MilitaryProxy::setArmorType( unsigned int roleID, QString slot, QString type, QString material )
 {
-	emit signalSetArmorType( roleID, slot, type, material );
+	signalSetArmorType( roleID, slot, type, material );
 }
 
 void MilitaryProxy::onPossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats )
@@ -174,10 +174,10 @@ void MilitaryProxy::onPossibleMaterials( unsigned int roleID, const QString slot
 
 void MilitaryProxy::setRole( unsigned int gnomeID, unsigned int roleID )
 {
-	emit signalSetRole( gnomeID, roleID );
+	signalSetRole( gnomeID, roleID );
 }
 
 void MilitaryProxy::setRoleCivilian( unsigned int roleID, bool value )
 {
-	emit signalSetRoleCivilian( roleID, value );
+	signalSetRoleCivilian( roleID, value );
 }

@@ -88,12 +88,12 @@ World* WorldGenerator::generateTopology()
 	m_random.SetNoiseType( FastNoise::NoiseType::CubicFractal );
 	m_random.SetFractalType( FastNoise::FractalType::Billow );
 
-	emit signalStatus( "Create height map." );
+	signalStatus( "Create height map." );
 	createHeightMap( m_dimX, m_dimY );
 	initMateralVectors();
 
 	// resize world and fill stone layers
-	emit signalStatus( "Set stone layers." );
+	signalStatus( "Set stone layers." );
 	setStoneLayers();
 
 	if ( ngs->rivers() > 0 )
@@ -103,22 +103,22 @@ World* WorldGenerator::generateTopology()
 
 	if ( ngs->oceanSize() > 0 )
 	{
-		emit signalStatus( "Create ocean front." );
+		signalStatus( "Create ocean front." );
 		createOceanFront();
 	}
 
 	// set metal ores and gems
-	emit signalStatus( "Create ore and gem veins." );
+	signalStatus( "Create ore and gem veins." );
 	setMetalsAndGems();
 	// set water and sand floor at water
-	emit signalStatus( "Set water." );
+	signalStatus( "Set water." );
 	setWater();
 
 	// set sunlight and grass
-	emit signalStatus( "Init sun light." );
+	signalStatus( "Init sun light." );
 	initSunLight();
 
-	emit signalStatus( "Create ramps." );
+	signalStatus( "Create ramps." );
 	createRamps();
 
 	if ( !ngs->isPeaceful() )
@@ -127,7 +127,7 @@ World* WorldGenerator::generateTopology()
 		//placeLairs();
 	}
 
-	emit signalStatus( "Init world." );
+	signalStatus( "Init world." );
 	w->init();
 
 	discoverAll();
@@ -138,13 +138,13 @@ World* WorldGenerator::generateTopology()
 void WorldGenerator::addLife()
 {
 	// add plants and trees
-	emit signalStatus( "Add plants and trees." );
+	signalStatus( "Add plants and trees." );
 	addPlantsAndTrees();
 	// add animals
-	emit signalStatus( "Add animals." );
+	signalStatus( "Add animals." );
 	addAnimals();
 	// add gnomes and starting items
-	emit signalStatus( "Place embark items and gnomes." );
+	signalStatus( "Place embark items and gnomes." );
 	addGnomesAndStartingItems();
 
 	int maxVeinLength = m_dimX / 2;
@@ -202,7 +202,7 @@ void WorldGenerator::setStoneLayers()
 	{
 		if ( timer.elapsed() > 3000 )
 		{
-			emit signalStatus( "Set stone layers..." + QString::number( (int)( ( 100. / (float)m_dimZ ) * z ) ) + "%" );
+			signalStatus( "Set stone layers..." + QString::number( (int)( ( 100. / (float)m_dimZ ) * z ) ) + "%" );
 			timer.restart();
 		}
 		fillFloor( z, m_mats, m_matsInLevel );
@@ -213,7 +213,7 @@ void WorldGenerator::setStoneLayers()
 	{
 		if ( timer.elapsed() > 3000 )
 		{
-			emit signalStatus( "Set stone layers..." + QString::number( (int)( ( 100. / (float)m_dimZ ) * z ) ) + "%" );
+			signalStatus( "Set stone layers..." + QString::number( (int)( ( 100. / (float)m_dimZ ) * z ) ) + "%" );
 			timer.restart();
 		}
 		fillFloorMushroomBiome( z, m_mats, m_matsInLevel );
@@ -1808,6 +1808,6 @@ bool WorldGenerator::checkPlacement( int xLoc, int yLoc, int zLoc, int xSize, in
 			}
 		}
 	}
-	emit signalStatus( "Found lairs location." );
+	signalStatus( "Found lairs location." );
 	return true;
 }

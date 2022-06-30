@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QQueue>
 
+#include <sigslot/signal.hpp>
+
 class Job;
 class Game;
 
@@ -78,6 +80,6 @@ private:
 	QList<Workshop*> m_workshops;
 	QQueue<unsigned int> m_toDelete;
 
-signals:
-	void signalJobListChanged( unsigned int workshopID );
+public: // signals:
+	sigslot::signal<unsigned int /*workshopID*/> signalJobListChanged;
 };

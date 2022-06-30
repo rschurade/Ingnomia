@@ -31,31 +31,31 @@
 PopulationProxy::PopulationProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalPopulationUpdate, this, &PopulationProxy::onUpdateInfo, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalProfessionList, this, &PopulationProxy::onProfessionList, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalProfessionSkills, this, &PopulationProxy::onProfessionSkills, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalUpdateSingleGnome, this, &PopulationProxy::onUpdateSingleGnome, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorPopulation()->signalPopulationUpdate.connect(&PopulationProxy::onUpdateInfo, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorPopulation()->signalProfessionList.connect(&PopulationProxy::onProfessionList, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorPopulation()->signalProfessionSkills.connect(&PopulationProxy::onProfessionSkills, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorPopulation()->signalUpdateSingleGnome.connect(&PopulationProxy::onUpdateSingleGnome, this); // TODO: Qt::QueuedConnection
 
-	connect( this, &PopulationProxy::signalSetSkillActive, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetSkillActive, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllSkills, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllSkills, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllGnomes, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllGnomes, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSortGnomes, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSortGnomes, Qt::QueuedConnection );
+	this->signalSetSkillActive.connect(&AggregatorPopulation::onSetSkillActive, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetAllSkills.connect(&AggregatorPopulation::onSetAllSkills, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetAllGnomes.connect(&AggregatorPopulation::onSetAllGnomes, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetProfession.connect(&AggregatorPopulation::onSetProfession, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSortGnomes.connect(&AggregatorPopulation::onSortGnomes, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
 
-	connect( this, &PopulationProxy::signalRequestSchedules, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestSchedules, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetSchedule, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetSchedule, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetAllHours, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetAllHours, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalSetHourForAll, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onSetHourForAll, Qt::QueuedConnection );
+	this->signalRequestSchedules.connect(&AggregatorPopulation::onRequestSchedules, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetSchedule.connect(&AggregatorPopulation::onSetSchedule, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetAllHours.connect(&AggregatorPopulation::onSetAllHours, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalSetHourForAll.connect(&AggregatorPopulation::onSetHourForAll, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
 
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdate, this, &PopulationProxy::onUpdateSchedules, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalScheduleUpdateSingleGnome, this, &PopulationProxy::onScheduleUpdateSingleGnome, Qt::QueuedConnection );
-	connect( Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::signalSelectEditProfession, this, &PopulationProxy::onSelectEditProfession, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorPopulation()->signalScheduleUpdate.connect(&PopulationProxy::onUpdateSchedules, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorPopulation()->signalScheduleUpdateSingleGnome.connect(&PopulationProxy::onScheduleUpdateSingleGnome, this); // TODO: Qt::QueuedConnection
+	Global::eventConnector->aggregatorPopulation()->signalSelectEditProfession.connect(&PopulationProxy::onSelectEditProfession, this); // TODO: Qt::QueuedConnection
 	
-	connect( this, &PopulationProxy::signalRequestProfessions, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestProfessions, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalRequestSkills, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onRequestSkills, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalUpdateProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onUpdateProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalNewProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onNewProfession, Qt::QueuedConnection );
-	connect( this, &PopulationProxy::signalDeleteProfession, Global::eventConnector->aggregatorPopulation(), &AggregatorPopulation::onDeleteProfession, Qt::QueuedConnection );
+	this->signalRequestProfessions.connect(&AggregatorPopulation::onRequestProfessions, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalRequestSkills.connect(&AggregatorPopulation::onRequestSkills, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalUpdateProfession.connect(&AggregatorPopulation::onUpdateProfession, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalNewProfession.connect(&AggregatorPopulation::onNewProfession, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
+	this->signalDeleteProfession.connect(&AggregatorPopulation::onDeleteProfession, Global::eventConnector->aggregatorPopulation()); // TODO: Qt::QueuedConnection
 }
 
 PopulationProxy::~PopulationProxy()
@@ -77,17 +77,17 @@ void PopulationProxy::onUpdateInfo( const GuiPopulationInfo& info )
 
 void PopulationProxy::setSkillActive( unsigned int gnomeID, QString skillID, bool value )
 {
-	emit signalSetSkillActive( gnomeID, skillID, value );
+	signalSetSkillActive( gnomeID, skillID, value );
 }
 
 void PopulationProxy::setAllSkillsForGnome( unsigned int gnomeID, bool value )
 {
-	emit signalSetAllSkills( gnomeID, value );
+	signalSetAllSkills( gnomeID, value );
 }
 	
 void PopulationProxy::setSkillForAllGnomes( QString skillID, bool value )
 {
-	emit signalSetAllGnomes( skillID, value );
+	signalSetAllGnomes( skillID, value );
 }
 
 void PopulationProxy::onProfessionList( const QStringList& professions )
@@ -108,7 +108,7 @@ void PopulationProxy::onProfessionSkills( const QString profession, const QList<
 
 void PopulationProxy::setProfession( unsigned int gnomeID, QString profession )
 {
-	emit signalSetProfession( gnomeID, profession );
+	signalSetProfession( gnomeID, profession );
 }
 
 void PopulationProxy::onUpdateSingleGnome( const GuiGnomeInfo& gnome )
@@ -121,27 +121,27 @@ void PopulationProxy::onUpdateSingleGnome( const GuiGnomeInfo& gnome )
 
 void PopulationProxy::sortGnomes( QString mode )
 { 
-	emit signalSortGnomes( mode );
+	signalSortGnomes( mode );
 }
 
 void PopulationProxy::requestSchedules()
 {
-	emit signalRequestSchedules();
+	signalRequestSchedules();
 }
 	
 void PopulationProxy::setSchedule( unsigned int gnomeID, int hour, ScheduleActivity activity )
 {
-	emit signalSetSchedule( gnomeID, hour, m_currentActivitiy );
+	signalSetSchedule( gnomeID, hour, m_currentActivitiy );
 }
 
 void PopulationProxy::setAllHours( unsigned int gnomeID, ScheduleActivity activitiy )
 {
-	emit signalSetAllHours( gnomeID, activitiy );
+	signalSetAllHours( gnomeID, activitiy );
 }
 	
 void PopulationProxy::setHourForAll( int hour, ScheduleActivity activity )
 {
-	emit signalSetHourForAll( hour, activity );
+	signalSetHourForAll( hour, activity );
 }
 
 void PopulationProxy::onUpdateSchedules( const GuiScheduleInfo& info )
@@ -167,27 +167,27 @@ void PopulationProxy::setCurrentActivity( ScheduleActivity activity )
 
 void PopulationProxy::requestProfessions()
 {
-	emit signalRequestProfessions();
+	signalRequestProfessions();
 }
 	
 void PopulationProxy::requestSkills( QString profession )
 {
-	emit signalRequestSkills( profession );
+	signalRequestSkills( profession );
 }
 
 void PopulationProxy::updateProfession( QString name, QString newName, QStringList skills )
 {
-	emit signalUpdateProfession( name, newName, skills );
+	signalUpdateProfession( name, newName, skills );
 }
 
 void PopulationProxy::deleteProfession( QString name )
 {
-	emit signalDeleteProfession( name );
+	signalDeleteProfession( name );
 }
 
 void PopulationProxy::newProfession()
 {
-	emit signalNewProfession();
+	signalNewProfession();
 }
 
 void PopulationProxy::onSelectEditProfession( const QString name )

@@ -20,6 +20,8 @@
 #include <QPointer>
 #include "../base/position.h"
 
+#include <sigslot/signal.hpp>
+
 struct SoundEffect
 {
 	QString type;
@@ -46,6 +48,6 @@ public:
 private:
 	QPointer<Game> g;
 
-signals:
-	void signalPlayEffect( const SoundEffect& effect );
+public: // signals:
+	sigslot::signal<const SoundEffect& /*effect*/> signalPlayEffect;
 };

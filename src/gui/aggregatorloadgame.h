@@ -20,6 +20,8 @@
 #include <QObject>
 #include <QDateTime>
 
+#include <sigslot/signal.hpp>
+
 struct GuiSaveInfo
 {
 	QString name;
@@ -48,7 +50,7 @@ public slots:
 	void onRequestKingdoms();
 	void onRequestSaveGames( const QString path );
 
-signals:
-	void signalKingdoms( const QList<GuiSaveInfo>& kingdoms );
-	void signalSaveGames( const QList<GuiSaveInfo>& kingdoms );
+public: // signals:
+	sigslot::signal<const QList<GuiSaveInfo>& /*kingdoms*/> signalKingdoms;
+	sigslot::signal<const QList<GuiSaveInfo>& /*kingdoms*/> signalSaveGames;
 };
