@@ -19,7 +19,6 @@
 
 #include <QString>
 #include <QVariantMap>
-#include <QVector>
 
 #include <vector>
 

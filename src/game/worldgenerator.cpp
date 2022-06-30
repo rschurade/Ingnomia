@@ -620,7 +620,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 {
 	int num = ngs->numGnomes();
 
-	QVector<Position> offsets;
+	std::vector<Position> offsets;
 	offsets.push_back( Position( 0, 0, 0 ) );
 	offsets.push_back( Position( -1, 0, 0 ) );
 	offsets.push_back( Position( 1, 0, 0 ) );
@@ -827,7 +827,7 @@ void WorldGenerator::createHeightMap( int dimX, int dimY )
 	//qDebug() << "heightMap min: " << m_min << "heightMap max: " << m_max;
 }
 
-void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel )
+void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel )
 {
 	int baseLevel = m_mushroomLevel;
 
@@ -914,7 +914,7 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 	}
 }
 
-void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel )
+void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel )
 {
 	auto& world = w->world();
 
@@ -1218,7 +1218,7 @@ void WorldGenerator::createOceanFront()
 
 	int sandRowID = DBH::materialUID( "Sand" );
 
-	QVector<int> sizes;
+	std::vector<int> sizes;
 	for ( int i = 0; i < m_dimX; ++i )
 	{
 		sizes.push_back( size + ( m_heightMap2[i + 20 * m_dimX] * size ) );

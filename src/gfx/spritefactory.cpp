@@ -1260,7 +1260,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 				for ( int i = 0; i < 32; ++i )
 				{
-					QVector<uint8_t> data( bytes );
+					std::vector<uint8_t> data( bytes );
 					m_pixelData.push_back( data );
 				}
 			}
@@ -1304,7 +1304,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 			for ( int i = 0; i < 32; ++i )
 			{
-				QVector<uint8_t> data( bytes );
+				std::vector<uint8_t> data( bytes );
 				m_pixelData.push_back( data );
 			}
 		}
@@ -1323,10 +1323,10 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 					for ( int x = 0; x < 32; ++x )
 					{
 						QColor col = img.pixelColor( x, y );
-						m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y ), col.red() );
-						m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 1 ), col.green() );
-						m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 2 ), col.blue() );
-						m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 3 ), col.alpha() );
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y )]     = col.red();
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.green();
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.blue();
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.alpha();
 					}
 				}
 			}
@@ -1351,41 +1351,41 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 		{
 			for ( int y = 0; y < 16; ++y )
 			{
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 1 ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 2 ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 3 ), 0 );
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 			}
 
 			for ( int y = 16; y < 48; ++y )
 			{
 				QColor col = img.pixelColor( x, y - 16 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y ), col.red() );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 1 ), col.green() );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 2 ), col.blue() );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 3 ), col.alpha() );
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = col.red();
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.green();
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.blue();
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.alpha();
 			}
 			for ( int y = 48; y < 64; ++y )
 			{
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 1 ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 2 ), 0 );
-				m_pixelData[tex].replace( startIndex + ( x * 4 + 128 * y + 3 ), 0 );
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = 0;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 			}
 		}
 	}
 }
 
-void SpriteFactory::addEmptyRows( int startIndex, int rows, QVector<uint8_t>& pixelData )
+void SpriteFactory::addEmptyRows( int startIndex, int rows, std::vector<uint8_t>& pixelData )
 {
 	for ( int y = 0; y < rows; ++y )
 	{
 		for ( int x = 0; x < 32; ++x )
 		{
-			pixelData.replace( startIndex + ( x * 4 + 128 * y ), 0 );
-			pixelData.replace( startIndex + ( x * 4 + 128 * y + 1 ), 0 );
-			pixelData.replace( startIndex + ( x * 4 + 128 * y + 2 ), 0 );
-			pixelData.replace( startIndex + ( x * 4 + 128 * y + 3 ), 0 );
+			pixelData[startIndex + ( x * 4 + 128 * y )] = 0;
+			pixelData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
+			pixelData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
+			pixelData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 		}
 	}
 }
@@ -1694,7 +1694,7 @@ unsigned int SpriteFactory::size()
 	return m_spriteIDs.size();
 }
 
-QVector<uint8_t> SpriteFactory::pixelData( int index )
+std::vector<uint8_t> SpriteFactory::pixelData( int index )
 {
 	QMutexLocker ml( &m_mutex );
 	return m_pixelData[index];

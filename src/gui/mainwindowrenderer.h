@@ -82,7 +82,7 @@ private:
 	void paintThoughtBubbles();
 	void paintAxles();
 	void updateWorld();
-	void uploadTileData( const QVector<TileDataUpdate>& tileData );
+	void uploadTileData( const std::vector<TileDataUpdate>& tileData );
 	void updateTextures();
 	void updateRenderParams();
 
@@ -140,7 +140,7 @@ private:
 
 	ThoughtBubbleInfo m_thoughBubbles;
 	AxleDataInfo m_axleData;
-	QVector<QVector<TileDataUpdate>> m_pendingUpdates;
+	std::vector<std::vector<TileDataUpdate>> m_pendingUpdates;
 
 public slots:
 	void initializeGL();

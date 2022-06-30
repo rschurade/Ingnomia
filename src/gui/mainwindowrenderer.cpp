@@ -832,7 +832,7 @@ void MainWindowRenderer::updateWorld()
 	}
 }
 
-void MainWindowRenderer::uploadTileData( const QVector<TileDataUpdate>& tileData )
+void MainWindowRenderer::uploadTileData( const std::vector<TileDataUpdate>& tileData )
 {
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileUpdateBo );
 	glBufferData( GL_SHADER_STORAGE_BUFFER, sizeof( TileDataUpdate ) * tileData.size(), tileData.data(), GL_STREAM_DRAW );
@@ -856,7 +856,7 @@ void MainWindowRenderer::updateTextures()
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
-			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
+			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).data() );
 		}
 	}
 }

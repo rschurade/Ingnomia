@@ -22,8 +22,8 @@
 #include <QBitmap>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
-#include <QVector>
 
+#include <vector>
 #include <ranges>
 
 struct DefNode
@@ -109,7 +109,7 @@ private:
 	absl::btree_map<QString, QString> m_materialTypes;
 
 	//pixel data for array textures
-	QVector<QVector<uint8_t>> m_pixelData;
+	std::vector<std::vector<uint8_t>> m_pixelData;
 	int m_texesUsed = 0;
 
 	bool m_textureAdded         = false;
@@ -135,7 +135,7 @@ private:
 	void addPixmapToPixelData( Sprite* sprite );
 	void addPixmapToPixelData32( Sprite* sprite );
 
-	void addEmptyRows( int startIndex, int rows, QVector<uint8_t>& pixelData );
+	void addEmptyRows( int startIndex, int rows, std::vector<uint8_t>& pixelData );
 
 	void tintPixmap( QPixmap& pm, QColor color );
 
@@ -191,6 +191,6 @@ public:
 	
 	unsigned int size();
 	
-	QVector<uint8_t> pixelData( int index );
+	std::vector<uint8_t> pixelData( int index );
 	
 };

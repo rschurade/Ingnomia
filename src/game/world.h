@@ -294,7 +294,7 @@ public:
 	void addToUpdateList( const unsigned int uID );
 	void addToUpdateList( const Position pos );
 	void addToUpdateList( const unsigned short x, const unsigned short y, const unsigned short z );
-	void addToUpdateList( const QVector<unsigned int>& ul );
+	void addToUpdateList( const std::vector<unsigned int>& ul );
 	void addToUpdateList( const absl::btree_set<unsigned int>& ul );
 
 	void setDoorLocked( unsigned int tileUID, bool lockGnome, bool lockMonster, bool lockAnimal );

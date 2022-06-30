@@ -22,7 +22,7 @@
 #include <QMutex>
 #include <QQueue>
 #include <QThreadPool>
-#include <QVector>
+#include <vector>
 #include <optional>
 
 class PathFinderThread;

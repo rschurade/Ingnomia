@@ -311,15 +311,15 @@ void ItemHistory::minusItem( QString itemSID, QString materialSID )
 	}
 }
 
-absl::btree_map<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
+absl::btree_map<QString, std::vector<IH_values>> ItemHistory::getHistory( QString itemSID )
 {
-	absl::btree_map<QString, QVector<IH_values>> out;
+	absl::btree_map<QString, std::vector<IH_values>> out;
 
 	absl::btree_set<QString> mats = m_itemsPresent.at( itemSID );
-	out.insert_or_assign( "all", QVector<IH_values>() );
+	out.insert_or_assign( "all", std::vector<IH_values>() );
 	for ( auto mat : mats )
 	{
-		out.insert_or_assign( mat, QVector<IH_values>() );
+		out.insert_or_assign( mat, std::vector<IH_values>() );
 	}
 
 	for ( int i = 0; i < m_data.size(); ++i )
@@ -397,13 +397,13 @@ absl::btree_map<QString, QVector<IH_values>> ItemHistory::getHistory( QString it
 	return out;
 }
 
-absl::btree_map<QString, QVector<IH_values>> ItemHistory::getRandomHistory( QString itemSID )
+absl::btree_map<QString, std::vector<IH_values>> ItemHistory::getRandomHistory( QString itemSID )
 {
-	absl::btree_map<QString, QVector<IH_values>> out;
+	absl::btree_map<QString, std::vector<IH_values>> out;
 
 	for ( int k = 1; k < 8; ++k )
 	{
-		QVector<IH_values> vec;
+		std::vector<IH_values> vec;
 
 		int total = 0;
 		for ( int i = 0; i < 20; ++i )

@@ -772,7 +772,7 @@ void World::addDeaquifier( Position pos )
 void World::processWater()
 {
 	// Batch updates
-	QVector<unsigned int> waterUpdates;
+	std::vector<unsigned int> waterUpdates;
 	// Expecting to see every tile again
 	waterUpdates.reserve( m_aquifiers.size() + m_deaquifiers.size() );
 
@@ -784,7 +784,7 @@ void World::processWater()
 		{
 			tile.fluidLevel++;
 			tile.flags += TileFlag::TF_WATER;
-			waterUpdates.append( pos.toInt() );
+			waterUpdates.push_back( pos.toInt() );
 		}
 		m_water.insert( pos.toInt() );
 	}
@@ -807,7 +807,7 @@ void World::processWater()
 				tile.flags -= TileFlag::TF_WATER;
 				m_water.erase( pos.toInt() );
 			}
-			waterUpdates.append( pos.toInt() );
+			waterUpdates.push_back( pos.toInt() );
 		}
 	}
 
@@ -855,8 +855,8 @@ void World::processWaterFlow()
 	absl::btree_set<unsigned int> newWater;
 	absl::btree_set<unsigned int> removedWater;
 
-	QVector<unsigned int> drain;
-	QVector<unsigned int> flood;
+	std::vector<unsigned int> drain;
+	std::vector<unsigned int> flood;
 
 	// Random numbers are expensive, and rand() only delivers 15bit of entropy per call
 	auto seedBase = rand() ^ rand() << 10 ^ rand() << 20;
@@ -884,7 +884,7 @@ void World::processWaterFlow()
 				if ( ( seed % 1000 ) == 0 )
 				{
 					here.flow = WF_EVAP;
-					drain.append( currentPos );
+					drain.push_back( currentPos );
 				}
 				else
 				{
@@ -966,8 +966,8 @@ void World::processWaterFlow()
 			if ( pressure[down] != invalidPressure && pressure[down] <= pressure[center] || pressure[down] < 10 )
 			{
 				here.flow += WF_DOWN;
-				drain.append( currentPos );
-				flood.append( neighbors.below );
+				drain.push_back( currentPos );
+				flood.push_back( neighbors.below );
 				pressure[center]--;
 				pressure[up]++;
 			}
@@ -986,8 +986,8 @@ void World::processWaterFlow()
 					const bool vacuum = waterAbove && pressure[center] == 10;
 					if ( pressure[j] != invalidPressure && ( pressure[center] > pressure[j] + preventInstability ) && !vacuum )
 					{
-						drain.append( currentPos );
-						flood.append( candidates[j] );
+						drain.push_back( currentPos );
+						flood.push_back( candidates[j] );
 						here.flow += direction[j];
 						pressure[center]--;
 						pressure[j]++;
@@ -999,8 +999,8 @@ void World::processWaterFlow()
 			if ( pressure[up] != invalidPressure && ( pressure[center] > 10 ) && ( pressure[center] > pressure[up] + preventInstability + 1 ) )
 			{
 				here.flow += WF_UP;
-				drain.append( currentPos );
-				flood.append( neighbors.above );
+				drain.push_back( currentPos );
+				flood.push_back( neighbors.above );
 				pressure[center]--;
 				pressure[up]++;
 			}
@@ -1014,7 +1014,7 @@ void World::processWaterFlow()
 	}
 
 	// Batch updates
-	QVector<unsigned int> waterUpdates;
+	std::vector<unsigned int> waterUpdates;
 	// Expecting to see every tile again
 	waterUpdates.reserve( (int)m_water.size() );
 
@@ -1031,7 +1031,7 @@ void World::processWaterFlow()
 		if ( here.fluidLevel < 10 )
 		{
 			++here.fluidLevel;
-			waterUpdates.append( pos );
+			waterUpdates.push_back( pos );
 		}
 		else
 		{
@@ -1050,7 +1050,7 @@ void World::processWaterFlow()
 		else
 		{
 			--here.fluidLevel;
-			waterUpdates.append( pos );
+			waterUpdates.push_back( pos );
 		}
 		if ( here.fluidLevel == 0 )
 		{
@@ -1690,7 +1690,7 @@ void World::addToUpdateList( const unsigned short x, const unsigned short y, con
 	m_updatedTiles.insert( tileID );
 }
 
-void World::addToUpdateList( const QVector<unsigned int>& ul )
+void World::addToUpdateList( const std::vector<unsigned int>& ul )
 {
 	QMutexLocker lock( &m_updateMutex );
 	for ( auto tileID : ul )

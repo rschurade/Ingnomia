@@ -22,7 +22,6 @@
 #include <QPointer>
 #include <absl/container/btree_map.h>
 #include <QObject>
-#include <QVector>
 
 #include <vector>
 
@@ -68,9 +67,9 @@ private:
 
 	void initMateralVectors();
 
-	void fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel );
+	void fillFloor( int z, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel );
 
-	void fillFloorMushroomBiome( int z, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel );
+	void fillFloorMushroomBiome( int z, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel );
 
 	void discoverAll();
 
@@ -102,8 +101,8 @@ private:
 
 	void createHeightMap( int dimX, int dimY );
 
-	QVector<int> m_heightMap;
-	QVector<float> m_heightMap2;
+	std::vector<int> m_heightMap;
+	std::vector<float> m_heightMap2;
 
 	int m_seed = 1337;
 
@@ -120,8 +119,8 @@ private:
 
 	FastNoise m_random;
 
-	QVector<TerrainMaterial> m_mats;
-	QVector<int> m_matsInLevel;
+	std::vector<TerrainMaterial> m_mats;
+	std::vector<int> m_matsInLevel;
 
 	bool m_fow = true;
 

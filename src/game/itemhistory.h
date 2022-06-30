@@ -69,9 +69,9 @@ public:
 		return m_itemsPresent;
 	}
 
-	absl::btree_map<QString, QVector<IH_values>> getHistory( QString itemSID );
+	absl::btree_map<QString, std::vector<IH_values>> getHistory( QString itemSID );
 
-	absl::btree_map<QString, QVector<IH_values>> getRandomHistory( QString itemSID );
+	absl::btree_map<QString, std::vector<IH_values>> getRandomHistory( QString itemSID );
 
 private:
 	void newDay();

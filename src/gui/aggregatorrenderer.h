@@ -21,7 +21,7 @@
 #include "../base/tile.h"
 
 #include <QObject>
-#include <QVector>
+#include <vector>
 #include <QPointer>
 
 #include <sigslot/signal.hpp>
@@ -58,7 +58,7 @@ Q_DECLARE_TYPEINFO( TileDataUpdate, Q_PRIMITIVE_TYPE );
 
 struct TileDataUpdateInfo
 {
-	QVector<TileDataUpdate> updates;
+	std::vector<TileDataUpdate> updates;
 };
 Q_DECLARE_METATYPE( TileDataUpdateInfo );
 
@@ -82,7 +82,7 @@ Q_DECLARE_TYPEINFO( ThoughtBubble, Q_PRIMITIVE_TYPE );
 
 struct ThoughtBubbleInfo
 {
-	QVector<ThoughtBubble> thoughtBubbles;
+	std::vector<ThoughtBubble> thoughtBubbles;
 };
 Q_DECLARE_METATYPE( ThoughtBubbleInfo );
 
