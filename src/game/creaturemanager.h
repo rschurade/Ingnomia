@@ -22,6 +22,8 @@
 
 #include <ranges>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 class CreatureManager : public QObject
@@ -93,10 +95,10 @@ private:
 
 	void updateLists();
 
-signals:
-	void signalCreatureDeath( unsigned int id );
-	void signalCreatureRemove( unsigned int id );
+public: // signals:
+	sigslot::signal< unsigned int /*id*/ > signalCreatureDeath;
+	sigslot::signal< unsigned int /*id*/ > signalCreatureRemove;
 
-	void signalAddMonster( unsigned int monsterID );
-	void signalRemoveMonster( unsigned int monsterID );
+	sigslot::signal< unsigned int /*monsterID*/ > signalAddMonster;
+	sigslot::signal< unsigned int /*monsterID*/ > signalRemoveMonster;
 };

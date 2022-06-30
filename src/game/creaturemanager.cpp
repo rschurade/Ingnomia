@@ -80,7 +80,7 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 		}
 
 		m_startIndex = i + 1;
-		//if( jobChanged ) emit signalGnomeActivity( g.id(), g.getActivity() );
+		//if( jobChanged ) signalGnomeActivity( g.id(), g.getActivity() );
 		//if ( timer.elapsed() > 2 )
 		//	break;
 	}
@@ -319,7 +319,7 @@ void CreatureManager::removeCreature( unsigned int id )
 
 		m_dirty = true;
 
-		emit signalCreatureRemove( id );
+		signalCreatureRemove( id );
 	}
 }
 
