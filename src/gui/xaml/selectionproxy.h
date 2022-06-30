@@ -40,6 +40,4 @@ private slots:
     void onCursor( QString pos );
     void onFirstClick( QString pos );
     void onSize( QString pos );
-
-signals:
 };

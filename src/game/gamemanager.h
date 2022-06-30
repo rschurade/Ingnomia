@@ -69,8 +69,6 @@ private:
 
 	void postCreationInit();
 	
-signals:
-
 public slots:
 	void onGeneratorMessage( QString message );
 };

@@ -116,7 +116,5 @@ private:
 
 	QList<NeighborKingdom> m_kingdoms;
 
-signals:
-
 public slots:
 };
