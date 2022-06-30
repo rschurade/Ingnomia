@@ -321,25 +321,25 @@ bool IO::load( QString folder )
 
 	loadFile( folder + "sprites.json", jd );
 	IO::loadSprites( jd );
-	emit signalStatus( "Start loading world.." );
+	signalStatus( "Start loading world.." );
 	if ( !IO::loadWorld( folder ) )
 	{
 		return false;
 	}
 	g->w()->afterLoad();
-	emit signalStatus( "Loading world done" );
+	signalStatus( "Loading world done" );
 	IO::loadItems( folder );
-	emit signalStatus( "Loading items done" );
+	signalStatus( "Loading items done" );
 	loadFile( folder + "floorconstructions.json", jd );
 	IO::loadFloorConstructions( jd );
 	loadFile( folder + "wallconstructions.json", jd );
 	IO::loadWallConstructions( jd );
-	emit signalStatus( "Loading constructions done" );
+	signalStatus( "Loading constructions done" );
 	loadFile( folder + "jobs.json", jd );
 	IO::loadJobs( jd );
 	loadFile( folder + "jobsprites.json", jd );
 	IO::loadJobSprites( jd );
-	emit signalStatus( "Loading jobs done" );
+	signalStatus( "Loading jobs done" );
 	loadFile( folder + "workshops.json", jd );
 	IO::loadWorkshops( jd );
 	loadFile( folder + "farms.json", jd );
@@ -357,7 +357,7 @@ bool IO::load( QString folder )
 	IO::loadMonsters( folder );
 	IO::loadPlants( folder );
 	IO::loadAnimals( folder );
-	emit signalStatus( "Loading gnomes, plants and animals done" );
+	signalStatus( "Loading gnomes, plants and animals done" );
 	loadFile( folder + "rooms.json", jd );
 	IO::loadRooms( jd );
 	loadFile( folder + "doors.json", jd );

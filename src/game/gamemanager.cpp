@@ -202,7 +202,7 @@ void GameManager::loadGame( QString folder )
 	m_eventConnector->setGamePtr( m_game );
 
 	IO io( m_game, this) ;
-	connect( &io, &IO::signalStatus, this, &GameManager::onGeneratorMessage );
+	io.signalStatus.connect( &GameManager::onGeneratorMessage, this );
 	if ( io.load( folder ) )
 	{
 		Global::util = new Util( m_game );

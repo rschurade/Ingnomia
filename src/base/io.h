@@ -20,6 +20,8 @@
 #include <QObject>
 #include <QPointer>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 class IO : public QObject
@@ -114,6 +116,6 @@ public:
 
 	QString getTempFolder();
 
-signals:
-	void signalStatus( QString text );
+public: // signals:
+	sigslot::signal< const QString & /*text*/> signalStatus;
 };
