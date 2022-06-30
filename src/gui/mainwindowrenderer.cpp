@@ -69,12 +69,12 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	QObject( parent ),
 	m_parent( parent )
 {
-	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalWorldParametersChanged, this, &MainWindowRenderer::cleanupWorld );
+	Global::eventConnector->aggregatorRenderer()->signalWorldParametersChanged.connect( &MainWindowRenderer::cleanupWorld, this );
 
-	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalTileUpdates, this, &MainWindowRenderer::onTileUpdates );
-	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalAxleData, this, &MainWindowRenderer::onAxelData );
-	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalThoughtBubbles, this, &MainWindowRenderer::onThoughtBubbles );
-	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalCenterCamera, this, &MainWindowRenderer::onCenterCameraPosition );
+	Global::eventConnector->aggregatorRenderer()->signalTileUpdates.connect( &MainWindowRenderer::onTileUpdates, this );
+	Global::eventConnector->aggregatorRenderer()->signalAxleData.connect( &MainWindowRenderer::onAxelData, this );
+	Global::eventConnector->aggregatorRenderer()->signalThoughtBubbles.connect( &MainWindowRenderer::onThoughtBubbles, this );
+	Global::eventConnector->aggregatorRenderer()->signalCenterCamera.connect( &MainWindowRenderer::onCenterCameraPosition, this );
 	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
 
 	Global::eventConnector->aggregatorSelection()->signalUpdateSelection.connect(&MainWindowRenderer::onUpdateSelection, this); // TODO: This was Qt::QueuedConnection

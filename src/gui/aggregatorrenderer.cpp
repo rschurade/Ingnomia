@@ -249,7 +249,7 @@ void AggregatorRenderer::onAllTileInfo()
 		if ( tileUpdates.updates.size() >= batchSize )
 		{
 			{
-				emit signalTileUpdates( tileUpdates );
+				signalTileUpdates( tileUpdates );
 				tileUpdates.updates.clear();
 			}
 			tileUpdates.updates.reserve( batchSize );
@@ -257,7 +257,7 @@ void AggregatorRenderer::onAllTileInfo()
 	}
 	if ( !tileUpdates.updates.empty() )
 	{
-		emit signalTileUpdates( tileUpdates );
+		signalTileUpdates( tileUpdates );
 	}
 }
 
@@ -288,7 +288,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const absl::btree_set<unsigned int
 		if ( tileUpdates.updates.size() >= batchSize )
 		{
 			{
-				emit signalTileUpdates( tileUpdates );
+				signalTileUpdates( tileUpdates );
 				tileUpdates.updates.clear();
 			}
 			tileUpdates.updates.reserve( batchSize );
@@ -296,7 +296,7 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const absl::btree_set<unsigned int
 	}
 	if ( !tileUpdates.updates.empty() )
 	{
-		emit signalTileUpdates( tileUpdates );
+		signalTileUpdates( tileUpdates );
 	}
 
 	if ( g->mcm()->axlesChanged() )
@@ -327,7 +327,7 @@ void AggregatorRenderer::onThoughtBubbleUpdate()
 			info.thoughtBubbles.push_back( { gn->getPos(), g->sf()->thoughtBubbleID( thoughtBubble ) } );
 		}
 	}
-	emit signalThoughtBubbles( info );
+	signalThoughtBubbles( info );
 }
 
 void AggregatorRenderer::onAxleDataUpdate()
@@ -335,17 +335,17 @@ void AggregatorRenderer::onAxleDataUpdate()
 	if( !g ) return;
 	AxleDataInfo data;
 	data.data = g->mcm()->axleData();
-	emit signalAxleData( data );
+	signalAxleData( data );
 }
 
 void AggregatorRenderer::onCenterCamera( const Position& location )
 {
 	if ( !g ) return;
-	emit signalCenterCamera( location );
+	signalCenterCamera( location );
 }
 
 void AggregatorRenderer::onWorldParametersChanged()
 {
 	if( !g ) return;
-	emit signalWorldParametersChanged();
+	signalWorldParametersChanged();
 }

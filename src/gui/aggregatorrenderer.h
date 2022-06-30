@@ -24,6 +24,8 @@
 #include <QVector>
 #include <QPointer>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 struct TileData
@@ -118,10 +120,10 @@ public slots:
 	void onAxleDataUpdate();
 	void onCenterCamera( const Position& location );
 
-signals:
-	void signalWorldParametersChanged();
-	void signalTileUpdates( const TileDataUpdateInfo& updates );
-	void signalThoughtBubbles( const ThoughtBubbleInfo& bubbles );
-	void signalAxleData( const AxleDataInfo& data );
-	void signalCenterCamera( const Position& location );
+public: // signals:
+	sigslot::signal<> signalWorldParametersChanged;
+	sigslot::signal< const TileDataUpdateInfo& /*updates*/ > signalTileUpdates;
+	sigslot::signal< const ThoughtBubbleInfo& /*bubbles*/ > signalThoughtBubbles;
+	sigslot::signal< const AxleDataInfo& /*data*/ > signalAxleData;
+	sigslot::signal< const Position& /*location*/ > signalCenterCamera;
 };
