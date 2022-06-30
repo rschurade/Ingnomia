@@ -25,6 +25,8 @@
 #include <unordered_map>
 #include <absl/container/flat_hash_map.h>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 class Inventory;
 class Job;
@@ -134,8 +136,8 @@ private:
 
 	int m_totalCountAnimals = 0;
 
-signals:
-	void signalFarmChanged( unsigned int id );
-	void signalPastureChanged( unsigned int id );
-	void signalGroveChanged( unsigned int id );
+public: // signals:
+	sigslot::signal< unsigned int /*id*/ > signalFarmChanged;
+	sigslot::signal< unsigned int /*id*/ > signalPastureChanged;
+	sigslot::signal< unsigned int /*id*/ > signalGroveChanged;
 };

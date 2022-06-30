@@ -310,7 +310,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 					fa->addTile( p.first );
 				}
 			}
-			emit signalFarmChanged( faID );
+			signalFarmChanged( faID );
 		}
 	}
 	else
@@ -325,7 +325,7 @@ void FarmingManager::addFarm( Position firstClick, QList<QPair<Position, bool>> 
 			}
 		}
 		m_farms.insert_or_assign( fa->id(), fa );
-		emit signalFarmChanged( fa->id() );
+		signalFarmChanged( fa->id() );
 	}
 }
 
@@ -491,7 +491,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 			{
 				removeFarm( id );
 			}
-			emit signalFarmChanged( id );
+			signalFarmChanged( id );
 		}
 	}
 	else if ( includeGrove && isGrove( pos ) )
@@ -516,7 +516,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 			{
 				removePasture( pasture->id() );
 			}
-			emit signalPastureChanged( pasture->id() );
+			signalPastureChanged( pasture->id() );
 		}
 	}
 }
@@ -704,15 +704,15 @@ bool FarmingManager::harvestBeehive( Position pos )
 	
 void FarmingManager::emitUpdateSignalFarm( unsigned int id )
 {
-	emit signalFarmChanged( id );
+	signalFarmChanged( id );
 }
 
 void FarmingManager::emitUpdateSignalPasture( unsigned int id )
 {
-	emit signalPastureChanged( id );
+	signalPastureChanged( id );
 }
 
 void FarmingManager::emitUpdateSignalGrove( unsigned int id )
 {
-	emit signalGroveChanged( id );
+	signalGroveChanged( id );
 }
