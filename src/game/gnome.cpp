@@ -267,7 +267,7 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 	{
 		auto pm = vpm.toMap();
 
-		CreaturePart part = Global::creaturePartLookUp.value( pm.value( "Part" ).toString() );
+		CreaturePart part = Global::creaturePartLookUp.at( pm.value( "Part" ).toString() );
 
 		QString tint = pm.value( "Tint" ).toString();
 
@@ -840,7 +840,7 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 		for ( auto need : Global::needIDs )
 		{
 			//update need values
-			float decay  = Global::needDecays.value( need );
+			float decay  = Global::needDecays.at( need );
 			float oldVal = m_needs[need].toFloat();
 			float newVal = oldVal + decay;
 

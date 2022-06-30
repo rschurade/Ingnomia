@@ -43,8 +43,8 @@ public:
 	void updateLight( absl::btree_set<unsigned int>& updateList, std::vector<Tile>& world, Position pos );
 
 private:
-	QMap<unsigned int, QMap<unsigned int, unsigned char>> m_lightMap;
-	QMap<unsigned int, Light> m_lights;
+	absl::btree_map<unsigned int, absl::btree_map<unsigned int, unsigned char>> m_lightMap;
+	absl::btree_map<unsigned int, Light> m_lights;
 
 	unsigned char calcIntensity( unsigned int posID );
 

@@ -25,6 +25,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+#include <ranges>
+
 PathFinder::PathFinder( World* world, QObject* parent) :
 	m_world( world ),
 	QObject(parent)
@@ -47,10 +49,11 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 	auto it = m_jobs.find( id );
 	if ( it != m_jobs.end() )
 	{
-		if ( it->state != PathFinderResult::Running && it->state != PathFinderResult::Pending )
+		auto &job = it->second;
+		if ( job.state != PathFinderResult::Running && job.state != PathFinderResult::Pending )
 		{
-			path = std::move( it->path );
-			const auto result = it->state;
+			path = std::move( job.path );
+			const auto result = job.state;
 			m_jobs.erase( it );
 			return result;
 		}
@@ -86,9 +89,9 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 		}
 
 		// If no trivial solution exists, fork to worker
-		auto it = m_jobs.insert(
+		auto [it, _] = m_jobs.emplace(
 			id,
-			{
+			PathFinderJob {
 				start,
 				goal,
 				ignoreNoPass,
@@ -97,7 +100,7 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 			}
 		);
 
-		return it->state;
+		return it->second.state;
 	}
 }
 
@@ -114,33 +117,36 @@ void PathFinder::findPaths()
 		// Filter jobs which are not pending yet
 		for ( auto it = m_jobs.begin(); it != m_jobs.end(); ++it )
 		{
-			if ( it.value().state == PathFinderResult::Pending )
+			auto &job = it->second;
+			if ( job.state == PathFinderResult::Pending )
 			{
-				it.value().state = PathFinderResult::Running;
-				jobs.insert( it.key(), it.value() );
+				job.state = PathFinderResult::Running;
+				jobs.insert_or_assign( it->first, job );
 			}
 		}
 	}
 
 	for ( auto it = jobs.begin(); it != jobs.end(); ++it)
 	{
+		const auto &job = it->second;
 		// Common case is for many creatures to have the same goal, so invert path finding direction by default
-		const Position start = it->goal;
-		std::unordered_set<Position> goals = { it->start };
-		const bool ignoreNoPass = it->ignoreNoPass;
+		const Position start = job.goal;
+		std::unordered_set<Position> goals = { job.start };
+		const bool ignoreNoPass = job.ignoreNoPass;
 		// Fold all other requests which share either of goal or start into this one
-		for (auto it2 = it + 1; it2 != jobs.end();)
+		for (auto it2 = std::next(it); it2 != jobs.end();)
 		{
-			if (it2->ignoreNoPass == ignoreNoPass)
+			auto &job2 = it2->second;
+			if (job2.ignoreNoPass == ignoreNoPass)
 			{
-				if (it2->goal == start)
+				if (job2.goal == start)
 				{
-					goals.emplace( it2->start );
+					goals.emplace( job2.start );
 					it2 = jobs.erase( it2 );
 				}
-				else if (it2->start == start)
+				else if (job2.start == start)
 				{
-					goals.emplace( it2->goal );
+					goals.emplace( job2.goal );
 					it2 = jobs.erase( it2 );
 				}
 				else
@@ -168,7 +174,7 @@ void PathFinder::findPaths()
 void PathFinder::onResult( Position start, Position goal, bool ignoreNoPass, std::vector<Position> path )
 {
 	QMutexLocker lock( &m_mutex );
-	for ( auto& job : m_jobs )
+	for ( auto& job : m_jobs | std::views::values )
 	{
 		const bool forwardPath = ( job.goal == goal && job.start == start );
 		const bool reversePath = ( job.goal == start && job.start == goal );

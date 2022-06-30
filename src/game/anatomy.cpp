@@ -32,6 +32,16 @@ Anatomy::~Anatomy()
 {
 }
 
+CreaturePart Anatomy::lookupCreaturePart(const QString &key)
+{
+	if ( const auto& it = Global::creaturePartLookUp.find( key ); it != Global::creaturePartLookUp.end() )
+	{
+		return it->second;
+	}
+
+	return KCP_NONE;
+}
+
 void Anatomy::init( QString type, bool isAquatic )
 {
 	m_type = type;
@@ -53,8 +63,8 @@ void Anatomy::init( QString type, bool isAquatic )
 	for ( auto row : rows )
 	{
 		AnatomyPart ap;
-		ap.id     = Global::creaturePartLookUp.value( row.value( "ID2" ).toString() );
-		ap.parent = Global::creaturePartLookUp.value( row.value( "Parent" ).toString() );
+		ap.id     = lookupCreaturePart( row.value( "ID2" ).toString() );
+		ap.parent = lookupCreaturePart( row.value( "Parent" ).toString() );
 
 		QString sh = row.value( "Height" ).toString();
 		if ( sh == "High" )
@@ -82,8 +92,8 @@ void Anatomy::init( QString type, bool isAquatic )
 
 	for ( auto row : rows )
 	{
-		auto id     = Global::creaturePartLookUp.value( row.value( "ID2" ).toString() );
-		auto parent = Global::creaturePartLookUp.value( row.value( "Parent" ).toString() );
+		auto id     = lookupCreaturePart( row.value( "ID2" ).toString() );
+		auto parent = lookupCreaturePart( row.value( "Parent" ).toString() );
 
 		m_parts[parent].children.append( id );
 	}

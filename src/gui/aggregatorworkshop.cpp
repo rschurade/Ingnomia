@@ -33,6 +33,8 @@
 
 #include <QDebug>
 
+#include <ranges>
+
 void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
 	if( !g ) return;
@@ -56,8 +58,8 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 	}
 	materials.append( GuiWorkshopMaterial { anyString, mats["any"] } );
 
-	mats.remove( "any" );
-	for ( auto key : mats.keys() )
+	mats.erase( "any" );
+	for ( auto key : mats | std::views::keys )
 	{
 		materials.append( GuiWorkshopMaterial { key, mats[key] } );
 	}
@@ -390,8 +392,8 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 						QList<unsigned int> itemList = g->inv()->tradeInventory( item, mat );
 
 						Counter<unsigned int> counter;
-						QMap<unsigned int, unsigned int>values;
-						QMap<int, QList<unsigned int>> vlItems;
+						absl::btree_map<unsigned int, unsigned int>values;
+						absl::btree_map<int, QList<unsigned int>> vlItems;
 						for( auto itemUID : itemList )
 						{
 							if( DB::select( "HasQuality", "Items", item ).toBool() )

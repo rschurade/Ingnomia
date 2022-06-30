@@ -239,10 +239,9 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 		return true;
 	}
 
-	QMap<QString, int> mc = g->inv()->materialCountsForItem( rt.type, false );
-	QStringList keys      = mc.keys();
+	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type, false );
 
-	for ( auto key : keys )
+	for ( auto key : mc | std::views::keys )
 	{
 		if ( mc[key] > 0 )
 		{
@@ -479,7 +478,6 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 	for ( auto skillID : skills )
 	{
 		unsigned int jobID = 0;
-		const auto& strKey = skillID.toStdString();
 
 		const auto& skillToIntIt = m_skillToInt.find( skillID );
 		if (skillToIntIt != m_skillToInt.end())

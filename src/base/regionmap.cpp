@@ -141,9 +141,9 @@ void RegionMap::mergeRegions( const Position& pos, unsigned int oldRegionID, uns
 	Region& oldRegion = m_regions[oldRegionID];
 	Region& newRegion = m_regions[newRegionID];
 
-	for ( auto con : oldRegion.connectionSetTo().keys() )
+	for ( auto con : oldRegion.connectionsTo() )
 	{
-		for ( auto conPos : oldRegion.connectionSetTo().value( con ) )
+		for ( auto conPos : oldRegion.connectionSetTo().at( con ) )
 		{
 			newRegion.addConnectionTo( con, conPos );
 			m_regions[con].addConnectionFrom( newRegionID, conPos );
@@ -151,9 +151,9 @@ void RegionMap::mergeRegions( const Position& pos, unsigned int oldRegionID, uns
 		m_regions[con].removeAllConnectionsFrom( oldRegionID );
 	}
 
-	for ( auto con : oldRegion.connectionSetFrom().keys() )
+	for ( auto con : oldRegion.connectionsFrom() )
 	{
-		for ( auto conPos : oldRegion.connectionSetFrom().value( con ) )
+		for ( auto conPos : oldRegion.connectionSetFrom().at( con ) )
 		{
 			newRegion.addConnectionFrom( con, conPos );
 			m_regions[con].addConnectionTo( newRegionID, Position( conPos ) );
@@ -173,9 +173,9 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 	auto oldConSetTo = fromRegion.connectionSetTo();
 
 	fromRegion.clearConnectionsTo();
-	for ( auto con : oldConSetTo.keys() )
+	for ( auto con : oldConSetTo | std::views::keys )
 	{
-		for ( auto conPosString : oldConSetTo.value( con ) )
+		for ( auto conPosString : oldConSetTo.at( con ) )
 		{
 			//check if location is in new region or still in old region
 			Position conPos( conPosString );
@@ -195,7 +195,7 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 
 	auto oldConSet = fromRegion.connectionSetFrom();
 	fromRegion.clearConnectionsFrom();
-	for ( auto downRegionID : oldConSet.keys() )
+	for ( auto downRegionID : oldConSet | std::views::keys )
 	{
 		Region& downRegion = m_regions[downRegionID];
 		// get list of position to the old region that is split

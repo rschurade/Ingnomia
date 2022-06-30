@@ -43,7 +43,7 @@ private:
 private slots:
 	void onUpdateInfo( const GuiCreatureInfo& info );
 	void onProfessionList( const QStringList& profs );
-	void onEmptyPics( const QMap< QString, std::vector<unsigned char> >& emptyPics );
+	void onEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics );
 signals:
 	void signalRequestCreatureUpdate( unsigned int creatureID );
 	void signalRequestProfessionList();

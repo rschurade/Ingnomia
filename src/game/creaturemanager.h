@@ -20,6 +20,8 @@
 #include "../game/animal.h"
 #include "../game/monster.h"
 
+#include <ranges>
+
 class Game;
 
 class CreatureManager : public QObject
@@ -65,7 +67,10 @@ public:
 	
 	void forceMoveAnimals( const Position& from, const Position& to );
 
-	QList<QString> types();
+	auto types() {
+		return m_countPerType | std::views::keys;
+	}
+
 	QList<unsigned int> animalsByType( QString type );
 
 	bool hasPathTo( const Position& pos, unsigned int creatureID );
@@ -79,8 +84,8 @@ private:
 
 	absl::flat_hash_map<unsigned int, Creature*> m_creaturesByID;
 
-	QMap<QString, unsigned int> m_countPerType;
-	QMap<QString, QList<unsigned int>> m_creaturesPerType;
+	absl::btree_map<QString, unsigned int> m_countPerType;
+	absl::btree_map<QString, QList<unsigned int>> m_creaturesPerType;
 
 	int m_startIndex = 0;
 

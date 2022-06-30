@@ -22,7 +22,7 @@
 #include "../game/job.h"
 
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPair>
 #include <QVariantMap>
 
@@ -90,11 +90,11 @@ public:
 private:
 	GroveProperties m_properties;
 
-	QMap<unsigned int, GroveField*> m_fields;
+	absl::btree_map<unsigned int, GroveField*> m_fields;
 
 	void updateAutoForester();
 
-	QMap<int, int> m_prioValues;
+	absl::btree_map<int, int> m_prioValues;
 
 	GroveProperties& properties()
 	{

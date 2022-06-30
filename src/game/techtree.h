@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QObject>
 #include <absl/container/btree_set.h>
 #include <absl/container/flat_hash_map.h>
@@ -46,5 +46,5 @@ private:
 	bool compsLowerLevel( QString craftID, absl::flat_hash_map<QString, int>& itemLevels );
 	int levelPlusOne( QString craftID, absl::flat_hash_map<QString, int>& itemLevels );
 
-	QMap<QString, TTNode> m_items;
+	absl::btree_map<QString, TTNode> m_items;
 };

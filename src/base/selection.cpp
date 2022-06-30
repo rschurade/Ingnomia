@@ -37,6 +37,8 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
+#include "containersHelper.h"
+
 Selection::Selection( Game* game ) :
 	g( game ),
 	m_rotation( 0 ),
@@ -48,36 +50,36 @@ Selection::Selection( Game* game ) :
 	m_selectionSize.first  = 0;
 	m_selectionSize.second = 0;
 
-	m_reqMap.insert( "none", SEL_NONE );
-	m_reqMap.insert( "Floor", SEL_FLOOR );
-	m_reqMap.insert( "FloorOrScaffold", SEL_FLOOR_OR_SCAFFOLD );
-	m_reqMap.insert( "Wall", SEL_WALL );
-	m_reqMap.insert( "MineableWall", SEL_MINEABLE_WALL );
-	m_reqMap.insert( "Construction", SEL_CONSTRUCTION );
-	m_reqMap.insert( "Job", SEL_JOB );
-	m_reqMap.insert( "Designation", SEL_DESIGNATION );
-	m_reqMap.insert( "Stockpile", SEL_STOCKPILE );
-	m_reqMap.insert( "Room", SEL_ROOM );
-	m_reqMap.insert( "AllowBell", SEL_ALLOW_BELL );
-	m_reqMap.insert( "AllowFurniture", SEL_ALLOW_FURNITURE );
-	m_reqMap.insert( "Pasture", SEL_PASTURE );
-	m_reqMap.insert( "Walkable", SEL_WALKABLE );
-	m_reqMap.insert( "Mechanism", SEL_MECHANISM );
-	m_reqMap.insert( "GearBox", SEL_GEARBOX );
+	m_reqMap.insert_or_assign( "none", SEL_NONE );
+	m_reqMap.insert_or_assign( "Floor", SEL_FLOOR );
+	m_reqMap.insert_or_assign( "FloorOrScaffold", SEL_FLOOR_OR_SCAFFOLD );
+	m_reqMap.insert_or_assign( "Wall", SEL_WALL );
+	m_reqMap.insert_or_assign( "MineableWall", SEL_MINEABLE_WALL );
+	m_reqMap.insert_or_assign( "Construction", SEL_CONSTRUCTION );
+	m_reqMap.insert_or_assign( "Job", SEL_JOB );
+	m_reqMap.insert_or_assign( "Designation", SEL_DESIGNATION );
+	m_reqMap.insert_or_assign( "Stockpile", SEL_STOCKPILE );
+	m_reqMap.insert_or_assign( "Room", SEL_ROOM );
+	m_reqMap.insert_or_assign( "AllowBell", SEL_ALLOW_BELL );
+	m_reqMap.insert_or_assign( "AllowFurniture", SEL_ALLOW_FURNITURE );
+	m_reqMap.insert_or_assign( "Pasture", SEL_PASTURE );
+	m_reqMap.insert_or_assign( "Walkable", SEL_WALKABLE );
+	m_reqMap.insert_or_assign( "Mechanism", SEL_MECHANISM );
+	m_reqMap.insert_or_assign( "GearBox", SEL_GEARBOX );
 
-	m_reqMap.insert( "Stairs", SEL_STAIRS );
-	m_reqMap.insert( "StairsTop", SEL_STAIRSTOP );
-	m_reqMap.insert( "Ramp", SEL_RAMP );
-	m_reqMap.insert( "RampTop", SEL_RAMPTOP );
+	m_reqMap.insert_or_assign( "Stairs", SEL_STAIRS );
+	m_reqMap.insert_or_assign( "StairsTop", SEL_STAIRSTOP );
+	m_reqMap.insert_or_assign( "Ramp", SEL_RAMP );
+	m_reqMap.insert_or_assign( "RampTop", SEL_RAMPTOP );
 
-	m_reqMap.insert( "Soil", SEL_SOIL );
-	m_reqMap.insert( "Tree", SEL_TREE );
-	m_reqMap.insert( "Plant", SEL_PLANT );
-	m_reqMap.insert( "TreeCLip", SEL_TREECLIP );
-	m_reqMap.insert( "PlantWithFruit", SEL_PLANT_WITH_FRUIT );
-	m_reqMap.insert( "TreeInRange", SEL_TREE_IN_RANGE );
+	m_reqMap.insert_or_assign( "Soil", SEL_SOIL );
+	m_reqMap.insert_or_assign( "Tree", SEL_TREE );
+	m_reqMap.insert_or_assign( "Plant", SEL_PLANT );
+	m_reqMap.insert_or_assign( "TreeCLip", SEL_TREECLIP );
+	m_reqMap.insert_or_assign( "PlantWithFruit", SEL_PLANT_WITH_FRUIT );
+	m_reqMap.insert_or_assign( "TreeInRange", SEL_TREE_IN_RANGE );
 
-	m_reqMap.insert( "AnyWall", SEL_ANYWALL );
+	m_reqMap.insert_or_assign( "AnyWall", SEL_ANYWALL );
 }
 
 Selection::~Selection()
@@ -393,7 +395,10 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		{
 			//if ( Global::debugMode )
 			//	qDebug() << "test requirement: " << req << "...";
-			switch ( m_reqMap.value( req ) )
+
+			auto sel = (enumReqs)maps::at_or_default( m_reqMap, req, (int)SEL_NONE );
+
+			switch ( sel )
 			{
 				case SEL_NONE:
 					break;
@@ -535,7 +540,9 @@ bool Selection::testTileForJobSelection( const Position& pos )
 				return false;
 			}
 
-			switch ( m_reqMap.value( forb ) )
+			auto sel = (enumReqs)maps::at_or_default(m_reqMap, forb, (int)SEL_NONE);
+
+			switch ( sel )
 			{
 				case SEL_NONE:
 					break;

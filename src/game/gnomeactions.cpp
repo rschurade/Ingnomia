@@ -743,7 +743,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 						for ( int i = 0; i < count; ++i )
 						{
 							unsigned int item = 0;
-							for ( auto spf : sp->getFields() )
+							for ( auto spf : sp->getFields() | std::views::values )
 							{
 								// if exists get item from that position
 								item = g->inv()->getItemAtPos( spf->pos, true, itemSID, mat );
@@ -767,7 +767,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
-						for ( auto spf : sp->getFields() )
+						for ( auto spf : sp->getFields() | std::views::values )
 						{
 							// if exists get item from that position
 							item = g->inv()->getItemAtPos( spf->pos, true, itemSID, "any" );
@@ -787,7 +787,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
-						for ( auto spf : sp->getFields() )
+						for ( auto spf : sp->getFields() | std::views::values )
 						{
 							// if exists get item from that position
 							item = g->inv()->getItemAtPos( spf->pos, true, itemSID, "any" );
@@ -822,7 +822,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 			for ( int i = 0; i < count; ++i )
 			{
 				unsigned int item = 0;
-				for ( auto spf : sp->getFields() )
+				for ( auto spf : sp->getFields() | std::views::values )
 				{
 					// if exists get item from that position
 					item = g->inv()->getItemAtPos( spf->pos, true, itemSID, materialSID );
@@ -1072,10 +1072,9 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		}
 	}
 	//no item equipped
-	QMap<QString, int> mc = g->inv()->materialCountsForItem( rt.type );
-	QStringList keys      = mc.keys();
+	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type );
 
-	for ( auto key : keys )
+	for ( auto key : mc | std::views::keys )
 	{
 		if ( mc[key] > 0 )
 		{
@@ -1160,7 +1159,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 		return false;
 	}
 
-	auto part = Global::creaturePartLookUp.value( slot );
+	auto part = Global::creaturePartLookUp.at( slot );
 
 	QString item     = uniform->parts[slot].item;
 	QString material = uniform->parts[slot].material;
@@ -2591,7 +2590,7 @@ bool Gnome::equipItem()
 		unsigned int materialUID = g->inv()->materialUID( itemID );
 		QString materialSID      = g->inv()->materialSID( itemID );
 
-		auto part = Global::creaturePartLookUp.value( slot );
+		auto part = Global::creaturePartLookUp.at( slot );
 
 		auto& itemSlot = m_equipment.getSlot( part );
 		if ( itemSlot.itemID )

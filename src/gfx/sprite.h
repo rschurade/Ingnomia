@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPixmap>
 #include <QString>
 
@@ -52,7 +52,7 @@ public:
 	float opacity    = 1.0;
 	bool anim        = false;
 	bool hasTransp   = false;
-	QMap<int, int> randomNumbers;
+	absl::btree_map<int, int> randomNumbers;
 	QString m_type = "";
 };
 

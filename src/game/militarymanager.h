@@ -52,7 +52,7 @@ struct Uniform
 	QString name = "new uniform";
 	quint32 id   = GameState::createID();
 
-	QMap<QString, UniformItem> parts;
+	absl::btree_map<QString, UniformItem> parts;
 
 	QVariantMap serialize();
 	Uniform( const QVariantMap& in );

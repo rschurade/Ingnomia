@@ -18,16 +18,21 @@
 #pragma once
 
 #include <QDebug>
-#include <QMap>
 #include <QString>
 #include <absl/container/btree_set.h>
+#include <absl/container/btree_map.h>
+
+#include <ranges>
+#include "containersHelper.h"
 
 class FilterItem
 {
 public:
 	void addItem( QString material );
 
-	QStringList materials();
+	[[nodiscard]] auto materials() const {
+		return m_materials | std::views::keys;
+	}
 
 	void setCheckState( bool state );
 	void setCheckState( QString material, bool state );
@@ -35,7 +40,7 @@ public:
 	bool getCheckState( QString material );
 
 private:
-	QMap<QString, bool> m_materials;
+	absl::btree_map<QString, bool> m_materials;
 };
 
 class FilterGroup
@@ -43,8 +48,10 @@ class FilterGroup
 public:
 	void addItem( QString item, QString material );
 
-	QStringList items();
-	QStringList materials( QString item );
+	auto items() {
+		return m_items | std::views::keys;
+	}
+
 
 	void setCheckState( bool state );
 	void setCheckState( QString item, bool state );
@@ -53,7 +60,13 @@ public:
 	bool getCheckState( QString item, QString material );
 
 private:
-	QMap<QString, FilterItem> m_items;
+	absl::btree_map<QString, FilterItem> m_items;
+	static inline FilterItem EmptyFilter;
+
+public:
+	auto materials( QString item ) {
+		return maps::at_or_default(m_items, item, EmptyFilter).materials();
+	}
 };
 
 class FilterCategory
@@ -62,9 +75,18 @@ public:
 	void addItem( QString group, QString item, QString material );
 	void addGroup( QString group );
 
-	QStringList groups();
-	QStringList items( QString group );
-	QStringList materials( QString group, QString item );
+	auto groups() {
+		return m_groups | std::views::keys;
+	}
+
+	auto items( QString group ) {
+		return m_groups.at(group).items();
+	}
+
+	auto materials( QString group, QString item )
+	{
+		return m_groups.at(group).materials( item );
+	}
 
 	void setCheckState( bool state );
 	void setCheckState( QString group, bool state );
@@ -74,7 +96,7 @@ public:
 	bool getCheckState( QString group, QString item, QString material );
 
 private:
-	QMap<QString, FilterGroup> m_groups;
+	absl::btree_map<QString, FilterGroup> m_groups;
 };
 
 class Filter
@@ -89,10 +111,22 @@ public:
 
 	void addItem( QString category, QString group, QString item, QString material );
 
-	QStringList categories();
-	QStringList groups( QString catgory );
-	QStringList items( QString category, QString group );
-	QStringList materials( QString category, QString group, QString item );
+	auto categories() {
+		return m_categories | std::views::keys;
+	}
+
+	auto groups( QString category ) {
+		return m_categories.at(category).groups();
+	}
+
+	auto items( QString category, QString group ) {
+		return m_categories.at(category).items( group );
+	}
+
+	auto materials( QString category, QString group, QString item )
+	{
+		return m_categories.at(category).materials( group, item );
+	}
 
 	void setCheckState( QString category, bool state );
 	void setCheckState( QString category, QString group, bool state );
@@ -108,7 +142,7 @@ public:
 	void update();
 
 private:
-	QMap<QString, FilterCategory> m_categories;
+	absl::btree_map<QString, FilterCategory> m_categories;
 
 	bool m_activeDirty       = true;
 	bool m_activeSimpleDirty = true;

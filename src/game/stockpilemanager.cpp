@@ -34,7 +34,7 @@ StockpileManager::StockpileManager( Game* parent ) :
 
 StockpileManager::~StockpileManager()
 {
-	for ( const auto& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles | std::views::values )
 	{
 		delete sp;
 	}
@@ -42,7 +42,7 @@ StockpileManager::~StockpileManager()
 
 void StockpileManager::onTick( quint64 tick )
 {
-	for ( auto& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->countFields() == 0 && !sp->stillHasJobs() )
 		{
@@ -51,7 +51,7 @@ void StockpileManager::onTick( quint64 tick )
 		}
 	}
 
-	for ( auto& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->onTick( tick ) )
 		{
@@ -88,7 +88,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 			}
 		}
 		sp->setPriority( m_stockpilesOrdered.size() );
-		m_stockpiles.insert( sp->id(), sp );
+		m_stockpiles.insert_or_assign( sp->id(), sp );
 		m_stockpilesOrdered.append( sp->id() );
 		m_lastAdded = sp->id();
 	}
@@ -105,18 +105,18 @@ void StockpileManager::load( QVariantMap vals )
 		m_allStockpileTiles.insert_or_assign( Position( sfm.value( "Pos" ) ).toInt(), sp->id() );
 	}
 	sp->setPriority( m_stockpilesOrdered.size() );
-	m_stockpiles.insert( sp->id(), sp );
+	m_stockpiles.insert_or_assign( sp->id(), sp );
 	m_stockpilesOrdered.append( sp->id() );
 }
 
 void StockpileManager::removeStockpile( unsigned int id )
 {
-	auto sp = m_stockpiles.value( id );
+	auto sp = m_stockpiles.at( id );
 	if ( sp )
 	{
 		delete sp;
 	}
-	m_stockpiles.remove( id );
+	m_stockpiles.erase( id );
 	m_stockpilesOrdered.removeAll( id );
 	emit signalStockpileDeleted( id );
 }
@@ -172,7 +172,7 @@ Stockpile* StockpileManager::getLastAddedStockpile()
 	{
 		return m_stockpiles[m_lastAdded];
 	}
-	return m_stockpiles.last();
+	return m_stockpiles.rbegin()->second;
 }
 
 void StockpileManager::insertItem( unsigned int stockpileID, Position pos, unsigned int item )
@@ -241,7 +241,7 @@ unsigned int StockpileManager::getJob()
 
 bool StockpileManager::finishJob( unsigned int jobID )
 {
-	for ( auto& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->finishJob( jobID ) )
 		{
@@ -253,7 +253,7 @@ bool StockpileManager::finishJob( unsigned int jobID )
 
 bool StockpileManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto& sp : m_stockpiles )
+	for ( auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->giveBackJob( jobID ) )
 		{
@@ -269,7 +269,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 
 QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
 {
-	for ( const auto& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{
@@ -280,7 +280,7 @@ QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
 
 bool StockpileManager::hasJobID( unsigned int jobID ) const
 {
-	for ( const auto& sp : m_stockpiles )
+	for ( const auto& sp : m_stockpiles | std::views::values )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{

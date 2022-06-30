@@ -418,7 +418,7 @@ void IO::sanitize()
 			const auto& constructions = g->w()->wallConstructions();
 			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
 			{
-				const auto& construction = it.value();
+				const auto& construction = it->second;
 				if ( construction.contains( "Item" ) )
 				{
 					auto itemID = construction["Item"].toInt();
@@ -442,7 +442,7 @@ void IO::sanitize()
 			const auto& constructions = g->w()->floorConstructions();
 			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
 			{
-				const auto& construction = it.value();
+				const auto& construction = it->second;
 				if ( construction.contains( "Item" ) )
 				{
 					auto itemID = construction["Item"].toInt();
@@ -789,7 +789,7 @@ QJsonArray IO::jsonArrayWallConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayWallConstructions";
 	QJsonArray ja;
-	for ( const auto& constr : g->w()->wallConstructions() )
+	for ( const auto& constr : g->w()->wallConstructions() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -803,7 +803,7 @@ QJsonArray IO::jsonArrayFloorConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFloorConstructions";
 	QJsonArray ja;
-	for ( const auto& constr : g->w()->floorConstructions() )
+	for ( const auto& constr : g->w()->floorConstructions() | std::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -1003,7 +1003,10 @@ QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 
 	QJsonArray ja;
 	auto plants = g->w()->plants();
-	auto keys   = plants.keys();
+	auto plantsKeys = plants | std::views::keys;
+
+	// FIXME: Original code was also creating a copy of the keys to iterate, but this seems wasteful in any case
+	std::vector<unsigned int> keys(plantsKeys.begin(), plantsKeys.end());
 	int i       = startIndex;
 
 	while ( i < keys.size() && amount > 0 )
@@ -1082,12 +1085,10 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 
 	QJsonArray ja;
 	auto& items = g->inv()->allItems();
+	const auto &itemsKeys = items | std::views::keys;
 
 	// FIXME: Original code was also creating a copy of the keys to iterate, but this seems wasteful in any case
-	std::vector<unsigned int> keys;
-	for (const auto &key : items | std::views::keys) {
-		keys.push_back(key);
-	}
+	std::vector<unsigned int> keys(itemsKeys.begin(), itemsKeys.end());
 
 	int i = startIndex;
 
@@ -1199,7 +1200,7 @@ QJsonArray IO::jsonArrayJobSprites()
 	QJsonArray ja;
 	auto jobSprites = g->w()->jobSprites();
 
-	for ( const auto& key : jobSprites.keys() )
+	for ( const auto& key : jobSprites | std::views::keys )
 	{
 		auto entry = jobSprites[key];
 		entry.insert( "PosID", key );

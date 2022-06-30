@@ -76,7 +76,7 @@ void AggregatorSound::init( Game* game )
 
 		try
 		{
-			m_buffers.insert( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename.toStdString() ) );
+			m_buffers.insert_or_assign( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename.toStdString() ) );
 			qDebug() << "loaded sound " << soundID << " " << filename;
 		}
 		catch ( ... )

@@ -27,7 +27,7 @@
 
 #include <absl/container/btree_set.h>
 
-QMap<QString, QString> Strings::m_table = QMap<QString, QString>();
+absl::btree_map<QString, QString> Strings::m_table = absl::btree_map<QString, QString>();
 QString Strings::m_language             = "";
 
 Strings::Strings()
@@ -45,7 +45,7 @@ bool Strings::init()
 	//for( auto row : DB::selectRows( "Translation_" + m_language ) )
 	for ( auto row : DB::selectRows( "Translation" ) )
 	{
-		m_table.insert( row.value( "ID" ).toString(), row.value( "Text" ).toString() );
+		m_table.insert_or_assign( row.value( "ID" ).toString(), row.value( "Text" ).toString() );
 	}
 
 	return true;
@@ -66,7 +66,7 @@ QString Strings::s( QString key )
 
 void Strings::insertString( QString key, QString string )
 {
-	m_table.insert( key, string );
+	m_table.insert_or_assign( key, string );
 }
 
 QString Strings::randomKingdomName()

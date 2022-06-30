@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 
 class Strings
 {
@@ -28,10 +28,10 @@ private:
 	Strings( Strings const& copy );            // Not Implemented
 	Strings& operator=( Strings const& copy ); // Not Implemented
 
-	static QMap<QString, QString> m_table;
+	static absl::btree_map<QString, QString> m_table;
 	static QString m_language;
 
-	QMap<int, QString> m_numberWords;
+	absl::btree_map<int, QString> m_numberWords;
 
 	static QString replaceNamePart( QString part );
 	static QString replaceNamePart2( QString part );

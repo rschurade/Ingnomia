@@ -48,9 +48,9 @@ unsigned int Global::undiscoveredUID = 0;
 
 QVariantMap Global::copiedStockpileSettings;
 
-QMap<QString, QVariantMap> Global::m_windowParams;
+absl::btree_map<QString, QVariantMap> Global::m_windowParams;
 
-QMap<QString, absl::btree_set<QString>> Global::allowedInContainer;
+absl::btree_map<QString, absl::btree_set<QString>> Global::allowedInContainer;
 
 absl::flat_hash_map<Qt::Key, Noesis::Key> Global::keyConvertMap;
 
@@ -66,15 +66,15 @@ bool Global::debugMode = false;
 bool Global::debugOpenGL = false;
 bool Global::debugSound = false;
 
-QMap<QString, QDomElement> Global::m_behaviorTrees;
+absl::btree_map<QString, QDomElement> Global::m_behaviorTrees;
 
 QStringList Global::needIDs;
-QMap<QString, float> Global::needDecays;
+absl::btree_map<QString, float> Global::needDecays;
 
 unsigned int Global::dirtUID = 0;
 
-QMap<QString, CreaturePart> Global::creaturePartLookUp;
-QMap<CreaturePart, QString> Global::creaturePartToString;
+absl::btree_map<QString, CreaturePart> Global::creaturePartLookUp;
+absl::btree_map<CreaturePart, QString> Global::creaturePartToString;
 
 absl::btree_set<QString> Global::craftable;
 
@@ -109,7 +109,7 @@ void Global::reset()
 		{
 			auto need = row.value( "ID" ).toString();
 			needIDs.append( need );
-			needDecays.insert( need, row.value( "DecayPerMinute" ).toFloat() );
+			needDecays.insert_or_assign( need, row.value( "DecayPerMinute" ).toFloat() );
 		}
 	}
 
@@ -117,103 +117,103 @@ void Global::reset()
 
 	Global::cfg->set( "renderCreatures", true );
 
-	creaturePartLookUp.insert( "Head", CP_HEAD );
-	creaturePartLookUp.insert( "Torso", CP_TORSO );
-	creaturePartLookUp.insert( "LeftArm", CP_LEFT_ARM );
-	creaturePartLookUp.insert( "RightArm", CP_RIGHT_ARM );
-	creaturePartLookUp.insert( "LeftHand", CP_LEFT_HAND );
-	creaturePartLookUp.insert( "RightHand", CP_RIGHT_HAND );
-	creaturePartLookUp.insert( "LeftLeg", CP_LEFT_LEG );
-	creaturePartLookUp.insert( "RightLeg", CP_RIGHT_LEG );
-	creaturePartLookUp.insert( "LeftFoot", CP_LEFT_FOOT );
-	creaturePartLookUp.insert( "RightFoot", CP_RIGHT_FOOT );
+	creaturePartLookUp.insert_or_assign( "Head", CP_HEAD );
+	creaturePartLookUp.insert_or_assign( "Torso", CP_TORSO );
+	creaturePartLookUp.insert_or_assign( "LeftArm", CP_LEFT_ARM );
+	creaturePartLookUp.insert_or_assign( "RightArm", CP_RIGHT_ARM );
+	creaturePartLookUp.insert_or_assign( "LeftHand", CP_LEFT_HAND );
+	creaturePartLookUp.insert_or_assign( "RightHand", CP_RIGHT_HAND );
+	creaturePartLookUp.insert_or_assign( "LeftLeg", CP_LEFT_LEG );
+	creaturePartLookUp.insert_or_assign( "RightLeg", CP_RIGHT_LEG );
+	creaturePartLookUp.insert_or_assign( "LeftFoot", CP_LEFT_FOOT );
+	creaturePartLookUp.insert_or_assign( "RightFoot", CP_RIGHT_FOOT );
 
-	creaturePartLookUp.insert( "LeftFrontLeg", CP_LEFT_FRONT_LEG );
-	creaturePartLookUp.insert( "LegFrontLeg", CP_RIGHT_FRONT_LEG );
-	creaturePartLookUp.insert( "LeftFrontFoot", CP_LEFT_FRONT_FOOT );
-	creaturePartLookUp.insert( "RightFrontFoot", CP_RIGHT_FRONT_FOOT );
+	creaturePartLookUp.insert_or_assign( "LeftFrontLeg", CP_LEFT_FRONT_LEG );
+	creaturePartLookUp.insert_or_assign( "LegFrontLeg", CP_RIGHT_FRONT_LEG );
+	creaturePartLookUp.insert_or_assign( "LeftFrontFoot", CP_LEFT_FRONT_FOOT );
+	creaturePartLookUp.insert_or_assign( "RightFrontFoot", CP_RIGHT_FRONT_FOOT );
 
-	creaturePartLookUp.insert( "LeftWing", CP_RIGHT_WING );
-	creaturePartLookUp.insert( "RightWing", CP_RIGHT_WING );
+	creaturePartLookUp.insert_or_assign( "LeftWing", CP_RIGHT_WING );
+	creaturePartLookUp.insert_or_assign( "RightWing", CP_RIGHT_WING );
 
-	creaturePartLookUp.insert( "Brain", CP_BRAIN );
-	creaturePartLookUp.insert( "LeftEye", CP_LEFT_EYE );
-	creaturePartLookUp.insert( "RightEye", CP_RIGHT_EYE );
-	creaturePartLookUp.insert( "Heart", CP_HEART );
-	creaturePartLookUp.insert( "LeftLung", CP_LEFT_LUNG );
-	creaturePartLookUp.insert( "RightLung", CP_RIGHT_LUNG );
+	creaturePartLookUp.insert_or_assign( "Brain", CP_BRAIN );
+	creaturePartLookUp.insert_or_assign( "LeftEye", CP_LEFT_EYE );
+	creaturePartLookUp.insert_or_assign( "RightEye", CP_RIGHT_EYE );
+	creaturePartLookUp.insert_or_assign( "Heart", CP_HEART );
+	creaturePartLookUp.insert_or_assign( "LeftLung", CP_LEFT_LUNG );
+	creaturePartLookUp.insert_or_assign( "RightLung", CP_RIGHT_LUNG );
 
-	creaturePartLookUp.insert( "Hair", CP_HAIR );
-	creaturePartLookUp.insert( "Facial", CP_FACIAL_HAIR );
-	creaturePartLookUp.insert( "Clothing", CP_CLOTHING );
-	creaturePartLookUp.insert( "Boots", CP_BOOTS );
-	creaturePartLookUp.insert( "Hat", CP_HAT );
-	creaturePartLookUp.insert( "Back", CP_BACK );
+	creaturePartLookUp.insert_or_assign( "Hair", CP_HAIR );
+	creaturePartLookUp.insert_or_assign( "Facial", CP_FACIAL_HAIR );
+	creaturePartLookUp.insert_or_assign( "Clothing", CP_CLOTHING );
+	creaturePartLookUp.insert_or_assign( "Boots", CP_BOOTS );
+	creaturePartLookUp.insert_or_assign( "Hat", CP_HAT );
+	creaturePartLookUp.insert_or_assign( "Back", CP_BACK );
 
-	creaturePartLookUp.insert( "HeadArmor", CP_ARMOR_HEAD );
-	creaturePartLookUp.insert( "ChestArmor", CP_ARMOR_TORSO );
-	creaturePartLookUp.insert( "LeftArmArmor", CP_ARMOR_LEFT_ARM );
-	creaturePartLookUp.insert( "RightArmArmor", CP_ARMOR_RIGHT_ARM );
-	creaturePartLookUp.insert( "LeftHandArmor", CP_ARMOR_LEFT_HAND );
-	creaturePartLookUp.insert( "RightHandArmor", CP_ARMOR_RIGHT_HAND );
-	creaturePartLookUp.insert( "LeftFootArmor", CP_ARMOR_LEFT_FOOT );
-	creaturePartLookUp.insert( "RightFootArmor", CP_ARMOR_RIGHT_FOOT );
-	creaturePartLookUp.insert( "LeftHandHeld", CP_LEFT_HAND_HELD );
-	creaturePartLookUp.insert( "RightHandHeld", CP_RIGHT_HAND_HELD );
+	creaturePartLookUp.insert_or_assign( "HeadArmor", CP_ARMOR_HEAD );
+	creaturePartLookUp.insert_or_assign( "ChestArmor", CP_ARMOR_TORSO );
+	creaturePartLookUp.insert_or_assign( "LeftArmArmor", CP_ARMOR_LEFT_ARM );
+	creaturePartLookUp.insert_or_assign( "RightArmArmor", CP_ARMOR_RIGHT_ARM );
+	creaturePartLookUp.insert_or_assign( "LeftHandArmor", CP_ARMOR_LEFT_HAND );
+	creaturePartLookUp.insert_or_assign( "RightHandArmor", CP_ARMOR_RIGHT_HAND );
+	creaturePartLookUp.insert_or_assign( "LeftFootArmor", CP_ARMOR_LEFT_FOOT );
+	creaturePartLookUp.insert_or_assign( "RightFootArmor", CP_ARMOR_RIGHT_FOOT );
+	creaturePartLookUp.insert_or_assign( "LeftHandHeld", CP_LEFT_HAND_HELD );
+	creaturePartLookUp.insert_or_assign( "RightHandHeld", CP_RIGHT_HAND_HELD );
 
-	creaturePartLookUp.insert( "ArmArmor", CP_ARMOR_ARM );
-	creaturePartLookUp.insert( "HandArmor", CP_ARMOR_HAND );
-	creaturePartLookUp.insert( "FootArmor", CP_ARMOR_FOOT );
-	creaturePartLookUp.insert( "LegArmor", CP_ARMOR_LEG );
+	creaturePartLookUp.insert_or_assign( "ArmArmor", CP_ARMOR_ARM );
+	creaturePartLookUp.insert_or_assign( "HandArmor", CP_ARMOR_HAND );
+	creaturePartLookUp.insert_or_assign( "FootArmor", CP_ARMOR_FOOT );
+	creaturePartLookUp.insert_or_assign( "LegArmor", CP_ARMOR_LEG );
 
-	creaturePartToString.insert( CP_HEAD, "Head" );
-	creaturePartToString.insert( CP_TORSO, "Torso" );
-	creaturePartToString.insert( CP_LEFT_ARM, "LeftArm" );
-	creaturePartToString.insert( CP_RIGHT_ARM, "RightArm" );
-	creaturePartToString.insert( CP_LEFT_HAND, "LeftHand" );
-	creaturePartToString.insert( CP_RIGHT_HAND, "RightHand" );
-	creaturePartToString.insert( CP_LEFT_LEG, "LeftLeg" );
-	creaturePartToString.insert( CP_RIGHT_LEG, "LegLeg" );
-	creaturePartToString.insert( CP_LEFT_FOOT, "LeftFoot" );
-	creaturePartToString.insert( CP_RIGHT_FOOT, "RightFoot" );
+	creaturePartToString.insert_or_assign( CP_HEAD, "Head" );
+	creaturePartToString.insert_or_assign( CP_TORSO, "Torso" );
+	creaturePartToString.insert_or_assign( CP_LEFT_ARM, "LeftArm" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_ARM, "RightArm" );
+	creaturePartToString.insert_or_assign( CP_LEFT_HAND, "LeftHand" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_HAND, "RightHand" );
+	creaturePartToString.insert_or_assign( CP_LEFT_LEG, "LeftLeg" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_LEG, "LegLeg" );
+	creaturePartToString.insert_or_assign( CP_LEFT_FOOT, "LeftFoot" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_FOOT, "RightFoot" );
 
-	creaturePartToString.insert( CP_LEFT_FRONT_LEG, "LeftFrontLeg" );
-	creaturePartToString.insert( CP_RIGHT_FRONT_LEG, "LegFrontLeg" );
-	creaturePartToString.insert( CP_LEFT_FRONT_FOOT, "LeftFrontFoot" );
-	creaturePartToString.insert( CP_RIGHT_FRONT_FOOT, "RightFrontFoot" );
+	creaturePartToString.insert_or_assign( CP_LEFT_FRONT_LEG, "LeftFrontLeg" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_FRONT_LEG, "LegFrontLeg" );
+	creaturePartToString.insert_or_assign( CP_LEFT_FRONT_FOOT, "LeftFrontFoot" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_FRONT_FOOT, "RightFrontFoot" );
 
-	creaturePartToString.insert( CP_LEFT_WING, "LeftWing" );
-	creaturePartToString.insert( CP_RIGHT_WING, "RightWing" );
+	creaturePartToString.insert_or_assign( CP_LEFT_WING, "LeftWing" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_WING, "RightWing" );
 
-	creaturePartToString.insert( CP_BRAIN, "Brain" );
-	creaturePartToString.insert( CP_LEFT_EYE, "LeftEye" );
-	creaturePartToString.insert( CP_RIGHT_EYE, "RightEye" );
-	creaturePartToString.insert( CP_HEART, "Heart" );
-	creaturePartToString.insert( CP_LEFT_LUNG, "LeftLung" );
-	creaturePartToString.insert( CP_RIGHT_LUNG, "RightLung" );
+	creaturePartToString.insert_or_assign( CP_BRAIN, "Brain" );
+	creaturePartToString.insert_or_assign( CP_LEFT_EYE, "LeftEye" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_EYE, "RightEye" );
+	creaturePartToString.insert_or_assign( CP_HEART, "Heart" );
+	creaturePartToString.insert_or_assign( CP_LEFT_LUNG, "LeftLung" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_LUNG, "RightLung" );
 
-	creaturePartToString.insert( CP_HAIR, "Hair" );
-	creaturePartToString.insert( CP_FACIAL_HAIR, "Facial" );
-	creaturePartToString.insert( CP_CLOTHING, "Clothing" );
-	creaturePartToString.insert( CP_BOOTS, "Boots" );
-	creaturePartToString.insert( CP_HAT, "Hat" );
-	creaturePartToString.insert( CP_BACK, "Back" );
+	creaturePartToString.insert_or_assign( CP_HAIR, "Hair" );
+	creaturePartToString.insert_or_assign( CP_FACIAL_HAIR, "Facial" );
+	creaturePartToString.insert_or_assign( CP_CLOTHING, "Clothing" );
+	creaturePartToString.insert_or_assign( CP_BOOTS, "Boots" );
+	creaturePartToString.insert_or_assign( CP_HAT, "Hat" );
+	creaturePartToString.insert_or_assign( CP_BACK, "Back" );
 
-	creaturePartToString.insert( CP_ARMOR_HEAD, "HeadArmor" );
-	creaturePartToString.insert( CP_ARMOR_TORSO, "ChestArmor" );
-	creaturePartToString.insert( CP_ARMOR_LEFT_ARM, "LeftArmArmor" );
-	creaturePartToString.insert( CP_ARMOR_RIGHT_ARM, "RightArmArmor" );
-	creaturePartToString.insert( CP_ARMOR_LEFT_HAND, "LeftHandArmor" );
-	creaturePartToString.insert( CP_ARMOR_RIGHT_HAND, "RightHandArmor" );
-	creaturePartToString.insert( CP_ARMOR_LEFT_FOOT, "LeftFootArmor" );
-	creaturePartToString.insert( CP_ARMOR_RIGHT_FOOT, "RightFootArmor" );
-	creaturePartToString.insert( CP_LEFT_HAND_HELD, "LeftHandHeld" );
-	creaturePartToString.insert( CP_RIGHT_HAND_HELD, "RightHandHeld" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_HEAD, "HeadArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_TORSO, "ChestArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_LEFT_ARM, "LeftArmArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_RIGHT_ARM, "RightArmArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_LEFT_HAND, "LeftHandArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_RIGHT_HAND, "RightHandArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_LEFT_FOOT, "LeftFootArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_RIGHT_FOOT, "RightFootArmor" );
+	creaturePartToString.insert_or_assign( CP_LEFT_HAND_HELD, "LeftHandHeld" );
+	creaturePartToString.insert_or_assign( CP_RIGHT_HAND_HELD, "RightHandHeld" );
 
-	creaturePartToString.insert( CP_ARMOR_ARM, "ArmArmor" );
-	creaturePartToString.insert( CP_ARMOR_HAND, "HandArmor" );
-	creaturePartToString.insert( CP_ARMOR_FOOT, "FootArmor" );
-	creaturePartToString.insert( CP_ARMOR_LEG, "LegArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_ARM, "ArmArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_HAND, "HandArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_FOOT, "FootArmor" );
+	creaturePartToString.insert_or_assign( CP_ARMOR_LEG, "LegArmor" );
 
 	craftable.clear();
 	auto rows = DB::selectRows( "Crafts" );
@@ -257,14 +257,14 @@ bool Global::loadBehaviorTrees()
 		f.close();
 
 		QDomElement root = xml.documentElement();
-		m_behaviorTrees.insert( id, root );
+		m_behaviorTrees.insert_or_assign( id, root );
 	}
 	return true;
 }
 
 QDomElement Global::behaviorTree( QString id )
 {
-	return m_behaviorTrees.value( id );
+	return m_behaviorTrees.at( id );
 }
 
 bool Global::addBehaviorTree( QString id, QString path )
@@ -283,7 +283,7 @@ bool Global::addBehaviorTree( QString id, QString path )
 	f.close();
 
 	QDomElement root = xml.documentElement();
-	m_behaviorTrees.insert( id, root );
+	m_behaviorTrees.insert_or_assign( id, root );
 
 	return true;
 }

@@ -25,7 +25,7 @@
 #include <QPointer>
 #include <absl/container/flat_hash_map.h>
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QString>
 
 #include <vector>
@@ -97,7 +97,7 @@ public:
 
 	bool isInGroup( QString category, QString group, unsigned int itemUID );
 
-	QMap<QString, int> materialCountsForItem( QString itemID, bool allowInJob = false );
+	absl::btree_map<QString, int> materialCountsForItem( QString itemID, bool allowInJob = false );
 	unsigned int itemCount( QString itemID, QString materialID );
 	unsigned int itemCountWithInJob( QString itemID, QString materialID );
 	unsigned int itemCountInStockpile( QString itemID, QString materialID );
@@ -231,16 +231,16 @@ private:
 	absl::flat_hash_map<QString, absl::flat_hash_map<QString, Octree*>> m_octrees;
 
 	QList<QString> m_categoriesSorted;
-	QMap<QString, QList<QString>> m_groupsSorted;
-	QMap<QString, QMap<QString, QList<QString>>> m_itemsSorted;
+	absl::btree_map<QString, QList<QString>> m_groupsSorted;
+	absl::btree_map<QString, absl::btree_map<QString, QList<QString>>> m_itemsSorted;
 
 	absl::flat_hash_map<QString, QStringList> m_materialsInTypes;
 
 	QStringList m_foodItemLookup;
 	QStringList m_drinkItemLookup;
 
-	QMap<unsigned int, unsigned char> m_foodItems;
-	QMap<unsigned int, unsigned char> m_drinkItems;
+	absl::btree_map<unsigned int, unsigned char> m_foodItems;
+	absl::btree_map<unsigned int, unsigned char> m_drinkItems;
 
 	void addObject( Item& object, const QString& itemID, const QString& materialID );
 	void init();

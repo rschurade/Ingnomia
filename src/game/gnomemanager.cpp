@@ -80,7 +80,7 @@ void GnomeManager::addGnome( Position pos )
 {
 	GnomeFactory gf( g );
 	m_gnomes.push_back( gf.createGnome( pos ) );
-	m_gnomesByID.insert( m_gnomes.last()->id(), m_gnomes.last() );
+	m_gnomesByID.insert_or_assign( m_gnomes.last()->id(), m_gnomes.last() );
 }
 
 unsigned int GnomeManager::addTrader( Position pos, unsigned int workshopID, QString type )
@@ -106,14 +106,14 @@ unsigned int GnomeManager::addTrader( Position pos, unsigned int workshopID, QSt
 	}
 
 	m_specialGnomes.push_back( gnome );
-	m_gnomesByID.insert( gnome->id(), m_specialGnomes.last() );
+	m_gnomesByID.insert_or_assign( gnome->id(), m_specialGnomes.last() );
 	return gnome->id();
 }
 
 void GnomeManager::addAutomaton( Automaton* a )
 {
 	m_automatons.append( a );
-	m_gnomesByID.insert( a->id(), m_automatons.last() );
+	m_gnomesByID.insert_or_assign( a->id(), m_automatons.last() );
 
 	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
@@ -123,7 +123,7 @@ void GnomeManager::addAutomaton( QVariantMap values )
 {
 	Automaton* a = new Automaton( values, g );
 	m_automatons.append( a );
-	m_gnomesByID.insert( a->id(), m_automatons.last() );
+	m_gnomesByID.insert_or_assign( a->id(), m_automatons.last() );
 
 	//a->setSpriteID( Global::sf().setAutomatonSprite( a->id(), g->m_inv->spriteID( a->automatonItem() ) ) );
 	//a->updateSprite();
@@ -134,7 +134,7 @@ void GnomeManager::addGnome( QVariantMap values )
 	GnomeFactory gf( g );
 	Gnome* gn( gf.createGnome( values ) );
 	m_gnomes.push_back( gn );
-	m_gnomesByID.insert( gn->id(), m_gnomes.last() );
+	m_gnomesByID.insert_or_assign( gn->id(), m_gnomes.last() );
 }
 
 void GnomeManager::addTrader( QVariantMap values )
@@ -142,7 +142,7 @@ void GnomeManager::addTrader( QVariantMap values )
 	GnomeFactory gf( g );
 	GnomeTrader* gt( gf.createGnomeTrader( values ) );
 	m_specialGnomes.push_back( gt );
-	m_gnomesByID.insert( gt->id(), m_specialGnomes.last() );
+	m_gnomesByID.insert_or_assign( gt->id(), m_specialGnomes.last() );
 }
 
 void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
@@ -234,7 +234,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 				{
 					Gnome* dg = m_gnomes[i];
 					m_deadGnomes.append( dg );
-					m_gnomesByID.insert( dg->id(), m_deadGnomes.last() );
+					m_gnomesByID.insert_or_assign( dg->id(), m_deadGnomes.last() );
 					m_gnomes.removeAt( i );
 					g->mil()->removeGnome( gid );
 					emit signalGnomeDeath( dg->id() );
@@ -255,11 +255,11 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 					if ( dg->isDead() )
 					{
 						m_deadGnomes.append( dg );
-						m_gnomesByID.insert( dg->id(), m_deadGnomes.last() );
+						m_gnomesByID.insert_or_assign( dg->id(), m_deadGnomes.last() );
 					}
 					else
 					{
-						m_gnomesByID.remove( dg->id() );
+						m_gnomesByID.erase( dg->id() );
 						g->m_world->addToUpdateList( dg->getPos() );
 						delete dg;
 					}
@@ -277,7 +277,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 			Gnome* dg = m_deadGnomes[i];
 			if ( dg->expires() < GameState::tick )
 			{
-				m_gnomesByID.remove( dg->id() );
+				m_gnomesByID.erase( dg->id() );
 				g->m_world->addToUpdateList( dg->getPos() );
 				m_deadGnomes.removeAt( i );
 				delete dg;
@@ -393,11 +393,11 @@ QList<Gnome*> GnomeManager::gnomesSorted()
 void GnomeManager::saveProfessions()
 {
 	QVariantList pl;
-	for ( auto key : m_profs.keys() )
+	for ( const auto &entry : m_profs )
 	{
 		QVariantMap pm;
-		pm.insert( "Name", key );
-		pm.insert( "Skills", m_profs[key] );
+		pm.insert( "Name", entry.first );
+		pm.insert( "Skills", entry.second );
 		pl.append( pm );
 	}
 
@@ -429,27 +429,22 @@ void GnomeManager::loadProfessions()
 	{
 		QString name       = vprof.toMap().value( "Name" ).toString();
 		QStringList skills = vprof.toMap().value( "Skills" ).toStringList();
-		m_profs.insert( name, skills );
+		m_profs.insert_or_assign( name, skills );
 	}
 
 	if ( !m_profs.contains( "Gnomad" ) )
 	{
 		QStringList skills = DB::ids( "Skills" );
-		m_profs.insert( "Gnomad", skills );
+		m_profs.insert_or_assign( "Gnomad", skills );
 		saveProfessions();
 	}
 }
 
-QStringList GnomeManager::professions()
-{
-	return m_profs.keys();
-}
-
 QStringList GnomeManager::professionSkills( QString profession )
 {
-	if ( m_profs.contains( profession ) )
+	if ( const auto &it = m_profs.find( profession ); it != m_profs.end() )
 	{
-		return m_profs.value( profession );
+		return it->second;
 	}
 	return QStringList();
 }
@@ -460,7 +455,7 @@ QString GnomeManager::addProfession()
 	
 	if( !m_profs.contains( name ) )
 	{
-		m_profs.insert( name, QStringList() );
+		m_profs.insert_or_assign( name, QStringList() );
 		saveProfessions();
 		return name;
 	}
@@ -471,7 +466,7 @@ QString GnomeManager::addProfession()
 		++suffixNumber;
 	}
 	name += QString::number( suffixNumber );
-	m_profs.insert( name, QStringList() );
+	m_profs.insert_or_assign( name, QStringList() );
 	saveProfessions();
 	return name;
 }
@@ -480,7 +475,7 @@ void GnomeManager::addProfession( QString name, QStringList skills )
 {
 	if ( !m_profs.contains( name ) )
 	{
-		m_profs.insert( name, skills );
+		m_profs.insert_or_assign( name, skills );
 		saveProfessions();
 	}
 }
@@ -490,7 +485,7 @@ void GnomeManager::removeProfession( QString name )
 	if ( name == "Gnomad" )
 		return;
 
-	m_profs.remove( name );
+	m_profs.erase( name );
 	saveProfessions();
 }
 
@@ -499,15 +494,15 @@ void GnomeManager::modifyProfession( QString name, QString newName, QStringList 
 	if ( name == "Gnomad" )
 		return;
 
-	m_profs.remove( name );
+	m_profs.erase( name );
 
 	if ( m_profs.contains( newName ) )
 	{
-		m_profs.insert( name, skills );
+		m_profs.insert_or_assign( name, skills );
 	}
 	else
 	{
-		m_profs.insert( newName, skills );
+		m_profs.insert_or_assign( newName, skills );
 	}
 
 	saveProfessions();

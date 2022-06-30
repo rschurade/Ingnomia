@@ -22,7 +22,7 @@
 #include "../base/priorityqueue.h"
 #include "../game/neighbormanager.h"
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QObject>
 #include <QPointer>
 #include <QVariantMap>
@@ -151,8 +151,8 @@ public:
 private:
 	QPointer<Game> g;
 
-	QMap<QString, int> m_string2type;
-	QMap<QString, int> m_reqMap;
+	absl::btree_map<QString, int> m_string2type;
+	absl::btree_map<QString, int> m_reqMap;
 
 	QList<Event> m_eventList;
 

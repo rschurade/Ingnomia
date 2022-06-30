@@ -88,7 +88,7 @@ private:
 
 	static Counter<QString> m_counter;
 
-	static QMap<Qt::HANDLE, QSqlDatabase> m_connections;
+	static absl::btree_map<Qt::HANDLE, QSqlDatabase> m_connections;
 
 	static absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> m_workshops;
 	static absl::flat_hash_map<QString, QSharedPointer<DBS::Job>> m_jobs;

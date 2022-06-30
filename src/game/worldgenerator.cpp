@@ -39,6 +39,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+#include "../base/containersHelper.h"
+
 WorldGenerator::WorldGenerator( NewGameSettings* newGameSettings, Game* parent ) :
 	g( parent ),
 	ngs( newGameSettings ),
@@ -222,7 +224,7 @@ void WorldGenerator::setStoneLayers()
 // set metal ores and gems
 void WorldGenerator::setMetalsAndGems()
 {
-	QMap<QString, EmbeddedMaterial> embeddeds;
+	absl::btree_map<QString, EmbeddedMaterial> embeddeds;
 	QList<QString> eids = DB::ids( "EmbeddedMaterials" );
 
 	for ( auto id : eids )
@@ -235,7 +237,7 @@ void WorldGenerator::setMetalsAndGems()
 		m.wall    = row["WallSprite"].toString();
 		m.lowest  = row["Lowest"].toInt();
 		m.highest = row["Highest"].toInt();
-		embeddeds.insert( id, m );
+		embeddeds.insert_or_assign( id, m );
 	}
 
 	int maxVeinLength = m_dimX / 4;
@@ -476,7 +478,7 @@ void WorldGenerator::addPlantsAndTrees()
 						if ( w->getTile( pos ).wallType == WallType::WT_NOWALL && w->noTree( pos, 0, 0 ) && !( w->getTileFlag( pos ) & TileFlag::TF_WATER ) )
 						{
 							Plant plant( pos, plants[ra], true, g );
-							w->plants().insert( plant.getPos().toInt(), plant );
+							w->plants().insert_or_assign( plant.getPos().toInt(), plant );
 						}
 					}
 				}
@@ -530,7 +532,7 @@ void WorldGenerator::addAnimals()
 	int y_               = m_dimY / 2;
 	int startingZoneSize = ngs->startZone();
 
-	QMap<QString, int> countPerType;
+	absl::btree_map<QString, int> countPerType;
 
 	if ( numTypes > 0 )
 	{
@@ -558,11 +560,12 @@ void WorldGenerator::addAnimals()
 						int randomType = rand() % ( numWaterTypes );
 						QString type   = waterKeys[randomType];
 
-						int count = countPerType.value( type );
+						int count = maps::at_or_default(countPerType, type, 0);
+
 						if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
 						{
 							g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
-							countPerType.insert( type, count + 1 );
+							countPerType.insert_or_assign( type, count + 1 );
 						}
 					}
 				}
@@ -571,12 +574,12 @@ void WorldGenerator::addAnimals()
 					int randomType = rand() % ( numTypes );
 					QString type   = keys[randomType];
 
-					int count = countPerType.value( type );
+					int count = maps::at_or_default(countPerType, type, 0);
 
 					if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
 					{
 						g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
-						countPerType.insert( type, count + 1 );
+						countPerType.insert_or_assign( type, count + 1 );
 					}
 				}
 			}
@@ -1175,12 +1178,12 @@ void WorldGenerator::setEmbedded3x3( std::vector<Tile>& world, Position& pos, un
 	}
 }
 
-QString WorldGenerator::getRandomEmbedded( int x, int y, int z, QMap<QString, EmbeddedMaterial>& em )
+QString WorldGenerator::getRandomEmbedded( int x, int y, int z, absl::btree_map<QString, EmbeddedMaterial>& em )
 {
 	QStringList possibles;
-	for ( auto key : em.keys() )
+	for ( const auto& entry : em )
 	{
-		auto e = em.value( key );
+		auto e = entry.second;
 		int zz = z - ngs->ground() + m_heightMap[x + y * m_dimX];
 		if ( zz >= e.lowest && zz <= e.highest )
 		{

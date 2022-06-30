@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QString>
 #include <QStringList>
 
@@ -49,24 +49,24 @@ public:
 	static QString itemGroup( QString itemID );
 
 	// itemSID => [ materialType => craftID ]
-	static QMap<QString, QMultiMap<QString, QString>> workshopPossibleCraftResults( QString workshopId );
+	static absl::btree_map<QString, QMultiMap<QString, QString>> workshopPossibleCraftResults( QString workshopId );
 
 private:
 	DBHelper()  = delete;
 	~DBHelper() = delete;
 
-	static QMap<QString, QString> m_spriteIDCache;
-	static QMap<QString, bool> m_spriteIsRandomCache;
-	static QMap<QString, bool> m_spriteHasAnimCache;
-	static QMap<QString, QString> m_materialColorCache;
+	static absl::btree_map<QString, QString> m_spriteIDCache;
+	static absl::btree_map<QString, bool> m_spriteIsRandomCache;
+	static absl::btree_map<QString, bool> m_spriteHasAnimCache;
+	static absl::btree_map<QString, QString> m_materialColorCache;
 
-	static QMap<QString, int> m_materialToolLevelCache;
-	static QMap<int, bool> m_itemIsContainerCache;
-	static QMap<int, QString> m_qualitySIDCache;
-	static QMap<int, float> m_qualityModCache;
-	static QMap<QString, QString> m_itemGroupCache;
+	static absl::btree_map<QString, int> m_materialToolLevelCache;
+	static absl::btree_map<int, bool> m_itemIsContainerCache;
+	static absl::btree_map<int, QString> m_qualitySIDCache;
+	static absl::btree_map<int, float> m_qualityModCache;
+	static absl::btree_map<QString, QString> m_itemGroupCache;
 
-	static QMap<QString, QMap<QString, QMultiMap<QString, QString>>> m_workshopCraftResults;
+	static absl::btree_map<QString, absl::btree_map<QString, QMultiMap<QString, QString>>> m_workshopCraftResults;
 
 	static QMutex m_mutex;
 };

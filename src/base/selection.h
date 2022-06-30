@@ -86,7 +86,7 @@ private:
 	QList<QVariantMap> m_tileCheckList;
 	bool m_canRotate = false;
 
-	QMap<QString, int> m_reqMap;
+	absl::btree_map<QString, int> m_reqMap;
 
 	bool testTileForJobSelection( const Position& pos );
 	void onSecondClick( bool shift, bool ctrl );

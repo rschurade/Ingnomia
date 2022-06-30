@@ -365,11 +365,11 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 
 	if ( object.nutritionalValue() != 0 )
 	{
-		m_foodItems.insert( object.id(), object.nutritionalValue() );
+		m_foodItems.insert_or_assign( object.id(), object.nutritionalValue() );
 	}
 	if ( object.drinkValue() != 0 )
 	{
-		m_drinkItems.insert( object.id(), object.drinkValue() );
+		m_drinkItems.insert_or_assign( object.id(), object.drinkValue() );
 	}
 
 	if ( m_hash[itemID].contains( materialID ) )
@@ -421,8 +421,8 @@ void Inventory::destroyObject( unsigned int id )
 			
 			m_hash[itemSID][materialSID].erase( id );
 
-			m_foodItems.remove( id );
-			m_drinkItems.remove( id );
+			m_foodItems.erase( id );
+			m_drinkItems.erase( id );
 			// finally remove object
 			m_items.erase( id );
 
@@ -992,18 +992,18 @@ bool Inventory::isInGroup( QString category, QString group, unsigned int itemID 
 	return false;
 }
 
-QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allowInJob )
+absl::btree_map<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allowInJob )
 {
-	QMap<QString, int> mats;
+	absl::btree_map<QString, int> mats;
 
-	mats.insert( "any", 0 );
+	mats.insert_or_assign( "any", 0 );
 
 	if ( m_hash.contains( itemSID ) )
 	{
 		const auto matKeys = m_hash[itemSID] | std::views::keys;
 		for ( auto mk : matKeys )
 		{
-			mats.insert( mk, 0 );
+			mats.insert_or_assign( mk, 0 );
 		}
 		if ( !m_hash[itemSID].empty() )
 		{
@@ -1020,7 +1020,7 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 						}
 						else
 						{
-							mats.insert( item->materialSID(), 1 );
+							mats.insert_or_assign( item->materialSID(), 1 );
 						}
 					}
 				}
@@ -1688,14 +1688,14 @@ QList<QString> Inventory::materialsForItem( QString itemSID, int count )
 {
 	QList<QString> out;
 
-	QMap<QString, int> matCount = materialCountsForItem( itemSID );
+	absl::btree_map<QString, int> matCount = materialCountsForItem( itemSID );
 	for ( auto mc = matCount.begin(); mc != matCount.end(); ++mc )
 	{
-		if ( mc.key() != "any" )
+		if ( mc->first != "any" )
 		{
-			if ( mc.value() >= count )
+			if ( mc->second >= count )
 			{
-				out.push_back( mc.key() );
+				out.push_back( mc->first );
 			}
 		}
 	}

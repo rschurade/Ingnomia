@@ -114,7 +114,7 @@ void Automaton::updateSprite()
 	QString material = g->inv()->materialSID( m_automatonItem );
 
 	auto components = g->inv()->components( m_automatonItem );
-	QMap<QString, QString> compMats;
+	absl::btree_map<QString, QString> compMats;
 	for ( auto vcomp : components )
 	{
 		auto comp = vcomp.toMap();
@@ -125,16 +125,16 @@ void Automaton::updateSprite()
 		{
 			if ( compMats.contains( it + "Left" ) )
 			{
-				compMats.insert( it + "Right", ma );
+				compMats.insert_or_assign( it + "Right", ma );
 			}
 			else
 			{
-				compMats.insert( it + "Left", ma );
+				compMats.insert_or_assign( it + "Left", ma );
 			}
 		}
 		else
 		{
-			compMats.insert( it, ma );
+			compMats.insert_or_assign( it, ma );
 		}
 	}
 	QString itemSID = g->inv()->itemSID( m_automatonItem );
@@ -164,9 +164,9 @@ void Automaton::updateSprite()
 			pm.insert( "BaseSprite", bsl[rn] );
 		}
 		QString idPart = pm.value( "ID" ).toString() + pm.value( "Part" ).toString();
-		if ( compMats.contains( idPart ) )
+		if ( const auto it = compMats.find( idPart ); it != compMats.end() )
 		{
-			pm.insert( "Material", compMats.value( idPart ) );
+			pm.insert( "Material", it->second );
 		}
 		else
 		{
@@ -211,9 +211,9 @@ void Automaton::updateSprite()
 		aid.chop( 4 );
 		QString idPart = aid + pm.value( "Part" ).toString();
 
-		if ( compMats.contains( idPart ) )
+		if ( const auto it = compMats.find( idPart ); it != compMats.end() )
 		{
-			pm.insert( "Material", compMats.value( idPart ) );
+			pm.insert( "Material", it->second );
 		}
 		else
 		{

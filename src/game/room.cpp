@@ -29,6 +29,8 @@
 #include <QElapsedTimer>
 #include <QString>
 
+#include <ranges>
+
 Room::Room() :
 	WorldObject( nullptr )
 {
@@ -56,7 +58,7 @@ Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Room::~Room()
 {
-	for ( const auto& field : m_fields )
+	for ( const auto& field : m_fields | std::views::values )
 	{
 		delete field;
 	}
@@ -68,7 +70,7 @@ void Room::addTile( const Position & pos )
 	rt->pos      = pos;
 	rt->furnitureID = g->w()->getFurnitureOnTile( pos );
 
-	m_fields.insert( pos.toInt(), rt );
+	m_fields.insert_or_assign( pos.toInt(), rt );
 
 	g->w()->setTileFlag( rt->pos, TileFlag::TF_ROOM );
 }
@@ -89,7 +91,7 @@ Room::Room( QVariantMap vals, Game* game ) :
 		RoomTile* rt    = new RoomTile;
 		rt->pos         = Position( vf.toMap().value( "Pos" ).toString() );
 		rt->furnitureID = vf.toMap().value( "FurID" ).toUInt();
-		m_fields.insert( rt->pos.toInt(), rt );
+		m_fields.insert_or_assign( rt->pos.toInt(), rt );
 	}
 }
 
@@ -104,7 +106,7 @@ QVariant Room::serialize() const
 	out.insert( "Type", (unsigned char)m_type );
 
 	QVariantList fields;
-	for ( auto field : m_fields )
+	for ( auto field : m_fields | std::views::values )
 	{
 		QVariantMap fima;
 		fima.insert( "Pos", field->pos.toString() );
@@ -132,9 +134,9 @@ void Room::onTick( quint64 tick )
 
 bool Room::removeTile( const Position & pos )
 {
-	RoomTile* rt   = m_fields.value( pos.toInt() );
+	RoomTile* rt   = m_fields.at( pos.toInt() );
 	// remove tile and remove tile flag
-	m_fields.remove( pos.toInt() );
+	m_fields.erase( pos.toInt() );
 	g->w()->clearTileFlag( pos, TileFlag::TF_ROOM );
 	delete rt;
 
@@ -144,7 +146,7 @@ bool Room::removeTile( const Position & pos )
 		if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 		{
 			bool found = false;
-			for ( auto& f : m_fields )
+			for ( auto& f : m_fields | std::views::values )
 			{
 				if ( f->furnitureID )
 				{
@@ -192,7 +194,7 @@ void Room::removeFurniture( const Position& pos )
 		{
 			if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 			{
-				for ( auto& f : m_fields )
+				for ( auto& f : m_fields | std::views::values )
 				{
 					if ( f->furnitureID )
 					{
@@ -211,7 +213,7 @@ void Room::removeFurniture( const Position& pos )
 bool Room::checkRoofed()
 {
 	bool roofed = true;
-	for ( auto tile : m_fields )
+	for ( auto tile : m_fields | std::views::values )
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
@@ -229,7 +231,7 @@ bool Room::checkRoofed()
 bool Room::checkEnclosed()
 {
 	bool enclosed = true;
-	for ( auto tile : m_fields )
+	for ( auto tile : m_fields | std::views::values )
 	{
 		Position posi = tile->pos;
 
@@ -282,7 +284,7 @@ bool Room::checkEnclosed()
 QList<unsigned int> Room::beds()
 {
 	QList<unsigned int> beds;
-	for ( auto field : m_fields )
+	for ( auto field : m_fields | std::views::values )
 	{
 		if ( g->inv()->isInGroup( "Furniture", "Beds", field->furnitureID ) )
 		{
@@ -295,7 +297,7 @@ QList<unsigned int> Room::beds()
 QList<unsigned int> Room::chairs()
 {
 	QList<unsigned int> chairs;
-	for ( auto field : m_fields )
+	for ( auto field : m_fields | std::views::values )
 	{
 		if ( g->inv()->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
 		{
@@ -317,7 +319,7 @@ void Room::setHasAlarmBell( bool value )
 
 Position Room::firstBellPos() const
 {
-	for ( const auto& f : m_fields )
+	for ( const auto& f : m_fields | std::views::values )
 	{
 		if ( f->furnitureID )
 		{
@@ -333,7 +335,7 @@ Position Room::firstBellPos() const
 QList<Position> Room::allBellPos() const
 {
 	QList<Position> out;
-	for ( const auto& f : m_fields )
+	for ( const auto& f : m_fields | std::views::values )
 	{
 		if ( f->furnitureID )
 		{
@@ -351,7 +353,7 @@ Position Room::randomTilePos() const
 	if ( m_fields.size() )
 	{
 		auto id = rand() % m_fields.size();
-		for ( auto rt : m_fields )
+		for ( auto rt : m_fields | std::views::values )
 		{
 			if ( id == 0 )
 			{
@@ -366,7 +368,7 @@ Position Room::randomTilePos() const
 unsigned int Room::value()
 {
 	unsigned int out = 0;
-	for ( const auto& f : m_fields )
+	for ( const auto& f : m_fields | std::views::values )
 	{
 		if ( f->furnitureID )
 		{

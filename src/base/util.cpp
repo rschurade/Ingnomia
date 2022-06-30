@@ -208,12 +208,12 @@ int Util::toolLevel( QString materialSID )
 
 absl::btree_set<QString> Util::itemsAllowedInContainer( unsigned int containerID )
 {
-	return Global::allowedInContainer.value( g->inv()->itemSID( containerID ) );
+	return Global::allowedInContainer.at( g->inv()->itemSID( containerID ) );
 }
 
 bool Util::itemAllowedInContainer( unsigned int itemID, unsigned int containerID )
 {
-	return Global::allowedInContainer.value( g->inv()->itemSID( containerID ) ).contains( g->inv()->itemSID( itemID ) );
+	return Global::allowedInContainer.at( g->inv()->itemSID( containerID ) ).contains( g->inv()->itemSID( itemID ) );
 }
 
 void Util::initAllowedInContainer()
@@ -305,12 +305,12 @@ void Util::string2Tile( Tile& tile, QString data, QString seperator )
 	}
 }
 
-QString Util::mapJoin( QMap<int, int> data, QString seperator )
+QString Util::mapJoin( absl::btree_map<int, int> data, QString seperator )
 {
 	QString out;
-	if ( !data.isEmpty() )
+	if ( !data.empty() )
 	{
-		for ( const auto& rp : data.toStdMap() )
+		for ( const auto& rp : data )
 		{
 			out += QString::number( rp.first );
 			out += seperator;
@@ -322,15 +322,15 @@ QString Util::mapJoin( QMap<int, int> data, QString seperator )
 	return out;
 }
 
-QMap<int, int> Util::mapSplit( QString data, QString seperator )
+absl::btree_map<int, int> Util::mapSplit( QString data, QString seperator )
 {
-	QMap<int, int> m;
+	absl::btree_map<int, int> m;
 	if ( !data.isEmpty() )
 	{
 		QStringList dl = data.split( seperator );
 		for ( int i = 0; i < dl.size(); i += 2 )
 		{
-			m.insert( dl[i].toInt(), dl[i + 1].toInt() );
+			m.insert_or_assign( dl[i].toInt(), dl[i + 1].toInt() );
 		}
 	}
 	return m;

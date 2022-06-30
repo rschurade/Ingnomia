@@ -17,7 +17,8 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
+#include <ranges>
 
 template <class T>
 class Counter
@@ -25,19 +26,17 @@ class Counter
 public:
 	void add( T id )
 	{
-		unsigned int val = m_counts.value( id );
-		++val;
-		m_counts.insert( id, val );
+		++m_counts[id];
 	}
 
-	QList<T> keys()
+	auto keys()
 	{
-		return m_counts.keys();
+		return m_counts | std::views::keys;
 	}
 
 	unsigned int count( T key )
 	{
-		return m_counts.value( key );
+		return m_counts.at( key );
 	}
 
 	void reset()
@@ -46,5 +45,5 @@ public:
 	}
 
 private:
-	QMap<T, unsigned int> m_counts;
+	absl::btree_map<T, unsigned int> m_counts;
 };

@@ -62,7 +62,7 @@ private:
 		std::vector<Position> path;
 	};
 
-	QMap<unsigned int, PathFinderJob> m_jobs;
+	absl::btree_map<unsigned int, PathFinderJob> m_jobs;
 
 	QMutex m_mutex;
 

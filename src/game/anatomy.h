@@ -79,4 +79,6 @@ private:
 	AnatomyStatus m_status = AS_HEALTHY;
 
 	absl::flat_hash_map<CreaturePart, AnatomyPart> m_parts;
+
+	CreaturePart lookupCreaturePart(const QString &key);
 };

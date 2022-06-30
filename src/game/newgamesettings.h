@@ -213,5 +213,5 @@ private:
 
 	QString m_selectedPreset;
 
-	QMap<QString, CheckableItem> m_checkableItems;
+	absl::btree_map<QString, CheckableItem> m_checkableItems;
 };

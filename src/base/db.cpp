@@ -30,11 +30,12 @@
 #include <QFile>
 
 #include <ranges>
+#include "containersHelper.h"
 
 QMutex DB::m_mutex;
 int DB::accessCounter = 0;
 Counter<QString> DB::m_counter;
-QMap<Qt::HANDLE, QSqlDatabase> DB::m_connections;
+absl::btree_map<Qt::HANDLE, QSqlDatabase> DB::m_connections;
 
 
 absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
@@ -686,11 +687,7 @@ bool DB::addTranslation( QString id, QString text )
 
 QSharedPointer<DBS::Workshop> DB::workshop( QString id )
 {
-	if( DB::m_workshops.contains( id ) )
-	{
-		return DB::m_workshops.at( id );
-	}
-	return nullptr;
+	return maps::at_or_default( DB::m_workshops, id, (QSharedPointer<DBS::Workshop>)nullptr );
 }
 
 QSharedPointer<DBS::Job> DB::job( QString id )

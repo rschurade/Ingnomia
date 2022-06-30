@@ -49,7 +49,7 @@ public:
 private:
 	QPointer<Game> g;
 	QList<ActiveEffect> m_activeEffects;
-	QMap<QString, std::shared_ptr<AL::Buffer>> m_buffers;
+	absl::btree_map<QString, std::shared_ptr<AL::Buffer>> m_buffers;
 	std::shared_ptr<AL::Context> m_audioContext;
 	std::shared_ptr<AL::Listener> m_audioListener;
 	static constexpr size_t maxOcclusion = 8;

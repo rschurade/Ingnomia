@@ -21,7 +21,7 @@
 #include "../game/worldobject.h"
 #include "../game/job.h"
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QVariantMap>
 
 class Job;
@@ -185,7 +185,7 @@ public:
 
 	bool outputTileFree();
 
-	QMap<unsigned int, Position>& tiles()
+	absl::btree_map<unsigned int, Position>& tiles()
 	{
 		return m_tiles;
 	}
@@ -278,7 +278,7 @@ private:
 
 	WorkshopProperties m_properties;
 
-	QMap<unsigned int, Position> m_tiles;
+	absl::btree_map<unsigned int, Position> m_tiles;
 	QList<CraftJob> m_jobList;
 	QList<CraftJob> m_autoCraftList;
 

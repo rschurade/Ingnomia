@@ -24,7 +24,6 @@
 #include <QColor>
 #include <absl/container/flat_hash_map.h>
 #include <QList>
-#include <QMap>
 #include <QQueue>
 #include <QString>
 #include <QPointer>

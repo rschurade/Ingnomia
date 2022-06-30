@@ -45,7 +45,7 @@ private:
 
     Position m_cursorPos;
 
-    QMap<unsigned int, SelectionData> m_selectionData;
+    absl::btree_map<unsigned int, SelectionData> m_selectionData;
 
 public slots:
     void onActionChanged( const QString action );
@@ -67,5 +67,5 @@ signals:
 
     void signalSelectTile( unsigned int );
 
-    void signalUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest );
+    void signalUpdateSelection( const absl::btree_map<unsigned int, SelectionData>& data, bool noDepthTest );
 };

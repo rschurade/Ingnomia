@@ -23,7 +23,7 @@
 #include "../game/worldobject.h"
 
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPair>
 #include <QtGlobal>
 
@@ -55,7 +55,7 @@ public:
 
 	QVariant serialize() const;
 
-	QMap<unsigned int, RoomTile*>& getFields()
+	absl::btree_map<unsigned int, RoomTile*>& getFields()
 	{
 		return m_fields;
 	}
@@ -120,7 +120,7 @@ private:
 	bool m_enclosed      = false;
 	bool m_hasAlarmBell  = false;
 
-	QMap<unsigned int, RoomTile*> m_fields;
+	absl::btree_map<unsigned int, RoomTile*> m_fields;
 
 	RoomType m_type = RoomType::NotSet;
 };

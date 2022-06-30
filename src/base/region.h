@@ -19,8 +19,10 @@
 
 #include "../base/position.h"
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
+
+#include <ranges>
 
 class Region
 {
@@ -50,35 +52,35 @@ public:
 	void removeAllConnectionsFrom( unsigned int id );
 	void removeAllConnectionsTo( unsigned int id );
 
-	QMap<unsigned int, absl::btree_set<QString>> connectionSetFrom()
+	absl::btree_map<unsigned int, absl::btree_set<QString>> connectionSetFrom()
 	{
 		return m_connectionsFrom;
 	};
-	QMap<unsigned int, absl::btree_set<QString>> connectionSetTo()
+	absl::btree_map<unsigned int, absl::btree_set<QString>> connectionSetTo()
 	{
 		return m_connectionsTo;
 	}
 
 	absl::btree_set<QString> connectionsToRegion( unsigned int region )
 	{
-		return m_connectionsTo.value( region );
+		return m_connectionsTo.at( region );
 	}
 
 	unsigned id()
 	{
 		return m_id;
 	}
-	QList<unsigned int> connectionsFrom()
+	auto connectionsFrom()
 	{
-		return m_connectionsFrom.keys();
+		return std::views::keys(m_connectionsFrom);
 	}
-	QList<unsigned int> connectionsTo()
+	auto connectionsTo()
 	{
-		return m_connectionsTo.keys();
+		return std::views::keys(m_connectionsTo);
 	}
 
 private:
 	unsigned int m_id = 0;
-	QMap<unsigned int, absl::btree_set<QString>> m_connectionsFrom;
-	QMap<unsigned int, absl::btree_set<QString>> m_connectionsTo;
+	absl::btree_map<unsigned int, absl::btree_set<QString>> m_connectionsFrom;
+	absl::btree_map<unsigned int, absl::btree_set<QString>> m_connectionsTo;
 };

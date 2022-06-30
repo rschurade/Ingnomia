@@ -67,8 +67,8 @@ public:
 
 	QString tile2String( Tile& tile, QString seperator = "_" );
 	void string2Tile( Tile& tile, QString data, QString seperator = "_" );
-	QString mapJoin( QMap<int, int>, QString seperator = "_" );
-	QMap<int, int> mapSplit( QString data, QString seperator = "_" );
+	QString mapJoin( absl::btree_map<int, int>, QString seperator = "_" );
+	absl::btree_map<int, int> mapSplit( QString data, QString seperator = "_" );
 
 	QPair<int, int> pixelOffset( const int x, const int y, const int z );
 	QPair<int, int> pixelOffset( const Position& pos );

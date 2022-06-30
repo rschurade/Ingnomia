@@ -64,7 +64,8 @@ bool World::hasJob( unsigned int tileID )
 
 QVariantMap World::jobSprite( Position pos )
 {
-	return m_jobSprites.value( pos.toInt() );
+	const auto& it = m_jobSprites.find( pos.toInt() );
+	return it != m_jobSprites.end() ? it->second : QVariantMap();
 }
 
 QVariantMap World::jobSprite( int x, int y, int z )
@@ -74,7 +75,8 @@ QVariantMap World::jobSprite( int x, int y, int z )
 
 QVariantMap World::jobSprite( unsigned int tileID )
 {
-	return m_jobSprites.value( tileID );
+	const auto& it = m_jobSprites.find( tileID );
+	return it != m_jobSprites.end() ? it->second : QVariantMap();
 }
 
 TileFlag World::getTileFlag( Position pos )
@@ -351,7 +353,7 @@ void World::loadFloorConstructions( QVariantList list )
 	{
 		Position pos( item.toMap().value( "Pos" ) );
 		auto constr = item.toMap();
-		m_floorConstructions.insert( pos.toInt(), constr );
+		m_floorConstructions.insert_or_assign( pos.toInt(), constr );
 	}
 }
 
@@ -363,7 +365,7 @@ void World::loadWallConstructions( QVariantList list )
 
 		Position pos( map.value( "Pos" ) );
 		auto constr = item.toMap();
-		m_wallConstructions.insert( pos.toInt(), constr );
+		m_wallConstructions.insert_or_assign( pos.toInt(), constr );
 
 		if ( map.value( "Light" ).toInt() > 0 )
 		{
@@ -372,14 +374,14 @@ void World::loadWallConstructions( QVariantList list )
 	}
 }
 
-QMap<unsigned int, QVariantMap> World::jobSprites()
+absl::btree_map<unsigned int, QVariantMap> World::jobSprites()
 {
 	return m_jobSprites;
 }
 
 void World::insertLoadedJobSprite( unsigned int key, QVariantMap entry )
 {
-	m_jobSprites.insert( key, entry );
+	m_jobSprites.insert_or_assign( key, entry );
 }
 
 int World::walkableNeighbors( Position pos )
@@ -400,7 +402,7 @@ QString World::getDebugWallConstruction( Position pos )
 {
 	if ( m_wallConstructions.contains( pos.toInt() ) )
 	{
-		auto wc = m_wallConstructions.value( pos.toInt() );
+		auto wc = m_wallConstructions.at( pos.toInt() );
 		return QString( QJsonDocument::fromVariant( wc ).toJson() );
 	}
 	return "no construction";
@@ -410,7 +412,7 @@ unsigned int World::getFurnitureOnTile( Position pos )
 {
 	if ( m_wallConstructions.contains( pos.toInt() ) )
 	{
-		auto wc = m_wallConstructions.value( pos.toInt() );
+		auto wc = m_wallConstructions.at( pos.toInt() );
 		if( wc.value( "Type").toString() == "Furniture" )
 		{
 			return wc.value( "Item" ).toUInt();
@@ -449,7 +451,7 @@ QString World::getDebugFloorConstruction( Position pos )
 	{
 		if ( m_floorConstructions.contains( pos.toInt() ) )
 		{
-			auto fc = m_floorConstructions.value( pos.toInt() );
+			auto fc = m_floorConstructions.at( pos.toInt() );
 			return QString( QJsonDocument::fromVariant( fc ).toJson() );
 		}
 	}

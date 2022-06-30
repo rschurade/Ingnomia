@@ -23,7 +23,7 @@
 #include "../game/worldobject.h"
 
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPair>
 #include <QSize>
 #include <QThread>
@@ -74,7 +74,7 @@ public:
 	QVariant serialize();
 	void pasteSettings( QVariantMap vals );
 
-	QMap<unsigned int, InventoryField*>& getFields()
+	absl::btree_map<unsigned int, InventoryField*>& getFields()
 	{
 		return m_fields;
 	}
@@ -132,7 +132,7 @@ public:
 	void resetLimits();
 	StockpileItemLimit limit( QString key );
 	void setLimit( QString key, StockpileItemLimit limit );
-	QMap<QString, StockpileItemLimit> limits()
+	absl::btree_map<QString, StockpileItemLimit> limits()
 	{
 		return m_limits;
 	}
@@ -161,18 +161,18 @@ private:
 
 	bool m_isFull = false;
 
-	QMap<unsigned int, InventoryField*> m_fields;
+	absl::btree_map<unsigned int, InventoryField*> m_fields;
 
 	QList<unsigned int> m_possibleItems;
 	bool m_filterChanged = true;
 
 	Filter m_filter;
 
-	QMap<unsigned int, QSharedPointer<Job>> m_jobsOut;
+	absl::btree_map<unsigned int, QSharedPointer<Job>> m_jobsOut;
 
 	QList<unsigned int> m_linkedWorkshops;
 
-	QMap<QString, StockpileItemLimit> m_limits;
+	absl::btree_map<QString, StockpileItemLimit> m_limits;
 
 	bool m_limitWithmaterial = false;
 

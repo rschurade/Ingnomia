@@ -480,7 +480,7 @@ void AggregatorSelection::updateSelection()
 							sd.pos.setToBounds();
 							sd.isFloor = isFloor;
 							sd.valid   = true;
-							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
+							m_selectionData.insert_or_assign( posToInt( sd.pos, m_rotation ), sd );
 						}
 					}
 				}
@@ -497,7 +497,7 @@ void AggregatorSelection::updateSelection()
 							sd.pos.setToBounds();
 							sd.isFloor = isFloor;
 							sd.valid   = false;
-							m_selectionData.insert( posToInt( sd.pos, m_rotation ), sd );
+							m_selectionData.insert_or_assign( posToInt( sd.pos, m_rotation ), sd );
 						}
 					}
 				}

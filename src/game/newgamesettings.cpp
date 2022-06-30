@@ -28,6 +28,7 @@
 #include <QStandardPaths>
 
 #include <random>
+#include <ranges>
 
 NewGameSettings::NewGameSettings( QObject* parent ) :
 	QObject( parent )
@@ -69,7 +70,7 @@ void NewGameSettings::save()
 	QVariantMap allowedPlants;
 	QVariantMap allowedTrees;
 
-	for( const auto& ci : m_checkableItems )
+	for( const auto& ci : m_checkableItems | std::views::values )
 	{
 		if( ci.type == "Animal" )
 		{
@@ -174,7 +175,7 @@ void NewGameSettings::loadEmbarkMap()
 	for ( auto id : trees )
 	{
 		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", embarkMap.value( "allowedTrees" ).toMap().value( id ).toBool(), 0 };
-		m_checkableItems.insert( id, ci );
+		m_checkableItems.insert_or_assign( id, ci );
 	}
 
 	QStringList allplants = DB::ids( "Plants", "Type", "Plant" );
@@ -184,7 +185,7 @@ void NewGameSettings::loadEmbarkMap()
 		if ( DB::select( "AllowInWild", "Plants", id ).toBool() )
 		{
 			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", embarkMap.value( "allowedPlants" ).toMap().value( id ).toBool(), 0 };
-			m_checkableItems.insert( id, ci );
+			m_checkableItems.insert_or_assign( id, ci );
 		}
 	}
 
@@ -197,7 +198,7 @@ void NewGameSettings::loadEmbarkMap()
 		if ( DB::select( "AllowInWild", "Animals", id ).toBool() && DB::select( "Biome", "Animals", id ).toString().isEmpty() )
 		{
 			CheckableItem ci { id, S::s( "$CreatureName_" + id ), "Animal", allowedAnimals.value( id ).toBool(), allowedAnimals.value( id ).toInt() };
-			m_checkableItems.insert( id, ci );
+			m_checkableItems.insert_or_assign( id, ci );
 		}
 	}
 
@@ -722,7 +723,7 @@ QStringList NewGameSettings::presetNames()
 QVariantList NewGameSettings::trees()
 {
 	QVariantList out;
-	for ( auto ci : m_checkableItems )
+	for ( auto ci : m_checkableItems | std::views::values )
 	{
 		if ( ci.type == "Tree" )
 		{
@@ -739,7 +740,7 @@ QVariantList NewGameSettings::trees()
 QVariantList NewGameSettings::plants()
 {
 	QVariantList out;
-	for ( auto ci : m_checkableItems )
+	for ( auto ci : m_checkableItems | std::views::values )
 	{
 		if ( ci.type == "Plant" )
 		{
@@ -756,7 +757,7 @@ QVariantList NewGameSettings::plants()
 QVariantList NewGameSettings::animals()
 {
 	QVariantList out;
-	for ( auto ci : m_checkableItems )
+	for ( auto ci : m_checkableItems | std::views::values )
 	{
 		if ( ci.type == "Animal" )
 		{
@@ -824,7 +825,7 @@ int NewGameSettings::maxAnimalsPerType( QString type )
 {
 	if( m_checkableItems.contains( type ) )
 	{
-		const auto& ci = m_checkableItems.value( type );
+		const auto& ci = m_checkableItems.at( type );
 		return ci.max;
 	}
 	return 0;

@@ -94,13 +94,13 @@ EventManager::EventManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	m_string2type.insert( "EventTrader", (int)EventType::TRADER );
-	m_string2type.insert( "EventMigration", (int)EventType::MIGRATION );
-	m_string2type.insert( "EventInvasion", (int)EventType::INVASION );
+	m_string2type.insert_or_assign( "EventTrader", (int)EventType::TRADER );
+	m_string2type.insert_or_assign( "EventMigration", (int)EventType::MIGRATION );
+	m_string2type.insert_or_assign( "EventInvasion", (int)EventType::INVASION );
 
-	m_reqMap.insert( "None", (int)EventRequire::NOREQUIRE );
-	m_reqMap.insert( "Query", (int)EventRequire::QUERY );
-	m_reqMap.insert( "FreeMarketStall", (int)EventRequire::FREEMARKETSTALL );
+	m_reqMap.insert_or_assign( "None", (int)EventRequire::NOREQUIRE );
+	m_reqMap.insert_or_assign( "Query", (int)EventRequire::QUERY );
+	m_reqMap.insert_or_assign( "FreeMarketStall", (int)EventRequire::FREEMARKETSTALL );
 }
 
 EventManager::~EventManager()
@@ -194,7 +194,7 @@ Event EventManager::createEvent( QString eventID )
 	Event ev;
 	ev.id   = GameState::createID();
 	ev.tick = GameState::tick;
-	ev.type = (EventType)m_string2type.value( eventID );
+	ev.type = (EventType)m_string2type.at( eventID );
 
 	QVariantMap em = DB::selectRow( "Events", eventID );
 
@@ -227,7 +227,7 @@ bool EventManager::checkRequirements( Event& event )
 	int num   = data.value( "Amount" ).toInt();
 
 	auto im = data.value( "Init" ).toMap();
-	switch ( (EventRequire)m_reqMap.value( im.value( "Require" ).toString() ) )
+	switch ( (EventRequire)m_reqMap.at( im.value( "Require" ).toString() ) )
 	{
 		case EventRequire::NOREQUIRE:
 			return true;

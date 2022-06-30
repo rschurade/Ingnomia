@@ -22,7 +22,7 @@
 #include "../game/job.h"
 
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPair>
 #include <QVariantMap>
 
@@ -110,7 +110,7 @@ public:
 private:
 	FarmProperties m_properties;
 
-	QMap<unsigned int, FarmField> m_fields;
+	absl::btree_map<unsigned int, FarmField> m_fields;
 
 	void updateAutoFarmer();
 

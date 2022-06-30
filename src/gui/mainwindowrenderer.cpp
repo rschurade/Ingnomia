@@ -674,7 +674,7 @@ void MainWindowRenderer::paintSelection()
 		m_selectionShader->setUniformValue( texNum.toStdString().c_str(), i );
 	}
 
-	for ( const auto& sd : m_selectionData )
+	for ( const auto& sd : m_selectionData | std::views::values )
 	{
 		GLint tile = m_axleShader->uniformLocation( "tile" );
 		glUniform3ui( tile, sd.pos.x, sd.pos.y, sd.pos.z );
@@ -861,13 +861,10 @@ void MainWindowRenderer::updateTextures()
 	}
 }
 
-void MainWindowRenderer::onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest )
+void MainWindowRenderer::onUpdateSelection( const absl::btree_map<unsigned int, SelectionData>& data, bool noDepthTest )
 {
 	m_selectionData.clear();
-	for( const auto& key : data.keys() )
-	{
-		m_selectionData.insert( key, data[key] );
-	}
+	m_selectionData.insert(data.begin(), data.end());
 	m_selectionNoDepthTest = noDepthTest;
 }
 

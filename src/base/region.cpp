@@ -39,7 +39,7 @@ void Region::removeConnectionFrom( unsigned int toRegion, const Position& pos )
 	m_connectionsFrom[toRegion].erase( pos.toString() );
 	if ( m_connectionsFrom[toRegion].empty() )
 	{
-		m_connectionsFrom.remove( toRegion );
+		m_connectionsFrom.erase( toRegion );
 	}
 }
 void Region::removeConnectionTo( unsigned int toRegion, const Position& pos )
@@ -47,7 +47,7 @@ void Region::removeConnectionTo( unsigned int toRegion, const Position& pos )
 	m_connectionsTo[toRegion].erase( pos.toString() );
 	if ( m_connectionsTo[toRegion].empty() )
 	{
-		m_connectionsTo.remove( toRegion );
+		m_connectionsTo.erase( toRegion );
 	}
 }
 
@@ -64,7 +64,7 @@ void Region::removeConnectionFrom( unsigned int toRegion, QString pos )
 	m_connectionsFrom[toRegion].erase( pos );
 	if ( m_connectionsFrom[toRegion].empty() )
 	{
-		m_connectionsFrom.remove( toRegion );
+		m_connectionsFrom.erase( toRegion );
 	}
 }
 void Region::removeConnectionTo( unsigned int toRegion, QString pos )
@@ -72,16 +72,16 @@ void Region::removeConnectionTo( unsigned int toRegion, QString pos )
 	m_connectionsTo[toRegion].erase( pos );
 	if ( m_connectionsTo[toRegion].empty() )
 	{
-		m_connectionsTo.remove( toRegion );
+		m_connectionsTo.erase( toRegion );
 	}
 }
 
 void Region::removeAllConnectionsFrom( unsigned int id )
 {
-	m_connectionsFrom.remove( id );
+	m_connectionsFrom.erase( id );
 }
 
 void Region::removeAllConnectionsTo( unsigned int id )
 {
-	m_connectionsTo.remove( id );
+	m_connectionsTo.erase( id );
 }

@@ -30,6 +30,8 @@
 #include <QElapsedTimer>
 #include <QString>
 
+#include <ranges>
+
 Stockpile::Stockpile( Game* game ) :
 	WorldObject( game )
 {
@@ -53,7 +55,7 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Stockpile::~Stockpile()
 {
-	for ( const auto& field : m_fields )
+	for ( const auto& field : m_fields | std::views::values )
 	{
 		delete field;
 	}
@@ -67,7 +69,7 @@ void Stockpile::addTile( Position& pos )
 	infi->stackSize      = 1;
 	infi->containerID    = 0;
 
-	m_fields.insert( pos.toInt(), infi );
+	m_fields.insert_or_assign( pos.toInt(), infi );
 
 	g->w()->setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
 }
@@ -120,13 +122,13 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 
 		}
 
-		m_fields.insert( infi->pos.toInt(), infi );
+		m_fields.insert_or_assign( infi->pos.toInt(), infi );
 
 		QVariantList vjl = vals.value( "Jobs" ).toList();
 		for ( auto vj : vjl )
 		{
 			QSharedPointer<Job> job( new Job( vj.toMap() ) );
-			m_jobsOut.insert( job->id(), job );
+			m_jobsOut.insert_or_assign( job->id(), job );
 		}
 	}
 
@@ -138,7 +140,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 	{
 		auto vm = vl.toMap();
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), vm.value( "Suspended" ).toBool() );
-		m_limits.insert( vm.value( "Key" ).toString(), limit );
+		m_limits.insert_or_assign( vm.value( "Key" ).toString(), limit );
 	}
 }
 
@@ -153,7 +155,7 @@ QVariant Stockpile::serialize()
 	out.insert( "LimitWithMaterial", m_limitWithmaterial );
 
 	QVariantList fields;
-	for ( auto field : m_fields )
+	for ( auto field : m_fields | std::views::values )
 	{
 		QVariantMap fima;
 		fima.insert( "Pos", field->pos.toString() );
@@ -185,7 +187,7 @@ QVariant Stockpile::serialize()
 	out.insert( "Fields", fields );
 
 	QVariantList limits;
-	for ( auto key : m_limits.keys() )
+	for ( auto key : m_limits | std::views::keys )
 	{
 		auto limit = m_limits[key];
 		QVariantMap lima;
@@ -199,7 +201,7 @@ QVariant Stockpile::serialize()
 	out.insert( "Limits", limits );
 
 	QVariantList jobs;
-	for ( auto job : m_jobsOut )
+	for ( auto job : m_jobsOut | std::views::values )
 	{
 		jobs.append( job->serialize() );
 	}
@@ -225,7 +227,7 @@ void Stockpile::pasteSettings( QVariantMap vals )
 	{
 		auto vm = vl.toMap();
 		StockpileItemLimit limit( vm.value( "Max" ).toInt(), vm.value( "Activate" ).toInt(), vm.value( "Suspend" ).toInt(), false );
-		m_limits.insert( vm.value( "Key" ).toString(), limit );
+		m_limits.insert_or_assign( vm.value( "Key" ).toString(), limit );
 	}
 }
 
@@ -257,7 +259,7 @@ bool Stockpile::onTick( quint64 tick )
 				}
 			}
 
-			m_possibleItems = g->inv()->getClosestItemsForStockpile( m_id, m_fields.first()->pos, m_pullOthers, effectiveFilter );
+			m_possibleItems = g->inv()->getClosestItemsForStockpile( m_id, m_fields.begin()->second->pos, m_pullOthers, effectiveFilter );
 			if ( m_possibleItems.size() > 5000 )
 			{
 				qWarning() << "Excessive number of candidates for stockpile";
@@ -273,7 +275,7 @@ bool Stockpile::onTick( quint64 tick )
 absl::btree_set<QPair<QString, QString>> Stockpile::freeSlots() const
 {
 	absl::btree_set<QPair<QString, QString>> freeSlots;
-	for ( auto infi : m_fields )
+	for ( auto infi : m_fields | std::views::values )
 	{
 		if ( !infi->isFull )
 		{
@@ -340,11 +342,11 @@ unsigned int Stockpile::getJob()
 			}
 		}
 
-		if ( !suspended && !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id && g->w()->regionMap().checkConnectedRegions( m_fields.first()->pos, g->inv()->getItemPos( item ) ) )
+		if ( !suspended && !g->inv()->isInJob( item ) && g->inv()->isInStockpile( item ) != m_id && g->w()->regionMap().checkConnectedRegions( m_fields.begin()->second->pos, g->inv()->getItemPos( item ) ) )
 		{
 			m_isFull = true;
 			//loop over all stockpile fields
-			for ( auto infi : m_fields )
+			for ( auto infi : m_fields | std::views::values )
 			{
 				if ( !infi->isFull )
 				{
@@ -414,7 +416,7 @@ unsigned int Stockpile::getJob()
 				}
 			}
 			//loop over all stockpile fields
-			for ( auto infi : m_fields )
+			for ( auto infi : m_fields | std::views::values )
 			{
 				if ( !infi->isFull )
 				{
@@ -545,7 +547,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 							--freeSpace;
 						}
 					}
-					m_jobsOut.insert( job->id(), job );
+					m_jobsOut.insert_or_assign( job->id(), job );
 					return job->id();
 				}
 			}
@@ -587,7 +589,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 		}
 	}
 
-	m_jobsOut.insert( job->id(), job );
+	m_jobsOut.insert_or_assign( job->id(), job );
 	return job->id();
 }
 
@@ -600,7 +602,7 @@ unsigned int Stockpile::getCleanUpJob()
 	//loop over all stockpile fields
 	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
 	{
-		InventoryField* infi = i.value();
+		InventoryField* infi = i->second;
 		//first tiles with container
 		if ( infi->containerID )
 		{
@@ -626,7 +628,7 @@ unsigned int Stockpile::getCleanUpJob()
 
 						for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
 						{
-							InventoryField* infi2 = j.value();
+							InventoryField* infi2 = j->second;
 							if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
 							{
 								for ( auto oi : infi2->items )
@@ -649,7 +651,7 @@ unsigned int Stockpile::getCleanUpJob()
 				{
 					for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
 					{
-						InventoryField* infi2 = j.value();
+						InventoryField* infi2 = j->second;
 						if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
 						{
 							for ( auto oi : infi2->items )
@@ -668,7 +670,7 @@ unsigned int Stockpile::getCleanUpJob()
 
 	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
 	{
-		InventoryField* infi = i.value();
+		InventoryField* infi = i->second;
 		if ( !infi->containerID )
 		{
 			if ( infi->stackSize > 1 && ( infi->items.size() + infi->reservedItems.size() < infi->stackSize ) )
@@ -679,10 +681,10 @@ unsigned int Stockpile::getCleanUpJob()
 					return 0;
 				}
 
-				auto iter = m_fields.end() - 1;
+				auto iter = std::prev(m_fields.end());
 				while ( iter != i )
 				{
-					InventoryField* infi2 = iter.value();
+					InventoryField* infi2 = iter->second;
 					if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
 					{
 						for ( auto oi : infi2->items )
@@ -743,7 +745,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 				}
 			}
 		}
-		m_jobsOut.remove( jobID );
+		m_jobsOut.erase( jobID );
 		return true;
 	}
 	return false;
@@ -753,7 +755,7 @@ void Stockpile::setInfiNotFull( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
-		InventoryField* field = m_fields.value( pos.toInt() );
+		InventoryField* field = m_fields.at( pos.toInt() );
 		field->isFull         = false;
 		m_isFull              = false;
 	}
@@ -763,7 +765,7 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
-		InventoryField* field = m_fields.value( pos.toInt() );
+		InventoryField* field = m_fields.at( pos.toInt() );
 		field->reservedItems.erase( item );
 		field->items.insert( item );
 		field->isFull  = false;
@@ -884,7 +886,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 		// unchecked some items, need to expel it from the stockpile
 		absl::btree_set<QString> filter = m_filter.getActiveSimple();
 
-		for ( auto infi : m_fields )
+		for ( auto infi : m_fields | std::views::values )
 		{
 			QList<unsigned int> toRemove;
 			for ( auto oi : infi->items )
@@ -909,7 +911,7 @@ void Stockpile::addContainer( unsigned int containerID, Position& pos )
 	{
 		if ( containerID )
 		{
-			InventoryField* field = m_fields.value( pos.toInt() );
+			InventoryField* field = m_fields.at( pos.toInt() );
 
 			field->containerID = containerID;
 			field->requireSame = g->inv()->requireSame( containerID );
@@ -968,7 +970,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
-		InventoryField* field = m_fields.value( pos.toInt() );
+		InventoryField* field = m_fields.at( pos.toInt() );
 		if ( field->containerID == containerID )
 		{
 			auto items     = g->inv()->itemsInContainer( containerID );
@@ -1000,7 +1002,7 @@ bool Stockpile::hasJobID( unsigned int jobID ) const
 
 bool Stockpile::removeTile( Position& pos )
 {
-	InventoryField* infi = m_fields.value( pos.toInt() );
+	InventoryField* infi = m_fields.at( pos.toInt() );
 	// unconstruct container on tile
 	if ( infi->containerID != 0 )
 	{
@@ -1022,7 +1024,7 @@ bool Stockpile::removeTile( Position& pos )
 	infi->items.clear();
 	infi->reservedItems.clear();
 	// remove tile and remove tile flag
-	m_fields.remove( pos.toInt() );
+	m_fields.erase( pos.toInt() );
 	g->w()->clearTileFlag( pos, TileFlag::TF_STOCKPILE );
 	delete infi;
 	// if last tile deleted return true
@@ -1053,7 +1055,7 @@ void Stockpile::unlinkWorkshop( unsigned int workshopID )
 int Stockpile::count( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields )
+	for ( auto spf : m_fields | std::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1070,7 +1072,7 @@ int Stockpile::count( QString itemSID, QString materialSID )
 int Stockpile::count( QString itemSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields )
+	for ( auto spf : m_fields | std::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1087,7 +1089,7 @@ int Stockpile::count( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields )
+	for ( auto spf : m_fields | std::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1111,7 +1113,7 @@ int Stockpile::countPlusReserved( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields )
+	for ( auto spf : m_fields | std::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1174,7 +1176,7 @@ StockpileItemLimit Stockpile::limit( QString key )
 
 void Stockpile::setLimit( QString key, StockpileItemLimit limit )
 {
-	m_limits.insert( key, limit );
+	m_limits.insert_or_assign( key, limit );
 }
 
 bool Stockpile::suspendChanged()
@@ -1186,7 +1188,7 @@ bool Stockpile::suspendChanged()
 
 bool Stockpile::stillHasJobs()
 {
-	return !m_jobsOut.isEmpty();
+	return !m_jobsOut.empty();
 }
 
 int Stockpile::countFields()
@@ -1209,7 +1211,7 @@ int Stockpile::capacity( unsigned int tileID )
 	if ( m_fields.contains( tileID ) )
 	{
 
-		InventoryField* field = m_fields.value( tileID );
+		InventoryField* field = m_fields.at( tileID );
 		return field->capacity;
 		
 	}
@@ -1221,7 +1223,7 @@ int Stockpile::itemCount( unsigned int tileID )
 	if ( m_fields.contains( tileID ) )
 	{
 
-		InventoryField* field = m_fields.value( tileID );
+		InventoryField* field = m_fields.at( tileID );
 		return field->items.size();
 		
 	}
@@ -1233,7 +1235,7 @@ int Stockpile::reserved( unsigned int tileID )
 	if ( m_fields.contains( tileID ) )
 	{
 
-		InventoryField* field = m_fields.value( tileID );
+		InventoryField* field = m_fields.at( tileID );
 		return field->reservedItems.size();
 		
 	}

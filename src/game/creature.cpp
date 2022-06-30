@@ -51,7 +51,7 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	Object( in ),
 	m_attributes( in.value( "Attributes" ).toMap() ),
 	m_skills( in.value( "Skills" ).toMap() ),
-	//QMap<QString, unsigned int> m_spriteUIDs;
+	//absl::btree_map<QString, unsigned int> m_spriteUIDs;
 	m_spriteUIDs( in.value( "spritUIDs" ).toMap() ),
 	m_spriteDef( in.value( "SpriteDef" ).toList() ),
 	m_spriteDefBack( in.value( "SpriteDefBack" ).toList() ),
@@ -179,7 +179,7 @@ void Creature::serialize( QVariantMap& out ) const
 
 	out.insert( "BTBlackBoard", m_btBlackBoard );
 
-	//QMap<QString, unsigned int> m_spriteUIDs;
+	//absl::btree_map<QString, unsigned int> m_spriteUIDs;
 	out.insert( "spritUIDs", m_spriteUIDs );
 	out.insert( "SpriteDef", m_spriteDef );
 	out.insert( "SpriteDefBack", m_spriteDefBack );

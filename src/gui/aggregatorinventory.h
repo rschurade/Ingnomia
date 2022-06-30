@@ -22,7 +22,7 @@
 #include <QPointer>
 #include <QObject>
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
 #include <absl/container/flat_hash_map.h>
 
@@ -155,8 +155,8 @@ private:
 
     absl::btree_set<QString> m_watchedItems;
 
-    QMap<BuildSelection, QString> m_buildSelection2String;
-    QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;
+    absl::btree_map<BuildSelection, QString> m_buildSelection2String;
+    absl::btree_map<BuildSelection, BuildItemType> m_buildSelection2buildItem;
 
     void setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection );
     void setAvailableMats( GuiBuildRequiredItem& gbri );

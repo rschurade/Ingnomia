@@ -87,27 +87,27 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 			m_info.itemPics.clear();
 			if( m_info.equipment.head.itemID )
 			{
-				createUniformImg( "ArmorHead", m_info.uniform.parts.value( "HeadArmor" ), m_info.equipment.head );
+				createUniformImg( "ArmorHead", m_info.uniform.parts.at( "HeadArmor" ), m_info.equipment.head );
 			}
 			if( m_info.equipment.chest.itemID )
 			{
-				createUniformImg( "ArmorChest", m_info.uniform.parts.value( "ChestArmor" ), m_info.equipment.chest );
+				createUniformImg( "ArmorChest", m_info.uniform.parts.at( "ChestArmor" ), m_info.equipment.chest );
 			}
 			if( m_info.equipment.arm.itemID )
 			{
-				createUniformImg( "ArmorArms", m_info.uniform.parts.value( "ArmArmor" ), m_info.equipment.arm );
+				createUniformImg( "ArmorArms", m_info.uniform.parts.at( "ArmArmor" ), m_info.equipment.arm );
 			}
 			if( m_info.equipment.hand.itemID )
 			{
-				createUniformImg( "ArmorHands", m_info.uniform.parts.value( "HandArmor" ), m_info.equipment.hand );
+				createUniformImg( "ArmorHands", m_info.uniform.parts.at( "HandArmor" ), m_info.equipment.hand );
 			}
 			if( m_info.equipment.leg.itemID )
 			{
-				createUniformImg( "ArmorLegs", m_info.uniform.parts.value( "LegArmor" ), m_info.equipment.leg );
+				createUniformImg( "ArmorLegs", m_info.uniform.parts.at( "LegArmor" ), m_info.equipment.leg );
 			}
 			if( m_info.equipment.foot.itemID )
 			{
-				createUniformImg( "ArmorFeet", m_info.uniform.parts.value( "FootArmor" ), m_info.equipment.foot );
+				createUniformImg( "ArmorFeet", m_info.uniform.parts.at( "FootArmor" ), m_info.equipment.foot );
 			}
 			if( m_info.equipment.leftHandHeld.itemID )
 			{
@@ -182,7 +182,8 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 void AggregatorCreatureInfo::onRequestProfessionList()
 {
 	if( !g ) return;
-	emit signalProfessionList( g->gm()->professions() );
+	const auto professions = g->gm()->professions();
+	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
@@ -226,7 +227,7 @@ void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 		std::vector<unsigned char> buffer;
 
 		Global::util->createBufferForNoesisImage( pm, buffer );
-		m_info.itemPics.insert( slot, buffer );
+		m_info.itemPics.insert_or_assign( slot, buffer );
 	}
 	else
 	{
@@ -252,7 +253,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 		std::vector<unsigned char> buffer;
 
 		Global::util->createBufferForNoesisImage( pm, buffer );
-		m_info.itemPics.insert( slot, buffer );
+		m_info.itemPics.insert_or_assign( slot, buffer );
 	}
 	else
 	{
@@ -275,13 +276,13 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 
 		Global::util->createBufferForNoesisImage( pm, buffer );
 
-		m_emptyPics.insert( spriteID, buffer );
+		m_emptyPics.insert_or_assign( spriteID, buffer );
 	}
 	else
 	{
 		std::vector<unsigned char> buffer;
 		buffer.resize( 32 * 32 * 4, 0 );
-		m_emptyPics.insert( spriteID, buffer );
+		m_emptyPics.insert_or_assign( spriteID, buffer );
 	}
 }
 

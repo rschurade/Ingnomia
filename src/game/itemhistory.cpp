@@ -22,6 +22,8 @@
 
 #include <QDebug>
 
+#include <ranges>
+
 ItemHistory::ItemHistory( QObject* parent ) :
 	QObject( parent )
 {
@@ -34,7 +36,7 @@ ItemHistory::~ItemHistory()
 void ItemHistory::serialize( QVariantMap& out )
 {
 	QVariantList items;
-	for ( auto key : m_itemsPresent.keys() )
+	for ( auto key : m_itemsPresent | std::views::keys )
 	{
 		QVariantMap item;
 		item.insert( "ID", key );
@@ -57,13 +59,13 @@ void ItemHistory::serialize( QVariantMap& out )
 		vmDay.insert( "Season", day.season );
 		vmDay.insert( "Year", day.year );
 		QVariantList dayData;
-		for ( auto itemKey : day.dayData.data.keys() )
+		for ( auto itemKey : day.dayData.data | std::views::keys )
 		{
 			auto entry = day.dayData.data[itemKey];
 			QVariantMap itemData;
 			itemData.insert( "ID", itemKey );
 			QVariantList matList;
-			for ( auto matKey : entry.keys() )
+			for ( auto matKey : entry | std::views::keys )
 			{
 				QVariantMap matData;
 				auto matEntry = entry[matKey];
@@ -87,13 +89,13 @@ void ItemHistory::serialize( QVariantMap& out )
 		vmDay.insert( "Season", day.season );
 		vmDay.insert( "Year", day.year );
 		QVariantList dayData;
-		for ( auto itemKey : day.dayData.data.keys() )
+		for ( auto itemKey : day.dayData.data | std::views::keys )
 		{
 			auto entry = day.dayData.data[itemKey];
 			QVariantMap itemData;
 			itemData.insert( "ID", itemKey );
 			QVariantList matList;
-			for ( auto matKey : entry.keys() )
+			for ( auto matKey : entry | std::views::keys )
 			{
 				QVariantMap matData;
 				auto matEntry = entry[matKey];
@@ -125,7 +127,7 @@ void ItemHistory::deserialize( const QVariantMap& in )
 		{
 			mats.insert( vmat.toString() );
 		}
-		m_itemsPresent.insert( itemSID, mats );
+		m_itemsPresent.insert_or_assign( itemSID, mats );
 	}
 
 	auto vlDays = in.value( "Days" ).toList();
@@ -153,7 +155,7 @@ void ItemHistory::deserialize( const QVariantMap& in )
 		{
 			QString itemSID = itemEntry.toMap().value( "ID" ).toString();
 			auto mats       = itemEntry.toMap().value( "Mats" ).toList();
-			QMap<QString, IH_values> vMats;
+			absl::btree_map<QString, IH_values> vMats;
 			for ( auto matEntry : mats )
 			{
 				auto vmMat = matEntry.toMap();
@@ -161,9 +163,9 @@ void ItemHistory::deserialize( const QVariantMap& in )
 				iv.total = vmMat.value( "Total" ).toInt();
 				iv.plus  = vmMat.value( "Plus" ).toInt();
 				iv.minus = vmMat.value( "Minus" ).toInt();
-				vMats.insert( vmMat.value( "ID" ).toString(), iv );
+				vMats.insert_or_assign( vmMat.value( "ID" ).toString(), iv );
 			}
-			dd.data.insert( itemSID, vMats );
+			dd.data.insert_or_assign( itemSID, vMats );
 		}
 		ihd.dayData = dd;
 		m_data.push_back( ihd );
@@ -183,7 +185,7 @@ void ItemHistory::deserialize( const QVariantMap& in )
 		{
 			QString itemSID = itemEntry.toMap().value( "ID" ).toString();
 			auto mats       = itemEntry.toMap().value( "Mats" ).toList();
-			QMap<QString, IH_values> vMats;
+			absl::btree_map<QString, IH_values> vMats;
 			for ( auto matEntry : mats )
 			{
 				auto vmMat = matEntry.toMap();
@@ -191,9 +193,9 @@ void ItemHistory::deserialize( const QVariantMap& in )
 				iv.total = vmMat.value( "Total" ).toInt();
 				iv.plus  = vmMat.value( "Plus" ).toInt();
 				iv.minus = vmMat.value( "Minus" ).toInt();
-				vMats.insert( vmMat.value( "ID" ).toString(), iv );
+				vMats.insert_or_assign( vmMat.value( "ID" ).toString(), iv );
 			}
-			dd.data.insert( itemSID, vMats );
+			dd.data.insert_or_assign( itemSID, vMats );
 		}
 		ihd.dayData  = dd;
 		m_currentDay = ihd;
@@ -228,18 +230,18 @@ void ItemHistory::newDay()
 	m_currentDay.year   = GameState::year;
 
 	auto lastData = m_currentDay.dayData.data;
-	for ( auto key : lastData.keys() )
+	for ( auto key : lastData | std::views::keys )
 	{
 		auto& entry = lastData[key];
-		QMap<QString, IH_values> newDayData;
-		for ( auto matKey : entry.keys() )
+		absl::btree_map<QString, IH_values> newDayData;
+		for ( auto matKey : entry | std::views::keys )
 		{
 			auto& matEntry = entry[matKey];
 			IH_values newVals;
 			newVals.total = matEntry.total;
-			newDayData.insert( matKey, newVals );
+			newDayData.insert_or_assign( matKey, newVals );
 		}
-		m_currentDay.dayData.data.insert( key, newDayData );
+		m_currentDay.dayData.data.insert_or_assign( key, newDayData );
 	}
 }
 
@@ -262,12 +264,12 @@ void ItemHistory::plusItem( QString itemSID, QString materialSID )
 			if ( m_startUp )
 			{
 				IH_values mv { 1, 0, 0 };
-				materialEntry.insert( materialSID, mv );
+				materialEntry.insert_or_assign( materialSID, mv );
 			}
 			else
 			{
 				IH_values mv { 1, 1, 0 };
-				materialEntry.insert( materialSID, mv );
+				materialEntry.insert_or_assign( materialSID, mv );
 			}
 
 			m_itemsPresent[itemSID].insert( materialSID );
@@ -275,20 +277,20 @@ void ItemHistory::plusItem( QString itemSID, QString materialSID )
 	}
 	else
 	{
-		QMap<QString, IH_values> matEntry;
+		absl::btree_map<QString, IH_values> matEntry;
 		if ( m_startUp )
 		{
-			matEntry.insert( materialSID, IH_values { 1, 0, 0 } );
-			m_currentDay.dayData.data.insert( itemSID, matEntry );
+			matEntry.insert_or_assign( materialSID, IH_values { 1, 0, 0 } );
+			m_currentDay.dayData.data.insert_or_assign( itemSID, matEntry );
 		}
 		else
 		{
-			matEntry.insert( materialSID, IH_values { 1, 1, 0 } );
-			m_currentDay.dayData.data.insert( itemSID, matEntry );
+			matEntry.insert_or_assign( materialSID, IH_values { 1, 1, 0 } );
+			m_currentDay.dayData.data.insert_or_assign( itemSID, matEntry );
 		}
 		absl::btree_set<QString> mats;
 		mats.insert( materialSID );
-		m_itemsPresent.insert( itemSID, mats );
+		m_itemsPresent.insert_or_assign( itemSID, mats );
 	}
 }
 
@@ -309,15 +311,15 @@ void ItemHistory::minusItem( QString itemSID, QString materialSID )
 	}
 }
 
-QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
+absl::btree_map<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 {
-	QMap<QString, QVector<IH_values>> out;
+	absl::btree_map<QString, QVector<IH_values>> out;
 
-	absl::btree_set<QString> mats = m_itemsPresent.value( itemSID );
-	out.insert( "all", QVector<IH_values>() );
+	absl::btree_set<QString> mats = m_itemsPresent.at( itemSID );
+	out.insert_or_assign( "all", QVector<IH_values>() );
 	for ( auto mat : mats )
 	{
-		out.insert( mat, QVector<IH_values>() );
+		out.insert_or_assign( mat, QVector<IH_values>() );
 	}
 
 	for ( int i = 0; i < m_data.size(); ++i )
@@ -350,9 +352,9 @@ QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 		{
 			// item doesn't exist yet, insert empty for all materials
 			IH_values matValues;
-			for ( auto key : out.keys() )
+			for ( auto &entry : out )
 			{
-				out[key].push_back( matValues );
+				entry.second.push_back( matValues );
 			}
 		}
 	}
@@ -385,9 +387,9 @@ QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 		{
 			// item doesn't exist yet, insert empty for all materials
 			IH_values matValues;
-			for ( auto key : out.keys() )
+			for ( auto &entry : out )
 			{
-				out[key].push_back( matValues );
+				entry.second.push_back( matValues );
 			}
 		}
 	}
@@ -395,9 +397,9 @@ QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 	return out;
 }
 
-QMap<QString, QVector<IH_values>> ItemHistory::getRandomHistory( QString itemSID )
+absl::btree_map<QString, QVector<IH_values>> ItemHistory::getRandomHistory( QString itemSID )
 {
-	QMap<QString, QVector<IH_values>> out;
+	absl::btree_map<QString, QVector<IH_values>> out;
 
 	for ( int k = 1; k < 8; ++k )
 	{
@@ -414,7 +416,7 @@ QMap<QString, QVector<IH_values>> ItemHistory::getRandomHistory( QString itemSID
 			vec.push_back( mv );
 		}
 
-		out.insert( "material_" + QString::number( k ), vec );
+		out.insert_or_assign( "material_" + QString::number( k ), vec );
 	}
 
 	return out;

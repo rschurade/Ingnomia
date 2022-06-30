@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QObject>
 #include <absl/container/btree_set.h>
 
@@ -30,7 +30,7 @@ struct IH_values
 
 struct IH_dayData
 {
-	QMap<QString, QMap<QString, IH_values>> data;
+	absl::btree_map<QString, absl::btree_map<QString, IH_values>> data;
 };
 
 struct IH_day
@@ -64,14 +64,14 @@ public:
 		m_startUp = false;
 	}
 
-	QMap<QString, absl::btree_set<QString>> allItems()
+	absl::btree_map<QString, absl::btree_set<QString>> allItems()
 	{
 		return m_itemsPresent;
 	}
 
-	QMap<QString, QVector<IH_values>> getHistory( QString itemSID );
+	absl::btree_map<QString, QVector<IH_values>> getHistory( QString itemSID );
 
-	QMap<QString, QVector<IH_values>> getRandomHistory( QString itemSID );
+	absl::btree_map<QString, QVector<IH_values>> getRandomHistory( QString itemSID );
 
 private:
 	void newDay();
@@ -79,7 +79,7 @@ private:
 	QList<IH_day> m_data;
 	IH_day m_currentDay;
 
-	QMap<QString, absl::btree_set<QString>> m_itemsPresent;
+	absl::btree_map<QString, absl::btree_set<QString>> m_itemsPresent;
 
 	bool m_startUp = true;
 };

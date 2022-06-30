@@ -46,20 +46,20 @@ CreatureInfoModel::CreatureInfoModel()
 	m_proxy->requestProfessionList();
 }
 
-void CreatureInfoModel::updateEmptySlotImages( const QMap< QString, std::vector<unsigned char> >& pics )
+void CreatureInfoModel::updateEmptySlotImages( const absl::btree_map< QString, std::vector<unsigned char> >& pics )
 {
-	m_bitmapHeadEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapChestEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotChest" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapArmsEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotArms" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapHandsEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotHands" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapLegsEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotLegs" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapFeetEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotFeet" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapLHeldEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotShield" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapRHeldEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotWeapon" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapBackEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotBack" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapNeckEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotNeck" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapLRingEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotRing" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
-	m_bitmapRRingEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotRing" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapHeadEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapChestEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotChest" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapArmsEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotArms" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapHandsEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotHands" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapLegsEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotLegs" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapFeetEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotFeet" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapLHeldEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotShield" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapRHeldEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotWeapon" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapBackEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotBack" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapNeckEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotNeck" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapLRingEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotRing" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapRRingEmpty = BitmapImage::Create( 32, 32, 96, 96, pics.at( "UIEmptySlotRing" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 	m_emptyPicsInitialized = true;
 }
 
@@ -136,9 +136,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorHead" ) )
 		{
-			if( info.itemPics.value( "ArmorHead" ).size() == 8192 )
+			if( info.itemPics.at( "ArmorHead" ).size() == 8192 )
 			{
-				m_bitmapHead = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapHead = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -146,9 +146,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorChest" ) )
 		{
-			if( info.itemPics.value( "ArmorChest" ).size() == 8192 )
+			if( info.itemPics.at(  "ArmorChest" ).size() == 8192 )
 			{
-				m_bitmapChest = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorChest" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapChest = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorChest" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -156,9 +156,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorArms" ) )
 		{
-			if( info.itemPics.value( "ArmorArms" ).size() == 8192 )
+			if( info.itemPics.at(  "ArmorArms" ).size() == 8192 )
 			{
-				m_bitmapArms = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorArms" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapArms = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorArms" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -166,9 +166,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorHands" ) )
 		{
-			if( info.itemPics.value( "ArmorHands" ).size() == 8192 )
+			if( info.itemPics.at(  "ArmorHands" ).size() == 8192 )
 			{
-				m_bitmapHands = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorHands" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapHands = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorHands" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -176,9 +176,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorLegs" ) )
 		{
-			if( info.itemPics.value( "ArmorLegs" ).size() == 8192 )
+			if( info.itemPics.at(  "ArmorLegs" ).size() == 8192 )
 			{
-				m_bitmapLegs = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorLegs" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapLegs = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorLegs" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -186,9 +186,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "ArmorFeet" ) )
 		{
-			if( info.itemPics.value( "ArmorFeet" ).size() == 8192 )
+			if( info.itemPics.at(  "ArmorFeet" ).size() == 8192 )
 			{
-				m_bitmapFeet = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "ArmorFeet" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapFeet = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "ArmorFeet" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -196,9 +196,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "LeftHandHeld" ) )
 		{
-			if( info.itemPics.value( "LeftHandHeld" ).size() == 8192 )
+			if( info.itemPics.at(  "LeftHandHeld" ).size() == 8192 )
 			{
-				m_bitmapLHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "LeftHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapLHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "LeftHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}
@@ -206,9 +206,9 @@ void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 	{
 		if( info.itemPics.contains( "RightHandHeld" ) )
 		{
-			if( info.itemPics.value( "RightHandHeld" ).size() == 8192 )
+			if( info.itemPics.at(  "RightHandHeld" ).size() == 8192 )
 			{
-				m_bitmapRHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.value( "RightHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
+				m_bitmapRHeld = BitmapImage::Create( 32, 32, 96, 96, info.itemPics.at(  "RightHandHeld" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
 			}
 		}
 	}

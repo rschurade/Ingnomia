@@ -30,9 +30,11 @@
 
 #include <QDebug>
 
+#include <ranges>
+
 Grove::~Grove()
 {
-	for ( const auto& field : m_fields )
+	for ( const auto& field : m_fields | std::views::values )
 	{
 		delete field;
 	}
@@ -101,7 +103,7 @@ Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
 		{
 			GroveField* grofi = new GroveField;
 			grofi->pos        = p.first;
-			m_fields.insert( p.first.toInt(), grofi );
+			m_fields.insert_or_assign( p.first.toInt(), grofi );
 		}
 	}
 }
@@ -120,7 +122,7 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 		{
 			grofi->job = g->jm()->getJob( vfm.value( "Job" ).toUInt() );
 		}
-		m_fields.insert( grofi->pos.toInt(), grofi );
+		m_fields.insert_or_assign( grofi->pos.toInt(), grofi );
 	}
 }
 
@@ -130,7 +132,7 @@ QVariant Grove::serialize() const
 	WorldObject::serialize( out );
 	m_properties.serialize( out );
 	QVariantList tiles;
-	for ( auto field : m_fields )
+	for ( auto field : m_fields | std::views::values )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
@@ -151,7 +153,7 @@ void Grove::onTick( quint64 tick )
 	if ( !m_active )
 		return;
 	
-	for( auto& gf : m_fields )
+	for( auto& gf : m_fields | std::views::values )
 	{
 		if( !gf->job )
 		{
@@ -164,7 +166,7 @@ void Grove::onTick( quint64 tick )
 					QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
 					QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
 
-					auto item = g->inv()->getClosestItem( m_fields.first()->pos, true, seedID, mat );
+					auto item = g->inv()->getClosestItem( m_fields.begin()->second->pos, true, seedID, mat );
 					if ( item == 0 )
 					{
 						continue;
@@ -255,9 +257,9 @@ bool Grove::canDelete() const
 
 bool Grove::removeTile( const Position & pos )
 {
-	GroveField* gf = m_fields.value( pos.toInt() );
+	GroveField* gf = m_fields.at( pos.toInt() );
 
-	m_fields.remove( pos.toInt() );
+	m_fields.erase( pos.toInt() );
 
 	g->w()->clearTileFlag( pos, TileFlag::TF_GROVE );
 	delete gf;
@@ -269,7 +271,7 @@ void Grove::addTile( const Position & pos )
 {
 	GroveField* grofi = new GroveField;
 	grofi->pos        = pos;
-	m_fields.insert( pos.toInt(), grofi );
+	m_fields.insert_or_assign( pos.toInt(), grofi );
 
 	g->w()->setTileFlag( pos, TileFlag::TF_GROVE );
 }
@@ -277,7 +279,7 @@ void Grove::addTile( const Position & pos )
 int Grove::numTrees()
 {
 	int numTrees = 0;
-	for( auto& gf : m_fields )
+	for( auto& gf : m_fields | std::views::values )
 	{
 		if( g->w()->plants().contains( gf->pos.toInt() ) )
 		{

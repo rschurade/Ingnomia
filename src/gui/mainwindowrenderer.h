@@ -133,7 +133,7 @@ private:
 
 	bool m_reloadShaders = false;
 
-	QMap<unsigned int, SelectionData> m_selectionData;
+	absl::btree_map<unsigned int, SelectionData> m_selectionData;
 	bool m_selectionNoDepthTest = false;
 
 	ThoughtBubbleInfo m_thoughBubbles;
@@ -161,7 +161,7 @@ public slots:
 
 	void onSetInMenu( bool value );
 
-	void onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest );
+	void onUpdateSelection( const absl::btree_map<unsigned int, SelectionData>& data, bool noDepthTest );
 
 	void onCenterCameraPosition( const Position& target );
 

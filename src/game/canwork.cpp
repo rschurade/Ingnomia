@@ -529,8 +529,8 @@ bool CanWork::dropEquippedItem()
 			auto uniform = g->mil()->uniform( m_roleID );
 			if ( uniform )
 			{
-				QString rhi = uniform->parts["RightHandHeld"].item;
-				QString rhm = uniform->parts["RightHandHeld"].material;
+				QString rhi = uniform->parts.at("RightHandHeld").item;
+				QString rhm = uniform->parts.at("RightHandHeld").material;
 				if ( rhi == m_equipment.rightHandHeld.item && ( rhm == "any" || rhm == m_equipment.rightHandHeld.material ) )
 				{
 					return true;
@@ -1012,7 +1012,7 @@ bool CanWork::harvest()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	QMap<unsigned int, Plant>& plants = g->w()->plants();
+	absl::btree_map<unsigned int, Plant>& plants = g->w()->plants();
 	if ( plants.contains( pos.toInt() ) )
 	{
 		Plant& plant = plants[pos.toInt()];
@@ -1027,7 +1027,7 @@ bool CanWork::harvest()
 				g->w()->setWallSprite( pos, 0 );
 				g->w()->removeGrass( pos );
 			}
-			plants.remove( pos.toInt() );
+			plants.erase( pos.toInt() );
 
 			return true;
 		}
@@ -1269,7 +1269,7 @@ bool CanWork::fellTree()
 		offset = Position( m_currentTask.value( "Offset" ).toString() );
 	}
 	Position pos( m_job->pos() + offset );
-	QMap<unsigned int, Plant>& plants = g->w()->plants();
+	absl::btree_map<unsigned int, Plant>& plants = g->w()->plants();
 	if ( plants.contains( pos.toInt() ) )
 	{
 		Plant& plant = plants[pos.toInt()];

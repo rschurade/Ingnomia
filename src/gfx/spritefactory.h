@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <QVector>
 
+#include <ranges>
+
 struct DefNode
 {
 	DefNode()
@@ -42,7 +44,7 @@ struct DefNode
 	};
 	~DefNode()
 	{
-		for( auto& child : childs )
+		for( auto& child : childs | std::views::values )
 		{
 			delete child;
 		}
@@ -63,14 +65,14 @@ struct DefNode
 	bool hasTransp = false;
 
 	//DefNode* parent;
-	QMap<QString, DefNode*> childs;
+	absl::btree_map<QString, DefNode*> childs;
 };
 
 struct SpriteCreation
 {
 	QString itemSID;
 	QStringList materialSIDs;
-	QMap<int, int> random;
+	absl::btree_map<int, int> random;
 	unsigned int uID        = 0;
 	unsigned int creatureID = 0;
 };
@@ -96,15 +98,15 @@ private:
 
 	// base sprites and sources for creation
 	absl::flat_hash_map<QString, QPixmap> m_pixmapSources;
-	QMap<QString, QPixmap> m_baseSprites;
-	QMap<QString, DefNode*> m_spriteDefinitions;
-	QMap<QString, QVariantMap> m_spriteDefVMs;
+	absl::btree_map<QString, QPixmap> m_baseSprites;
+	absl::btree_map<QString, DefNode*> m_spriteDefinitions;
+	absl::btree_map<QString, QVariantMap> m_spriteDefVMs;
 
-	QMap<QString, unsigned int> m_thoughtBubbleIDs;
+	absl::btree_map<QString, unsigned int> m_thoughtBubbleIDs;
 
 	// cached DB values for faster lookup
 	QStringList m_seasons;
-	QMap<QString, QString> m_materialTypes;
+	absl::btree_map<QString, QString> m_materialTypes;
 
 	//pixel data for array textures
 	QVector<QVector<uint8_t>> m_pixelData;
@@ -117,7 +119,7 @@ private:
 	QString m_offset  = "";
 	float m_opacity   = 1.0;
 	float m_numFrames = 1;
-	QMap<int, int> m_randomNumbers;
+	absl::btree_map<int, int> m_randomNumbers;
 
 	QList<QColor> m_colors;
 	QList<QColor> m_hairColors;
@@ -125,8 +127,8 @@ private:
 	// created sprites for current game
 	QList<Sprite*> m_sprites;
 
-	QMap<QString, int> m_spriteIDs;
-	QMap<unsigned int, int> m_creatureSpriteIDs;
+	absl::btree_map<QString, int> m_spriteIDs;
+	absl::btree_map<unsigned int, int> m_creatureSpriteIDs;
 
 	QList<SpriteCreation> m_spriteCreations;
 
@@ -141,7 +143,7 @@ private:
 
 	QPixmap getTintedBaseSprite( QString baseSprite, QString material );
 
-	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
+	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	
 	void printDebug();
 
@@ -159,8 +161,8 @@ public:
 
 	
 
-	Sprite* createSprite( const QString itemSID, QStringList materialSID, const QMap<int, int>& random = QMap<int, int>() );
-	Sprite* createAnimalSprite( const QString spriteSID, const QMap<int, int>& random = QMap<int, int>() );
+	Sprite* createSprite( const QString itemSID, QStringList materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
+	Sprite* createAnimalSprite( const QString spriteSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	Sprite* getSprite( const int id );
 
 	Sprite* setCreatureSprite( const unsigned int gnomeUID, QVariantList components, QVariantList componentsBack, bool isDead = false );

@@ -18,6 +18,7 @@
 #include "spritefactory.h"
 
 #include "../base/config.h"
+#include "../base/containersHelper.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/io.h"
@@ -42,7 +43,7 @@ SpriteFactory::~SpriteFactory()
 		delete sprite;
 	}
 	m_sprites.clear();
-	for( auto& def : m_spriteDefinitions )
+	for( auto& def : m_spriteDefinitions | std::views::values )
 	{
 		delete def;
 	}
@@ -77,7 +78,7 @@ bool SpriteFactory::init()
 	auto matIds = DB::ids( "Materials" );
 	for ( auto id : matIds )
 	{
-		m_materialTypes.insert( id, DB::select( "Type", "Materials", id ).toString() );
+		m_materialTypes.insert_or_assign( id, DB::select( "Type", "Materials", id ).toString() );
 	}
 
 	for ( auto color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
@@ -157,7 +158,7 @@ bool SpriteFactory::init()
 			}
 			*/
 		}
-		m_baseSprites.insert( row.value( "ID" ).toString(), extractPixmap( tilesheet, row ) );
+		m_baseSprites.insert_or_assign( row.value( "ID" ).toString(), extractPixmap( tilesheet, row ) );
 	}
 	
 	QList<QVariantMap> spriteList = DB::selectRows( "Sprites" );
@@ -350,7 +351,7 @@ bool SpriteFactory::init()
 
 	for ( auto row : spriteList )
 	{
-		m_spriteDefVMs.insert( row.value( "ID" ).toString(), row );
+		m_spriteDefVMs.insert_or_assign( row.value( "ID" ).toString(), row );
 	}
 
 	for ( auto row : spriteList )
@@ -361,11 +362,11 @@ bool SpriteFactory::init()
 		m_numFrames   = 1;
 		parseDef( root, row );
 		root->numFrames = m_numFrames;
-		if ( root->childs.isEmpty() && root->baseSprite.isEmpty() )
+		if ( root->childs.empty() && root->baseSprite.isEmpty() )
 		{
 			root->baseSprite = root->value;
 		}
-		m_spriteDefinitions.insert( root->value, root );
+		m_spriteDefinitions.insert_or_assign( root->value, root );
 	}
 
 	createStandardSprites();
@@ -388,11 +389,11 @@ void SpriteFactory::addPixmapSource( QString name, QString path )
 
 void SpriteFactory::createStandardSprites()
 {
-	m_thoughtBubbleIDs.insert( "Tired", createSprite( "StatusTired", { "None" } )->uID );
-	m_thoughtBubbleIDs.insert( "Sleeping", createSprite( "StatusSleeping", { "None" } )->uID );
-	m_thoughtBubbleIDs.insert( "Thirsty", createSprite( "ThoughtBubbleThirsty", { "None" } )->uID );
-	m_thoughtBubbleIDs.insert( "Hungry", createSprite( "ThoughtBubbleHungry", { "None" } )->uID );
-	m_thoughtBubbleIDs.insert( "Combat", createSprite( "ThoughtBubbleCombat", { "None" } )->uID );
+	m_thoughtBubbleIDs.insert_or_assign( "Tired", createSprite( "StatusTired", { "None" } )->uID );
+	m_thoughtBubbleIDs.insert_or_assign( "Sleeping", createSprite( "StatusSleeping", { "None" } )->uID );
+	m_thoughtBubbleIDs.insert_or_assign( "Thirsty", createSprite( "ThoughtBubbleThirsty", { "None" } )->uID );
+	m_thoughtBubbleIDs.insert_or_assign( "Hungry", createSprite( "ThoughtBubbleHungry", { "None" } )->uID );
+	m_thoughtBubbleIDs.insert_or_assign( "Combat", createSprite( "ThoughtBubbleCombat", { "None" } )->uID );
 
 	createSprite( "SolidSelectionWall", { "Purple" } );
 
@@ -448,12 +449,12 @@ unsigned char SpriteFactory::rotationToChar( const QString suffix )
 	return rot;
 }
 
-Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
+Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList materialSIDs, const absl::btree_map<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
 	QString key = itemSID;
 	m_randomNumbers.clear();
-	if ( random.isEmpty() )
+	if ( random.empty() )
 	{
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
@@ -481,7 +482,7 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
 
-			for ( auto r : m_randomNumbers )
+			for ( auto r : m_randomNumbers | std::views::values )
 			{
 				key += "_";
 				key += QString::number( r );
@@ -491,7 +492,7 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 	Sprite* sprite = nullptr;
 	if ( m_spriteIDs.contains( key ) )
 	{
-		sprite = m_sprites.value( m_spriteIDs.value( key ) );
+		sprite = m_sprites.value( m_spriteIDs.at( key ) );
 	}
 	else
 	{
@@ -499,11 +500,11 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 
 		if ( !sprite )
 		{
-			return m_sprites.value( m_spriteIDs.value( "SolidSelectionWall_Purple" ) );
+			return m_sprites.value( m_spriteIDs.at( "SolidSelectionWall_Purple" ) );
 		}
 
 		sprite->uID = m_sprites.size();
-		m_spriteIDs.insert( key, m_sprites.size() );
+		m_spriteIDs.insert_or_assign( key, m_sprites.size() );
 		m_sprites.append( sprite );
 
 		addPixmapToPixelData( sprite );
@@ -531,11 +532,11 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 
 // used for loading definitions, doesn't check if sprite exists as it will not exist and 
 // doesn't create short walls because they are in the definition anyway
-Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
+Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materialSIDs, const absl::btree_map<int, int>& random )
 {
 	QString key = itemSID;
 	m_randomNumbers.clear();
-	if ( random.isEmpty() )
+	if ( random.empty() )
 	{
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
@@ -563,7 +564,7 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
 
-			for ( auto r : m_randomNumbers )
+			for ( auto r : m_randomNumbers | std::views::values )
 			{
 				key += "_";
 				key += QString::number( r );
@@ -576,11 +577,11 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 
 	if ( !sprite )
 	{
-		return m_sprites.value( m_spriteIDs.value( "SolidSelectionWall_Purple" ) );
+		return m_sprites.value( m_spriteIDs.at( "SolidSelectionWall_Purple" ) );
 	}
 
 	sprite->uID = m_sprites.size();
-	m_spriteIDs.insert( key, m_sprites.size() );
+	m_spriteIDs.insert_or_assign( key, m_sprites.size() );
 	m_sprites.append( sprite );
 
 	addPixmapToPixelData( sprite );
@@ -598,12 +599,12 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 	return sprite;
 }
 
-Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<int, int>& random )
+Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const absl::btree_map<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
 	QString key = spriteSID;
 	m_randomNumbers.clear();
-	if ( random.isEmpty() )
+	if ( random.empty() )
 	{
 		if ( containsRandom( spriteSID, { "None" } ) )
 		{
@@ -616,7 +617,7 @@ Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<i
 
 		key += "_None";
 
-		for ( auto r : m_randomNumbers )
+		for ( auto r : m_randomNumbers | std::views::values )
 		{
 			key += "_";
 			key += QString::number( r );
@@ -626,14 +627,14 @@ Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<i
 	Sprite* sprite = nullptr;
 	if ( m_spriteIDs.contains( key ) )
 	{
-		sprite = m_sprites.value( m_spriteIDs.value( key ) );
+		sprite = m_sprites.value( m_spriteIDs.at( key ) );
 	}
 	else
 	{
 		sprite = createSpriteMaterial( spriteSID, { "None" }, key );
 
 		sprite->uID = m_sprites.size();
-		m_spriteIDs.insert( key, m_sprites.size() );
+		m_spriteIDs.insert_or_assign( key, m_sprites.size() );
 		m_sprites.append( sprite );
 
 		addPixmapToPixelData( sprite );
@@ -672,7 +673,7 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 		qDebug() << "***ERROR*** sprite definition " << spriteSID << " for item " << itemSID << " doesn't exist.";
 		//abort();
 	}
-	DefNode* dn = m_spriteDefinitions.value( spriteSID );
+	DefNode* dn = m_spriteDefinitions.at( spriteSID );
 	if ( dn )
 	{
 		for ( auto season : m_seasons )
@@ -692,7 +693,7 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 		key += "_";
 		key += mat;
 	}
-	for ( auto r : m_randomNumbers )
+	for ( auto r : m_randomNumbers | std::views::values )
 	{
 		key += "_";
 		key += QString::number( r );
@@ -715,7 +716,7 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 		qDebug() << "***ERROR*** sprite definition " << spriteSID << " for item " << itemSID << " doesn't exist.";
 		//abort();
 	}
-	DefNode* dn    = m_spriteDefinitions.value( spriteSID );
+	DefNode* dn    = m_spriteDefinitions.at( spriteSID );
 	Sprite* sprite = nullptr;
 	if ( dn )
 	{
@@ -750,17 +751,21 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	if ( def.contains( "Sprite" ) )
 	{
 		QString spriteID = def.value( "Sprite" ).toString();
-		QVariant tint    = def.value( "Tint" );
-		QVariant effect  = def.value( "Effect" );
-		QVariant offset  = def.value( "Offset" );
-		def              = m_spriteDefVMs.value( spriteID );
-		if ( tint.isValid() )
+		if ( !spriteID.isEmpty() )
 		{
-			def.insert( "Tint", tint );
-		}
-		if ( effect.isValid() )
-		{
-			def.insert( "Effect", effect );
+			QVariant tint   = def.value( "Tint" );
+			QVariant effect = def.value( "Effect" );
+			QVariant offset = def.value( "Offset" );
+
+			def             = m_spriteDefVMs.at( spriteID );
+			if ( tint.isValid() )
+			{
+				def.insert( "Tint", tint );
+			}
+			if ( effect.isValid() )
+			{
+				def.insert( "Effect", effect );
+			}
 		}
 	}
 
@@ -795,7 +800,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 			child->type     = "ByMaterial";
 			child->value    = item.toMap().value( "MaterialID" ).toString();
-			parent->childs.insert( child->value, child );
+			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -808,7 +813,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 			child->type     = "ByMaterialType";
 			child->value    = item.toMap().value( "MaterialType" ).toString();
-			parent->childs.insert( child->value, child );
+			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -821,7 +826,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 			child->type     = "Season";
 			child->value    = item.toMap().value( "Season" ).toString();
-			parent->childs.insert( child->value, child );
+			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -834,7 +839,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 			child->type     = "Rotation";
 			child->value    = item.toMap().value( "Rotation" ).toString();
-			parent->childs.insert( child->value, child );
+			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -848,7 +853,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 			child->type     = "Frame";
-			parent->childs.insert( "Frame" + QString::number( index++ ), child );
+			parent->childs.insert_or_assign( "Frame" + QString::number( index++ ), child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -859,7 +864,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		randomNode->type     = "RandomNode";
 		randomNode->depth    = parent->depth + 1;
 		randomNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-		parent->childs.insert( "RandomNode", randomNode );
+		parent->childs.insert_or_assign( "RandomNode", randomNode );
 
 		for ( auto item : def.value( "Random" ).toList() )
 		{
@@ -867,7 +872,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->depth    = randomNode->depth + 1;
 			child->childPos = randomNode->childPos + QString::number( randomNode->childs.size() + 1 );
 			child->type     = "Random";
-			randomNode->childs.insert( "Random" + QString::number( index++ ), child );
+			randomNode->childs.insert_or_assign( "Random" + QString::number( index++ ), child );
 			randomNode->randomWeights.push_back( item.toMap().value( "Weight" ).toInt() );
 			parseDef( child, item.toMap() );
 		}
@@ -880,7 +885,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		combineNode->type     = "CombineNode";
 		combineNode->depth    = parent->depth + 1;
 		combineNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-		parent->childs.insert( "CombineNode", combineNode );
+		parent->childs.insert_or_assign( "CombineNode", combineNode );
 
 		for ( auto item : def.value( "Combine" ).toList() )
 		{
@@ -888,7 +893,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			child->depth    = parent->depth + 1;
 			child->childPos = combineNode->childPos + QString::number( combineNode->childs.size() + 1 );
 			child->type     = "Combine";
-			combineNode->childs.insert( "Combine" + QString::number( index++ ), child );
+			combineNode->childs.insert_or_assign( "Combine" + QString::number( index++ ), child );
 			parseDef( child, item.toMap() );
 		}
 	}
@@ -904,7 +909,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	QString materialSID = materialSIDs[materialID];
 	if ( !node->baseSprite.isEmpty() )
 	{
-		QPixmap pm           = m_baseSprites.value( node->baseSprite );
+		QPixmap pm           = m_baseSprites.at( node->baseSprite );
 		SpritePixmap* sprite = new SpritePixmap( pm, m_offset );
 		sprite->applyEffect( node->effect );
 		sprite->applyTint( node->tint, materialSID );
@@ -912,24 +917,24 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		return sprite;
 	}
 
-	if ( node->childs.size() && node->childs.first()->type == "Rotation" )
+	if ( node->childs.size() && node->childs.begin()->second->type == "Rotation" )
 	{
 		SpriteRotations* sr = new SpriteRotations;
 
-		sr->m_sprites.push_back( getBaseSprite( node->childs.value( "FR" ), itemSID, materialSIDs ) );
-		sr->m_sprites.push_back( getBaseSprite( node->childs.value( "FL" ), itemSID, materialSIDs ) );
-		sr->m_sprites.push_back( getBaseSprite( node->childs.value( "BL" ), itemSID, materialSIDs ) );
-		sr->m_sprites.push_back( getBaseSprite( node->childs.value( "BR" ), itemSID, materialSIDs ) );
+		sr->m_sprites.push_back( getBaseSprite( node->childs.at( "FR" ), itemSID, materialSIDs ) );
+		sr->m_sprites.push_back( getBaseSprite( node->childs.at( "FL" ), itemSID, materialSIDs ) );
+		sr->m_sprites.push_back( getBaseSprite( node->childs.at( "BL" ), itemSID, materialSIDs ) );
+		sr->m_sprites.push_back( getBaseSprite( node->childs.at( "BR" ), itemSID, materialSIDs ) );
 
 		sr->applyEffect( node->effect );
 		sr->applyTint( node->tint, materialSID );
 		sr->hasTransp = node->hasTransp;
 		return sr;
 	}
-	if ( node->childs.size() && node->childs.first()->type == "Season" )
+	if ( node->childs.size() && node->childs.begin()->second->type == "Season" )
 	{
 		SpriteSeasons* ss = new SpriteSeasons;
-		for ( auto child : node->childs )
+		for ( auto child : node->childs | std::views::values )
 		{
 			ss->m_sprites.insert_or_assign( child->value, getBaseSprite( child, itemSID, materialSIDs ) );
 		}
@@ -938,14 +943,14 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		ss->hasTransp = node->hasTransp;
 		return ss;
 	}
-	if ( node->childs.contains( itemSID ) )
+	if ( DefNode * temp; maps::try_at( node->childs, itemSID, temp ) )
 	{
-		return getBaseSprite( node->childs[itemSID], itemSID, materialSIDs );
+		return getBaseSprite( temp, itemSID, materialSIDs );
 	}
-	if ( node->childs.size() && node->childs.first()->type == "Frame" )
+	if ( node->childs.size() && node->childs.begin()->second->type == "Frame" )
 	{
 		SpriteFrames* sf = new SpriteFrames;
-		for ( auto child : node->childs )
+		for ( auto child : node->childs | std::views::values )
 		{
 			sf->m_sprites.push_back( getBaseSprite( child, itemSID, materialSIDs ) );
 		}
@@ -957,11 +962,11 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 
 	if ( node->type == "CombineNode" && node->childs.size() > 1 )
 	{
-		Sprite* s = getBaseSprite( node->childs["Combine0"], itemSID, materialSIDs, materialID );
+		Sprite* s = getBaseSprite( node->childs.at("Combine0"), itemSID, materialSIDs, materialID );
 
 		for ( int i = 1; i < node->childs.size(); ++i )
 		{
-			Sprite* s2 = getBaseSprite( node->childs["Combine" + QString::number( i )], itemSID, materialSIDs, materialID + i );
+			Sprite* s2 = getBaseSprite( node->childs.at("Combine" + QString::number( i )), itemSID, materialSIDs, materialID + i );
 			for ( auto season : m_seasons )
 			{
 				s->combine( s2, season, 0, 0 );
@@ -990,20 +995,24 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	}
 	if ( node->type == "RandomNode" )
 	{
-		int randomNumber = m_randomNumbers.value( node->childPos.toInt() );
-		Sprite* rs       = getBaseSprite( node->childs["Random" + QString::number( randomNumber )], itemSID, materialSIDs );
-		rs->applyEffect( node->childs["Random" + QString::number( randomNumber )]->effect );
-		rs->applyTint( node->childs["Random" + QString::number( randomNumber )]->tint, materialSID );
+		int randomNumber = m_randomNumbers.at( node->childPos.toInt() );
+		const auto &childKey    = "Random" + QString::number( randomNumber );
+		const auto &nodeChild       = node->childs.at(childKey);
+		Sprite* rs       = getBaseSprite( nodeChild, itemSID, materialSIDs );
+		rs->applyEffect( nodeChild->effect );
+		rs->applyTint( nodeChild->tint, materialSID );
 		rs->hasTransp = node->hasTransp;
 		return rs;
 	}
 
 	if ( materialSIDs.size() )
 	{
+		DefNode *temp;
+
 		QString materialType = getMaterialType( materialSID );
-		if ( node->childs.contains( materialType ) )
+		if ( maps::try_at( node->childs, materialType, temp ) )
 		{
-			Sprite* pm = getBaseSprite( node->childs[materialType], itemSID, materialSIDs );
+			Sprite* pm = getBaseSprite( temp, itemSID, materialSIDs );
 			pm->applyEffect( node->effect );
 			pm->applyTint( node->tint, materialSID );
 			pm->hasTransp = node->hasTransp;
@@ -1011,9 +1020,9 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		}
 
 		QString materialSID = *materialSIDs.begin();
-		if ( node->childs.contains( materialSID ) )
+		if ( maps::try_at( node->childs, materialSID, temp ) )
 		{
-			Sprite* pm = getBaseSprite( node->childs[materialSID], itemSID, materialSIDs );
+			Sprite* pm = getBaseSprite( temp, itemSID, materialSIDs );
 			pm->applyEffect( node->effect );
 			pm->applyTint( node->tint, materialSID );
 			pm->hasTransp = node->hasTransp;
@@ -1022,9 +1031,9 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		// if no other hit
 		if ( node->childs.size() )
 		{
-			if ( !node->defaultMaterial.isEmpty() && node->childs.contains( node->defaultMaterial ) )
+			if ( !node->defaultMaterial.isEmpty() && maps::try_at( node->childs, node->defaultMaterial, temp ) )
 			{
-				Sprite* pm = getBaseSprite( node->childs[node->defaultMaterial], itemSID, materialSIDs );
+				Sprite* pm = getBaseSprite( temp, itemSID, materialSIDs );
 				pm->applyEffect( node->effect );
 				pm->applyTint( node->tint, materialSID );
 				pm->hasTransp = node->hasTransp;
@@ -1032,7 +1041,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 			}
 			else
 			{
-				Sprite* pm = getBaseSprite( node->childs.first(), itemSID, materialSIDs, materialID );
+				Sprite* pm = getBaseSprite( node->childs.begin()->second, itemSID, materialSIDs, materialID );
 				pm->applyEffect( node->effect );
 				pm->applyTint( node->tint, materialSID );
 				pm->hasTransp = node->hasTransp;
@@ -1041,7 +1050,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		}
 	}
 
-	QPixmap pm           = m_baseSprites.value( "SolidSelectionWall" );
+	QPixmap pm           = m_baseSprites.at( "SolidSelectionWall" );
 	SpritePixmap* sprite = new SpritePixmap( pm );
 	sprite->applyTint( "Material", "JobPurple" );
 	return sprite;
@@ -1055,34 +1064,38 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 		return;
 	}
 
-	if ( node->childs.contains( rotation ) )
+	const auto &childs = node->childs;
+
+	DefNode *temp;
+	if ( maps::try_at( childs, rotation, temp ) )
 	{
-		getBaseSpriteDryRun( node->childs[rotation], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
-	if ( node->childs.contains( season ) )
+	if ( maps::try_at( childs, season, temp ) )
 	{
-		getBaseSpriteDryRun( node->childs[season], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
-	if ( node->childs.contains( itemSID ) )
+	if ( maps::try_at( childs, itemSID, temp ) )
 	{
-		getBaseSpriteDryRun( node->childs[itemSID], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
-	if ( node->childs.contains( "Frame" + QString::number( animFrame ) ) )
+	auto frameKey = "Frame" + QString::number( animFrame );
+	if ( maps::try_at( childs, frameKey, temp ) )
 	{
-		getBaseSpriteDryRun( node->childs["Frame" + QString::number( animFrame )], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
 
-	if ( node->type == "CombineNode" && node->childs.size() > 1 )
+	if ( node->type == "CombineNode" && childs.size() > 1 )
 	{
-		getBaseSpriteDryRun( node->childs["Combine0"], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( childs.at("Combine0"), itemSID, materialSIDs, season, rotation, animFrame );
 
-		for ( int i = 1; i < node->childs.size(); ++i )
+		for ( int i = 1; i < childs.size(); ++i )
 		{
-			getBaseSpriteDryRun( node->childs["Combine" + QString::number( i )], itemSID, materialSIDs, season, rotation, animFrame );
+			getBaseSpriteDryRun( childs.at("Combine" + QString::number( i )), itemSID, materialSIDs, season, rotation, animFrame );
 		}
 		return;
 	}
@@ -1095,8 +1108,8 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 		{
 			if ( weights.contains( 0 ) )
 			{
-				randomNumber = rand() % node->childs.size();
-				m_randomNumbers.insert( node->childPos.toInt(), randomNumber );
+				randomNumber = rand() % childs.size();
+				m_randomNumbers.insert_or_assign( node->childPos.toInt(), randomNumber );
 			}
 			else
 			{
@@ -1110,42 +1123,40 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 					total += weights[i];
 					if ( ran < total )
 					{
-						m_randomNumbers.insert( node->childPos.toInt(), i );
+						m_randomNumbers.insert_or_assign( node->childPos.toInt(), i );
 						break;
 					}
 				}
 			}
 		}
-		randomNumber = m_randomNumbers.value( node->childPos.toInt() );
+		randomNumber = m_randomNumbers.at( node->childPos.toInt() );
 
-		getBaseSpriteDryRun( node->childs["Random" + QString::number( randomNumber )], itemSID, materialSIDs, season, rotation, animFrame );
+		getBaseSpriteDryRun( childs.at("Random" + QString::number( randomNumber )), itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
 
-	if ( materialSIDs.size() )
+	if ( !materialSIDs.empty() )
 	{
 		QString materialType = getMaterialType( materialSID );
-		if ( node->childs.contains( materialType ) )
+		if ( maps::try_at( childs, materialType, temp ) )
 		{
-			getBaseSpriteDryRun( node->childs[materialType], itemSID, materialSIDs, season, rotation, animFrame );
+			getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 			return;
 		}
 
 		QString materialSID = *materialSIDs.begin();
-		if ( node->childs.contains( materialSID ) )
+		if ( maps::try_at( childs, materialSID, temp ) )
 		{
-			getBaseSpriteDryRun( node->childs[materialSID], itemSID, materialSIDs, season, rotation, animFrame );
+			getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 			return;
 		}
 		// if no other hit
-		if ( node->childs.size() )
+		if ( !childs.empty() )
 		{
-			getBaseSpriteDryRun( node->childs.first(), itemSID, materialSIDs, season, rotation, animFrame );
+			getBaseSpriteDryRun( childs.begin()->second, itemSID, materialSIDs, season, rotation, animFrame );
 			return;
 		}
 	}
-
-	return;
 }
 
 int SpriteFactory::numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation )
@@ -1155,7 +1166,7 @@ int SpriteFactory::numFrames( const DefNode* node, const QString itemSID, const 
 
 QString SpriteFactory::getMaterialType( const QString materialSID )
 {
-	return m_materialTypes.value( materialSID );
+	return m_materialTypes.at( materialSID );
 }
 
 Sprite* SpriteFactory::getSprite( const int id )
@@ -1170,7 +1181,7 @@ Sprite* SpriteFactory::getSprite( const int id )
 
 void SpriteFactory::printDebug()
 {
-	for ( auto si : m_spriteIDs.toStdMap() )
+	for ( auto si : m_spriteIDs )
 	{
 		qDebug() << si.first << " - " << si.second;
 	}
@@ -1213,7 +1224,7 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 				}
 				else
 				{
-					m_creatureSpriteIDs.insert( sc.creatureID, sc.uID );
+					m_creatureSpriteIDs.insert_or_assign( sc.creatureID, sc.uID );
 					m_sprites.append( nullptr );
 				}
 			}
@@ -1576,21 +1587,21 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 	sr->m_sprites.push_back( sbl );
 	sr->m_sprites.push_back( sbr );
 
-	if ( m_creatureSpriteIDs.contains( creatureUID ) )
+	if ( auto it = m_creatureSpriteIDs.find( creatureUID ); it != m_creatureSpriteIDs.end() )
 	{
-		Sprite* oldSprite = m_sprites[m_creatureSpriteIDs.value( creatureUID )];
+		Sprite* oldSprite = m_sprites[it->second];
 		if ( oldSprite )
 		{
 			delete oldSprite;
 		}
 
-		sr->uID = m_creatureSpriteIDs.value( creatureUID );
+		sr->uID = it->second;
 		m_sprites.replace( sr->uID, sr );
 	}
 	else
 	{
 		sr->uID = m_sprites.size();
-		m_creatureSpriteIDs.insert( creatureUID, sr->uID );
+		m_creatureSpriteIDs.insert_or_assign( creatureUID, sr->uID );
 		m_sprites.append( sr );
 
 		SpriteCreation sc { "Creature", { "None" }, m_randomNumbers, sr->uID, creatureUID };
@@ -1668,7 +1679,7 @@ QPixmap SpriteFactory::baseSprite( QString id )
 unsigned int SpriteFactory::thoughtBubbleID( QString sid )
 {
 	QMutexLocker ml( &m_mutex );
-	return m_thoughtBubbleIDs.value( sid );
+	return m_thoughtBubbleIDs.at( sid );
 }
 
 int SpriteFactory::texesUsed()

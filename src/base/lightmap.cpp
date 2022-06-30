@@ -26,6 +26,8 @@
 #include <QQueue>
 #include <QVector3D>
 
+#include <ranges>
+
 LightMap::LightMap()
 {
 }
@@ -98,7 +100,7 @@ void LightMap::addLight( absl::btree_set<unsigned int>& updateList, std::vector<
 
 				if ( curIntensity > 0 )
 				{
-					m_lightMap[curPosID].insert( id, curIntensity );
+					m_lightMap[curPosID].insert_or_assign( id, curIntensity );
 
 					Tile& tile      = getTile( world, curPos );
 					tile.lightLevel = calcIntensity( curPosID );
@@ -131,7 +133,7 @@ void LightMap::addLight( absl::btree_set<unsigned int>& updateList, std::vector<
 			}
 		}
 	}
-	m_lights.insert( id, light );
+	m_lights.insert_or_assign( id, light );
 }
 
 unsigned char LightMap::calcIntensity( unsigned int posID )
@@ -140,7 +142,7 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 	{
 		const auto& maps = m_lightMap[posID];
 		int light = 0;
-		for ( const auto& value : maps )
+		for ( const auto& value : maps | std::views::values )
 		{
 			light += value;
 		}
@@ -157,11 +159,11 @@ void LightMap::removeLight( absl::btree_set<unsigned int>& updateList, std::vect
 	if ( m_lights.contains( id ) )
 	{
 		Light light = m_lights[id];
-		m_lights.remove( id );
+		m_lights.erase( id );
 
 		for ( auto posID : light.effectTiles )
 		{
-			m_lightMap[posID].remove( id );
+			m_lightMap[posID].erase( id );
 
 			Tile& tile      = world[posID];
 			tile.lightLevel = calcIntensity( posID );
@@ -177,7 +179,7 @@ void LightMap::updateLight( absl::btree_set<unsigned int>& updateList, std::vect
 	{
 		auto maps = m_lightMap[posID];
 
-		for ( auto key : maps.keys() )
+		for ( auto key : maps | std::views::keys )
 		{
 			Light light = m_lights[key];
 

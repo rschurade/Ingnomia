@@ -21,6 +21,8 @@
 #include "../game/stockpile.h"
 #include <absl/container/flat_hash_map.h>
 
+#include <ranges>
+
 class Job;
 class Stockpile;
 class Inventory;
@@ -66,9 +68,9 @@ public:
 	QSharedPointer<Job> getJob( unsigned int jobID );
 	bool hasJobID( unsigned int jobID ) const;
 
-	QList<unsigned int> allStockpiles()
+	auto allStockpiles()
 	{
-		return m_stockpiles.keys();
+		return m_stockpiles | std::views::keys;
 	}
 	QList<unsigned int>& allStockpilesOrdered()
 	{
@@ -91,7 +93,7 @@ public:
 private:
 	QPointer<Game> g;
 
-	QMap<unsigned int, Stockpile*> m_stockpiles;
+	absl::btree_map<unsigned int, Stockpile*> m_stockpiles;
 	QList<unsigned int> m_stockpilesOrdered;
 	absl::flat_hash_map<unsigned int, unsigned int> m_allStockpileTiles;
 

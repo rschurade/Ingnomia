@@ -52,26 +52,26 @@ World::World( int dimX, int dimY, int dimZ, Game* game ) :
 	m_dimZ( dimZ ),
 	m_regionMap( this )
 {
-	m_constructionSID2ENUM.insert( "Wall", CID_WALL );
-	m_constructionSID2ENUM.insert( "FancyWall", CID_FANCYWALL );
-	m_constructionSID2ENUM.insert( "Fence", CID_FENCE );
-	m_constructionSID2ENUM.insert( "Floor", CID_FLOOR );
-	m_constructionSID2ENUM.insert( "FancyFloor", CID_FANCYFLOOR );
-	m_constructionSID2ENUM.insert( "WallFloor", CID_WALLFLOOR );
-	m_constructionSID2ENUM.insert( "Stairs", CID_STAIRS );
-	m_constructionSID2ENUM.insert( "Ramp", CID_RAMP );
-	m_constructionSID2ENUM.insert( "RampCorner", CID_RAMPCORNER );
-	m_constructionSID2ENUM.insert( "Item", CID_ITEM );
-	m_constructionSID2ENUM.insert( "Workshop", CID_WORKSHOP );
+	m_constructionSID2ENUM.insert_or_assign( "Wall", CID_WALL );
+	m_constructionSID2ENUM.insert_or_assign( "FancyWall", CID_FANCYWALL );
+	m_constructionSID2ENUM.insert_or_assign( "Fence", CID_FENCE );
+	m_constructionSID2ENUM.insert_or_assign( "Floor", CID_FLOOR );
+	m_constructionSID2ENUM.insert_or_assign( "FancyFloor", CID_FANCYFLOOR );
+	m_constructionSID2ENUM.insert_or_assign( "WallFloor", CID_WALLFLOOR );
+	m_constructionSID2ENUM.insert_or_assign( "Stairs", CID_STAIRS );
+	m_constructionSID2ENUM.insert_or_assign( "Ramp", CID_RAMP );
+	m_constructionSID2ENUM.insert_or_assign( "RampCorner", CID_RAMPCORNER );
+	m_constructionSID2ENUM.insert_or_assign( "Item", CID_ITEM );
+	m_constructionSID2ENUM.insert_or_assign( "Workshop", CID_WORKSHOP );
 
-	m_constrItemSID2ENUM.insert( "Containers", CI_STORAGE );
-	m_constrItemSID2ENUM.insert( "Furniture", CI_FURNITURE );
-	m_constrItemSID2ENUM.insert( "Lights", CI_LIGHT );
-	m_constrItemSID2ENUM.insert( "Doors", CI_DOOR );
-	m_constrItemSID2ENUM.insert( "AlarmBell", CI_ALARMBELL );
-	m_constrItemSID2ENUM.insert( "Farm", CI_FARMUTIL );
-	m_constrItemSID2ENUM.insert( "Mechanism", CI_MECHANISM );
-	m_constrItemSID2ENUM.insert( "Hydraulics", CI_HYDRAULICS );
+	m_constrItemSID2ENUM.insert_or_assign( "Containers", CI_STORAGE );
+	m_constrItemSID2ENUM.insert_or_assign( "Furniture", CI_FURNITURE );
+	m_constrItemSID2ENUM.insert_or_assign( "Lights", CI_LIGHT );
+	m_constrItemSID2ENUM.insert_or_assign( "Doors", CI_DOOR );
+	m_constrItemSID2ENUM.insert_or_assign( "AlarmBell", CI_ALARMBELL );
+	m_constrItemSID2ENUM.insert_or_assign( "Farm", CI_FARMUTIL );
+	m_constrItemSID2ENUM.insert_or_assign( "Mechanism", CI_MECHANISM );
+	m_constrItemSID2ENUM.insert_or_assign( "Hydraulics", CI_HYDRAULICS );
 }
 
 World::~World()
@@ -239,7 +239,7 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 	if ( !m_jobSprites.contains( pos.toInt() ) )
 	{
 		QVariantMap entry;
-		m_jobSprites.insert( pos.toInt(), entry );
+		m_jobSprites.insert_or_assign( pos.toInt(), entry );
 	}
 	if ( floor )
 	{
@@ -270,7 +270,7 @@ void World::clearJobSprite( Position pos, bool floor )
 	}
 	if ( m_jobSprites[pos.toInt()].isEmpty() )
 	{
-		m_jobSprites.remove( pos.toInt() );
+		m_jobSprites.erase( pos.toInt() );
 	}
 	addToUpdateList( pos.toInt() );
 }
@@ -316,7 +316,7 @@ void World::updateFenceSprite( Position pos )
 	QVariantMap constr;
 	if ( m_wallConstructions.contains( pos.toInt() ) )
 	{
-		constr = m_wallConstructions.value( pos.toInt() );
+		constr = m_wallConstructions.at( pos.toInt() );
 	}
 	else
 	{
@@ -327,7 +327,7 @@ void World::updateFenceSprite( Position pos )
 
 	if ( m_wallConstructions.contains( pos.northOf().toInt() ) )
 	{
-		QVariantMap nc = m_wallConstructions.value( pos.northOf().toInt() );
+		QVariantMap nc = m_wallConstructions.at( pos.northOf().toInt() );
 		if ( nc.value( "ConstructionID" ).toString() == constructionSID )
 		{
 			suffix += "N";
@@ -336,7 +336,7 @@ void World::updateFenceSprite( Position pos )
 
 	if ( m_wallConstructions.contains( pos.eastOf().toInt() ) )
 	{
-		QVariantMap nc = m_wallConstructions.value( pos.eastOf().toInt() );
+		QVariantMap nc = m_wallConstructions.at( pos.eastOf().toInt() );
 		if ( nc.value( "ConstructionID" ).toString() == constructionSID )
 		{
 			suffix += "E";
@@ -344,7 +344,7 @@ void World::updateFenceSprite( Position pos )
 	}
 	if ( m_wallConstructions.contains( pos.southOf().toInt() ) )
 	{
-		QVariantMap nc = m_wallConstructions.value( pos.southOf().toInt() );
+		QVariantMap nc = m_wallConstructions.at( pos.southOf().toInt() );
 		if ( nc.value( "ConstructionID" ).toString() == constructionSID )
 		{
 			suffix += "S";
@@ -352,7 +352,7 @@ void World::updateFenceSprite( Position pos )
 	}
 	if ( m_wallConstructions.contains( pos.westOf().toInt() ) )
 	{
-		QVariantMap nc = m_wallConstructions.value( pos.westOf().toInt() );
+		QVariantMap nc = m_wallConstructions.at( pos.westOf().toInt() );
 		if ( nc.value( "ConstructionID" ).toString() == constructionSID )
 		{
 			suffix += "W";
@@ -381,7 +381,7 @@ void World::updatePipeSprite( Position pos )
 	QVariantMap constr;
 	if ( m_wallConstructions.contains( pos.toInt() ) )
 	{
-		constr = m_wallConstructions.value( pos.toInt() );
+		constr = m_wallConstructions.at( pos.toInt() );
 	}
 	else
 	{
@@ -483,7 +483,7 @@ void World::expelTileInhabitants( Position pos, Position& to )
 void World::plantTree( Position pos, QString type, bool fullyGrown )
 {
 	Plant plant_( pos, type, fullyGrown, g );
-	m_plants.insert( pos.toInt(), plant_ );
+	m_plants.insert_or_assign( pos.toInt(), plant_ );
 
 	getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 	addToUpdateList( pos );
@@ -492,7 +492,7 @@ void World::plantTree( Position pos, QString type, bool fullyGrown )
 void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 {
 	Plant plant_( pos, type, fullyGrown, g );
-	m_plants.insert( pos.toInt(), plant_ );
+	m_plants.insert_or_assign( pos.toInt(), plant_ );
 
 	Tile& tile = getTile( pos );
 	if( plant_.hasAlpha() )
@@ -511,7 +511,7 @@ void World::plant( Position pos, unsigned int baseItem )
 		if ( DB::select( "Material", "Plants", plant ).toString() == g->inv()->materialSID( baseItem ) )
 		{
 			Plant plant_( pos, plant, false, g );
-			m_plants.insert( pos.toInt(), plant_ );
+			m_plants.insert_or_assign( pos.toInt(), plant_ );
 			getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite()->uID;
 			return;
 		}
@@ -521,7 +521,7 @@ void World::plant( Position pos, unsigned int baseItem )
 void World::addPlant( Plant plant )
 {
 	Position pos = plant.getPos();
-	m_plants.insert( pos.toInt(), plant );
+	m_plants.insert_or_assign( pos.toInt(), plant );
 	//getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite();
 }
 
@@ -531,7 +531,7 @@ void World::removePlant( Position pos )
 	{
 		getTile( pos ).wallType      = WallType::WT_NOWALL;
 		getTile( pos ).wallSpriteUID = 0;
-		m_plants.remove( pos.toInt() );
+		m_plants.erase( pos.toInt() );
 		getTile( pos ).wallSpriteUID = 0;
 		addToUpdateList( pos );
 	}
@@ -539,7 +539,7 @@ void World::removePlant( Position pos )
 
 void World::removePlant( Plant plant )
 {
-	m_plants.remove( plant.getPos().toInt() );
+	m_plants.erase( plant.getPos().toInt() );
 }
 
 bool World::reduceOneGrowLevel( Position pos )
@@ -561,7 +561,7 @@ void World::removeCreatureFromPosition( Position pos, unsigned int creatureID )
 	{
 		if ( m_creaturePositions[pos.toInt()].size() == 1 )
 		{
-			m_creaturePositions.remove( pos.toInt() );
+			m_creaturePositions.erase( pos.toInt() );
 			g->mcm()->updateCreaturesAtPos( pos, 0 );
 		}
 		else
@@ -584,7 +584,7 @@ void World::insertCreatureAtPosition( Position pos, unsigned int creatureID )
 	else
 	{
 		QList<unsigned int> cl( { creatureID } );
-		m_creaturePositions.insert( pos.toInt(), cl );
+		m_creaturePositions.insert_or_assign( pos.toInt(), cl );
 		g->mcm()->updateCreaturesAtPos( pos, 1 );
 	}
 	addToUpdateList( pos );

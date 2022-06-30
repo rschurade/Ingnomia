@@ -61,9 +61,9 @@ QVariantMap Uniform::serialize()
 	vUni.insert( "ID", id );
 	QVariantMap items;
 
-	for( const auto& key : parts.keys() )
+	for( auto& entry : parts )
 	{
-		items.insert( key, parts[key].serialize() );
+		items.insert( entry.first, entry.second.serialize() );
 	}
 	vUni.insert( "Items", items );
 
@@ -76,28 +76,28 @@ Uniform::Uniform( const QVariantMap& in )
 	id            = in.value( "ID" ).toUInt();
 	auto vmItems  = in.value( "Items" ).toMap();
 
-	parts.insert( "HeadArmor", UniformItem( vmItems.value( "HeadArmor" ).toMap() ) );
-	parts.insert( "ChestArmor", UniformItem( vmItems.value( "ChestArmor" ).toMap() ) );
-	parts.insert( "ArmArmor", UniformItem( vmItems.value( "ArmArmor" ).toMap() ) );
-	parts.insert( "HandArmor", UniformItem( vmItems.value( "HandArmor" ).toMap() ) );
-	parts.insert( "LegArmor", UniformItem( vmItems.value( "LegArmor" ).toMap() ) );
-	parts.insert( "FootArmor", UniformItem( vmItems.value( "FootArmor" ).toMap() ) );
-	parts.insert( "LeftHandHeld", UniformItem( vmItems.value( "LeftHandHeld" ).toMap() ) );
-	parts.insert( "RightHandHeld", UniformItem( vmItems.value( "RightHandHeld" ).toMap() ) );
-	parts.insert( "Back", UniformItem( vmItems.value( "Back" ).toMap() ) );
+	parts.insert_or_assign( "HeadArmor", UniformItem( vmItems.value( "HeadArmor" ).toMap() ) );
+	parts.insert_or_assign( "ChestArmor", UniformItem( vmItems.value( "ChestArmor" ).toMap() ) );
+	parts.insert_or_assign( "ArmArmor", UniformItem( vmItems.value( "ArmArmor" ).toMap() ) );
+	parts.insert_or_assign( "HandArmor", UniformItem( vmItems.value( "HandArmor" ).toMap() ) );
+	parts.insert_or_assign( "LegArmor", UniformItem( vmItems.value( "LegArmor" ).toMap() ) );
+	parts.insert_or_assign( "FootArmor", UniformItem( vmItems.value( "FootArmor" ).toMap() ) );
+	parts.insert_or_assign( "LeftHandHeld", UniformItem( vmItems.value( "LeftHandHeld" ).toMap() ) );
+	parts.insert_or_assign( "RightHandHeld", UniformItem( vmItems.value( "RightHandHeld" ).toMap() ) );
+	parts.insert_or_assign( "Back", UniformItem( vmItems.value( "Back" ).toMap() ) );
 }
 
 Uniform::Uniform()
 {
-	parts.insert( "HeadArmor", UniformItem() );
-	parts.insert( "ChestArmor", UniformItem() );
-	parts.insert( "ArmArmor", UniformItem() );
-	parts.insert( "HandArmor", UniformItem() );
-	parts.insert( "LegArmor", UniformItem( ) );
-	parts.insert( "FootArmor", UniformItem() );
-	parts.insert( "LeftHandHeld", UniformItem() );
-	parts.insert( "RightHandHeld", UniformItem() );
-	parts.insert( "Back", UniformItem() );
+	parts.insert_or_assign( "HeadArmor", UniformItem() );
+	parts.insert_or_assign( "ChestArmor", UniformItem() );
+	parts.insert_or_assign( "ArmArmor", UniformItem() );
+	parts.insert_or_assign( "HandArmor", UniformItem() );
+	parts.insert_or_assign( "LegArmor", UniformItem( ) );
+	parts.insert_or_assign( "FootArmor", UniformItem() );
+	parts.insert_or_assign( "LeftHandHeld", UniformItem() );
+	parts.insert_or_assign( "RightHandHeld", UniformItem() );
+	parts.insert_or_assign( "Back", UniformItem() );
 }
 
 
@@ -226,7 +226,10 @@ void MilitaryManager::init()
 		auto sl = mm.value( "Squads" ).toList();
 		for ( auto entry : sl )
 		{
-			Squad squad( g->m_creatureManager->types(), entry.toMap() );
+			const auto &types = g->m_creatureManager->types();
+			QStringList typesCopy(types.begin(), types.end());
+
+			Squad squad( typesCopy, entry.toMap() );
 			m_squads.insert( squad.id, squad );
 
 			for( auto gnome : squad.gnomes )
@@ -380,10 +383,12 @@ Squad* MilitaryManager::squad( unsigned int id )
 
 unsigned int MilitaryManager::addSquad()
 {
-	Squad squad( g->m_creatureManager->types() );
+	const auto &types = g->m_creatureManager->types();
+	QStringList typesCopy(types.begin(), types.end());
 
-	auto types = g->m_creatureManager->types();
-	for( auto type : types )
+	Squad squad( typesCopy );
+
+	for( const auto& type : types )
 	{
 		TargetPriority tp { type, MilAttitude::DEFEND };
 		squad.priorities.append( tp );

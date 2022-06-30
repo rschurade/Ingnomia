@@ -20,7 +20,7 @@
 #include "../../3rdparty/fastnoise/FastNoise.h"
 
 #include <QPointer>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QObject>
 #include <QVector>
 
@@ -96,7 +96,7 @@ private:
 	void setEmbedded3x3( std::vector<Tile>& world, Position& pos, unsigned short embeddedMaterial, unsigned short spriteID );
 
 	float perlinRandWhiteNoise( int x, int y, int z = -1 );
-	QString getRandomEmbedded( int x, int y, int z, QMap<QString, EmbeddedMaterial>& em );
+	QString getRandomEmbedded( int x, int y, int z, absl::btree_map<QString, EmbeddedMaterial>& em );
 
 	void createHeightMap( int dimX, int dimY );
 

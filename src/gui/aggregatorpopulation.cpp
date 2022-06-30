@@ -58,7 +58,8 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 {
 	if( !g ) return;
 
-	emit signalProfessionList( g->gm()->professions() );
+	const auto professions = g->gm()->professions();
+	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
 
 	m_populationInfo.gnomes.clear();
 
@@ -278,7 +279,8 @@ void AggregatorPopulation::onSetHourForAll( int hour, ScheduleActivity activity 
 void AggregatorPopulation::onRequestProfessions()
 {
 	if( !g ) return;
-	emit signalProfessionList( g->gm()->professions() );
+	const auto professions = g->gm()->professions();
+	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 	
 void AggregatorPopulation::onRequestSkills( QString profession )
@@ -309,13 +311,15 @@ void AggregatorPopulation::onDeleteProfession( QString name )
 {
 	if( !g ) return;
 	g->gm()->removeProfession( name );
-	emit signalProfessionList( g->gm()->professions() );
+	const auto professions = g->gm()->professions();
+	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
 }
 	
 void AggregatorPopulation::onNewProfession()
 {
 	if( !g ) return;
 	QString name = g->gm()->addProfession();
-	emit signalProfessionList( g->gm()->professions() );
+	const auto professions = g->gm()->professions();
+	emit signalProfessionList( QStringList(professions.begin(), professions.end()) );
 	emit signalSelectEditProfession( name );
 }

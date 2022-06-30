@@ -57,7 +57,7 @@ public:
 	void updateInfo( const GuiCreatureInfo& info );
 	void updateProfessionList( const QStringList& professions );
 
-	void updateEmptySlotImages( const QMap< QString, std::vector<unsigned char> >& pics );
+	void updateEmptySlotImages( const absl::btree_map< QString, std::vector<unsigned char> >& pics );
 
 private:
 	CreatureInfoProxy* m_proxy = nullptr;

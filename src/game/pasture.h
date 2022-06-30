@@ -23,7 +23,7 @@
 #include "../game/job.h"
 
 #include <QList>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <QPair>
 #include <QVariantMap>
 
@@ -139,7 +139,7 @@ public:
 private:
 	PastureProperties m_properties;
 
-	QMap<unsigned int, PastureField*> m_fields;
+	absl::btree_map<unsigned int, PastureField*> m_fields;
 
 	QList<unsigned int> m_animals;
 };

@@ -25,31 +25,33 @@
 #include "../game/inventory.h"
 #include "../gui/strings.h"
 
+#include <ranges>
+
 AggregatorInventory::AggregatorInventory( QObject* parent ) :
 	QObject( parent )
 {
 
-	m_buildSelection2String.insert( BuildSelection::Workshop, "Workshop" );
-	m_buildSelection2String.insert( BuildSelection::Wall, "Wall" );
-	m_buildSelection2String.insert( BuildSelection::Floor, "Floor" );
-	m_buildSelection2String.insert( BuildSelection::Stairs, "Stairs" );
-	m_buildSelection2String.insert( BuildSelection::Ramps, "Ramp" );
-	m_buildSelection2String.insert( BuildSelection::Containers, "Containers" );
-	m_buildSelection2String.insert( BuildSelection::Fence, "Fence" );
-	m_buildSelection2String.insert( BuildSelection::Furniture, "Furniture" );
-	m_buildSelection2String.insert( BuildSelection::Utility, "Utility" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Workshop, "Workshop" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Wall, "Wall" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Floor, "Floor" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Stairs, "Stairs" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Ramps, "Ramp" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Containers, "Containers" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Fence, "Fence" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Furniture, "Furniture" );
+	m_buildSelection2String.insert_or_assign( BuildSelection::Utility, "Utility" );
 
-	m_buildSelection2buildItem.insert( BuildSelection::Workshop, BuildItemType::Workshop );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Workshop, BuildItemType::Workshop );
 
-	m_buildSelection2buildItem.insert( BuildSelection::Wall, BuildItemType::Terrain );
-	m_buildSelection2buildItem.insert( BuildSelection::Floor, BuildItemType::Terrain );
-	m_buildSelection2buildItem.insert( BuildSelection::Stairs, BuildItemType::Terrain );
-	m_buildSelection2buildItem.insert( BuildSelection::Ramps, BuildItemType::Terrain );
-	m_buildSelection2buildItem.insert( BuildSelection::Fence, BuildItemType::Terrain );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Wall, BuildItemType::Terrain );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Floor, BuildItemType::Terrain );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Stairs, BuildItemType::Terrain );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Ramps, BuildItemType::Terrain );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Fence, BuildItemType::Terrain );
 	
-	m_buildSelection2buildItem.insert( BuildSelection::Containers, BuildItemType::Item );
-	m_buildSelection2buildItem.insert( BuildSelection::Furniture, BuildItemType::Item );
-	m_buildSelection2buildItem.insert( BuildSelection::Utility, BuildItemType::Item );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Containers, BuildItemType::Item );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Furniture, BuildItemType::Item );
+	m_buildSelection2buildItem.insert_or_assign( BuildSelection::Utility, BuildItemType::Item );
 }
 
 AggregatorInventory::~AggregatorInventory()
@@ -186,7 +188,7 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 			case BuildSelection::Stairs:
 			case BuildSelection::Ramps:
 			case BuildSelection::Fence:
-				rows = DB::selectRows( "Constructions", "Type", m_buildSelection2String.value( buildSelection ), "Category", category );
+				rows = DB::selectRows( "Constructions", "Type", m_buildSelection2String.at( buildSelection ), "Category", category );
 				break;
 			case BuildSelection::Workshop:
 				rows = DB::selectRows( "Workshops", "Tab", category );
@@ -212,7 +214,7 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 			GuiBuildItem gbi;
 			gbi.id   = row.value( "ID" ).toString();
 			gbi.name = S::s( prefix + row.value( "ID" ).toString() );
-			gbi.biType = m_buildSelection2buildItem.value( buildSelection );
+			gbi.biType = m_buildSelection2buildItem.at( buildSelection );
 
 			setBuildItemValues( gbi, buildSelection );
 
@@ -225,7 +227,7 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection )
 {
 	if( !g ) return;
-	auto type = m_buildSelection2buildItem.value( selection );
+	auto type = m_buildSelection2buildItem.at( selection );
 	switch ( type )
 	{
 		case BuildItemType::Workshop:
@@ -319,7 +321,7 @@ void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 	auto mats = g->inv()->materialCountsForItem( gbri.itemID );
 
 	gbri.availableMats.append( { "any", mats["any"] } );
-	for ( auto key : mats.keys() )
+	for ( auto key : mats | std::views::keys )
 	{
 		if ( key != "any" )
 		{

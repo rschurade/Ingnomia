@@ -47,7 +47,7 @@ struct GuiCreatureInfo
 	Uniform uniform;
 	Equipment equipment;
 
-	QMap< QString, std::vector<unsigned char> > itemPics;
+	absl::btree_map< QString, std::vector<unsigned char> > itemPics;
 };
 Q_DECLARE_METATYPE( GuiCreatureInfo )
 
@@ -67,7 +67,7 @@ private:
 	QPointer<Game> g;
 
 	GuiCreatureInfo m_info;
-	QMap< QString, std::vector<unsigned char> > m_emptyPics;
+	absl::btree_map< QString, std::vector<unsigned char> > m_emptyPics;
 
 	unsigned int m_currentID = 0;
 	unsigned int m_previousID = 0;
@@ -87,6 +87,6 @@ signals:
 	void signalCreatureUpdate( const GuiCreatureInfo& info );
 	void signalProfessionList( const QStringList& profs );
 	
-	void signalEmptyPics( const QMap< QString, std::vector<unsigned char> >& emptyPics );
+	void signalEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics );
 
 };

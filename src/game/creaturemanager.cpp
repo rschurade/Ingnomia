@@ -31,6 +31,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+#include "../base/containersHelper.h"
+
 CreatureManager::CreatureManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -172,10 +174,10 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 		unsigned int id = m_creatures.last()->id();
 		m_creaturesByID.insert_or_assign( id, m_creatures.last() );
 
-		int count = m_countPerType.value( type );
-	
+		int count = m_countPerType[type];
+
 		++count;
-		m_countPerType.insert( type, count );
+		m_countPerType.insert_or_assign( type, count );
 
 		auto& list = m_creaturesPerType[type];
 		list.append( id );
@@ -212,9 +214,9 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 		m_creaturesByID.insert_or_assign( id, m_creatures.last() );
 
 		QString type = creature->species();
-		int count    = m_countPerType.value( type );
+		int count    = m_countPerType[type];
 		++count;
-		m_countPerType.insert( type, count );
+		m_countPerType.insert_or_assign( type, count );
 
 		auto& list = m_creaturesPerType[type];
 		list.append( id );
@@ -273,7 +275,7 @@ int CreatureManager::count()
 
 int CreatureManager::count( QString type )
 {
-	return m_countPerType.value( type );
+	return maps::at_or_default(m_countPerType, type, 0u);
 }
 
 void CreatureManager::removeCreature( unsigned int id )
@@ -309,9 +311,9 @@ void CreatureManager::removeCreature( unsigned int id )
 		m_creaturesByID.erase( id );
 		m_creatures.removeAll( creature );
 
-		int count = m_countPerType.value( creature->species() );
+		int count = m_countPerType.at( creature->species() );
 		--count;
-		m_countPerType.insert( creature->species(), count );
+		m_countPerType.insert_or_assign( creature->species(), count );
 
 		delete creature;
 
@@ -356,7 +358,7 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 
 QList<unsigned int> CreatureManager::animalsByType( QString type )
 {
-	return m_creaturesPerType.value( type );
+	return m_creaturesPerType.at( type );
 }
 
 void CreatureManager::forceMoveAnimals( const Position& from, const Position& to )
@@ -373,12 +375,6 @@ void CreatureManager::forceMoveAnimals( const Position& from, const Position& to
 		}
 	}
 }
-
-QList<QString> CreatureManager::types()
-{
-	return m_countPerType.keys();
-}
-
 	
 QList<Animal*>& CreatureManager::animals()
 {

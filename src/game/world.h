@@ -24,6 +24,8 @@
 #include "../base/regionmap.h"
 #include "../base/tile.h"
 
+#include "plant.h"
+
 #include <QPointer>
 #include <QMutex>
 #include <QPixmap>
@@ -31,7 +33,6 @@
 #include <absl/container/btree_set.h>
 #include <vector>
 
-class Plant;
 class Animal;
 class Creature;
 class Game;
@@ -87,21 +88,21 @@ private:
 
 	std::vector<Tile> m_world;
 
-	QMap<unsigned int, Plant> m_plants;
-	QMap<unsigned int, QList<unsigned int>> m_creaturePositions;
-	QMap<unsigned int, QVariantMap> m_wallConstructions;
-	QMap<unsigned int, QVariantMap> m_floorConstructions;
+	absl::btree_map<unsigned int, Plant> m_plants;
+	absl::btree_map<unsigned int, QList<unsigned int>> m_creaturePositions;
+	absl::btree_map<unsigned int, QVariantMap> m_wallConstructions;
+	absl::btree_map<unsigned int, QVariantMap> m_floorConstructions;
 	absl::btree_set<Position> m_grass;
 	absl::btree_set<unsigned int> m_grassCandidatePositions;
-	QMap<unsigned int, QVariantMap> m_jobSprites;
+	absl::btree_map<unsigned int, QVariantMap> m_jobSprites;
 	absl::btree_set<unsigned int> m_water;
 	QList<Position> m_aquifiers;
 	QList<Position> m_deaquifiers;
 
 	absl::btree_set<unsigned int> m_updatedTiles;
 
-	QMap<QString, CONSTRUCTION_ID> m_constructionSID2ENUM;
-	QMap<QString, CONSTR_ITEM_ID> m_constrItemSID2ENUM;
+	absl::btree_map<QString, CONSTRUCTION_ID> m_constructionSID2ENUM;
+	absl::btree_map<QString, CONSTR_ITEM_ID> m_constrItemSID2ENUM;
 
 	bool constructWall( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
 	bool constructFloor( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo );
@@ -145,11 +146,11 @@ public:
 	{
 		return m_world;
 	}
-	QMap<unsigned int, QVariantMap>& wallConstructions()
+	absl::btree_map<unsigned int, QVariantMap>& wallConstructions()
 	{
 		return m_wallConstructions;
 	}
-	QMap<unsigned int, QVariantMap>& floorConstructions()
+	absl::btree_map<unsigned int, QVariantMap>& floorConstructions()
 	{
 		return m_floorConstructions;
 	}
@@ -173,7 +174,7 @@ public:
 	QVariantMap jobSprite( Position pos );
 	QVariantMap jobSprite( int x, int y, int z );
 	QVariantMap jobSprite( unsigned int tileID );
-	QMap<unsigned int, QVariantMap> jobSprites();
+	absl::btree_map<unsigned int, QVariantMap> jobSprites();
 	void insertLoadedJobSprite( unsigned int key, QVariantMap entry );
 	bool hasJob( Position pos );
 	bool hasJob( int x, int y, int z );
@@ -198,7 +199,7 @@ public:
 	int walkableNeighbors( Position pos );
 	QList<Position> connectedNeighbors( Position pos );
 
-	QMap<unsigned int, Plant>& plants()
+	absl::btree_map<unsigned int, Plant>& plants()
 	{
 		return m_plants;
 	}
@@ -228,7 +229,7 @@ public:
 	void removePlant( Plant plant );
 	bool reduceOneGrowLevel( Position pos );
 
-	QMap<unsigned int, QList<unsigned int>>& creaturePositions()
+	absl::btree_map<unsigned int, QList<unsigned int>>& creaturePositions()
 	{
 		return m_creaturePositions;
 	}

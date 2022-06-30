@@ -53,7 +53,7 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 	QVariantMap con = DB::selectRow( "Constructions", constructionSID );
 	QString type    = con.value( "Type" ).toString();
 	
-	int typeNum     = m_constructionSID2ENUM.value( type );
+	int typeNum     = m_constructionSID2ENUM.at( type );
 
 	QStringList materialSIDs;
 	QVariantList materialUIDs;
@@ -177,7 +177,7 @@ bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVarian
 		constr.insert( "Items", itemUIDs );
 		constr.insert( "Materials", materialUIDs );
 
-		m_wallConstructions.insert( pos.toInt(), constr );
+		m_wallConstructions.insert_or_assign( pos.toInt(), constr );
 	}
 
 	updateNavigation( updateCoords, extractTo );
@@ -206,10 +206,10 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 			//auto mats = removeFloor( pos, extractTo );
 			Global::util->createRawMaterialItem( extractTo, mat );
 		}
-		if ( m_floorConstructions.contains( pos.toInt() ) )
+		if ( const auto &it = m_floorConstructions.find( pos.toInt() ); it != m_floorConstructions.end() )
 		{
-			auto constr = m_floorConstructions.value( pos.toInt() );
-			m_floorConstructions.remove( pos.toInt() );
+			auto constr = it->second;
+			m_floorConstructions.erase( it );
 			deconstruct2( constr, pos, true, extractTo, false );
 		}
 
@@ -270,7 +270,7 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 		}
 		constr.insert( "Items", itemUIDs );
 		constr.insert( "Materials", materialUIDs );
-		m_floorConstructions.insert( pos.toInt(), constr );
+		m_floorConstructions.insert_or_assign( pos.toInt(), constr );
 	}
 
 	isGrassCandidate( pos );
@@ -335,7 +335,7 @@ bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVaria
 	constr.insert( "Items", itemUIDs );
 	constr.insert( "Materials", materialUIDs );
 
-	m_wallConstructions.insert( pos.toInt(), constr );
+	m_wallConstructions.insert_or_assign( pos.toInt(), constr );
 
 	updateFenceSprite( pos );
 	updateFenceSprite( pos.northOf() );
@@ -356,7 +356,7 @@ bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 	constr.insert( "Item", itemUID );
 	constr.insert( "Type", "Hydraulics" );
 
-	m_wallConstructions.insert( pos.toInt(), constr );
+	m_wallConstructions.insert_or_assign( pos.toInt(), constr );
 
 	setTileFlag( pos, TileFlag::TF_PIPE );
 	Tile& tile        = getTile( pos );
@@ -513,11 +513,11 @@ bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QV
 			constr.insert( "Pos", insertPos.toString() );
 			if ( isWall )
 			{
-				m_wallConstructions.insert( insertPos.toInt(), constr );
+				m_wallConstructions.insert_or_assign( insertPos.toInt(), constr );
 			}
 			else
 			{
-				m_floorConstructions.insert( insertPos.toInt(), constr );
+				m_floorConstructions.insert_or_assign( insertPos.toInt(), constr );
 			}
 		}
 	}
@@ -593,11 +593,11 @@ bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVari
 		constr.insert( "Pos", insertPos.toString() );
 		if ( isWall )
 		{
-			m_wallConstructions.insert( insertPos.toInt(), constr );
+			m_wallConstructions.insert_or_assign( insertPos.toInt(), constr );
 		}
 		else
 		{
-			m_floorConstructions.insert( insertPos.toInt(), constr );
+			m_floorConstructions.insert_or_assign( insertPos.toInt(), constr );
 		}
 	}
 
@@ -695,11 +695,11 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 			constr.insert( "Pos", insertPos.toString() );
 			if ( isWall )
 			{
-				m_wallConstructions.insert( insertPos.toInt(), constr );
+				m_wallConstructions.insert_or_assign( insertPos.toInt(), constr );
 			}
 			else
 			{
-				m_floorConstructions.insert( insertPos.toInt(), constr );
+				m_floorConstructions.insert_or_assign( insertPos.toInt(), constr );
 			}
 		}
 	}
@@ -926,11 +926,11 @@ bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, Q
 		constr.insert( "Pos", insertPos.toString() );
 		if ( isWall )
 		{
-			m_wallConstructions.insert( insertPos.toInt(), constr );
+			m_wallConstructions.insert_or_assign( insertPos.toInt(), constr );
 		}
 		else
 		{
-			m_floorConstructions.insert( insertPos.toInt(), constr );
+			m_floorConstructions.insert_or_assign( insertPos.toInt(), constr );
 		}
 	}
 
@@ -1014,7 +1014,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	}
 
 	addToUpdateList( pos );
-	switch ( m_constrItemSID2ENUM.value( type ) )
+	switch ( m_constrItemSID2ENUM.at( type ) )
 	{
 		case CI_STORAGE:
 			g->spm()->addContainer( itemID, pos );
@@ -1023,7 +1023,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 			g->rm()->addFurniture( itemID, pos );
 			break;
 	}
-	switch ( m_constrItemSID2ENUM.value( group ) )
+	switch ( m_constrItemSID2ENUM.at( group ) )
 	{
 		case CI_DOOR:
 			setTileFlag( pos, TileFlag::TF_DOOR );
@@ -1062,12 +1062,12 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 
 	if ( location == "Wall" )
 	{
-		m_wallConstructions.insert( pos.toInt(), constr );
+		m_wallConstructions.insert_or_assign( pos.toInt(), constr );
 	}
 	else if ( location == "Floor" || location == "FloorHidden" )
 	{
 		constr.insert( "Hidden", location == "FloorHidden" );
-		m_floorConstructions.insert( pos.toInt(), constr );
+		m_floorConstructions.insert_or_assign( pos.toInt(), constr );
 	}
 
 	return true;
@@ -1094,10 +1094,10 @@ void World::updateNavigation( QList<Position>& coords, Position extractTo )
 bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 {
 	QVariantMap constr;
-	if ( m_wallConstructions.contains( decPos.toInt() ) )
+	if ( const auto &it = m_wallConstructions.find( decPos.toInt() ); it != m_wallConstructions.end() )
 	{
-		constr = m_wallConstructions.value( decPos.toInt() );
-		m_wallConstructions.remove( decPos.toInt() );
+		constr = it->second;
+		m_wallConstructions.erase( it );
 		return deconstruct2( constr, decPos, false, workPos, ignoreGravity );
 	}
 	else if ( g->wsm()->isWorkshop( decPos ) )
@@ -1129,10 +1129,10 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 		g->wsm()->deleteWorkshop( ws->id() );
 		return true;
 	}
-	else if ( m_floorConstructions.contains( decPos.toInt() ) )
+	else if ( const auto &it = m_floorConstructions.find( decPos.toInt() ); it != m_floorConstructions.end() )
 	{
-		constr = m_floorConstructions.value( decPos.toInt() );
-		m_floorConstructions.remove( decPos.toInt() );
+		constr = it->second;
+		m_floorConstructions.erase( it );
 		return deconstruct2( constr, decPos, true, workPos, ignoreGravity );
 	}
 	else
@@ -1155,7 +1155,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		{
 			group = "AlarmBell";
 		}
-		switch ( m_constrItemSID2ENUM.value( type ) )
+		switch ( m_constrItemSID2ENUM.at( type ) )
 		{
 			case CI_STORAGE:
 				g->spm()->removeContainer( itemID, decPos );
@@ -1166,7 +1166,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 			case CI_HYDRAULICS:
 				deconstructPipe( constr, decPos, workPos );
 		}
-		switch ( m_constrItemSID2ENUM.value( group ) )
+		switch ( m_constrItemSID2ENUM.at( group ) )
 		{
 			case CI_DOOR:
 				clearTileFlag( decPos, TileFlag::TF_DOOR );
@@ -1233,7 +1233,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		//if construction above is scaffold
 		if ( m_wallConstructions.contains( decPos.aboveOf().toInt() ) )
 		{
-			auto aboveConstr = m_wallConstructions.value( decPos.aboveOf().toInt() );
+			auto aboveConstr = m_wallConstructions.at( decPos.aboveOf().toInt() );
 			if ( aboveConstr.value( "ConstructionID" ).toString() == "Scaffold" )
 			{
 				deconstruct( decPos.aboveOf(), workPos, ignoreGravity );
@@ -1276,7 +1276,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 					tile.flags += TileFlag::TF_WALKABLE;
 				}
 
-				m_wallConstructions.remove( pos.toInt() );
+				m_wallConstructions.erase( pos.toInt() );
 			}
 			else
 			{
@@ -1310,7 +1310,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 					discover( tmpPos );
 					addToUpdateList( tmpPos );
 				}
-				m_floorConstructions.remove( pos.toInt() );
+				m_floorConstructions.erase( pos.toInt() );
 			}
 		}
 	}

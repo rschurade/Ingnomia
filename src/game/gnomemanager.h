@@ -24,6 +24,8 @@
 
 #include <QList>
 
+#include <ranges>
+
 class Game;
 
 class GnomeManager : public QObject
@@ -39,8 +41,8 @@ private:
 
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;
-	QMap<unsigned int, Gnome*> m_gnomesByID;
-	QMap<QString, QStringList> m_profs;
+	absl::btree_map<unsigned int, Gnome*> m_gnomesByID;
+	absl::btree_map<QString, QStringList> m_profs;
 
 	QList<Gnome*> m_specialGnomes;
 	QList<Automaton*> m_automatons;
@@ -53,7 +55,11 @@ public:
 
 	void loadProfessions();
 	void saveProfessions();
-	QStringList professions();
+	auto professions()
+	{
+		return m_profs | std::views::keys;
+	}
+
 	QStringList professionSkills( QString profession );
 	QString addProfession();
 	void addProfession( QString name, QStringList skills );

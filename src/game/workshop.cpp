@@ -221,7 +221,7 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 			}
 
 			Position constrPos( pos + offset );
-			m_tiles.insert( constrPos.toInt(), constrPos );
+			m_tiles.insert_or_assign( constrPos.toInt(), constrPos );
 		}
 
 		m_properties.gui = dbws->GUI;
@@ -281,7 +281,7 @@ Workshop::Workshop( QVariantMap vals, Game* game ) :
 	for ( auto vt : vtl )
 	{
 		Position pos( vt );
-		m_tiles.insert( pos.toInt(), pos );
+		m_tiles.insert_or_assign( pos.toInt(), pos );
 	}
 
 	QVariantList vjl = vals.value( "JobQueue" ).toList();
@@ -317,7 +317,7 @@ QVariant Workshop::serialize()
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( auto tp : m_tiles )
+	for ( auto tp : m_tiles | std::views::values )
 	{
 		QString ps = tp.toString();
 		tiles.append( ps );
@@ -633,7 +633,7 @@ bool Workshop::canCraft( QString itemSID, QString materialSID )
 		return false;
 	}
 
-	const auto& possibleMaterials = possibleCrafts[itemSID];
+	const auto& possibleMaterials = possibleCrafts.at(itemSID);
 
 	QString craftID;
 	if ( materialSID != "any" )
@@ -669,7 +669,7 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 		return false;
 	}
 
-	const auto& possibleMaterials = possibleCrafts[itemSID];
+	const auto& possibleMaterials = possibleCrafts.at(itemSID);
 
 	QString craftID;
 	if ( materialSID != "any" )
@@ -1173,7 +1173,7 @@ unsigned int Workshop::getPossibleStockpile()
 			short xMax = 0;
 			short yMax = 0;
 
-			for ( auto spField : sp->getFields() )
+			for ( auto spField : sp->getFields() | std::views::values )
 			{
 				Position pos = spField->pos;
 				xMin         = qMin( xMin, pos.x );
@@ -1204,11 +1204,11 @@ bool Workshop::outputTileFree()
 
 	if ( !isFree )
 	{
-		bool alreadySet = g->w()->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = g->w()->getTileFlag( m_tiles.begin()->second ) & TileFlag::TF_BLOCKED;
 
 		if ( !alreadySet )
 		{
-			for ( auto pos : m_tiles )
+			for ( auto pos : m_tiles | std::views::values )
 			{
 				g->w()->setTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
@@ -1216,11 +1216,11 @@ bool Workshop::outputTileFree()
 	}
 	else
 	{
-		bool alreadySet = g->w()->getTileFlag( m_tiles.first() ) & TileFlag::TF_BLOCKED;
+		bool alreadySet = g->w()->getTileFlag( m_tiles.begin()->second ) & TileFlag::TF_BLOCKED;
 
 		if ( alreadySet )
 		{
-			for ( auto pos : m_tiles )
+			for ( auto pos : m_tiles | std::views::values )
 			{
 				g->w()->clearTileFlag( pos, TileFlag::TF_BLOCKED );
 			}

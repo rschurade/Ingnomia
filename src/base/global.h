@@ -23,7 +23,7 @@
 #include <NsGui/InputEnums.h>
 
 #include <QDomElement>
-#include <QMap>
+#include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
 #include <absl/container/flat_hash_map.h>
 #include <QString>
@@ -60,7 +60,7 @@ public:
 
 	static QVariantMap copiedStockpileSettings;
 
-	static QMap<QString, QVariantMap> m_windowParams;
+	static absl::btree_map<QString, QVariantMap> m_windowParams;
 
 	static int dimX;
 	static int dimY;
@@ -71,10 +71,10 @@ public:
 	static bool debugOpenGL;
 	static bool debugSound;
 
-	static QMap<QString, absl::btree_set<QString>> allowedInContainer;
+	static absl::btree_map<QString, absl::btree_set<QString>> allowedInContainer;
 
 	static QStringList needIDs;
-	static QMap<QString, float> needDecays;
+	static absl::btree_map<QString, float> needDecays;
 
 	static unsigned int dirtUID;
 
@@ -82,8 +82,8 @@ public:
 
 	static absl::flat_hash_map<Qt::Key, Noesis::Key> keyConvertMap;
 
-	static QMap<QString, CreaturePart> creaturePartLookUp;
-	static QMap<CreaturePart, QString> creaturePartToString;
+	static absl::btree_map<QString, CreaturePart> creaturePartLookUp;
+	static absl::btree_map<CreaturePart, QString> creaturePartToString;
 
 	static Noesis::Key keyConvert( Qt::Key key );
 
@@ -100,7 +100,7 @@ private:
 
 	//static KeyBindings m_keyBindings;
 
-	static QMap<QString, QDomElement> m_behaviorTrees;
+	static absl::btree_map<QString, QDomElement> m_behaviorTrees;
 	static bool loadBehaviorTrees();
 	static void initKeyConvert();
 };

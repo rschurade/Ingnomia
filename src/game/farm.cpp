@@ -31,6 +31,8 @@
 
 #include <QDebug>
 
+#include <ranges>
+
 FarmProperties::FarmProperties( QVariantMap& in )
 {
 	plantType = in.value( "PlantType" ).toString();
@@ -95,13 +97,13 @@ Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
 	{
 		if ( p.second )
 		{
-			m_fields.insert( p.first.toInt(), FarmField(p.first, nullptr));
+			m_fields.insert_or_assign( p.first.toInt(), FarmField(p.first, nullptr));
 		}
 	}
 
 	if (!m_fields.empty())
 	{
-		m_properties.firstPos = m_fields.first().pos;
+		m_properties.firstPos = m_fields.begin()->second.pos;
 	}
 }
 
@@ -119,12 +121,12 @@ Farm::Farm( QVariantMap vals, Game* game ) :
 		{
 			grofi.job = g->jm()->getJob( gfm.value( "Job" ).toUInt() );
 		}
-		m_fields.insert( grofi.pos.toInt(), std::move(grofi));
+		m_fields.insert_or_assign( grofi.pos.toInt(), std::move(grofi));
 	}
 
 	if (!m_fields.empty())
 	{
-		m_properties.firstPos = m_fields.first().pos;
+		m_properties.firstPos = m_fields.begin()->second.pos;
 	}
 
 	QVariantList vjl = vals.value( "Jobs" ).toList();
@@ -141,7 +143,7 @@ QVariant Farm::serialize() const
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( const auto& field : m_fields )
+	for ( const auto& field : m_fields | std::views::values )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field.pos.toString() );
@@ -163,7 +165,7 @@ Farm::~Farm()
 
 void Farm::addTile( const Position & pos )
 {
-	m_fields.insert( pos.toInt(), FarmField(pos, nullptr) );
+	m_fields.insert_or_assign( pos.toInt(), FarmField(pos, nullptr) );
 	g->w()->setTileFlag( pos, TileFlag::TF_FARM );
 }
 
@@ -172,7 +174,7 @@ void Farm::onTick( quint64 tick )
 	if ( !m_active )
 		return;
 
-	for( auto& gf : m_fields )
+	for( auto& gf : m_fields | std::views::values )
 	{
 		if( !gf.job )
 		{
@@ -212,7 +214,7 @@ void Farm::onTick( quint64 tick )
 				}
 				if ( tile.flags & TileFlag::TF_TILLED )
 				{
-					auto item = g->inv()->getClosestItem( m_fields.first().pos, true, m_properties.seedItem, m_properties.plantType );
+					auto item = g->inv()->getClosestItem( m_fields.begin()->second.pos, true, m_properties.seedItem, m_properties.plantType );
 					if ( item == 0 )
 					{
 						continue;
@@ -341,21 +343,21 @@ bool Farm::canDelete()
 bool Farm::removeTile( const Position & pos )
 {
 	auto id = pos.toInt();
-	if( m_fields.contains( id ) )
+	if( const auto &it = m_fields.find( id ); it != m_fields.end() )
 	{
-		auto gf = m_fields.value( id );
+		auto gf = it->second;
 		if( gf.job )
 		{
 			//qDebug() << "farm field still has a job";
 			g->jm()->deleteJobAt( pos );
 		}
 	}
-	m_fields.remove( id );
+	m_fields.erase( id );
 	g->w()->clearTileFlag( pos, TileFlag::TF_FARM );
 
 	if (!m_fields.empty())
 	{
-		m_properties.firstPos = m_fields.first().pos;
+		m_properties.firstPos = m_fields.begin()->second.pos;
 	}
 	else
 	{
@@ -372,7 +374,7 @@ void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 	tilled    = 0;
 	planted   = 0;
 	cropReady = 0;
-	for ( const auto& gf : m_fields )
+	for ( const auto& gf : m_fields | std::views::values )
 	{
 
 		Tile& tile = g->w()->getTile( gf.pos );
