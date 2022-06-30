@@ -25,6 +25,8 @@
 #include <QElapsedTimer>
 #include <absl/container/btree_set.h>
 
+#include <sigslot/signal.hpp>
+
 class Config;
 class NewGameSettings;
 
@@ -166,17 +168,17 @@ public slots:
 	void stop();
 	void sendTime();
 
-signals:
-	void sendOverlayMessage( int id, QString text );
-	void signalTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
-	void signalKingdomInfo( QString name, QString info1, QString info2, QString info3 );
-	void signalHeartbeat( int value );
-	void signalPause( bool pause );
-	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
-	void signalStartAutoSave();
-	void signalEndAutoSave();
-	void signalUpdateTileInfo( absl::btree_set<unsigned int> changeSet );
-	void signalUpdateStockpile();
+public: // signals:
+	sigslot::signal<int /*id*/, QString /*text*/> sendOverlayMessage;
+	sigslot::signal<int /*minute*/, int /*hour*/, int /*day*/, QString /*season*/, int /*year*/, QString /*sunStatus*/> signalTimeAndDate;
+	sigslot::signal<QString /*name*/, QString /*info1*/, QString /*info2*/, QString /*info3*/> signalKingdomInfo;
+	sigslot::signal<int /*value*/> signalHeartbeat;
+	sigslot::signal<bool /*pause*/> signalPause;
+	sigslot::signal<unsigned int /*id, QString /*title*/, QString /*msg*/, bool /*pause*/, bool /*yesno*/> signalEvent;
+	sigslot::signal<> signalStartAutoSave;
+	sigslot::signal<> signalEndAutoSave;
+	sigslot::signal<const absl::btree_set<unsigned int> & /*changeSet*/> signalUpdateTileInfo;
+	sigslot::signal<> signalUpdateStockpile;
 };
 
 #endif /* GAME_H_ */

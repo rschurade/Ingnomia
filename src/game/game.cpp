@@ -152,7 +152,7 @@ void Game::start()
 		Global::cfg->set( "DaysToNextAutoSave", 0 );
 		autoSave();
 		Global::cfg->set( "Pause", true );
-		emit signalPause( true );
+		signalPause( true );
 	}
 
 	if ( m_timer )
@@ -195,7 +195,7 @@ void Game::loop()
 		{
 			
 			
-			emit sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
+			sendOverlayMessage( 6, "tick " + QString::number( GameState::tick ) );
 			//printf("   game tick %d\n",GameState::tick );
 			
 			sendClock();
@@ -248,7 +248,7 @@ void Game::loop()
 		{
 			signalUpdateTileInfo( std::move( updates ) );
 		}
-		emit signalUpdateStockpile();
+		signalUpdateStockpile();
 	
 		Global::eventConnector->aggregatorCreatureInfo()->update();
 	
@@ -262,16 +262,16 @@ void Game::loop()
 		QString msg = "game loop time: " + numString;
 		if ( Global::debugMode )
 			msg += " ms (max gnome time:" + QString::number( m_maxLoopTime ) + "ms)";
-		emit sendOverlayMessage( 3, msg );
+		sendOverlayMessage( 3, msg );
 	
 		
-		emit signalKingdomInfo( GameState::kingdomName, 
+		signalKingdomInfo( GameState::kingdomName, 
 			"Gnomes: " + QString::number( gm()->numGnomes() ), 
 			"Animals: " + QString::number( fm()->countAnimals() ),
 			"Items: "  + QString::number( inv()->numItems() ) );
 
 		m_guiHeartbeat = m_guiHeartbeat + 1;
-		emit signalHeartbeat(m_guiHeartbeat);
+		signalHeartbeat(m_guiHeartbeat);
 	}
 
 	
@@ -359,12 +359,12 @@ void Game::sendClock()
 	QString dt = QString( "Day %1, %2:%3" ).arg( GameState::day, 2, 10, QChar( ' ' ) ).arg( GameState::hour, 2, 10, QChar( '0' ) ).arg( GameState::minute, 2, 10, QChar( '0' ) );
 	GameState::currentDayTime = dt;
 	GameState::currentYearAndSeason = "Year " + QString::number( GameState::year ) + ", " + S::s( "$SeasonName_" + GameState::seasonString );
-	emit signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, sunStatus );
+	signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, sunStatus );
 }
 
 void Game::sendTime()
 {
-	emit signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, "" );
+	signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, "" );
 }
 
 void Game::calcDaylight()
@@ -439,15 +439,15 @@ void Game::autoSave()
 	if ( daysToNext == 0 )
 	{
 		Global::cfg->set( "Pause", true );
-		emit signalStartAutoSave();
-		emit signalPause( true );
+		signalStartAutoSave();
+		signalPause( true );
 		IO io( this, this );
 		io.save( true );
-		emit signalEndAutoSave();
+		signalEndAutoSave();
 
 		if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 		{
-			emit signalPause( false );
+			signalPause( false );
 			Global::cfg->set( "Pause", false );
 		}
 
@@ -463,15 +463,15 @@ void Game::autoSave()
 void Game::save()
 {
 	Global::cfg->set( "Pause", true );
-	emit signalStartAutoSave();
-	emit signalPause( true );
+	signalStartAutoSave();
+	signalPause( true );
 	IO io( this, this );
 	io.save( true );
-	emit signalEndAutoSave();
+	signalEndAutoSave();
 
 	if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
 	{
-		emit signalPause( false );
+		signalPause( false );
 		Global::cfg->set( "Pause", false );
 	}
 }

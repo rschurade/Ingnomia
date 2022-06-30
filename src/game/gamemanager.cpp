@@ -265,9 +265,9 @@ void GameManager::postCreationInit()
 	connect( m_game->inv(), &Inventory::signalAddItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onAddItem, Qt::QueuedConnection );
 	connect( m_game->inv(), &Inventory::signalRemoveItem, m_eventConnector->aggregatorInventory(), &AggregatorInventory::onRemoveItem, Qt::QueuedConnection );
 
-	connect( m_game, &Game::signalTimeAndDate, m_eventConnector, &EventConnector::onTimeAndDate );
-	connect( m_game, &Game::signalKingdomInfo, m_eventConnector, &EventConnector::onKingdomInfo );
-	connect( m_game, &Game::signalHeartbeat, m_eventConnector, &EventConnector::onHeartbeat );
+	m_game->signalTimeAndDate.connect(&EventConnector::onTimeAndDate, m_eventConnector);
+	m_game->signalKingdomInfo.connect(&EventConnector::onKingdomInfo, m_eventConnector);
+	m_game->signalHeartbeat.connect(&EventConnector::onHeartbeat, m_eventConnector);
 
 	
 	Global::util->initAllowedInContainer();
@@ -280,10 +280,10 @@ void GameManager::postCreationInit()
 	connect( m_eventConnector, &EventConnector::signalCameraPosition, m_eventConnector->aggregatorSound(), &AggregatorSound::onCameraPosition, Qt::QueuedConnection );
 
 
-	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorTileInfo(), &AggregatorTileInfo::onUpdateAnyTileInfo );
-	connect( m_game, &Game::signalUpdateStockpile, m_eventConnector->aggregatorStockpile(), &AggregatorStockpile::onUpdateAfterTick );
-	connect( m_game, &Game::signalUpdateTileInfo,  m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onUpdateAnyTileInfo );
-	connect( m_game, &Game::signalTimeAndDate,     m_eventConnector, &EventConnector::onTimeAndDate );
+	m_game->signalUpdateTileInfo.connect(&AggregatorTileInfo::onUpdateAnyTileInfo, m_eventConnector->aggregatorTileInfo());
+	m_game->signalUpdateStockpile.connect(&AggregatorStockpile::onUpdateAfterTick, m_eventConnector->aggregatorStockpile());
+	m_game->signalUpdateTileInfo.connect(&AggregatorRenderer::onUpdateAnyTileInfo, m_eventConnector->aggregatorRenderer());
+	m_game->signalTimeAndDate.connect(&EventConnector::onTimeAndDate, m_eventConnector);
 	m_game->sendTime();
 
 	Global::sel->signalActionChanged.connect(&AggregatorSelection::onActionChanged, m_eventConnector->aggregatorSelection()); // TODO: Qt::QueuedConnection
