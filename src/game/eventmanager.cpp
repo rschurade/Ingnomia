@@ -153,7 +153,7 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	{
 		for ( auto mission : m_missions )
 		{
-			emit signalUpdateMission( mission );
+			signalUpdateMission( mission );
 		}
 	}
 
@@ -324,7 +324,7 @@ void EventManager::executeEvent( Event& event )
 		}
 		break;
 	}
-	emit signalCenterCamera( location );
+	signalCenterCamera( location );
 }
 
 void EventManager::spawnGnome( Position location, int amount )

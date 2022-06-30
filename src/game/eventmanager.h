@@ -27,6 +27,8 @@
 #include <QPointer>
 #include <QVariantMap>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 enum class EventRequire
@@ -170,9 +172,9 @@ private:
 
 	QList<Mission> m_missions;
 
-signals:
-	void signalCenterCamera( const Position& location );
-	void signalUpdateMission( const Mission& mission );
+public: // signals:
+	sigslot::signal< const Position& /*location*/ > signalCenterCamera;
+	sigslot::signal< const Mission& /*mission*/ > signalUpdateMission;
 
 public slots:
 	void onAnswer( unsigned int id, bool answer );
