@@ -27,6 +27,8 @@
 #include <QString>
 #include <QVariantMap>
 
+#include <sigslot/signal.hpp>
+
 class Game;
 
 enum enumReqs
@@ -160,8 +162,8 @@ public:
 	bool changed();
 	void updateGui();
 
-signals:
-	void signalActionChanged( const QString action );
-	void signalFirstClick( const QString firstClick );
-	void signalSize( const QString size );
+public: // signals:
+	sigslot::signal< const QString & /*action*/ > signalActionChanged;
+	sigslot::signal< const QString & /*firstClick*/ > signalFirstClick;
+	sigslot::signal< const QString & /*size*/ > signalSize;
 };

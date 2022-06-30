@@ -121,7 +121,7 @@ void Selection::clear()
 	m_materials.clear();
 	m_canRotate = false;
 
-	emit signalActionChanged( "" );
+	signalActionChanged( "" );
 }
 
 void Selection::rotate()
@@ -151,7 +151,7 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		m_canRotate = actionMap.value( "Rotate" ).toBool();
 		m_selection.push_back( QPair<Position, bool>( pos, testTileForJobSelection( pos ) ) );
 		
-		emit signalFirstClick( m_firstClick.toString() );
+		signalFirstClick( m_firstClick.toString() );
 
 		if ( !m_isMulti && !shift )
 		{
@@ -170,8 +170,8 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 		onSecondClick( shift, ctrl );
 		m_firstClicked = false;
 		m_changed      = true;
-		emit signalFirstClick( "" );
-		emit signalSize( "" );
+		signalFirstClick( "" );
+		signalSize( "" );
 		updateSelection( pos, shift, ctrl );
 		return true;
 	}
@@ -192,7 +192,7 @@ void Selection::setAction( QString action )
 	m_isMultiZ  = actionMap.value( "MultiZ" ).toBool();
 	m_canRotate = actionMap.value( "Rotate" ).toBool();
 
-	emit signalActionChanged( m_action );
+	signalActionChanged( m_action );
 }
 
 void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
@@ -270,11 +270,11 @@ void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
 
 	if( m_firstClicked )
 	{
-		emit signalSize( QString::number( m_selectionSize.first ) + " x " + QString::number( m_selectionSize.second ) );
+		signalSize( QString::number( m_selectionSize.first ) + " x " + QString::number( m_selectionSize.second ) );
 	}
 	else
 	{
-		emit signalSize( "" );
+		signalSize( "" );
 	}
 
 	m_changed = true;
@@ -296,8 +296,8 @@ void Selection::rightClick( Position& pos )
 		clear();
 	}
 
-	emit signalFirstClick( "" );
-	emit signalSize( "" );
+	signalFirstClick( "" );
+	signalSize( "" );
 		
 	m_changed = true;
 }
@@ -906,6 +906,6 @@ bool Selection::changed()
 
 void Selection::updateGui()
 {
-	emit signalActionChanged( "" );
-	emit signalSize( "" );
+	signalActionChanged( "" );
+	signalSize( "" );
 }

@@ -286,9 +286,9 @@ void GameManager::postCreationInit()
 	connect( m_game, &Game::signalTimeAndDate,     m_eventConnector, &EventConnector::onTimeAndDate );
 	m_game->sendTime();
 
-	connect( Global::sel, &Selection::signalActionChanged, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onActionChanged, Qt::QueuedConnection );
-	connect( Global::sel, &Selection::signalFirstClick, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateFirstClick, Qt::QueuedConnection );
-	connect( Global::sel, &Selection::signalSize, m_eventConnector->aggregatorSelection(), &AggregatorSelection::onUpdateSize, Qt::QueuedConnection );
+	Global::sel->signalActionChanged.connect(&AggregatorSelection::onActionChanged, m_eventConnector->aggregatorSelection()); // TODO: Qt::QueuedConnection
+	Global::sel->signalFirstClick.connect(&AggregatorSelection::onUpdateFirstClick, m_eventConnector->aggregatorSelection()); // TODO: Qt::QueuedConnection
+	Global::sel->signalSize.connect(&AggregatorSelection::onUpdateSize, m_eventConnector->aggregatorSelection()); // TODO: Qt::QueuedConnection
 	Global::sel->updateGui();
 
 	m_eventConnector->aggregatorInventory()->update();
