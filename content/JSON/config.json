@@ -6,10 +6,6 @@
     "LastRunVersion": "0.7.5.0",
     "MaxArrayTextures": "2048",
     "Pause": true,
-    "WindowHeight": 1631,
-    "WindowPosX": 604,
-    "WindowPosY": 53,
-    "WindowWidth": 3231,
     "XpMod": 250,
     "clearLogOnStart": "true",
     "crosshair": "false",
@@ -40,7 +36,5 @@
     "scale": 1,
     "server": "127.0.0.1",
     "viewLevel": 108,
-    "waterQuality": 1,
-    "windowSizeX": 1600,
-    "windowSizeY": 900
+    "waterQuality": 1
 }

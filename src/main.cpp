@@ -46,6 +46,8 @@
 QTextStream* out = 0;
 bool verbose     = false;
 
+constexpr auto DefaultScreenScale = 3 / 4.0;
+
 void clearLog()
 {
 	QString folder   = IO::getDataFolder();
@@ -201,8 +203,10 @@ int main( int argc, char* argv[] )
 		}
 	}
 
-	int width  = qMax( 1200, Global::cfg->get( "WindowWidth" ).toInt() );
-	int height = qMax( 675, Global::cfg->get( "WindowHeight" ).toInt() );
+	const auto screenRect = QApplication::desktop()->screenGeometry();
+
+	int width  = qMax( (int)( screenRect.width() * DefaultScreenScale ), Global::cfg->get( "WindowWidth" ).toInt() );
+	int height = qMax( (int)( screenRect.height() * DefaultScreenScale ), Global::cfg->get( "WindowHeight" ).toInt() );
 
 	auto defaultFormat = QSurfaceFormat::defaultFormat();
 	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
@@ -228,7 +232,15 @@ int main( int argc, char* argv[] )
 	
 	w.setIcon( QIcon( QCoreApplication::applicationDirPath() + "/content/icon.png" ) );
 	w.resize( width, height );
-	w.setPosition( Global::cfg->get( "WindowPosX" ).toInt(), Global::cfg->get( "WindowPosY" ).toInt() );
+	if (Global::cfg->object().contains( "WindowPosX" ))
+	{
+		w.setPosition( Global::cfg->get( "WindowPosX" ).toInt(), Global::cfg->get( "WindowPosY" ).toInt() );
+	}
+	else
+	{
+		const QPoint halfSize( width / 2, height / 2 );
+		w.setPosition( screenRect.center() - halfSize );
+	}
 	w.show();
 	if( Global::cfg->get( "fullscreen" ).toBool() )
 	{
