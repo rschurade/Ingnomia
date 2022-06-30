@@ -505,7 +505,7 @@ void AggregatorSelection::updateSelection()
 		}
 		bool noDepthTest = ( action == "DigStairsDown" || action == "DigRampDown" );
 
-		emit signalUpdateSelection( m_selectionData, noDepthTest );
+		signalUpdateSelection( m_selectionData, noDepthTest );
 	}
 }
 

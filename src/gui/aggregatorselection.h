@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <sigslot/signal.hpp>
+
 class AggregatorSelection : public QObject
 {
 	Q_OBJECT
@@ -67,5 +69,6 @@ signals:
 
     void signalSelectTile( unsigned int );
 
-    void signalUpdateSelection( const absl::btree_map<unsigned int, SelectionData>& data, bool noDepthTest );
+public: // Signals
+	sigslot::signal<const absl::btree_map<unsigned int, SelectionData>& /*data*/, bool /*noDepthTest*/> signalUpdateSelection;
 };

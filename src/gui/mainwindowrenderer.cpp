@@ -77,7 +77,7 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::signalCenterCamera, this, &MainWindowRenderer::onCenterCameraPosition );
 	connect( Global::eventConnector, &EventConnector::signalInMenu, this, &MainWindowRenderer::onSetInMenu );
 
-	connect( Global::eventConnector->aggregatorSelection(), &AggregatorSelection::signalUpdateSelection, this, &MainWindowRenderer::onUpdateSelection, Qt::QueuedConnection );
+	Global::eventConnector->aggregatorSelection()->signalUpdateSelection.connect(&MainWindowRenderer::onUpdateSelection, this); // TODO: This was Qt::QueuedConnection
 
 	// Full polling of initial state on load
 	connect( this, &MainWindowRenderer::fullDataRequired, Global::eventConnector->aggregatorRenderer(), &AggregatorRenderer::onAllTileInfo );
