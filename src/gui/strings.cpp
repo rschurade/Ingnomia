@@ -18,6 +18,7 @@
 #include "strings.h"
 
 #include "../base/config.h"
+#include "../base/containersHelper.h"
 #include "../base/db.h"
 
 #include <QApplication>
@@ -40,7 +41,7 @@ Strings::~Strings()
 
 bool Strings::init()
 {
-	m_language = Global::cfg->get( "language" ).toString();
+	m_language = Global::cfg->get_or_default<QString>( "language" , "en_US"  );
 	m_table.clear();
 	//for( auto row : DB::selectRows( "Translation_" + m_language ) )
 	for ( auto row : DB::selectRows( "Translation" ) )

@@ -85,7 +85,7 @@ void Global::reset()
 	GameState::stockOverlay.clear();
 	GameState::squads.clear();
 
-	Global::xpMod = Global::cfg->get( "XpMod" ).toDouble();
+	Global::xpMod = Global::cfg->get<double>( "XpMod" );
 
 	m_logger.reset();
 
@@ -245,7 +245,7 @@ bool Global::loadBehaviorTrees()
 
 		QDomDocument xml;
 		// Load xml file as raw data
-		QFile f( Global::cfg->get( "dataPath" ).toString() + "/ai/" + xmlName );
+		QFile f( Global::cfg->get<QString>( "dataPath" ) + "/ai/" + xmlName );
 		if ( !f.open( QIODevice::ReadOnly ) )
 		{
 			// Error while loading file

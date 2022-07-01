@@ -94,12 +94,41 @@ bool IO::saveGameExists()
 	return true;
 }
 
+// TODO: Remove after QJsonDocument is gone
+QVariant toQVariant(ConfigVariant v) {
+	return std::visit( []( auto&& arg )
+				{
+					using T = std::decay_t<decltype(arg)>;
+					if constexpr (std::is_same_v<T, QString>)
+						return QVariant(arg);
+					else if constexpr (std::is_same_v<T, bool>)
+						return QVariant(arg);
+					else if constexpr (std::is_same_v<T, int>)
+						return QVariant(arg);
+					else if constexpr (std::is_same_v<T, float>)
+						return QVariant(arg);
+					else if constexpr (std::is_same_v<T, double>)
+						return QVariant(arg);
+					else
+						static_assert(always_false_v<T>, "non-exhaustive visitor!"); },
+				v );
+}
+
+// TODO: Remove after QJsonDocument is gone
+QVariantMap toQVariant(ConfigMap map) {
+	QVariantMap result;
+	for ( const auto& entry : map ) {
+		result[entry.first] = toQVariant(entry.second);
+	}
+	return result;
+}
+
 bool IO::saveConfig()
 {
 	QString folder = getDataFolder() + "/settings/";
 
-	QVariantMap cm   = Global::cfg->object();
-	QJsonDocument jd = QJsonDocument::fromVariant( cm );
+	ConfigMap cm   = Global::cfg->object();
+	QJsonDocument jd = QJsonDocument::fromVariant( toQVariant(cm) );
 
 	IO::saveFile( folder + "config.json", jd );
 
@@ -624,7 +653,7 @@ QJsonArray IO::jsonArrayConfig()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayConfig";
 	QJsonArray ja;
-	ja.append( QJsonValue::fromVariant( Global::cfg->object() ) );
+	ja.append( QJsonValue::fromVariant( toQVariant(Global::cfg->object()) ) );
 
 	return ja;
 }
@@ -644,7 +673,7 @@ QJsonArray IO::jsonArrayGame()
 {
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayGame";
-	GameState::version = Global::cfg->get( "CurrentVersion" ).toString();
+	GameState::version = Global::cfg->get<QString>( "CurrentVersion" );
 
 	GameState::initialSave = true;
 

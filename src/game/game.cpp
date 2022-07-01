@@ -149,7 +149,7 @@ void Game::start()
 
 	if ( GameState::tick == 0 && !GameState::initialSave )
 	{
-		Global::cfg->set( "DaysToNextAutoSave", 0 );
+		Global::cfg->set( "DaysToNextAutoSave", 0.0 );
 		autoSave();
 		Global::cfg->set( "Pause", true );
 		signalPause( true );
@@ -434,7 +434,7 @@ void Game::processPlants()
 
 void Game::autoSave()
 {
-	int daysToNext = Global::cfg->get( "DaysToNextAutoSave" ).toInt();
+	int daysToNext = Global::cfg->get_or_default<double>( "DaysToNextAutoSave" , 0 );
 
 	if ( daysToNext == 0 )
 	{
@@ -445,13 +445,13 @@ void Game::autoSave()
 		io.save( true );
 		signalEndAutoSave();
 
-		if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
+		if ( Global::cfg->get_or_default<bool>( "AutoSaveContinue" , false ) )
 		{
 			signalPause( false );
 			Global::cfg->set( "Pause", false );
 		}
 
-		Global::cfg->set( "DaysToNextAutoSave", Global::cfg->get( "AutoSaveInterval" ).toInt() - 1 );
+		Global::cfg->set( "DaysToNextAutoSave", Global::cfg->get<double>( "AutoSaveInterval" ) - 1 );
 	}
 	else
 	{
@@ -469,7 +469,7 @@ void Game::save()
 	io.save( true );
 	signalEndAutoSave();
 
-	if ( Global::cfg->get( "AutoSaveContinue" ).toBool() )
+	if ( Global::cfg->get_or_default<bool>( "AutoSaveContinue" , false ) )
 	{
 		signalPause( false );
 		Global::cfg->set( "Pause", false );

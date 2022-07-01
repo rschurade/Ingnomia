@@ -27,6 +27,24 @@
 #include <QStandardPaths>
 #include <QCoreApplication>
 
+#include "containersHelper.h"
+
+ConfigVariant qVariantToConfigVariant(QVariant v) {
+	if (v.type() == QVariant::String) {
+		qDebug() << "Type QString";
+		return { v.toString() };
+	} else if (v.type() == QVariant::Double) {
+		qDebug() << "Type double";
+		return { v.toDouble() };
+	} else if (v.type() == QVariant::Bool) {
+		qDebug() << "Type bool";
+		return {v.toBool()};
+	} else {
+		qDebug() << "Fatal error: Cannot convert QVariant to ConfigVariant!";
+		abort();
+	}
+}
+
 Config::Config()
 {
 	QMutexLocker lock( &m_mutex );
@@ -45,9 +63,14 @@ Config::Config()
 		}
 	}
 	
-	m_settings = jd.toVariant().toMap();
+	// FIXME: Remove intermediate steps after replacing QJsonDocument
+	const auto qmap  = jd.toVariant().toMap();
+	for ( const auto& entry : qmap.toStdMap() ) {
+		qDebug() << "Setting: '" << entry.first << "' - '" << entry.second << "'";
+		m_settings.insert_or_assign(entry.first, qVariantToConfigVariant(entry.second));
+	}
 
-	if( m_settings.keys().size() == 0 )
+	if ( m_settings.empty() )
 	{
 		return;
 	}
@@ -65,23 +88,23 @@ Config::Config()
 	// add values to exisiting confings
 	if ( !m_settings.contains( "XpMod" ) )
 	{
-		m_settings.insert( "XpMod", 250. );
+		m_settings.insert_or_assign( "XpMod", 250.0 );
 	}
 
 	if ( !m_settings.contains( "fow" ) )
 	{
-		m_settings.insert( "fow", true );
+		m_settings.insert_or_assign( "fow", true );
 	}
 
 	if ( !m_settings.contains( "AutoSaveInterval" ) )
 	{
-		m_settings.insert( "AutoSaveInterval", 3 );
+		m_settings.insert_or_assign( "AutoSaveInterval", 3.0 );
 	}
 	if ( !m_settings.contains( "uiscale" ) )
 	{
-		m_settings.insert( "uiscale", 1.0 );
+		m_settings.insert_or_assign( "uiscale", 1.0 );
 	}
-	m_settings.insert( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
+	m_settings.insert_or_assign( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
 
 	m_valid = true;
 
@@ -91,21 +114,39 @@ Config::~Config()
 {
 }
 
-QVariant Config::get( QString key )
+ConfigVariant Config::get_variant( const QString& key )
 {
 	QMutexLocker lock( &m_mutex );
-	if ( m_settings.contains( key ) )
-	{
-		QVariant out = m_settings[key];
-		return out;
-	}
-	else
-	{
-		return QVariant();
-	}
+
+	ConfigVariant v;
+	maps::try_at(m_settings, key, v);
+	return v;
 }
 
-void Config::set( QString key, QVariant value )
+template<class> inline constexpr bool always_false_v = false;
+
+std::string variantToString( ConfigVariant v )
+{
+	return std::visit( []( auto&& arg )
+					   {
+		using T = std::decay_t<decltype(arg)>;
+		if constexpr (std::is_same_v<T, QString>)
+			return arg.toStdString();
+		else if constexpr (std::is_same_v<T, bool>)
+			return std::string(arg ? "true" : "false");
+		else if constexpr (std::is_arithmetic_v<T>)
+			return std::to_string(arg);
+		else
+			static_assert(always_false_v<T>, "non-exhaustive visitor!"); },
+					   v );
+}
+
+void Config::set( const QString& key, int value )
+{
+	set(key, static_cast<ConfigVariant>(static_cast<double>(value)));
+}
+
+void Config::set( const QString& key, ConfigVariant value )
 {
 	QMutexLocker lock( &m_mutex );
 	const auto oldValue = m_settings[key];
@@ -114,6 +155,6 @@ void Config::set( QString key, QVariant value )
 		m_settings[key] = value;
 		IO::saveConfig();
 
-		qDebug() << "Update config" << key << "=" << value << "(was" << oldValue << ")";
+		qDebug() << "Update config" << key << "=" << QString::fromStdString(variantToString(value)) << "(was" << QString::fromStdString(variantToString(oldValue)) << ")";
 	}
 }

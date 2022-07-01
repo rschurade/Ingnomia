@@ -17,10 +17,13 @@
 */
 #include "aggregatorsettings.h"
 
-#include "../base/global.h"
 #include "../base/config.h"
+#include "../base/containersHelper.h"
+#include "../base/global.h"
 
 #include <QDebug>
+
+#include <variant>
 
 AggregatorSettings::AggregatorSettings( QObject* parent ) :
 	QObject(parent)
@@ -34,20 +37,20 @@ AggregatorSettings::~AggregatorSettings()
 
 void AggregatorSettings::onRequestSettings()
 {
-    m_settings.fullscreen = Global::cfg->get( "fullscreen" ).toBool();
-    m_settings.scale = qMax( 0.5f, Global::cfg->get( "uiscale" ).toFloat() );
-    m_settings.keyboardSpeed = qMax( 0, qMin( Global::cfg->get( "keyboardMoveSpeed" ).toInt(), 200) );
+    m_settings.fullscreen = Global::cfg->get_or_default<bool>( "fullscreen" , false );
+    m_settings.scale = qMax( 0.5, Global::cfg->get<double>( "uiscale" ) );
+    m_settings.keyboardSpeed = qMax( 0.0, qMin( Global::cfg->get_or_default<double>( "keyboardMoveSpeed" , 0.0 ), 200.0) );
     m_settings.languages.clear();
     m_settings.languages.append( "en_US" );
     m_settings.languages.append( "fr_FR" );
 
-    m_settings.language = Global::cfg->get( "language" ).toString();
+    m_settings.language = Global::cfg->get_or_default<QString>( "language" , "en_US" );
 
-    m_settings.lightMin = Global::cfg->get( "lightMin" ).toFloat() * 100; 
+    m_settings.lightMin = Global::cfg->get_or_default<double>( "lightMin" , 0 ) * 100;
 
-    m_settings.toggleMouseWheel = Global::cfg->get( "toggleMouseWheel" ).toBool();
-	 
-	 m_settings.audioMasterVolume = Global::cfg->get( "AudioMasterVolume" ).toFloat() * 100; 
+    m_settings.toggleMouseWheel = Global::cfg->get_or_default<bool>( "toggleMouseWheel" , false );
+
+    m_settings.audioMasterVolume = Global::cfg->get_or_default<double>( "AudioMasterVolume" , 1.0 ) * 100.0;
 
     signalUpdateSettings( m_settings );
 }
@@ -87,16 +90,16 @@ void AggregatorSettings::onSetToggleMouseWheel( bool value )
 
 void AggregatorSettings::onRequestUIScale()
 {
-    float scale = Global::cfg->get( "uiscale" ).toFloat();
+	float scale = Global::cfg->get<double>( "uiscale" );
     signalUIScale( scale );
 }
 void AggregatorSettings::onRequestVersion()
 {
-    QString version = Global::cfg->get( "CurrentVersion" ).toString();
+    QString version = Global::cfg->get<QString>( "CurrentVersion" );
     signalVersion( version );
 }
 
 void AggregatorSettings::onSetAudioMasterVolume( float value )
 {
-	Global::cfg->set( "AudioMasterVolume", (float)value);
+	Global::cfg->set( "AudioMasterVolume", value );
 }

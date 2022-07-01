@@ -903,7 +903,7 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 
 	if ( !dbws->Icon.isEmpty() )
 	{
-		const auto path = Global::cfg->get( "dataPath" ).toString() + "/xaml/buttons/" + dbws->Icon;
+		const auto path = Global::cfg->get<QString>( "dataPath" ) + "/xaml/buttons/" + dbws->Icon;
 		QPixmap pm( path );
 		assert( pm.width() > 0 );
 		return pm;

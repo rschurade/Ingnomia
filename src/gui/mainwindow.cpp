@@ -338,7 +338,7 @@ void MainWindow::keyboardMove()
 
 	if( m_renderer && (x || y) )
 	{
-		const float keyboardMoveSpeed = (Global::cfg->get( "keyboardMoveSpeed" ).toFloat() + 50.f) * 4.f;
+		const float keyboardMoveSpeed = (Global::cfg->get_or_default<double>( "keyboardMoveSpeed" , 0 ) + 50.f) * 4.f;
 
 		float moveX = -x * keyboardMoveSpeed * elapsedTime;
 		float moveY = -y * keyboardMoveSpeed * elapsedTime;
@@ -518,7 +518,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		}
 		else
 		{
-			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() ) 
+			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get_or_default<bool>( "toggleMouseWheel" , false ) )
 			{
 				// Scale the view / do the zoom
 				auto delta = wEvent->delta();
@@ -761,7 +761,7 @@ MainWindowRenderer* MainWindow::renderer()
 
 void MainWindow::installResourceProviders()
 {
-	const std::string contentPath = Global::cfg->get( "dataPath" ).toString().toStdString() + "/xaml/";
+	const std::string contentPath = Global::cfg->get<QString>( "dataPath" ).toStdString() + "/xaml/";
 	Noesis::GUI::SetXamlProvider( Noesis::MakePtr<NoesisApp::LocalXamlProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetTextureProvider( Noesis::MakePtr<NoesisApp::LocalTextureProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetFontProvider( Noesis::MakePtr<NoesisApp::LocalFontProvider>( contentPath.c_str() ) );

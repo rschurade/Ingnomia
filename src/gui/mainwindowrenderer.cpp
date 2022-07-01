@@ -17,22 +17,22 @@
 */
 #include "mainwindowrenderer.h"
 
-#include "../game/game.h" //TODO only temporary
-
 #include "../base/config.h"
+#include "../base/containersHelper.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
 #include "../base/vptr.h"
+#include "../game/game.h" //TODO only temporary
 #include "../game/gamemanager.h"
 #include "../game/plant.h"
 #include "../game/world.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
+#include "aggregatorselection.h"
 #include "eventconnector.h"
 #include "mainwindow.h"
-#include "aggregatorselection.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -251,7 +251,7 @@ void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 
 QString MainWindowRenderer::copyShaderToString( QString name )
 {
-	QFile file( Global::cfg->get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
+	QFile file( Global::cfg->get<QString>( "dataPath" ) + "/shaders/" + name + ".glsl" );
 	file.open( QIODevice::ReadOnly );
 	QTextStream in( &file );
 	QString code( "" );
@@ -398,7 +398,7 @@ void MainWindowRenderer::initTextures()
 	qDebug() << "max array size: " << max_layers;
 	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
 
-	int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
+	int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
 
 	for ( int i = 0; i < 32; ++i )
 	{
@@ -438,14 +438,14 @@ void MainWindowRenderer::updateRenderParams()
 {
 	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_width * m_width + m_height * m_height ) / 12 ) / m_scale ) );
 
-	m_renderDepth = Global::cfg->get( "renderDepth" ).toInt();
+	m_renderDepth = Global::cfg->get_or_default<double>( "renderDepth" , 0 );
 
 	m_viewLevel = GameState::viewLevel;
 
 	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
 	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
 
-	m_lightMin = Global::cfg->get( "lightMin" ).toFloat();
+	m_lightMin = Global::cfg->get_or_default<double>( "lightMin" , 0 );
 	if ( m_lightMin < 0.01 )
 		m_lightMin = 0.3f;
 
@@ -563,7 +563,7 @@ void MainWindowRenderer::paintWorld()
 
 	//glFinish();
 
-	bool pause = Global::cfg->get( "Pause" ).toBool();
+	bool pause = Global::cfg->get<bool>( "Pause" );
 
 	if ( pause != m_pause )
 	{
@@ -852,7 +852,7 @@ void MainWindowRenderer::updateTextures()
 
 		m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-		int maxArrayTextures = Global::cfg->get( "MaxArrayTextures" ).toInt();
+		int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{

@@ -18,6 +18,7 @@
 #include "aggregatorsound.h"
 
 #include "../base/config.h"
+#include "../base/containersHelper.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/position.h"
@@ -27,9 +28,9 @@
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindowrenderer.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QJsonDocument>
-#include <QCoreApplication>
 
 AggregatorSound::AggregatorSound( EventConnector* parent ) :
 	QObject( parent )
@@ -65,7 +66,7 @@ void AggregatorSound::init( Game* game )
 	g = game;
 
 	AL::Context::Lock lock( m_audioContext );
-	m_audioListener->setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+	m_audioListener->setVolume( Global::cfg->get_or_default<double>( "AudioMasterVolume" , 1.0 ) );
 	QList<QVariantMap> soundList = DB::selectRows( "Sounds" );
 	for ( auto& sound : soundList )
 	{
@@ -229,7 +230,7 @@ bool AggregatorSound::rebalanceSound( ActiveEffect& effect )
 void AggregatorSound::garbageCollection()
 {
 	//TODO Get the slot fed externally!
-	m_audioListener->setVolume( Global::cfg->get( "AudioMasterVolume" ).toFloat() );
+	m_audioListener->setVolume( Global::cfg->get_or_default<double>( "AudioMasterVolume" , 1.0 ) );
 
 	for ( auto it = m_activeEffects.begin(); it != m_activeEffects.end(); )
 	{

@@ -43,4 +43,18 @@ bool try_at( const C<K, V, Args...>& map, K const& key, V& outVal )
 	}
 }
 
+template <class T, typename... Args>
+const T& get_or_default( const std::variant<Args...>& variant, const T& defval )
+{
+	const auto* result = std::get_if<T>( &variant );
+	if ( result != nullptr )
+	{
+		return *result;
+	}
+	else
+	{
+		return defval;
+	}
+}
+
 }
