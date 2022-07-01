@@ -94,6 +94,8 @@ bool IO::saveGameExists()
 	return true;
 }
 
+template<class> inline constexpr bool always_false_v = false;
+
 // TODO: Remove after QJsonDocument is gone
 QVariant toQVariant(ConfigVariant v) {
 	return std::visit( []( auto&& arg )
