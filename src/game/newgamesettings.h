@@ -159,9 +159,9 @@ public:
 		return m_startingAnimals;
 	}
 
-	QVariantList trees();
-	QVariantList plants();
-	QVariantList animals();
+	std::vector<CheckableItem> trees();
+	std::vector<CheckableItem> plants();
+	std::vector<CheckableItem> animals();
 
 	void setPreset( QString name );
 	QStringList presetNames();
@@ -183,6 +183,7 @@ private:
 	void setStartingItems( QVariantList sil );
 	void collectStartItems( QVariantList& sil );
 
+	std::vector<CheckableItem> filterCheckableItems( const QString& itemType );
 
 	QString m_kingdomName;
 	QString m_seed;

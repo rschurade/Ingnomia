@@ -212,24 +212,21 @@ NewGameModel::NewGameModel() :
 
 	for ( auto vt : Global::newGameSettings->trees() )
 	{
-		auto vm = vt.toMap();
-		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString() );
+		auto gi = MakePtr<GameItem>( vt.name, vt.sid );
 		//gi->setChecked( vm.value( "Allowed" ).toBool() ? true : false );
 		_allowedTrees->Add( gi );
 	}
 
 	for ( auto vt : Global::newGameSettings->plants() )
 	{
-		auto vm = vt.toMap();
-		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString() );
+		auto gi = MakePtr<GameItem>( vt.name, vt.sid );
 		//gi->setChecked( vm.value( "Allowed" ).toBool() ? true : false );
 		_allowedPlants->Add( gi );
 	}
 
 	for ( auto vt : Global::newGameSettings->animals() )
 	{
-		auto vm = vt.toMap();
-		auto gi = MakePtr<GameItem>( vm.value( "Name" ).toString(), vm.value( "ID" ).toString(), vm.value( "Amount" ).toInt() );
+		auto gi = MakePtr<GameItem>( vt.name, vt.sid, vt.max );
 		_allowedWildAnimals->Add( gi );
 	}
 }

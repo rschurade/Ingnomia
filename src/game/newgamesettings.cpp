@@ -720,56 +720,19 @@ QStringList NewGameSettings::presetNames()
 	return out;
 }
 
-QVariantList NewGameSettings::trees()
+std::vector<CheckableItem> NewGameSettings::trees()
 {
-	QVariantList out;
-	for ( auto ci : m_checkableItems | std::views::values )
-	{
-		if ( ci.type == "Tree" )
-		{
-			QVariantMap entry;
-			entry.insert( "ID", ci.sid );
-			entry.insert( "Name", ci.name );
-			entry.insert( "Allowed", ci.isChecked );
-			out.append( entry );
-		}
-	}
-	return out;
+	return filterCheckableItems( "Tree" );
 }
 
-QVariantList NewGameSettings::plants()
+std::vector<CheckableItem> NewGameSettings::plants()
 {
-	QVariantList out;
-	for ( auto ci : m_checkableItems | std::views::values )
-	{
-		if ( ci.type == "Plant" )
-		{
-			QVariantMap entry;
-			entry.insert( "ID", ci.sid );
-			entry.insert( "Name", ci.name );
-			entry.insert( "Allowed", ci.isChecked );
-			out.append( entry );
-		}
-	}
-	return out;
+	return filterCheckableItems( "Plant" );
 }
 
-QVariantList NewGameSettings::animals()
+std::vector<CheckableItem> NewGameSettings::animals()
 {
-	QVariantList out;
-	for ( auto ci : m_checkableItems | std::views::values )
-	{
-		if ( ci.type == "Animal" )
-		{
-			QVariantMap entry;
-			entry.insert( "ID", ci.sid );
-			entry.insert( "Name", ci.name );
-			entry.insert( "Allowed", ci.isChecked );
-			entry.insert( "Amount", ci.max );
-			out.append( entry );
-		}
-	}
-	return out;
+	return filterCheckableItems( "Animal" );
 }
 
 bool NewGameSettings::isChecked( QString sid )
@@ -838,4 +801,15 @@ void NewGameSettings::setAmount( QString sid, int value )
 		auto& ci     = m_checkableItems[sid];
 		ci.max = value;
 	}
+}
+
+std::vector<CheckableItem> NewGameSettings::filterCheckableItems( const QString& itemType )
+{
+	std::vector<CheckableItem> result;
+	const auto &values = std::views::values(m_checkableItems);
+	std::copy_if( values.begin(), values.end(),
+				  std::back_inserter( result ),
+				  [itemType]( const CheckableItem& item )
+				  { return item.type == itemType; } );
+	return result;
 }
