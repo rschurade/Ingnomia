@@ -19,6 +19,7 @@
 
 #include "../../3rdparty/fastnoise/FastNoise.h"
 
+#include <QPointer>
 #include <QMap>
 #include <QObject>
 #include <QVector>

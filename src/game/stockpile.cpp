@@ -241,7 +241,7 @@ bool Stockpile::onTick( quint64 tick )
 		{
 			auto possibleSloits     = freeSlots();
 			const auto activeFilter = m_filter.getActive();
-			QSet<QPair<QString, QString>> effectiveFilter;
+			std::set<QPair<QString, QString>> effectiveFilter;
 			if ( possibleSloits.contains( QPair<QString, QString> { "Any", "Any" } ) )
 			{
 				effectiveFilter = activeFilter;
@@ -270,9 +270,9 @@ bool Stockpile::onTick( quint64 tick )
 	return false;
 }
 
-QSet<QPair<QString, QString>> Stockpile::freeSlots() const
+std::set<QPair<QString, QString>> Stockpile::freeSlots() const
 {
-	QSet<QPair<QString, QString>> freeSlots;
+	std::set<QPair<QString, QString>> freeSlots;
 	for ( auto infi : m_fields )
 	{
 		if ( !infi->isFull )
@@ -313,7 +313,7 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 
 unsigned int Stockpile::getJob()
 {
-	if ( m_isFull || !m_active || m_filter.getActive().isEmpty() || m_fields.empty() )
+	if ( m_isFull || !m_active || m_filter.getActive().empty() || m_fields.empty() )
 		return 0;
 
 	int itemsChecked = 0;
@@ -354,7 +354,7 @@ unsigned int Stockpile::getJob()
 						unsigned int reservedItemID = *infi->reservedItems.begin();
 						if ( !g->inv()->itemExists( reservedItemID ) || g->inv()->isInJob( reservedItemID ) == 0 )
 						{
-							infi->reservedItems.remove( reservedItemID );
+							infi->reservedItems.erase( reservedItemID );
 						}
 					}
 
@@ -593,7 +593,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 
 unsigned int Stockpile::getCleanUpJob()
 {
-	if ( !m_active || m_filter.getActive().isEmpty() )
+	if ( !m_active || m_filter.getActive().empty() )
 		return 0;
 
 	// cleaning up
@@ -720,7 +720,7 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 			Position pos = job->pos();
 			if ( m_fields.contains( pos.toInt() ) )
 			{
-				m_fields[pos.toInt()]->reservedItems.remove( itemID );
+				m_fields[pos.toInt()]->reservedItems.erase( itemID );
 				m_fields[pos.toInt()]->isFull = false;
 				m_isFull                      = false;
 			}
@@ -764,7 +764,7 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		InventoryField* field = m_fields.value( pos.toInt() );
-		field->reservedItems.remove( item );
+		field->reservedItems.erase( item );
 		field->items.insert( item );
 		field->isFull  = false;
 		m_isFull       = false;
@@ -820,7 +820,7 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		InventoryField* field = m_fields[pos.toInt()];
-		if ( field->items.remove( item ) )
+		if ( field->items.erase( item ) )
 		{
 			field->isFull = false;
 			m_isFull      = false;
@@ -882,7 +882,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 	if ( !state )
 	{
 		// unchecked some items, need to expel it from the stockpile
-		QSet<QString> filter = m_filter.getActiveSimple();
+		std::set<QString> filter = m_filter.getActiveSimple();
 
 		for ( auto infi : m_fields )
 		{
@@ -897,7 +897,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 			}
 			for ( auto tr : toRemove )
 			{
-				infi->items.remove( tr );
+				infi->items.erase( tr );
 			}
 		}
 	}

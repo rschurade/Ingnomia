@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.16.0)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Disable release-builds without debug info
 set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo CACHE STRING INTERNAL FORCE)
 
@@ -41,7 +45,7 @@ add_executable(${PROJECT_NAME})
 # C++ version
 set_target_properties(${PROJECT_NAME}
 	PROPERTIES
-		CXX_STANDARD 17
+		CXX_STANDARD 20
 		AUTOMOC ON
 		INTERPROCEDURAL_OPTIMIZATION ON
 		INSTALL_RPATH "$ORIGIN"

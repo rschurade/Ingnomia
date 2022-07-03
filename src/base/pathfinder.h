@@ -21,7 +21,6 @@
 
 #include <QMutex>
 #include <QQueue>
-#include <QSet>
 #include <QThreadPool>
 #include <QVector>
 #include <optional>

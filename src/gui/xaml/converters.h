@@ -20,6 +20,7 @@
 
 #include <NsCore/Noesis.h>
 #include <NsCore/ReflectionDeclare.h>
+#include <NsGui/BaseValueConverter.h>
 
 namespace IngnomiaGUI
 {

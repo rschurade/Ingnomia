@@ -640,7 +640,7 @@ void World::processGrass()
 	}
 	for ( auto p : toRemove )
 	{
-		m_grassCandidatePositions.remove( p.toInt() );
+		m_grassCandidatePositions.erase( p.toInt() );
 	}
 }
 
@@ -695,7 +695,7 @@ void World::removeGrass( Position pos )
 
 	if ( m_grass.contains( pos.toInt() ) )
 	{
-		m_grass.remove( pos.toInt() );
+		m_grass.erase( pos.toInt() );
 
 		Tile& tile           = getTile( pos );
 		tile.vegetationLevel = 0;
@@ -852,8 +852,8 @@ struct Neighbors
 void World::processWaterFlow()
 {
 	// Batch newly tracked water tiles
-	QSet<unsigned int> newWater;
-	QSet<unsigned int> removedWater;
+	std::set<unsigned int> newWater;
+	std::set<unsigned int> removedWater;
 
 	QVector<unsigned int> drain;
 	QVector<unsigned int> flood;
@@ -1699,10 +1699,10 @@ void World::addToUpdateList( const QVector<unsigned int>& ul )
 	}
 }
 
-void World::addToUpdateList( const QSet<unsigned int>& ul )
+void World::addToUpdateList( const std::set<unsigned int>& ul )
 {
 	QMutexLocker lock( &m_updateMutex );
-	m_updatedTiles += ul;
+	m_updatedTiles.insert(ul.begin(), ul.end());
 }
 
 void World::setDoorLocked( unsigned int tileUID, bool lockGnome, bool lockMonster, bool lockAnimal )
@@ -1752,21 +1752,21 @@ void World::putLight( const unsigned short x, const unsigned short y, const unsi
 
 void World::addLight( unsigned int id, Position pos, int intensity )
 {
-	QSet<unsigned int> ul;
+	std::set<unsigned int> ul;
 	m_lightMap.addLight( ul, m_world, id, pos, intensity );
 	addToUpdateList( ul );
 }
 
 void World::removeLight( unsigned int id )
 {
-	QSet<unsigned int> ul;
+	std::set<unsigned int> ul;
 	m_lightMap.removeLight( ul, m_world, id );
 	addToUpdateList( ul );
 }
 
 void World::moveLight( unsigned int id, Position pos, int intensity )
 {
-	QSet<unsigned int> ul;
+	std::set<unsigned int> ul;
 	m_lightMap.removeLight( ul, m_world, id );
 	m_lightMap.addLight( ul, m_world, id, pos, intensity );
 	addToUpdateList( ul );
@@ -1774,7 +1774,7 @@ void World::moveLight( unsigned int id, Position pos, int intensity )
 
 void World::updateLightsInRange( Position pos )
 {
-	QSet<unsigned int> ul;
+	std::set<unsigned int> ul;
 	m_lightMap.updateLight( ul, m_world, pos );
 	addToUpdateList( ul );
 }

@@ -338,7 +338,7 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 	}
 	else
 	{
-		m_watchedItems.remove( key );
+		m_watchedItems.erase( key );
 		for( int i = 0; i < GameState::watchedItemList.size(); ++i )
 		{
 			auto hwi = GameState::watchedItemList[i];

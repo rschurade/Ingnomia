@@ -29,6 +29,7 @@
 
 #include <QDebug>
 #include <QJsonDocument>
+#include <QCoreApplication>
 
 AggregatorSound::AggregatorSound( QObject* parent ) :
 	QObject( parent )

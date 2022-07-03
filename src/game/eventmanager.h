@@ -24,6 +24,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QPointer>
 #include <QVariantMap>
 
 class Game;

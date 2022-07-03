@@ -797,7 +797,7 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 	{
 		if ( m_action == "Deconstruct" )
 		{
-			QSet<unsigned int> workshops;
+			std::set<unsigned int> workshops;
 
 			QList<QPair<Position, bool>> newSelection;
 

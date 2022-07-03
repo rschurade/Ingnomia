@@ -29,7 +29,7 @@ struct ItemExtraData
 {
 
 	QList<ItemMaterial> components;
-	QSet<unsigned int> containedItems;
+	std::set<unsigned int> containedItems;
 
 	unsigned char nutritionalValue = 0;
 	unsigned char drinkValue       = 0;
@@ -88,7 +88,7 @@ public:
 	unsigned int madeBy() const;
 	void setMadeBy( unsigned int creatureID );
 
-	const QSet<unsigned int>& containedItems() const;
+	const std::set<unsigned int>& containedItems() const;
 	unsigned char capacity() const;
 	bool requireSame() const;
 

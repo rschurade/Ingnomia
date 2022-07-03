@@ -272,13 +272,13 @@ bool Item::isContainer() const
 	return false;
 }
 
-const QSet<unsigned int>& Item::containedItems() const
+const std::set<unsigned int>& Item::containedItems() const
 {
 	if ( m_extraData )
 	{
 		return m_extraData->containedItems;
 	}
-	static const QSet<unsigned int> nullopt;
+	static const std::set<unsigned int> nullopt;
 	return nullopt;
 }
 
@@ -506,7 +506,7 @@ bool Item::removeItem( unsigned int itemID )
 {
 	if ( m_extraData )
 	{
-		return m_extraData->containedItems.remove( itemID );
+		return m_extraData->containedItems.erase( itemID );
 	}
 	return false;
 }

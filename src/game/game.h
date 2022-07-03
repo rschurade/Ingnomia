@@ -20,7 +20,10 @@
 
 #include "../base/enums.h"
 
+#include <QPointer>
 #include <QObject>
+#include <QElapsedTimer>
+#include <set>
 
 class Config;
 class NewGameSettings;
@@ -172,7 +175,7 @@ signals:
 	void signalEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 	void signalStartAutoSave();
 	void signalEndAutoSave();
-	void signalUpdateTileInfo( QSet<unsigned int> changeSet );
+	void signalUpdateTileInfo( std::set<unsigned int> changeSet );
 	void signalUpdateStockpile();
 };
 

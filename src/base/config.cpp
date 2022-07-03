@@ -25,6 +25,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QStandardPaths>
+#include <QCoreApplication>
 
 Config::Config()
 {

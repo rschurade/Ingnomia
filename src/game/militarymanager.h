@@ -22,7 +22,6 @@
 
 #include <QObject>
 #include <QRandomGenerator>
-#include <QSet>
 #include <QVariantMap>
 
 class Game;

@@ -21,7 +21,7 @@
 #include "../base/position.h"
 #include "../game/job.h"
 
-#include <QSet>
+#include <QPointer>
 
 class Game;
 

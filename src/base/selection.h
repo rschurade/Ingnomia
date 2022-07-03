@@ -19,6 +19,8 @@
 
 #include "../base/position.h"
 
+#include <QElapsedTimer>
+#include <QPointer>
 #include <QColor>
 #include <QList>
 #include <QPair>

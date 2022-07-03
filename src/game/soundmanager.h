@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include <QPointer>
 #include "../base/position.h"
 
 struct SoundEffect

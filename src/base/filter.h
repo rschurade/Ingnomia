@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QString>
+#include <set>
 
 class FilterItem
 {
@@ -100,8 +101,8 @@ public:
 
 	bool getCheckState( QString category, QString group, QString item, QString material );
 
-	const QSet<QPair<QString, QString>>& getActive();
-	QSet<QString> getActiveSimple();
+	const std::set<QPair<QString, QString>>& getActive();
+	std::set<QString> getActiveSimple();
 	void setActiveSimple( QString val );
 
 	void update();
@@ -111,6 +112,6 @@ private:
 
 	bool m_activeDirty       = true;
 	bool m_activeSimpleDirty = true;
-	QSet<QPair<QString, QString>> m_active;
-	QSet<QString> m_activeSimple;
+	std::set<QPair<QString, QString>> m_active;
+	std::set<QString> m_activeSimple;
 };

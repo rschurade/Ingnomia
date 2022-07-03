@@ -17,6 +17,12 @@
 */
 
 #include "converters.h"
+#include <QString>
+#include <QStringList>
+#include <NsCore/Package.h>
+#include <NsGui/Brush.h>
+#include <NsGui/SolidColorBrush.h>
+#include <NsDrawing/Color.h>
 
 using namespace IngnomiaGUI;
 using namespace Noesis;

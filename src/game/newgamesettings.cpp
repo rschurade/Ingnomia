@@ -22,6 +22,7 @@
 #include "../base/io.h"
 #include "../gui/strings.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QStandardPaths>

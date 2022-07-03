@@ -22,6 +22,7 @@
 #include "../base/dbstructs.h"
 #include "../base/position.h"
 
+#include <QPointer>
 #include <QList>
 #include <QMutex>
 #include <QSqlDatabase>

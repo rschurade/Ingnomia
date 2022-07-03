@@ -48,7 +48,8 @@ PastureProperties::PastureProperties( QVariantMap& in )
 	maxTroughCapacity = in.value( "MaxTroughCapacity" ).toInt();
 	troughContent     = in.value( "TroughContent" ).toInt();
 
-	foodSettings = in.value( "Food" ).toStringList().toSet();
+	const auto &listFood = in.value( "Food" ).toStringList();
+	foodSettings = std::set(listFood.begin(), listFood.end());
 
 	animalSize = DB::select( "PastureSize", "Animals", animalType ).toInt();
 }
@@ -71,7 +72,7 @@ void PastureProperties::serialize( QVariantMap& out ) const
 	out.insert( "MaxTroughCapacity", maxTroughCapacity );
 	out.insert( "TroughContent", troughContent );
 
-	out.insert( "Food", QStringList( foodSettings.values() ) );
+	out.insert( "Food", QStringList( foodSettings.begin(), foodSettings.end() ) );
 }
 
 Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
@@ -325,7 +326,7 @@ void Pasture::onTick( quint64 tick, int& count )
 		}
 	}
 	//fill troughs
-	if ( !m_properties.foodSettings.isEmpty() && m_properties.maxTroughCapacity > 0 )
+	if ( !m_properties.foodSettings.empty() && m_properties.maxTroughCapacity > 0 )
 	{
 		if ( m_properties.troughContent < m_properties.maxTroughCapacity - 9 )
 		{
@@ -691,7 +692,7 @@ Position Pasture::findShed()
 	return Position();
 }
 
-QSet<QString>& Pasture::foodSettings()
+std::set<QString>& Pasture::foodSettings()
 {
 	return m_properties.foodSettings;
 }
@@ -703,7 +704,7 @@ void Pasture::addFoodSetting( QString itemSID, QString materialSID )
 
 void Pasture::removeFoodSetting( QString itemSID, QString materialSID )
 {
-	m_properties.foodSettings.remove( itemSID + "_" + materialSID );
+	m_properties.foodSettings.erase( itemSID + "_" + materialSID );
 }
 
 void Pasture::addFood( unsigned int itemID )

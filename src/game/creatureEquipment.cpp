@@ -17,6 +17,8 @@
 */
 #include "creature.h"
 
+#include <QDebug>
+
 QVariantMap EquipmentItem::serialize()
 {
 	QVariantMap out;

@@ -19,7 +19,7 @@
 
 #include <QMap>
 #include <QObject>
-#include <QSet>
+#include <set>
 
 struct IH_values
 {
@@ -64,7 +64,7 @@ public:
 		m_startUp = false;
 	}
 
-	QMap<QString, QSet<QString>> allItems()
+	QMap<QString, std::set<QString>> allItems()
 	{
 		return m_itemsPresent;
 	}
@@ -79,7 +79,7 @@ private:
 	QList<IH_day> m_data;
 	IH_day m_currentDay;
 
-	QMap<QString, QSet<QString>> m_itemsPresent;
+	QMap<QString, std::set<QString>> m_itemsPresent;
 
 	bool m_startUp = true;
 };

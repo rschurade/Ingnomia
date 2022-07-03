@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 
+#include <QPointer>
 #include <QGridLayout>
 #include <QLayoutItem>
 #include <QPixmap>
@@ -56,7 +57,7 @@ public:
 	int toolLevel( unsigned int itemUID );
 	int toolLevel( QString materialSID );
 
-	QSet<QString> itemsAllowedInContainer( unsigned int container );
+	std::set<QString> itemsAllowedInContainer( unsigned int container );
 	bool itemAllowedInContainer( unsigned int item, unsigned int container );
 	void initAllowedInContainer();
 	QString carryContainerForItem( QString itemSID );

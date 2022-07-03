@@ -19,9 +19,12 @@
 
 #include "../base/enums.h"
 
+#include <QPointer>
 #include <QObject>
 #include <QList>
 #include <QHash>
+#include <QMap>
+#include <set>
 
 class Game;
 
@@ -150,7 +153,7 @@ private:
     
     QList<GuiBuildItem> m_buildItems;
 
-    QSet<QString> m_watchedItems;
+    std::set<QString> m_watchedItems;
 
     QMap<BuildSelection, QString> m_buildSelection2String;
     QMap<BuildSelection, BuildItemType> m_buildSelection2buildItem;

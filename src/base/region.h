@@ -20,7 +20,7 @@
 #include "../base/position.h"
 
 #include <QMap>
-#include <QSet>
+#include <set>
 
 class Region
 {
@@ -50,16 +50,16 @@ public:
 	void removeAllConnectionsFrom( unsigned int id );
 	void removeAllConnectionsTo( unsigned int id );
 
-	QMap<unsigned int, QSet<QString>> connectionSetFrom()
+	QMap<unsigned int, std::set<QString>> connectionSetFrom()
 	{
 		return m_connectionsFrom;
 	};
-	QMap<unsigned int, QSet<QString>> connectionSetTo()
+	QMap<unsigned int, std::set<QString>> connectionSetTo()
 	{
 		return m_connectionsTo;
 	}
 
-	QSet<QString> connectionsToRegion( unsigned int region )
+	std::set<QString> connectionsToRegion( unsigned int region )
 	{
 		return m_connectionsTo.value( region );
 	}
@@ -79,6 +79,6 @@ public:
 
 private:
 	unsigned int m_id = 0;
-	QMap<unsigned int, QSet<QString>> m_connectionsFrom;
-	QMap<unsigned int, QSet<QString>> m_connectionsTo;
+	QMap<unsigned int, std::set<QString>> m_connectionsFrom;
+	QMap<unsigned int, std::set<QString>> m_connectionsTo;
 };

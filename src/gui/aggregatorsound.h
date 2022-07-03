@@ -19,6 +19,7 @@
 
 #include "../base/position.h"
 
+#include <QPointer>
 #include <QList>
 
 #include "openalwrapper.h"

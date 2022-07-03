@@ -20,6 +20,7 @@
 
 #include "../base/position.h"
 
+#include <QPointer>
 #include <QMap>
 #include <QVariantMap>
 

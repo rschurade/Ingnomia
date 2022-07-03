@@ -19,7 +19,7 @@
 
 #include <QMap>
 #include <QObject>
-#include <QSet>
+#include <set>
 
 struct TTNode
 {
@@ -27,8 +27,8 @@ struct TTNode
 	QString itemSID;
 	QString craftID;
 
-	QSet<QString> parents;
-	QSet<QString> childs;
+	std::set<QString> parents;
+	std::set<QString> childs;
 };
 
 class TechTree : public QObject

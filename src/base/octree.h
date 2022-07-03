@@ -18,7 +18,7 @@
 #pragma once
 
 #include <QList>
-#include <QSet>
+#include <set>
 
 #include <functional>
 
@@ -47,5 +47,5 @@ private:
 	const bool m_isLeaf;
 
 	Octree* m_children[8] = { 0 };
-	QSet<unsigned int> m_items;
+	std::set<unsigned int> m_items;
 };

@@ -21,8 +21,6 @@
 #include "../base/position.h"
 #include "../game/room.h"
 
-#include <QSet>
-
 class Job;
 class Room;
 class Game;

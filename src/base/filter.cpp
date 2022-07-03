@@ -34,6 +34,7 @@
 */
 #include "filter.h"
 
+#include <QElapsedTimer>
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../game/game.h"
@@ -179,7 +180,7 @@ bool Filter::getCheckState( QString category, QString group, QString item, QStri
 	return m_categories[category].getCheckState( group, item, material );
 }
 
-const QSet<QPair<QString, QString>>& Filter::getActive()
+const std::set<QPair<QString, QString>>& Filter::getActive()
 {
 	if ( m_activeDirty )
 	{
@@ -207,7 +208,7 @@ const QSet<QPair<QString, QString>>& Filter::getActive()
 	return m_active;
 }
 
-QSet<QString> Filter::getActiveSimple()
+std::set<QString> Filter::getActiveSimple()
 {
 	if ( m_activeSimpleDirty )
 	{
