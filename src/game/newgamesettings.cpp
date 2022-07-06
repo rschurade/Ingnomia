@@ -28,7 +28,7 @@
 #include <QStandardPaths>
 
 #include <random>
-#include <ranges>
+#include <range/v3/view.hpp>
 
 NewGameSettings::NewGameSettings( QObject* parent ) :
 	QObject( parent )
@@ -70,7 +70,7 @@ void NewGameSettings::save()
 	QVariantMap allowedPlants;
 	QVariantMap allowedTrees;
 
-	for( const auto& ci : m_checkableItems | std::views::values )
+	for( const auto& ci : m_checkableItems | ranges::views::values )
 	{
 		if( ci.type == "Animal" )
 		{
@@ -806,7 +806,7 @@ void NewGameSettings::setAmount( QString sid, int value )
 std::vector<CheckableItem> NewGameSettings::filterCheckableItems( const QString& itemType )
 {
 	std::vector<CheckableItem> result;
-	const auto &values = std::views::values(m_checkableItems);
+	const auto &values = ranges::views::values(m_checkableItems);
 	std::copy_if( values.begin(), values.end(),
 				  std::back_inserter( result ),
 				  [itemType]( const CheckableItem& item )

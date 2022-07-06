@@ -23,7 +23,7 @@
 #include <QQueue>
 #include <QSqlQuery>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 TechTree::TechTree( QObject* parent ) :
 	QObject( parent )
@@ -80,13 +80,13 @@ void TechTree::create()
 	}
 	qDebug() << "####################################################";
 	int maxLevel = 0;
-	for ( const auto& value : itemLevels | std::views::values )
+	for ( const auto& value : itemLevels | ranges::views::values )
 	{
 		maxLevel = qMax( maxLevel, value );
 	}
 	int currentLevel = 1;
 	std::vector<QString> keys;
-	for ( const auto& key : itemLevels | std::views::keys ) {
+	for ( const auto& key : itemLevels | ranges::views::keys ) {
 		keys.push_back(key);
 	}
 	std::sort(keys.begin(), keys.end());

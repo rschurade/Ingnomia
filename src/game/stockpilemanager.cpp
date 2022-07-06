@@ -34,7 +34,7 @@ StockpileManager::StockpileManager( Game* parent ) :
 
 StockpileManager::~StockpileManager()
 {
-	for ( const auto& sp : m_stockpiles | std::views::values )
+	for ( const auto& sp : m_stockpiles | ranges::views::values )
 	{
 		delete sp;
 	}
@@ -42,7 +42,7 @@ StockpileManager::~StockpileManager()
 
 void StockpileManager::onTick( quint64 tick )
 {
-	for ( auto& sp : m_stockpiles | std::views::values )
+	for ( auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->countFields() == 0 && !sp->stillHasJobs() )
 		{
@@ -51,7 +51,7 @@ void StockpileManager::onTick( quint64 tick )
 		}
 	}
 
-	for ( auto& sp : m_stockpiles | std::views::values )
+	for ( auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->onTick( tick ) )
 		{
@@ -241,7 +241,7 @@ unsigned int StockpileManager::getJob()
 
 bool StockpileManager::finishJob( unsigned int jobID )
 {
-	for ( auto& sp : m_stockpiles | std::views::values )
+	for ( auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->finishJob( jobID ) )
 		{
@@ -253,7 +253,7 @@ bool StockpileManager::finishJob( unsigned int jobID )
 
 bool StockpileManager::giveBackJob( unsigned int jobID )
 {
-	for ( auto& sp : m_stockpiles | std::views::values )
+	for ( auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->giveBackJob( jobID ) )
 		{
@@ -269,7 +269,7 @@ bool StockpileManager::giveBackJob( unsigned int jobID )
 
 QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
 {
-	for ( const auto& sp : m_stockpiles | std::views::values )
+	for ( const auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{
@@ -280,7 +280,7 @@ QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
 
 bool StockpileManager::hasJobID( unsigned int jobID ) const
 {
-	for ( const auto& sp : m_stockpiles | std::views::values )
+	for ( const auto& sp : m_stockpiles | ranges::views::values )
 	{
 		if ( sp->hasJobID( jobID ) )
 		{

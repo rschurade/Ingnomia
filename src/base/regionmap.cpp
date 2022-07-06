@@ -176,7 +176,7 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 	auto oldConSetTo = fromRegion.connectionSetTo();
 
 	fromRegion.clearConnectionsTo();
-	for ( auto con : oldConSetTo | std::views::keys )
+	for ( auto con : oldConSetTo | ranges::views::keys )
 	{
 		for ( auto conPosString : oldConSetTo.at( con ) )
 		{
@@ -198,7 +198,7 @@ void RegionMap::splitRegions( unsigned int fromRegionID, unsigned int intoRegion
 
 	auto oldConSet = fromRegion.connectionSetFrom();
 	fromRegion.clearConnectionsFrom();
-	for ( auto downRegionID : oldConSet | std::views::keys )
+	for ( auto downRegionID : oldConSet | ranges::views::keys )
 	{
 		Region& downRegion = m_regions[downRegionID];
 		// get list of position to the old region that is split

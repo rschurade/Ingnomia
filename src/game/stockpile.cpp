@@ -30,7 +30,7 @@
 #include <QElapsedTimer>
 #include <QString>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Stockpile::Stockpile( Game* game ) :
 	WorldObject( game )
@@ -55,7 +55,7 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Stockpile::~Stockpile()
 {
-	for ( const auto& field : m_fields | std::views::values )
+	for ( const auto& field : m_fields | ranges::views::values )
 	{
 		delete field;
 	}
@@ -155,7 +155,7 @@ QVariant Stockpile::serialize()
 	out.insert( "LimitWithMaterial", m_limitWithmaterial );
 
 	QVariantList fields;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		QVariantMap fima;
 		fima.insert( "Pos", field->pos.toString() );
@@ -187,7 +187,7 @@ QVariant Stockpile::serialize()
 	out.insert( "Fields", fields );
 
 	QVariantList limits;
-	for ( auto key : m_limits | std::views::keys )
+	for ( auto key : m_limits | ranges::views::keys )
 	{
 		auto limit = m_limits[key];
 		QVariantMap lima;
@@ -201,7 +201,7 @@ QVariant Stockpile::serialize()
 	out.insert( "Limits", limits );
 
 	QVariantList jobs;
-	for ( auto job : m_jobsOut | std::views::values )
+	for ( auto job : m_jobsOut | ranges::views::values )
 	{
 		jobs.append( job->serialize() );
 	}
@@ -275,7 +275,7 @@ bool Stockpile::onTick( quint64 tick )
 absl::btree_set<QPair<QString, QString>> Stockpile::freeSlots() const
 {
 	absl::btree_set<QPair<QString, QString>> freeSlots;
-	for ( auto infi : m_fields | std::views::values )
+	for ( auto infi : m_fields | ranges::views::values )
 	{
 		if ( !infi->isFull )
 		{
@@ -346,7 +346,7 @@ unsigned int Stockpile::getJob()
 		{
 			m_isFull = true;
 			//loop over all stockpile fields
-			for ( auto infi : m_fields | std::views::values )
+			for ( auto infi : m_fields | ranges::views::values )
 			{
 				if ( !infi->isFull )
 				{
@@ -416,7 +416,7 @@ unsigned int Stockpile::getJob()
 				}
 			}
 			//loop over all stockpile fields
-			for ( auto infi : m_fields | std::views::values )
+			for ( auto infi : m_fields | ranges::views::values )
 			{
 				if ( !infi->isFull )
 				{
@@ -886,7 +886,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 		// unchecked some items, need to expel it from the stockpile
 		absl::btree_set<QString> filter = m_filter.getActiveSimple();
 
-		for ( auto infi : m_fields | std::views::values )
+		for ( auto infi : m_fields | ranges::views::values )
 		{
 			QList<unsigned int> toRemove;
 			for ( auto oi : infi->items )
@@ -1055,7 +1055,7 @@ void Stockpile::unlinkWorkshop( unsigned int workshopID )
 int Stockpile::count( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields | std::views::values )
+	for ( auto spf : m_fields | ranges::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1072,7 +1072,7 @@ int Stockpile::count( QString itemSID, QString materialSID )
 int Stockpile::count( QString itemSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields | std::views::values )
+	for ( auto spf : m_fields | ranges::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1089,7 +1089,7 @@ int Stockpile::count( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields | std::views::values )
+	for ( auto spf : m_fields | ranges::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )
@@ -1113,7 +1113,7 @@ int Stockpile::countPlusReserved( QString itemSID )
 int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
 {
 	int count      = 0;
-	for ( auto spf : m_fields | std::views::values )
+	for ( auto spf : m_fields | ranges::views::values )
 	{
 		// if exists get item from that position
 		for ( auto itemUID : spf->items )

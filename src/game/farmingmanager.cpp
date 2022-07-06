@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QVariantMap>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 void Beehive::serialize( QVariantMap& out ) const
 {
@@ -63,22 +63,22 @@ FarmingManager::FarmingManager( Game* parent ) :
 
 FarmingManager::~FarmingManager()
 {
-	for (const auto& pa : m_pastures | std::views::values)
+	for (const auto& pa : m_pastures | ranges::views::values)
 	{
 		delete pa;
 	}
 	m_pastures.clear();
-	for (const auto& fa : m_farms | std::views::values)
+	for (const auto& fa : m_farms | ranges::views::values)
 	{
 		delete fa;
 	}
 	m_farms.clear();
-	for (const auto& gr : m_groves | std::views::values)
+	for (const auto& gr : m_groves | ranges::views::values)
 	{
 		delete gr;
 	}
 	m_groves.clear();
-	for (const auto& bh : m_beehives | std::views::values)
+	for (const auto& bh : m_beehives | ranges::views::values)
 	{
 		delete bh;
 	}
@@ -147,7 +147,7 @@ void FarmingManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCha
 
 void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
-	for ( auto& bh : m_beehives | std::views::values )
+	for ( auto& bh : m_beehives | ranges::views::values )
 	{
 		bh->honey += (float)( 1.0 / 200. );
 
@@ -160,7 +160,7 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 
 void FarmingManager::onTickGrove( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
-	for ( auto&& gr : m_groves | std::views::values )
+	for ( auto&& gr : m_groves | ranges::views::values )
 	{
 		gr->onTick( tickNumber );
 	}
@@ -170,7 +170,7 @@ void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool da
 {
 	if ( hourChanged )
 	{
-		for ( auto&& fa : m_farms | std::views::values )
+		for ( auto&& fa : m_farms | ranges::views::values )
 		{
 			if ( fa->countTiles() == 0 && fa->canDelete() )
 			{
@@ -180,7 +180,7 @@ void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool da
 		}
 	}
 
-	for ( auto& fa : m_farms | std::views::values )
+	for ( auto& fa : m_farms | ranges::views::values )
 	{
 		fa->onTick( tickNumber );
 	}
@@ -190,7 +190,7 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 {
 	if ( hourChanged )
 	{
-		for ( auto& pa : m_pastures | std::views::values )
+		for ( auto& pa : m_pastures | ranges::views::values )
 		{
 			if ( pa->countTiles() == 0 && pa->canDelete() )
 			{
@@ -204,7 +204,7 @@ void FarmingManager::onTickPasture( quint64 tickNumber, bool seasonChanged, bool
 	{
 		m_totalCountAnimals = 0;
 		int count = 0;
-		for ( auto& pa : m_pastures | std::views::values )
+		for ( auto& pa : m_pastures | ranges::views::values )
 		{
 			pa->onTick( tickNumber, count );
 			m_totalCountAnimals += count;

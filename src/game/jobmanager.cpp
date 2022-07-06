@@ -37,7 +37,7 @@
 #include <QElapsedTimer>
 #include <QVariantMap>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 JobManager::JobManager( Game* parent ) :
 	m_startIndex( 0 ),
@@ -241,7 +241,7 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 
 	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type, false );
 
-	for ( auto key : mc | std::views::keys )
+	for ( auto key : mc | ranges::views::keys )
 	{
 		if ( mc[key] > 0 )
 		{
@@ -540,7 +540,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								}
 								else
 								{
-									for ( auto& type : m_jobsPerType | std::views::values )
+									for ( auto& type : m_jobsPerType | ranges::views::values )
 									{
 										type.remove( prio, job->id() );
 									}
@@ -576,7 +576,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 									}
 									else
 									{
-										for ( auto& type : m_jobsPerType | std::views::values )
+										for ( auto& type : m_jobsPerType | ranges::views::values )
 										{
 											type.remove( prio, job->id() );
 										}
@@ -603,7 +603,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								}
 								else
 								{
-									for ( auto& type : m_jobsPerType | std::views::values )
+									for ( auto& type : m_jobsPerType | ranges::views::values )
 									{
 										type.remove( prio, job->id() );
 									}
@@ -748,7 +748,7 @@ void JobManager::finishJob( unsigned int jobID )
 
 		removeFromPositionHash( jobID );
 
-		for ( auto& mtype : m_jobsPerType | std::views::values )
+		for ( auto& mtype : m_jobsPerType | ranges::views::values )
 		{
 			mtype.remove( job->priority(), jobID );
 		}
@@ -971,7 +971,7 @@ void JobManager::giveBackJob( unsigned int jobID )
 		job->clearPossibleWorkPositions();
 		job->setComponentMissing( true );
 
-		for ( auto& type : m_jobsPerType | std::views::values )
+		for ( auto& type : m_jobsPerType | ranges::views::values )
 		{
 			type.remove( job->priority(), jobID );
 		}
@@ -1018,7 +1018,7 @@ void JobManager::cancelJob( const Position& pos )
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
-			for ( auto& type : m_jobsPerType | std::views::values )
+			for ( auto& type : m_jobsPerType | ranges::views::values )
 			{
 				type.remove( job->priority(), jobID );
 			}
@@ -1048,7 +1048,7 @@ void JobManager::deleteJob( unsigned int jobID )
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
-			for ( auto& type : m_jobsPerType | std::views::values )
+			for ( auto& type : m_jobsPerType | ranges::views::values )
 			{
 				type.remove( job->priority(), jobID );
 			}

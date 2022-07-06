@@ -43,7 +43,7 @@
 #include <QOpenGLTexture>
 #include <QTimer>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 namespace
 {
@@ -674,7 +674,7 @@ void MainWindowRenderer::paintSelection()
 		m_selectionShader->setUniformValue( texNum.toStdString().c_str(), i );
 	}
 
-	for ( const auto& sd : m_selectionData | std::views::values )
+	for ( const auto& sd : m_selectionData | ranges::views::values )
 	{
 		GLint tile = m_axleShader->uniformLocation( "tile" );
 		glUniform3ui( tile, sd.pos.x, sd.pos.y, sd.pos.z );
@@ -729,7 +729,7 @@ void MainWindowRenderer::paintAxles()
 		m_axleShader->setUniformValue( texNum.toStdString().c_str(), i );
 	}
 
-	for ( const auto& ad : m_axleData.data | std::views::values )
+	for ( const auto& ad : m_axleData.data | ranges::views::values )
 	{
 		if ( !ad.isVertical && ad.pos.z <= m_viewLevel )
 		{

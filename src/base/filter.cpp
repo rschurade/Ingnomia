@@ -25,7 +25,7 @@
 
 #include "../gui/eventconnector.h"
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 #pragma region Filter
 Filter::Filter()
@@ -240,7 +240,7 @@ void FilterCategory::addGroup( QString group )
 
 void FilterCategory::setCheckState( bool state )
 {
-	for ( const auto& key : m_groups | std::views::keys )
+	for ( const auto& key : m_groups | ranges::views::keys )
 	{
 		m_groups[key].setCheckState( state );
 	}
@@ -275,7 +275,7 @@ void FilterGroup::addItem( QString item, QString material )
 
 void FilterGroup::setCheckState( bool state )
 {
-	for ( const auto& key : m_items | std::views::keys )
+	for ( const auto& key : m_items | ranges::views::keys )
 	{
 		m_items[key].setCheckState( state );
 	}
@@ -313,7 +313,7 @@ void FilterItem::addItem( QString material )
 	{
 		// Inherit active state from silblings, if alle known are already active
 		bool allActive = true;
-		for ( const auto& material : m_materials | std::views::values )
+		for ( const auto& material : m_materials | ranges::views::values )
 		{
 			allActive = allActive && material;
 		}
@@ -323,7 +323,7 @@ void FilterItem::addItem( QString material )
 
 void FilterItem::setCheckState( bool state )
 {
-	for ( const auto& key : m_materials | std::views::keys )
+	for ( const auto& key : m_materials | ranges::views::keys )
 	{
 		m_materials[key] = state;
 	}

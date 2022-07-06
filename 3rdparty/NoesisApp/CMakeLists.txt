@@ -34,11 +34,12 @@ target_compile_definitions(
 		NS_APP_FRAMEWORK
 )
 
-target_precompile_headers(${PROJECT_NAME}
-	PRIVATE
-		pch.h
-)
-
+if (NOT APPLE)
+	target_precompile_headers(${PROJECT_NAME}
+		PRIVATE
+			$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/pch.h>
+	)
+endif()
 
 # Iterate over packages, and collect include + source directories
 foreach(PACKAGE ${NOESIS_APP_PACKAGES})
@@ -60,12 +61,14 @@ foreach(PACKAGE ${NOESIS_APP_PACKAGES})
 		list(GET PACKAGE_SPLIT 0 PACKAGE_NAME)
 		list(GET PACKAGE_SPLIT 1 COMPONENT_NAME)
 		set(MAIN_INCLUDE ${INCLUDE_DIR}/Ns${PACKAGE_NAME}/${COMPONENT_NAME}.h)
-		if(EXISTS ${MAIN_INCLUDE})
-			target_precompile_headers(${PROJECT_NAME}
-				PRIVATE
-					${MAIN_INCLUDE}
-			)
-		endif()
+        if (NOT APPLE)
+            if(EXISTS ${MAIN_INCLUDE})
+                target_precompile_headers(${PROJECT_NAME}
+                    PRIVATE
+                    $<$<COMPILE_LANGUAGE:CXX>:${MAIN_INCLUDE}>
+                )
+            endif()
+        endif()
 	endif()
 
 	# Switch package to static linkage
@@ -111,10 +114,18 @@ target_sources(${PROJECT_NAME}
 		${NOESIS_APP_SRC}
 		${NOESIS_APP_BIN2H}
 		${NOESIS_CORE_INCLUDES}
-		pch.h
 		register.cpp
 		README.md
 )
+
+if (APPLE)
+	set_source_files_properties(${NOESIS_ROOT}/Src/Packages/Render/GLRenderContext/Src/GLRenderContext.mm.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
+else()
+	target_sources(${PROJECT_NAME}
+		PRIVATE
+			pch.h
+	)
+endif()
 
 source_group(TREE "${CMAKE_CURRENT_BINARY_DIR}" PREFIX "Generated" FILES ${NOESIS_APP_GENERATED_PATHS})
 source_group(TREE "${NOESIS_ROOT}/Src/Packages" PREFIX "NoesisApp" FILES ${NOESIS_APP_SRC})

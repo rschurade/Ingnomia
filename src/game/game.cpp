@@ -415,7 +415,7 @@ QString Game::intToTime( int time )
 void Game::processPlants()
 {
 	QList<Position> toRemove;
-	for ( auto& p : m_world->plants() | std::views::values )
+	for ( auto& p : m_world->plants() | ranges::views::values )
 	{
 		switch ( p.onTick( GameState::tick, GameState::dayChanged, GameState::seasonChanged ) )
 		{

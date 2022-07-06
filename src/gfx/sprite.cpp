@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QPainter>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Sprite::Sprite()
 {
@@ -202,7 +202,7 @@ SpriteSeasons::SpriteSeasons( const SpriteSeasons& other ) :
 
 SpriteSeasons::~SpriteSeasons()
 {
-	for ( auto s : m_sprites | std::views::values )
+	for ( auto s : m_sprites | ranges::views::values )
 	{
 		delete s;
 	}
@@ -220,7 +220,7 @@ void SpriteSeasons::setPixmap( QPixmap pm, QString season, unsigned char rotatio
 
 void SpriteSeasons::applyEffect( QString effect )
 {
-	for ( auto s : m_sprites | std::views::values )
+	for ( auto s : m_sprites | ranges::views::values )
 	{
 		s->applyEffect( effect );
 	}
@@ -228,7 +228,7 @@ void SpriteSeasons::applyEffect( QString effect )
 
 void SpriteSeasons::applyTint( QString tint, QString materialSID )
 {
-	for ( auto s : m_sprites | std::views::values )
+	for ( auto s : m_sprites | ranges::views::values )
 	{
 		s->applyTint( tint, materialSID );
 	}

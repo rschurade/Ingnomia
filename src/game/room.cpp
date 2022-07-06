@@ -29,7 +29,7 @@
 #include <QElapsedTimer>
 #include <QString>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Room::Room() :
 	WorldObject( nullptr )
@@ -58,7 +58,7 @@ Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 
 Room::~Room()
 {
-	for ( const auto& field : m_fields | std::views::values )
+	for ( const auto& field : m_fields | ranges::views::values )
 	{
 		delete field;
 	}
@@ -106,7 +106,7 @@ QVariant Room::serialize() const
 	out.insert( "Type", (unsigned char)m_type );
 
 	QVariantList fields;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		QVariantMap fima;
 		fima.insert( "Pos", field->pos.toString() );
@@ -146,7 +146,7 @@ bool Room::removeTile( const Position & pos )
 		if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 		{
 			bool found = false;
-			for ( auto& f : m_fields | std::views::values )
+			for ( auto& f : m_fields | ranges::views::values )
 			{
 				if ( f->furnitureID )
 				{
@@ -194,7 +194,7 @@ void Room::removeFurniture( const Position& pos )
 		{
 			if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
 			{
-				for ( auto& f : m_fields | std::views::values )
+				for ( auto& f : m_fields | ranges::views::values )
 				{
 					if ( f->furnitureID )
 					{
@@ -213,7 +213,7 @@ void Room::removeFurniture( const Position& pos )
 bool Room::checkRoofed()
 {
 	bool roofed = true;
-	for ( auto tile : m_fields | std::views::values )
+	for ( auto tile : m_fields | ranges::views::values )
 	{
 		Position pos = tile->pos;
 		pos.z        = pos.z + 1;
@@ -231,7 +231,7 @@ bool Room::checkRoofed()
 bool Room::checkEnclosed()
 {
 	bool enclosed = true;
-	for ( auto tile : m_fields | std::views::values )
+	for ( auto tile : m_fields | ranges::views::values )
 	{
 		Position posi = tile->pos;
 
@@ -284,7 +284,7 @@ bool Room::checkEnclosed()
 QList<unsigned int> Room::beds()
 {
 	QList<unsigned int> beds;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		if ( g->inv()->isInGroup( "Furniture", "Beds", field->furnitureID ) )
 		{
@@ -297,7 +297,7 @@ QList<unsigned int> Room::beds()
 QList<unsigned int> Room::chairs()
 {
 	QList<unsigned int> chairs;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		if ( g->inv()->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
 		{
@@ -319,7 +319,7 @@ void Room::setHasAlarmBell( bool value )
 
 Position Room::firstBellPos() const
 {
-	for ( const auto& f : m_fields | std::views::values )
+	for ( const auto& f : m_fields | ranges::views::values )
 	{
 		if ( f->furnitureID )
 		{
@@ -335,7 +335,7 @@ Position Room::firstBellPos() const
 QList<Position> Room::allBellPos() const
 {
 	QList<Position> out;
-	for ( const auto& f : m_fields | std::views::values )
+	for ( const auto& f : m_fields | ranges::views::values )
 	{
 		if ( f->furnitureID )
 		{
@@ -353,7 +353,7 @@ Position Room::randomTilePos() const
 	if ( m_fields.size() )
 	{
 		auto id = rand() % m_fields.size();
-		for ( auto rt : m_fields | std::views::values )
+		for ( auto rt : m_fields | ranges::views::values )
 		{
 			if ( id == 0 )
 			{
@@ -368,7 +368,7 @@ Position Room::randomTilePos() const
 unsigned int Room::value()
 {
 	unsigned int out = 0;
-	for ( const auto& f : m_fields | std::views::values )
+	for ( const auto& f : m_fields | ranges::views::values )
 	{
 		if ( f->furnitureID )
 		{

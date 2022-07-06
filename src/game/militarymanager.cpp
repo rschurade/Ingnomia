@@ -33,7 +33,7 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 QVariantMap UniformItem::serialize()
 {
@@ -257,7 +257,7 @@ QVariantMap MilitaryManager::serialize()
 	QVariantMap military;
 
 	QVariantList vRoles;
-	for ( auto pos : m_roles | std::views::values )
+	for ( auto pos : m_roles | ranges::views::values )
 	{
 		vRoles.append( pos.serialize() );
 	}

@@ -9,9 +9,10 @@ find_path(NOESIS_INCLUDE_DIR
 
 find_library(NOESIS_LIBRARY
 	NAMES
-		libNoesis Noesis
+		Noesis Noesis.dylib
 	HINTS
 		${NOESIS_ROOT}/Bin/linux_x86_64
+		${NOESIS_ROOT}/Bin/macos
 		${NOESIS_ROOT}/Lib/windows_x86_64
 )
 

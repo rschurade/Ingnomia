@@ -31,7 +31,7 @@
 
 #include <QDebug>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 PastureProperties::PastureProperties( QVariantMap& in )
 {
@@ -93,7 +93,7 @@ Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
 	}
 	if ( m_fields.size() )
 	{
-		for ( auto field : m_fields | std::views::values )
+		for ( auto field : m_fields | ranges::views::values )
 		{
 			m_properties.firstPos = field->pos;
 			break;
@@ -120,7 +120,7 @@ Pasture::Pasture( QVariantMap vals, Game* game ) :
 	}
 	if ( m_fields.size() )
 	{
-		for ( auto field : m_fields | std::views::values )
+		for ( auto field : m_fields | ranges::views::values )
 		{
 			m_properties.firstPos = field->pos;
 			break;
@@ -151,7 +151,7 @@ QVariant Pasture::serialize() const
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
@@ -177,7 +177,7 @@ QVariant Pasture::serialize() const
 
 Pasture::~Pasture()
 {
-	for ( const auto& field : m_fields | std::views::values )
+	for ( const auto& field : m_fields | ranges::views::values )
 	{
 		delete field;
 	}
@@ -204,7 +204,7 @@ void Pasture::addTile( const Position & pos )
 // farming manager calls this on hour changed
 void Pasture::onTick( quint64 tick, int& count )
 {
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		Tile& tile = g->w()->getTile( field->pos );
 		if( GameState::season != 3 )
@@ -274,7 +274,7 @@ void Pasture::onTick( quint64 tick, int& count )
 			{
 				// find a free field first
 				QList<Position>freeFields;
-				for ( auto& field : m_fields | std::views::values )
+				for ( auto& field : m_fields | ranges::views::values )
 				{
 					if( !field->job )
 					{
@@ -337,7 +337,7 @@ void Pasture::onTick( quint64 tick, int& count )
 				auto fsl = foodString.split( "_" );
 				if ( g->inv()->itemCount( fsl[0], fsl[1] ) > 0 )
 				{
-					for ( auto& field : m_fields | std::views::values )
+					for ( auto& field : m_fields | ranges::views::values )
 					{
 						if ( field->util && !field->job )
 						{
@@ -363,7 +363,7 @@ void Pasture::onTick( quint64 tick, int& count )
 	{
 		if ( g->inv()->itemCount( "Hay", "any" ) < (unsigned int)m_properties.maxHay )
 		{
-			for ( auto& field : m_fields | std::views::values )
+			for ( auto& field : m_fields | ranges::views::values )
 			{
 				if ( !field->job && g->w()->hasMaxGrass( field->pos ) )
 				{
@@ -505,7 +505,7 @@ bool Pasture::removeTile( const Position & pos )
 
 	if ( m_fields.size() )
 	{
-		for ( auto field : m_fields | std::views::values )
+		for ( auto field : m_fields | ranges::views::values )
 		{
 			m_properties.firstPos = field->pos;
 			break;
@@ -668,7 +668,7 @@ unsigned int Pasture::util( Position pos )
 Position Pasture::randomFieldPos()
 {
 	int random = rand() % m_fields.size();
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		if ( random == 0 )
 		{
@@ -681,7 +681,7 @@ Position Pasture::randomFieldPos()
 
 Position Pasture::findShed()
 {
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		if ( field->util )
 		{

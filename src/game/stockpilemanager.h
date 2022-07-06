@@ -21,7 +21,7 @@
 #include "../game/stockpile.h"
 #include <absl/container/flat_hash_map.h>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 #include <sigslot/signal.hpp>
 
@@ -72,7 +72,7 @@ public:
 
 	auto allStockpiles()
 	{
-		return m_stockpiles | std::views::keys;
+		return m_stockpiles | ranges::views::keys;
 	}
 	QList<unsigned int>& allStockpilesOrdered()
 	{

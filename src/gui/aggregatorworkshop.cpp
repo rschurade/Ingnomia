@@ -33,7 +33,7 @@
 
 #include <QDebug>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
@@ -59,7 +59,7 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 	materials.append( GuiWorkshopMaterial { anyString, mats["any"] } );
 
 	mats.erase( "any" );
-	for ( auto key : mats | std::views::keys )
+	for ( auto key : mats | ranges::views::keys )
 	{
 		materials.append( GuiWorkshopMaterial { key, mats[key] } );
 	}

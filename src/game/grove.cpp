@@ -30,11 +30,11 @@
 
 #include <QDebug>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Grove::~Grove()
 {
-	for ( const auto& field : m_fields | std::views::values )
+	for ( const auto& field : m_fields | ranges::views::values )
 	{
 		delete field;
 	}
@@ -132,7 +132,7 @@ QVariant Grove::serialize() const
 	WorldObject::serialize( out );
 	m_properties.serialize( out );
 	QVariantList tiles;
-	for ( auto field : m_fields | std::views::values )
+	for ( auto field : m_fields | ranges::views::values )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field->pos.toString() );
@@ -153,7 +153,7 @@ void Grove::onTick( quint64 tick )
 	if ( !m_active )
 		return;
 	
-	for( auto& gf : m_fields | std::views::values )
+	for( auto& gf : m_fields | ranges::views::values )
 	{
 		if( !gf->job )
 		{
@@ -279,7 +279,7 @@ void Grove::addTile( const Position & pos )
 int Grove::numTrees()
 {
 	int numTrees = 0;
-	for( auto& gf : m_fields | std::views::values )
+	for( auto& gf : m_fields | ranges::views::values )
 	{
 		if( g->w()->plants().contains( gf->pos.toInt() ) )
 		{

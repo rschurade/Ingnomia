@@ -21,6 +21,9 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+if (APPLE)
+	enable_language(OBJCXX)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
@@ -29,9 +32,11 @@ find_package(Sigslot REQUIRED)
 
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
+find_package(RangesV3 REQUIRED)
+
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
-find_package(OpenAL REQUIRED)
+add_subdirectory(3rdparty/openal-soft-master)
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
 set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
@@ -105,6 +110,8 @@ target_link_libraries(${PROJECT_NAME}
 		absl::hash
 		absl::flat_hash_map
 		Pal::Sigslot
+
+		range-v3::range-v3
 )
 
 # Noesis license

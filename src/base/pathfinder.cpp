@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 PathFinder::PathFinder( World* world, QObject* parent) :
 	m_world( world ),
@@ -174,7 +174,7 @@ void PathFinder::findPaths()
 void PathFinder::onResult( Position start, Position goal, bool ignoreNoPass, std::vector<Position> path )
 {
 	QMutexLocker lock( &m_mutex );
-	for ( auto& job : m_jobs | std::views::values )
+	for ( auto& job : m_jobs | ranges::views::values )
 	{
 		const bool forwardPath = ( job.goal == goal && job.start == start );
 		const bool reversePath = ( job.goal == start && job.start == goal );

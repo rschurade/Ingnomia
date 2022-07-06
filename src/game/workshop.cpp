@@ -40,7 +40,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 WorkshopProperties::WorkshopProperties( QVariantMap& in )
 {
@@ -317,7 +317,7 @@ QVariant Workshop::serialize()
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( auto tp : m_tiles | std::views::values )
+	for ( auto tp : m_tiles | ranges::views::values )
 	{
 		QString ps = tp.toString();
 		tiles.append( ps );
@@ -816,7 +816,7 @@ bool Workshop::createJobFromCraftJob( CraftJob& cj )
 
 QSharedPointer<Job> Workshop::createButcherJob()
 {
-	for ( auto& pasture : g->fm()->allPastures() | std::views::values )
+	for ( auto& pasture : g->fm()->allPastures() | ranges::views::values )
 	{
 		if ( g->pf()->checkConnectedRegions( pasture->firstPos(), m_properties.pos ) )
 		{
@@ -1173,7 +1173,7 @@ unsigned int Workshop::getPossibleStockpile()
 			short xMax = 0;
 			short yMax = 0;
 
-			for ( auto spField : sp->getFields() | std::views::values )
+			for ( auto spField : sp->getFields() | ranges::views::values )
 			{
 				Position pos = spField->pos;
 				xMin         = qMin( xMin, pos.x );
@@ -1208,7 +1208,7 @@ bool Workshop::outputTileFree()
 
 		if ( !alreadySet )
 		{
-			for ( auto pos : m_tiles | std::views::values )
+			for ( auto pos : m_tiles | ranges::views::values )
 			{
 				g->w()->setTileFlag( pos, TileFlag::TF_BLOCKED );
 			}
@@ -1220,7 +1220,7 @@ bool Workshop::outputTileFree()
 
 		if ( alreadySet )
 		{
-			for ( auto pos : m_tiles | std::views::values )
+			for ( auto pos : m_tiles | ranges::views::values )
 			{
 				g->w()->clearTileFlag( pos, TileFlag::TF_BLOCKED );
 			}

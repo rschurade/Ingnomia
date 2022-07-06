@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 KeyBindings::KeyBindings(QObject *parent)
 	: QObject(parent)
@@ -148,7 +148,7 @@ UserKeyboardAction KeyBindings::getCommand( QKeyEvent* event )
 
 QString KeyBindings::getStringForCommand( UserKeyboardAction cmd )
 {
-	for( auto key : m_stringToCommand | std::views::keys )
+	for( auto key : m_stringToCommand | ranges::views::keys )
 	{
 		if( m_stringToCommand[key] == cmd )
 		{

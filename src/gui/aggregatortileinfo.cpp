@@ -37,7 +37,7 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 AggregatorTileInfo::AggregatorTileInfo( QObject* parent ) :
 	QObject(parent)

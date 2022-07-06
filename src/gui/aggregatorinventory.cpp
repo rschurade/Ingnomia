@@ -25,7 +25,7 @@
 #include "../game/inventory.h"
 #include "../gui/strings.h"
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 AggregatorInventory::AggregatorInventory( QObject* parent ) :
 	QObject( parent )
@@ -321,7 +321,7 @@ void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 	auto mats = g->inv()->materialCountsForItem( gbri.itemID );
 
 	gbri.availableMats.append( { "any", mats["any"] } );
-	for ( auto key : mats | std::views::keys )
+	for ( auto key : mats | ranges::views::keys )
 	{
 		if ( key != "any" )
 		{

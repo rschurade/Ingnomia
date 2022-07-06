@@ -22,7 +22,7 @@
 #include <QDir>
 #include <QFile>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 int GameState::alarm        = 0;
 unsigned int GameState::alarmRoomID = 0;
@@ -211,14 +211,14 @@ void GameState::serialize( QVariantMap& out )
 	out.insert( "watchedItems", qwil );
 
 	QVariantMap vmIDs;
-	for( auto key : GameState::materialSID2ID | std::views::keys )
+	for( auto key : GameState::materialSID2ID | ranges::views::keys )
 	{
 		vmIDs.insert( key, materialSID2ID.at( key ) );
 	}
 	out.insert( "mats2ids", vmIDs );
 
 	QVariantMap viIDs;
-	for( auto key : GameState::itemSID2ID | std::views::keys )
+	for( auto key : GameState::itemSID2ID | ranges::views::keys )
 	{
 		viIDs.insert( key, itemSID2ID.at( key ) );
 	}

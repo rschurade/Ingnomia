@@ -18,7 +18,7 @@
 #pragma once
 
 #include <absl/container/btree_map.h>
-#include <ranges>
+#include <range/v3/view.hpp>
 
 template <class T>
 class Counter
@@ -31,7 +31,7 @@ public:
 
 	auto keys()
 	{
-		return m_counts | std::views::keys;
+		return m_counts | ranges::views::keys;
 	}
 
 	unsigned int count( T key )

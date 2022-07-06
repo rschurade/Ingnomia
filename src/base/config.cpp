@@ -67,7 +67,7 @@ Config::Config()
 	const auto qmap  = jd.toVariant().toMap();
 	for ( const auto& entry : qmap.toStdMap() ) {
 		qDebug() << "Setting: '" << entry.first << "' - '" << entry.second << "'";
-		m_settings.insert_or_assign(entry.first, qVariantToConfigVariant(entry.second));
+		m_settings.insert_or_assign(entry.first.toStdString(), qVariantToConfigVariant(entry.second));
 	}
 
 	if ( m_settings.empty() )
@@ -119,7 +119,7 @@ ConfigVariant Config::get_variant( const QString& key )
 	QMutexLocker lock( &m_mutex );
 
 	ConfigVariant v;
-	maps::try_at(m_settings, key, v);
+	maps::try_at(m_settings, key.toStdString(), v);
 	return v;
 }
 
@@ -149,10 +149,10 @@ void Config::set( const QString& key, int value )
 void Config::set( const QString& key, ConfigVariant value )
 {
 	QMutexLocker lock( &m_mutex );
-	const auto oldValue = m_settings[key];
+	const auto oldValue = m_settings[key.toStdString()];
 	if (oldValue != value)
 	{
-		m_settings[key] = value;
+		m_settings[key.toStdString()] = value;
 		IO::saveConfig();
 
 		qDebug() << "Update config" << key << "=" << QString::fromStdString(variantToString(value)) << "(was" << QString::fromStdString(variantToString(oldValue)) << ")";

@@ -31,7 +31,7 @@
 
 #include <QDebug>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 FarmProperties::FarmProperties( QVariantMap& in )
 {
@@ -143,7 +143,7 @@ QVariant Farm::serialize() const
 	m_properties.serialize( out );
 
 	QVariantList tiles;
-	for ( const auto& field : m_fields | std::views::values )
+	for ( const auto& field : m_fields | ranges::views::values )
 	{
 		QVariantMap entry;
 		entry.insert( "Pos", field.pos.toString() );
@@ -174,7 +174,7 @@ void Farm::onTick( quint64 tick )
 	if ( !m_active )
 		return;
 
-	for( auto& gf : m_fields | std::views::values )
+	for( auto& gf : m_fields | ranges::views::values )
 	{
 		if( !gf.job )
 		{
@@ -374,7 +374,7 @@ void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 	tilled    = 0;
 	planted   = 0;
 	cropReady = 0;
-	for ( const auto& gf : m_fields | std::views::values )
+	for ( const auto& gf : m_fields | ranges::views::values )
 	{
 
 		Tile& tile = g->w()->getTile( gf.pos );

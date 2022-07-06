@@ -10,7 +10,9 @@ target_sources(${PROJECT_NAME}
 		${CMAKE_CURRENT_LIST_FILE}
 )
 
-target_precompile_headers(${PROJECT_NAME}
-	PRIVATE
-		pch.h
-)
+if (NOT APPLE)
+	target_precompile_headers(${PROJECT_NAME}
+		PRIVATE
+			$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/pch.h>
+	)
+endif()

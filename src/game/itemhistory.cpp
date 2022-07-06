@@ -22,7 +22,7 @@
 
 #include <QDebug>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 ItemHistory::ItemHistory( QObject* parent ) :
 	QObject( parent )
@@ -36,7 +36,7 @@ ItemHistory::~ItemHistory()
 void ItemHistory::serialize( QVariantMap& out )
 {
 	QVariantList items;
-	for ( auto key : m_itemsPresent | std::views::keys )
+	for ( auto key : m_itemsPresent | ranges::views::keys )
 	{
 		QVariantMap item;
 		item.insert( "ID", key );
@@ -59,13 +59,13 @@ void ItemHistory::serialize( QVariantMap& out )
 		vmDay.insert( "Season", day.season );
 		vmDay.insert( "Year", day.year );
 		QVariantList dayData;
-		for ( auto itemKey : day.dayData.data | std::views::keys )
+		for ( auto itemKey : day.dayData.data | ranges::views::keys )
 		{
 			auto entry = day.dayData.data[itemKey];
 			QVariantMap itemData;
 			itemData.insert( "ID", itemKey );
 			QVariantList matList;
-			for ( auto matKey : entry | std::views::keys )
+			for ( auto matKey : entry | ranges::views::keys )
 			{
 				QVariantMap matData;
 				auto matEntry = entry[matKey];
@@ -89,13 +89,13 @@ void ItemHistory::serialize( QVariantMap& out )
 		vmDay.insert( "Season", day.season );
 		vmDay.insert( "Year", day.year );
 		QVariantList dayData;
-		for ( auto itemKey : day.dayData.data | std::views::keys )
+		for ( auto itemKey : day.dayData.data | ranges::views::keys )
 		{
 			auto entry = day.dayData.data[itemKey];
 			QVariantMap itemData;
 			itemData.insert( "ID", itemKey );
 			QVariantList matList;
-			for ( auto matKey : entry | std::views::keys )
+			for ( auto matKey : entry | ranges::views::keys )
 			{
 				QVariantMap matData;
 				auto matEntry = entry[matKey];
@@ -230,11 +230,11 @@ void ItemHistory::newDay()
 	m_currentDay.year   = GameState::year;
 
 	auto lastData = m_currentDay.dayData.data;
-	for ( auto key : lastData | std::views::keys )
+	for ( auto key : lastData | ranges::views::keys )
 	{
 		auto& entry = lastData[key];
 		absl::btree_map<QString, IH_values> newDayData;
-		for ( auto matKey : entry | std::views::keys )
+		for ( auto matKey : entry | ranges::views::keys )
 		{
 			auto& matEntry = entry[matKey];
 			IH_values newVals;

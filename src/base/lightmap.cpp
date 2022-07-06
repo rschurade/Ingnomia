@@ -26,7 +26,7 @@
 #include <QQueue>
 #include <QVector3D>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 LightMap::LightMap()
 {
@@ -142,7 +142,7 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 	{
 		const auto& maps = m_lightMap[posID];
 		int light = 0;
-		for ( const auto& value : maps | std::views::values )
+		for ( const auto& value : maps | ranges::views::values )
 		{
 			light += value;
 		}
@@ -179,7 +179,7 @@ void LightMap::updateLight( absl::btree_set<unsigned int>& updateList, std::vect
 	{
 		auto maps = m_lightMap[posID];
 
-		for ( auto key : maps | std::views::keys )
+		for ( auto key : maps | ranges::views::keys )
 		{
 			Light light = m_lights[key];
 

@@ -22,7 +22,7 @@
 #include "../game/creature.h"
 
 #include <QDebug>
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Anatomy::Anatomy()
 {
@@ -111,7 +111,7 @@ QVariantMap Anatomy::serialize() const
 
 	QVariantList vlParts;
 
-	for ( const auto& part : m_parts | std::views::values)
+	for ( const auto& part : m_parts | ranges::views::values)
 	{
 		QVariantMap vm;
 		vm.insert( "ID", part.id );
@@ -398,7 +398,7 @@ void Anatomy::heal()
 	{
 		bool stillWounded = false;
 
-		for ( auto& part : m_parts | std::views::values)
+		for ( auto& part : m_parts | ranges::views::values)
 		{
 			if ( part.hp > 0 && part.hp < part.maxHP )
 			{

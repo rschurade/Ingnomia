@@ -19,6 +19,7 @@
 
 #include <QObject>
 #include <QVariantMap>
+#include <absl/container/btree_map.h>
 
 struct StartingItem
 {

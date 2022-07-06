@@ -61,7 +61,7 @@
 
 #include <unordered_set>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
@@ -120,7 +120,7 @@ QVariant toQVariant(ConfigVariant v) {
 QVariantMap toQVariant(ConfigMap map) {
 	QVariantMap result;
 	for ( const auto& entry : map ) {
-		result[entry.first] = toQVariant(entry.second);
+		result[QString::fromStdString(entry.first)] = toQVariant(entry.second);
 	}
 	return result;
 }
@@ -501,7 +501,7 @@ void IO::sanitize()
 			}
 		}
 
-		for ( auto& item : g->inv()->allItems() | std::views::values )
+		for ( auto& item : g->inv()->allItems() | ranges::views::values )
 		{
 			const auto job = item.isInJob();
 			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
@@ -820,7 +820,7 @@ QJsonArray IO::jsonArrayWallConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayWallConstructions";
 	QJsonArray ja;
-	for ( const auto& constr : g->w()->wallConstructions() | std::views::values )
+	for ( const auto& constr : g->w()->wallConstructions() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -834,7 +834,7 @@ QJsonArray IO::jsonArrayFloorConstructions()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFloorConstructions";
 	QJsonArray ja;
-	for ( const auto& constr : g->w()->floorConstructions() | std::views::values )
+	for ( const auto& constr : g->w()->floorConstructions() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( constr );
 		ja.append( jv );
@@ -1034,7 +1034,7 @@ QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 
 	QJsonArray ja;
 	auto plants = g->w()->plants();
-	auto plantsKeys = plants | std::views::keys;
+	auto plantsKeys = plants | ranges::views::keys;
 
 	// FIXME: Original code was also creating a copy of the keys to iterate, but this seems wasteful in any case
 	std::vector<unsigned int> keys(plantsKeys.begin(), plantsKeys.end());
@@ -1116,7 +1116,7 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 
 	QJsonArray ja;
 	auto& items = g->inv()->allItems();
-	const auto &itemsKeys = items | std::views::keys;
+	const auto &itemsKeys = items | ranges::views::keys;
 
 	// FIXME: Original code was also creating a copy of the keys to iterate, but this seems wasteful in any case
 	std::vector<unsigned int> keys(itemsKeys.begin(), itemsKeys.end());
@@ -1212,7 +1212,7 @@ QJsonArray IO::jsonArrayJobs()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayJobs";
 	QJsonArray ja;
-	for ( const auto& job : g->jm()->allJobs() | std::views::values )
+	for ( const auto& job : g->jm()->allJobs() | ranges::views::values )
 	{
 		if ( !job->type().isEmpty() )
 		{
@@ -1231,7 +1231,7 @@ QJsonArray IO::jsonArrayJobSprites()
 	QJsonArray ja;
 	auto jobSprites = g->w()->jobSprites();
 
-	for ( const auto& key : jobSprites | std::views::keys )
+	for ( const auto& key : jobSprites | ranges::views::keys )
 	{
 		auto entry = jobSprites[key];
 		entry.insert( "PosID", key );
@@ -1270,22 +1270,22 @@ QJsonArray IO::jsonArrayFarms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayFarms";
 	QJsonArray ja;
-	for ( const auto& farm : g->fm()->allFarms() | std::views::values )
+	for ( const auto& farm : g->fm()->allFarms() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( farm->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& grove : g->fm()->allGroves() | std::views::values )
+	for ( const auto& grove : g->fm()->allGroves() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( grove->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& pasture : g->fm()->allPastures() | std::views::values )
+	for ( const auto& pasture : g->fm()->allPastures() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( pasture->serialize() );
 		ja.append( jv );
 	}
-	for ( const auto& beehive : g->fm()->allBeeHives() | std::views::values )
+	for ( const auto& beehive : g->fm()->allBeeHives() | ranges::views::values )
 	{
 		QVariantMap vm;
 		beehive->serialize( vm );
@@ -1301,7 +1301,7 @@ QJsonArray IO::jsonArrayRooms()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayRooms";
 	QJsonArray ja;
-	for ( const auto& room : g->rm()->allRooms() | std::views::values )
+	for ( const auto& room : g->rm()->allRooms() | ranges::views::values )
 	{
 		QJsonValue jv = QJsonValue::fromVariant( room->serialize() );
 		ja.append( jv );
@@ -1315,7 +1315,7 @@ QJsonArray IO::jsonArrayDoors()
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayDoors";
 	QJsonArray ja;
-	for ( const auto& door : g->rm()->allDoors() | std::views::values )
+	for ( const auto& door : g->rm()->allDoors() | ranges::views::values )
 	{
 		QVariantMap out;
 
@@ -1533,7 +1533,7 @@ QJsonDocument IO::jsonArrayMechanisms()
 		qDebug() << "jsonArrayMechanisms";
 	QVariantList ol;
 
-	for ( const auto& md : g->mcm()->mechanisms() | std::views::values )
+	for ( const auto& md : g->mcm()->mechanisms() | ranges::views::values )
 	{
 		auto vmd = md.serialize();
 		ol.append( vmd );
@@ -1557,7 +1557,7 @@ QJsonDocument IO::jsonArrayPipes()
 		qDebug() << "jsonArrayPipes";
 	QVariantList ol;
 
-	for ( const auto& fp : g->flm()->pipes() | std::views::values )
+	for ( const auto& fp : g->flm()->pipes() | ranges::views::values )
 	{
 		auto vfp = fp.serialize();
 		/*

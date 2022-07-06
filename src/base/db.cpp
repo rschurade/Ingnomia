@@ -29,7 +29,7 @@
 #include <QThread>
 #include <QFile>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 #include "containersHelper.h"
 
 QMutex DB::m_mutex;
@@ -702,7 +702,7 @@ QSharedPointer<DBS::Job> DB::job( QString id )
 std::vector<QString> DB::jobIds()
 {
 	std::vector<QString> keys;
-	for ( const auto& key : DB::m_jobs | std::views::keys ) {
+	for ( const auto& key : DB::m_jobs | ranges::views::keys ) {
 		keys.push_back(key);
 	}
 	return keys;

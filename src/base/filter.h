@@ -22,7 +22,7 @@
 #include <absl/container/btree_set.h>
 #include <absl/container/btree_map.h>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 #include "containersHelper.h"
 
 class FilterItem
@@ -31,7 +31,7 @@ public:
 	void addItem( QString material );
 
 	[[nodiscard]] auto materials() const {
-		return m_materials | std::views::keys;
+		return m_materials | ranges::views::keys;
 	}
 
 	void setCheckState( bool state );
@@ -49,7 +49,7 @@ public:
 	void addItem( QString item, QString material );
 
 	auto items() {
-		return m_items | std::views::keys;
+		return m_items | ranges::views::keys;
 	}
 
 
@@ -76,7 +76,7 @@ public:
 	void addGroup( QString group );
 
 	auto groups() {
-		return m_groups | std::views::keys;
+		return m_groups | ranges::views::keys;
 	}
 
 	auto items( QString group ) {
@@ -112,7 +112,7 @@ public:
 	void addItem( QString category, QString group, QString item, QString material );
 
 	auto categories() {
-		return m_categories | std::views::keys;
+		return m_categories | ranges::views::keys;
 	}
 
 	auto groups( QString category ) {

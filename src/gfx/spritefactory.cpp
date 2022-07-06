@@ -43,7 +43,7 @@ SpriteFactory::~SpriteFactory()
 		delete sprite;
 	}
 	m_sprites.clear();
-	for( auto& def : m_spriteDefinitions | std::views::values )
+	for( auto& def : m_spriteDefinitions | ranges::views::values )
 	{
 		delete def;
 	}
@@ -482,7 +482,7 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
 
-			for ( auto r : m_randomNumbers | std::views::values )
+			for ( auto r : m_randomNumbers | ranges::views::values )
 			{
 				key += "_";
 				key += QString::number( r );
@@ -564,7 +564,7 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 		if ( containsRandom( itemSID, materialSIDs ) )
 		{
 
-			for ( auto r : m_randomNumbers | std::views::values )
+			for ( auto r : m_randomNumbers | ranges::views::values )
 			{
 				key += "_";
 				key += QString::number( r );
@@ -617,7 +617,7 @@ Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const absl::
 
 		key += "_None";
 
-		for ( auto r : m_randomNumbers | std::views::values )
+		for ( auto r : m_randomNumbers | ranges::views::values )
 		{
 			key += "_";
 			key += QString::number( r );
@@ -693,7 +693,7 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 		key += "_";
 		key += mat;
 	}
-	for ( auto r : m_randomNumbers | std::views::values )
+	for ( auto r : m_randomNumbers | ranges::views::values )
 	{
 		key += "_";
 		key += QString::number( r );
@@ -934,7 +934,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	if ( node->childs.size() && node->childs.begin()->second->type == "Season" )
 	{
 		SpriteSeasons* ss = new SpriteSeasons;
-		for ( auto child : node->childs | std::views::values )
+		for ( auto child : node->childs | ranges::views::values )
 		{
 			ss->m_sprites.insert_or_assign( child->value, getBaseSprite( child, itemSID, materialSIDs ) );
 		}
@@ -950,7 +950,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	if ( node->childs.size() && node->childs.begin()->second->type == "Frame" )
 	{
 		SpriteFrames* sf = new SpriteFrames;
-		for ( auto child : node->childs | std::views::values )
+		for ( auto child : node->childs | ranges::views::values )
 		{
 			sf->m_sprites.push_back( getBaseSprite( child, itemSID, materialSIDs ) );
 		}

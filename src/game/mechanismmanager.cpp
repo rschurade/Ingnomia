@@ -32,7 +32,7 @@
 #include <QDebug>
 #include <QQueue>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 QVariantMap MechanismData::serialize() const
 {
@@ -127,7 +127,7 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 		updateNetWorks();
 	}
 
-	for ( auto& network : m_networks | std::views::values )
+	for ( auto& network : m_networks | ranges::views::values )
 	{
 		network.produce = 0;
 		network.consume = 0;
@@ -178,7 +178,7 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 			}
 		}
 	}
-	for( auto& md : m_mechanisms | std::views::values )
+	for( auto& md : m_mechanisms | ranges::views::values )
 	{
 		if( !md.job )
 		{
@@ -692,7 +692,7 @@ void MechanismManager::updateNetWorks()
 	QQueue<MechanismData> workQueue;
 	m_networks.clear();
 
-	for ( auto& md : m_mechanisms | std::views::values )
+	for ( auto& md : m_mechanisms | ranges::views::values )
 	{
 		md.networkID = 0;
 		md.hasPower  = false;
@@ -703,7 +703,7 @@ void MechanismManager::updateNetWorks()
 		}
 	}
 
-	for ( auto md : m_mechanisms | std::views::values )
+	for ( auto md : m_mechanisms | ranges::views::values )
 	{
 		if ( md.producePower > 0 && md.networkID == 0 )
 		{
@@ -752,7 +752,7 @@ void MechanismManager::updateNetWorks()
 		}
 	}
 
-	for ( auto& ad : m_axleData | std::views::values )
+	for ( auto& ad : m_axleData | ranges::views::values )
 	{
 		unsigned int networkID = m_mechanisms[ad.itemID].networkID;
 		if ( m_networks[networkID].produce > 0 && m_networks[networkID].produce >= m_networks[networkID].consume )

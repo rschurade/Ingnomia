@@ -22,7 +22,7 @@
 #include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 class Region
 {
@@ -72,11 +72,11 @@ public:
 	}
 	auto connectionsFrom()
 	{
-		return std::views::keys(m_connectionsFrom);
+		return ranges::views::keys(m_connectionsFrom);
 	}
 	auto connectionsTo()
 	{
-		return std::views::keys(m_connectionsTo);
+		return ranges::views::keys(m_connectionsTo);
 	}
 
 private:

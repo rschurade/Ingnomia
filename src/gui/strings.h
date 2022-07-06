@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include <QString>
 #include <absl/container/btree_map.h>
 
 class Strings

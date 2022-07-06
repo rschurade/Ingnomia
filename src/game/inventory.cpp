@@ -36,7 +36,7 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 Inventory::Inventory( Game* parent ) :
 	g( parent ),
@@ -61,9 +61,9 @@ Inventory::~Inventory()
 	m_foodItems.clear();
 	m_drinkItems.clear();
 
-	for ( const auto& octtreeGroup : m_octrees | std::views::values)
+	for ( const auto& octtreeGroup : m_octrees | ranges::views::values)
 	{
-		for (const auto& octree : octtreeGroup | std::views::values)
+		for (const auto& octree : octtreeGroup | ranges::views::values)
 		{
 			delete octree;
 		}
@@ -141,9 +141,9 @@ void Inventory::init()
 void Inventory::saveFilter()
 {
 	QVariantList filter;
-	for ( const auto& itemID : m_hash | std::views::keys )
+	for ( const auto& itemID : m_hash | ranges::views::keys )
 	{
-		for ( const auto& materialID : m_hash[itemID] | std::views::keys )
+		for ( const auto& materialID : m_hash[itemID] | ranges::views::keys )
 		{
 			filter.append( itemID + "_" + materialID );
 		}
@@ -539,7 +539,7 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 	
 	if ( materialSID == "any" )
 	{
-		for ( auto material : m_octrees[itemSID] | std::views::keys )
+		for ( auto material : m_octrees[itemSID] | ranges::views::keys )
 		{
 			Octree* ot = octree( itemSID, material );
 			ot->visit( pos.x, pos.y, pos.z, predicate );
@@ -627,7 +627,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 
 	if ( materialSID == "any" )
 	{
-		for ( auto material : m_octrees[itemSID] | std::views::keys )
+		for ( auto material : m_octrees[itemSID] | ranges::views::keys )
 		{
 			Octree* ot = octree( itemSID, material );
 			ot->visit( pos.x, pos.y, pos.z, predicate );
@@ -671,7 +671,7 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 
 		if ( materialSID == "any" )
 		{
-			for ( auto material : m_octrees[itemSID] | std::views::keys )
+			for ( auto material : m_octrees[itemSID] | ranges::views::keys )
 			{
 				Octree* ot = octree( itemSID, material );
 				items += ot->query( pos.x, pos.y, pos.z );
@@ -720,7 +720,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 	{
 		if ( !m_hash[itemSID].empty() )
 		{
-			for ( auto item : m_hash[itemSID][materialSID] | std::views::values )
+			for ( auto item : m_hash[itemSID][materialSID] | ranges::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() )
 				{
@@ -741,7 +741,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 	{
 		if ( !m_hash[itemSID].empty() )
 		{
-			for ( auto item : m_hash[itemSID][materialSID] | std::views::values )
+			for ( auto item : m_hash[itemSID][materialSID] | ranges::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() && item->quality() == quality )
 				{
@@ -968,7 +968,7 @@ std::vector<QString> Inventory::materials( QString category, QString group, QStr
 	std::vector<QString> result;
 	if ( m_hash.contains( item ) )
 	{
-		for (const auto &key : m_hash[item] | std::views::keys) {
+		for (const auto &key : m_hash[item] | ranges::views::keys) {
 			result.push_back(key);
 		}
 	}
@@ -1000,7 +1000,7 @@ absl::btree_map<QString, int> Inventory::materialCountsForItem( QString itemSID,
 
 	if ( m_hash.contains( itemSID ) )
 	{
-		const auto matKeys = m_hash[itemSID] | std::views::keys;
+		const auto matKeys = m_hash[itemSID] | ranges::views::keys;
 		for ( auto mk : matKeys )
 		{
 			mats.insert_or_assign( mk, 0 );
@@ -1009,7 +1009,7 @@ absl::btree_map<QString, int> Inventory::materialCountsForItem( QString itemSID,
 		{
 			for ( auto it : m_hash[itemSID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					if ( ( !item->isInJob() || allowInJob ) && !item->isConstructed() && ( item->isHeldBy() == 0 ) )
 					{
@@ -1040,7 +1040,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					if ( item->isFree() )
 					{
@@ -1054,7 +1054,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] | std::views::values )
+			for ( auto item : m_hash[itemID][materialID] | ranges::views::values )
 			{
 				if ( item->isFree() )
 				{
@@ -1077,7 +1077,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					if ( !item->isConstructed() )
 					{
@@ -1091,7 +1091,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] | std::views::values )
+			for ( auto item : m_hash[itemID][materialID] | ranges::views::values )
 			{
 				if ( !item->isConstructed() )
 				{
@@ -1114,7 +1114,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					if ( item->isInStockpile() && item->isFree() )
 					{
@@ -1128,7 +1128,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] | std::views::values )
+			for ( auto item : m_hash[itemID][materialID] | ranges::views::values )
 			{
 				if ( item->isInStockpile() && item->isFree() )
 				{
@@ -1151,7 +1151,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					if ( !item->isInStockpile() && item->isFree() )
 					{
@@ -1165,7 +1165,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] | std::views::values )
+			for ( auto item : m_hash[itemID][materialID] | ranges::views::values )
 			{
 				if ( item->materialSID() == materialID && !item->isInStockpile() && item->isFree() )
 				{
@@ -1188,7 +1188,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 		{
 			for ( auto it : m_hash[itemID] )
 			{
-				for ( auto item : it.second | std::views::values )
+				for ( auto item : it.second | ranges::views::values )
 				{
 					result.total++;
 
@@ -1219,7 +1219,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 	{
 		if ( m_hash.contains( itemID ) && m_hash[itemID].contains( materialID ) )
 		{
-			for ( auto item : m_hash[itemID][materialID] | std::views::values )
+			for ( auto item : m_hash[itemID][materialID] | ranges::views::values )
 			{
 				if ( item->materialSID() == materialID )
 				{
@@ -1786,7 +1786,7 @@ void Inventory::sanityCheck()
 	int removed = 0;
 	for ( auto it : m_hash["Crate"] )
 	{
-		for ( auto crate : it.second | std::views::values )
+		for ( auto crate : it.second | ranges::views::values )
 		{
 			auto items = crate->containedItems();
 
@@ -1806,7 +1806,7 @@ void Inventory::sanityCheck()
 	removed = 0;
 	for ( auto it : m_hash["Barrel"] )
 	{
-		for ( auto barrel : it.second | std::views::values )
+		for ( auto barrel : it.second | ranges::views::values )
 		{
 			auto items = barrel->containedItems();
 
@@ -1825,7 +1825,7 @@ void Inventory::sanityCheck()
 	removed = 0;
 	for ( auto it : m_hash["Sack"] )
 	{
-		for ( auto sack : it.second | std::views::values )
+		for ( auto sack : it.second | ranges::views::values )
 		{
 			auto items = sack->containedItems();
 

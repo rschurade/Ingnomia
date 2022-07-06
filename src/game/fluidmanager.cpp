@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QQueue>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 QVariantMap NetworkPipe::serialize() const
 {
@@ -236,7 +236,7 @@ void FluidManager::removeAt( Position pos )
 
 void FluidManager::updateNetwork()
 {
-	for ( auto& nw : m_allPipes | std::views::values)
+	for ( auto& nw : m_allPipes | ranges::views::values)
 	{
 		nw.ins.clear();
 		nw.outs.clear();

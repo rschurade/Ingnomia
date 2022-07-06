@@ -743,7 +743,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 						for ( int i = 0; i < count; ++i )
 						{
 							unsigned int item = 0;
-							for ( auto spf : sp->getFields() | std::views::values )
+							for ( auto spf : sp->getFields() | ranges::views::values )
 							{
 								// if exists get item from that position
 								item = g->inv()->getItemAtPos( spf->pos, true, itemSID, mat );
@@ -767,7 +767,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
-						for ( auto spf : sp->getFields() | std::views::values )
+						for ( auto spf : sp->getFields() | ranges::views::values )
 						{
 							// if exists get item from that position
 							item = g->inv()->getItemAtPos( spf->pos, true, itemSID, "any" );
@@ -787,7 +787,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 					for ( int i = 0; i < count; ++i )
 					{
 						unsigned int item = 0;
-						for ( auto spf : sp->getFields() | std::views::values )
+						for ( auto spf : sp->getFields() | ranges::views::values )
 						{
 							// if exists get item from that position
 							item = g->inv()->getItemAtPos( spf->pos, true, itemSID, "any" );
@@ -822,7 +822,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 			for ( int i = 0; i < count; ++i )
 			{
 				unsigned int item = 0;
-				for ( auto spf : sp->getFields() | std::views::values )
+				for ( auto spf : sp->getFields() | ranges::views::values )
 				{
 					// if exists get item from that position
 					item = g->inv()->getItemAtPos( spf->pos, true, itemSID, materialSID );
@@ -1074,7 +1074,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 	//no item equipped
 	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type );
 
-	for ( auto key : mc | std::views::keys )
+	for ( auto key : mc | ranges::views::keys )
 	{
 		if ( mc[key] > 0 )
 		{

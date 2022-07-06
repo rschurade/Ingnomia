@@ -27,7 +27,7 @@
 #include "../gfx/spritefactory.h"
 
 #include <QDebug>
-#include <ranges>
+#include <range/v3/view.hpp>
 
 RoomManager::RoomManager( Game* parent ) :
 	g( parent ),
@@ -38,7 +38,7 @@ RoomManager::RoomManager( Game* parent ) :
 
 RoomManager::~RoomManager()
 {
-	for ( const auto& room : m_rooms | std::views::values )
+	for ( const auto& room : m_rooms | ranges::views::values )
 	{
 		delete room;
 	}
@@ -46,7 +46,7 @@ RoomManager::~RoomManager()
 
 void RoomManager::onTick( quint64 tick )
 {
-	for ( const auto& room : m_rooms | std::views::values )
+	for ( const auto& room : m_rooms | ranges::views::values )
 	{
 		room->onTick( tick );
 	}
@@ -259,7 +259,7 @@ QList<unsigned int> RoomManager::getDorms()
 {
 	QList<unsigned int> out;
 
-	for ( const auto& room : m_rooms | std::views::values )
+	for ( const auto& room : m_rooms | ranges::views::values )
 	{
 		if ( room->type() == RoomType::Dorm )
 		{
@@ -274,7 +274,7 @@ QList<unsigned int> RoomManager::getDinings()
 {
 	QList<unsigned int> out;
 
-	for ( const auto& room : m_rooms | std::views::values )
+	for ( const auto& room : m_rooms | ranges::views::values )
 	{
 		if ( room->type() == RoomType::Dining )
 		{

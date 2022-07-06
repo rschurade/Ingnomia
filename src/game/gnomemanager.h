@@ -24,7 +24,7 @@
 
 #include <QList>
 
-#include <ranges>
+#include <range/v3/view.hpp>
 
 #include <sigslot/signal.hpp>
 
@@ -59,7 +59,7 @@ public:
 	void saveProfessions();
 	auto professions()
 	{
-		return m_profs | std::views::keys;
+		return m_profs | ranges::views::keys;
 	}
 
 	QStringList professionSkills( QString profession );

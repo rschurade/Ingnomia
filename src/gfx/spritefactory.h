@@ -24,7 +24,7 @@
 #include <QPixmap>
 
 #include <vector>
-#include <ranges>
+#include <range/v3/view.hpp>
 
 struct DefNode
 {
@@ -44,7 +44,7 @@ struct DefNode
 	};
 	~DefNode()
 	{
-		for( auto& child : childs | std::views::values )
+		for( auto& child : childs | ranges::views::values )
 		{
 			delete child;
 		}

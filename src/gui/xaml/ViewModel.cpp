@@ -20,6 +20,7 @@
 
 #include "../eventconnector.h"
 #include "../strings.h"
+#include "../../base/global.h"
 
 #include <NsApp/Application.h>
 #include <NsCore/Log.h>

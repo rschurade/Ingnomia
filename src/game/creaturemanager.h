@@ -20,7 +20,7 @@
 #include "../game/animal.h"
 #include "../game/monster.h"
 
-#include <ranges>
+#include <range/v3/all.hpp>
 
 #include <sigslot/signal.hpp>
 
@@ -70,7 +70,7 @@ public:
 	void forceMoveAnimals( const Position& from, const Position& to );
 
 	auto types() {
-		return m_countPerType | std::views::keys;
+		return m_countPerType | ranges::views::keys;
 	}
 
 	QList<unsigned int> animalsByType( QString type );
