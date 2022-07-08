@@ -22,6 +22,10 @@
 
 #include <sigslot/signal.hpp>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 struct GuiSaveInfo
 {
 	QString name;
@@ -48,7 +52,7 @@ private:
 
 public slots:
 	void onRequestKingdoms();
-	void onRequestSaveGames( const std::string& path );
+	void onRequestSaveGames( const fs::path& path );
 
 public: // signals:
 	sigslot::signal<const QList<GuiSaveInfo>& /*kingdoms*/> signalKingdoms;

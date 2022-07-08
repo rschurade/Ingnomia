@@ -203,7 +203,7 @@ void MilitaryManager::init()
 	{
 		//load from file
 		QJsonDocument jd;
-		IO::loadFile( IO::getDataFolder() + "/settings/military.json", jd );
+		IO::loadFile( IO::getDataFolder() / "settings/military.json", jd );
 		QVariantMap vm = jd.toVariant().toMap();
 		if ( vm.contains( "Roles" ) )
 		{
@@ -249,7 +249,7 @@ void MilitaryManager::save()
 	auto vm = serialize();
 	vm.remove( "Squads" );
 	QJsonObject jo = QJsonObject::fromVariantMap( vm );
-	IO::saveFile( IO::getDataFolder() + "/settings/military.json", jo );
+	IO::saveFile( IO::getDataFolder() / "settings/military.json", jo );
 }
 
 QVariantMap MilitaryManager::serialize()

@@ -42,7 +42,7 @@ AggregatorLoadGame::~AggregatorLoadGame()
 
 void AggregatorLoadGame::onRequestKingdoms()
 {
-	const auto sfolder = IO::getDataFolder() + "/save";
+	const auto sfolder = IO::getDataFolder() / "save";
 
 	m_kingdomList.clear();
 
@@ -53,7 +53,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 
 	for ( auto sdir : entryList )
 	{
-		const auto kingdomFolder = sfolder + "/" + sdir.toStdString();
+		const auto kingdomFolder = sfolder / sdir.toStdString();
 
 		QDir kdir( QString::fromStdString(kingdomFolder) );
 		kdir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
@@ -65,9 +65,9 @@ void AggregatorLoadGame::onRequestKingdoms()
 		{
 			for( const auto& gdir : gdirs )
 			{
-				const auto gameFolder = kingdomFolder + "/" + gdir.toStdString();
+				const auto gameFolder = kingdomFolder / gdir.toStdString();
 				QJsonDocument jd;
-				IO::loadFile( gameFolder + "/game.json", jd );
+				IO::loadFile( gameFolder / "game.json", jd );
 
 				if ( jd.isArray() )
 				{
@@ -77,7 +77,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 					{
 						QVariantMap vm = vl.first().toMap();
 
-						QFile file( QString::fromStdString(gameFolder + "/game.json") );
+						QFile file( QString::fromStdString(gameFolder / "game.json") );
 						QFileInfo fi( file );
 
 						GuiSaveInfo gsk;
@@ -100,7 +100,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 	signalKingdoms( m_kingdomList );
 }
 
-void AggregatorLoadGame::onRequestSaveGames( const std::string& path )
+void AggregatorLoadGame::onRequestSaveGames( const fs::path& path )
 {
 	m_gameList.clear();
 
@@ -113,11 +113,11 @@ void AggregatorLoadGame::onRequestSaveGames( const std::string& path )
 	{
 		GuiSaveInfo gsi;
 
-		gsi.folder = path + "/" + sdir.toStdString();
+		gsi.folder = path / sdir.toStdString();
 		gsi.dir    = sdir;
 
 		QJsonDocument jd;
-		IO::loadFile( gsi.folder + "/game.json", jd );
+		IO::loadFile( fs::path(gsi.folder) / "game.json", jd );
 
 		if( jd.isArray() )
 		{
@@ -138,7 +138,7 @@ void AggregatorLoadGame::onRequestSaveGames( const std::string& path )
 
 				gsi.name = vm.value( "kingdomName" ).toString();
 
-				QFile file( QString::fromStdString(gsi.folder + "/game.json") );
+				QFile file( QString::fromStdString(fs::path(gsi.folder) / "game.json") );
 				QFileInfo fi( file );
 				gsi.date = fi.lastModified();
 

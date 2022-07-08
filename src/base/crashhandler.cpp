@@ -30,8 +30,8 @@ void setupCrashHandler()
 	mpSender->setGuardByteBufferSize( 20 * 1024 * 1024 );
 
 	// Include main log file
-	QString logFile = IO::getDataFolder() + "/log.txt";
-	mpSender->sendAdditionalFile( logFile.replace( '/', '\\' ).toStdWString().c_str() );
+	const auto logFile = IO::getDataFolder() / "log.txt";
+	mpSender->sendAdditionalFile( QString::fromStdString(logFile.string()).replace( '/', '\\' ).toStdWString().c_str() );
 }
 #else
 void setupCrashHandler()

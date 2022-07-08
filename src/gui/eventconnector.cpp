@@ -263,7 +263,7 @@ void EventConnector::onContinueLastGame()
 	gm->continueLastGame();
 }
 
-void EventConnector::onLoadGame( const std::string& folder )
+void EventConnector::onLoadGame( const fs::path& folder )
 {
 	gm->loadGame( folder );
 }

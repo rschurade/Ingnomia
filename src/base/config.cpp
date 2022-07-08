@@ -55,11 +55,11 @@ Config::Config()
 	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
-	const std::string& folder = IO::getDataFolder();
+	const fs::path& folder = IO::getDataFolder();
 	bool ok        = true;
 	QJsonDocument jd;
 
-	if ( !IO::loadFile( folder + "settings/config.json", jd ) )
+	if ( !IO::loadFile( folder / "settings/config.json", jd ) )
 	{
 		if( !IO::loadOriginalConfig( jd ) )
 		{
@@ -81,11 +81,11 @@ Config::Config()
 
 
 	/*
-	if ( !IO::loadFile( folder + "settings/keybindings.json", jd ) )
+	if ( !IO::loadFile( folder / "settings/keybindings.json", jd ) )
 	{
 		if ( QFile::exists( "keybindings.json" ) )
 		{
-			QFile::copy( "keybindings.json", folder + "settings/keybindings.json" );
+			QFile::copy( "keybindings.json", folder / "settings/keybindings.json" );
 		}
 	}
 	*/

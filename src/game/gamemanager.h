@@ -24,6 +24,10 @@
 #include <QString>
 #include <QThread>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 class Game;
 class EventConnector;
 class NewGameSettings;
@@ -40,7 +44,7 @@ public:
 	void startNewGame();
 	void setUpNewGame();
 	void continueLastGame();
-	void loadGame( const std::string& folder );
+	void loadGame( const fs::path& folder );
 	void saveGame();
 
 	void setShowMainMenu( bool value );

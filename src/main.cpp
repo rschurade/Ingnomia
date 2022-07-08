@@ -60,7 +60,7 @@ void clearLog()
 	std::string fileName = "log.txt";
 	if ( fs::exists( folder ) )
 	{
-		fileName = folder + "/" + fileName;
+		fileName = folder / fileName;
 	}
 
 	QFile file( QString::fromStdString(fileName) );
@@ -70,12 +70,12 @@ void clearLog()
 
 QPointer<QFile> openLog()
 {
-	const std::string& folder   = IO::getDataFolder();
+	const fs::path& folder   = IO::getDataFolder();
 	bool ok          = true;
 	std::string fileName = "log.txt";
 	if ( fs::exists( folder ) )
 	{
-		fileName = folder + "/" + fileName;
+		fileName = folder / fileName;
 	}
 
 	QPointer<QFile> outFile(new QFile( QString::fromStdString(fileName) ));

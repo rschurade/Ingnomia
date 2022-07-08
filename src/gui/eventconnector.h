@@ -25,6 +25,10 @@
 
 #include <sigslot/signal.hpp>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 class GameManager;
 
 class AggregatorTileInfo;     
@@ -179,7 +183,7 @@ public slots:
 
 	void onStartNewGame();
 	void onContinueLastGame();
-	void onLoadGame( const std::string& folder );
+	void onLoadGame( const fs::path& folder );
 	void onSaveGame();
 	void onSetShowMainMenu( bool value );
 	void onEndGame();

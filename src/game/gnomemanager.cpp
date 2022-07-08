@@ -402,18 +402,18 @@ void GnomeManager::saveProfessions()
 	}
 
 	QJsonDocument sd = QJsonDocument::fromVariant( pl );
-	IO::saveFile( IO::getDataFolder() + "/settings/profs.json", sd );
+	IO::saveFile( IO::getDataFolder() / "settings/profs.json", sd );
 }
 
 void GnomeManager::loadProfessions()
 {
 	QJsonDocument sd;
-	if ( !IO::loadFile( IO::getDataFolder() + "/settings/profs.json", sd ) )
+	if ( !IO::loadFile( IO::getDataFolder() / "settings/profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
 		if ( IO::loadFile( Global::cfg->get<QString>( "dataPath" ).toStdString() + "/JSON/profs.json", sd ) )
 		{
-			IO::saveFile( IO::getDataFolder() + "/settings/profs.json", sd );
+			IO::saveFile( IO::getDataFolder() / "settings/profs.json", sd );
 		}
 		else
 		{

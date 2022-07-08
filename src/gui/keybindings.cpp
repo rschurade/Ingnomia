@@ -106,9 +106,9 @@ KeyBindings::~KeyBindings()
 
 void KeyBindings::update()
 {
-	const std::string& folder = IO::getDataFolder() + "/settings/";
+	const fs::path& folder = IO::getDataFolder() / "settings";
 	QJsonDocument jd;
-	IO::loadFile( folder + "keybindings.json", jd );
+	IO::loadFile( folder / "keybindings.json", jd );
 	qDebug() << "Load key bindings...";
 	auto groupList = jd.toVariant().toList();
 	

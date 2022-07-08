@@ -147,7 +147,7 @@ void GameManager::setUpNewGame()
 void GameManager::continueLastGame()
 {
 	//get last save
-	auto folder = IO::getDataFolder() + "/save/";
+	auto folder = IO::getDataFolder() / "save";
 
 	QDir dir( QString::fromStdString(folder) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
@@ -156,7 +156,7 @@ void GameManager::continueLastGame()
 	{
 		auto kingdomDir = dir.entryList().first().toStdString();
 
-		folder = IO::getDataFolder() + "/save/" + kingdomDir + "/";
+		folder = IO::getDataFolder() / "save" / kingdomDir;
 		QDir dir2( QString::fromStdString(folder) );
 		dir2.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 		dir2.setSorting( QDir::Time );
@@ -164,9 +164,9 @@ void GameManager::continueLastGame()
 		{
 			auto gameDir = dir2.entryList().first().toStdString();
 
-			if ( IO::saveCompatible( folder + gameDir + "/" ) )
+			if ( IO::saveCompatible( folder / gameDir ) )
 			{
-				loadGame( folder + gameDir + "/" );
+				loadGame( folder / gameDir );
 				return;
 			}
 		}
@@ -194,7 +194,7 @@ void GameManager::init()
 	}
 }
 
-void GameManager::loadGame( const std::string& folder )
+void GameManager::loadGame( const fs::path& folder )
 {
 	init();
 	
