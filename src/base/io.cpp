@@ -187,22 +187,22 @@ bool IO::createFolders()
 
 	const fs::path exePath = QCoreApplication::applicationDirPath().toStdString();
 
-	if ( !fs::exists( folder / "settings/profs.json" ) && fs::exists( exePath / "content/JSON/profs.json" ) )
+	if ( !fs::exists( folder / "settings" / "profs.json" ) && fs::exists( exePath / "content" / "JSON" / "profs.json" ) )
 	{
-		fs::copy( exePath / "content/JSON/profs.json", folder / "settings/profs.json" );
+		fs::copy( exePath / "content" / "JSON" / "profs.json", folder / "settings" / "profs.json" );
 	}
-	if ( !fs::exists( folder / "settings/config.json" ) && fs::exists( exePath / "content/JSON/config.json" ) )
+	if ( !fs::exists( folder / "settings" / "config.json" ) && fs::exists( exePath / "content" / "JSON" / "config.json" ) )
 	{
-		fs::copy( exePath / "content/JSON/config.json", folder / "settings/config.json" );
+		fs::copy( exePath / "content" / "JSON" / "config.json", folder / "settings" / "config.json" );
 	}
-	if ( !fs::exists( folder / "settings/newgame.json" ) && fs::exists( exePath / "content/JSON/newgame.json" ) )
+	if ( !fs::exists( folder / "settings" / "newgame.json" ) && fs::exists( exePath / "content" / "JSON" / "newgame.json" ) )
 	{
-		fs::copy( exePath / "content/JSON/newgame.json", folder / "settings/newgame.json" );
+		fs::copy( exePath / "content" / "JSON" / "newgame.json", folder / "settings" / "newgame.json" );
 	}
 	/*
-	if ( !fs::exists( folder / "settings/keybindings.json" ) && fs::exists( exePath / "content/JSON/keybindings.json" ) )
+	if ( !fs::exists( folder / "settings" / "keybindings.json" ) && fs::exists( exePath / "content" / "JSON" / "keybindings.json" ) )
 	{
-		fs::copy( exePath / "content/JSON/keybindings.json", folder / "settings/keybindings.json" );
+		fs::copy( exePath / "content" / "JSON" / "keybindings.json", folder / "settings" / "keybindings.json" );
 	}
 	*/
 
@@ -213,7 +213,7 @@ bool IO::loadOriginalConfig( QJsonDocument& jd )
 {
 	qDebug() << "load standard config";
 	const auto exePath = fs::path(QCoreApplication::applicationDirPath().toStdString());
-	return IO::loadFile( exePath / "content/JSON/config.json", jd );
+	return IO::loadFile( exePath / "content" / "JSON" / "config.json", jd );
 }
 
 std::string IO::save( bool autosave )

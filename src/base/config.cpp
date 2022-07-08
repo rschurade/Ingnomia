@@ -59,7 +59,7 @@ Config::Config()
 	bool ok        = true;
 	QJsonDocument jd;
 
-	if ( !IO::loadFile( folder / "settings/config.json", jd ) )
+	if ( !IO::loadFile( folder / "settings" / "config.json", jd ) )
 	{
 		if( !IO::loadOriginalConfig( jd ) )
 		{
@@ -81,11 +81,11 @@ Config::Config()
 
 
 	/*
-	if ( !IO::loadFile( folder / "settings/keybindings.json", jd ) )
+	if ( !IO::loadFile( folder / "settings" / "keybindings.json", jd ) )
 	{
 		if ( QFile::exists( "keybindings.json" ) )
 		{
-			QFile::copy( "keybindings.json", folder / "settings/keybindings.json" );
+			QFile::copy( "keybindings.json", folder / "settings" / "keybindings.json" );
 		}
 	}
 	*/
