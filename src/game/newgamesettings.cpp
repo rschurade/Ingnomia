@@ -25,10 +25,31 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QStandardPaths>
 
 #include <random>
 #include <range/v3/view.hpp>
+
+inline void from_json(const json& j, JsonStartingItem& item) {
+	const auto type = j.at("Type").get<std::string>();
+	if (type == "Item") {
+		JsonNormalItem newItem;
+		from_json(j, newItem);
+		item = newItem;
+	} else if (type == "CombinedItem") {
+		JsonCombinedItem newItem;
+		from_json(j, newItem);
+		item = newItem;
+	} else if (type == "Animal") {
+		JsonAnimalItem newItem;
+		from_json(j, newItem);
+		item = newItem;
+	} else {
+		throw std::runtime_error("Invalid starting item type: " + type);
+	}
+}
 
 NewGameSettings::NewGameSettings( QObject* parent ) :
 	QObject( parent )
@@ -153,13 +174,13 @@ void NewGameSettings::loadEmbarkMap()
 {
 	m_checkableItems.clear();
 
-	QJsonDocument sd;
-	if ( !IO::loadFile( IO::getDataFolder() / "settings" / "newgame.json", sd ) )
+	json embarkMap;
+	if ( !IO::loadFile( IO::getDataFolder() / "settings" / "newgame.json", embarkMap ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( fs::path(Global::cfg->get<std::string>( "dataPath" )) / "JSON/newgame.json", sd ) )
+		if ( IO::loadFile( fs::path(Global::cfg->get<std::string>( "dataPath" )) / "JSON" / "newgame.json", embarkMap ) )
 		{
-			IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", sd );
+			IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", embarkMap );
 		}
 		else
 		{
@@ -167,62 +188,67 @@ void NewGameSettings::loadEmbarkMap()
 			abort();
 		}
 	}
-	auto embarkMap = sd.toVariant().toMap();
 
 	QVariantList out;
-	QStringList trees = DB::ids( "Plants", "Type", "Tree" );
+	const auto& trees = DB::ids( "Plants", "Type", "Tree" );
 
-	for ( auto id : trees )
+	const auto& allowedTrees = embarkMap.at( "allowedTrees" );
+	for ( const auto& id : trees )
 	{
-		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", embarkMap.value( "allowedTrees" ).toMap().value( id ).toBool(), 0 };
+		const auto& key = id.toStdString();
+		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", allowedTrees.contains( key ) && allowedTrees.at( key ).get<bool>(), 0 };
 		m_checkableItems.insert_or_assign( id, ci );
 	}
 
-	QStringList allplants = DB::ids( "Plants", "Type", "Plant" );
+	auto allplants = DB::ids( "Plants", "Type", "Plant" );
 	allplants.sort();
-	for ( auto id : allplants )
+	const auto allowedPlants = embarkMap.at( "allowedPlants" );
+	for ( const auto& id : allplants )
 	{
 		if ( DB::select( "AllowInWild", "Plants", id ).toBool() )
 		{
-			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", embarkMap.value( "allowedPlants" ).toMap().value( id ).toBool(), 0 };
+			const auto& key = id.toStdString();
+			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", allowedPlants.contains(key) && allowedPlants.at( key ).get<bool>(), 0 };
 			m_checkableItems.insert_or_assign( id, ci );
 		}
 	}
 
 	QStringList allAnimals = DB::ids( "Animals" );
 	allAnimals.sort();
-	auto allowedAnimals = embarkMap.value( "allowedAnimals" ).toMap();
+	const auto& allowedAnimals = embarkMap.at( "allowedAnimals" );
 
-	for ( auto id : allAnimals )
+	for ( const auto& id : allAnimals )
 	{
 		if ( DB::select( "AllowInWild", "Animals", id ).toBool() && DB::select( "Biome", "Animals", id ).toString().isEmpty() )
 		{
-			CheckableItem ci { id, S::s( "$CreatureName_" + id ), "Animal", allowedAnimals.value( id ).toBool(), allowedAnimals.value( id ).toInt() };
+			const auto& key = id.toStdString();
+			const auto containsKey = allowedAnimals.contains( key );
+			CheckableItem ci { id, S::s( "$CreatureName_" + id ), "Animal", containsKey, containsKey && allowedAnimals.at( key ).get<int>() };
 			m_checkableItems.insert_or_assign( id, ci );
 		}
 	}
 
-	auto sil = embarkMap.value( "startingItems" ).toList();
+	auto sil = embarkMap.at( "startingItems" );
 	setStartingItems( sil );
 
 	// QString m_kingdomName not in embark map, we want to change it on every embark
-	m_seed = embarkMap.value( "seed" ).toString();
+	m_seed = QString::fromStdString( embarkMap.at( "seed" ).get<std::string>() );
 
-	m_worldSize    = embarkMap.value( "dimX" ).toInt();
-	m_zLevels      = embarkMap.value( "dimZ" ).toInt();
-	m_ground       = embarkMap.value( "groundLevel" ).toInt();
-	m_flatness     = embarkMap.value( "flatness" ).toInt();
-	m_oceanSize    = embarkMap.value( "oceanSize" ).toInt();
-	m_rivers       = embarkMap.value( "rivers" ).toInt();
-	m_riverSize    = embarkMap.value( "riverSize" ).toInt();
-	m_numGnomes    = embarkMap.value( "numGnomes" ).toInt();
-	m_startZone    = embarkMap.value( "startingZone" ).toInt();
-	m_treeDensity  = embarkMap.value( "treeDensity" ).toInt();
-	m_plantDensity = embarkMap.value( "plantDensity" ).toInt();
-	m_isPeaceful   = embarkMap.value( "peaceful" ).toBool();
+	m_worldSize    = embarkMap.at( "dimX" ).get<int>();
+	m_zLevels      = embarkMap.at( "dimZ" ).get<int>();
+	m_ground       = embarkMap.at( "groundLevel" ).get<int>();
+	m_flatness     = embarkMap.at( "flatness" ).get<int>();
+	m_oceanSize    = embarkMap.at( "oceanSize" ).get<int>();
+	m_rivers       = embarkMap.at( "rivers" ).get<int>();
+	m_riverSize    = embarkMap.at( "riverSize" ).get<int>();
+	m_numGnomes    = embarkMap.at( "numGnomes" ).get<int>();
+	m_startZone    = embarkMap.at( "startingZone" ).get<int>();
+	m_treeDensity  = embarkMap.at( "treeDensity" ).get<int>();
+	m_plantDensity = embarkMap.at( "plantDensity" ).get<int>();
+	m_isPeaceful   = embarkMap.at( "peaceful" ).get<bool>();
 
-	m_maxPerType     = embarkMap.value( "maxPerType" ).toInt();
-	m_numWildAnimals = embarkMap.value( "numAnimals" ).toInt();
+	m_maxPerType     = embarkMap.at( "maxPerType" ).get<int>();
+	m_numWildAnimals = embarkMap.at( "numAnimals" ).get<int>();
 }
 
 void NewGameSettings::setRandomName()
@@ -543,8 +569,10 @@ void NewGameSettings::setPreset( QString name )
 		if ( pm.value( "Name" ).toString() == name )
 		{
 			auto sil = pm.value( "startingItems" ).toList();
+			// FIXME: Remove this intermediate step after we completely remove QJsonDocument
+			QJsonDocument doc = QJsonDocument::fromVariant(sil);
 
-			setStartingItems( sil );
+			setStartingItems( json::parse(doc.toJson().toStdString()) );
 
 			return;
 		}
@@ -555,7 +583,10 @@ void NewGameSettings::setPreset( QString name )
 		{
 			auto sil = pm.value( "startingItems" ).toList();
 
-			setStartingItems( sil );
+			// FIXME: Remove this intermediate step after we completely remove QJsonDocument
+			QJsonDocument doc = QJsonDocument::fromVariant(sil);
+
+			setStartingItems( json::parse(doc.toJson().toStdString()) );
 
 			return;
 		}
@@ -661,45 +692,39 @@ bool NewGameSettings::removePreset( QString name )
 	return false;
 }
 
-void NewGameSettings::setStartingItems( QVariantList sil )
+void NewGameSettings::setStartingItems( const std::vector<JsonStartingItem>& sil )
 {
 	m_startingItems.clear();
 	m_startingAnimals.clear();
 
-	for ( auto vsi : sil )
+	for ( const auto& sipm : sil )
 	{
-		auto sipm = vsi.toMap();
-		if ( sipm.value( "Type" ).toString() == "Item" )
+		if ( const JsonNormalItem* item = std::get_if<JsonNormalItem>( &sipm ) )
 		{
-			QString itemSID = sipm.value( "ItemID" ).toString();
-			QString mat1    = sipm.value( "MaterialID" ).toString();
-			int amount      = sipm.value( "Amount" ).toInt();
+			auto itemSID = QString::fromStdString( item->ItemID );
+			auto mat1    = QString::fromStdString( item->MaterialID );
+			int amount      = item->Amount;
 			StartingItem si { itemSID, mat1, "", amount };
 			m_startingItems.append( si );
-		}
-		else if ( sipm.value( "Type" ).toString() == "CombinedItem" )
+		} else if ( const JsonCombinedItem* item = std::get_if<JsonCombinedItem>( &sipm ) )
 		{
-			QString itemSID = sipm.value( "ItemID" ).toString();
-			int amount      = sipm.value( "Amount" ).toInt();
-			auto components = sipm.value( "Components" ).toList();
+			auto itemSID = QString::fromStdString( item->ItemID );
+			int amount      = item->Amount;
+			auto components = item->Components;
 			if ( components.size() == 2 )
 			{
-				auto vmc1 = components[0].toMap();
-				auto vmc2 = components[0].toMap();
-
-				QString mat1 = vmc1.value( "MaterialID" ).toString();
-				QString mat2 = vmc2.value( "MaterialID" ).toString();
+				auto mat1 = QString::fromStdString(components[0].MaterialID);
+				auto mat2 = QString::fromStdString(components[1].MaterialID);
 
 				StartingItem si { itemSID, mat1, mat2, amount };
 				m_startingItems.append( si );
 			}
-		}
-		if ( sipm.value( "Type" ).toString() == "Animal" )
+		} else if ( const JsonAnimalItem* item = std::get_if<JsonAnimalItem>( &sipm ) )
 		{
-			QString type   = sipm.value( "ItemID" ).toString();
-			QString gender = sipm.value( "Gender" ).toString();
+			QString type   = QString::fromStdString(item->ItemID);
+			QString gender = QString::fromStdString(item->Gender);
 			gender.replace( 0, 1, gender[0].toUpper() );
-			int amount = sipm.value( "Amount" ).toInt();
+			int amount = item->Amount;
 			StartingAnimal si { type, gender, amount };
 			m_startingAnimals.append( si );
 		}

@@ -1612,6 +1612,21 @@ bool IO::saveFile( const fs::path& url, const QJsonDocument& jd )
 	return true;
 }
 
+bool IO::saveFile( const fs::path& url, const json& jd )
+{
+	std::ofstream fos(url);
+
+	if (!fos.is_open() || fos.bad())
+	{
+		qWarning( "Couldn't open save file." );
+		return false;
+	}
+
+	fos << jd.dump();
+
+	return true;
+}
+
 bool IO::loadFile( const fs::path& url, QJsonDocument& ja )
 {
 	if (!fs::exists(url)) {

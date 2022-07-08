@@ -21,6 +21,42 @@
 #include <QVariantMap>
 #include <absl/container/btree_map.h>
 
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+struct JsonBaseStartingItem {
+	int Amount;
+	std::string ItemID;
+	std::string Type;
+};
+
+struct JsonCombinedItemComponent {
+	std::string ItemID, MaterialID;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonCombinedItemComponent, ItemID, MaterialID)
+
+struct JsonCombinedItem : public JsonBaseStartingItem {
+	std::vector<JsonCombinedItemComponent> Components;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonCombinedItem, Amount, ItemID, Type, Components)
+
+struct JsonAnimalItem : public JsonBaseStartingItem {
+	std::string Gender;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonAnimalItem, Amount, ItemID, Type, Gender)
+
+struct JsonNormalItem : public JsonBaseStartingItem {
+	std::string MaterialID;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonNormalItem, Amount, ItemID, Type, MaterialID)
+
+using JsonStartingItem = std::variant<JsonCombinedItem, JsonAnimalItem, JsonNormalItem>;
+
 struct StartingItem
 {
 	QString itemSID;
@@ -181,7 +217,7 @@ private:
 	void loadPresets();
 	void saveUserPresets();
 
-	void setStartingItems( QVariantList sil );
+	void setStartingItems( const std::vector<JsonStartingItem>& sil );
 	void collectStartItems( QVariantList& sil );
 
 	std::vector<CheckableItem> filterCheckableItems( const QString& itemType );

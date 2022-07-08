@@ -62,6 +62,7 @@ public:
 	static bool saveFile( const fs::path& url, const QJsonDocument& jd );
 	static bool saveFile( const fs::path& url, const QJsonArray& ja );
 	static bool saveFile( const fs::path& url, const QJsonObject& jo );
+	static bool saveFile( const fs::path& url, const json& jo );
 	static bool loadFile( const fs::path& url, QJsonDocument& ja );
 	static bool loadFile( const fs::path& url, json& ja );
 
