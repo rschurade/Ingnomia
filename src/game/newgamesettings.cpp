@@ -51,6 +51,25 @@ inline void from_json(const json& j, JsonStartingItem& item) {
 	}
 }
 
+inline void to_json(json& j, const JsonStartingItem& item) {
+	if ( const JsonNormalItem* itemPtr = std::get_if<JsonNormalItem>( &item ) )
+	{
+		j = *itemPtr;
+	}
+	else if ( const JsonCombinedItem* itemPtr = std::get_if<JsonCombinedItem>( &item ) )
+	{
+		j = *itemPtr;
+	}
+	else if ( const JsonAnimalItem* itemPtr = std::get_if<JsonAnimalItem>( &item ) )
+	{
+		j = *itemPtr;
+	}
+	else
+	{
+		throw std::runtime_error( "Cannot convert JsonStartingItem to JSON" );
+	}
+}
+
 NewGameSettings::NewGameSettings( QObject* parent ) :
 	QObject( parent )
 {
@@ -110,11 +129,14 @@ void NewGameSettings::save()
 	embarkMap.insert( "allowedPlants", allowedPlants );
 	embarkMap.insert( "allowedTrees", allowedTrees );
 
-
-	QVariantList startItems;
+	std::vector<JsonStartingItem> startItems;
 	collectStartItems( startItems );
 
-	embarkMap.insert( "startingItems", startItems );
+	// FIXME: Remove this intermediate step after we completely remove QJsonDocument
+	json tmp = startItems;
+	const auto tmpStr = QString::fromStdString( tmp.dump() );
+	QJsonDocument doc = QJsonDocument::fromJson( tmpStr.toUtf8() );
+	embarkMap.insert( "startingItems", doc.toVariant().toList() );
 
 	QJsonDocument sd = QJsonDocument::fromVariant( embarkMap );
 	IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", sd );
@@ -122,51 +144,38 @@ void NewGameSettings::save()
 	savePreset( startItems );
 }
 
-void NewGameSettings::collectStartItems( QVariantList& sil )
+void NewGameSettings::collectStartItems( std::vector<JsonStartingItem>& sil )
 {
 	for( const auto& si : m_startingItems )
 	{
-		QVariantMap sim;
 		if( si.mat2.isEmpty() )
 		{
-			sim.insert( "Amount", si.amount );
-			sim.insert( "ItemID", si.itemSID );
-			sim.insert( "MaterialID", si.mat1 );
-			sim.insert( "Type", "Item" );
+			sil.emplace_back(JsonNormalItem{
+				{ si.amount, si.itemSID.toStdString(), "Item" },
+				si.mat1.toStdString()
+			});
 		}
 		else
 		{
 			auto rows = DB::selectRows( "Items_Components", si.itemSID );
 			if( rows.size() > 1 )
 			{
-				sim.insert( "Amount", si.amount );
-				sim.insert( "ItemID", si.itemSID );
-
-				QVariantList comps;
-				QVariantMap cm1;
-				QVariantMap cm2;
-			
-				cm1.insert( "ItemID", rows[0].value( "ItemID" ).toString() );
-				cm1.insert( "MaterialID", si.mat1 );
-				cm2.insert( "ItemID", rows[1].value( "ItemID" ).toString() );
-				cm2.insert( "MaterialID", si.mat2 );
-
-				comps.append( cm1 );
-				comps.append( cm2 );
-				sim.insert( "Components", comps );
-				sim.insert( "Type", "CombinedItem" );
+				sil.emplace_back(JsonCombinedItem{
+					{ si.amount, si.itemSID.toStdString(), "CombinedItem" },
+					{
+						{rows[0].value( "ItemID" ).toString().toStdString(), si.mat1.toStdString()},
+						{rows[1].value( "ItemID" ).toString().toStdString(), si.mat2.toStdString()}
+					}
+				});
 			}
 		}
-		sil.append( sim );
 	}
 	for( const auto& si : m_startingAnimals )
 	{
-		QVariantMap sim;
-		sim.insert( "Amount", si.amount );
-		sim.insert( "ItemID", si.type );
-		sim.insert( "Gender", si.gender );
-		sim.insert( "Type", "Animal" );
-		sil.append( sim );
+		sil.emplace_back(JsonAnimalItem{
+			{ si.amount, si.type.toStdString(), "Animal" },
+			si.gender.toStdString()
+		});
 	}
 }
 
@@ -528,82 +537,67 @@ void NewGameSettings::removeStartingAnimal( QString tag )
 
 void NewGameSettings::loadPresets()
 {
-	QJsonDocument sd;
+	json sd;
 
-	const auto exePath = QCoreApplication::applicationDirPath().toStdString();
+	const auto exePath = fs::path( QCoreApplication::applicationDirPath().toStdString() );
 
-	bool ok = IO::loadFile( exePath + "/content/JSON/embarkpresets.json", sd );
+	bool ok = IO::loadFile( exePath / "content" / "JSON" / "embarkpresets.json", sd );
 	if ( ok )
 	{
-		m_standardPresets = sd.toVariant().toList();
+		m_standardPresets = sd;
+	}
+	else
+	{
+		throw std::runtime_error("Cannot load 'embarkPresets.json'");
 	}
 
 	ok = IO::loadFile( IO::getDataFolder() / "settings" / "userpresets.json", sd );
 	if ( ok )
 	{
-		m_userPresets.clear();
-		for( auto vp : sd.toVariant().toList() )
-		{
-			m_userPresets.append( vp.toMap() );
-		}
+		m_userPresets = sd;
 	}
 }
 
 void NewGameSettings::saveUserPresets()
 {
-	QVariantList up;
-	for( auto pm : m_userPresets )
-	{
-		up.append( pm );
-	}
-	QJsonDocument sd = QJsonDocument::fromVariant( up );
+	json sd = m_userPresets;
 	IO::saveFile( IO::getDataFolder() / "settings" / "userpresets.json", sd );
 }
 
-void NewGameSettings::setPreset( QString name )
+void NewGameSettings::setPreset( const std::string& name )
 {
 	m_selectedPreset = name;
-	for ( auto p : m_standardPresets )
+	for ( const auto& pm : m_standardPresets )
 	{
-		auto pm = p.toMap();
-		if ( pm.value( "Name" ).toString() == name )
+		if ( pm.Name == name )
 		{
-			auto sil = pm.value( "startingItems" ).toList();
-			// FIXME: Remove this intermediate step after we completely remove QJsonDocument
-			QJsonDocument doc = QJsonDocument::fromVariant(sil);
-
-			setStartingItems( json::parse(doc.toJson().toStdString()) );
+			setStartingItems( pm.startingItems );
 
 			return;
 		}
 	}
-	for ( auto pm : m_userPresets )
+	for ( const auto& pm : m_userPresets )
 	{
-		if ( pm.value( "Name" ).toString() == name )
+		if ( pm.Name == name )
 		{
-			auto sil = pm.value( "startingItems" ).toList();
-
-			// FIXME: Remove this intermediate step after we completely remove QJsonDocument
-			QJsonDocument doc = QJsonDocument::fromVariant(sil);
-
-			setStartingItems( json::parse(doc.toJson().toStdString()) );
+			setStartingItems( pm.startingItems );
 
 			return;
 		}
 	}
 }
 
-QString NewGameSettings::addPreset()
+std::string NewGameSettings::addPreset()
 {
 	// get next user name
 	int index       = 1;
-	QString newName = "Custom " + QString::number( index );
+	auto newName = "Custom " + std::to_string( index );
 	while ( true )
 	{
 		bool conflict = false;
-		for ( auto pm : m_userPresets )
+		for ( const auto& pm : m_userPresets )
 		{
-			auto name = pm.value( "Name" ).toString();
+			auto name = pm.Name;
 			if ( name == newName )
 			{
 				conflict = true;
@@ -615,28 +609,27 @@ QString NewGameSettings::addPreset()
 			break;
 		}
 		++index;
-		newName = "Custom " + QString::number( index );
+		newName = "Custom " + std::to_string( index );
 	}
 
-	if ( !m_selectedPreset.isEmpty() )
+	if ( !m_selectedPreset.empty() )
 	{
-		for ( auto p : m_standardPresets )
+		for ( auto pm : m_standardPresets )
 		{
-			auto pm = p.toMap();
-			if ( pm.value( "Name" ).toString() == m_selectedPreset )
+			if ( pm.Name == m_selectedPreset )
 			{
-				pm.insert( "Name", newName );
-				m_userPresets.append( pm );
+				pm.Name = newName;
+				m_userPresets.push_back( pm );
 				saveUserPresets();
 				return newName;
 			}
 		}
 		for ( auto pm : m_userPresets )
 		{
-			if ( pm.value( "Name" ).toString() == m_selectedPreset )
+			if ( pm.Name == m_selectedPreset )
 			{
-				pm.insert( "Name", newName );
-				m_userPresets.append( pm );
+				pm.Name = newName;
+				m_userPresets.push_back( pm );
 				saveUserPresets();
 				return newName;
 			}
@@ -644,24 +637,23 @@ QString NewGameSettings::addPreset()
 	}
 	else
 	{
-		QVariantMap pm;
-		pm.insert( "Name", newName );
-		pm.insert( "startingItems", QVariantList() );
-		m_userPresets.append( pm );
+		JsonPreset pm;
+		pm.Name = newName;
+		m_userPresets.push_back( pm );
 		saveUserPresets();
 		return newName;
 	}
 	return "";
 }
 
-bool NewGameSettings::savePreset(  QVariantList items )
+bool NewGameSettings::savePreset( const std::vector<JsonStartingItem>& items )
 {
 	for ( auto& pm : m_userPresets )
 	{
-		if ( pm.value( "Name" ).toString() == m_selectedPreset )
+		if ( pm.Name == m_selectedPreset )
 		{
-			pm.insert( "startingItems", items );
-		
+			pm.startingItems = items;
+
 			saveUserPresets();
 			return true;
 		}
@@ -671,20 +663,19 @@ bool NewGameSettings::savePreset(  QVariantList items )
 
 bool NewGameSettings::onSavePreset()
 {
-	QVariantList sil;
+	std::vector<JsonStartingItem> sil;
 	collectStartItems( sil );
 	return savePreset( sil );
 }
 
-bool NewGameSettings::removePreset( QString name )
+bool NewGameSettings::removePreset( const std::string& name )
 {
-	for ( int i = 0; i < m_userPresets.size(); ++i )
+	for ( auto it = m_userPresets.begin(); it != m_userPresets.end(); it++ )
 	{
-		auto pm = m_userPresets[i];
-		if ( pm.value( "Name" ).toString() == name )
+		if ( it->Name == name )
 		{
 			m_selectedPreset = "";
-			m_userPresets.removeAt( i );
+			m_userPresets.erase( it );
 			saveUserPresets();
 			return true;
 		}
@@ -731,16 +722,17 @@ void NewGameSettings::setStartingItems( const std::vector<JsonStartingItem>& sil
 	}
 }
 
-QStringList NewGameSettings::presetNames()
+std::vector<std::string> NewGameSettings::presetNames()
 {
-	QStringList out;
-	for ( auto p : m_standardPresets )
+	std::vector<std::string> out;
+
+	for ( const auto& p : m_standardPresets )
 	{
-		out.append( p.toMap().value( "Name" ).toString() );
+		out.push_back(p.Name);
 	}
-	for ( auto pm : m_userPresets )
+	for ( const auto& p : m_userPresets )
 	{
-		out.append( pm.value( "Name" ).toString() );
+		out.push_back( p.Name );
 	}
 	return out;
 }

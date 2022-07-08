@@ -173,9 +173,9 @@ NewGameModel::NewGameModel() :
 	_animalAmount = "1";
 
 	_presets = *new ObservableCollection<Preset>();
-	for ( auto name : Global::newGameSettings->presetNames() )
+	for ( const auto& name : Global::newGameSettings->presetNames() )
 	{
-		_presets->Add( MakePtr<Preset>( name.toStdString().c_str() ) );
+		_presets->Add( MakePtr<Preset>( name.c_str() ) );
 	}
 	updateStartingItems();
 	updateStartingAnimals();
@@ -291,10 +291,10 @@ void NewGameModel::OnRandomSeed( BaseComponent* param )
 
 void NewGameModel::OnNewPreset( BaseComponent* param )
 {
-	QString newName = Global::newGameSettings->addPreset();
-	if ( !newName.isEmpty() )
+	const auto& newName = Global::newGameSettings->addPreset();
+	if ( !newName.empty() )
 	{
-		_presets->Add( MakePtr<Preset>( newName.toStdString().c_str() ) );
+		_presets->Add( MakePtr<Preset>( newName.c_str() ) );
 	}
 	SetSelectedPreset( _presets->Get( _presets->Count() - 1 ) );
 }

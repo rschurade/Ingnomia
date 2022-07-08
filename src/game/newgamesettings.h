@@ -57,6 +57,16 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonNormalItem, Amount, ItemID, Type, Materia
 
 using JsonStartingItem = std::variant<JsonCombinedItem, JsonAnimalItem, JsonNormalItem>;
 
+void from_json(const json& j, JsonStartingItem& item);
+void to_json(json& j, const JsonStartingItem& item);
+
+struct JsonPreset {
+	std::string Name;
+	std::vector<JsonStartingItem> startingItems;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonPreset, Name, startingItems)
+
 struct StartingItem
 {
 	QString itemSID;
@@ -200,11 +210,11 @@ public:
 	std::vector<CheckableItem> plants();
 	std::vector<CheckableItem> animals();
 
-	void setPreset( QString name );
-	QStringList presetNames();
-	QString addPreset();
-	bool removePreset( QString name );
-	bool savePreset( QVariantList items );
+	void setPreset( const std::string& name );
+	std::vector<std::string> presetNames();
+	std::string addPreset();
+	bool removePreset( const std::string& name );
+	bool savePreset( const std::vector<JsonStartingItem>& items );
 	bool onSavePreset();
 
 	bool isChecked( QString sid );
@@ -218,7 +228,7 @@ private:
 	void saveUserPresets();
 
 	void setStartingItems( const std::vector<JsonStartingItem>& sil );
-	void collectStartItems( QVariantList& sil );
+	void collectStartItems( std::vector<JsonStartingItem>& sil );
 
 	std::vector<CheckableItem> filterCheckableItems( const QString& itemType );
 
@@ -246,10 +256,10 @@ private:
 
 	QStringList materials( QString itemSID );
 
-	QVariantList m_standardPresets;
-	QList<QVariantMap> m_userPresets;
+	std::vector<JsonPreset> m_standardPresets;
+	std::vector<JsonPreset> m_userPresets;
 
-	QString m_selectedPreset;
+	std::string m_selectedPreset;
 
 	absl::btree_map<QString, CheckableItem> m_checkableItems;
 };
