@@ -36,6 +36,10 @@ ConfigVariant qVariantToConfigVariant(QVariant v) {
 	} else if (v.type() == QVariant::Double) {
 		qDebug() << "Type double";
 		return { v.toDouble() };
+	} else if (v.type() == QVariant::Int || v.type() == QVariant::LongLong) {
+		qDebug() << "Type int or long";
+		// FIXME: Add `toInt` and support integers on config?
+		return { v.toDouble() };
 	} else if (v.type() == QVariant::Bool) {
 		qDebug() << "Type bool";
 		return {v.toBool()};
