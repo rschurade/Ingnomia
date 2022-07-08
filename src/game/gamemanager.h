@@ -40,7 +40,7 @@ public:
 	void startNewGame();
 	void setUpNewGame();
 	void continueLastGame();
-	void loadGame( QString folder );
+	void loadGame( const std::string& folder );
 	void saveGame();
 
 	void setShowMainMenu( bool value );

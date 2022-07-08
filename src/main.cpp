@@ -44,6 +44,10 @@
 #include "base/containersHelper.h"
 #include "version.h"
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 QTextStream* out = 0;
 bool verbose     = false;
 
@@ -51,30 +55,30 @@ constexpr auto DefaultScreenScale = 3 / 4.0;
 
 void clearLog()
 {
-	QString folder   = IO::getDataFolder();
+	const auto& folder   = IO::getDataFolder();
 	bool ok          = true;
-	QString fileName = "log.txt";
-	if ( QDir( folder ).exists() )
+	std::string fileName = "log.txt";
+	if ( fs::exists( folder ) )
 	{
 		fileName = folder + "/" + fileName;
 	}
 
-	QFile file( fileName );
+	QFile file( QString::fromStdString(fileName) );
 	file.open( QIODevice::WriteOnly );
 	file.close();
 }
 
 QPointer<QFile> openLog()
 {
-	QString folder   = IO::getDataFolder();
+	const std::string& folder   = IO::getDataFolder();
 	bool ok          = true;
-	QString fileName = "log.txt";
-	if ( QDir( folder ).exists() )
+	std::string fileName = "log.txt";
+	if ( fs::exists( folder ) )
 	{
 		fileName = folder + "/" + fileName;
 	}
 
-	QPointer<QFile> outFile(new QFile( fileName ));
+	QPointer<QFile> outFile(new QFile( QString::fromStdString(fileName) ));
 	if(outFile->open( QIODevice::WriteOnly | QIODevice::Append ))
 	{
 		return outFile;

@@ -25,9 +25,9 @@
 struct GuiSaveInfo
 {
 	QString name;
-	QString folder;
+	std::string folder;
 	QString dir;
-	QString version;
+	std::string version;
 	QDateTime date;
 	bool compatible = true;
 };
@@ -48,7 +48,7 @@ private:
 
 public slots:
 	void onRequestKingdoms();
-	void onRequestSaveGames( const QString path );
+	void onRequestSaveGames( const std::string& path );
 
 public: // signals:
 	sigslot::signal<const QList<GuiSaveInfo>& /*kingdoms*/> signalKingdoms;

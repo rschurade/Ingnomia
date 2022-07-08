@@ -33,7 +33,7 @@ public:
 	void setParent( IngnomiaGUI::LoadGameModel* parent );
 
 	void requestKingdoms();
-	void requestSaveGames( const QString path );
+	void requestSaveGames( const std::string& path );
 
 private:
 	IngnomiaGUI::LoadGameModel* m_parent = nullptr;
@@ -44,5 +44,5 @@ private slots:
 
 public: // signals:
 	sigslot::signal<> signalRequestKingdoms;
-	sigslot::signal<const QString /*path*/> signalRequestSaveGames;
+	sigslot::signal<const std::string& /*path*/> signalRequestSaveGames;
 };

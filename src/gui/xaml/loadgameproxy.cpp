@@ -50,7 +50,7 @@ void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
 	}
 }
 
-void LoadGameProxy::requestSaveGames( const QString path )
+void LoadGameProxy::requestSaveGames( const std::string& path )
 {
 	signalRequestSaveGames( path );
 }

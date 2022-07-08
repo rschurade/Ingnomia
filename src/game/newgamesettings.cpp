@@ -157,7 +157,7 @@ void NewGameSettings::loadEmbarkMap()
 	if ( !IO::loadFile( IO::getDataFolder() + "/settings/newgame.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( Global::cfg->get<QString>( "dataPath" ) + "/JSON/newgame.json", sd ) )
+		if ( IO::loadFile( Global::cfg->get<QString>( "dataPath" ).toStdString() + "/JSON/newgame.json", sd ) )
 		{
 			IO::saveFile( IO::getDataFolder() + "/settings/newgame.json", sd );
 		}
@@ -504,7 +504,7 @@ void NewGameSettings::loadPresets()
 {
 	QJsonDocument sd;
 
-	QString exePath = QCoreApplication::applicationDirPath();
+	const auto exePath = QCoreApplication::applicationDirPath().toStdString();
 
 	bool ok = IO::loadFile( exePath + "/content/JSON/embarkpresets.json", sd );
 	if ( ok )

@@ -39,7 +39,7 @@ public:
 
 	void startNewGame();
 	void continueLastGame();
-	void loadGame( QString param );
+	void loadGame( const std::string& param );
 	void saveGame();
 	void setShowMainMenu( bool value );
 
@@ -65,7 +65,7 @@ public: // signals:
 
 	sigslot::signal<> signalStartNewGame;
 	sigslot::signal<> signalContinueLastGame;
-	sigslot::signal<QString /*param*/> signalLoadGame;
+	sigslot::signal<const std::string& /*param*/> signalLoadGame;
 	sigslot::signal<> signalSaveGame;
 	sigslot::signal<bool /*value*/> signalSetShowMainMenu;
 	sigslot::signal<> signalEndGame;

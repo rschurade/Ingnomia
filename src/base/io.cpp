@@ -63,6 +63,10 @@
 
 #include <range/v3/view.hpp>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
 	QObject( parent )
@@ -73,7 +77,7 @@ IO::~IO()
 {
 }
 
-bool IO::saveCompatible( QString folder )
+bool IO::saveCompatible( const std::string& folder )
 {
 	int vi = versionInt( folder );
 	if ( vi < 741 )
@@ -85,9 +89,9 @@ bool IO::saveCompatible( QString folder )
 
 bool IO::saveGameExists()
 {
-	QString folder = getDataFolder() + "/save/";
+	const std::string& folder = getDataFolder() + "/save/";
 
-	if ( !QDir( folder ).exists() || QDir( folder ).isEmpty() )
+	if ( !fs::exists( folder ) || fs::is_empty( folder ) )
 	{
 		return false;
 	}
@@ -127,7 +131,7 @@ QVariantMap toQVariant(ConfigMap map) {
 
 bool IO::saveConfig()
 {
-	QString folder = getDataFolder() + "/settings/";
+	const std::string& folder = getDataFolder() + "/settings/";
 
 	ConfigMap cm   = Global::cfg->object();
 	QJsonDocument jd = QJsonDocument::fromVariant( toQVariant(cm) );
@@ -137,107 +141,105 @@ bool IO::saveConfig()
 	return true;
 }
 
-QString IO::getDataFolder()
+std::string IO::getDataFolder()
 {
 #ifdef _WIN32
 	return QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia";
 #else
 	// corresponds to ~/.local/share/<APPNAME> on Linux
-	return QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ) + "/Ingnomia";
+	return (QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ) + "/Ingnomia").toStdString();
 #endif
 }
 
-QString IO::getTempFolder()
+std::string IO::getTempFolder()
 {
 	return getDataFolder() + "/tmp/";
 }
 
 bool IO::createFolders()
 {
-	QString folder = getDataFolder() + "/";
-	if ( !QDir( folder ).exists() )
+	const std::string& folder = getDataFolder() + "/";
+	if ( !fs::exists( folder ) )
 	{
-		QDir().mkpath( folder );
+		fs::create_directory( folder );
 	}
-	QString modFolder = folder + "mods/";
-	if ( !QDir( modFolder ).exists() )
+	const auto modFolder = folder + "mods/";
+	if ( !fs::exists( modFolder ) )
 	{
-		QDir().mkdir( modFolder );
+		fs::create_directory( modFolder );
 	}
-	QString saveFolder = folder + "save/";
-	if ( !QDir( saveFolder ).exists() )
+	const auto saveFolder = folder + "save/";
+	if ( !fs::exists( saveFolder ) )
 	{
-		QDir().mkdir( saveFolder );
+		fs::create_directory( saveFolder );
 	}
-	QString ssFolder = folder + "screenshots/";
-	if ( !QDir( ssFolder ).exists() )
+	const auto ssFolder = folder + "screenshots/";
+	if ( !fs::exists( ssFolder ) )
 	{
-		QDir().mkdir( ssFolder );
+		fs::create_directory( ssFolder );
 	}
-	QString settingsFolder = folder + "settings/";
-	if ( !QDir( settingsFolder ).exists() )
+	const auto settingsFolder = folder + "settings/";
+	if ( !fs::exists( settingsFolder ) )
 	{
-		QDir().mkdir( settingsFolder );
+		fs::create_directory( settingsFolder );
 	}
-	QString tmpFolder = folder + "tmp/";
-	if ( !QDir( tmpFolder ).exists() )
+	const auto tmpFolder = folder + "tmp/";
+	if ( !fs::exists( tmpFolder ) )
 	{
-		QDir().mkdir( tmpFolder );
+		fs::create_directory( tmpFolder );
 	}
 
-	QString exePath = QCoreApplication::applicationDirPath();
+	const auto exePath = QCoreApplication::applicationDirPath().toStdString();
 
-	if ( !QFile::exists( folder + "settings/profs.json" ) && QFile::exists( exePath + "/content/JSON/profs.json" ) )
+	if ( !fs::exists( folder + "settings/profs.json" ) && fs::exists( exePath + "/content/JSON/profs.json" ) )
 	{
-		QFile::copy( exePath + "/content/JSON/profs.json", folder + "settings/profs.json" );
+		fs::copy( exePath + "/content/JSON/profs.json", folder + "settings/profs.json" );
 	}
-	if ( !QFile::exists( folder + "settings/config.json" ) && QFile::exists( exePath + "/content/JSON/config.json" ) )
+	if ( !fs::exists( folder + "settings/config.json" ) && fs::exists( exePath + "/content/JSON/config.json" ) )
 	{
-		QFile::copy( exePath + "/content/JSON/config.json", folder + "settings/config.json" );
+		fs::copy( exePath + "/content/JSON/config.json", folder + "settings/config.json" );
 	}
-	if ( !QFile::exists( folder + "settings/newgame.json" ) && QFile::exists( exePath + "/content/JSON/newgame.json" ) )
+	if ( !fs::exists( folder + "settings/newgame.json" ) && fs::exists( exePath + "/content/JSON/newgame.json" ) )
 	{
-		QFile::copy( exePath + "/content/JSON/newgame.json", folder + "settings/newgame.json" );
+		fs::copy( exePath + "/content/JSON/newgame.json", folder + "settings/newgame.json" );
 	}
 	/*
-	if ( !QFile::exists( folder + "settings/keybindings.json" ) && QFile::exists( exePath + "/content/JSON/keybindings.json" ) )
+	if ( !fs::exists( folder + "settings/keybindings.json" ) && fs::exists( exePath + "/content/JSON/keybindings.json" ) )
 	{
-		QFile::copy( exePath + "/content/JSON/keybindings.json", folder + "settings/keybindings.json" );
+		fs::copy( exePath + "/content/JSON/keybindings.json", folder + "settings/keybindings.json" );
 	}
 	*/
 
-	folder = getDataFolder() + "/save/";
-
-	return QDir( folder ).exists();
+	return fs::exists( getDataFolder() + "/save/" );
 }
 
 bool IO::loadOriginalConfig( QJsonDocument& jd )
 {
 	qDebug() << "load standard config";
-	QString exePath = QCoreApplication::applicationDirPath();
+	const auto exePath = QCoreApplication::applicationDirPath().toStdString();
 	return IO::loadFile( exePath + "/content/JSON/config.json", jd );
 }
 
-QString IO::save( bool autosave )
+std::string IO::save( bool autosave )
 {
 	QElapsedTimer timer;
 	timer.start();
 
-	QString folder = getDataFolder() + "/save/";
+	auto folder = getDataFolder() + "/save/";
 
-	if ( !QDir( folder ).exists() )
+	if ( !fs::exists( folder ) )
 	{
-		QDir().mkdir( folder );
+		fs::create_directory( folder );
 	}
-	QString name = GameState::kingdomName;
+	auto name = GameState::kingdomName;
 	name         = name.simplified();
 	name.replace( " ", "" );
-	folder += name;
+	folder += name.toStdString();
 	folder += "/";
 
-	if ( !QDir( folder ).exists() )
+	if ( !fs::exists( folder ) )
 	{
-		QDir().mkdir( folder );
+		fs::create_directory( folder );
 	}
 	int slot = 0;
 
@@ -248,7 +250,7 @@ QString IO::save( bool autosave )
 	else
 	{
 
-		QDirIterator directories( folder, QDir::Dirs | QDir::NoDotAndDotDot );
+		QDirIterator directories( QString::fromStdString( folder ), QDir::Dirs | QDir::NoDotAndDotDot );
 		QStringList dirs;
 		while ( directories.hasNext() )
 		{
@@ -272,18 +274,18 @@ QString IO::save( bool autosave )
 			}
 		}
 		++slot;
-		folder += QString::number( slot );
+		folder += std::to_string( slot );
 	}
 
 	if ( Global::debugMode )
-		qDebug() << folder;
-	QString oldFolder;
-	if ( QDir( folder ).exists() )
+		qDebug() << QString::fromStdString(folder);
+	std::string oldFolder;
+	if ( fs::exists( folder ) )
 	{
 		oldFolder = folder + ".backup";
-		QDir().rename( folder, oldFolder );
+		fs::rename( folder, oldFolder );
 	}
-	QDir().mkdir( folder );
+	fs::create_directory( folder );
 	
 	folder += "/";
 
@@ -322,18 +324,18 @@ QString IO::save( bool autosave )
 
 	qDebug() << "saving game took: " + QString::number( timer.elapsed() ) + " ms";
 
-	if (!oldFolder.isEmpty())
+	if (!oldFolder.empty())
 	{
-		QDir( oldFolder ).removeRecursively();
+		fs::remove_all( oldFolder );
 		qDebug() << "Savegame backup removed";
 	}
 
 	return folder;
 }
 
-bool IO::load( QString folder )
+bool IO::load( std::string folder )
 {
-	if ( !folder.endsWith( "/" ) )
+	if ( !folder.ends_with( "/" ) )
 	{
 		folder += "/";
 	}
@@ -607,7 +609,7 @@ void IO::sanitize()
 	}
 }
 
-QString IO::versionString( QString folder )
+std::string IO::versionString( const std::string& folder )
 {
 	QJsonDocument jd;
 	IO::loadFile( folder + "/game.json", jd );
@@ -622,24 +624,28 @@ QString IO::versionString( QString folder )
 
 			if ( vm.contains( "Version" ) )
 			{
-				return vm.value( "Version" ).toString();
+				return vm.value( "Version" ).toString().toStdString();
 			}
 			else
 			{
-				return vm.value( "version" ).toString();
+				return vm.value( "version" ).toString().toStdString();
 			}
 		}
 	}
 	return ( "0.0.0.0" );
 }
 
-int IO::versionInt( QString folder )
+int IO::versionInt( const std::string& folder )
 {
-	QString version = versionString( folder );
-	QStringList vl  = version.split( "." );
+	const auto version = versionString( folder );
+	const auto vl  = ranges::actions::split( version, "." );
 	if ( vl.size() == 4 )
 	{
-		int vi = vl[0].toInt() * 1000 + vl[1].toInt() * 100 + vl[2].toInt() * 10 + vl[3].toInt();
+		const auto& v0 = vl[0];
+		const auto& v1 = vl[1];
+		const auto& v2 = vl[2];
+		const auto& v3 = vl[3];
+		int vi = std::atoi(v0.c_str()) * 1000 + std::atoi(v1.c_str()) * 100 + std::atoi(v2.c_str()) * 10 + std::atoi(v3.c_str());
 		return vi;
 		if ( vi < 577 )
 		{
@@ -719,11 +725,11 @@ bool IO::loadGame( QJsonDocument& jd )
 	return true;
 }
 
-bool IO::saveWorld( QString folder )
+bool IO::saveWorld( const std::string& folder )
 {
 	if ( Global::debugMode )
 		qDebug() << "saveWorld";
-	QFile worldFile( folder + "world.dat" );
+	QFile worldFile( QString::fromStdString( folder + "world.dat" ) );
 	if ( worldFile.open( QIODevice::WriteOnly ) )
 	{
 		QDataStream out( &worldFile );
@@ -756,9 +762,9 @@ bool IO::saveWorld( QString folder )
 	return true;
 }
 
-bool IO::loadWorld( QString folder )
+bool IO::loadWorld( const std::string& folder )
 {
-	QFile worldFile( folder + "world.dat" );
+	QFile worldFile( QString::fromStdString(folder + "world.dat") );
 	if ( worldFile.open( QIODevice::ReadOnly ) )
 	{
 		QDataStream in( &worldFile );
@@ -954,7 +960,7 @@ QJsonArray IO::jsonArrayMonsters( int startIndex, int amount )
 	return ja;
 }
 
-bool IO::saveMonsters( QString folder )
+bool IO::saveMonsters( const std::string& folder )
 {
 	int i          = 1;
 	int startIndex = 0;
@@ -963,7 +969,7 @@ bool IO::saveMonsters( QString folder )
 		auto ja = jsonArrayMonsters( startIndex, 10000 );
 		if ( ja.size() > 0 )
 		{
-			IO::saveFile( folder + "monsters" + QString::number( i ) + ".json", ja );
+			IO::saveFile( folder + "monsters" + std::to_string( i ) + ".json", ja );
 			++i;
 			startIndex += 10000;
 		}
@@ -998,10 +1004,10 @@ bool IO::loadGnomes( QJsonDocument& jd )
 	return true;
 }
 
-bool IO::loadMonsters( QString folder )
+bool IO::loadMonsters( const std::string& folder )
 {
 	QJsonDocument jd;
-	if ( QFileInfo::exists( folder + "monsters.json" ) )
+	if ( QFileInfo::exists( QString::fromStdString( folder + "monsters.json" ) ) )
 	{
 		loadFile( folder + "monsters.json", jd );
 		QJsonArray ja = jd.array();
@@ -1013,9 +1019,9 @@ bool IO::loadMonsters( QString folder )
 	else
 	{
 		int i = 1;
-		while ( QFileInfo::exists( folder + "monsters" + QString::number( i ) + ".json" ) )
+		while ( QFileInfo::exists( QString::fromStdString( folder + "monsters" + std::to_string( i ) + ".json" ) ) )
 		{
-			loadFile( folder + "monsters" + QString::number( i ) + ".json", jd );
+			loadFile( folder + "monsters" + std::to_string( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 			for ( const auto& entry : ja.toVariantList() )
 			{
@@ -1053,7 +1059,7 @@ QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 	return ja;
 }
 
-bool IO::savePlants( QString folder )
+bool IO::savePlants( const std::string& folder )
 {
 	QByteArray out;
 
@@ -1064,7 +1070,7 @@ bool IO::savePlants( QString folder )
 		auto ja = jsonArrayPlants( startIndex, 10000 );
 		if ( ja.size() > 0 )
 		{
-			IO::saveFile( folder + "plants" + QString::number( i ) + ".json", ja );
+			IO::saveFile( folder + "plants" + std::to_string( i ) + ".json", ja );
 			++i;
 			startIndex += 10000;
 		}
@@ -1076,10 +1082,10 @@ bool IO::savePlants( QString folder )
 	return true;
 }
 
-bool IO::loadPlants( QString folder )
+bool IO::loadPlants( const std::string& folder )
 {
 	QJsonDocument jd;
-	if ( QFileInfo::exists( folder + "plants.json" ) )
+	if ( QFileInfo::exists( QString::fromStdString(folder + "plants.json") ) )
 	{
 		loadFile( folder + "plants.json", jd );
 		QJsonArray ja = jd.array();
@@ -1093,9 +1099,9 @@ bool IO::loadPlants( QString folder )
 	{
 		int i = 1;
 
-		while ( QFileInfo::exists( folder + "plants" + QString::number( i ) + ".json" ) )
+		while ( QFileInfo::exists( QString::fromStdString(folder + "plants" + std::to_string( i ) + ".json") ) )
 		{
-			loadFile( folder + "plants" + QString::number( i ) + ".json", jd );
+			loadFile( folder + "plants" + std::to_string( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 
 			for ( const auto& entry : ja.toVariantList() )
@@ -1136,7 +1142,7 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 	return ja;
 }
 
-bool IO::saveItems( QString folder )
+bool IO::saveItems( const std::string& folder )
 {
 	g->inv()->sanityCheck();
 
@@ -1149,7 +1155,7 @@ bool IO::saveItems( QString folder )
 		auto ja = jsonArrayItems( startIndex, 50000 );
 		if ( ja.size() > 0 )
 		{
-			IO::saveFile( folder + "items" + QString::number( i ) + ".json", ja );
+			IO::saveFile( folder + "items" + std::to_string( i ) + ".json", ja );
 			++i;
 			startIndex += 50000;
 		}
@@ -1162,12 +1168,12 @@ bool IO::saveItems( QString folder )
 	return true;
 }
 
-bool IO::loadItems( QString folder )
+bool IO::loadItems( const std::string& folder )
 {
 	g->inv()->loadFilter();
 
 	QJsonDocument jd;
-	if ( QFileInfo::exists( folder + "items.json" ) )
+	if ( QFileInfo::exists( QString::fromStdString(folder + "items.json") ) )
 	{
 		loadFile( folder + "items.json", jd );
 		QJsonArray ja = jd.array();
@@ -1183,9 +1189,9 @@ bool IO::loadItems( QString folder )
 	{
 		int i     = 1;
 		int count = 0;
-		while ( QFileInfo::exists( folder + "items" + QString::number( i ) + ".json" ) )
+		while ( QFileInfo::exists(QString::fromStdString( folder + "items" + std::to_string( i ) + ".json" )) )
 		{
-			loadFile( folder + "items" + QString::number( i ) + ".json", jd );
+			loadFile( folder + "items" + std::to_string( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 
 			for ( const auto& entry : ja.toVariantList() )
@@ -1443,7 +1449,7 @@ QJsonArray IO::jsonArrayAnimals( int startIndex, int amount )
 	return ja;
 }
 
-bool IO::saveAnimals( QString folder )
+bool IO::saveAnimals( const std::string& folder )
 {
 	int i          = 1;
 	int startIndex = 0;
@@ -1452,7 +1458,7 @@ bool IO::saveAnimals( QString folder )
 		auto ja = jsonArrayAnimals( startIndex, 10000 );
 		if ( ja.size() > 0 )
 		{
-			IO::saveFile( folder + "animals" + QString::number( i ) + ".json", ja );
+			IO::saveFile( folder + "animals" + std::to_string( i ) + ".json", ja );
 			++i;
 			startIndex += 10000;
 		}
@@ -1464,10 +1470,10 @@ bool IO::saveAnimals( QString folder )
 	return true;
 }
 
-bool IO::loadAnimals( QString folder )
+bool IO::loadAnimals( const std::string& folder )
 {
 	QJsonDocument jd;
-	if ( QFileInfo::exists( folder + "animals.json" ) )
+	if ( QFileInfo::exists( QString::fromStdString( folder + "animals.json" ) ) )
 	{
 		loadFile( folder + "animals.json", jd );
 		QJsonArray ja = jd.array();
@@ -1479,9 +1485,9 @@ bool IO::loadAnimals( QString folder )
 	else
 	{
 		int i = 1;
-		while ( QFileInfo::exists( folder + "animals" + QString::number( i ) + ".json" ) )
+		while ( QFileInfo::exists( QString::fromStdString(folder + "animals" + std::to_string( i ) + ".json" )) )
 		{
-			loadFile( folder + "animals" + QString::number( i ) + ".json", jd );
+			loadFile( folder + "animals" + std::to_string( i ) + ".json", jd );
 			QJsonArray ja = jd.array();
 			for ( const auto& entry : ja.toVariantList() )
 			{
@@ -1589,21 +1595,21 @@ bool IO::loadPipes( QJsonDocument& jd )
 	return true;
 }
 
-bool IO::saveFile( QString url, const QJsonObject& jo )
+bool IO::saveFile( const std::string& url, const QJsonObject& jo )
 {
 	QJsonDocument saveDoc( jo );
 	return saveFile( url, saveDoc );
 }
 
-bool IO::saveFile( QString url, const QJsonArray& ja )
+bool IO::saveFile( const std::string& url, const QJsonArray& ja )
 {
 	QJsonDocument saveDoc( ja );
 	return saveFile( url, saveDoc );
 }
 
-bool IO::saveFile( QString url, const QJsonDocument& jd )
+bool IO::saveFile( const std::string& url, const QJsonDocument& jd )
 {
-	QFile file( url );
+	QFile file( QString::fromStdString(url) );
 
 	if ( !file.open( QIODevice::WriteOnly ) )
 	{
@@ -1616,9 +1622,9 @@ bool IO::saveFile( QString url, const QJsonDocument& jd )
 	return true;
 }
 
-bool IO::loadFile( QString url, QJsonDocument& ja )
+bool IO::loadFile( const std::string& url, QJsonDocument& ja )
 {
-	QFile file( url );
+	QFile file( QString::fromStdString(url) );
 	file.open( QIODevice::ReadOnly | QIODevice::Text );
 	QString val = file.readAll();
 	file.close();
@@ -1631,7 +1637,7 @@ bool IO::loadFile( QString url, QJsonDocument& ja )
 		return true;
 	}
 
-	qDebug() << "json parse error in" << url << error.offset;
+	qDebug() << "json parse error in" << QString::fromStdString(url) << error.offset;
 
 	return false;
 }

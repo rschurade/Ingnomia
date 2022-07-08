@@ -35,29 +35,30 @@ public:
 	IO( Game* g, QObject* parent );
 	~IO();
 
-	static QString getDataFolder();
+	// TODO: Return fs::path instead
+	static std::string getDataFolder();
 	static bool createFolders();
 	static bool saveConfig();
 	static bool loadOriginalConfig( QJsonDocument& jd );
 
 	bool saveGameExists();
 
-	QString save( bool autosave = false );
-	bool load( QString folder );
+	std::string save( bool autosave = false );
+	bool load( std::string folder );
 
 	void sanitize();
 
-	static bool saveCompatible( QString folder );
-	static QString versionString( QString folder );
-	static int versionInt( QString folder );
+	static bool saveCompatible( const std::string& folder );
+	static std::string versionString( const std::string& folder );
+	static int versionInt( const std::string& folder );
 
-	static bool saveFile( QString url, const QJsonDocument& jd );
-	static bool saveFile( QString url, const QJsonArray& ja );
-	static bool saveFile( QString url, const QJsonObject& jo );
-	static bool loadFile( QString url, QJsonDocument& ja );
+	static bool saveFile( const std::string& url, const QJsonDocument& jd );
+	static bool saveFile( const std::string& url, const QJsonArray& ja );
+	static bool saveFile( const std::string& url, const QJsonObject& jo );
+	static bool loadFile( const std::string& url, QJsonDocument& ja );
 
-	bool saveWorld( QString folder );
-	bool loadWorld( QString folder );
+	bool saveWorld( const std::string& folder );
+	bool loadWorld( const std::string& folder );
 	void loadWorld( QDataStream& in );
 
 	QJsonArray jsonArraySprites();
@@ -91,15 +92,15 @@ public:
 	bool loadFloorConstructions( QJsonDocument& jd );
 	bool loadWallConstructions( QJsonDocument& jd );
 	bool loadGnomes( QJsonDocument& jd );
-	bool loadMonsters( QString folder );
-	bool loadPlants( QString folder );
-	bool loadItems( QString folder );
+	bool loadMonsters( const std::string& folder );
+	bool loadPlants( const std::string& folder );
+	bool loadItems( const std::string& folder );
 	bool loadItemHistory( QJsonDocument& jd );
 	bool loadJobs( QJsonDocument& jd );
 	bool loadJobSprites( QJsonDocument& jd );
 	bool loadFarms( QJsonDocument& jd );
 	bool loadStockpiles( QJsonDocument& jd );
-	bool loadAnimals( QString folder );
+	bool loadAnimals( const std::string& folder );
 	bool loadWorkshops( QJsonDocument& jd );
 	bool loadRooms( QJsonDocument& jd );
 	bool loadDoors( QJsonDocument& jd );
@@ -107,14 +108,15 @@ public:
 	bool loadMechanisms( QJsonDocument& jd );
 	bool loadPipes( QJsonDocument& jd );
 
-	bool saveItems( QString folder );
-	bool savePlants( QString folder );
-	bool saveAnimals( QString folder );
-	bool saveMonsters( QString folder );
+	bool saveItems( const std::string& folder );
+	bool savePlants( const std::string& folder );
+	bool saveAnimals( const std::string& folder );
+	bool saveMonsters( const std::string& folder );
 
 	int version = 0;
 
-	QString getTempFolder();
+	// TODO: Return fs::path instead
+	std::string getTempFolder();
 
 public: // signals:
 	sigslot::signal< const QString & /*text*/> signalStatus;

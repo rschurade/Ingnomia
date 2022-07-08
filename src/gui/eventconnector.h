@@ -179,7 +179,7 @@ public slots:
 
 	void onStartNewGame();
 	void onContinueLastGame();
-	void onLoadGame( QString folder );
+	void onLoadGame( const std::string& folder );
 	void onSaveGame();
 	void onSetShowMainMenu( bool value );
 	void onEndGame();

@@ -889,7 +889,7 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 						mat.wallSprite                                                                    = tile.wallSpriteUID;
 						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
 						// TODO: Is this a bug?
-						g->sf()->createSprite( mat.shortwall, { mat.key } )->uID;
+						g->sf()->createSprite( mat.shortwall, { mat.key } );
 					}
 					if ( m_fow )
 					{
@@ -971,7 +971,7 @@ void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::
 							mat.wallSprite                                                                    = tile.wallSpriteUID;
 							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
 							// TODO: Is this a bug?
-							g->sf()->createSprite( mat.shortwall, { mat.key } )->uID;
+							g->sf()->createSprite( mat.shortwall, { mat.key } );
 						}
 						if ( m_fow )
 						{

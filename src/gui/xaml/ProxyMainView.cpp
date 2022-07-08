@@ -102,7 +102,7 @@ void ProxyMainView::continueLastGame()
 	signalContinueLastGame();
 }
 
-void ProxyMainView::loadGame( QString param )
+void ProxyMainView::loadGame( const std::string& param )
 {
 	signalLoadGame( param );
 }

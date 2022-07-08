@@ -75,7 +75,7 @@ void LoadGameModel::updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms )
 
 	for ( const auto& gsk : kingdoms )
 	{
-		_savedKingdoms->Add( MakePtr<SaveItem>( gsk.name, gsk.folder, "", gsk.version, gsk.date.toString() ) );
+	_savedKingdoms->Add( MakePtr<SaveItem>( gsk.name, QString::fromStdString(gsk.folder), "", QString::fromStdString(gsk.version), gsk.date.toString() ) );
 	}
 
 	OnPropertyChanged( "SavedKingdoms" );
@@ -92,7 +92,7 @@ void LoadGameModel::updateSaveGames( const QList<GuiSaveInfo>& saveGames )
 
 	for ( const auto& gsi : saveGames )
 	{
-		_savedGames->Add( MakePtr<SaveItem>( gsi.name, gsi.folder, gsi.dir, gsi.version, gsi.date.toString(), gsi.compatible ) );
+		_savedGames->Add( MakePtr<SaveItem>( gsi.name, QString::fromStdString(gsi.folder), gsi.dir, QString::fromStdString(gsi.version), gsi.date.toString(), gsi.compatible ) );
 	}
 
 	OnPropertyChanged( "SavedGames" );

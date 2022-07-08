@@ -42,20 +42,20 @@ AggregatorLoadGame::~AggregatorLoadGame()
 
 void AggregatorLoadGame::onRequestKingdoms()
 {
-	QString sfolder = IO::getDataFolder() + "/save";
+	const auto sfolder = IO::getDataFolder() + "/save";
 
 	m_kingdomList.clear();
 
-	QDir dir( sfolder );
+	QDir dir( QString::fromStdString(sfolder) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 
 	auto entryList = dir.entryList();
 
 	for ( auto sdir : entryList )
 	{
-		QString kingdomFolder = sfolder + "/" + sdir;
+		const auto kingdomFolder = sfolder + "/" + sdir.toStdString();
 
-		QDir kdir( kingdomFolder );
+		QDir kdir( QString::fromStdString(kingdomFolder) );
 		kdir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 		kdir.setSorting( QDir::Time );
 
@@ -65,7 +65,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 		{
 			for( const auto& gdir : gdirs )
 			{
-				QString gameFolder = kingdomFolder + "/" + gdir;
+				const auto gameFolder = kingdomFolder + "/" + gdir.toStdString();
 				QJsonDocument jd;
 				IO::loadFile( gameFolder + "/game.json", jd );
 
@@ -77,13 +77,13 @@ void AggregatorLoadGame::onRequestKingdoms()
 					{
 						QVariantMap vm = vl.first().toMap();
 
-						QFile file( gameFolder + "/game.json" );
+						QFile file( QString::fromStdString(gameFolder + "/game.json") );
 						QFileInfo fi( file );
 
 						GuiSaveInfo gsk;
 						gsk.folder  = kingdomFolder;
 						gsk.name    = vm.value( "kingdomName" ).toString();
-						gsk.version = vm.value( "Version" ).toString();
+						gsk.version = vm.value( "Version" ).toString().toStdString();
 						gsk.date    = fi.lastModified();
 
 						m_kingdomList.append( gsk );
@@ -100,11 +100,11 @@ void AggregatorLoadGame::onRequestKingdoms()
 	signalKingdoms( m_kingdomList );
 }
 
-void AggregatorLoadGame::onRequestSaveGames( const QString path )
+void AggregatorLoadGame::onRequestSaveGames( const std::string& path )
 {
 	m_gameList.clear();
 
-	QDir dir( path );
+	QDir dir( QString::fromStdString(path) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 
 	auto sdirs = dir.entryList();
@@ -113,7 +113,7 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 	{
 		GuiSaveInfo gsi;
 
-		gsi.folder = path + "/" + sdir;
+		gsi.folder = path + "/" + sdir.toStdString();
 		gsi.dir    = sdir;
 
 		QJsonDocument jd;
@@ -138,7 +138,7 @@ void AggregatorLoadGame::onRequestSaveGames( const QString path )
 
 				gsi.name = vm.value( "kingdomName" ).toString();
 
-				QFile file( gsi.folder + "/game.json" );
+				QFile file( QString::fromStdString(gsi.folder + "/game.json") );
 				QFileInfo fi( file );
 				gsi.date = fi.lastModified();
 

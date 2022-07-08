@@ -55,7 +55,7 @@ Config::Config()
 	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
-	QString folder = IO::getDataFolder();
+	const std::string& folder = IO::getDataFolder();
 	bool ok        = true;
 	QJsonDocument jd;
 

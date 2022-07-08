@@ -135,10 +135,7 @@ target_sources(${PROJECT_NAME}
 
 if(UNIX)
 	# Qt requires position independent code
-	target_compile_options(${PROJECT_NAME}
-		PRIVATE
-			-fPIC
-	)
+	set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
 get_target_property(SOURCE_LIST ${PROJECT_NAME} SOURCES)

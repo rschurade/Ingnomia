@@ -106,7 +106,7 @@ KeyBindings::~KeyBindings()
 
 void KeyBindings::update()
 {
-	QString folder = IO::getDataFolder() + "/settings/";
+	const std::string& folder = IO::getDataFolder() + "/settings/";
 	QJsonDocument jd;
 	IO::loadFile( folder + "keybindings.json", jd );
 	qDebug() << "Load key bindings...";

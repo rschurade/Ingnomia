@@ -263,7 +263,7 @@ void EventConnector::onContinueLastGame()
 	gm->continueLastGame();
 }
 
-void EventConnector::onLoadGame( QString folder )
+void EventConnector::onLoadGame( const std::string& folder )
 {
 	gm->loadGame( folder );
 }
