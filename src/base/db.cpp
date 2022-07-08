@@ -32,6 +32,10 @@
 #include <range/v3/view.hpp>
 #include "containersHelper.h"
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 QMutex DB::m_mutex;
 int DB::accessCounter = 0;
 Counter<QString> DB::m_counter;
@@ -45,7 +49,8 @@ void DB::init()
 {
 	QMutexLocker lock( &DB::m_mutex );
 
-	QFile file( Global::cfg->get<QString>( "dataPath" ) + "/db/" + "ingnomia.db.sql" );
+	const auto dbPath = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "db" / "ingnomia.db.sql";
+	QFile file( QString::fromStdString(dbPath) );
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString sql = file.readAll();
     file.close();

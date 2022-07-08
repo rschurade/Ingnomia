@@ -29,20 +29,24 @@
 
 #include "containersHelper.h"
 
-ConfigVariant qVariantToConfigVariant(QVariant v) {
-	if (v.type() == QVariant::String) {
-		qDebug() << "Type QString";
-		return { v.toString() };
-	} else if (v.type() == QVariant::Double) {
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+ConfigVariant jsonToConfigVariant(const json& v) {
+	if (v.type() == nlohmann::detail::value_t::string) {
+		qDebug() << "Type string";
+		return { v.get<std::string>() };
+	} else if (v.type() == nlohmann::detail::value_t::number_float) {
 		qDebug() << "Type double";
-		return { v.toDouble() };
-	} else if (v.type() == QVariant::Int || v.type() == QVariant::LongLong) {
+		return { v.get<double>() };
+	} else if (v.type() == nlohmann::detail::value_t::number_integer || v.type() == nlohmann::detail::value_t::number_unsigned) {
 		qDebug() << "Type int or long";
 		// FIXME: Add `toInt` and support integers on config?
-		return { v.toDouble() };
-	} else if (v.type() == QVariant::Bool) {
+		return { (double)v.get<int>() };
+	} else if (v.type() == nlohmann::detail::value_t::boolean) {
 		qDebug() << "Type bool";
-		return {v.toBool()};
+		return {v.get<bool>() };
 	} else {
 		qDebug() << "Fatal error: Cannot convert QVariant to ConfigVariant!";
 		abort();
@@ -57,7 +61,7 @@ Config::Config()
 	//check if Ingnomia folder in /Documents/My Games exist
 	const fs::path& folder = IO::getDataFolder();
 	bool ok        = true;
-	QJsonDocument jd;
+	json jd;
 
 	if ( !IO::loadFile( folder / "settings" / "config.json", jd ) )
 	{
@@ -66,12 +70,9 @@ Config::Config()
 			return;
 		}
 	}
-	
-	// FIXME: Remove intermediate steps after replacing QJsonDocument
-	const auto qmap  = jd.toVariant().toMap();
-	for ( const auto& entry : qmap.toStdMap() ) {
-		qDebug() << "Setting: '" << entry.first << "' - '" << entry.second << "'";
-		m_settings.insert_or_assign(entry.first.toStdString(), qVariantToConfigVariant(entry.second));
+
+	for ( const auto& entry : jd.items() ) {
+		m_settings.insert_or_assign(entry.key(), jsonToConfigVariant(entry.value()));
 	}
 
 	if ( m_settings.empty() )
@@ -108,7 +109,7 @@ Config::Config()
 	{
 		m_settings.insert_or_assign( "uiscale", 1.0 );
 	}
-	m_settings.insert_or_assign( "dataPath", QCoreApplication::applicationDirPath() + "/content" );
+	m_settings.insert_or_assign( "dataPath", fs::path(QCoreApplication::applicationDirPath().toStdString()) / "content" );
 
 	m_valid = true;
 
@@ -134,8 +135,8 @@ std::string variantToString( ConfigVariant v )
 	return std::visit( []( auto&& arg )
 					   {
 		using T = std::decay_t<decltype(arg)>;
-		if constexpr (std::is_same_v<T, QString>)
-			return arg.toStdString();
+		if constexpr (std::is_same_v<T, std::string>)
+			return arg;
 		else if constexpr (std::is_same_v<T, bool>)
 			return std::string(arg ? "true" : "false");
 		else if constexpr (std::is_arithmetic_v<T>)

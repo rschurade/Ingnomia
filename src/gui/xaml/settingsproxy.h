@@ -35,7 +35,7 @@ public:
 
 	void requestSettings();
 
-    void setLanguage( QString language );
+    void setLanguage( const std::string& language );
     void setUIScale( float scale );
     void setFullScreen( bool value );
     void setKeyboardSpeed( int value );
@@ -54,7 +54,7 @@ private slots:
 public: // signals:
 	sigslot::signal<> signalRequestSettings;
 
-    sigslot::signal<QString /*language*/> signalSetLanguage;
+    sigslot::signal<const std::string& /*language*/> signalSetLanguage;
     sigslot::signal<float /*scale*/> signalSetUIScale;
     sigslot::signal<bool /*value*/> signalSetFullScreen;
     sigslot::signal<int /*value*/> signalSetKeyboardSpeed;

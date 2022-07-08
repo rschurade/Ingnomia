@@ -157,7 +157,7 @@ void NewGameSettings::loadEmbarkMap()
 	if ( !IO::loadFile( IO::getDataFolder() / "settings" / "newgame.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( fs::path(Global::cfg->get<QString>( "dataPath" ).toStdString()) / "JSON/newgame.json", sd ) )
+		if ( IO::loadFile( fs::path(Global::cfg->get<std::string>( "dataPath" )) / "JSON/newgame.json", sd ) )
 		{
 			IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", sd );
 		}

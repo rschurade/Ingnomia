@@ -26,6 +26,10 @@
 
 namespace fs = std::filesystem;
 
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 class Game;
 
 class IO : public QObject
@@ -42,7 +46,7 @@ public:
 	static fs::path getDataFolder();
 	static bool createFolders();
 	static bool saveConfig();
-	static bool loadOriginalConfig( QJsonDocument& jd );
+	static bool loadOriginalConfig( json& jd );
 
 	bool saveGameExists();
 
@@ -59,6 +63,7 @@ public:
 	static bool saveFile( const fs::path& url, const QJsonArray& ja );
 	static bool saveFile( const fs::path& url, const QJsonObject& jo );
 	static bool loadFile( const fs::path& url, QJsonDocument& ja );
+	static bool loadFile( const fs::path& url, json& ja );
 
 	bool saveWorld( const fs::path& folder );
 	bool loadWorld( const fs::path& folder );

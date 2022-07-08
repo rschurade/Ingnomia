@@ -30,7 +30,7 @@ private:
 	Strings& operator=( Strings const& copy ); // Not Implemented
 
 	static absl::btree_map<QString, QString> m_table;
-	static QString m_language;
+	static std::string m_language;
 
 	absl::btree_map<int, QString> m_numberWords;
 

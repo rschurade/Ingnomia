@@ -56,7 +56,7 @@ private slots:
 
 	void onResume();
 	void onLoadGameDone( bool value );
-	void onVersion( QString version );
+	void onVersion( const std::string& version );
 
 public: // signals:
 	sigslot::signal<> signalRequestLoadScreenUpdate;

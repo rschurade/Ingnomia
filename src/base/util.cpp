@@ -36,6 +36,10 @@
 #include <QJsonDocument>
 #include <QPainter>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 Util::Util( Game* game ) :
 	g( game )
 {
@@ -903,8 +907,8 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 
 	if ( !dbws->Icon.isEmpty() )
 	{
-		const auto path = Global::cfg->get<QString>( "dataPath" ) + "/xaml/buttons/" + dbws->Icon;
-		QPixmap pm( path );
+		const auto path = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "xaml" / "buttons" / dbws->Icon.toStdString();
+		QPixmap pm( QString::fromStdString(path) );
 		assert( pm.width() > 0 );
 		return pm;
 	}

@@ -29,7 +29,7 @@
 #include <absl/container/btree_set.h>
 
 absl::btree_map<QString, QString> Strings::m_table = absl::btree_map<QString, QString>();
-QString Strings::m_language             = "";
+std::string Strings::m_language             = "";
 
 Strings::Strings()
 {
@@ -41,7 +41,7 @@ Strings::~Strings()
 
 bool Strings::init()
 {
-	m_language = Global::cfg->get_or_default<QString>( "language" , "en_US"  );
+	m_language = Global::cfg->get_or_default<std::string>( "language" , "en_US"  );
 	m_table.clear();
 	//for( auto row : DB::selectRows( "Translation_" + m_language ) )
 	for ( auto row : DB::selectRows( "Translation" ) )

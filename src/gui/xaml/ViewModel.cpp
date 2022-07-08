@@ -80,9 +80,9 @@ void ViewModel::setWindowSize( int w, int h )
 	OnPropertyChanged( "WindowHeight" );
 }
 
-void ViewModel::updateVersion( QString version )
+void ViewModel::updateVersion( const std::string& version )
 {
-	m_version = version.toStdString().c_str();	
+	m_version = version.c_str();
 	OnPropertyChanged( "Version" );
 }
 

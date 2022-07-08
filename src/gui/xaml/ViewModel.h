@@ -65,7 +65,7 @@ public:
 	void OnBack( BaseComponent* param );
 
 	void setUIScale( float value );
-	void updateVersion( QString version );
+	void updateVersion( const std::string& version );
 
 	void OnResume( BaseComponent* param = nullptr );
 	void OnContinueGameFinished( bool gameLoaded );

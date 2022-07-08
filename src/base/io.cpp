@@ -63,6 +63,8 @@
 
 #include <range/v3/view.hpp>
 
+#include <fstream>
+
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
 	QObject( parent )
@@ -101,8 +103,8 @@ QVariant toQVariant(ConfigVariant v) {
 	return std::visit( []( auto&& arg )
 				{
 					using T = std::decay_t<decltype(arg)>;
-					if constexpr (std::is_same_v<T, QString>)
-						return QVariant(arg);
+					if constexpr (std::is_same_v<T, std::string>)
+						return QVariant(QString::fromStdString(arg));
 					else if constexpr (std::is_same_v<T, bool>)
 						return QVariant(arg);
 					else if constexpr (std::is_same_v<T, int>)
@@ -209,7 +211,7 @@ bool IO::createFolders()
 	return fs::exists( getDataFolder() / "save" );
 }
 
-bool IO::loadOriginalConfig( QJsonDocument& jd )
+bool IO::loadOriginalConfig( json& jd )
 {
 	qDebug() << "load standard config";
 	const auto exePath = fs::path(QCoreApplication::applicationDirPath().toStdString());
@@ -669,7 +671,7 @@ QJsonArray IO::jsonArrayGame()
 {
 	if ( Global::debugMode )
 		qDebug() << "jsonArrayGame";
-	GameState::version = Global::cfg->get<QString>( "CurrentVersion" );
+	GameState::version = QString::fromStdString(Global::cfg->get<std::string>( "CurrentVersion" ));
 
 	GameState::initialSave = true;
 
@@ -1634,4 +1636,23 @@ bool IO::loadFile( const fs::path& url, QJsonDocument& ja )
 	qDebug() << "json parse error in" << QString::fromStdString(url) << error.offset;
 
 	return false;
+}
+
+bool IO::loadFile( const fs::path& url, json& ja )
+{
+	if (!fs::exists(url)) {
+		qDebug() << "JSON file '" << QString::fromStdString(url) << "' doesn't exist";
+		return false;
+	}
+
+	std::ifstream fis(url);
+	try
+	{
+		ja = json::parse( fis );
+		return true;
+	} catch (json::parse_error& e) {
+		qDebug() << "json parse error in" << QString::fromStdString(url) << e.what();
+
+		return false;
+	}
 }

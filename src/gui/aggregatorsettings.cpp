@@ -44,7 +44,7 @@ void AggregatorSettings::onRequestSettings()
     m_settings.languages.append( "en_US" );
     m_settings.languages.append( "fr_FR" );
 
-    m_settings.language = Global::cfg->get_or_default<QString>( "language" , "en_US" );
+    m_settings.language = Global::cfg->get_or_default<std::string>( "language" , "en_US" );
 
     m_settings.lightMin = Global::cfg->get_or_default<double>( "lightMin" , 0 ) * 100;
 
@@ -55,7 +55,7 @@ void AggregatorSettings::onRequestSettings()
     signalUpdateSettings( m_settings );
 }
 
-void AggregatorSettings::onSetLanguage( QString language )
+void AggregatorSettings::onSetLanguage( const std::string& language )
 {
     Global::cfg->set( "language", language );
     //emit signalSetLanguage( language );
@@ -95,7 +95,7 @@ void AggregatorSettings::onRequestUIScale()
 }
 void AggregatorSettings::onRequestVersion()
 {
-    QString version = Global::cfg->get<QString>( "CurrentVersion" );
+    const auto& version = Global::cfg->get<std::string>( "CurrentVersion" );
     signalVersion( version );
 }
 

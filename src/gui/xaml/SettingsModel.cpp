@@ -77,10 +77,10 @@ void SettingsModel::updateSettings( const GuiSettings& settings )
         m_languages->Add( MakePtr<LanguageEntry>( lang ) );
 	}
 
-    if( settings.languages.contains( settings.language ) )
+    if( settings.languages.contains( QString::fromStdString(settings.language) ) )
     {
-        setLanguage( m_languages->Get( settings.languages.indexOf( settings.language ) ) );
-    }
+		setLanguage( m_languages->Get( settings.languages.indexOf( QString::fromStdString( settings.language ) ) ) );
+	}
 	else
 	{
         setLanguage( m_languages->Get( 0 ) );

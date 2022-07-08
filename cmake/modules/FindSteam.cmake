@@ -7,7 +7,15 @@ find_path(STEAM_INCLUDE_DIR
 		${STEAM_SDK_ROOT}/public
 )
 
-if(UNIX)
+if(APPLE)
+	find_library(STEAM_LIBRARY
+		NAMES
+			steam_api
+		HINTS
+			${STEAM_SDK_ROOT}/redistributable_bin/osx
+	)
+	set(STEAM_DLL ${STEAM_LIBRARY})
+elseif(UNIX)
 	find_library(STEAM_LIBRARY
 		NAMES
 			steam_api

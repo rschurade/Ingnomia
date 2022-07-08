@@ -251,7 +251,7 @@ void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 
 QString MainWindowRenderer::copyShaderToString( QString name )
 {
-	QFile file( Global::cfg->get<QString>( "dataPath" ) + "/shaders/" + name + ".glsl" );
+	QFile file( QString::fromStdString(fs::path(Global::cfg->get<std::string>( "dataPath" )) / "shaders" / (name.toStdString() + ".glsl")) );
 	file.open( QIODevice::ReadOnly );
 	QTextStream in( &file );
 	QString code( "" );

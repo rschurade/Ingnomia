@@ -761,7 +761,7 @@ MainWindowRenderer* MainWindow::renderer()
 
 void MainWindow::installResourceProviders()
 {
-	const std::string contentPath = Global::cfg->get<QString>( "dataPath" ).toStdString() + "/xaml/";
+	const auto contentPath = Global::cfg->get<std::string>( "dataPath" ) + "/xaml/";
 	Noesis::GUI::SetXamlProvider( Noesis::MakePtr<NoesisApp::LocalXamlProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetTextureProvider( Noesis::MakePtr<NoesisApp::LocalTextureProvider>( contentPath.c_str() ) );
 	Noesis::GUI::SetFontProvider( Noesis::MakePtr<NoesisApp::LocalFontProvider>( contentPath.c_str() ) );

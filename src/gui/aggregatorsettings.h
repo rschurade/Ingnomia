@@ -27,7 +27,7 @@ struct GuiSettings
     bool fullscreen = false;
     float scale = 1.0;
     QList<QString> languages;
-    QString language;
+    std::string language;
     int keyboardSpeed = 20;
     int lightMin = 30;
     bool toggleMouseWheel = false;
@@ -53,7 +53,7 @@ public slots:
     void onRequestUIScale();
     void onRequestVersion();
 
-    void onSetLanguage( QString language );
+    void onSetLanguage( const std::string& language );
     void onSetUIScale( float scale );
     void onSetKeyboardSpeed( int value );
     void onSetFullScreen( bool value );
@@ -66,6 +66,6 @@ public: // signals:
 
     sigslot::signal<bool /*value*/> signalFullScreen;
     sigslot::signal<float /*value*/> signalUIScale;
-    sigslot::signal<QString /*language*/> signalSetLanguage;
-    sigslot::signal<QString /*version*/> signalVersion;
+    sigslot::signal<const std::string& /*language*/> signalSetLanguage;
+    sigslot::signal<const std::string& /*version*/> signalVersion;
 };

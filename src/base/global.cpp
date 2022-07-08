@@ -245,7 +245,7 @@ bool Global::loadBehaviorTrees()
 
 		QDomDocument xml;
 		// Load xml file as raw data
-		QFile f( Global::cfg->get<QString>( "dataPath" ) + "/ai/" + xmlName );
+		QFile f( QString::fromStdString(fs::path(Global::cfg->get<std::string>( "dataPath" )) / "ai" / xmlName.toStdString()) );
 		if ( !f.open( QIODevice::ReadOnly ) )
 		{
 			// Error while loading file

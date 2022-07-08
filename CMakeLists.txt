@@ -34,6 +34,8 @@ find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(RangesV3 REQUIRED)
 
+find_package(NlohmannJson REQUIRED)
+
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
 add_subdirectory(3rdparty/openal-soft-master)
@@ -112,6 +114,8 @@ target_link_libraries(${PROJECT_NAME}
 		Pal::Sigslot
 
 		range-v3::range-v3
+
+		nlohmann_json::nlohmann_json
 )
 
 # Noesis license

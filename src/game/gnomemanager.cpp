@@ -411,7 +411,7 @@ void GnomeManager::loadProfessions()
 	if ( !IO::loadFile( IO::getDataFolder() / "settings" / "profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
-		if ( IO::loadFile( Global::cfg->get<QString>( "dataPath" ).toStdString() + "/JSON/profs.json", sd ) )
+		if ( IO::loadFile( fs::path(Global::cfg->get<std::string>( "dataPath" )) / "JSON" / "profs.json", sd ) )
 		{
 			IO::saveFile( IO::getDataFolder() / "settings" / "profs.json", sd );
 		}

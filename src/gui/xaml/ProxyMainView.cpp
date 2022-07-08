@@ -143,7 +143,7 @@ void ProxyMainView::requestVersion()
 	signalRequestVersion();
 }
 
-void ProxyMainView::onVersion( QString version )
+void ProxyMainView::onVersion( const std::string& version )
 {
 	if( m_parent )
 	{

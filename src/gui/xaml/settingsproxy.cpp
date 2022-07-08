@@ -55,7 +55,7 @@ void SettingsProxy::onSettings( const GuiSettings& settings )
 	}
 }
 
-void SettingsProxy::setLanguage( QString language )
+void SettingsProxy::setLanguage( const std::string& language )
 {
     signalSetLanguage( language );
 }
