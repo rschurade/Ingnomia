@@ -56,7 +56,7 @@ void LightMap::addLight( absl::btree_set<unsigned int>& updateList, std::vector<
 	QQueue<QPair<Position, int>> wq;
 	absl::btree_set<unsigned int> visited;
 	wq.enqueue( QPair<Position, int>( pos, 0 ) );
-	int decay = Global::cfg->get<double>( "lightDecay" );
+	int decay = Global::cfg->get<int>( "lightDecay" );
 
 	int range = intensity / decay;
 

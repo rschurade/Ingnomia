@@ -26,7 +26,7 @@
 
 #include "containersHelper.h"
 
-using ConfigVariant = std::variant<bool, double, std::string>;
+using ConfigVariant = std::variant<bool, int, double, std::string>;
 using ConfigMap = absl::flat_hash_map<std::string, ConfigVariant>;
 
 class Config

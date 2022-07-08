@@ -1255,7 +1255,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 			if ( m_pixelData.size() < tex + 1 )
 			{
-				int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
+				int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
 				int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 				for ( int i = 0; i < 32; ++i )
@@ -1299,7 +1299,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 		if ( m_pixelData.size() < tex + 1 )
 		{
-			int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
+			int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
 			int bytes            = 32 * 64 * 4 * maxArrayTextures;
 
 			for ( int i = 0; i < 32; ++i )

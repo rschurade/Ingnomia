@@ -338,7 +338,7 @@ void MainWindow::keyboardMove()
 
 	if( m_renderer && (x || y) )
 	{
-		const float keyboardMoveSpeed = (Global::cfg->get_or_default<double>( "keyboardMoveSpeed" , 0 ) + 50.f) * 4.f;
+		const float keyboardMoveSpeed = (Global::cfg->get_or_default<int>( "keyboardMoveSpeed" , 0 ) + 50.f) * 4.f;
 
 		float moveX = -x * keyboardMoveSpeed * elapsedTime;
 		float moveY = -y * keyboardMoveSpeed * elapsedTime;

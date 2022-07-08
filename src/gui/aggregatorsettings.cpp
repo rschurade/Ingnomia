@@ -39,7 +39,7 @@ void AggregatorSettings::onRequestSettings()
 {
     m_settings.fullscreen = Global::cfg->get_or_default<bool>( "fullscreen" , false );
     m_settings.scale = qMax( 0.5, Global::cfg->get<double>( "uiscale" ) );
-    m_settings.keyboardSpeed = qMax( 0.0, qMin( Global::cfg->get_or_default<double>( "keyboardMoveSpeed" , 0.0 ), 200.0) );
+    m_settings.keyboardSpeed = qMax( 0, qMin( Global::cfg->get_or_default<int>( "keyboardMoveSpeed" , 0 ), 200) );
     m_settings.languages.clear();
     m_settings.languages.append( "en_US" );
     m_settings.languages.append( "fr_FR" );

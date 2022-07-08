@@ -42,11 +42,10 @@ ConfigVariant jsonToConfigVariant(const json& v) {
 		return { v.get<double>() };
 	} else if (v.type() == nlohmann::detail::value_t::number_integer || v.type() == nlohmann::detail::value_t::number_unsigned) {
 		qDebug() << "Type int or long";
-		// FIXME: Add `toInt` and support integers on config?
-		return { (double)v.get<int>() };
+		return { v.get<int>() };
 	} else if (v.type() == nlohmann::detail::value_t::boolean) {
 		qDebug() << "Type bool";
-		return {v.get<bool>() };
+		return { v.get<bool>() };
 	} else {
 		qDebug() << "Fatal error: Cannot convert QVariant to ConfigVariant!";
 		abort();
@@ -103,7 +102,7 @@ Config::Config()
 
 	if ( !m_settings.contains( "AutoSaveInterval" ) )
 	{
-		m_settings.insert_or_assign( "AutoSaveInterval", 3.0 );
+		m_settings.insert_or_assign( "AutoSaveInterval", 3 );
 	}
 	if ( !m_settings.contains( "uiscale" ) )
 	{

@@ -398,7 +398,7 @@ void MainWindowRenderer::initTextures()
 	qDebug() << "max array size: " << max_layers;
 	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
 
-	int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
+	int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
 
 	for ( int i = 0; i < 32; ++i )
 	{
@@ -438,7 +438,7 @@ void MainWindowRenderer::updateRenderParams()
 {
 	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_width * m_width + m_height * m_height ) / 12 ) / m_scale ) );
 
-	m_renderDepth = Global::cfg->get_or_default<double>( "renderDepth" , 0 );
+	m_renderDepth = Global::cfg->get_or_default<int>( "renderDepth" , 0 );
 
 	m_viewLevel = GameState::viewLevel;
 
@@ -852,7 +852,7 @@ void MainWindowRenderer::updateTextures()
 
 		m_texesUsed = Global::eventConnector->game()->sf()->texesUsed();
 
-		int maxArrayTextures = Global::cfg->get<double>( "MaxArrayTextures" );
+		int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
