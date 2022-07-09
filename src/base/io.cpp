@@ -132,7 +132,12 @@ bool IO::saveConfig()
 	const fs::path& folder = getDataFolder() / "settings";
 
 	ConfigMap cm   = Global::cfg->object();
-	QJsonDocument jd = QJsonDocument::fromVariant( toQVariant(cm) );
+	json jd;
+	for ( const auto& entry : cm )
+	{
+		// FIXME: Figure out why ADL is not using this `to_json` automatically
+		to_json(jd[entry.first], entry.second);
+	}
 
 	IO::saveFile( folder / "config.json", jd );
 
@@ -159,7 +164,7 @@ bool IO::createFolders()
 	const fs::path& folder = getDataFolder();
 	if ( !fs::exists( folder ) )
 	{
-		fs::create_directory( folder );
+		fs::create_directories( folder );
 	}
 	const auto modFolder = folder / "mods";
 	if ( !fs::exists( modFolder ) )
@@ -1622,7 +1627,7 @@ bool IO::saveFile( const fs::path& url, const json& jd )
 		return false;
 	}
 
-	fos << jd.dump();
+	fos << jd.dump(4);
 
 	return true;
 }

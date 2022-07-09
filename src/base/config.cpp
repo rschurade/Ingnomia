@@ -29,9 +29,19 @@
 
 #include "containersHelper.h"
 
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
+void to_json(json& j, const ConfigVariant& item) {
+	if (const bool *itemPtr = std::get_if<bool>(&item)) {
+		j = *itemPtr;
+	} else if (const int *itemPtr = std::get_if<int>(&item)) {
+		j = *itemPtr;
+	} else if (const double *itemPtr = std::get_if<double>(&item)) {
+		j = *itemPtr;
+	} else if (const std::string *itemPtr = std::get_if<std::string>(&item)) {
+		j = *itemPtr;
+	} else {
+		throw std::runtime_error("Cannot convert ConfigVariant to JSON");
+	}
+}
 
 ConfigVariant jsonToConfigVariant(const json& v) {
 	if (v.type() == nlohmann::detail::value_t::string) {
@@ -145,12 +155,7 @@ std::string variantToString( ConfigVariant v )
 					   v );
 }
 
-void Config::set( const QString& key, int value )
-{
-	set(key, static_cast<ConfigVariant>(static_cast<double>(value)));
-}
-
-void Config::set( const QString& key, ConfigVariant value )
+void Config::set( const QString& key, const ConfigVariant& value )
 {
 	QMutexLocker lock( &m_mutex );
 	const auto oldValue = m_settings[key.toStdString()];

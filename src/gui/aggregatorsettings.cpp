@@ -63,7 +63,7 @@ void AggregatorSettings::onSetLanguage( const std::string& language )
     
 void AggregatorSettings::onSetUIScale( float scale )
 {
-    Global::cfg->set( "uiscale", scale );
+    Global::cfg->set( "uiscale", (double)scale );
     signalUIScale( scale );
 }
 

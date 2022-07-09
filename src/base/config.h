@@ -26,8 +26,14 @@
 
 #include "containersHelper.h"
 
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 using ConfigVariant = std::variant<bool, int, double, std::string>;
 using ConfigMap = absl::flat_hash_map<std::string, ConfigVariant>;
+
+void to_json(json& j, const ConfigVariant& item);
 
 class Config
 {
@@ -54,8 +60,7 @@ public:
 		return maps::get_or_default<T>( get_variant( key ), defaultValue );
 	}
 
-	void set( const QString& key, int value );
-	void set( const QString& key, ConfigVariant value );
+	void set( const QString& key, const ConfigVariant& value );
 
 	ConfigMap& object()
 	{
