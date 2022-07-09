@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+#include <future>
 #include <range/v3/view.hpp>
 
 PathFinder::PathFinder( World* world, QObject* parent) :

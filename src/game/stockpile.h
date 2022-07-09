@@ -26,7 +26,6 @@
 #include <absl/container/btree_map.h>
 #include <QPair>
 #include <QSize>
-#include <QThread>
 #include <QtGlobal>
 
 class Game;

@@ -36,6 +36,7 @@
 #include <QSurfaceFormat>
 #include <QWindow>
 #include <QtWidgets/QApplication>
+#include <QThread>
 
 #include <iostream>
 #ifdef _WIN32

@@ -22,7 +22,6 @@
 #include <QPointer>
 #include <QObject>
 #include <QString>
-#include <QThread>
 
 #include <filesystem>
 
