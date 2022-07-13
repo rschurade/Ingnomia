@@ -32,7 +32,7 @@ public:
 	BT_Factory()  = delete;
 	~BT_Factory() = delete;
 
-	static BT_Node* load( const QString id, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* load( QDomElement root, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
 
 private:
 	static BT_Node* createBTNode( QDomElement treeElement, BT_Node* parent, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );

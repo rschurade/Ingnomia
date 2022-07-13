@@ -100,6 +100,8 @@ add_subdirectory(3rdparty) # 3rd party dependencies
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
+		Ingnomia::BehaviorTree
+
 		Qt5::Core
 		Qt5::Xml
 		Qt5::Sql

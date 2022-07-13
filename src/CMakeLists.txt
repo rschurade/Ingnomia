@@ -4,11 +4,15 @@ file(GLOB_RECURSE SOURCE_LIST
 	"*.cpp"
 )
 
+list(FILTER SOURCE_LIST EXCLUDE REGEX "base/behaviortree/.*")
+
 target_sources(${PROJECT_NAME}
 	PRIVATE
 		${SOURCE_LIST}
 		${CMAKE_CURRENT_LIST_FILE}
 )
+
+add_subdirectory(base/behaviortree)
 
 if (NOT APPLE)
 	target_precompile_headers(${PROJECT_NAME}

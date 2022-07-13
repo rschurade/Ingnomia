@@ -17,8 +17,7 @@
 */
 #include "bt_factory.h"
 
-#include "../config.h"
-#include "../global.h"
+#include <absl/container/flat_hash_map.h>
 
 #include <QDebug>
 
@@ -51,9 +50,8 @@ public:
 };
 }
 
-BT_Node* BT_Factory::load( const QString id, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::load( QDomElement root, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
-	QDomElement root = Global::behaviorTree( id );
 	QString mainTree = root.attribute( "main_tree_to_execute" );
 
 	BT_Node* behaviorTree = getTree( mainTree, root, actions, blackboard );

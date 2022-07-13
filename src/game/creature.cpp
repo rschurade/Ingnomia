@@ -303,7 +303,7 @@ void Creature::processCooldowns( quint64 tickNumber )
 
 void Creature::loadBehaviorTree( QString id )
 {
-	m_behaviorTree.reset( BT_Factory::load( id, m_behaviors, m_btBlackBoard ) );
+	m_behaviorTree.reset( BT_Factory::load( Global::behaviorTree( id ), m_behaviors, m_btBlackBoard ) );
 
 	if ( !m_behaviorTree )
 	{
