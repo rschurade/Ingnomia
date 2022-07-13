@@ -17,7 +17,7 @@
 */
 #include "bt_nodeconditional.h"
 
-BT_NodeConditional::BT_NodeConditional( QString name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback ) :
+BT_NodeConditional::BT_NodeConditional( std::string name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback ) :
 	BT_Node( name, blackboard ),
 	m_callback( callback )
 {

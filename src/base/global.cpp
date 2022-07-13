@@ -66,7 +66,7 @@ bool Global::debugMode = false;
 bool Global::debugOpenGL = false;
 bool Global::debugSound = false;
 
-absl::btree_map<QString, QDomElement> Global::m_behaviorTrees;
+absl::btree_map<QString, pugi::xml_node> Global::m_behaviorTrees;
 
 QStringList Global::needIDs;
 absl::btree_map<QString, float> Global::needDecays;
@@ -239,50 +239,31 @@ bool Global::loadBehaviorTrees()
 {
 	m_behaviorTrees.clear();
 
-	for ( auto id : DB::ids( "AI" ) )
+	for ( const auto& id : DB::ids( "AI" ) )
 	{
 		QString xmlName = DB::select( "BehaviorTree", "AI", id ).toString();
 
-		QDomDocument xml;
-		// Load xml file as raw data
-		QFile f( QString::fromStdString(fs::path(Global::cfg->get<std::string>( "dataPath" )) / "ai" / xmlName.toStdString()) );
-		if ( !f.open( QIODevice::ReadOnly ) )
-		{
-			// Error while loading file
-			qDebug() << "Error while loading file xmlName";
-			return false;
-		}
-		// Set data into the QDomDocument before processing
-		xml.setContent( &f );
-		f.close();
+		pugi::xml_document xml;
+		const auto& xmlPath = fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "ai" / xmlName.toStdString();
+		xml.load_file( xmlPath.c_str() );
 
-		QDomElement root = xml.documentElement();
+		const auto& root = xml.document_element();
 		m_behaviorTrees.insert_or_assign( id, root );
 	}
 	return true;
 }
 
-QDomElement Global::behaviorTree( QString id )
+const pugi::xml_node& Global::behaviorTree( QString id )
 {
 	return m_behaviorTrees.at( id );
 }
 
 bool Global::addBehaviorTree( QString id, QString path )
 {
-	QDomDocument xml;
-	// Load xml file as raw data
-	QFile f( path );
-	if ( !f.open( QIODevice::ReadOnly ) )
-	{
-		// Error while loading file
-		qDebug() << "Error while loading file xmlName";
-		return false;
-	}
-	// Set data into the QDomDocument before processing
-	xml.setContent( &f );
-	f.close();
+	pugi::xml_document xml;
+	xml.load_file( path.toStdString().c_str() );
 
-	QDomElement root = xml.documentElement();
+	const auto& root = xml.document_element();
 	m_behaviorTrees.insert_or_assign( id, root );
 
 	return true;

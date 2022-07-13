@@ -19,7 +19,7 @@
 
 #include "spdlog/spdlog.h"
 
-BT_NodeRepeatUntilSuccess::BT_NodeRepeatUntilSuccess( QString name, int num, QVariantMap& blackboard ) :
+BT_NodeRepeatUntilSuccess::BT_NodeRepeatUntilSuccess( std::string name, int num, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),
 	m_num( num )
 {
@@ -32,7 +32,7 @@ BT_NodeRepeatUntilSuccess::~BT_NodeRepeatUntilSuccess()
 QVariantMap BT_NodeRepeatUntilSuccess::serialize()
 {
 	QVariantMap out;
-	out.insert( "Name", m_name );
+	out.insert( "Name", QString::fromStdString(m_name) );
 	out.insert( "ID", m_index );
 	out.insert( "Status", (unsigned char)m_status );
 	out.insert( "Num", m_num );
@@ -49,7 +49,7 @@ QVariantMap BT_NodeRepeatUntilSuccess::serialize()
 
 void BT_NodeRepeatUntilSuccess::deserialize( QVariantMap in )
 {
-	if ( m_name != in.value( "Name" ).toString() )
+	if ( QString::fromStdString(m_name) != in.value( "Name" ).toString() )
 	{
 		spdlog::debug("error loading behavior tree state - nodes don't match");
 	}

@@ -22,7 +22,7 @@
 class BT_NodeRepeatUntilSuccess final : public BT_Node
 {
 public:
-	BT_NodeRepeatUntilSuccess( QString name, int num, QVariantMap& blackboard );
+	BT_NodeRepeatUntilSuccess( std::string name, int num, QVariantMap& blackboard );
 	~BT_NodeRepeatUntilSuccess();
 
 	QVariantMap serialize();

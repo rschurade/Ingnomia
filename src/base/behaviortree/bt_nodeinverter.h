@@ -22,7 +22,7 @@
 class BT_NodeInverter final : public BT_Node
 {
 public:
-	BT_NodeInverter( QString name, QVariantMap& blackboard );
+	BT_NodeInverter( std::string name, QVariantMap& blackboard );
 	~BT_NodeInverter();
 
 	BT_RESULT tick();

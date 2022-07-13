@@ -20,7 +20,7 @@
 #include "bt_tree.h"
 #include "spdlog/spdlog.h"
 
-BT_Node::BT_Node( QString name, QVariantMap& blackboard ) :
+BT_Node::BT_Node( std::string name, QVariantMap& blackboard ) :
 	m_name( name ),
 	m_blackboard( blackboard )
 {
@@ -37,7 +37,7 @@ BT_Node::~BT_Node()
 QVariantMap BT_Node::serialize() const
 {
 	QVariantMap out;
-	out.insert( "Name", m_name );
+	out.insert( "Name", QString::fromStdString(m_name) );
 	out.insert( "ID", m_index );
 	out.insert( "Status", (unsigned char)m_status );
 
@@ -53,7 +53,7 @@ QVariantMap BT_Node::serialize() const
 
 void BT_Node::deserialize( QVariantMap in )
 {
-	if ( m_name != in.value( "Name" ).toString() )
+	if ( QString::fromStdString(m_name) != in.value( "Name" ).toString() )
 	{
 		spdlog::debug("error loading behavior tree state - nodes don't match");
 	}
@@ -91,7 +91,7 @@ void BT_Node::deserialize( QVariantMap in )
 	}
 }
 
-BT_Node* BT_Node::addFallback( QString name )
+BT_Node* BT_Node::addFallback( std::string name )
 {
 	BT_NodeFallback* bn = new BT_NodeFallback( name, m_blackboard );
 	m_children.push_back( bn );
@@ -99,7 +99,7 @@ BT_Node* BT_Node::addFallback( QString name )
 	return bn;
 }
 
-BT_Node* BT_Node::addFallbackStar( QString name )
+BT_Node* BT_Node::addFallbackStar( std::string name )
 {
 	BT_NodeFallbackStar* bn = new BT_NodeFallbackStar( name, m_blackboard );
 	m_children.push_back( bn );
@@ -107,7 +107,7 @@ BT_Node* BT_Node::addFallbackStar( QString name )
 	return bn;
 }
 
-BT_Node* BT_Node::addSequence( QString name )
+BT_Node* BT_Node::addSequence( std::string name )
 {
 	BT_NodeSequence* bn = new BT_NodeSequence( name, m_blackboard );
 	m_children.push_back( bn );
@@ -115,7 +115,7 @@ BT_Node* BT_Node::addSequence( QString name )
 	return bn;
 }
 
-BT_Node* BT_Node::addSequenceStar( QString name )
+BT_Node* BT_Node::addSequenceStar( std::string name )
 {
 	BT_NodeSequenceStar* bn = new BT_NodeSequenceStar( name, m_blackboard, true );
 	m_children.push_back( bn );
@@ -139,7 +139,7 @@ BT_Node* BT_Node::addForceFailure()
 	return bn;
 }
 
-BT_Node* BT_Node::addInverter( QString name )
+BT_Node* BT_Node::addInverter( std::string name )
 {
 	BT_NodeInverter* bn = new BT_NodeInverter( name, m_blackboard );
 	m_children.push_back( bn );
@@ -147,7 +147,7 @@ BT_Node* BT_Node::addInverter( QString name )
 	return bn;
 }
 
-BT_Node* BT_Node::addRepeat( QString name, int num )
+BT_Node* BT_Node::addRepeat( std::string name, int num )
 {
 	BT_NodeRepeat* bn = new BT_NodeRepeat( name, num, m_blackboard );
 	m_children.push_back( bn );
@@ -155,7 +155,7 @@ BT_Node* BT_Node::addRepeat( QString name, int num )
 	return bn;
 }
 
-BT_Node* BT_Node::addRepeatUntilSuccess( QString name, int num )
+BT_Node* BT_Node::addRepeatUntilSuccess( std::string name, int num )
 {
 	BT_NodeRepeatUntilSuccess* bn = new BT_NodeRepeatUntilSuccess( name, num, m_blackboard );
 	m_children.push_back( bn );
@@ -168,7 +168,7 @@ void BT_Node::addTree( BT_Node* tree )
 	m_children.push_back( tree );
 }
 
-BT_Node* BT_Node::addConditional( QString name, std::function<BT_RESULT( bool )> callback )
+BT_Node* BT_Node::addConditional( std::string name, std::function<BT_RESULT( bool )> callback )
 {
 	BT_NodeConditional* bn = new BT_NodeConditional( name, m_blackboard, callback );
 	m_children.push_back( bn );
@@ -176,7 +176,7 @@ BT_Node* BT_Node::addConditional( QString name, std::function<BT_RESULT( bool )>
 	return bn;
 }
 
-BT_Node* BT_Node::addAction( QString name, std::function<BT_RESULT( bool )> callback )
+BT_Node* BT_Node::addAction( std::string name, std::function<BT_RESULT( bool )> callback )
 {
 	BT_NodeAction* bn = new BT_NodeAction( name, m_blackboard, callback );
 	m_children.push_back( bn );
@@ -184,7 +184,7 @@ BT_Node* BT_Node::addAction( QString name, std::function<BT_RESULT( bool )> call
 	return bn;
 }
 
-BT_Node* BT_Node::addBBPrecondition( QString name, QString key, QString expected )
+BT_Node* BT_Node::addBBPrecondition( std::string name, std::string key, std::string expected )
 {
 	BT_NodeBBPrecondition* bn = new BT_NodeBBPrecondition( name, key, expected, m_blackboard );
 	m_children.push_back( bn );

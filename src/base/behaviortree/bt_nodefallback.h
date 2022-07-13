@@ -22,7 +22,7 @@
 class BT_NodeFallback final : public BT_Node
 {
 public:
-	BT_NodeFallback( QString name, QVariantMap& blackboard );
+	BT_NodeFallback( std::string name, QVariantMap& blackboard );
 	~BT_NodeFallback();
 
 	BT_RESULT tick();

@@ -22,7 +22,7 @@
 class BT_NodeSequence final : public BT_Node
 {
 public:
-	BT_NodeSequence( QString name, QVariantMap& blackboard );
+	BT_NodeSequence( std::string name, QVariantMap& blackboard );
 	~BT_NodeSequence();
 
 	BT_RESULT tick();

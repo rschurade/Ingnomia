@@ -17,7 +17,7 @@
 */
 #include "bt_nodebbprecondition.h"
 
-BT_NodeBBPrecondition::BT_NodeBBPrecondition( QString name, QString key, QString expected, QVariantMap& blackboard ) :
+BT_NodeBBPrecondition::BT_NodeBBPrecondition( std::string name, std::string key, std::string expected, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),
 	m_key( key ),
 	m_expected( expected )
@@ -30,7 +30,7 @@ BT_NodeBBPrecondition::~BT_NodeBBPrecondition()
 
 BT_RESULT BT_NodeBBPrecondition::tick()
 {
-	if ( m_blackboard.value( m_key ).toString() == m_expected || m_expected == "*" )
+	if ( m_blackboard.value( QString::fromStdString(m_key) ).toString().toStdString() == m_expected || m_expected == "*" )
 	{
 		if ( m_children.size() > 0 )
 		{

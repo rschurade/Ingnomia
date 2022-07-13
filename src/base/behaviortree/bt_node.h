@@ -17,7 +17,6 @@
 */
 #pragma once
 
-#include <QString>
 #include <QVariantMap>
 
 #include <vector>
@@ -33,7 +32,7 @@ enum class BT_RESULT
 class BT_Node
 {
 public:
-	BT_Node( QString name, QVariantMap& blackboard );
+	BT_Node( std::string name, QVariantMap& blackboard );
 	virtual ~BT_Node();
 
 	virtual QVariantMap serialize() const;
@@ -52,24 +51,24 @@ public:
 		return m_status;
 	}
 
-	BT_Node* addFallback( QString name );
-	BT_Node* addFallbackStar( QString name );
+	BT_Node* addFallback( std::string name );
+	BT_Node* addFallbackStar( std::string name );
 	BT_Node* addForceSuccess();
 	BT_Node* addForceFailure();
-	BT_Node* addSequence( QString name );
-	BT_Node* addSequenceStar( QString name );
-	BT_Node* addInverter( QString name );
-	BT_Node* addRepeat( QString name, int num );
-	BT_Node* addRepeatUntilSuccess( QString name, int num );
-	BT_Node* addBBPrecondition( QString name, QString key, QString expected );
+	BT_Node* addSequence( std::string name );
+	BT_Node* addSequenceStar( std::string name );
+	BT_Node* addInverter( std::string name );
+	BT_Node* addRepeat( std::string name, int num );
+	BT_Node* addRepeatUntilSuccess( std::string name, int num );
+	BT_Node* addBBPrecondition( std::string name, std::string key, std::string expected );
 
 	void addTree( BT_Node* tree );
 
-	BT_Node* addConditional( QString name, std::function<BT_RESULT( bool )> callback );
-	BT_Node* addAction( QString name, std::function<BT_RESULT( bool )> callback );
+	BT_Node* addConditional( std::string name, std::function<BT_RESULT( bool )> callback );
+	BT_Node* addAction( std::string name, std::function<BT_RESULT( bool )> callback );
 
 protected:
-	const QString m_name;
+	const std::string m_name;
 	QVariantMap& m_blackboard;
 
 	std::vector<BT_Node*> m_children;

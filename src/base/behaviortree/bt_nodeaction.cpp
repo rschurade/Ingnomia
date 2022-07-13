@@ -17,7 +17,7 @@
 */
 #include "bt_nodeaction.h"
 
-BT_NodeAction::BT_NodeAction( QString name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback ) :
+BT_NodeAction::BT_NodeAction( std::string name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback ) :
 	BT_Node( name, blackboard ),
 	m_callback( callback )
 {

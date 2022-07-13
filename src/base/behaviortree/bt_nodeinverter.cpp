@@ -17,7 +17,7 @@
 */
 #include "bt_nodeinverter.h"
 
-BT_NodeInverter::BT_NodeInverter( QString name, QVariantMap& blackboard ) :
+BT_NodeInverter::BT_NodeInverter( std::string name, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard )
 {
 }

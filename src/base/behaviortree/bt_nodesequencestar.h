@@ -22,7 +22,7 @@
 class BT_NodeSequenceStar final : public BT_Node
 {
 public:
-	BT_NodeSequenceStar( QString name, QVariantMap& blackboard, bool resetOnFailure );
+	BT_NodeSequenceStar( std::string name, QVariantMap& blackboard, bool resetOnFailure );
 	~BT_NodeSequenceStar();
 
 	QVariantMap serialize();

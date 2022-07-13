@@ -22,12 +22,12 @@
 class BT_NodeBBPrecondition final : public BT_Node
 {
 public:
-	BT_NodeBBPrecondition( QString name, QString key, QString expected, QVariantMap& blackboard );
+	BT_NodeBBPrecondition( std::string name, std::string key, std::string expected, QVariantMap& blackboard );
 	~BT_NodeBBPrecondition();
 
 	BT_RESULT tick();
 
 private:
-	QString m_key;
-	QString m_expected;
+	std::string m_key;
+	std::string m_expected;
 };

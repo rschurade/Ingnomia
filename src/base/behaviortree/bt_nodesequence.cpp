@@ -17,7 +17,7 @@
 */
 #include "bt_nodesequence.h"
 
-BT_NodeSequence::BT_NodeSequence( QString name, QVariantMap& blackboard ) :
+BT_NodeSequence::BT_NodeSequence( std::string name, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard )
 {
 }

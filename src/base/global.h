@@ -22,7 +22,7 @@
 
 #include <NsGui/InputEnums.h>
 
-#include <QDomElement>
+#include <pugixml.hpp>
 #include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
 #include <absl/container/flat_hash_map.h>
@@ -47,7 +47,7 @@ public:
 
 	static Logger& logger();
 
-	static QDomElement behaviorTree( QString id );
+	static const pugi::xml_node& behaviorTree( QString id );
 
 	//static KeyBindings& keyBindings();
 	static bool wallsLowered;
@@ -100,7 +100,7 @@ private:
 
 	//static KeyBindings m_keyBindings;
 
-	static absl::btree_map<QString, QDomElement> m_behaviorTrees;
+	static absl::btree_map<QString, pugi::xml_node> m_behaviorTrees;
 	static bool loadBehaviorTrees();
 	static void initKeyConvert();
 };

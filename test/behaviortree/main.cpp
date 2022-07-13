@@ -48,15 +48,20 @@ const std::string contentSimple2 = R"(
 </root>
 )";
 
+pugi::xml_document loadXml(const std::string& content) {
+	pugi::xml_document result;
+	result.load_buffer_inplace( (void*)content.c_str(), content.size() );
+	return result;
+}
+
 TEST(SimpleTest1, BasicParsing) {
 	BT_ActionMap result {
 		{ "RandomMoveBig", [](bool){ return BT_RESULT::SUCCESS; } }
 	};
 	QVariantMap blackBoard;
 
-	QDomDocument xml;
-	xml.setContent( QString::fromStdString(contentSimple1) );
-	QDomElement root = xml.documentElement();
+	const auto xml = loadXml(contentSimple1);
+	const auto root = xml.document_element();
 
 	const auto* node = BT_Factory::load(root, result, blackBoard);
 	EXPECT_EQ(node->status(), BT_RESULT::IDLE);
@@ -79,9 +84,8 @@ TEST(SimpleTest2, BasicParsing) {
 	};
 	QVariantMap blackBoard;
 
-	QDomDocument xml;
-	xml.setContent( QString::fromStdString(contentSimple2) );
-	QDomElement root = xml.documentElement();
+	const auto xml = loadXml(contentSimple2);
+	const auto root = xml.document_element();
 
 	const auto* node = BT_Factory::load(root, result, blackBoard);
 	EXPECT_EQ(node->status(), BT_RESULT::IDLE);

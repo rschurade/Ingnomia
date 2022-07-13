@@ -17,7 +17,7 @@
 */
 #include "bt_nodefallbackstar.h"
 
-BT_NodeFallbackStar::BT_NodeFallbackStar( QString name, QVariantMap& blackboard ) :
+BT_NodeFallbackStar::BT_NodeFallbackStar( std::string name, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard )
 {
 }

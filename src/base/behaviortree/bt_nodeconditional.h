@@ -22,49 +22,49 @@
 class BT_NodeConditional final : public BT_Node
 {
 public:
-	BT_NodeConditional( QString name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback );
+	BT_NodeConditional( std::string name, QVariantMap& blackboard, std::function<BT_RESULT( bool )> callback );
 	~BT_NodeConditional();
 
 	BT_RESULT tick();
 
 	void halt();
 
-	BT_Node* addFallback( QString name )
+	BT_Node* addFallback( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addFallbackStar( QString name )
+	BT_Node* addFallbackStar( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addSequence( QString name )
+	BT_Node* addSequence( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addSequenceStar( QString name )
+	BT_Node* addSequenceStar( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addInverter( QString name )
+	BT_Node* addInverter( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addRepeat( QString name, int num )
+	BT_Node* addRepeat( std::string name, int num )
 	{
 		return nullptr;
 	};
-	BT_Node* addRepeatUntilSuccess( QString name, int num )
+	BT_Node* addRepeatUntilSuccess( std::string name, int num )
 	{
 		return nullptr;
 	};
 
 	void addTree( BT_Node* tree ) {};
 
-	BT_Node* addConditional( QString name )
+	BT_Node* addConditional( std::string name )
 	{
 		return nullptr;
 	};
-	BT_Node* addAction( QString name )
+	BT_Node* addAction( std::string name )
 	{
 		return nullptr;
 	};

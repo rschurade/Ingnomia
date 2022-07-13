@@ -36,7 +36,6 @@
 #include "../gui/strings.h"
 
 #include <QDebug>
-#include <QDomDocument>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QPainter>

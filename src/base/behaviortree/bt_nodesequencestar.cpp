@@ -19,7 +19,7 @@
 
 #include "spdlog/spdlog.h"
 
-BT_NodeSequenceStar::BT_NodeSequenceStar( QString name, QVariantMap& blackboard, bool resetOnFailure ) :
+BT_NodeSequenceStar::BT_NodeSequenceStar( std::string name, QVariantMap& blackboard, bool resetOnFailure ) :
 	BT_Node( name, blackboard ),
 	m_resetOnFailure( resetOnFailure )
 {
@@ -32,7 +32,7 @@ BT_NodeSequenceStar::~BT_NodeSequenceStar()
 QVariantMap BT_NodeSequenceStar::serialize()
 {
 	QVariantMap out;
-	out.insert( "Name", m_name );
+	out.insert( "Name", QString::fromStdString(m_name) );
 	out.insert( "ID", m_index );
 	out.insert( "Status", (unsigned char)m_status );
 	out.insert( "RoF", m_resetOnFailure );
@@ -49,7 +49,7 @@ QVariantMap BT_NodeSequenceStar::serialize()
 
 void BT_NodeSequenceStar::deserialize( QVariantMap in )
 {
-	if ( m_name != in.value( "Name" ).toString() )
+	if ( QString::fromStdString(m_name) != in.value( "Name" ).toString() )
 	{
 		spdlog::debug("error loading behavior tree state - nodes don't match");
 	}

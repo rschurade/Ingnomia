@@ -24,7 +24,7 @@ namespace
 class BT_NodeDummy final : public BT_Node
 {
 public:
-	BT_NodeDummy( const QString& name, QVariantMap& blackboard ) :
+	BT_NodeDummy( const std::string& name, QVariantMap& blackboard ) :
 		BT_Node( name, blackboard )
 	{
 	}
@@ -46,9 +46,9 @@ public:
 };
 }
 
-BT_Node* BT_Factory::load( const QDomElement& root, BT_ActionMap& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::load( const pugi::xml_node& root, BT_ActionMap& actions, QVariantMap& blackboard )
 {
-	QString mainTree = root.attribute( "main_tree_to_execute" );
+	const std::string mainTree = root.attribute( "main_tree_to_execute" ).value();
 
 	BT_Node* behaviorTree = getTree( mainTree, root, actions, blackboard );
 	if ( !behaviorTree )
@@ -60,19 +60,19 @@ BT_Node* BT_Factory::load( const QDomElement& root, BT_ActionMap& actions, QVari
 	return behaviorTree;
 }
 
-BT_Node* BT_Factory::getTree( const QString& treeID, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::getTree( const std::string& treeID, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
-	QDomElement treeElement = documentRoot.firstChildElement();
-	while ( !treeElement.isNull() )
+	pugi::xml_node treeElement = documentRoot.first_child();
+	while ( treeElement )
 	{
-		QString nodeName = treeElement.nodeName();
+		std::string nodeName = treeElement.name();
 
 		if ( nodeName == "BehaviorTree" )
 		{
-			QString thisTreeID = treeElement.attribute( "ID" );
+			std::string thisTreeID = treeElement.attribute( "ID" ).value();
 			if ( thisTreeID == treeID )
 			{
-				QDomElement treeRoot = treeElement.firstChildElement();
+				pugi::xml_node treeRoot = treeElement.first_child();
 
 				BT_NodeDummy dummy( "dummy", blackboard );
 
@@ -87,64 +87,73 @@ BT_Node* BT_Factory::getTree( const QString& treeID, const QDomElement& document
 				}
 				else
 				{
-					spdlog::critical("failed to create root node for behavior tree {}", treeID.toStdString());
+					spdlog::critical("failed to create root node for behavior tree {}", treeID);
 				}
 
 				return rootNode;
 			}
 		}
 
-		treeElement = treeElement.nextSiblingElement();
+		treeElement = treeElement.next_sibling();
 	}
 	return nullptr;
 }
 
-void BT_Factory::getNodes( BT_Node* parent, const QDomElement& root, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
+void BT_Factory::getNodes( BT_Node* parent, const pugi::xml_node& root, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
-	QDomElement treeElement = root.firstChildElement();
-	while ( !treeElement.isNull() )
+	pugi::xml_node treeElement = root.first_child();
+	while ( treeElement )
 	{
 		BT_Node* node = createBTNode( treeElement, parent, documentRoot, actions, blackboard );
 
-		if ( treeElement.hasChildNodes() )
+		if ( treeElement.first_child() )
 		{
 			getNodes( node, treeElement, documentRoot, actions, blackboard );
 		}
 
-		treeElement = treeElement.nextSiblingElement();
+		treeElement = treeElement.next_sibling();
 	}
 }
 
-BT_Node* BT_Factory::createBTNode( const QDomElement& domElement, BT_Node* parent, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::createBTNode( const pugi::xml_node& domElement, BT_Node* parent, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
-	QString nodeName = domElement.nodeName();
+	std::string nodeName = domElement.name();
 	BT_Node* bn      = nullptr;
-	const std::string& idKey = domElement.attribute( "ID" ).toStdString();
 	if ( nodeName == "Action" )
 	{
-		if ( !actions.contains( idKey ) )
-		{
-			spdlog::critical("Action '{}' doesn't exist in behaviorMap", domElement.attribute( "ID" ).toStdString());
+		const std::string idKey = domElement.attribute( "ID" ).value();
+		if ( idKey.empty() ) {
+			spdlog::critical("Action missing ID");
 			abort();
 		}
-		bn = parent->addAction( domElement.attribute( "ID" ), actions[idKey] );
+		if ( !actions.contains( idKey ) )
+		{
+			spdlog::critical("Action '{}' doesn't exist in behaviorMap", idKey);
+			abort();
+		}
+		bn = parent->addAction( idKey, actions[idKey] );
 	}
 	else if ( nodeName == "Condition" )
 	{
-		if ( !actions.contains( idKey ) )
-		{
-			spdlog::critical("Condition doesn't exist in behaviorMap: '{}'", domElement.attribute( "ID" ).toStdString());
+		const std::string idKey = domElement.attribute( "ID" ).value();
+		if ( idKey.empty() ) {
+			spdlog::critical("Condition missing ID");
 			abort();
 		}
-		bn = parent->addConditional( domElement.attribute( "ID" ), actions[idKey] );
+		if ( !actions.contains( idKey ) )
+		{
+			spdlog::critical("Condition doesn't exist in behaviorMap: '{}'", idKey);
+			abort();
+		}
+		bn = parent->addConditional( idKey, actions[idKey] );
 	}
 	else if ( nodeName == "Fallback" )
 	{
-		bn = parent->addFallback( domElement.attribute( "name" ) );
+		bn = parent->addFallback( domElement.attribute( "name" ).value() );
 	}
 	else if ( nodeName == "FallbackStar" )
 	{
-		bn = parent->addFallbackStar( domElement.attribute( "name" ) );
+		bn = parent->addFallbackStar( domElement.attribute( "name" ).value() );
 	}
 	else if ( nodeName == "ForceSuccess" )
 	{
@@ -156,31 +165,35 @@ BT_Node* BT_Factory::createBTNode( const QDomElement& domElement, BT_Node* paren
 	}
 	else if ( nodeName == "Sequence" )
 	{
-		bn = parent->addSequence( domElement.attribute( "name" ) );
+		bn = parent->addSequence( domElement.attribute( "name" ).value() );
 	}
 	else if ( nodeName == "SequenceStar" )
 	{
-		bn = parent->addSequenceStar( domElement.attribute( "name" ) );
+		bn = parent->addSequenceStar( domElement.attribute( "name" ).value() );
 	}
 	else if ( nodeName == "Repeat" )
 	{
-		bn = parent->addRepeat( domElement.attribute( "name" ), domElement.attribute( "num_cycles" ).toInt() );
+		bn = parent->addRepeat( domElement.attribute( "name" ).value(), domElement.attribute( "num_cycles" ).as_int() );
 	}
 	else if ( nodeName == "RetryUntilSuccesful" )
 	{
-		bn = parent->addRepeatUntilSuccess( domElement.attribute( "name" ), domElement.attribute( "num_attempts" ).toInt() );
+		bn = parent->addRepeatUntilSuccess( domElement.attribute( "name" ).value(), domElement.attribute( "num_attempts" ).as_int() );
 	}
 	else if ( nodeName == "Inverter" )
 	{
-		bn = parent->addInverter( domElement.attribute( "name" ) );
+		bn = parent->addInverter( domElement.attribute( "name" ).value() );
 	}
 	else if ( nodeName == "BB_Precondition" )
 	{
-		bn = parent->addBBPrecondition( domElement.attribute( "name" ), domElement.attribute( "key" ), domElement.attribute( "expected" ) );
+		bn = parent->addBBPrecondition( domElement.attribute( "name" ).value(), domElement.attribute( "key" ).value(), domElement.attribute( "expected" ).value() );
 	}
 	else if ( nodeName == "SubTree" )
 	{
-		QString subtreeID = domElement.attribute( "ID" );
+		std::string subtreeID = domElement.attribute( "ID" ).value();
+		if ( subtreeID.empty() ) {
+			spdlog::critical("SubTree missing ID");
+			abort();
+		}
 		//spdlog::debug("request subtree: {}", subtreeID);
 		bn = getTree( subtreeID, documentRoot, actions, blackboard );
 		if ( bn )

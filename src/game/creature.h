@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "../base/behaviortree/bt_factory.h"
 #include "../base/behaviortree/bt_node.h"
 #include "../base/pathfinder.h"
 #include "../base/priorityqueue.h"

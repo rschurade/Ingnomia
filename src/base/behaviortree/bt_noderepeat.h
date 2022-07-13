@@ -22,7 +22,7 @@
 class BT_NodeRepeat final : public BT_Node
 {
 public:
-	BT_NodeRepeat( QString name, int num, QVariantMap& blackboard );
+	BT_NodeRepeat( std::string name, int num, QVariantMap& blackboard );
 	~BT_NodeRepeat();
 
 	QVariantMap serialize();

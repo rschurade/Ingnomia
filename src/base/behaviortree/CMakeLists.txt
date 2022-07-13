@@ -17,12 +17,12 @@ target_include_directories(IngnomiaBT
 
 target_link_libraries(IngnomiaBT
         Qt5::Core
-        Qt5::Xml
 
         absl::hash
         absl::flat_hash_map
 
         spdlog::spdlog
+        pugixml::pugixml
 )
 
 add_library(Ingnomia::BehaviorTree ALIAS IngnomiaBT)

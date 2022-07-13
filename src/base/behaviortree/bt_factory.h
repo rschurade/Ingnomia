@@ -19,7 +19,7 @@
 
 #include "bt_tree.h"
 
-#include <QDomDocument>
+#include "pugixml.hpp"
 #include <absl/container/flat_hash_map.h>
 #include <QObject>
 #include <QVariantMap>
@@ -34,12 +34,12 @@ public:
 	BT_Factory()  = delete;
 	~BT_Factory() = delete;
 
-	static BT_Node* load( const QDomElement& root, BT_ActionMap& actions, QVariantMap& blackboard );
+	static BT_Node* load( const pugi::xml_node& root, BT_ActionMap& actions, QVariantMap& blackboard );
 
 private:
-	static BT_Node* createBTNode( const QDomElement& treeElement, BT_Node* parent, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
+	static BT_Node* createBTNode( const pugi::xml_node& treeElement, BT_Node* parent, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 
-	static BT_Node* getTree( const QString& treeID, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
+	static BT_Node* getTree( const std::string& treeID, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 
-	static void getNodes( BT_Node* parent, const QDomElement& root, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
+	static void getNodes( BT_Node* parent, const pugi::xml_node& root, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 };

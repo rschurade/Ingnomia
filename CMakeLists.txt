@@ -38,6 +38,7 @@ find_package(RangesV3 REQUIRED)
 
 find_package(NlohmannJson REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(pugixml REQUIRED)
 find_package(googletest REQUIRED)
 
 find_package(Steam REQUIRED)
@@ -108,7 +109,6 @@ target_link_libraries(${PROJECT_NAME}
 		Ingnomia::BehaviorTree
 
 		Qt5::Core
-		Qt5::Xml
 		Qt5::Sql
 		Qt5::OpenGL
 		Steam
@@ -123,6 +123,7 @@ target_link_libraries(${PROJECT_NAME}
 		range-v3::range-v3
 
 		nlohmann_json::nlohmann_json
+		pugixml::pugixml
 )
 
 # Noesis license
