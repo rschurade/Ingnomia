@@ -26,18 +26,20 @@
 
 #include <functional>
 
+using BT_ActionMap = absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>;
+
 class BT_Factory
 {
 public:
 	BT_Factory()  = delete;
 	~BT_Factory() = delete;
 
-	static BT_Node* load( QDomElement root, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* load( const QDomElement& root, BT_ActionMap& actions, QVariantMap& blackboard );
 
 private:
-	static BT_Node* createBTNode( QDomElement treeElement, BT_Node* parent, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* createBTNode( const QDomElement& treeElement, BT_Node* parent, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 
-	static BT_Node* getTree( QString treeID, QDomElement documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static BT_Node* getTree( const QString& treeID, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 
-	static void getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard );
+	static void getNodes( BT_Node* parent, const QDomElement& root, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );
 };

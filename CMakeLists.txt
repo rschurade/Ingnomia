@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Disable release-builds without debug info
@@ -29,12 +30,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
 find_package(Abseil REQUIRED)
 find_package(Sigslot REQUIRED)
+find_package(fmt REQUIRED)
 
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
 find_package(RangesV3 REQUIRED)
 
 find_package(NlohmannJson REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(googletest REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
@@ -95,6 +99,7 @@ target_sources(${PROJECT_NAME}
 )
 
 add_subdirectory(src) # Sources list
+add_subdirectory(test) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
 # Linking

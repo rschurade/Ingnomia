@@ -17,7 +17,7 @@
 */
 #include "bt_nodesequencestar.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 BT_NodeSequenceStar::BT_NodeSequenceStar( QString name, QVariantMap& blackboard, bool resetOnFailure ) :
 	BT_Node( name, blackboard ),
@@ -51,7 +51,7 @@ void BT_NodeSequenceStar::deserialize( QVariantMap in )
 {
 	if ( m_name != in.value( "Name" ).toString() )
 	{
-		qDebug() << "error loading behavior tree state - nodes don't match";
+		spdlog::debug("error loading behavior tree state - nodes don't match");
 	}
 	m_index          = in.value( "ID" ).toInt();
 	m_status         = (BT_RESULT)in.value( "Status" ).toInt();

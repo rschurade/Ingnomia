@@ -10,12 +10,19 @@ add_library(IngnomiaBT
         ${CMAKE_CURRENT_LIST_FILE}
 )
 
+target_include_directories(IngnomiaBT
+        PUBLIC
+        .
+)
+
 target_link_libraries(IngnomiaBT
         Qt5::Core
         Qt5::Xml
 
         absl::hash
         absl::flat_hash_map
+
+        spdlog::spdlog
 )
 
 add_library(Ingnomia::BehaviorTree ALIAS IngnomiaBT)

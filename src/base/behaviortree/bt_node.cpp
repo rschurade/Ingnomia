@@ -18,8 +18,7 @@
 #include "bt_node.h"
 
 #include "bt_tree.h"
-
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 BT_Node::BT_Node( QString name, QVariantMap& blackboard ) :
 	m_name( name ),
@@ -56,7 +55,7 @@ void BT_Node::deserialize( QVariantMap in )
 {
 	if ( m_name != in.value( "Name" ).toString() )
 	{
-		qDebug() << "error loading behavior tree state - nodes don't match";
+		spdlog::debug("error loading behavior tree state - nodes don't match");
 	}
 	m_index  = in.value( "ID" ).toInt();
 	m_status = (BT_RESULT)in.value( "Status" ).toInt();

@@ -17,26 +17,22 @@
 */
 #include "bt_factory.h"
 
-#include <absl/container/flat_hash_map.h>
-
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 namespace
 {
 class BT_NodeDummy final : public BT_Node
 {
 public:
-	BT_NodeDummy( QString name, QVariantMap& blackboard ) :
+	BT_NodeDummy( const QString& name, QVariantMap& blackboard ) :
 		BT_Node( name, blackboard )
 	{
 	}
-	~BT_NodeDummy()
-	{
-	}
+	~BT_NodeDummy() = default;
 
 	BT_Node* takeChild()
 	{
-		if ( m_children.size() )
+		if ( !m_children.empty() )
 		{
 			auto child = m_children.back();
 			m_children.pop_back();
@@ -50,21 +46,21 @@ public:
 };
 }
 
-BT_Node* BT_Factory::load( QDomElement root, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::load( const QDomElement& root, BT_ActionMap& actions, QVariantMap& blackboard )
 {
 	QString mainTree = root.attribute( "main_tree_to_execute" );
 
 	BT_Node* behaviorTree = getTree( mainTree, root, actions, blackboard );
 	if ( !behaviorTree )
 	{
-		qDebug() << "Fatal error. Failed to load behavior tree";
+		spdlog::debug("Fatal error. Failed to load behavior tree");
 		return nullptr;
 	}
 
 	return behaviorTree;
 }
 
-BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::getTree( const QString& treeID, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = documentRoot.firstChildElement();
 	while ( !treeElement.isNull() )
@@ -91,7 +87,7 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, absl::fl
 				}
 				else
 				{
-					qCritical() << "failed to create root node for behavior tree " << treeID;
+					spdlog::critical("failed to create root node for behavior tree {}", treeID.toStdString());
 				}
 
 				return rootNode;
@@ -103,7 +99,7 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, absl::fl
 	return nullptr;
 }
 
-void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+void BT_Factory::getNodes( BT_Node* parent, const QDomElement& root, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = root.firstChildElement();
 	while ( !treeElement.isNull() )
@@ -119,7 +115,7 @@ void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& docum
 	}
 }
 
-BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::createBTNode( const QDomElement& domElement, BT_Node* parent, const QDomElement& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard )
 {
 	QString nodeName = domElement.nodeName();
 	BT_Node* bn      = nullptr;
@@ -128,7 +124,7 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 	{
 		if ( !actions.contains( idKey ) )
 		{
-			qCritical() << "Action " << domElement.attribute( "ID" ) << " doesn't exist in behaviorMap";
+			spdlog::critical("Action '{}' doesn't exist in behaviorMap", domElement.attribute( "ID" ).toStdString());
 			abort();
 		}
 		bn = parent->addAction( domElement.attribute( "ID" ), actions[idKey] );
@@ -137,7 +133,7 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 	{
 		if ( !actions.contains( idKey ) )
 		{
-			qCritical() << "Condition doesn't exist in behaviorMap:" << domElement.attribute( "ID" );
+			spdlog::critical("Condition doesn't exist in behaviorMap: '{}'", domElement.attribute( "ID" ).toStdString());
 			abort();
 		}
 		bn = parent->addConditional( domElement.attribute( "ID" ), actions[idKey] );
@@ -185,11 +181,11 @@ BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDom
 	else if ( nodeName == "SubTree" )
 	{
 		QString subtreeID = domElement.attribute( "ID" );
-		//qDebug() << "request subtree: " << subtreeID;
+		//spdlog::debug("request subtree: {}", subtreeID);
 		bn = getTree( subtreeID, documentRoot, actions, blackboard );
 		if ( bn )
 		{
-			//qDebug() << "found subtree";
+			//spdlog::debug("found subtree");
 			parent->addTree( bn );
 		}
 	}

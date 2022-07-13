@@ -392,7 +392,7 @@ protected:
 
 	bool m_hasTransparency = false;
 
-	absl::flat_hash_map<std::string, std::function<BT_RESULT( bool )>> m_behaviors;
+	BT_ActionMap m_behaviors;
 	absl::flat_hash_map<std::string, std::function<bool( void )>> m_taskFunctions;
 
 	QList<AggroEntry> m_aggroList;
