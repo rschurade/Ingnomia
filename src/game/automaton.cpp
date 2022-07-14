@@ -23,8 +23,6 @@
 #include "../game/inventory.h"
 #include "../gfx/spritefactory.h"
 
-#include <QDebug>
-
 Automaton::Automaton( Position pos, unsigned int automatonItem, Game* game ) :
 	Gnome( pos, "Automaton", Gender::UNDEFINED, game ),
 	m_automatonItem( automatonItem )

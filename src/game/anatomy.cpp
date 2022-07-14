@@ -20,8 +20,8 @@
 #include "../base/db.h"
 #include "../base/global.h"
 #include "../game/creature.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <range/v3/view.hpp>
 
 Anatomy::Anatomy()
@@ -376,7 +376,7 @@ void Anatomy::setFluidLevelonTile( unsigned char fluidLevel )
 	{
 		m_status        = AnatomyStatus( m_status | AS_DEAD );
 		m_statusChanged = true;
-		qDebug() << "Anatomy: Dead! Drowned";
+		spdlog::debug("Anatomy: Dead! Drowned");
 	}
 }
 

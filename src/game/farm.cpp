@@ -29,8 +29,6 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include <QDebug>
-
 #include <range/v3/view.hpp>
 
 FarmProperties::FarmProperties( QVariantMap& in )
@@ -348,7 +346,7 @@ bool Farm::removeTile( const Position & pos )
 		auto gf = it->second;
 		if( gf.job )
 		{
-			//qDebug() << "farm field still has a job";
+			//spdlog::debug("farm field still has a job");
 			g->jm()->deleteJobAt( pos );
 		}
 	}

@@ -27,8 +27,6 @@
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
 
-#include <QDebug>
-
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;

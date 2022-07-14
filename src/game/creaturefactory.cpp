@@ -24,7 +24,6 @@
 #include "../game/game.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 
 CreatureFactory::CreatureFactory( Game* game ) :

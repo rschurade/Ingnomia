@@ -33,7 +33,6 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QVariantMap>
 
@@ -688,7 +687,7 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 		job->clearPossibleWorkPositions();
 		// jobs on same tile
 		auto wpl = job->origWorkPosOffsets();
-		//qDebug() << "### get staging for " << pos.toString();
+		//spdlog::debug( "### get staging for  {}", pos.toString().toStdString() );
 		for ( const auto& offset : wpl )
 		{
 			Position testPos( pos + offset );
@@ -708,7 +707,7 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 				}
 			}
 		}
-		//if ( job.possibleWorkPositions().empty() ) qDebug() << "not reachable";
+		//if ( job.possibleWorkPositions().empty() ) spdlog::debug("not reachable");
 		return job->possibleWorkPositions().size() > 0;
 	}
 	return false;

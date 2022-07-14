@@ -25,7 +25,6 @@
 #include "../game/jobmanager.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QVariantMap>
 
 #include <range/v3/view.hpp>

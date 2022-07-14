@@ -29,9 +29,9 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
+#include "spdlog/spdlog.h"
 
 #include <QComboBox>
-#include <QDebug>
 #include <QIcon>
 #include <QJsonDocument>
 #include <QPainter>
@@ -391,7 +391,7 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 		for ( int x = 0; x < 32; ++x )
 		{
 			if ( img.height() <= y )
-				qDebug() << "Util::smallPixmap 1" << sprite->sID;
+				spdlog::debug( "Util::smallPixmap 1 {}", sprite->sID.toStdString() );
 			QColor col = img.pixelColor( x, y );
 			if ( col.red() + col.green() + col.blue() > 0 )
 			{
@@ -409,7 +409,7 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 		for ( int x = 0; x < 32; ++x )
 		{
 			if ( img.height() <= y )
-				qDebug() << "Util::smallPixmap 2" << sprite->sID;
+				spdlog::debug( "Util::smallPixmap 2 {}", sprite->sID.toStdString() );
 			QColor col = img.pixelColor( x, y );
 			if ( col.red() + col.green() + col.blue() > 0 )
 			{
@@ -437,7 +437,7 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 		for ( int x = 0; x < 32; ++x )
 		{
 			if ( img.height() <= y )
-				qDebug() << "Util::smallPixmap 3" << sprite->sID;
+				spdlog::debug( "Util::smallPixmap 3 {}", sprite->sID.toStdString() );
 			QColor col = img.pixelColor( x, y + firstLine );
 			newImg.setPixelColor( x, y + yOff, col );
 		}
@@ -887,7 +887,7 @@ QString Util::addDyeMaterial( QString sourceMaterial, QString dyeMaterial )
 
 void Util::debugVM( QVariantMap vm, QString name )
 {
-	qDebug() << name;
+	spdlog::debug( "{}", name.toStdString() );
 	for ( const auto& key : vm.keys() )
 	{
 		qDebug() << key << ":" << vm.value( key ).toString();

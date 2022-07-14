@@ -18,16 +18,15 @@
 #include "config.h"
 
 #include "../base/io.h"
+#include "containersHelper.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QStandardPaths>
-#include <QCoreApplication>
-
-#include "containersHelper.h"
 
 void to_json(json& j, const ConfigVariant& item) {
 	if (const bool *itemPtr = std::get_if<bool>(&item)) {
@@ -45,19 +44,19 @@ void to_json(json& j, const ConfigVariant& item) {
 
 ConfigVariant jsonToConfigVariant(const json& v) {
 	if (v.type() == nlohmann::detail::value_t::string) {
-		qDebug() << "Type string";
+		spdlog::debug("Type string");
 		return { v.get<std::string>() };
 	} else if (v.type() == nlohmann::detail::value_t::number_float) {
-		qDebug() << "Type double";
+		spdlog::debug("Type double");
 		return { v.get<double>() };
 	} else if (v.type() == nlohmann::detail::value_t::number_integer || v.type() == nlohmann::detail::value_t::number_unsigned) {
-		qDebug() << "Type int or long";
+		spdlog::debug("Type int or long");
 		return { v.get<int>() };
 	} else if (v.type() == nlohmann::detail::value_t::boolean) {
-		qDebug() << "Type bool";
+		spdlog::debug("Type bool");
 		return { v.get<bool>() };
 	} else {
-		qDebug() << "Fatal error: Cannot convert QVariant to ConfigVariant!";
+		spdlog::debug("Fatal error: Cannot convert QVariant to ConfigVariant!");
 		abort();
 	}
 }
@@ -164,6 +163,6 @@ void Config::set( const QString& key, const ConfigVariant& value )
 		m_settings[key.toStdString()] = value;
 		IO::saveConfig();
 
-		qDebug() << "Update config" << key << "=" << QString::fromStdString(variantToString(value)) << "(was" << QString::fromStdString(variantToString(oldValue)) << ")";
+		spdlog::debug( "Update config {} = {} (was {})", key.toStdString(), variantToString(value), variantToString(oldValue) );
 	}
 }

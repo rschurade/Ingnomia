@@ -23,7 +23,6 @@
 #include "../../base/global.h"
 #include "../../gui/eventconnector.h"
 
-#include <QDebug>
 #include <QPainter>
 
 AgricultureProxy::AgricultureProxy( QObject* parent ) :

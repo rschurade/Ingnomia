@@ -20,7 +20,6 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 
-#include <QDebug>
 
 #include <range/v3/view.hpp>
 

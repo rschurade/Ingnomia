@@ -26,11 +26,12 @@
 #include "../game/jobmanager.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QString>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 Stockpile::Stockpile( Game* game ) :
 	WorldObject( game )
@@ -262,7 +263,7 @@ bool Stockpile::onTick( quint64 tick )
 			m_possibleItems = g->inv()->getClosestItemsForStockpile( m_id, m_fields.begin()->second->pos, m_pullOthers, effectiveFilter );
 			if ( m_possibleItems.size() > 5000 )
 			{
-				qWarning() << "Excessive number of candidates for stockpile";
+				spdlog::warn("Excessive number of candidates for stockpile");
 			}
 		}
 		m_lastUpdateTick = tick;
@@ -813,7 +814,7 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 	g->inv()->setInJob( item, 0 );
 
 	if ( Global::debugMode )
-		qDebug() << "item insert failed";
+		spdlog::debug("item insert failed");
 	return false;
 }
 
@@ -857,7 +858,7 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 		}
 	}
 	if ( Global::debugMode )
-		qDebug() << "remove item failed";
+		spdlog::debug("remove item failed");
 	return false;
 }
 
@@ -866,7 +867,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 	m_filterChanged = true;
 	if ( material != "" )
 	{
-		qDebug() << category << group << item << material << state;
+		spdlog::debug( "{} {} {} {} {}", category.toStdString(), group.toStdString(), item.toStdString(), material.toStdString(), state );
 		m_filter.setCheckState( category, group, item, material, state );
 	}
 	else if ( item != "" )

@@ -25,7 +25,6 @@
 #include "../game/world.h"
 #include "../game/game.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QString>
 

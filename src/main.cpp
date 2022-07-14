@@ -28,7 +28,6 @@
 
 #include <QApplication>
 #include <QDateTime>
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFileIconProvider>
@@ -43,7 +42,10 @@
 #include <windows.h>
 #endif
 #include "base/containersHelper.h"
+#include "spdlog/spdlog.h"
 #include "version.h"
+
+#include <QTextStream>
 
 #include <filesystem>
 
@@ -147,10 +149,9 @@ int main( int argc, char* argv[] )
 	setupCrashHandler();
 	clearLog();
 	qInstallMessageHandler( &logOutput );
-	qInfo() << PROJECT_NAME << "version" << PROJECT_VERSION;
+	spdlog::info( "{} version {}", PROJECT_NAME, PROJECT_VERSION );
 #ifdef GIT_REPO
-	qInfo() << "Built from" << GIT_REPO << GIT_REF << "(" << GIT_SHA << ")"
-			<< "build" << BUILD_ID;
+	spdlog::info( "Built from {} {} ({}) build {}", GIT_REPO, GIT_REF, GIT_SHA, BUILD_ID );
 #endif // GIT_REPO
 
 	// Disable use of ANGLE, as it supports OpenGL 3.x at most
@@ -173,7 +174,7 @@ int main( int argc, char* argv[] )
 
 	if ( !Global::cfg->valid() )
 	{
-		qDebug() << "Failed to init Config.";
+		spdlog::debug("Failed to init Config.");
 		abort();
 	}
 
@@ -182,7 +183,7 @@ int main( int argc, char* argv[] )
 
 	if ( !S::gi().init() )
 	{
-		qDebug() << "Failed to init translation.";
+		spdlog::debug("Failed to init translation.");
 		abort();
 	}
 
@@ -194,10 +195,10 @@ int main( int argc, char* argv[] )
 	{
 		if ( args.at( i ) == "-h" || args.at( i ) == "?" )
 		{
-			qDebug() << "Command line options:";
-			qDebug() << "-h : displays this message";
-			qDebug() << "-v : toggles verbose mode, warning: this will spam your console with messages";
-			qDebug() << "---";
+			spdlog::debug("Command line options:");
+			spdlog::debug("-h : displays this message");
+			spdlog::debug("-v : toggles verbose mode, warning: this will spam your console with messages");
+			spdlog::debug("---");
 		}
 		if ( args.at( i ) == "-v" )
 		{

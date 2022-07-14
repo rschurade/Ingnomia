@@ -28,7 +28,6 @@
 #include "../gfx/spritefactory.h"
 
 #include <QBitmap>
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QPainter>
 

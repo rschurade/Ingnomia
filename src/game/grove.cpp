@@ -28,7 +28,6 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include <QDebug>
 
 #include <range/v3/view.hpp>
 

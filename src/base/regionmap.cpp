@@ -22,8 +22,8 @@
 #include "../base/global.h"
 #include "../base/region.h"
 #include "../game/world.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QQueue>
 
@@ -95,7 +95,7 @@ void RegionMap::initRegions()
 				Tile& tile = m_world->getTile( x, y, z );
 				if ( ( tile.flags & TileFlag::TF_WALKABLE && !( tile.flags & TileFlag::TF_NOPASS ) ) && ( m_regionMap[index( x, y, z )] == 0 ) )
 				{
-					////qDebug() << "found new tile without region";
+					////spdlog::debug("found new tile without region");
 					// assign new region numer
 					unsigned int id               = static_cast<unsigned int>( m_regions.size() );
 					m_regionMap[index( x, y, z )] = id;
@@ -133,7 +133,7 @@ void RegionMap::initRegions()
 		}
 	}
 
-	qDebug() << "initialized " << m_regions.size() << " regions in " + QString::number( timer.elapsed() ) + " ms";
+	spdlog::debug( "initialized {} regions in {} ms", m_regions.size(), timer.elapsed() );
 	m_initialized = true;
 }
 
@@ -250,7 +250,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 	{
 		Position p0 = floodQueue.dequeue();
 		m_world->addToUpdateList( p0 );
-		//qDebug() << "continue with " << p0.toString();
+		//spdlog::debug( "continue with  {}", p0.toString().toStdString() );
 		unsigned int currentIndex = index( p0.x, p0.y, p0.z );
 
 		bool prevLineAdded = false;
@@ -270,7 +270,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 						Position pos( x, p0.y - 1, p0.z );
 						floodQueue.enqueue( pos );
 						prevLineAdded = true;
-						//qDebug() << "add to queue: " << pos.toString();
+						//spdlog::debug( "add to queue:  {}", pos.toString().toStdString() );
 					}
 				}
 				else
@@ -285,7 +285,7 @@ void RegionMap::floodFill( unsigned int oldID, unsigned int newID, int x_, int y
 						Position pos( x, p0.y + 1, p0.z );
 						floodQueue.enqueue( pos );
 						nextLineAdded = true;
-						//qDebug() << "add to queue: " << pos.toString();
+						//spdlog::debug( "add to queue:  {}", pos.toString().toStdString() );
 					}
 				}
 				else
@@ -355,7 +355,7 @@ void RegionMap::updatePosition( const Position& pos )
 {
 	if ( m_initialized )
 	{
-		//qDebug() << "update position " << pos.toString();
+		//spdlog::debug( "update position  {}", pos.toString().toStdString() );
 		if ( m_world->isWalkableGnome( pos ) )
 		{
 			updatePositionSetWalkable( pos );
@@ -441,7 +441,7 @@ void RegionMap::updateConnectedRegions( const Position& pos )
 {
 	if ( m_initialized )
 	{
-		//qDebug() << "update connected regions " << pos.toString();
+		//spdlog::debug( "update connected regions  {}", pos.toString().toStdString() );
 
 		unsigned int currentIndex = index( pos );
 
@@ -488,7 +488,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				split = checkSplitFlood( Position( pos.x - 1, pos.y, pos.z ), Position( pos.x + 1, pos.y, pos.z ), region1 );
 			}
 		}
@@ -501,7 +501,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				split = checkSplitFlood( Position( pos.x - 1, pos.y, pos.z ), Position( pos.x, pos.y - 1, pos.z ), region1 );
 			}
 		}
@@ -514,7 +514,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				split = checkSplitFlood( Position( pos.x - 1, pos.y, pos.z ), Position( pos.x, pos.y + 1, pos.z ), region1 );
 			}
 		}
@@ -543,7 +543,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				split = checkSplitFlood( Position( pos.x + 1, pos.y, pos.z ), Position( pos.x, pos.y - 1, pos.z ), region2 );
 			}
 		}
@@ -556,7 +556,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				split = checkSplitFlood( Position( pos.x + 1, pos.y, pos.z ), Position( pos.x, pos.y + 1, pos.z ), region2 );
 			}
 		}
@@ -593,7 +593,7 @@ bool RegionMap::checkSplit( const Position& pos )
 			}
 			else
 			{
-				//qDebug() << "check split flood";
+				//spdlog::debug("check split flood");
 				if ( checkSplitFlood( Position( pos.x, pos.y - 1, pos.z ), Position( pos.x, pos.y + 1, pos.z ), region3 ) )
 				{
 					unsigned int id                                           = static_cast<unsigned int>( m_regions.size() );
@@ -629,7 +629,7 @@ bool RegionMap::checkSplitFlood( const Position& pos, const Position& pos2, unsi
 			return false;
 		}
 
-		//qDebug() << "continue with " << p0.toString();
+		//spdlog::debug( "continue with  {}", p0.toString().toStdString() );
 		unsigned int currentIndex     = index( p0.x, p0.y, p0.z );
 		visited[p0.x + p0.y * m_dimX] = true;
 
@@ -647,7 +647,7 @@ bool RegionMap::checkSplitFlood( const Position& pos, const Position& pos2, unsi
 						Position pos( x, p0.y - 1, p0.z );
 						floodQueue.enqueue( pos );
 						prevLineAdded = true;
-						//qDebug() << "add to queue: " << pos.toString();
+						//spdlog::debug( "add to queue:  {}", pos.toString().toStdString() );
 					}
 				}
 				else
@@ -662,7 +662,7 @@ bool RegionMap::checkSplitFlood( const Position& pos, const Position& pos2, unsi
 						Position pos( x, p0.y + 1, p0.z );
 						floodQueue.enqueue( pos );
 						nextLineAdded = true;
-						//qDebug() << "add to queue: " << pos.toString();
+						//spdlog::debug( "add to queue:  {}", pos.toString().toStdString() );
 					}
 				}
 				else
@@ -793,7 +793,7 @@ bool RegionMap::checkConnectedRegions( unsigned int start, unsigned int goal )
 		}
 	}
 	m_cachedConnections.insert( { std::make_pair( start, goal ), false } );
-	//qDebug() << "no connection";
+	//spdlog::debug("no connection");
 	return false;
 }
 
@@ -803,7 +803,7 @@ bool RegionMap::checkConnectedRegions( const Position& start, const Position& go
 	QElapsedTimer et;
 	et.start();
 	bool connected = checkConnectedRegions( regionID( start), regionID( goal ) );
-	qDebug() << "check connected regions took " << et.elapsed() << " ms";
+	spdlog::debug( "check connected regions took {} ms", et.elapsed().toStdString() );
 	return connected;
 	*/
 	return checkConnectedRegions( regionID( start ), regionID( goal ) );

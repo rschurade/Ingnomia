@@ -21,17 +21,17 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/plant.h"
+#include "../game/world.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
-#include "../game/world.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QPainter>
 #include <QPixmap>
 
@@ -221,7 +221,7 @@ void Animal::updateSprite()
 		}
 		else
 		{
-			qDebug() << "*ERROR* failed to create sprite for " << m_stateMap.value( "ID" ).toString() << " state: " << m_stateMap.value( "ID2" ).toString();
+			spdlog::debug( "*ERROR* failed to create sprite for {} state: {}", m_stateMap.value( "ID" ).toString().toStdString(), m_stateMap.value( "ID2" ).toString().toStdString() );
 		}
 	}
 }
@@ -1128,7 +1128,7 @@ BT_RESULT Animal::actionGuardDogGetTarget( bool halt )
 		auto fox = foxes.get();
 		if ( m_position.distSquare( fox->getPos() ) < 40 )
 		{
-			//qDebug() << "fox alert";
+			//spdlog::debug("fox alert");
 			AggroEntry ae { 100, fox->id() };
 			m_aggroList.append( ae );
 		}

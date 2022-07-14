@@ -27,7 +27,6 @@
 #include "../gfx/spritefactory.h"
 #include "eventconnector.h"
 
-#include <QDebug>
 
 AggregatorSelection::AggregatorSelection( QObject* parent ) :
 	QObject( parent )

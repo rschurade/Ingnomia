@@ -19,20 +19,20 @@
 
 #include "../base/config.h"
 #include "../game/item.h"
+#include "containersHelper.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
+#include <QFile>
 #include <QMutexLocker>
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QThread>
-#include <QFile>
-
-#include <range/v3/view.hpp>
-#include "containersHelper.h"
 
 #include <filesystem>
+
+#include <range/v3/view.hpp>
 
 namespace fs = std::filesystem;
 
@@ -62,7 +62,7 @@ void DB::init()
 	{
 		if ( !destQuery.exec( s ) )
 		{
-			qDebug() << destQuery.lastError();
+			spdlog::debug("{}", destQuery.lastError().text().toStdString());
 		}
 	}
 }
@@ -157,12 +157,12 @@ QSqlDatabase& DB::getDB()
 		db.setDatabaseName( "file:game?mode=memory&cache=shared" );
 		if ( !db.open() )
 		{
-			qDebug() << "Error: create in memory db";
+			spdlog::debug("Error: create in memory db");
 			abort();
 		}
 		else
 		{
-			qDebug() << "Memory DB: connection ok";
+			spdlog::debug("Memory DB: connection ok");
 		}
 		m_connections[thread] = db;
 	}
@@ -191,8 +191,8 @@ QVariant DB::execQuery( QString queryString )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << queryString;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( "{}", queryString.toStdString() );
 	}
 
 	return QVariant();
@@ -214,8 +214,8 @@ QVariantList DB::execQuery2( QString queryString )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << queryString;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( "{}", queryString.toStdString() );
 	}
 
 	return out;
@@ -234,8 +234,8 @@ QSqlQuery DB::execQuery3( QString queryString, bool& ok )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << queryString;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( "{}", queryString.toStdString() );
 	}
 
 	ok = false;
@@ -257,8 +257,8 @@ QVariant DB::select( QString selectCol, QString table, QString whereVal )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT \"" + selectCol + "\" FROM " + table + " WHERE ID = " + "\"" + whereVal + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT \"" + selectCol + "\" FROM " + table + " WHERE ID = " + "\"" + whereVal + "\"").toStdString() );
 	}
 
 	return QVariant();
@@ -279,8 +279,8 @@ QVariant DB::select( QString selectCol, QString table, int whereVal )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT \"" + selectCol + "\" FROM " + table + " WHERE rowid = " + "\"" + QString::number( whereVal ) + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT \"" + selectCol + "\" FROM " + table + " WHERE rowid = " + "\"" + QString::number( whereVal ) + "\"").toStdString() );
 	}
 
 	return QVariant();
@@ -302,8 +302,8 @@ QVariantList DB::select2( QString selectCol, QString table, QString whereCol, QS
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT \"" + selectCol + "\" FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT \"" + selectCol + "\" FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"").toStdString() );
 	}
 
 	return out;
@@ -335,8 +335,8 @@ QVariant DB::select3( QString selectCol, QString table, QString whereCol, QStrin
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT \"" + selectCol + "\" FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT \"" + selectCol + "\" FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"").toStdString() );
 	}
 
 	return out;
@@ -359,8 +359,8 @@ QStringList DB::ids( QString table )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT ID FROM " + table;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT ID FROM " + table).toStdString() );
 	}
 
 	return out;
@@ -383,9 +383,9 @@ QStringList DB::ids( QString table, QString whereCol, QString whereVal )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << getDB().tables();
-		qDebug() << "SELECT ID FROM " + table;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+//		spdlog::debug( "{}", getDB().tables() );
+		spdlog::debug( "SELECT ID FROM {}", table.toStdString());
 	}
 
 	return out;
@@ -406,8 +406,8 @@ int DB::numRows( QString table )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT COUNT(*) FROM " + table;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT COUNT(*) FROM " + table).toStdString() );
 	}
 	return 0;
 }
@@ -427,8 +427,8 @@ int DB::numRows( QString table, QString id )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT COUNT(*) FROM " + table + " WHERE ID = \"" + id + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT COUNT(*) FROM " + table + " WHERE ID = \"" + id + "\"").toStdString() );
 	}
 	return 0;
 }
@@ -448,8 +448,8 @@ int DB::numRows2( QString table, QString id )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT COUNT(*) FROM " + table + " WHERE BaseSprite = \"" + id + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT COUNT(*) FROM " + table + " WHERE BaseSprite = \"" + id + "\"").toStdString() );
 	}
 	return 0;
 }
@@ -477,8 +477,8 @@ QVariantMap DB::selectRow( QString table, QString whereVal )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE ID = \"" + whereVal + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT * FROM " + table + " WHERE ID = \"" + whereVal + "\"").toStdString() );
 	}
 
 	return QVariantMap();
@@ -508,8 +508,8 @@ QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString wher
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\"").toStdString() );
 	}
 	return out;
 }
@@ -538,8 +538,8 @@ QList<QVariantMap> DB::selectRows( QString table, QString whereCol, QString wher
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT * FROM " + table + " WHERE \"" + whereCol + "\" = \"" + whereVal + "\" AND \"" + whereCol2 + "\" = \"" + whereVal2 + "\"").toStdString() );
 	}
 
 	return out;
@@ -570,8 +570,8 @@ QList<QVariantMap> DB::selectRows( QString table )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table;
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT * FROM " + table).toStdString() );
 	}
 	return out;
 }
@@ -599,8 +599,8 @@ QList<QVariantMap> DB::selectRows( QString table, QString id )
 	}
 	else
 	{
-		qDebug() << "sql error:  " << query.lastError();
-		qDebug() << "SELECT * FROM " + table + " WHERE ID = \"" + id + "\"";
+		spdlog::debug( "sql error:   {}", query.lastError().text().toStdString() );
+		spdlog::debug( ("SELECT * FROM " + table + " WHERE ID = \"" + id + "\"").toStdString() );
 	}
 	return out;
 }
@@ -663,7 +663,7 @@ bool DB::addRow( QString table, QVariantMap values )
 	query2.chop( 2 );
 	query2 += " )";
 
-	//qDebug() << query + query2;
+	//spdlog::debug( (query + query2).toStdString() );
 
 	bool ok = false;
 	DB::execQuery3( query + query2, ok );

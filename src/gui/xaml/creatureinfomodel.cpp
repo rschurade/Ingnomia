@@ -27,8 +27,6 @@
 #include <NsGui/UIElement.h>
 #include <NsGui/BitmapImage.h>
 
-#include <QDebug>
-
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;

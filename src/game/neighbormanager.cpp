@@ -23,7 +23,7 @@
 #include "../game/eventmanager.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 NeighborManager::NeighborManager( Game* parent ) :
 	g( parent ),
@@ -209,13 +209,13 @@ void NeighborManager::spy( Mission* mission )
 			bool success = ( rand() % 100 ) < chance;
 			if ( success )
 			{
-				qDebug() << "spy success";
+				spdlog::debug("spy success");
 				mission->result.insert( "Success", true );
 				mission->result.insert( "NextRaid", k.nextRaid );
 			}
 			else
 			{
-				qDebug() << "spy failure";
+				spdlog::debug("spy failure");
 				mission->result.insert( "Success", false );
 				k.attitude -= 10;
 			}
@@ -238,7 +238,7 @@ void NeighborManager::sabotage( Mission* mission )
 
 			if ( success )
 			{
-				qDebug() << "sabotage success";
+				spdlog::debug("sabotage success");
 				mission->result.insert( "Success", true );
 				int delay = qMax( 2, rand() % 6 );
 				mission->result.insert( "Delay", delay );
@@ -248,7 +248,7 @@ void NeighborManager::sabotage( Mission* mission )
 			}
 			else
 			{
-				qDebug() << "sabotage failure";
+				spdlog::debug("sabotage failure");
 				mission->result.insert( "Success", false );
 			}
 		}
@@ -270,14 +270,14 @@ void NeighborManager::raid( Mission* mission )
 
 			if ( success )
 			{
-				qDebug() << "raid success";
+				spdlog::debug("raid success");
 				mission->result.insert( "Success", true );
 
 				k.attitude -= 20;
 			}
 			else
 			{
-				qDebug() << "raid failure";
+				spdlog::debug("raid failure");
 				k.attitude -= 10;
 				mission->result.insert( "Success", false );
 			}

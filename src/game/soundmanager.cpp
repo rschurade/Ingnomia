@@ -24,7 +24,6 @@
 #include "../gui/eventconnector.h"
 #include "game.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 
 SoundManager::SoundManager( Game* parent ) :

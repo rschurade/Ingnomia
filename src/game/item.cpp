@@ -25,7 +25,6 @@
 
 #include "jobmanager.h"
 
-#include <QDebug>
 #include <QVariantMap>
 
 Item::Item() :

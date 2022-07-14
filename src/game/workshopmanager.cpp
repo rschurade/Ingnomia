@@ -20,7 +20,6 @@
 
 #include "../base/gamestate.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 
 WorkshopManager::WorkshopManager( Game* parent ) :

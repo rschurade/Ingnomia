@@ -24,12 +24,15 @@
 #include "../base/io.h"
 #include "../base/util.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QPainter>
 #include <QPixmap>
+
+#include "spdlog/spdlog.h"
+
+#include "../fmt_formats.h"
 
 SpriteFactory::SpriteFactory()
 {
@@ -105,7 +108,7 @@ bool SpriteFactory::init()
 				loaded = pm.load( tilesheet );
 				if ( !loaded )
 				{
-					qDebug() << "SpriteFactory: failed to load " << tilesheet;
+					spdlog::debug( "SpriteFactory: failed to load  {}", tilesheet.toStdString() );
 					return false;
 				}
 			}
@@ -433,7 +436,7 @@ QPixmap SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 
 		return p;
 	}
-	qDebug() << "***ERROR*** extractPixmap() for " << def.value( "ID" ).toString();
+	spdlog::debug( "***ERROR*** extractPixmap() for {}", def.value( "ID" ).toString().toStdString() );
 	return QPixmap();
 }
 
@@ -664,7 +667,7 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 	if ( spriteSID.isEmpty() )
 	{
 		// every item needs a SpriteID
-		//qDebug() << "***ERROR*** item " << itemSID << " has no SpriteID entry.";
+		//spdlog::debug( "***ERROR*** item {} has no SpriteID entry.", itemSID.toStdString() );
 		spriteSID = itemSID;
 	}
 
@@ -707,7 +710,7 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 	if ( spriteSID.isEmpty() )
 	{
 		// every item needs a SpriteID
-		//qDebug() << "***ERROR*** item " << itemSID << " has no SpriteID entry.";
+		//spdlog::debug( "***ERROR*** item {} has no SpriteID entry.", itemSID.toStdString() );
 		spriteSID = itemSID;
 	}
 
@@ -1102,7 +1105,7 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 	if ( node->type == "RandomNode" )
 	{
 		QList<int> weights = node->randomWeights;
-		//qDebug() << weights;
+		//spdlog::debug( "{}", weights.toStdString() );
 		int randomNumber = 0;
 		if ( !m_randomNumbers.contains( node->childPos.toInt() ) )
 		{
@@ -1200,14 +1203,19 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 		{
 			if ( sc.uID != static_cast<unsigned int>( m_sprites.size() ) )
 			{
+				std::vector<std::string> materialIDs;
+				for ( const auto& item : sc.materialSIDs ) {
+					materialIDs.push_back(item.toStdString());
+				}
+
 				if ( sc.uID < static_cast<unsigned int>( m_sprites.size() ) )
 				{
-					qWarning() << "## Loosing sprite " << sc.uID << m_sprites.size() << sc.itemSID << sc.materialSIDs;
+					spdlog::warn( "## Loosing sprite {} {} {} {}", sc.uID, m_sprites.size(), sc.itemSID.toStdString(), materialIDs );
 					continue;
 				}
 				else
 				{
-					qDebug() << "## Missing sprite before " << sc.uID << m_sprites.size() << sc.itemSID << sc.materialSIDs;
+					spdlog::debug( "## Missing sprite before {} {} {} {}", sc.uID, m_sprites.size(), sc.itemSID.toStdString(), materialIDs );
 					while ( sc.uID > static_cast<unsigned int>( m_sprites.size() ) )
 					{
 						// Sprite was probably lost due to a deleted definition, ID won't be reused
@@ -1234,7 +1242,7 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 			}
 		}
 	}
-	qDebug() << "Used" << m_texesUsed << "array textures";
+	spdlog::debug( "Used{}array textures", m_texesUsed );
 	m_spriteCreations = scl;
 }
 
@@ -1454,7 +1462,7 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 	QPixmap pmfr( 32, 32 );
 	pmfr.fill( QColor( 0, 0, 0, 0 ) );
 	QPainter painter( &pmfr );
-	//qDebug() << " =================================================";
+	//spdlog::debug(" =================================================");
 	for ( auto vcm : components )
 	{
 		auto cm = vcm.toMap();
@@ -1509,7 +1517,7 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 	QPixmap pmbr( 32, 32 );
 	pmbr.fill( QColor( 0, 0, 0, 0 ) );
 	QPainter painter2( &pmbr );
-	//qDebug() << "---------------------------------";
+	//spdlog::debug("---------------------------------");
 	for ( auto vcm : componentsBack )
 	{
 		auto cm = vcm.toMap();
@@ -1662,7 +1670,7 @@ QPixmap SpriteFactory::pixmap( QString name )
 	{
 		return m_pixmapSources[name];
 	}
-	qDebug() << "Pixmap " << name << " doesn't exist";
+	spdlog::debug( "Pixmap {} doesn't exist", name.toStdString() );
 	return QPixmap( 32, 32 );
 }
 
@@ -1672,7 +1680,7 @@ QPixmap SpriteFactory::baseSprite( QString id )
 	{
 		return m_baseSprites[id];
 	}
-	qDebug() << "Base sprite " << id << " doesn't exist";
+	spdlog::debug( "Base sprite {} doesn't exist", id.toStdString() );
 	return QPixmap( 32, 32 );
 }
 

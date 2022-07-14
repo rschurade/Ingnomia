@@ -24,7 +24,7 @@
 #include "../game/stockpile.h"
 #include "../game/world.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 StockpileManager::StockpileManager( Game* parent ) :
 	g( parent ),
@@ -92,7 +92,7 @@ void StockpileManager::addStockpile( Position& firstClick, QList<QPair<Position,
 		m_stockpilesOrdered.append( sp->id() );
 		m_lastAdded = sp->id();
 	}
-	qDebug() << "StockpileManager::addStockpile";
+	spdlog::debug("StockpileManager::addStockpile");
 	signalStockpileAdded( m_lastAdded );
 }
 
@@ -182,7 +182,7 @@ void StockpileManager::insertItem( unsigned int stockpileID, Position pos, unsig
 		if ( !m_stockpiles[stockpileID]->insertItem( pos, item ) )
 		{
 			if ( Global::debugMode )
-				qDebug() << "insert into stockpile " << stockpileID << " failed";
+				spdlog::debug( "insert into stockpile {} failed", stockpileID );
 		}
 		else
 		{

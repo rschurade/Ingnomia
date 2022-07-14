@@ -33,11 +33,14 @@
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonValue>
 
 #include "containersHelper.h"
+
+#include "spdlog/spdlog.h"
+
+#include "fmt_formats.h"
 
 Selection::Selection( Game* game ) :
 	g( game ),
@@ -180,7 +183,7 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 void Selection::setAction( QString action )
 {
 	if ( Global::debugMode )
-		qDebug() << "Selection set action: " << action;
+		spdlog::debug( "Selection set action:  {}", action.toStdString() );
 
 	clear();
 
@@ -324,8 +327,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		{
 			// Actions_Tiles
 			if ( Global::debugMode )
-				qDebug() << "test tiles: "
-						 << "Actions_Tiles BuildWallPalisade";
+				spdlog::debug( "test tiles: Actions_Tiles BuildWallPalisade" );
 			m_tileCheckList = DB::selectRows( "Actions_Tiles", "ID", "BuildWallPalisade" );
 		}
 		else
@@ -394,7 +396,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		for ( auto req : required )
 		{
 			//if ( Global::debugMode )
-			//	qDebug() << "test requirement: " << req << "...";
+			//	spdlog::debug( "test requirement: {}...", req.toStdString() );
 
 			auto sel = (enumReqs)maps::at_or_default( m_reqMap, req, (int)SEL_NONE );
 
@@ -523,7 +525,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 			}
 
 			//if ( Global::debugMode )
-			//	qDebug() << "passed.";
+			//	spdlog::debug("passed.");
 		}
 
 		QStringList forbidden = tm.value( "Forbidden" ).toString().split( "|" );
@@ -534,7 +536,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		for ( auto forb : forbidden )
 		{
 			//if ( Global::debugMode )
-			//	qDebug() << "test forbidden: " << forb << "...";
+			//	spdlog::debug( "test forbidden: {}...", forb.toStdString() );
 			if ( m_action.startsWith( "Build" ) && tile->flags & TileFlag::TF_OCCUPIED )
 			{
 				return false;
@@ -669,7 +671,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 			}
 
 			//if ( Global::debugMode )
-			//	qDebug() << "passed.";
+			//	spdlog::debug("passed.");
 		}
 	}
 
@@ -844,16 +846,21 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 			{
 				if ( p.second )
 				{
+					std::vector<std::string> materials;
+					for ( const auto& item : m_materials ) {
+						materials.push_back(item.toStdString());
+					}
+
 					if ( m_materials.empty() )
 					{
 						if ( Global::debugMode )
-							qDebug() << "Selection::onSecondclick1" << jobId << p.first.toString() << m_item << m_materials << m_rotation;
+							spdlog::debug( "Selection::onSecondclick2 {} {} {} {} {}", jobId.toStdString(), p.first.toString().toStdString(), m_item.toStdString(), materials, m_rotation );
 						g->jm()->addJob( jobId, p.first, m_rotation );
 					}
 					else
 					{
 						if ( Global::debugMode )
-							qDebug() << "Selection::onSecondclick2" << jobId << p.first.toString() << m_item << m_materials << m_rotation;
+							spdlog::debug( "Selection::onSecondclick2 {} {} {} {} {}", jobId.toStdString(), p.first.toString().toStdString(), m_item.toStdString(), materials, m_rotation );
 						g->jm()->addJob( jobId, p.first, m_item, m_materials, m_rotation );
 					}
 				}
@@ -867,16 +874,21 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 			auto& p = m_selection.first();
 			if ( p.second )
 			{
+				std::vector<std::string> materials;
+				for ( const auto& item : m_materials ) {
+					materials.push_back(item.toStdString());
+				}
+
 				if ( m_materials.empty() )
 				{
 					if ( Global::debugMode )
-						qDebug() << jobId << p.first.toString() << m_item << m_materials << m_rotation;
+						spdlog::debug( "{} {} {} {} {}", jobId.toStdString(), p.first.toString().toStdString(), m_item.toStdString(), materials, m_rotation );
 					g->jm()->addJob( jobId, p.first, m_rotation );
 				}
 				else
 				{
 					if ( Global::debugMode )
-						qDebug() << jobId << p.first.toString() << m_item << m_materials << m_rotation;
+						spdlog::debug( "{} {} {} {} {}", jobId.toStdString(), p.first.toString().toStdString(), m_item.toStdString(), materials, m_rotation );
 					g->jm()->addJob( jobId, p.first, m_item, m_materials, m_rotation );
 				}
 				p.second = false;

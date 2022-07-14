@@ -19,11 +19,12 @@
 
 #include "../base/db.h"
 
-#include <QDebug>
 #include <QQueue>
 #include <QSqlQuery>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 TechTree::TechTree( QObject* parent ) :
 	QObject( parent )
@@ -69,16 +70,16 @@ void TechTree::create()
 		++breaker;
 		if ( breaker == 100000 )
 		{
-			qDebug() << "breaker reached";
-			qDebug() << "workqueue size:" << workQueue.size();
+			spdlog::debug("breaker reached");
+			spdlog::debug( "workqueue size: {}", workQueue.size() );
 			while ( !workQueue.isEmpty() )
 			{
 				QString id = workQueue.dequeue();
-				qDebug() << id;
+				spdlog::debug( "{}", id.toStdString() );
 			}
 		}
 	}
-	qDebug() << "####################################################";
+	spdlog::debug("####################################################");
 	int maxLevel = 0;
 	for ( const auto& value : itemLevels | ranges::views::values )
 	{
@@ -93,25 +94,25 @@ void TechTree::create()
 
 	while ( currentLevel <= maxLevel )
 	{
-		//qDebug() << "-->" << currentLevel;
+		//spdlog::debug( "--> {}", currentLevel.toStdString() );
 		for ( const auto& key : keys )
 		{
 			if ( currentLevel == itemLevels[key] )
 			{
-				qDebug() << currentLevel << key;
+				spdlog::debug("{} {}", currentLevel, key.toStdString());
 			}
 		}
 		++currentLevel;
 	}
-	qDebug() << "####################################################";
+	spdlog::debug("####################################################");
 	for ( const auto& key : keys )
 	{
-		qDebug() << itemLevels[key] << key;
+		spdlog::debug("{} {}", itemLevels[key], key.toStdString() );
 
 		bool ok;
 		DB::execQuery3( "UPDATE Items SET \"VALUE\" = \"" + QString::number( itemLevels[key] ) + "\" WHERE ID = \"" + key + "\"", ok );
 	}
-	qDebug() << "####################################################";
+	spdlog::debug("####################################################");
 }
 
 bool TechTree::compsLowerLevel( QString craftID, absl::flat_hash_map<QString, int>& itemLevels )

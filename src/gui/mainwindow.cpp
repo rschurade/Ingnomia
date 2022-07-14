@@ -77,12 +77,13 @@
 #include <NsGui/IntegrationAPI.h>
 #include <NsRender/GLFactory.h>
 
-#include <QDebug>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QTimer>
 
 #include <string>
+
+#include "spdlog/spdlog.h"
 
 static MainWindow* instance;
 
@@ -91,7 +92,7 @@ static absl::btree_set<QString> m_noesisMessages;
 MainWindow::MainWindow( QWidget* parent ) :
 	QOpenGLWindow()
 {
-	qDebug() << "Create main window.";
+	spdlog::debug("Create main window.");
 	Global::eventConnector->signalExit.connect( &MainWindow::onExit, this );
 	this->signalWindowSize.connect(&EventConnector::onWindowSize, Global::eventConnector);
 	this->signalViewLevel.connect(&EventConnector::onViewLevel, Global::eventConnector);
@@ -116,7 +117,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 
 MainWindow::~MainWindow()
 {
-	qDebug() << "MainWindow destructor";
+	spdlog::debug("MainWindow destructor");
 
 	if( !m_isFullScreen )
 	{
@@ -385,7 +386,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 		}
 		else
 		{
-			//qDebug() << "huhu";
+			//spdlog::debug("huhu");
 		}
 	}
 
@@ -411,7 +412,7 @@ void MainWindow::onInitViewAfterLoad()
 
 void MainWindow::mousePressEvent( QMouseEvent* event )
 {
-	//qDebug() << "mousePressEvent";
+	//spdlog::debug("mousePressEvent");
 	auto gp = this->mapFromGlobal( event->globalPos() );
 	if ( event->button() & Qt::LeftButton )
 	{
@@ -454,7 +455,7 @@ void MainWindow::mousePressEvent( QMouseEvent* event )
 
 void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 {
-	//qDebug() << "mouseReleaseEvent";
+	//spdlog::debug("mouseReleaseEvent");
 	if ( event->button() & Qt::LeftButton )
 	{
 		if ( m_view )
@@ -587,7 +588,7 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 
 void MainWindow::noesisInit()
 {
-	qDebug() << "noesisInit()";
+	spdlog::debug("noesisInit()");
 	Noesis::LogHandler logHandler = []( const char*, uint32_t, uint32_t level, const char*, const char* message ) {
 		// [TRACE] [DEBUG] [INFO] [WARNING] [ERROR]
 		const char* prefixes[] = { "T", "D", "I", "W", "E" };
@@ -598,11 +599,11 @@ void MainWindow::noesisInit()
 		}
 		m_noesisMessages.insert( message );
 
-		qDebug() << "[NOESIS]" << prefixes[level] << message;
+		spdlog::debug( "[NOESIS] {} {}", prefixes[level], message );
 	};
 
 	Noesis::ErrorHandler errorHandler = []( const char* file, uint32_t line, const char* message, bool fatal ) {
-		qDebug() << "[NOESIS]" << message << " in " << file << ":" << line;
+		spdlog::debug( "[NOESIS] {} in {}:{}", message, file, line );
 		if ( fatal )
 		{
 			abort();

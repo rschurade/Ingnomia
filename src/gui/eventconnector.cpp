@@ -45,7 +45,6 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include <QDebug>
 
 EventConnector::EventConnector( GameManager* parent ) :
 	gm( parent ),

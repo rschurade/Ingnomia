@@ -17,7 +17,7 @@
 */
 #include "creature.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 QVariantMap EquipmentItem::serialize()
 {
@@ -215,7 +215,7 @@ EquipmentItem& Equipment::getSlot( CreaturePart part )
 		case CP_BACK:
 			return back;
 		default:
-			qWarning() << "Invalid equipment slot!";
+			spdlog::warn("Invalid equipment slot!");
 			abort();
 	}
 }

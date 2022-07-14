@@ -27,7 +27,7 @@
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
@@ -378,22 +378,22 @@ void NeighborsModel::onDiploMissionCmd( BaseComponent* param )
 	m_proxy->requestAvailableGnomes();
 
 
-	qDebug() << "Diplo" << param->ToString().Str();
+	spdlog::debug( "Diplo {}", param->ToString().Str() );
 }
 
 void NeighborsModel::onSpyMissionCmd( BaseComponent* param )
 {
-	qDebug() << "Spy" << param->ToString().Str();
+	spdlog::debug( "Spy", param->ToString().Str() );
 }
 
 void NeighborsModel::onRaidMissionCmd( BaseComponent* param )
 {
-	qDebug() << "Raid" << param->ToString().Str();
+	spdlog::debug( "Raid", param->ToString().Str() );
 }
 
 void NeighborsModel::onSabotageMissionCmd( BaseComponent* param )
 {
-	qDebug() << "Sabotage" << param->ToString().Str();
+	spdlog::debug( "Sabotage {}", param->ToString().Str() );
 }
 
 void NeighborsModel::neighborsUpdate( const QList<GuiNeighborInfo>& infos )

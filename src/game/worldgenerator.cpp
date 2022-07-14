@@ -36,10 +36,11 @@
 #include "../gfx/spritefactory.h"
 
 #include <QApplication>
-#include <QDebug>
 #include <QElapsedTimer>
 
 #include "../base/containersHelper.h"
+
+#include "spdlog/spdlog.h"
 
 WorldGenerator::WorldGenerator( NewGameSettings* newGameSettings, Game* parent ) :
 	g( parent ),
@@ -63,7 +64,7 @@ World* WorldGenerator::generateTopology()
 
 	w = new World( m_dimX, m_dimY, m_dimZ, g );
 
-	qDebug() << "creating world with size" << m_dimX << m_dimY << m_dimZ;
+	spdlog::debug( "creating world with size {} {} {}", m_dimX, m_dimY, m_dimZ );
 
 	m_groundLevel = ngs->ground();
 	m_fow         = Global::cfg->get_or_default<bool>( "fow" , false );
@@ -131,7 +132,7 @@ World* WorldGenerator::generateTopology()
 	w->init();
 
 	discoverAll();
-	qDebug() << "world generator - topology - done";
+	spdlog::debug("world generator - topology - done");
 	return w;
 }
 
@@ -151,7 +152,7 @@ void WorldGenerator::addLife()
 
 	GameState::kingdomName = ngs->kingdomName();
 
-	qDebug() << "world generator - life - done";
+	spdlog::debug("world generator - life - done");
 
 	w->regionMap().initRegions();
 }
@@ -419,7 +420,7 @@ void WorldGenerator::addPlantsAndTrees()
 
 	if ( treeDensity > 0 )
 	{
-		qDebug() << "tree density " << treeDensity;
+		spdlog::debug( "tree density  {}", treeDensity );
 		//treeDensity = 101 - treeDensity;
 
 		for ( int x_ = 2; x_ < m_dimX - 2; ++x_ )
@@ -1436,7 +1437,7 @@ void WorldGenerator::createRivers()
 		int border = qMax( 0, qMin( int( perlinRandWhiteNoise( i * 10, i * 20 ) * 4 ), 3 ) );
 		int offset = qMax( 10, qMin( int( perlinRandWhiteNoise( i * 15, i * 17 ) * m_dimX ), m_dimX - 10 ) );
 
-		qDebug() << i << ": " << border << offset;
+		spdlog::debug("{}: {} {}", i, border, offset );
 
 		int dir = 0;
 		Position pos;
@@ -1681,7 +1682,7 @@ void WorldGenerator::placeLairs()
 		ys = sl[1].toInt();
 		zs = sl[2].toInt();
 	}
-	qDebug() << "lair size " << xs << ys << zs;
+	spdlog::debug( "lair size {} {} {}", xs, ys, zs );
 	int x = 5;
 	int y = 5;
 	int z = 100 - zs;
@@ -1697,7 +1698,7 @@ void WorldGenerator::placeLairs()
 		x += 5;
 		y += 5;
 	}
-	qDebug() << "lair location " << x << y << z;
+	spdlog::debug("lair location {} {} {}", x, y, z);
 	if ( found )
 	{
 		auto& world = w->world();

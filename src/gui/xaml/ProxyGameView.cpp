@@ -28,7 +28,6 @@
 
 #include "ViewModel.h"
 
-#include <QDebug>
 #include <QPainter>
 
 ProxyGameView::ProxyGameView( QObject* parent ) :

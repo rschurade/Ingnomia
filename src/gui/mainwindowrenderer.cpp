@@ -35,7 +35,6 @@
 #include "mainwindow.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QFile>
 #include <QImage>
 #include <QMessageBox>
@@ -44,6 +43,8 @@
 #include <QTimer>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 namespace
 {
@@ -86,25 +87,25 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 
 	this->signalCameraPosition.connect(&EventConnector::onCameraPosition, Global::eventConnector);
 
-	qDebug() << "initialize GL ...";
+	spdlog::debug("initialize GL ...");
 	connect( m_parent->context(), &QOpenGLContext::aboutToBeDestroyed, this, &MainWindowRenderer::cleanup );
 	this->redrawRequired.connect(&MainWindow::redraw, m_parent);
 
 	if ( !initializeOpenGLFunctions() )
 	{
-		qDebug() << "failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3";
-		qCritical() << "failed to initialize OpenGL functions core 4.3 - exiting";
+		spdlog::debug("failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3");
+		spdlog::critical("failed to initialize OpenGL functions core 4.3 - exiting");
 		QMessageBox msgBox;
 		msgBox.setText( "Failed to initialize OpenGL - make sure your graphics card and driver support OpenGL 4.3" );
 		msgBox.exec();
 		exit( 0 );
 	}
 
-	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VENDOR ) );
-	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VERSION ) );
-	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_RENDERER ) );
+	spdlog::debug( "[OpenGL] {}", reinterpret_cast<char const*>( glGetString( GL_VENDOR ) ) );
+	spdlog::debug( "[OpenGL] {}", reinterpret_cast<char const*>( glGetString( GL_VERSION ) ) );
+	spdlog::debug( "[OpenGL] {}", reinterpret_cast<char const*>( glGetString( GL_RENDERER ) ) );
 
-	qDebug() << m_parent->context()->format();
+	spdlog::debug( "{}", m_parent->context()->format() );
 
 	QOpenGLExtraFunctions* f = QOpenGLContext::currentContext()->extraFunctions();
 	GLDEBUGPROC logHandler   = []( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) -> void
@@ -168,7 +169,7 @@ void MainWindowRenderer::initializeGL()
 
 	if ( !initShaders() )
 	{
-		//qCritical() << "failed to init shaders - exiting";
+		//spdlog::critical("failed to init shaders - exiting");
 	}
 
 	m_vao.create();
@@ -187,7 +188,7 @@ void MainWindowRenderer::initializeGL()
 
 	updateRenderParams();
 
-	qDebug() << "initialize GL - done";
+	spdlog::debug("initialize GL - done");
 }
 
 void MainWindowRenderer::reloadShaders()
@@ -276,7 +277,7 @@ QOpenGLShaderProgram* MainWindowRenderer::initShader( QString name )
 	ok &= shader->addShaderFromSourceCode( QOpenGLShader::Fragment, fs );
 	if ( !ok )
 	{
-		qCritical() << "failed to add shader source code" << name;
+		spdlog::critical("failed to add shader source code {}", name.toStdString());
 		return nullptr;
 	}
 
@@ -284,14 +285,14 @@ QOpenGLShaderProgram* MainWindowRenderer::initShader( QString name )
 
 	if ( !ok )
 	{
-		qCritical() << "failed to link shader" << name;
+		spdlog::critical("failed to link shader {}", name.toStdString());
 		return nullptr;
 	}
 
 	ok &= shader->bind();
 	if ( !ok )
 	{
-		qCritical() << "failed to bind shader" << name;
+		spdlog::critical("failed to bind shader {}", name.toStdString());
 		return nullptr;
 	}
 
@@ -310,7 +311,7 @@ QOpenGLShaderProgram* MainWindowRenderer::initComputeShader( QString name )
 	ok &= shader->addShaderFromSourceCode( QOpenGLShader::Compute, cs );
 	if ( !ok )
 	{
-		qCritical() << "failed to add shader source code";
+		spdlog::critical("failed to add shader source code");
 		return nullptr;
 	}
 
@@ -318,14 +319,14 @@ QOpenGLShaderProgram* MainWindowRenderer::initComputeShader( QString name )
 
 	if ( !ok )
 	{
-		qCritical() << "failed to link shader";
+		spdlog::critical("failed to link shader");
 		return nullptr;
 	}
 
 	ok &= shader->bind();
 	if ( !ok )
 	{
-		qCritical() << "failed to bind shader";
+		spdlog::critical("failed to bind shader");
 		return nullptr;
 	}
 
@@ -395,8 +396,8 @@ void MainWindowRenderer::initTextures()
 	GLint max_layers;
 	glGetIntegerv( GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers );
 
-	qDebug() << "max array size: " << max_layers;
-	qDebug() << "used " << Global::eventConnector->game()->sf()->size() << " sprites";
+	spdlog::debug( "max array size:  {}", max_layers );
+	spdlog::debug( "used {} sprites", Global::eventConnector->game()->sf()->size()  );
 
 	int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
 
@@ -458,10 +459,10 @@ void MainWindowRenderer::updateRenderParams()
 
 	/*
 	QString msg = "Move: " + QString::number( m_moveX ) + ", " + QString::number( m_moveY ) + " z-Level: " + QString::number( m_viewLevel ); 
-	qDebug() << msg;
+	spdlog::debug( "{}", msg.toStdString() );
 	//emit sendOverlayMessage( 5, msg );
 	msg = "Window size: " + QString::number( m_width ) + "x" + QString::number( m_height ) + " Scale " + QString::number( m_scale ) + " Rotation " + QString::number( m_rotation );
-	qDebug() << msg;
+	spdlog::debug( "{}", msg.toStdString() );
 	//emit sendOverlayMessage( 4, msg );
 	*/
 }

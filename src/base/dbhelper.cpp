@@ -17,11 +17,10 @@
 */
 #include "dbhelper.h"
 
-#include <QDebug>
 #include "../base/db.h"
 #include "../base/gamestate.h"
-
 #include "containersHelper.h"
+#include "spdlog/spdlog.h"
 
 absl::btree_map<QString, QString> DBHelper::m_spriteIDCache;
 absl::btree_map<QString, bool> DBHelper::m_spriteIsRandomCache;
@@ -123,7 +122,7 @@ QString DBH::materialSID( int material )
 	{
 		return it->second;
 	}
-	qDebug() << "***ERROR*** DBH::materialSID : no entry for material:" << material;
+	spdlog::debug( "***ERROR*** DBH::materialSID : no entry for material: {}", material );
 	return "NONE";
 }
 
@@ -143,7 +142,7 @@ QString DBH::itemSID( int item )
 	{
 		return it->second;
 	}
-	qDebug() << "***ERROR*** DBH::itemSID : no entry for item:" << item;
+	spdlog::debug( "***ERROR*** DBH::itemSID : no entry for item: {}", item );
 	return "NONE";
 }
 

@@ -119,6 +119,7 @@ target_link_libraries(${PROJECT_NAME}
 		absl::hash
 		absl::flat_hash_map
 		Pal::Sigslot
+		fmt::fmt
 
 		range-v3::range-v3
 

@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "creature.h"
-#include "../game/game.h"
 
 #include "../base/behaviortree/bt_factory.h"
 #include "../base/gamestate.h"
@@ -25,13 +24,13 @@
 #include "../base/util.h"
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/room.h"
 #include "../game/roommanager.h"
 #include "../game/world.h"
-
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 Creature::Creature( const Position& pos, QString name, Gender gender, QString species, Game* game ) :
 	g( game ),
@@ -307,7 +306,7 @@ void Creature::loadBehaviorTree( QString id )
 
 	if ( !m_behaviorTree )
 	{
-		qCritical() << "failed to load behavior tree!" << id;
+		spdlog::critical("failed to load behavior tree! {}", id.toStdString());
 	}
 }
 
@@ -548,7 +547,7 @@ bool Creature::moveOnPath()
 			{
 				m_currentPath.clear();
 				if ( Global::debugMode )
-					qDebug() << "moveOnPath tile blocked " << p.toString();
+					spdlog::debug( "moveOnPath tile blocked  {}", p.toString().toStdString() );
 				return false;
 			}
 
@@ -563,7 +562,7 @@ bool Creature::moveOnPath()
 						{
 							m_currentPath.clear();
 							if ( Global::debugMode )
-								qDebug() << "moveOnPath door closed for gnomes " << p.toString();
+								spdlog::debug( "moveOnPath door closed for gnomes  {}", p.toString().toStdString() );
 							return false;
 						}
 						break;
@@ -572,7 +571,7 @@ bool Creature::moveOnPath()
 						{
 							m_currentPath.clear();
 							if ( Global::debugMode )
-								qDebug() << "moveOnPath door closed for animals " << p.toString();
+								spdlog::debug( "moveOnPath door closed for animals  {}", p.toString().toStdString() );
 							return false;
 						}
 						break;
@@ -581,7 +580,7 @@ bool Creature::moveOnPath()
 						{
 							m_currentPath.clear();
 							if ( Global::debugMode )
-								qDebug() << "moveOnPath door closed for monsters " << p.toString();
+								spdlog::debug( "moveOnPath door closed for monsters  {}", p.toString().toStdString() );
 							return false;
 						}
 						break;
@@ -596,7 +595,7 @@ bool Creature::moveOnPath()
 					{
 						m_currentPath.clear();
 						if ( Global::debugMode )
-							qDebug() << "moveOnPath gnome can't move onto a tile occupied by monsters " << p.toString();
+							spdlog::debug( "moveOnPath gnome can't move onto a tile occupied by monsters  {}", p.toString().toStdString() );
 						return false;
 					}
 					break;
@@ -607,7 +606,7 @@ bool Creature::moveOnPath()
 					{
 						m_currentPath.clear();
 						if ( Global::debugMode )
-							qDebug() << "moveOnPath monster can't move onto a tile occupied by gnomes " << p.toString();
+							spdlog::debug( "moveOnPath monster can't move onto a tile occupied by gnomes  {}", p.toString().toStdString() );
 						return false;
 					}
 					break;
@@ -891,13 +890,13 @@ BT_RESULT Creature::conditionTargetAdjacent( bool halt )
 			if ( abs( m_position.x - cPos.x ) < 2 && abs( m_position.y - cPos.y ) < 2 )
 			{
 				if ( Global::debugMode )
-					qDebug() << m_name << "Target is adjacent";
+					spdlog::debug( "{} Target is adjacent", m_name.toStdString() );
 				return BT_RESULT::SUCCESS;
 			}
 		}
 	}
 	if ( Global::debugMode )
-		qDebug() << m_name << "Target is not adjacent";
+		spdlog::debug( "{} Target is not adjacent", m_name.toStdString() );
 	return BT_RESULT::FAILURE;
 }
 

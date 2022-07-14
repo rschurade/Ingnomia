@@ -2,7 +2,6 @@
 
 #include "../base/io.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QDir>
 #include <QStandardPaths>
@@ -10,6 +9,8 @@
 #include <QJsonDocument>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 KeyBindings::KeyBindings(QObject *parent)
 	: QObject(parent)
@@ -109,7 +110,7 @@ void KeyBindings::update()
 	const fs::path& folder = IO::getDataFolder() / "settings";
 	QJsonDocument jd;
 	IO::loadFile( folder / "keybindings.json", jd );
-	qDebug() << "Load key bindings...";
+	spdlog::debug("Load key bindings...");
 	auto groupList = jd.toVariant().toList();
 	
 	for( auto groupElement : groupList )

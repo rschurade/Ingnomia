@@ -24,7 +24,6 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 
 Tile& World::getTile( const unsigned short x, const unsigned short y, const unsigned short z )

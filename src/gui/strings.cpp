@@ -22,7 +22,6 @@
 #include "../base/db.h"
 
 #include <QApplication>
-#include <QDebug>
 #include <QJsonDocument>
 #include <QVariantMap>
 

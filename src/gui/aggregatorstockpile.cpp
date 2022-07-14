@@ -27,6 +27,8 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
+#include "spdlog/spdlog.h"
+
 AggregatorStockpile::AggregatorStockpile( QObject* parent ) :
 	QObject(parent)
 {
@@ -164,7 +166,7 @@ void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString n
 void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
 	if( !g ) return;
-	qDebug() << "set active:" << stockpileID << active << category << group << item << material;
+	spdlog::debug( "set active: {} {} {} {} {} {}", stockpileID, active, category.toStdString(), group.toStdString(), item.toStdString(), material.toStdString() );
 	auto sp = g->spm()->getStockpile( stockpileID );
 	if ( sp )
 	{

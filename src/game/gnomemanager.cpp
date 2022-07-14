@@ -32,10 +32,11 @@
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QStandardPaths>
+
+#include "spdlog/spdlog.h"
 
 GnomeManager::GnomeManager( Game* parent ) :
 	g( parent ),
@@ -171,7 +172,7 @@ void GnomeManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 		auto elapsed = timer2.elapsed();
 		if ( elapsed > 100 )
 		{
-			qDebug() << g->name() << "just needed" << elapsed << "ms for tick";
+			spdlog::debug("{} just needed {}ms for tick", g->name(), elapsed );
 			Global::cfg->set( "Pause", true );
 			return;
 		}
@@ -417,7 +418,7 @@ void GnomeManager::loadProfessions()
 		}
 		else
 		{
-			qDebug() << "Unable to find profession config!";
+			spdlog::debug("Unable to find profession config!");
 			return;
 		}
 	}

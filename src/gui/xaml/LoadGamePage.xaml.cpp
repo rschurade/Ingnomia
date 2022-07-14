@@ -17,8 +17,6 @@
 */
 #include "LoadGamePage.xaml.h"
 
-#include <QDebug>
-
 using namespace IngnomiaGUI;
 using namespace Noesis;
 

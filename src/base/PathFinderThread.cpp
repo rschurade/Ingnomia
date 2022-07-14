@@ -20,8 +20,6 @@
 #include "../base/global.h"
 #include "../game/world.h"
 
-#include <QDebug>
-
 #include <map>
 
 #define DEADLYFLUIDLEVEL 4
@@ -237,10 +235,10 @@ void PathFinderThread::findPath()
 		else
 		{
 			/*
-		qDebug() << "##################################################################################################";
-		qDebug() << "no path found";
+		spdlog::debug("##################################################################################################");
+		spdlog::debug("no path found");
 		qDebug() << "start: " << m_start.toString() << " goal: " << m_goal.toString();
-		qDebug() << "##################################################################################################";
+		spdlog::debug("##################################################################################################");
 		*/
 		}
 		m_callback( m_start, goal, m_ignoreNoPass, std::move(path) );

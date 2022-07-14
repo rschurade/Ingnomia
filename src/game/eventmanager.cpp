@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "eventmanager.h"
-#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -24,16 +23,15 @@
 #include "../base/global.h"
 #include "../base/pathfinder.h"
 #include "../base/util.h"
-#include "../game/gnome.h"
 #include "../game/creaturemanager.h"
+#include "../game/gnome.h"
 #include "../game/gnomemanager.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
-
 #include "../gui/eventconnector.h"
-
-#include <QDebug>
+#include "game.h"
+#include "spdlog/spdlog.h"
 
 QVariantMap Event::serialize()
 {
@@ -286,7 +284,7 @@ bool EventManager::checkRequirements( Event& event )
 
 void EventManager::executeEvent( Event& event )
 {
-	//qDebug() << "execute event";
+	//spdlog::debug("execute event");
 	auto data = event.data.toMap();
 	/*
 	for( auto key : data.keys() )
@@ -313,7 +311,7 @@ void EventManager::executeEvent( Event& event )
 			}
 			else
 			{
-				qDebug() << "Spawn trader failed, marketStall = 0";
+				spdlog::debug("Spawn trader failed, marketStall = 0");
 				return;
 			}
 		}

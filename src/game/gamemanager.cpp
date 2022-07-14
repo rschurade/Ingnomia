@@ -68,10 +68,11 @@
 
 #include <QPointer>
 #include <QDateTime>
-#include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QStandardPaths>
+
+#include "spdlog/spdlog.h"
 
 GameManager::GameManager( QObject* parent ) :
 	QObject( parent )
@@ -126,7 +127,7 @@ void GameManager::endCurrentGame()
 
 void GameManager::startNewGame()
 {
-	qDebug() << "GameManger: New game";
+	spdlog::debug("GameManger: New game");
 
 	// create new random kingdom name
 
@@ -189,7 +190,7 @@ void GameManager::init()
 
 	if ( !S::gi().init() )
 	{
-		qDebug() << "Failed to init translation.";
+		spdlog::debug("Failed to init translation.");
 		abort();
 	}
 }
@@ -213,7 +214,7 @@ void GameManager::loadGame( const fs::path& folder )
 	}
 	else
 	{
-		qDebug() << "failed to load";
+		spdlog::debug("failed to load");
 		m_eventConnector->sendLoadGameDone( false );
 	}
 }
@@ -298,7 +299,7 @@ void GameManager::postCreationInit()
 
 void GameManager::onGeneratorMessage( QString message )
 {
-	qDebug() << message;
+	spdlog::debug( "{}", message.toStdString() );
 }
 
 void GameManager::saveGame()

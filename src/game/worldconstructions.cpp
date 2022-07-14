@@ -20,10 +20,10 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
-#include "../game/game.h"
 #include "../game/creaturemanager.h"
 #include "../game/farmingmanager.h"
 #include "../game/fluidmanager.h"
+#include "../game/game.h"
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/mechanismmanager.h"
@@ -32,10 +32,10 @@
 #include "../game/workshopmanager.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
+#include "spdlog/spdlog.h"
 #include "world.h"
 
-//#include <QDebug>
-#include <QJsonDocument>
+//#include <QJsonDocument>
 
 const int ROT_BIT  = 65536;
 const int ANIM_BIT = 262144;
@@ -45,7 +45,7 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 {
 	if ( itemIDs.empty() )
 	{
-		//qDebug() << "World::construct() - source item list is empty!";
+		//spdlog::debug("World::construct() - source item list is empty!");
 		return false;
 	}
 
@@ -68,7 +68,7 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 		}
 		else
 		{
-			//qDebug() << "Source item no longer exists!" << vItem;
+			//spdlog::debug( "Source item no longer exists! {}", vItem.toStdString() );
 			return false;
 		}
 	}
@@ -950,7 +950,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 
 	if ( g->inv()->itemSID( itemID ) != itemSID )
 	{
-		//qDebug() << "create item from components before installing";
+		//spdlog::debug("create item from components before installing");
 		auto vItems = Global::util->uintList2Variant( items );
 		itemID      = g->inv()->createItem( pos, itemSID, vItems );
 		constr.insert( "Items", vItems );
@@ -977,7 +977,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		tile.wallType      = WallType::WT_CONSTRUCTED;
 		if ( sprite->anim )
 		{
-			//qDebug() << "set anim";
+			//spdlog::debug("set anim");
 			tile.wallSpriteUID += ANIM_BIT;
 		}
 	}
@@ -1143,7 +1143,7 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 
 bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Position workPos, bool ignoreGravity )
 {
-	qDebug() << "deconstruct" << decPos.toString() << isFloor;
+	spdlog::debug( "deconstruct {} {}", decPos.toString().toStdString(), isFloor );
 	if ( constr.value( "ConstructionID" ).toString() == "Item" )
 	{
 		unsigned itemID = constr.value( "Item" ).toUInt();

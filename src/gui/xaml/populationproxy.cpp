@@ -25,7 +25,6 @@
 #include "../eventconnector.h"
 #include "PopulationModel.h"
 
-#include <QDebug>
 #include <QPainter>
 
 PopulationProxy::PopulationProxy( QObject* parent ) :

@@ -18,7 +18,6 @@
 #include "gamestate.h"
 #include "../base/db.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QFile>
 

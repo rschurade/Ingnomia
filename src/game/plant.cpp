@@ -30,7 +30,6 @@
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
 #include <QPainter>
 #include <QRandomGenerator>
 

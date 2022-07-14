@@ -26,7 +26,6 @@
 
 #include "PopulationModel.h"
 
-#include <QDebug>
 #include <QPainter>
 
 CreatureInfoProxy::CreatureInfoProxy( QObject* parent ) :

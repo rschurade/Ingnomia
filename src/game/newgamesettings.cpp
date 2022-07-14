@@ -23,7 +23,6 @@
 #include "../gui/strings.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -31,6 +30,8 @@
 
 #include <random>
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 inline void from_json(const json& j, JsonStartingItem& item) {
 	const auto type = j.at("Type").get<std::string>();
@@ -193,7 +194,7 @@ void NewGameSettings::loadEmbarkMap()
 		}
 		else
 		{
-			qDebug() << "Unable to find new game config!";
+			spdlog::debug("Unable to find new game config!");
 			abort();
 		}
 	}

@@ -16,8 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "gnome.h"
-#include "../game/gnomemanager.h"
-#include "../game/game.h"
 
 #include "../base/behaviortree/bt_tree.h"
 #include "../base/config.h"
@@ -25,17 +23,19 @@
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
+#include "../game/game.h"
+#include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/militarymanager.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
-#include "../game/world.h"
 #include "../game/workshop.h"
 #include "../game/workshopmanager.h"
+#include "../game/world.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QPainter>
@@ -637,7 +637,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 
 	if ( isDead() )
 	{
-		qDebug() << m_name << " expires " << GameState::tick + Global::util->ticksPerDay;
+		spdlog::debug( "{} expires {}", m_name.toStdString(), GameState::tick + Global::util->ticksPerDay );
 		m_expires    = GameState::tick + Global::util->ticksPerDay * 2;
 		m_lastOnTick = tickNumber;
 		return CreatureTickResult::DEAD;
@@ -645,7 +645,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 
 	if ( m_job && ( m_job->isAborted() || m_job->isCanceled() ) )
 	{
-		qDebug() << m_job->type() << " job is canceled";
+		spdlog::debug( "{} job is canceled", m_job->type().toStdString() );
 		cleanUpJob( false );
 		m_behaviorTree->halt();
 	}
@@ -757,8 +757,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 			{
 				if ( m_job )
 				{
-					qDebug() << "LOOPTIME" << m_name << ela << "ms"
-							 << "job:" << m_job->type() << m_job->pos().toString();
+					spdlog::debug( "LOOPTIME {} {}ms job: {} {}", m_name.toStdString(), ela, m_job->type().toStdString(), m_job->pos().toString().toStdString() );
 				}
 			}
 		}

@@ -38,12 +38,13 @@
 #include "../gfx/spritefactory.h"
 #include "../gui/eventconnector.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 #include <QVector3D>
 
 #include <random>
 #include <time.h>
+
+#include "spdlog/spdlog.h"
 
 World::World( int dimX, int dimY, int dimZ, Game* game ) :
 	g( game ),
@@ -80,7 +81,7 @@ World::~World()
 
 void World::init()
 {
-	qDebug() << "World::init";
+	spdlog::debug("World::init");
 
 	m_dimX = Global::dimX;
 	m_dimY = Global::dimY;
@@ -139,7 +140,7 @@ void World::initWater()
 
 void World::afterLoad()
 {
-	qDebug() << "World::afterLoad";
+	spdlog::debug("World::afterLoad");
 	m_dimX = Global::dimX;
 	m_dimY = Global::dimY;
 	m_dimZ = Global::dimZ;
@@ -466,7 +467,7 @@ void World::expelTileItems( Position pos, Position& to )
 
 void World::expelTileInhabitants( Position pos, Position& to )
 {
-	//qDebug() << "expel from " << pos.toString();
+	//spdlog::debug( "expel from  {}", pos.toString().toStdString() );
 	Tile& tile = getTile( pos );
 	// check if someone is on the tile
 	if ( m_creaturePositions.contains( pos.toInt() ) )
@@ -703,7 +704,7 @@ void World::removeGrass( Position pos )
 
 		if ( tile.floorType & FT_SOLIDFLOOR && materialSID == "Dirt" )
 		{
-			//if( Global::debugMode ) qDebug() << "add grass candidate at " << pos.toString();
+			//if( Global::debugMode ) spdlog::debug( "add grass candidate at  {}", pos.toString().toStdString() );
 			tile.floorSpriteUID = g->sf()->createSprite( "RoughFloor", { "Dirt" } )->uID;
 			m_grassCandidatePositions.insert( pos.toInt() );
 		}
@@ -1233,7 +1234,7 @@ void World::updateRampAtPos( Position pos )
 	{
 		return;
 	}
-	//	qDebug() << "ramp at " << pos.toString();
+	//	spdlog::debug( "ramp at  {}", pos.toString().toStdString() );
 	Tile& tileBelow = getTile( pos.belowOf() );
 	Tile& tileAbove = getTile( pos.aboveOf() );
 

@@ -37,10 +37,11 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
 #include <QJsonDocument>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 WorkshopProperties::WorkshopProperties( QVariantMap& in )
 {
@@ -486,7 +487,7 @@ void Workshop::addJob( QString craftID, int mode, int number, QStringList mats )
 	if ( mats.size() != rows.size() )
 	{
 		//something went wrong, this should never happen, but if we are here it happened
-		qDebug() << "error creating craft job";
+		spdlog::debug("error creating craft job");
 		return;
 	}
 	for ( int i = 0; i < rows.size(); ++i )
@@ -1139,7 +1140,7 @@ void Workshop::setLinkedStockpile( bool link )
 	{
 		m_properties.linkedStockpile = 0;
 	}
-	qDebug() << "linked stockpile:" << m_properties.linkedStockpile;
+	spdlog::debug( "linked stockpile: {}", m_properties.linkedStockpile );
 }
 
 unsigned int Workshop::getPossibleStockpile()

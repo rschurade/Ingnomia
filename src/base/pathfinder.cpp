@@ -22,7 +22,6 @@
 #include "../base/global.h"
 #include "../game/world.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 
 #include <future>

@@ -28,10 +28,11 @@
 #include "../game/jobmanager.h"
 #include "../game/newgamesettings.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 
 #include "../base/containersHelper.h"
+
+#include "spdlog/spdlog.h"
 
 CreatureManager::CreatureManager( Game* parent ) :
 	g( parent ),
@@ -293,7 +294,7 @@ void CreatureManager::removeCreature( unsigned int id )
 				{
 					if ( a->pastureID() )
 					{
-						qDebug() << "remove animal from pasture";
+						spdlog::debug("remove animal from pasture");
 						auto pasture = g->m_farmingManager->getPasture( a->pastureID() );
 						if ( pasture )
 						{

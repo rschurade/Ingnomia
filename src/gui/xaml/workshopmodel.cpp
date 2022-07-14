@@ -28,7 +28,7 @@
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
@@ -425,7 +425,7 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 		m_catchFish   = info.catchFish;
 		m_processFish = info.processFish;
 	}
-	qDebug() << m_gui;
+	spdlog::debug("{}", m_gui.toStdString());
 
 	m_proxy->unblockWriteBack();
 

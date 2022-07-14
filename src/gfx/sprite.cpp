@@ -18,8 +18,8 @@
 #include "../gfx/sprite.h"
 
 #include "../base/db.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QPainter>
 
 #include <range/v3/view.hpp>
@@ -71,7 +71,7 @@ SpritePixmap::SpritePixmap( QPixmap pixmap, QString offset ) :
 		for ( int x = 0; x < img.width(); ++x )
 		{
 			if ( y > 63 )
-				qDebug() << "SpritePixmap::SpritePixmap" << sID;
+				spdlog::debug("SpritePixmap::SpritePixmap {}", sID.toStdString());
 			target.setPixelColor( qMin( 31, x + xOffset ), qMax( 0, qMin( 63, y + yOffset + 16 ) ), img.pixelColor( x, y ) );
 		}
 	}
@@ -116,7 +116,7 @@ void SpritePixmap::applyEffect( QString effect )
 			for ( int x = 0; x < 32; ++x )
 			{
 				if ( y + 16 > 63 )
-					qDebug() << "SpritePixmap::applyEffect 1" << sID;
+					spdlog::debug( "SpritePixmap::applyEffect 1 {}", sID.toStdString() );
 				tmp.setPixelColor( x, y, img.pixelColor( x, y + 16 ) );
 			}
 		}
@@ -128,7 +128,7 @@ void SpritePixmap::applyEffect( QString effect )
 			for ( int x = 0; x < 32; ++x )
 			{
 				if ( y > 63 )
-					qDebug() << "SpritePixmap::applyEffect 2" << sID;
+					spdlog::debug( "SpritePixmap::applyEffect 2 {}", sID.toStdString() );
 				img.setPixelColor( x, y + 16, tmp.pixelColor( x, y ) );
 			}
 		}
@@ -166,7 +166,7 @@ void SpritePixmap::applyTint( QString tint, QString materialSID )
 		for ( int y = 0; y < img.size().height(); ++y )
 		{
 			if ( y > 63 )
-				qDebug() << "SpritePixmap::applyTint" << sID;
+				spdlog::debug( "SpritePixmap::applyTint {}", sID.toStdString() );
 			QColor col = img.pixelColor( x, y );
 			col.setRedF( qMin( 1., col.redF() * color.redF() ) );
 			col.setGreenF( qMin( 1., col.greenF() * color.greenF() ) );

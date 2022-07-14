@@ -28,7 +28,6 @@
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 
-#include <QDebug>
 
 TraderDefinition::TraderDefinition( QVariantMap& in )
 {

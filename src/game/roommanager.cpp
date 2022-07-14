@@ -26,7 +26,6 @@
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
 
-#include <QDebug>
 #include <range/v3/view.hpp>
 
 RoomManager::RoomManager( Game* parent ) :
@@ -359,7 +358,7 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 
 			if ( pos.isZero() )
 			{
-				//qDebug() << "create alarm job - no bell";
+				//spdlog::debug("create alarm job - no bell");
 				return false;
 			}
 
@@ -369,7 +368,7 @@ bool RoomManager::createAlarmJob( unsigned int roomID )
 			}
 			else
 			{
-				//qDebug() << "create alarm job - create job returned 0";
+				//spdlog::debug("create alarm job - create job returned 0");
 				return false;
 			}
 		}

@@ -55,16 +55,17 @@
 #include "../gui/strings.h"
 #include "../gui/aggregatorcreatureinfo.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QTimer>
 
 #include <time.h>
 
+#include "spdlog/spdlog.h"
+
 Game::Game( QObject* parent ) :
 	QObject( parent )
 {
-	qDebug() << "init game...";
+	spdlog::debug("init game...");
 	
 	m_upsTimer.start();
 
@@ -117,7 +118,7 @@ Game::Game( QObject* parent ) :
 	
 	m_soundManager	= new SoundManager( this );
 
-	qDebug() << "init game done";
+	spdlog::debug("init game done");
 }
 
 
@@ -145,7 +146,7 @@ void Game::setWorld( int dimX, int dimY, int dimZ )
 
 void Game::start()
 {
-	qDebug() << "Starting game";
+	spdlog::debug("Starting game");
 
 	if ( GameState::tick == 0 && !GameState::initialSave )
 	{
@@ -166,7 +167,7 @@ void Game::start()
 
 void Game::stop()
 {
-	qDebug() << "Stop game";
+	spdlog::debug("Stop game");
 	if ( m_timer )
 	{
 		m_timer->stop();
@@ -313,7 +314,7 @@ void Game::sendClock()
 			++GameState::season;
 			GameState::seasonChanged    = true;
 			QString nextSeason = DB::select( "NextSeason", "Seasons", GameState::seasonString ).toString();
-			//qDebug() << "Now it's " << nextSeason;
+			//spdlog::debug( "Now it's  {}", nextSeason.toStdString() );
 			GameState::seasonString = nextSeason;
 
 			Global::util->daysPerSeason = DB::select( "NumDays", "Seasons", nextSeason ).toInt();

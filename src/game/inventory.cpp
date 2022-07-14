@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "inventory.h"
-#include "game.h"
 
 #include "../base/config.h"
 #include "../base/db.h"
@@ -30,8 +29,9 @@
 #include "../game/world.h"
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
+#include "game.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonValue>
@@ -79,7 +79,7 @@ void Inventory::init()
 	for ( auto categoryMap : DB::selectRows( "ItemGrouping" ) )
 	{
 		QString categoryID = categoryMap.value( "ID" ).toString();
-		//qDebug() << "--" << categoryID;
+		//spdlog::debug( "-- {}", categoryID.toStdString() );
 
 		m_categoriesSorted.push_back( categoryID );
 		m_groupsSorted[categoryID];
@@ -89,7 +89,7 @@ void Inventory::init()
 		for ( auto group : groupList )
 		{
 			QString groupID = group.toString();
-			//qDebug() << "----" << groupID;
+			//spdlog::debug( "---- {}", groupID.toStdString() );
 			m_groupsSorted[categoryID].push_back( groupID );
 			m_itemsSorted[categoryID][groupID];
 
@@ -221,13 +221,13 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 			}
 			else
 			{
-				qDebug() << "####### component item" << components.first() << "for createItem" << itemSID << "at" << pos.toString() << "doesn't exist";
+				spdlog::debug( "####### component item {} for createItem {} at {} doesn't exist", components.first(), itemSID.toStdString(), pos.toString().toStdString() );
 				return 0;
 			}
 		}
 		else
 		{
-			qDebug() << "####### create item, components empty";
+			spdlog::debug("####### create item, components empty");
 			return 0;
 		}
 	}
@@ -275,12 +275,12 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 {
 	if ( values.value( "ItemSID" ).toString().isEmpty() )
 	{
-		qDebug() << "missing itemSID" << values.value( "ID" ).toUInt() << "at" << values.value( "Position" ).toString();
+		spdlog::debug( "missing itemSID {} at {}", values.value( "ID" ).toUInt(), values.value( "Position" ).toString().toStdString() );
 		return 0;
 	}
 	if ( values.value( "MaterialSID" ).toString().isEmpty() )
 	{
-		qDebug() << "missing materialSID" << values.value( "ID" ).toUInt() << "at" << values.value( "Position" ).toString();
+		spdlog::debug( "missing materialSID {} at {}", values.value( "ID" ).toUInt(), values.value( "Position" ).toString().toStdString() );
 		return 0;
 	}
 	DBH::itemUID( values.value( "ItemSID" ).toString() );
@@ -1779,8 +1779,8 @@ int Inventory::numDrinkItems()
 
 void Inventory::sanityCheck()
 {
-	qDebug() << "Starting inventory sanity check ...";
-	qDebug() << "Checking containers";
+	spdlog::debug("Starting inventory sanity check ...");
+	spdlog::debug("Checking containers");
 	QElapsedTimer timer;
 	timer.start();
 	int removed = 0;
@@ -1802,7 +1802,7 @@ void Inventory::sanityCheck()
 			}
 		}
 	}
-	qDebug() << "Removed " << QString::number( removed ) << " invalid items from crates.";
+	spdlog::debug( "Removed {} invalid items from crates.", removed );
 	removed = 0;
 	for ( auto it : m_hash["Barrel"] )
 	{
@@ -1821,7 +1821,7 @@ void Inventory::sanityCheck()
 			}
 		}
 	}
-	qDebug() << "Removed " << QString::number( removed ) << " invalid items from barrels.";
+	spdlog::debug( "Removed {} invalid items from barrels.", removed );
 	removed = 0;
 	for ( auto it : m_hash["Sack"] )
 	{
@@ -1840,8 +1840,8 @@ void Inventory::sanityCheck()
 			}
 		}
 	}
-	qDebug() << "Removed " << QString::number( removed ) << " invalid items from sacks.";
-	qDebug() << "Sanity check took " << timer.elapsed() << "ms";
+	spdlog::debug( "Removed {} invalid items from sacks.", removed );
+	spdlog::debug( "Sanity check took {}ms", timer.elapsed() );
 }
 
 QVariantList Inventory::components( unsigned int itemID )

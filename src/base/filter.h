@@ -17,7 +17,7 @@
 */
 #pragma once
 
-#include <QDebug>
+#include <QVariantMap>
 #include <QString>
 #include <absl/container/btree_set.h>
 #include <absl/container/btree_map.h>

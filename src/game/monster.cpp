@@ -30,7 +30,6 @@
 #include "../gfx/spritefactory.h"
 #include "../game/world.h"
 
-#include <QDebug>
 
 Monster::Monster( QString species, int level, Position& pos, Gender gender, Game* game ) :
 	Creature( pos, species, gender, species, game )

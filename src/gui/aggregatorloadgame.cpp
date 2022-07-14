@@ -20,7 +20,6 @@
 #include "../base/io.h"
 
 #include <QDateTime>
-#include <QDebug>
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>

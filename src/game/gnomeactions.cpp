@@ -46,8 +46,9 @@
 #include "gnome.h"
 #include "gnomemanager.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
+
+#include "spdlog/spdlog.h"
 
 BT_RESULT Gnome::actionFinishJob( bool halt )
 {
@@ -183,7 +184,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 	if ( Global::debugMode )
 		log( "actionMove" );
 	//if ( Global::debugMode )
-	//qDebug() << "actionMove" << m_currentPath.size();
+	//spdlog::debug( "actionMove {}", m_currentPath.size().toStdString() );
 
 	if ( halt )
 	{
@@ -211,7 +212,7 @@ BT_RESULT Gnome::actionMove( bool halt )
 			if ( conditionTargetAdjacent( false ) == BT_RESULT::SUCCESS )
 			{
 				if ( Global::debugMode )
-					qDebug() << m_name << "target adjecent, finish movement";
+					spdlog::debug( "{} target adjecent, finish movement", m_name.toStdString() );
 				m_currentPath.clear();
 				return BT_RESULT::SUCCESS;
 			}
@@ -580,7 +581,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 		m_job        = g->jm()->getJob( m_jobID );
 		if ( !m_job )
 		{
-			qDebug() << "jm returned null ptr for jobid " << m_jobID;
+			spdlog::debug( "jm returned null ptr for jobid  {}", m_jobID );
 			return BT_RESULT::FAILURE;
 		}
 
@@ -627,8 +628,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 			{
 				if ( m_job )
 				{
-					qDebug() << "GETJOB" << m_name << ela << "ms"
-							 << "job:" << m_job->type() << m_job->pos().toString();
+					spdlog::debug( "GETJOB {} {}ms job: {} {}", m_name.toStdString(), ela, m_job->type().toStdString(), m_job->pos().toString().toStdString() );
 				}
 			}
 		}
@@ -861,7 +861,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 
 	if ( claimedItems().size() )
 	{
-		qDebug() << "Error: no items should be claimed here.";
+		spdlog::debug("Error: no items should be claimed here.");
 		unclaimAll();
 	}
 
@@ -1020,8 +1020,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 		{
 			if ( m_job )
 			{
-				qDebug() << "CLAIMITEMS" << m_name << ela << "ms"
-						 << "job:" << m_job->type() << m_job->pos().toString();
+				spdlog::debug( "CLAIMITEMS {} {}ms job: {} {}", m_name.toStdString(), ela, m_job->type().toStdString(), m_job->pos().toString().toStdString() );
 			}
 		}
 	}
@@ -2436,7 +2435,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 							if ( hours > 300 )
 							{
 								mission->result.insert( "Success", false );
-								//qDebug() << "Found nothing, returning";
+								//spdlog::debug("Found nothing, returning");
 								mission->nextCheckTick = GameState::tick + ( GameState::tick - mission->startTick );
 								m_nextCheckTick        = mission->nextCheckTick;
 								mission->step          = MissionStep::RETURN;
@@ -2512,7 +2511,7 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 		}
 		return BT_RESULT::RUNNING;
 	}
-	//qDebug() << "Mission failure";
+	//spdlog::debug("Mission failure");
 	return BT_RESULT::FAILURE;
 }
 
@@ -2550,12 +2549,12 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 		mission->step = MissionStep::RETURNED;
 		mission->result.insert( "TotalTime", ( GameState::tick - mission->startTick ) / ( Global::util->ticksPerMinute * Global::util->minutesPerHour ) );
 
-		//qDebug() << "Returning from mission at " << m_position.toString();
+		//spdlog::debug( "Returning from mission at  {}", m_position.toString().toStdString() );
 	}
 	else
 	{
 		// this should never be reached
-		qDebug() << "Returning from mission but mission doesn't exist anymore";
+		spdlog::debug("Returning from mission but mission doesn't exist anymore");
 	}
 
 	g->w()->insertCreatureAtPosition( m_position, m_id );
@@ -2595,7 +2594,7 @@ bool Gnome::equipItem()
 		auto& itemSlot = m_equipment.getSlot( part );
 		if ( itemSlot.itemID )
 		{
-			qWarning() << "Trying to equip into occupied slot!";
+			spdlog::warn("Trying to equip into occupied slot!");
 			g->inv()->putDownItem( itemSlot.itemID, m_position );
 			g->inv()->setInJob( itemSlot.itemID, 0 );
 		}

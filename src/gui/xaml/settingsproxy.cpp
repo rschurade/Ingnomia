@@ -20,8 +20,6 @@
 #include "../../base/global.h"
 #include "../eventconnector.h"
 
-#include <QDebug>
-
 SettingsProxy::SettingsProxy( QObject* parent ) :
 	QObject( parent )
 {

@@ -31,7 +31,6 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
 
 #include <range/v3/view.hpp>
 

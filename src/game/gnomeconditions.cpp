@@ -49,8 +49,6 @@
 
 #include "../base/behaviortree/bt_node.h"
 
-//#include <QDebug>
-
 BT_RESULT Gnome::conditionIsHungry( bool halt )
 {
 	int hour = qMin( 23, GameState::hour );

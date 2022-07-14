@@ -23,8 +23,8 @@
 #include "../base/io.h"
 #include "../base/logger.h"
 #include "../base/util.h"
+#include "spdlog/spdlog.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -80,7 +80,7 @@ absl::btree_set<QString> Global::craftable;
 
 void Global::reset()
 {
-	qDebug() << "*** Global reset";
+	spdlog::debug("*** Global reset");
 
 	GameState::stockOverlay.clear();
 	GameState::squads.clear();
@@ -96,7 +96,7 @@ void Global::reset()
 
 	if ( !loadBehaviorTrees() )
 	{
-		qCritical() << "failed to load behavior trees";
+		spdlog::critical("failed to load behavior trees");
 		abort();
 	}
 

@@ -21,8 +21,6 @@
 #include "../eventconnector.h"
 #include "../aggregatorselection.h"
 
-#include <QDebug>
-
 SelectionProxy::SelectionProxy( QObject* parent ) :
 	QObject( parent )
 {

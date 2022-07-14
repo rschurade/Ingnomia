@@ -22,8 +22,6 @@
 #include "../base/position.h"
 #include "../base/util.h"
 
-#include <QDebug>
-
 Job::Job()
 {
 	m_id = GameState::createID();

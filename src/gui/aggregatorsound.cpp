@@ -27,9 +27,9 @@
 #include "../game/world.h"
 #include "../gui/eventconnector.h"
 #include "../gui/mainwindowrenderer.h"
+#include "spdlog/spdlog.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QJsonDocument>
 
 AggregatorSound::AggregatorSound( EventConnector* parent ) :
@@ -53,7 +53,7 @@ AggregatorSound::AggregatorSound( EventConnector* parent ) :
 	}
 	catch ( const std::exception& e )
 	{
-		qInfo() << "No OpenAL filter support - falling back to pure volume hacks: " << e.what();
+		spdlog::info("No OpenAL filter support - falling back to pure volume hacks: {}", e.what());
 	}
 }
 
@@ -78,11 +78,11 @@ void AggregatorSound::init( Game* game )
 		try
 		{
 			m_buffers.insert_or_assign( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename.toStdString() ) );
-			qDebug() << "loaded sound " << soundID << " " << filename;
+			spdlog::debug( "loaded sound {} {}", soundID.toStdString(), filename.toStdString());
 		}
 		catch ( ... )
 		{
-			qDebug() << "unable to load sound" << soundID << " " << filename;
+			spdlog::debug( "unable to load sound {} {}", soundID.toStdString(), filename.toStdString());
 		}
 	}
 }
@@ -104,7 +104,7 @@ void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 			QString mat = soundID + soundMaterial;
 			if ( Global::debugSound )
 			{
-				qDebug() << "Unknown sound material " << mat;
+				spdlog::debug( "Unknown sound material  {}", mat.toStdString() );
 			}
 		}
 		m_activeEffects.append( ActiveEffect {
@@ -147,7 +147,7 @@ void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 			if ( Global::debugSound )
 			{
 				QString mat = soundID + soundMaterial;
-				qDebug() << "Unknown sound material " << mat;
+				spdlog::debug( "Unknown sound material  {}", mat.toStdString() );
 			}
 		}
 		m_activeEffects.append( ActiveEffect {

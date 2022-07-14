@@ -48,7 +48,6 @@
 #include "../gui/strings.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QDir>
 #include <QDirIterator>
 #include <QElapsedTimer>
@@ -64,6 +63,8 @@
 #include <range/v3/view.hpp>
 
 #include <fstream>
+
+#include "spdlog/spdlog.h"
 
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
@@ -218,7 +219,7 @@ bool IO::createFolders()
 
 bool IO::loadOriginalConfig( json& jd )
 {
-	qDebug() << "load standard config";
+	spdlog::debug("load standard config");
 	const auto exePath = fs::path(QCoreApplication::applicationDirPath().toStdString());
 	return IO::loadFile( exePath / "content" / "JSON" / "config.json", jd );
 }
@@ -280,7 +281,7 @@ std::string IO::save( bool autosave )
 	}
 
 	if ( Global::debugMode )
-		qDebug() << QString::fromStdString(folder);
+		spdlog::debug( "{}", folder.string() );
 	std::string oldFolder;
 	if ( fs::exists( folder ) )
 	{
@@ -327,7 +328,7 @@ std::string IO::save( bool autosave )
 	if (!oldFolder.empty())
 	{
 		fs::remove_all( oldFolder );
-		qDebug() << "Savegame backup removed";
+		spdlog::debug("Savegame backup removed");
 	}
 
 	return folder;
@@ -400,7 +401,7 @@ bool IO::load( const fs::path& folder )
 
 	sanitize();
 
-	qDebug() << "loading game took: " + QString::number( timer.elapsed() ) + " ms";
+	spdlog::debug( "loading game took: {} ms", timer.elapsed() );
 	return true;
 }
 
@@ -504,14 +505,14 @@ void IO::sanitize()
 			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
 			{
 				item.setInJob( 0 );
-				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
+				spdlog::warn("item {} {} had illegal job", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 			}
 			const bool carried    = 0 != carriedItems.count( item.id() );
 			const bool construced = 0 != constructedItems.count( item.id() );
 
 			if ( carried && construced )
 			{
-				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " is both carried around and installed somewhere simultaniously";
+				spdlog::warn("item {} {} is both carried around and installed somewhere simultaniously", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 				continue;
 			}
 
@@ -520,7 +521,7 @@ void IO::sanitize()
 			{
 				g->inv()->putDownItem( item.id(), item.getPos() );
 				item.setIsConstructed( false );
-				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
+				spdlog::warn("item {} {} found lost in space", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 			}
 			if ( carried )
 			{
@@ -532,7 +533,7 @@ void IO::sanitize()
 				if ( item.isConstructed() )
 				{
 					g->inv()->setConstructed( item.id(), false );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found constructed on a gnome";
+					spdlog::warn("item {} {} found constructed on a gnome", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 				}
 			}
 			// Items in world
@@ -543,7 +544,7 @@ void IO::sanitize()
 					g->inv()->setConstructed( item.id(), false );
 					item.setIsConstructed( false );
 					g->inv()->putDownItem( item.id(), item.getPos() );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
+					spdlog::warn("item {} {} found glued to the floor", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 				}
 			}
 			// Items in construction
@@ -564,7 +565,7 @@ void IO::sanitize()
 				if ( !item.isConstructed() )
 				{
 					g->inv()->setConstructed( item.id(), true );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found broken loose";
+					spdlog::warn("item {} {} found broken loose", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
 				}
 			}
 		}
@@ -654,7 +655,7 @@ int IO::versionInt( const fs::path& folder )
 QJsonArray IO::jsonArrayConfig()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayConfig";
+		spdlog::debug("jsonArrayConfig");
 	QJsonArray ja;
 	ja.append( QJsonValue::fromVariant( toQVariant(Global::cfg->object()) ) );
 
@@ -675,7 +676,7 @@ bool IO::loadConfig( QJsonDocument& jd )
 QJsonArray IO::jsonArrayGame()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayGame";
+		spdlog::debug("jsonArrayGame");
 	GameState::version = QString::fromStdString(Global::cfg->get<std::string>( "CurrentVersion" ));
 
 	GameState::initialSave = true;
@@ -723,7 +724,7 @@ bool IO::loadGame( QJsonDocument& jd )
 bool IO::saveWorld( const fs::path& folder )
 {
 	if ( Global::debugMode )
-		qDebug() << "saveWorld";
+		spdlog::debug("saveWorld");
 	QFile worldFile( QString::fromStdString( folder / "world.dat" ) );
 	if ( worldFile.open( QIODevice::WriteOnly ) )
 	{
@@ -819,7 +820,7 @@ void IO::loadWorld( QDataStream& in )
 QJsonArray IO::jsonArrayWallConstructions()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayWallConstructions";
+		spdlog::debug("jsonArrayWallConstructions");
 	QJsonArray ja;
 	for ( const auto& constr : g->w()->wallConstructions() | ranges::views::values )
 	{
@@ -833,7 +834,7 @@ QJsonArray IO::jsonArrayWallConstructions()
 QJsonArray IO::jsonArrayFloorConstructions()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayFloorConstructions";
+		spdlog::debug("jsonArrayFloorConstructions");
 	QJsonArray ja;
 	for ( const auto& constr : g->w()->floorConstructions() | ranges::views::values )
 	{
@@ -861,7 +862,7 @@ bool IO::loadWallConstructions( QJsonDocument& jd )
 QJsonArray IO::jsonArraySprites()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArraySprites";
+		spdlog::debug("jsonArraySprites");
 	QJsonArray ja;
 	for ( const auto& sc : g->sf()->spriteCreations() )
 	{
@@ -903,7 +904,7 @@ bool IO::loadSprites( QJsonDocument& jd )
 QJsonArray IO::jsonArrayGnomes()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayGnomes";
+		spdlog::debug("jsonArrayGnomes");
 	QJsonArray ja;
 	for ( const auto& gnome : g->gm()->gnomes() )
 	{
@@ -933,7 +934,7 @@ QJsonArray IO::jsonArrayGnomes()
 QJsonArray IO::jsonArrayMonsters( int startIndex, int amount )
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayMonsters";
+		spdlog::debug("jsonArrayMonsters");
 	QJsonArray ja;
 
 	int i         = startIndex;
@@ -979,7 +980,7 @@ bool IO::saveMonsters( const fs::path& folder )
 bool IO::loadGnomes( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
-	qDebug() << "load " << ja.toVariantList().size() << "gnomes";
+	spdlog::debug( "load {} gnomes", ja.toVariantList().size() );
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		auto em = entry.toMap();
@@ -1031,7 +1032,7 @@ bool IO::loadMonsters( const fs::path& folder )
 QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayAnimals";
+		spdlog::debug("jsonArrayAnimals");
 
 	QJsonArray ja;
 	auto plants = g->w()->plants();
@@ -1113,7 +1114,7 @@ bool IO::loadPlants( const fs::path& folder )
 QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayAnimals";
+		spdlog::debug("jsonArrayAnimals");
 
 	QJsonArray ja;
 	auto& items = g->inv()->allItems();
@@ -1178,7 +1179,7 @@ bool IO::loadItems( const fs::path& folder )
 			g->inv()->createItem( entry.toMap() );
 			++count;
 		}
-		qDebug() << "loaded" << count << "items";
+		spdlog::debug( "loaded {} items", count );
 	}
 	else
 	{
@@ -1196,7 +1197,7 @@ bool IO::loadItems( const fs::path& folder )
 			}
 			++i;
 		}
-		qDebug() << "loaded" << count << "items";
+		spdlog::debug( "loaded {} items", count );
 	}
 
 	return true;
@@ -1211,7 +1212,7 @@ bool IO::loadItemHistory( QJsonDocument& jd )
 QJsonArray IO::jsonArrayJobs()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayJobs";
+		spdlog::debug("jsonArrayJobs");
 	QJsonArray ja;
 	for ( const auto& job : g->jm()->allJobs() | ranges::views::values )
 	{
@@ -1228,7 +1229,7 @@ QJsonArray IO::jsonArrayJobs()
 QJsonArray IO::jsonArrayJobSprites()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayJobSprites";
+		spdlog::debug("jsonArrayJobSprites");
 	QJsonArray ja;
 	auto jobSprites = g->w()->jobSprites();
 
@@ -1269,7 +1270,7 @@ bool IO::loadJobSprites( QJsonDocument& jd )
 QJsonArray IO::jsonArrayFarms()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayFarms";
+		spdlog::debug("jsonArrayFarms");
 	QJsonArray ja;
 	for ( const auto& farm : g->fm()->allFarms() | ranges::views::values )
 	{
@@ -1300,7 +1301,7 @@ QJsonArray IO::jsonArrayFarms()
 QJsonArray IO::jsonArrayRooms()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayRooms";
+		spdlog::debug("jsonArrayRooms");
 	QJsonArray ja;
 	for ( const auto& room : g->rm()->allRooms() | ranges::views::values )
 	{
@@ -1314,7 +1315,7 @@ QJsonArray IO::jsonArrayRooms()
 QJsonArray IO::jsonArrayDoors()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayDoors";
+		spdlog::debug("jsonArrayDoors");
 	QJsonArray ja;
 	for ( const auto& door : g->rm()->allDoors() | ranges::views::values )
 	{
@@ -1368,7 +1369,7 @@ bool IO::loadDoors( QJsonDocument& jd )
 QJsonArray IO::jsonArrayStockpiles()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayStockpiles";
+		spdlog::debug("jsonArrayStockpiles");
 	QJsonArray ja;
 	for ( const auto& stockpileID : g->spm()->allStockpilesOrdered() )
 	{
@@ -1396,7 +1397,7 @@ bool IO::loadStockpiles( QJsonDocument& jd )
 QJsonArray IO::jsonArrayWorkshops()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayWorkshops";
+		spdlog::debug("jsonArrayWorkshops");
 	QJsonArray ja;
 	for ( const auto& w : g->wsm()->workshops() )
 	{
@@ -1423,7 +1424,7 @@ bool IO::loadWorkshops( QJsonDocument& jd )
 QJsonArray IO::jsonArrayAnimals( int startIndex, int amount )
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayAnimals";
+		spdlog::debug("jsonArrayAnimals");
 
 	QJsonArray ja;
 	auto animals = g->cm()->animals();
@@ -1497,7 +1498,7 @@ bool IO::loadAnimals( const fs::path& folder )
 QJsonDocument IO::jsonArrayItemHistory()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayItemHistory";
+		spdlog::debug("jsonArrayItemHistory");
 	QVariantMap out;
 	g->inv()->itemHistory()->serialize( out );
 
@@ -1509,7 +1510,7 @@ QJsonDocument IO::jsonArrayItemHistory()
 QJsonDocument IO::jsonArrayEvents()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayEvents";
+		spdlog::debug("jsonArrayEvents");
 	QVariantMap out = g->em()->serialize();
 	QVariantList ol;
 	ol.append( out );
@@ -1531,7 +1532,7 @@ bool IO::loadEvents( QJsonDocument& jd )
 QJsonDocument IO::jsonArrayMechanisms()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayMechanisms";
+		spdlog::debug("jsonArrayMechanisms");
 	QVariantList ol;
 
 	for ( const auto& md : g->mcm()->mechanisms() | ranges::views::values )
@@ -1555,7 +1556,7 @@ bool IO::loadMechanisms( QJsonDocument& jd )
 QJsonDocument IO::jsonArrayPipes()
 {
 	if ( Global::debugMode )
-		qDebug() << "jsonArrayPipes";
+		spdlog::debug("jsonArrayPipes");
 	QVariantList ol;
 
 	for ( const auto& fp : g->flm()->pipes() | ranges::views::values )
@@ -1608,7 +1609,7 @@ bool IO::saveFile( const fs::path& url, const QJsonDocument& jd )
 
 	if ( !file.open( QIODevice::WriteOnly ) )
 	{
-		qWarning( "Couldn't open save file." );
+		spdlog::warn( "Couldn't open save file." );
 		return false;
 	}
 
@@ -1623,7 +1624,7 @@ bool IO::saveFile( const fs::path& url, const json& jd )
 
 	if (!fos.is_open() || fos.bad())
 	{
-		qWarning( "Couldn't open save file." );
+		spdlog::warn( "Couldn't open save file." );
 		return false;
 	}
 
@@ -1635,7 +1636,7 @@ bool IO::saveFile( const fs::path& url, const json& jd )
 bool IO::loadFile( const fs::path& url, QJsonDocument& ja )
 {
 	if (!fs::exists(url)) {
-		qDebug() << "JSON file '" << QString::fromStdString(url) << "' doesn't exist";
+		spdlog::debug( "JSON file '{}' doesn't exist", url.string() );
 		return false;
 	}
 
@@ -1661,7 +1662,7 @@ bool IO::loadFile( const fs::path& url, QJsonDocument& ja )
 bool IO::loadFile( const fs::path& url, json& ja )
 {
 	if (!fs::exists(url)) {
-		qDebug() << "JSON file '" << QString::fromStdString(url) << "' doesn't exist";
+		spdlog::debug( "JSON file '{}' doesn't exist", url.string() );
 		return false;
 	}
 
@@ -1671,7 +1672,7 @@ bool IO::loadFile( const fs::path& url, json& ja )
 		ja = json::parse( fis );
 		return true;
 	} catch (json::parse_error& e) {
-		qDebug() << "json parse error in" << QString::fromStdString(url) << e.what();
+		spdlog::debug( "json parse error in {}: {}", url.string(), e.what() );
 
 		return false;
 	}

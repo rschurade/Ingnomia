@@ -29,10 +29,11 @@
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
 #include <QQueue>
 
 #include <range/v3/view.hpp>
+
+#include "spdlog/spdlog.h"
 
 QVariantMap MechanismData::serialize() const
 {
@@ -559,7 +560,7 @@ bool MechanismManager::changeActive( unsigned int itemID )
 
 void MechanismManager::setActive( unsigned int itemID, bool active )
 {
-	qDebug() << "setActive";
+	spdlog::debug("setActive");
 	if ( m_mechanisms.contains( itemID ) )
 	{
 		auto& md = m_mechanisms[itemID];

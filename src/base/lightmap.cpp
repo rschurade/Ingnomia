@@ -20,7 +20,6 @@
 #include "../base/config.h"
 #include "../base/gamestate.h"
 
-#include <QDebug>
 #include <QList>
 #include <QPair>
 #include <QQueue>

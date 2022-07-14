@@ -25,7 +25,6 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
-#include <QDebug>
 #include <QQueue>
 
 #include <range/v3/view.hpp>

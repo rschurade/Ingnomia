@@ -17,7 +17,7 @@
 */
 #include "aggregatordebug.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 AggregatorDebug::AggregatorDebug( QObject* parent ) :
 	QObject(parent)
@@ -31,7 +31,7 @@ AggregatorDebug::~AggregatorDebug()
 
 void AggregatorDebug::onSpawnCreature( QString type )
 {
-	qDebug() << "spawn creature:" << type;
+	spdlog::debug( "spawn creature: {}", type.toStdString() );
 	if( type == "Gnome" )
 	{
 		signalTriggerEvent( EventType::MIGRATION, QVariantMap() );

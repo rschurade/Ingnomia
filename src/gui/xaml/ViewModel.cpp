@@ -29,8 +29,6 @@
 #include <NsGui/ObservableCollection.h>
 #include <NsGui/UIElement.h>
 
-#include <QDebug>
-
 #include <functional>
 
 using namespace IngnomiaGUI;

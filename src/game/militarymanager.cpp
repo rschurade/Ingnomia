@@ -27,7 +27,6 @@
 #include "../game/creaturemanager.h"
 #include "../game/inventory.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>

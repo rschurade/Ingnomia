@@ -47,7 +47,7 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double> expression_t;
@@ -957,7 +957,7 @@ bool CanWork::construct()
 
 			if ( !g->inv()->isConstructed( itemUID ) )
 			{
-				qDebug() << "destroy items after construction";
+				spdlog::debug("destroy items after construction");
 				g->inv()->pickUpItem( itemUID, m_id ); // update item sprites on tile
 				g->inv()->destroyObject( itemUID );
 			}
@@ -999,7 +999,7 @@ bool CanWork::createItem()
 			}
 		}
 	}
-	qDebug() << "create item failed";
+	spdlog::debug("create item failed");
 	return false;
 }
 

@@ -35,9 +35,7 @@
 
 #include "../gui/strings.h"
 
-
-
-#include <QDebug>
+#include "spdlog/spdlog.h"
 
 AggregatorAgri::AggregatorAgri( QObject* parent ) :
 	QObject(parent)
@@ -203,7 +201,7 @@ void AggregatorAgri::onRequestGlobalAnimalInfo()
 
 void AggregatorAgri::onUpdate( unsigned int designationID )
 {
-	//qDebug() << "AggregatorAgri::onUpdate";
+	//spdlog::debug("AggregatorAgri::onUpdate");
 	if ( m_farmInfo.ID == designationID )
 	{
 		onUpdateFarm( designationID );
@@ -221,7 +219,7 @@ void AggregatorAgri::onUpdate( unsigned int designationID )
 void AggregatorAgri::onUpdateFarm( unsigned int id )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onUpdateFarm";
+	//spdlog::debug("AggregatorAgri::onUpdateFarm");
 	if ( m_farmInfo.ID == id )
 	{
 		auto farm = g->fm()->getFarm( id );
@@ -256,7 +254,7 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 void AggregatorAgri::onUpdatePasture( unsigned int id )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onUpdatePasture";
+	//spdlog::debug("AggregatorAgri::onUpdatePasture");
 	if ( m_pastureInfo.ID == id )
 	{
 		auto past = g->fm()->getPasture( id );
@@ -326,14 +324,14 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 	}
 	else
 	{
-		qDebug() << "but no update";
+		spdlog::debug("but no update");
 	}
 }
 
 void AggregatorAgri::onUpdateGrove( unsigned int id )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onUpdateGrove";
+	//spdlog::debug("AggregatorAgri::onUpdateGrove");
 	if ( m_groveInfo.ID == id )
 	{
 		auto grove = g->fm()->getGrove( id );
@@ -374,7 +372,7 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationID, QString name, int priority, bool suspended )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onSetBasicOptions";
+	//spdlog::debug("AggregatorAgri::onSetBasicOptions");
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
 		switch ( type )
@@ -420,7 +418,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 {
 	if( !g ) return;
 	//collect info
-	//qDebug() << "AggregatorAgri::onSelectProduct";
+	//spdlog::debug("AggregatorAgri::onSelectProduct");
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
 		switch ( type )
@@ -464,7 +462,7 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designationID, bool harvest, bool harvestHay, bool tame )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onSetHarvestOptions";
+	//spdlog::debug("AggregatorAgri::onSetHarvestOptions");
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
 		switch ( type )
@@ -496,7 +494,7 @@ void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designatio
 void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool plant, bool fell )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onSetGroveOptions";
+	//spdlog::debug("AggregatorAgri::onSetGroveOptions");
 	if ( m_groveInfo.ID == groveID )
 	{
 		auto grove = g->fm()->getGrove( groveID );
@@ -513,7 +511,7 @@ void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool pl
 void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designationID )
 {
 	if( !g ) return;
-	//qDebug() << "AggregatorAgri::onRequestProductInfo";
+	//spdlog::debug("AggregatorAgri::onRequestProductInfo");
 	if ( m_farmInfo.ID == designationID || m_pastureInfo.ID == designationID || m_groveInfo.ID == designationID )
 	{
 		switch ( type )
