@@ -160,7 +160,7 @@ fs::path IO::getTempFolder()
 	return getDataFolder() / "tmp";
 }
 
-bool IO::createFolders()
+bool IO::createFolders( const fs::path& exePath )
 {
 	const fs::path& folder = getDataFolder();
 	if ( !fs::exists( folder ) )
@@ -193,8 +193,6 @@ bool IO::createFolders()
 		fs::create_directory( tmpFolder );
 	}
 
-	const fs::path exePath = QCoreApplication::applicationDirPath().toStdString();
-
 	if ( !fs::exists( folder / "settings" / "profs.json" ) && fs::exists( exePath / "content" / "JSON" / "profs.json" ) )
 	{
 		fs::copy( exePath / "content" / "JSON" / "profs.json", folder / "settings" / "profs.json" );
@@ -217,10 +215,9 @@ bool IO::createFolders()
 	return fs::exists( getDataFolder() / "save" );
 }
 
-bool IO::loadOriginalConfig( json& jd )
+bool IO::loadOriginalConfig( const fs::path& exePath, json& jd )
 {
 	spdlog::debug("load standard config");
-	const auto exePath = fs::path(QCoreApplication::applicationDirPath().toStdString());
 	return IO::loadFile( exePath / "content" / "JSON" / "config.json", jd );
 }
 

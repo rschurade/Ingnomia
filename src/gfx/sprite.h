@@ -19,8 +19,9 @@
 
 #include <absl/container/btree_map.h>
 #include <absl/container/flat_hash_map.h>
-#include <QPixmap>
-#include <QString>
+#include <string>
+
+struct SDL_Surface;
 
 enum SpriteRotation : unsigned char
 {
@@ -38,42 +39,44 @@ public:
 	Sprite( const Sprite& other );
 	virtual ~Sprite();
 
-	virtual QPixmap& pixmap( QString season, unsigned char rotation, unsigned char animationStep ) = 0;
-	virtual void setPixmap( QPixmap pm, QString season, unsigned char rotation )                   = 0;
+	virtual SDL_Surface* pixmap( std::string season, unsigned char rotation, unsigned char animationStep ) = 0;
+	virtual void setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )                   = 0;
 
-	virtual void applyEffect( QString effect )                  = 0;
-	virtual void applyTint( QString tint, QString materialSID ) = 0;
+	virtual void applyEffect( std::string effect )                  = 0;
+	virtual void applyTint( std::string tint, std::string materialSID ) = 0;
 
-	virtual void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep ) = 0;
+	virtual void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep ) = 0;
 
 	unsigned int uID = 0;
-	QString sID      = "";
+	std::string sID      = "";
 	char xOffset     = 0;
 	char yOffset     = 0;
 	float opacity    = 1.0;
 	bool anim        = false;
 	bool hasTransp   = false;
 	absl::btree_map<int, int> randomNumbers;
-	QString m_type = "";
+	std::string m_type = "";
 };
 
 class SpritePixmap : public Sprite
 {
 public:
-	SpritePixmap( QPixmap pixmap );
-	SpritePixmap( QPixmap pixmap, QString offset );
+	SpritePixmap( SDL_Surface* pixmap );
+	SpritePixmap( SDL_Surface* pixmap, std::string offset );
 	SpritePixmap( const SpritePixmap& other );
 	~SpritePixmap();
 
-	QPixmap& pixmap( QString season, unsigned char rotation, unsigned char animationStep );
-	void setPixmap( QPixmap pm, QString season, unsigned char rotation );
+	SDL_Surface* pixmap( std::string season, unsigned char rotation, unsigned char animationStep );
+	void setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation );
 
-	void applyEffect( QString effect );
-	void applyTint( QString tint, QString materialSID );
+	void applyEffect( std::string effect );
+	void applyTint( std::string tint, std::string materialSID );
 
-	void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep );
+	void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep );
 
-	QPixmap m_pixmap;
+	SDL_Surface* m_pixmap;
+	// FIXME: Remove this and do proper resource management, probably with std::shared_ptr in this case
+	bool m_pixmapOwned;
 };
 
 class SpriteSeasons : public Sprite
@@ -83,15 +86,15 @@ public:
 	SpriteSeasons( const SpriteSeasons& other );
 	~SpriteSeasons();
 
-	QPixmap& pixmap( QString season, unsigned char rotation, unsigned char animationStep );
-	void setPixmap( QPixmap pm, QString season, unsigned char rotation );
+	SDL_Surface* pixmap( std::string season, unsigned char rotation, unsigned char animationStep );
+	void setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation );
 
-	void applyEffect( QString effect );
-	void applyTint( QString tint, QString materialSID );
+	void applyEffect( std::string effect );
+	void applyTint( std::string tint, std::string materialSID );
 
-	void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep );
+	void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep );
 
-	absl::flat_hash_map<QString, Sprite*> m_sprites;
+	absl::flat_hash_map<std::string, Sprite*> m_sprites;
 };
 
 class SpriteRotations : public Sprite
@@ -101,15 +104,15 @@ public:
 	SpriteRotations( const SpriteRotations& other );
 	~SpriteRotations();
 
-	QPixmap& pixmap( QString season, unsigned char rotation, unsigned char animationStep );
-	void setPixmap( QPixmap pm, QString season, unsigned char rotation );
+	SDL_Surface* pixmap( std::string season, unsigned char rotation, unsigned char animationStep );
+	void setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation );
 
-	void applyEffect( QString effect );
-	void applyTint( QString tint, QString materialSID );
+	void applyEffect( std::string effect );
+	void applyTint( std::string tint, std::string materialSID );
 
-	void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep );
+	void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep );
 
-	QList<Sprite*> m_sprites;
+	std::vector<Sprite*> m_sprites;
 };
 
 class SpriteFrames : public Sprite
@@ -119,13 +122,13 @@ public:
 	SpriteFrames( const SpriteFrames& other );
 	~SpriteFrames();
 
-	QPixmap& pixmap( QString season, unsigned char rotation, unsigned char animationStep );
-	void setPixmap( QPixmap pm, QString season, unsigned char rotation );
+	SDL_Surface* pixmap( std::string season, unsigned char rotation, unsigned char animationStep );
+	void setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation );
 
-	void applyEffect( QString effect );
-	void applyTint( QString tint, QString materialSID );
+	void applyEffect( std::string effect );
+	void applyTint( std::string tint, std::string materialSID );
 
-	void combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep );
+	void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep );
 
-	QList<Sprite*> m_sprites;
+	std::vector<Sprite*> m_sprites;
 };

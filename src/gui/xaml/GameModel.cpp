@@ -28,7 +28,6 @@
 #include <NsGui/UIElement.h>
 
 #include <QImage>
-#include <QPixmap>
 
 using namespace IngnomiaGUI;
 using namespace Noesis;

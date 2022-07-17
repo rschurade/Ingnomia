@@ -65,7 +65,7 @@ private:
 class TreeSelectEntry : public Noesis::BaseComponent
 {
 public:
-	TreeSelectEntry( const GuiPlant& tree );
+	TreeSelectEntry( const GuiPlant* tree );
 
 	const char* GetName() const;
 	const char* GetSID() const;
@@ -86,7 +86,7 @@ private:
 class TreeSelectRow : public Noesis::BaseComponent
 {
 public:
-	TreeSelectRow( QList<GuiPlant> trees );
+	TreeSelectRow( const std::vector<const GuiPlant*>& trees );
 
 private:
 	Noesis::ObservableCollection<TreeSelectEntry>* GetTrees() const;
@@ -99,7 +99,7 @@ private:
 class AnimalSelectEntry : public Noesis::BaseComponent
 {
 public:
-	AnimalSelectEntry( const GuiAnimal& Animal );
+	AnimalSelectEntry( const GuiAnimal* Animal );
 
 	const char* GetName() const;
 	const char* GetSID() const;
@@ -120,7 +120,7 @@ private:
 class AnimalSelectRow : public Noesis::BaseComponent
 {
 public:
-	AnimalSelectRow( QList<GuiAnimal> Animals );
+	AnimalSelectRow( const std::vector<const GuiAnimal*>& Animals );
 
 private:
 	Noesis::ObservableCollection<AnimalSelectEntry>* GetAnimals() const;
@@ -156,7 +156,7 @@ private:
 class PlantSelectEntry : public Noesis::BaseComponent
 {
 public:
-	PlantSelectEntry( const GuiPlant& plant );
+	PlantSelectEntry( const GuiPlant* plant );
 
 	const char* GetName() const;
 	const char* GetSID() const;
@@ -177,7 +177,7 @@ private:
 class PlantSelectRow : public Noesis::BaseComponent
 {
 public:
-	PlantSelectRow( QList<GuiPlant> plants );
+	PlantSelectRow( const std::vector<const GuiPlant*>& plants );
 
 private:
 	Noesis::ObservableCollection<PlantSelectEntry>* GetPlants() const;
@@ -192,7 +192,7 @@ private:
 class FoodSelectEntry : public Noesis::BaseComponent
 {
 public:
-	FoodSelectEntry( const GuiPastureFoodItem& item, AgricultureProxy* proxy );
+	FoodSelectEntry( const GuiPastureFoodItem* item, AgricultureProxy* proxy );
 
 	const char* GetName() const;
 
@@ -219,7 +219,7 @@ private:
 class FoodSelectRow : public Noesis::BaseComponent
 {
 public:
-	FoodSelectRow( QList<GuiPastureFoodItem> plants, AgricultureProxy* proxy );
+	FoodSelectRow( const std::vector<const GuiPastureFoodItem*>& plants, AgricultureProxy* proxy );
 
 private:
 	Noesis::ObservableCollection<FoodSelectEntry>* GetFoods() const;
@@ -239,9 +239,9 @@ public:
 	void updateFarmInfo( const GuiFarmInfo& info );
 	void updatePastureInfo( const GuiPastureInfo& info );
 	void updateGroveInfo( const GuiGroveInfo& info );
-	void updateGlobalPlantInfo( const QList<GuiPlant>& info );
-	void updateGlobalAnimalInfo( const QList<GuiAnimal>& info );
-	void updateGlobalTreeInfo( const QList<GuiPlant>& info );
+	void updateGlobalPlantInfo( const std::vector<GuiPlant>& info );
+	void updateGlobalAnimalInfo( const std::vector<GuiAnimal>& info );
+	void updateGlobalTreeInfo( const std::vector<GuiPlant>& info );
 
 private:
 	const char* GetName() const;

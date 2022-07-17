@@ -23,8 +23,6 @@
 #include "../../base/global.h"
 #include "../../gui/eventconnector.h"
 
-#include <QPainter>
-
 AgricultureProxy::AgricultureProxy( QObject* parent ) :
 	QObject( parent )
 {
@@ -110,7 +108,7 @@ void AgricultureProxy::setGroveOptions( unsigned int designationID, bool pick, b
 	signalSetGroveOptions( designationID, pick, plant, fell );
 }
 
-void AgricultureProxy::onUpdateGlobalPlants( const QList<GuiPlant>& plants )
+void AgricultureProxy::onUpdateGlobalPlants( const std::vector<GuiPlant>& plants )
 {
 	if ( m_parent )
 	{
@@ -118,7 +116,7 @@ void AgricultureProxy::onUpdateGlobalPlants( const QList<GuiPlant>& plants )
 	}
 }
 
-void AgricultureProxy::onUpdateGlobalAnimals( const QList<GuiAnimal>& animals )
+void AgricultureProxy::onUpdateGlobalAnimals( const std::vector<GuiAnimal>& animals )
 {
 	if ( m_parent )
 	{
@@ -126,7 +124,7 @@ void AgricultureProxy::onUpdateGlobalAnimals( const QList<GuiAnimal>& animals )
 	}
 }
 
-void AgricultureProxy::onUpdateGlobalTrees( const QList<GuiPlant>& trees )
+void AgricultureProxy::onUpdateGlobalTrees( const std::vector<GuiPlant>& trees )
 {
 	if ( m_parent )
 	{

@@ -34,7 +34,9 @@
 #include <QComboBox>
 #include <QIcon>
 #include <QJsonDocument>
-#include <QPainter>
+
+#include <SDL.h>
+#include <SDL_image.h>
 
 #include <filesystem>
 
@@ -371,16 +373,17 @@ unsigned char Util::rotString2Char( QString rot )
 	return 0;
 }
 
-QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
+PixmapPtr Util::smallPixmap( Sprite* sprite, const std::string& season, int rotation )
 {
+	PixmapPtr result(nullptr, SDL_FreeSurface);
+
 	if ( !sprite )
 	{
-		return QPixmap();
+		return result;
 	}
-	QPixmap pm = sprite->pixmap( season, 0, 0 );
+	auto* pm = sprite->pixmap( season, 0, 0 );
 
-	QImage img = pm.toImage();
-	QImage newImg( 32, 32, QImage::Format::Format_RGBA8888 );
+	SDL_Surface* newImg = createPixmap( 32, 32 );
 
 	int firstLine = 0;
 	int lastLine  = 63;
@@ -390,10 +393,11 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 		bool found = false;
 		for ( int x = 0; x < 32; ++x )
 		{
-			if ( img.height() <= y )
-				spdlog::debug( "Util::smallPixmap 1 {}", sprite->sID.toStdString() );
-			QColor col = img.pixelColor( x, y );
-			if ( col.red() + col.green() + col.blue() > 0 )
+			if ( pm->h <= y )
+				spdlog::debug( "Util::smallPixmap 1 {}", sprite->sID );
+
+			SDL_Color col = getPixelColor( pm, x, y );
+			if ( col.r + col.g + col.b > 0 )
 			{
 				firstLine = y;
 				found     = true;
@@ -408,10 +412,10 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 		bool found = false;
 		for ( int x = 0; x < 32; ++x )
 		{
-			if ( img.height() <= y )
-				spdlog::debug( "Util::smallPixmap 2 {}", sprite->sID.toStdString() );
-			QColor col = img.pixelColor( x, y );
-			if ( col.red() + col.green() + col.blue() > 0 )
+			if ( pm->h <= y )
+				spdlog::debug( "Util::smallPixmap 2 {}", sprite->sID );
+			auto col = getPixelColor( pm, x, y );
+			if ( col.r + col.g + col.b > 0 )
 			{
 				lastLine = y;
 				found    = true;
@@ -424,27 +428,22 @@ QPixmap Util::smallPixmap( Sprite* sprite, QString season, int rotation )
 
 	int numLines = lastLine - firstLine + 1;
 	int yOff     = qMax( 0, ( 32 - numLines ) ) / 2;
-	QColor col1( 0, 0, 0, 0 );
-	for ( int y = 0; y < 32; ++y )
-	{
-		for ( int x = 0; x < 32; ++x )
-		{
-			newImg.setPixelColor( x, y, col1 );
-		}
-	}
+	SDL_Color col1 { 0, 0, 0, 0 };
+	SDL_FillRect(newImg, nullptr, 0x00000000);
+
 	for ( int y = 0; y < 32 - yOff; ++y )
 	{
 		for ( int x = 0; x < 32; ++x )
 		{
-			if ( img.height() <= y )
-				spdlog::debug( "Util::smallPixmap 3 {}", sprite->sID.toStdString() );
-			QColor col = img.pixelColor( x, y + firstLine );
-			newImg.setPixelColor( x, y + yOff, col );
+			if ( pm->h <= y )
+				spdlog::debug( "Util::smallPixmap 3 {}", sprite->sID );
+			const auto col = getPixelColor( pm, x, y + firstLine );
+			setPixelColor( newImg, x, y + yOff, col );
 		}
 	}
 
-	QPixmap newPM = QPixmap::fromImage( newImg );
-	return newPM;
+	result.reset(newImg);
+	return result;
 }
 
 QColor Util::colorInt2Color( unsigned int color )
@@ -894,32 +893,33 @@ void Util::debugVM( QVariantMap vm, QString name )
 	}
 }
 
-QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList& mats )
+PixmapPtr Util::createWorkshopImage( const QString& workshopID, const QStringList& mats )
 {
+	PixmapPtr result(nullptr, SDL_FreeSurface);
+
 	auto dbws = DB::workshop( workshopID );
 
 	if( !dbws )
 	{
-		QPixmap pm( 100, 100 );
-		pm.fill( QColor( 0, 0, 0, 0 ) );
-		return pm;
+		result.reset( createPixmap( 100, 100 ) );
+		SDL_FillRect( result.get(), nullptr, 0x00000000 );
+		return result;
 	}
 
 	if ( !dbws->Icon.isEmpty() )
 	{
 		const auto path = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "xaml" / "buttons" / dbws->Icon.toStdString();
-		QPixmap pm( QString::fromStdString(path) );
-		assert( pm.width() > 0 );
-		return pm;
+		result.reset( IMG_Load( path.c_str() ) );
+		assert( result->w > 0 );
+		return result;
 	}
-	QString season = GameState::seasonString;
+	const auto season = GameState::seasonString.toStdString();
 
 	auto coms = DB::selectRows( "Workshops_Components", workshopID );
 
-	QPixmap pm( 100, 100 );
-	pm.fill( QColor( 0, 0, 0, 0 ) );
+	result.reset( createPixmap( 100, 100 ) );
+	SDL_FillRect( result.get(), nullptr, 0x00000000 );
 
-	QPainter painter( &pm );
 	int x0 = 34;
 	int y0 = 0;
 
@@ -933,15 +933,16 @@ QPixmap Util::createWorkshopImage( const QString& workshopID, const QStringList&
 			Sprite* sprite    = getSprite( x - 1, y - 1, coms, rot, mats );
 			if ( sprite )
 			{
+				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
-				painter.drawPixmap( px, py, sprite->pixmap( season, rot, 0 ) );
+				copyPixmap( result.get(), srcSurface, px, py );
 			}
 		}
 	}
-	return pm;
+	return result;
 }
 
-QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
+PixmapPtr Util::createItemImage( const QString& itemID, const QStringList& mats )
 {
 	auto vsprite = DB::select( "SpriteID", "Items", itemID );
 	QVariantMap component;
@@ -951,12 +952,11 @@ QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
 	QList<QVariantMap> comps;
 	comps.append( component );
 
-	QString season = GameState::seasonString;
+	const auto season = GameState::seasonString.toStdString();
 
-	QPixmap pm( 100, 100 );
-	pm.fill( QColor( 0, 0, 0, 0 ) );
+	PixmapPtr result( createPixmap( 100, 100 ), SDL_FreeSurface );
+	SDL_FillRect( result.get(), nullptr, 0x00000000 );
 
-	QPainter painter( &pm );
 	int x0 = 34;
 	int y0 = 0;
 
@@ -970,46 +970,46 @@ QPixmap Util::createItemImage( const QString& itemID, const QStringList& mats )
 			Sprite* sprite    = getSprite( x - 1, y - 1, comps, rot, mats );
 			if ( sprite )
 			{
+				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
-				painter.drawPixmap( px, py, sprite->pixmap( season, rot, 0 ) );
+				copyPixmap( result.get(), srcSurface, px, py );
 			}
 		}
 	}
-	return pm;
+	return result;
 }
 
-QPixmap Util::createItemImage2( const QString& itemID, const QStringList& mats )
+PixmapPtr Util::createItemImage2( const QString& itemID, const QStringList& mats )
 {
 	auto spriteID = DB::select( "SpriteID", "Items", itemID ).toString();
 	
-	QString season = GameState::seasonString;
+	const auto season = GameState::seasonString.toStdString();
 
-	QPixmap pm( 32, 32 );
-	pm.fill( QColor( 0, 0, 0, 0 ) );
+	PixmapPtr result(createPixmap( 32, 32 ), SDL_FreeSurface);
+	SDL_FillRect( result.get(), nullptr, 0x00000000 );
 
-	QPainter painter( &pm );
 	int x0 = 0;
 	int y0 = 0;
 
 	Sprite* sprite = g->sf()->createSprite( spriteID, mats ) ;
 	if ( sprite )
 	{
+		auto* srcSurface = sprite->pixmap( season, 0, 0 );
 		//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
-		painter.drawPixmap( 0, -16, sprite->pixmap( season, 0, 0 ) );
+		copyPixmap( result.get(), srcSurface, 0, -16 );
 	}
-	return pm;
+	return result;
 }
 
-QPixmap Util::createConstructionImage( const QString& constructionID, const QStringList& mats )
+PixmapPtr Util::createConstructionImage( const QString& constructionID, const QStringList& mats )
 {
 	auto sprites = DB::selectRows( "Constructions_Sprites", constructionID );
 
-	QString season = GameState::seasonString;
+	const auto season = GameState::seasonString.toStdString();
 
-	QPixmap pm( 100, 100 );
-	pm.fill( QColor( 0, 0, 0, 0 ) );
+	PixmapPtr result(createPixmap( 100, 100 ), SDL_FreeSurface);
+	SDL_FillRect( result.get(), nullptr, 0x00000000 );
 
-	QPainter painter( &pm );
 	int x0 = 34;
 	int y0 = 0;
 
@@ -1023,12 +1023,13 @@ QPixmap Util::createConstructionImage( const QString& constructionID, const QStr
 			Sprite* sprite    = getSprite( x - 1, y - 1, sprites, rot, mats );
 			if ( sprite )
 			{
+				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
-				painter.drawPixmap( px, py, sprite->pixmap( season, rot, 0 ) );
+				copyPixmap( result.get(), srcSurface, px, py );
 			}
 		}
 	}
-	return pm;
+	return result;
 }
 
 Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const QStringList& mats )
@@ -1108,22 +1109,21 @@ QStringList Util::possibleMaterials( QString allowedMaterials, QString allowedMa
 	return out;
 }
 
-void Util::createBufferForNoesisImage( const QPixmap& pm, std::vector<unsigned char>& buffer )
+void Util::createBufferForNoesisImage( const SDL_Surface* pm, std::vector<unsigned char>& buffer )
 {
-	int w = pm.width();
-	int h = pm.height();
+	int w = pm->w;
+	int h = pm->h;
 
 	buffer.resize( w * h * 4, 0 );
-	QImage img = pm.toImage();
 
 	for ( int x = 0; x < w; ++x )
 	{
 		for ( int y = 0; y < h; ++y )
 		{
-			auto color                    = img.pixelColor( x, y );
-			buffer[( x + y * w ) * 4]     = color.red();
-			buffer[( x + y * w ) * 4 + 1] = color.green();
-			buffer[( x + y * w ) * 4 + 2] = color.blue();
+			auto color                    = getPixelColor( pm, x, y );
+			buffer[( x + y * w ) * 4]     = color.r;
+			buffer[( x + y * w ) * 4 + 1] = color.g;
+			buffer[( x + y * w ) * 4 + 2] = color.b;
 			buffer[( x + y * w ) * 4 + 3] = 255;
 		}
 	}

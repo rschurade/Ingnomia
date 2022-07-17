@@ -32,9 +32,6 @@
 #include "../gfx/spritefactory.h"
 #include "spdlog/spdlog.h"
 
-#include <QPainter>
-#include <QPixmap>
-
 Animal::Animal( QString species, Position& pos, Gender gender, bool adult, Game* game ) :
 	Creature( pos, species, gender, species, game )
 {

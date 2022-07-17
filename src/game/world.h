@@ -28,7 +28,6 @@
 
 #include <QPointer>
 #include <QMutex>
-#include <QPixmap>
 
 #include <absl/container/btree_set.h>
 #include <vector>

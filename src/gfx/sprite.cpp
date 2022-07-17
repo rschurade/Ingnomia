@@ -17,10 +17,12 @@
 */
 #include "../gfx/sprite.h"
 
+#include "../base/SDL_util.h"
 #include "../base/db.h"
+#include "range/v3/action/split.hpp"
 #include "spdlog/spdlog.h"
 
-#include <QPainter>
+#include <SDL_surface.h>
 
 #include <range/v3/view.hpp>
 
@@ -42,41 +44,43 @@ Sprite::~Sprite()
 {
 }
 
-SpritePixmap::SpritePixmap( QPixmap pixmap ) :
-	Sprite()
+SpritePixmap::SpritePixmap( SDL_Surface* pixmap ) :
+	Sprite(), m_pixmap(pixmap)
 {
-	m_pixmap = pixmap;
 	m_type   = "pixmap";
 }
 
-SpritePixmap::SpritePixmap( QPixmap pixmap, QString offset ) :
+SpritePixmap::SpritePixmap( SDL_Surface* pixmap, std::string offset ) :
 	Sprite()
 {
 	m_type          = "pixmap";
 	int xOffset     = 0;
 	int yOffset     = 0;
-	QStringList osl = offset.split( " " );
+	const auto osl  = ranges::actions::split( offset, " " );
 	if ( osl.size() == 2 )
 	{
-		xOffset = osl[0].toInt();
-		yOffset = osl[1].toInt();
+		xOffset = std::stoi( osl[0] );
+		yOffset = std::stoi( osl[1] );
 	}
-	QImage img = pixmap.toImage();
-	QImage target( 32, 64, QImage::Format::Format_RGBA8888 );
 
-	target.fill( QColor( 0, 0, 0, 0 ) );
+	auto* target = createPixmap( 32, 64 );
+	SDL_FillRect(target, nullptr, 0x00000000);
 
-	for ( int y = 0; y < img.height(); ++y )
+	SDL_LockSurface(pixmap);
+	SDL_LockSurface(target);
+
+	for ( int y = 0; y < pixmap->h; ++y )
 	{
-		for ( int x = 0; x < img.width(); ++x )
+		for ( int x = 0; x < pixmap->w; ++x )
 		{
 			if ( y > 63 )
-				spdlog::debug("SpritePixmap::SpritePixmap {}", sID.toStdString());
-			target.setPixelColor( qMin( 31, x + xOffset ), qMax( 0, qMin( 63, y + yOffset + 16 ) ), img.pixelColor( x, y ) );
+				spdlog::debug("SpritePixmap::SpritePixmap {}", sID);
+			setPixelColor(target, std::min( 31, x + xOffset ), std::max( 0, std::min( 63, y + yOffset + 16 ) ), getPixelColor( pixmap, x, y ) );
 		}
 	}
 
-	m_pixmap = QPixmap::fromImage( target );
+	m_pixmap = target;
+	m_pixmapOwned = true;
 }
 
 SpritePixmap::SpritePixmap( const SpritePixmap& other ) :
@@ -84,106 +88,83 @@ SpritePixmap::SpritePixmap( const SpritePixmap& other ) :
 {
 	m_type   = "pixmap";
 	m_pixmap = other.m_pixmap;
+	m_pixmapOwned = false;
 }
 
 SpritePixmap::~SpritePixmap()
 {
 }
 
-QPixmap& SpritePixmap::pixmap( QString season, unsigned char rotation, unsigned char animationStep )
+SDL_Surface* SpritePixmap::pixmap( std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	return m_pixmap;
 }
 
-void SpritePixmap::setPixmap( QPixmap pm, QString season, unsigned char rotation )
+void SpritePixmap::setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )
 {
 	m_pixmap = pm;
 }
 
-void SpritePixmap::applyEffect( QString effect )
+void SpritePixmap::applyEffect( std::string effect )
 {
+	// TODO: Why is this not part of the shader code?
 	if ( effect == "FlipHorizontal" )
 	{
-		QImage img = m_pixmap.toImage();
-		m_pixmap   = QPixmap::fromImage( img.mirrored( true, false ) );
+		flipPixmap( m_pixmap, true, false );
 	}
 	else if ( effect == "Rot90" )
 	{
-		QImage img = m_pixmap.toImage();
-		QImage tmp( 32, 32, QImage::Format::Format_RGBA8888 );
-		for ( int y = 0; y < 32; ++y )
-		{
-			for ( int x = 0; x < 32; ++x )
-			{
-				if ( y + 16 > 63 )
-					spdlog::debug( "SpritePixmap::applyEffect 1 {}", sID.toStdString() );
-				tmp.setPixelColor( x, y, img.pixelColor( x, y + 16 ) );
-			}
-		}
-		QPixmap pm = QPixmap::fromImage( tmp );
-		pm         = pm.transformed( QTransform().rotate( 90 ) );
-		tmp        = pm.toImage();
-		for ( int y = 0; y < 32; ++y )
-		{
-			for ( int x = 0; x < 32; ++x )
-			{
-				if ( y > 63 )
-					spdlog::debug( "SpritePixmap::applyEffect 2 {}", sID.toStdString() );
-				img.setPixelColor( x, y + 16, tmp.pixelColor( x, y ) );
-			}
-		}
-		m_pixmap = QPixmap::fromImage( img );
+		throw std::runtime_error("TODO: Rot surface 90");
+//		QImage img = m_pixmap.toImage();
+//		QImage tmp( 32, 32, QImage::Format::Format_RGBA8888 );
+//		for ( int y = 0; y < 32; ++y )
+//		{
+//			for ( int x = 0; x < 32; ++x )
+//			{
+//				if ( y + 16 > 63 )
+//					spdlog::debug( "SpritePixmap::applyEffect 1 {}", sID );
+//				tmp.setPixelColor( x, y, img.pixelColor( x, y + 16 ) );
+//			}
+//		}
+//		QPixmap pm = QPixmap::fromImage( tmp );
+//		pm         = pm.transformed( QTransform().rotate( 90 ) );
+//		tmp        = pm.toImage();
+//		for ( int y = 0; y < 32; ++y )
+//		{
+//			for ( int x = 0; x < 32; ++x )
+//			{
+//				if ( y > 63 )
+//					spdlog::debug( "SpritePixmap::applyEffect 2 {}", sID );
+//				img.setPixelColor( x, y + 16, tmp.pixelColor( x, y ) );
+//			}
+//		}
+//		m_pixmap = QPixmap::fromImage( img );
 	}
 }
 
-void SpritePixmap::applyTint( QString tint, QString materialSID )
+void SpritePixmap::applyTint( std::string tint, std::string materialSID )
 {
-	if ( tint.isEmpty() )
+	// TODO: Why is this not part of the shader code?
+	if ( tint.empty() )
 		return;
 
-	QColor color;
+	SDL_Color color;
 
 	if ( tint == "Material" )
 	{
-		tint = DB::select( "Color", "Materials", materialSID ).toString();
+		tint = DB::select( "Color", "Materials", QString::fromStdString(materialSID) ).toString().toStdString();
 	}
-	QList<QString> csl = tint.split( ' ' );
-	if ( csl.size() == 4 )
-	{
-		color = QColor( csl[0].toInt(), csl[1].toInt(), csl[2].toInt(), csl[3].toInt() );
-	}
-	else
-	{
-		//qDebug() << "no tint" << materialSID << tint;
-		color = QColor( 255, 255, 255, 255 );
-	}
-	opacity = color.alphaF();
+	color   = string2SDLColor( tint );
+	opacity = color.a / 255.0f;
 
-	QImage img = m_pixmap.toImage();
-
-	for ( int x = 0; x < img.size().width(); ++x )
-	{
-		for ( int y = 0; y < img.size().height(); ++y )
-		{
-			if ( y > 63 )
-				spdlog::debug( "SpritePixmap::applyTint {}", sID.toStdString() );
-			QColor col = img.pixelColor( x, y );
-			col.setRedF( qMin( 1., col.redF() * color.redF() ) );
-			col.setGreenF( qMin( 1., col.greenF() * color.greenF() ) );
-			col.setBlueF( qMin( 1., col.blueF() * color.blueF() ) );
-			col.setAlphaF( qMin( 1., col.alphaF() * color.alphaF() ) );
-			img.setPixelColor( x, y, col );
-		}
-	}
-	m_pixmap = QPixmap::fromImage( img );
+	tintPixmap( m_pixmap, color );
 }
 
-void SpritePixmap::combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep )
+void SpritePixmap::combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep )
 {
-	if ( m_pixmap.size().width() > 0 && m_pixmap.size().height() > 0 )
+	if ( m_pixmap->w > 0 && m_pixmap->h > 0 )
 	{
-		QPainter painter( &m_pixmap );
-		painter.drawPixmap( 0, 0, other->pixmap( season, rotation, animationStep ) );
+		copyPixmap( m_pixmap, other->pixmap( season, rotation, animationStep ), 0, 0 );
 	}
 }
 
@@ -208,17 +189,17 @@ SpriteSeasons::~SpriteSeasons()
 	}
 }
 
-QPixmap& SpriteSeasons::pixmap( QString season, unsigned char rotation, unsigned char animationStep )
+SDL_Surface* SpriteSeasons::pixmap( std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	return m_sprites[season]->pixmap( season, rotation, animationStep );
 }
 
-void SpriteSeasons::setPixmap( QPixmap pm, QString season, unsigned char rotation )
+void SpriteSeasons::setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )
 {
 	m_sprites[season]->setPixmap( pm, season, rotation );
 }
 
-void SpriteSeasons::applyEffect( QString effect )
+void SpriteSeasons::applyEffect( std::string effect )
 {
 	for ( auto s : m_sprites | ranges::views::values )
 	{
@@ -226,7 +207,7 @@ void SpriteSeasons::applyEffect( QString effect )
 	}
 }
 
-void SpriteSeasons::applyTint( QString tint, QString materialSID )
+void SpriteSeasons::applyTint( std::string tint, std::string materialSID )
 {
 	for ( auto s : m_sprites | ranges::views::values )
 	{
@@ -234,7 +215,7 @@ void SpriteSeasons::applyTint( QString tint, QString materialSID )
 	}
 }
 
-void SpriteSeasons::combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep )
+void SpriteSeasons::combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	m_sprites[season]->combine( other, season, rotation, animationStep );
 }
@@ -260,17 +241,17 @@ SpriteRotations::SpriteRotations( const SpriteRotations& other ) :
 	m_sprites = other.m_sprites;
 }
 
-QPixmap& SpriteRotations::pixmap( QString season, unsigned char rotation, unsigned char animationStep )
+SDL_Surface* SpriteRotations::pixmap( std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	return m_sprites[rotation]->pixmap( season, rotation, animationStep );
 }
 
-void SpriteRotations::setPixmap( QPixmap pm, QString season, unsigned char rotation )
+void SpriteRotations::setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )
 {
 	m_sprites[rotation]->setPixmap( pm, season, rotation );
 }
 
-void SpriteRotations::applyEffect( QString effect )
+void SpriteRotations::applyEffect( std::string effect )
 {
 	for ( auto s : m_sprites )
 	{
@@ -278,7 +259,7 @@ void SpriteRotations::applyEffect( QString effect )
 	}
 }
 
-void SpriteRotations::applyTint( QString tint, QString materialSID )
+void SpriteRotations::applyTint( std::string tint, std::string materialSID )
 {
 	for ( auto s : m_sprites )
 	{
@@ -286,7 +267,7 @@ void SpriteRotations::applyTint( QString tint, QString materialSID )
 	}
 }
 
-void SpriteRotations::combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep )
+void SpriteRotations::combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	m_sprites[rotation]->combine( other, season, rotation, animationStep );
 }
@@ -312,17 +293,17 @@ SpriteFrames::~SpriteFrames()
 	}
 }
 
-QPixmap& SpriteFrames::pixmap( QString season, unsigned char rotation, unsigned char animationStep )
+SDL_Surface* SpriteFrames::pixmap( std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	return m_sprites[animationStep % m_sprites.size()]->pixmap( season, rotation, animationStep );
 }
 
-void SpriteFrames::setPixmap( QPixmap pm, QString season, unsigned char rotation )
+void SpriteFrames::setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )
 {
 	m_sprites[0]->setPixmap( pm, season, rotation );
 }
 
-void SpriteFrames::applyEffect( QString effect )
+void SpriteFrames::applyEffect( std::string effect )
 {
 	for ( auto s : m_sprites )
 	{
@@ -330,7 +311,7 @@ void SpriteFrames::applyEffect( QString effect )
 	}
 }
 
-void SpriteFrames::applyTint( QString tint, QString materialSID )
+void SpriteFrames::applyTint( std::string tint, std::string materialSID )
 {
 	for ( auto s : m_sprites )
 	{
@@ -338,7 +319,7 @@ void SpriteFrames::applyTint( QString tint, QString materialSID )
 	}
 }
 
-void SpriteFrames::combine( Sprite* other, QString season, unsigned char rotation, unsigned char animationStep )
+void SpriteFrames::combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep )
 {
 	if ( m_sprites.size() > animationStep )
 	{

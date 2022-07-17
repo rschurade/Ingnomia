@@ -38,7 +38,6 @@
 
 #include <QElapsedTimer>
 #include <QFile>
-#include <QPainter>
 
 Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 	CanWork( pos, name, gender, "Gnome", game )

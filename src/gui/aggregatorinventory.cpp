@@ -248,10 +248,10 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Global::util->createWorkshopImage( gbi.id, mats );
-			Global::util->createBufferForNoesisImage( pm, gbi.buffer );
-			gbi.iconWidth = pm.width();
-			gbi.iconHeight = pm.height();
+			const auto pm = Global::util->createWorkshopImage( gbi.id, mats );
+			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
+			gbi.iconWidth = pm->w;
+			gbi.iconHeight = pm->h;
 		}
 		break;
 		case BuildItemType::Terrain:
@@ -270,11 +270,11 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Global::util->createConstructionImage( gbi.id, mats );
+			const auto pm = Global::util->createConstructionImage( gbi.id, mats );
 
-			Global::util->createBufferForNoesisImage( pm, gbi.buffer );
-			gbi.iconWidth = pm.width();
-			gbi.iconHeight = pm.height();
+			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
+			gbi.iconWidth = pm->w;
+			gbi.iconHeight = pm->h;
 		}
 		break;
 		case BuildItemType::Item:
@@ -306,10 +306,10 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			QPixmap pm = Global::util->createItemImage( gbi.id, mats );
-			Global::util->createBufferForNoesisImage( pm, gbi.buffer );
-			gbi.iconWidth = pm.width();
-			gbi.iconHeight = pm.height();
+			const auto pm = Global::util->createItemImage( gbi.id, mats );
+			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
+			gbi.iconWidth = pm->w;
+			gbi.iconHeight = pm->h;
 		}
 		break;
 	}

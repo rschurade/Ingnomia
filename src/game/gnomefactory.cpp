@@ -29,7 +29,6 @@
 
 #include <QBitmap>
 #include <QElapsedTimer>
-#include <QPainter>
 
 GnomeFactory::GnomeFactory( Game* game ) :
 	g( game )

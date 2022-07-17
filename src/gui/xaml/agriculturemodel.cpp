@@ -47,14 +47,15 @@ const char* AcPriority::GetName() const
 
 #pragma region Trees
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-TreeSelectEntry::TreeSelectEntry( const GuiPlant& tree )
+TreeSelectEntry::TreeSelectEntry( const GuiPlant* tree )
 {
-	m_name = tree.name.toStdString().c_str();
-	m_sid  = tree.plantID.toStdString().c_str();
+	m_name = tree->name.toStdString().c_str();
+	m_sid  = tree->plantID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Global::util->createBufferForNoesisImage( tree.sprite, buffer );
-	m_bitmapSource = BitmapImage::Create( tree.sprite.width(), tree.sprite.height(), 96, 96, buffer.data(), tree.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	const auto* sprite = tree->sprite.get();
+	Global::util->createBufferForNoesisImage( sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( sprite->w, sprite->h, 96, 96, buffer.data(), sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* TreeSelectEntry::GetName() const
@@ -68,11 +69,11 @@ const char* TreeSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-TreeSelectRow::TreeSelectRow( QList<GuiPlant> Trees )
+TreeSelectRow::TreeSelectRow( const std::vector<const GuiPlant*>& Trees )
 {
 	m_entries = *new ObservableCollection<TreeSelectEntry>();
 
-	for ( auto Tree : Trees )
+	for ( const auto& Tree : Trees )
 	{
 		m_entries->Add( MakePtr<TreeSelectEntry>( Tree ) );
 	}
@@ -86,15 +87,16 @@ Noesis::ObservableCollection<TreeSelectEntry>* TreeSelectRow::GetTrees() const
 
 #pragma region Animals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-AnimalSelectEntry::AnimalSelectEntry( const GuiAnimal& animal )
+AnimalSelectEntry::AnimalSelectEntry( const GuiAnimal* animal )
 {
-	m_name = animal.name.toStdString().c_str();
-	m_sid  = animal.animalID.toStdString().c_str();
+	m_name = animal->name.toStdString().c_str();
+	m_sid  = animal->animalID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Global::util->createBufferForNoesisImage( animal.sprite, buffer );
+	const auto* sprite = animal->sprite.get();
+	Global::util->createBufferForNoesisImage( sprite, buffer );
 
-	m_bitmapSource = BitmapImage::Create( animal.sprite.width(), animal.sprite.height(), 96, 96, buffer.data(), animal.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	m_bitmapSource = BitmapImage::Create( sprite->w, sprite->h, 96, 96, buffer.data(), sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* AnimalSelectEntry::GetName() const
@@ -108,11 +110,11 @@ const char* AnimalSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-AnimalSelectRow::AnimalSelectRow( QList<GuiAnimal> animals )
+AnimalSelectRow::AnimalSelectRow( const std::vector<const GuiAnimal*>& animals )
 {
 	m_entries = *new ObservableCollection<AnimalSelectEntry>();
 
-	for ( auto animal : animals )
+	for ( const auto& animal : animals )
 	{
 		m_entries->Add( MakePtr<AnimalSelectEntry>( animal ) );
 	}
@@ -126,14 +128,15 @@ Noesis::ObservableCollection<AnimalSelectEntry>* AnimalSelectRow::GetAnimals() c
 
 #pragma region Plants
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-PlantSelectEntry::PlantSelectEntry( const GuiPlant& plant )
+PlantSelectEntry::PlantSelectEntry( const GuiPlant* plant )
 {
-	m_name = plant.name.toStdString().c_str();
-	m_sid  = plant.plantID.toStdString().c_str();
+	m_name = plant->name.toStdString().c_str();
+	m_sid  = plant->plantID.toStdString().c_str();
 
 	std::vector<unsigned char> buffer;
-	Global::util->createBufferForNoesisImage( plant.sprite, buffer );
-	m_bitmapSource = BitmapImage::Create( plant.sprite.width(), plant.sprite.height(), 96, 96, buffer.data(), plant.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	const auto* sprite = plant->sprite.get();
+	Global::util->createBufferForNoesisImage( sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( sprite->w, sprite->h, 96, 96, buffer.data(), sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* PlantSelectEntry::GetName() const
@@ -147,11 +150,11 @@ const char* PlantSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-PlantSelectRow::PlantSelectRow( QList<GuiPlant> plants )
+PlantSelectRow::PlantSelectRow( const std::vector<const GuiPlant*>& plants )
 {
 	m_entries = *new ObservableCollection<PlantSelectEntry>();
 
-	for ( auto plant : plants )
+	for ( const auto& plant : plants )
 	{
 		m_entries->Add( MakePtr<PlantSelectEntry>( plant ) );
 	}
@@ -218,18 +221,19 @@ void PastureAnimalEntry::SetButchering( bool value )
 
 #pragma region PastureFood
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem& food, AgricultureProxy* proxy ) :
+FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem* food, AgricultureProxy* proxy ) :
 	m_proxy( proxy )
 {
-	m_name = food.name.toStdString().c_str();
+	m_name = food->name.toStdString().c_str();
 	
-	m_itemSID  = food.itemSID;
-	m_materialSID = food.materialSID;
-	m_checked = food.checked;
+	m_itemSID  = food->itemSID;
+	m_materialSID = food->materialSID;
+	m_checked = food->checked;
 
 	std::vector<unsigned char> buffer;
-	Global::util->createBufferForNoesisImage( food.sprite, buffer );
-	m_bitmapSource = BitmapImage::Create( food.sprite.width(), food.sprite.height(), 96, 96, buffer.data(), food.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+	const auto* sprite = food->sprite.get();
+	Global::util->createBufferForNoesisImage( sprite, buffer );
+	m_bitmapSource = BitmapImage::Create( sprite->w, sprite->h, 96, 96, buffer.data(), sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 }
 
 const char* FoodSelectEntry::GetName() const
@@ -252,11 +256,11 @@ void FoodSelectEntry::setChecked( bool value )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-FoodSelectRow::FoodSelectRow( QList<GuiPastureFoodItem> foods, AgricultureProxy* proxy )
+FoodSelectRow::FoodSelectRow( const std::vector<const GuiPastureFoodItem*>& foods, AgricultureProxy* proxy )
 {
 	m_entries = *new ObservableCollection<FoodSelectEntry>();
 
-	for ( auto food : foods )
+	for ( const auto& food : foods )
 	{
 		m_entries->Add( MakePtr<FoodSelectEntry>( food, proxy ) );
 	}
@@ -296,16 +300,16 @@ AgricultureModel::AgricultureModel()
 	m_showPastureFoodCmd.SetExecuteFunc( MakeDelegate( this, &AgricultureModel::onShowPastureFood ) );
 }
 
-void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
+void AgricultureModel::updateGlobalPlantInfo( const std::vector<GuiPlant>& info )
 {
 	m_plantRows->Clear();
 	int plantDone = 0;
 	while ( plantDone < info.size() )
 	{
-		QList<GuiPlant> plantRow;
+		std::vector<const GuiPlant*> plantRow;
 		while ( plantRow.size() < 8 && plantDone < info.size() )
 		{
-			plantRow.append( info[plantDone] );
+			plantRow.push_back( &info[plantDone] );
 			++plantDone;
 		}
 		m_plantRows->Add( MakePtr<PlantSelectRow>( plantRow ) );
@@ -314,16 +318,16 @@ void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
 	OnPropertyChanged( "PlantRows" );
 }
 
-void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
+void AgricultureModel::updateGlobalAnimalInfo( const std::vector<GuiAnimal>& info )
 {
 	m_animalRows->Clear();
 	int animalDone = 0;
 	while ( animalDone < info.size() )
 	{
-		QList<GuiAnimal> animalRow;
+		std::vector<const GuiAnimal*> animalRow;
 		while ( animalRow.size() < 8 && animalDone < info.size() )
 		{
-			animalRow.append( info[animalDone] );
+			animalRow.push_back( &info[animalDone] );
 			++animalDone;
 		}
 		m_animalRows->Add( MakePtr<AnimalSelectRow>( animalRow ) );
@@ -332,16 +336,16 @@ void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
 	OnPropertyChanged( "AnimalRows" );
 }
 
-void AgricultureModel::updateGlobalTreeInfo( const QList<GuiPlant>& info )
+void AgricultureModel::updateGlobalTreeInfo( const std::vector<GuiPlant>& info )
 {
 	m_treeRows->Clear();
 	int plantDone = 0;
 	while ( plantDone < info.size() )
 	{
-		QList<GuiPlant> treeRow;
+		std::vector<const GuiPlant*> treeRow;
 		while ( treeRow.size() < 8 && plantDone < info.size() )
 		{
-			treeRow.append( info[plantDone] );
+			treeRow.push_back( &info[plantDone] );
 			++plantDone;
 		}
 		m_treeRows->Add( MakePtr<TreeSelectRow>( treeRow ) );
@@ -442,8 +446,8 @@ void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 	if ( !info.product.plantID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
-		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Global::util->createBufferForNoesisImage( info.product.sprite.get(), buffer );
+		m_bitmapSource = BitmapImage::Create( info.product.sprite->w, info.product.sprite->h, 96, 96, buffer.data(), info.product.sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$MaterialName_" + info.product.plantID ) + ")" ).toStdString().c_str();
 	}
@@ -512,8 +516,8 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	if ( !info.product.animalID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
-		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		Global::util->createBufferForNoesisImage( info.product.sprite.get(), buffer );
+		m_bitmapSource = BitmapImage::Create( info.product.sprite->w, info.product.sprite->h, 96, 96, buffer.data(), info.product.sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$CreatureName_" + info.product.animalID ) + ")" ).toStdString().c_str();
 	}
@@ -525,15 +529,15 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	OnPropertyChanged( "Title" );
 
 	m_foodRows->Clear();
-	if( !info.food.isEmpty() )
+	if( !info.food.empty() )
 	{	
 		int foodDone = 0;
 		while ( foodDone < info.food.size() )
 		{
-			QList<GuiPastureFoodItem> foodRow;
+			std::vector<const GuiPastureFoodItem*> foodRow;
 			while ( foodRow.size() < 8 && foodDone < info.food.size() )
 			{
-				foodRow.append( info.food[foodDone] );
+				foodRow.push_back( &info.food[foodDone] );
 				++foodDone;
 			}
 			m_foodRows->Add( MakePtr<FoodSelectRow>( foodRow, m_proxy ) );
@@ -562,9 +566,9 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	if ( !info.product.plantID.isEmpty() )
 	{
 		std::vector<unsigned char> buffer;
-		Global::util->createBufferForNoesisImage( info.product.sprite, buffer );
+		Global::util->createBufferForNoesisImage( info.product.sprite.get(), buffer );
 
-		m_bitmapSource = BitmapImage::Create( info.product.sprite.width(), info.product.sprite.height(), 96, 96, buffer.data(), info.product.sprite.width() * 4, BitmapSource::Format::Format_RGBA8 );
+		m_bitmapSource = BitmapImage::Create( info.product.sprite->w, info.product.sprite->h, 96, 96, buffer.data(), info.product.sprite->w * 4, BitmapSource::Format::Format_RGBA8 );
 
 		m_title = ( QString( m_name.Str() ) + " (" + S::s( "$ItemName_" + info.product.plantID ) + ")" ).toStdString().c_str();
 	}

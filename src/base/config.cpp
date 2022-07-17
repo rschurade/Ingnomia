@@ -61,10 +61,10 @@ ConfigVariant jsonToConfigVariant(const json& v) {
 	}
 }
 
-Config::Config()
+Config::Config( const fs::path& gamePath )
 {
 	QMutexLocker lock( &m_mutex );
-	IO::createFolders();
+	IO::createFolders( gamePath );
 
 	//check if Ingnomia folder in /Documents/My Games exist
 	const fs::path& folder = IO::getDataFolder();
@@ -73,7 +73,7 @@ Config::Config()
 
 	if ( !IO::loadFile( folder / "settings" / "config.json", jd ) )
 	{
-		if( !IO::loadOriginalConfig( jd ) )
+		if( !IO::loadOriginalConfig( gamePath, jd ) )
 		{
 			return;
 		}
@@ -117,7 +117,7 @@ Config::Config()
 	{
 		m_settings.insert_or_assign( "uiscale", 1.0 );
 	}
-	m_settings.insert_or_assign( "dataPath", fs::path(QCoreApplication::applicationDirPath().toStdString()) / "content" );
+	m_settings.insert_or_assign( "dataPath", fs::path( gamePath ) / "content" );
 
 	m_valid = true;
 

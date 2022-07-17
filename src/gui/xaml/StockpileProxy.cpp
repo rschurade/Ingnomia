@@ -25,8 +25,6 @@
 #include "../eventconnector.h"
 #include "TileInfoModel.h"
 
-#include <QPainter>
-
 StockpileProxy::StockpileProxy( QObject* parent ) :
 	QObject( parent )
 {

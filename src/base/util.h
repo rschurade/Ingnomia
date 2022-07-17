@@ -18,11 +18,11 @@
 #pragma once
 
 #include "../base/position.h"
+#include "SDL_util.h"
 
 #include <QPointer>
 #include <QGridLayout>
 #include <QLayoutItem>
-#include <QPixmap>
 #include <QString>
 #include <QStringList>
 #include <QToolButton>
@@ -121,14 +121,14 @@ public:
 
 	void debugVM( QVariantMap vm, QString name );
 
-	QPixmap smallPixmap( Sprite* sprite, QString season, int rotation );
-	QPixmap createWorkshopImage( const QString& workshopID, const QStringList& m_mats );
-	QPixmap createItemImage( const QString& constructionID, const QStringList& mats );
-	QPixmap createItemImage2( const QString& constructionID, const QStringList& mats );
-	QPixmap createConstructionImage( const QString& constructionID, const QStringList& mats );
+	PixmapPtr smallPixmap( Sprite* sprite, const std::string& season, int rotation );
+	PixmapPtr createWorkshopImage( const QString& workshopID, const QStringList& m_mats );
+	PixmapPtr createItemImage( const QString& constructionID, const QStringList& mats );
+	PixmapPtr createItemImage2( const QString& constructionID, const QStringList& mats );
+	PixmapPtr createConstructionImage( const QString& constructionID, const QStringList& mats );
 	Sprite* getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const QStringList& mats );
 
-	void createBufferForNoesisImage( const QPixmap& pm, std::vector<unsigned char>& buffer );
+	void createBufferForNoesisImage( const SDL_Surface* pm, std::vector<unsigned char>& buffer );
 
 	QStringList possibleMaterialsForItem( QString itemSID );
 	QStringList possibleMaterials( QString allowedMaterials, QString allowedMaterialTypes );

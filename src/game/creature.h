@@ -25,10 +25,8 @@
 #include "object.h"
 
 #include <QPointer>
-#include <QPixmap>
 #include <absl/container/flat_hash_map.h>
 
-class QPainter;
 class Game;
 
 struct AggroEntry

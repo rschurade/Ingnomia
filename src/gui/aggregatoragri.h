@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "../base/SDL_util.h"
 #include "../base/tile.h"
 #include "../game/creature.h"
 
@@ -35,9 +36,8 @@ struct GuiAnimal
 	int totalcount  = 0;
 	int maleCount   = 0;
 	int femaleCount = 0;
-	QPixmap sprite;
+	PixmapPtr sprite { nullptr, SDL_FreeSurface };
 };
-Q_DECLARE_METATYPE( GuiAnimal )
 
 struct GuiPastureAnimal
 {
@@ -49,7 +49,6 @@ struct GuiPastureAnimal
 	bool isYoung = false;
 	bool toButcher = false;
 };
-Q_DECLARE_METATYPE( GuiPastureAnimal )
 
 
 struct GuiPlant
@@ -62,9 +61,8 @@ struct GuiPlant
 	QString harvestedItem;
 	int itemCount  = 0;
 	int plantCount = 0;
-	QPixmap sprite;
+	PixmapPtr sprite { nullptr, SDL_FreeSurface };
 };
-Q_DECLARE_METATYPE( GuiPlant )
 
 enum class AgriType
 {
@@ -72,7 +70,6 @@ enum class AgriType
 	Pasture,
 	Grove
 };
-Q_DECLARE_METATYPE( AgriType )
 
 struct GuiFarmInfo
 {
@@ -92,7 +89,6 @@ struct GuiFarmInfo
 
 	GuiPlant product;
 };
-Q_DECLARE_METATYPE( GuiFarmInfo )
 
 struct GuiPastureFoodItem
 {
@@ -100,7 +96,7 @@ struct GuiPastureFoodItem
 	QString materialSID;
 	QString name;
 	bool checked = false;
-	QPixmap sprite;
+	PixmapPtr sprite { nullptr, SDL_FreeSurface };
 };
 
 struct GuiPastureInfo
@@ -130,12 +126,11 @@ struct GuiPastureInfo
 	int hayMax     = 0;
 	int hayCurrent = 0;
 
-	QList<GuiPastureFoodItem> food;
+	std::vector<GuiPastureFoodItem> food;
 
 	GuiAnimal product;
-	QList<GuiPastureAnimal> animals;
+	std::vector<GuiPastureAnimal> animals;
 };
-Q_DECLARE_METATYPE( GuiPastureInfo )
 
 struct GuiGroveInfo
 {
@@ -156,7 +151,6 @@ struct GuiGroveInfo
 
 	GuiPlant product;
 };
-Q_DECLARE_METATYPE( GuiGroveInfo )
 
 class AggregatorAgri : public QObject
 {
@@ -177,9 +171,9 @@ private:
 	GuiFarmInfo m_farmInfo;
 	GuiPastureInfo m_pastureInfo;
 	GuiGroveInfo m_groveInfo;
-	QList<GuiPlant> m_globalPlantInfo;
-	QList<GuiAnimal> m_globalAnimalInfo;
-	QList<GuiPlant> m_globalTreeInfo;
+	std::vector<GuiPlant> m_globalPlantInfo;
+	std::vector<GuiAnimal> m_globalAnimalInfo;
+	std::vector<GuiPlant> m_globalTreeInfo;
 
 public slots:
 	void onOpen( TileFlag designation, unsigned int tileID );
@@ -214,7 +208,7 @@ public: // signals:
 	sigslot::signal<const GuiFarmInfo& /*info*/> signalUpdateFarm;
 	sigslot::signal<const GuiPastureInfo& /*info*/> signalUpdatePasture;
 	sigslot::signal<const GuiGroveInfo& /*info*/> signalUpdateGrove;
-	sigslot::signal<const QList<GuiPlant>& /*info*/> signalGlobalPlantInfo;
-	sigslot::signal<const QList<GuiAnimal>& /*info*/> signalGlobalAnimalInfo;
-	sigslot::signal<const QList<GuiPlant>& /*info*/> signalGlobalTreeInfo;
+	sigslot::signal<const std::vector<GuiPlant>& /*info*/> signalGlobalPlantInfo;
+	sigslot::signal<const std::vector<GuiAnimal>& /*info*/> signalGlobalAnimalInfo;
+	sigslot::signal<const std::vector<GuiPlant>& /*info*/> signalGlobalTreeInfo;
 };

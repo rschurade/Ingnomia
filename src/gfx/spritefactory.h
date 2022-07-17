@@ -21,10 +21,13 @@
 
 #include <QBitmap>
 #include <QGraphicsPixmapItem>
-#include <QPixmap>
 
+#include <SDL.h>
 #include <vector>
+
 #include <range/v3/view.hpp>
+
+struct SDL_Surface;
 
 struct DefNode
 {
@@ -52,8 +55,8 @@ struct DefNode
 
 	QString type;
 	QString offset;
-	QString effect;
-	QString tint;
+	std::string effect;
+	std::string tint;
 	QString value;
 	QString baseSprite;
 	QString defaultMaterial;
@@ -86,26 +89,26 @@ private:
 	Sprite* getBaseSprite( const DefNode* node, const QString itemSID, const QStringList materialSIDs, int materialID = 0 );
 
 	QString createSpriteMaterialDryRun( const QString itemSID, const QStringList materialSIDs );
-	void getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation, const int animFrame );
+	void getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const std::string& season, const QString rotation, const int animFrame );
 
-	int numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation );
+	int numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const std::string& season, const QString rotation );
 	bool containsRandom( const QString itemSID, const QStringList materialSIDs );
 
-	QString getMaterialType( const QString materialSID );
+	QString getMaterialType( const std::string& materialSID );
 
-	QPixmap extractPixmap( QString sourcePNG, QVariantMap def );
+	SDL_Surface* extractPixmap( QString sourcePNG, QVariantMap def );
 	unsigned char rotationToChar( QString suffix );
 
 	// base sprites and sources for creation
-	absl::flat_hash_map<QString, QPixmap> m_pixmapSources;
-	absl::btree_map<QString, QPixmap> m_baseSprites;
+	absl::flat_hash_map<QString, SDL_Surface*> m_pixmapSources;
+	absl::btree_map<QString, SDL_Surface*> m_baseSprites;
 	absl::btree_map<QString, DefNode*> m_spriteDefinitions;
 	absl::btree_map<QString, QVariantMap> m_spriteDefVMs;
 
 	absl::btree_map<QString, unsigned int> m_thoughtBubbleIDs;
 
 	// cached DB values for faster lookup
-	QStringList m_seasons;
+	std::vector<std::string> m_seasons;
 	absl::btree_map<QString, QString> m_materialTypes;
 
 	//pixel data for array textures
@@ -121,8 +124,8 @@ private:
 	float m_numFrames = 1;
 	absl::btree_map<int, int> m_randomNumbers;
 
-	QList<QColor> m_colors;
-	QList<QColor> m_hairColors;
+	std::vector<SDL_Color> m_colors;
+	std::vector<SDL_Color> m_hairColors;
 
 	// created sprites for current game
 	QList<Sprite*> m_sprites;
@@ -137,19 +140,17 @@ private:
 
 	void addEmptyRows( int startIndex, int rows, std::vector<uint8_t>& pixelData );
 
-	void tintPixmap( QPixmap& pm, QColor color );
-
 	void createStandardSprites();
 
-	QPixmap getTintedBaseSprite( QString baseSprite, QString material );
+	SDL_Surface* getTintedBaseSprite( QString baseSprite, QString material );
 
 	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	
 	void printDebug();
 
-	QPixmap pixmap( QString name );
+	SDL_Surface* pixmap( QString name );
 
-	QPixmap baseSprite( QString id );
+	SDL_Surface* baseSprite( QString id );
 
 	QMutex m_mutex;
 
@@ -182,8 +183,6 @@ public:
 	bool creatureTextureAdded();
 
 	void forceUpdate();
-
-	void addPixmapSource( QString name, QString path );
 
 	unsigned int thoughtBubbleID( QString sid );
 	

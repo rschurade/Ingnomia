@@ -40,6 +40,9 @@ find_package(NlohmannJson REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(pugixml REQUIRED)
 find_package(googletest REQUIRED)
+find_package(PlatformFolders REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_Image REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
@@ -103,6 +106,8 @@ add_subdirectory(src) # Sources list
 add_subdirectory(test) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
+
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
@@ -125,6 +130,10 @@ target_link_libraries(${PROJECT_NAME}
 
 		nlohmann_json::nlohmann_json
 		pugixml::pugixml
+		sago::platform_folders
+
+		${SDL2_LIBRARIES}
+		${SDL2_IMAGE_LIBRARIES}
 )
 
 # Noesis license

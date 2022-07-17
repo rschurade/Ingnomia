@@ -222,7 +222,7 @@ void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 	auto sprite = g->sf()->createSprite( "UI" + eItem.item, mats );
 	if( sprite )
 	{
-		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
 
 		std::vector<unsigned char> buffer;
 
@@ -248,7 +248,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 	auto sprite = g->sf()->createSprite( "UI" + uItem.type + slot, mats );
 	if( sprite )
 	{
-		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
 
 		std::vector<unsigned char> buffer;
 
@@ -270,7 +270,7 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 	auto sprite = g->sf()->createSprite( spriteID, mats );
 	if( sprite )
 	{
-		QPixmap pm = sprite->pixmap( "Spring", 0, 0 );
+		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
 
 		std::vector<unsigned char> buffer;
 

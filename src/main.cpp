@@ -170,7 +170,7 @@ int main( int argc, char* argv[] )
 	QCoreApplication::setApplicationName( PROJECT_NAME );
 	QCoreApplication::setApplicationVersion( PROJECT_VERSION );
 
-	Global::cfg = new Config;
+	Global::cfg = new Config( QCoreApplication::applicationDirPath().toStdString() );
 
 	if ( !Global::cfg->valid() )
 	{
@@ -230,6 +230,7 @@ int main( int argc, char* argv[] )
 
 	GameManager* gm = new GameManager;
 	QThread gameThread;
+	gameThread.setObjectName("Game Thread");
 	gameThread.start();
 	gm->moveToThread( &gameThread );
 

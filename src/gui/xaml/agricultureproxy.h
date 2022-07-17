@@ -65,9 +65,9 @@ private slots:
 	void onUpdatePasture( const GuiPastureInfo& info );
 	void onUpdateGrove( const GuiGroveInfo& info );
 
-	void onUpdateGlobalPlants( const QList<GuiPlant>& plants );
-	void onUpdateGlobalAnimals( const QList<GuiAnimal>& animals );
-	void onUpdateGlobalTrees( const QList<GuiPlant>& trees );
+	void onUpdateGlobalPlants( const std::vector<GuiPlant>& plants );
+	void onUpdateGlobalAnimals( const std::vector<GuiAnimal>& animals );
+	void onUpdateGlobalTrees( const std::vector<GuiPlant>& trees );
 
 public: // signals:
 	sigslot::signal<AgriType /*type*/, unsigned int /*designationID*/, QString /*name*/, int /*priority*/, bool /*suspended*/> signalSetBasicOptions;

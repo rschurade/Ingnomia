@@ -23,8 +23,6 @@
 #include "../../base/global.h"
 #include "../eventconnector.h"
 
-#include <QPainter>
-
 WorkshopProxy::WorkshopProxy( QObject* parent ) :
 	QObject( parent )
 {

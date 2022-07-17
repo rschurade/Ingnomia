@@ -23,16 +23,14 @@
 #include "../base/gamestate.h"
 #include "../base/io.h"
 #include "../base/util.h"
+#include "../fmt_formats.h"
+#include "spdlog/spdlog.h"
 
 #include <QElapsedTimer>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include <QPainter>
-#include <QPixmap>
 
-#include "spdlog/spdlog.h"
-
-#include "../fmt_formats.h"
+#include <SDL_image.h>
 
 SpriteFactory::SpriteFactory()
 {
@@ -76,7 +74,11 @@ bool SpriteFactory::init()
 	m_colors.clear();
 	m_hairColors.clear();
 
-	m_seasons = DB::ids( "Seasons" );
+	const auto tmp = DB::ids( "Seasons" );
+	m_seasons.clear();
+	for ( const auto& id : tmp ) {
+		m_seasons.push_back( id.toStdString() );
+	}
 
 	auto matIds = DB::ids( "Materials" );
 	for ( auto id : matIds )
@@ -86,12 +88,12 @@ bool SpriteFactory::init()
 
 	for ( auto color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
 	{
-		m_colors.push_back( Global::util->string2QColor( color.toString() ) );
+		m_colors.push_back( string2SDLColor( color.toString().toStdString() ) );
 	}
 
 	for ( auto color : DB::selectRows( "HairColors" ) )
 	{
-		m_hairColors.push_back( Global::util->string2QColor( color.value( "Color" ).toString() ) );
+		m_hairColors.push_back( string2SDLColor( color.value( "Color" ).toString().toStdString() ) );
 	}
 
 	bool loaded = true;
@@ -101,16 +103,19 @@ bool SpriteFactory::init()
 		QString tilesheet = row.value( "Tilesheet" ).toString();
 		if ( !m_pixmapSources.contains( tilesheet ) )
 		{
-			QPixmap pm;
-			loaded = pm.load( QString::fromStdString( fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "tilesheet" / tilesheet.toStdString() ) );
-			if ( !loaded )
+			auto imgPath = fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "tilesheet" / tilesheet.toStdString();
+			SDL_Surface* pm;
+			if ( !fs::exists(imgPath) )
 			{
-				loaded = pm.load( tilesheet );
-				if ( !loaded )
+				const auto tilesheetStd = tilesheet.toStdString();
+				pm = IMG_Load( tilesheetStd.c_str() );
+				if ( !pm )
 				{
 					spdlog::debug( "SpriteFactory: failed to load  {}", tilesheet.toStdString() );
 					return false;
 				}
+			} else {
+				pm = IMG_Load( imgPath.c_str() );
 			}
 			m_pixmapSources.insert_or_assign( tilesheet, pm );
 			/*
@@ -377,19 +382,6 @@ bool SpriteFactory::init()
 	return loaded;
 }
 
-void SpriteFactory::addPixmapSource( QString name, QString path )
-{
-	if ( !m_pixmapSources.contains( name ) )
-	{
-		QPixmap pm;
-		bool loaded = pm.load( path );
-		if ( loaded )
-		{
-			m_pixmapSources.insert_or_assign( name, pm );
-		}
-	}
-}
-
 void SpriteFactory::createStandardSprites()
 {
 	m_thoughtBubbleIDs.insert_or_assign( "Tired", createSprite( "StatusTired", { "None" } )->uID );
@@ -419,7 +411,7 @@ void SpriteFactory::createStandardSprites()
 	}
 }
 
-QPixmap SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
+SDL_Surface* SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 {
 	QString rect = def.value( "SourceRectangle" ).toString();
 
@@ -431,13 +423,15 @@ QPixmap SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 		int dimX = rl[2].toInt();
 		int dimY = rl[3].toInt();
 
-		QPixmap p = m_pixmapSources[sourcePNG].copy( x, y, dimX, dimY );
-		p.setMask( p.createMaskFromColor( QColor( 255, 0, 255 ), Qt::MaskInColor ) );
+		auto *dst = createPixmap( dimX, dimY );
+		Uint32 maskMagenta = dst->format->Rmask | dst->format->Bmask;
+		copyPixmap( dst, m_pixmapSources[sourcePNG], x, y, dimX, dimY );
+		SDL_SetColorKey( dst, true, maskMagenta );
 
-		return p;
+		return dst;
 	}
 	spdlog::debug( "***ERROR*** extractPixmap() for {}", def.value( "ID" ).toString().toStdString() );
-	return QPixmap();
+	return nullptr;
 }
 
 unsigned char SpriteFactory::rotationToChar( const QString suffix )
@@ -772,9 +766,9 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		}
 	}
 
-	parent->effect          = def.value( "Effect" ).toString();
+	parent->effect          = def.value( "Effect" ).toString().toStdString();
 	parent->offset          = def.value( "Offset" ).toString();
-	parent->tint            = def.value( "Tint" ).toString();
+	parent->tint            = def.value( "Tint" ).toString().toStdString();
 	parent->baseSprite      = def.value( "BaseSprite" ).toString();
 	parent->defaultMaterial = def.value( "DefaultMaterial" ).toString();
 	parent->hasTransp       = def.value( "HasTransp" ).toBool();
@@ -909,11 +903,11 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		m_offset = node->offset;
 	}
 	materialID          = qMin( materialID, materialSIDs.size() - 1 );
-	QString materialSID = materialSIDs[materialID];
+	std::string materialSID = materialSIDs[materialID].toStdString();
 	if ( !node->baseSprite.isEmpty() )
 	{
-		QPixmap pm           = m_baseSprites.at( node->baseSprite );
-		SpritePixmap* sprite = new SpritePixmap( pm, m_offset );
+		SDL_Surface* pm      = m_baseSprites.at( node->baseSprite );
+		SpritePixmap* sprite = new SpritePixmap( pm, m_offset.toStdString() );
 		sprite->applyEffect( node->effect );
 		sprite->applyTint( node->tint, materialSID );
 		sprite->hasTransp = node->hasTransp;
@@ -939,7 +933,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		SpriteSeasons* ss = new SpriteSeasons;
 		for ( auto child : node->childs | ranges::views::values )
 		{
-			ss->m_sprites.insert_or_assign( child->value, getBaseSprite( child, itemSID, materialSIDs ) );
+			ss->m_sprites.insert_or_assign( child->value.toStdString(), getBaseSprite( child, itemSID, materialSIDs ) );
 		}
 		ss->applyEffect( node->effect );
 		ss->applyTint( node->tint, materialSID );
@@ -1022,8 +1016,8 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 			return pm;
 		}
 
-		QString materialSID = *materialSIDs.begin();
-		if ( maps::try_at( node->childs, materialSID, temp ) )
+		const auto materialSID = materialSIDs.begin()->toStdString();
+		if ( maps::try_at( node->childs, QString::fromStdString( materialSID ), temp ) )
 		{
 			Sprite* pm = getBaseSprite( temp, itemSID, materialSIDs );
 			pm->applyEffect( node->effect );
@@ -1053,13 +1047,13 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 		}
 	}
 
-	QPixmap pm           = m_baseSprites.at( "SolidSelectionWall" );
-	SpritePixmap* sprite = new SpritePixmap( pm );
+	auto* pm     = m_baseSprites.at( "SolidSelectionWall" );
+	auto* sprite = new SpritePixmap( pm );
 	sprite->applyTint( "Material", "JobPurple" );
 	return sprite;
 }
 
-void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation, const int animFrame )
+void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const std::string& season, const QString rotation, const int animFrame )
 {
 	QString materialSID = *materialSIDs.begin();
 	if ( !node->baseSprite.isEmpty() )
@@ -1075,7 +1069,7 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
-	if ( maps::try_at( childs, season, temp ) )
+	if ( maps::try_at( childs, QString::fromStdString( season ), temp ) )
 	{
 		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
@@ -1140,7 +1134,7 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 
 	if ( !materialSIDs.empty() )
 	{
-		QString materialType = getMaterialType( materialSID );
+		QString materialType = getMaterialType( materialSID.toStdString() );
 		if ( maps::try_at( childs, materialType, temp ) )
 		{
 			getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
@@ -1162,14 +1156,14 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 	}
 }
 
-int SpriteFactory::numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation )
+int SpriteFactory::numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const std::string& season, const QString rotation )
 {
 	return 1;
 }
 
-QString SpriteFactory::getMaterialType( const QString materialSID )
+QString SpriteFactory::getMaterialType( const std::string& materialSID )
 {
-	return m_materialTypes.at( materialSID );
+	return m_materialTypes.at( QString::fromStdString( materialSID ) );
 }
 
 Sprite* SpriteFactory::getSprite( const int id )
@@ -1248,8 +1242,8 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 
 void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 {
-	QString season = GameState::seasonString;
-	if( season.isEmpty() )
+	auto season = GameState::seasonString.toStdString();
+	if( season.empty() )
 	{
 		season = "Spring";
 	}
@@ -1276,25 +1270,26 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 			for ( int i = 0; i < 4; ++i )
 			{
 				auto pm    = sprite->pixmap( season, i, frame );
-				QImage img = pm.toImage();
 
 				int startIndex = 8192 * ( 4 * id + i );
 
-				if ( img.height() == 64 && img.width() == 32 )
+				if ( pm->h == 64 && pm->w == 32 )
 				{
+					SDL_LockSurface( pm );
 					auto data = m_pixelData[tex].data();
 					for ( int y = 0; y < 64; ++y )
 					{
 						for ( int x = 0; x < 32; ++x )
 						{
-							QColor col = img.pixelColor( x, y );
+							const auto col         = getPixelColor( pm, x, y );
 							const size_t baseIndex = startIndex + ( x * 4 + 128 * y );
-							data[baseIndex + 0]    = col.red();
-							data[baseIndex + 1]    = col.green();
-							data[baseIndex + 2]    = col.blue();
-							data[baseIndex + 3]    = col.alpha();
+							data[baseIndex + 0]    = col.r;
+							data[baseIndex + 1]    = col.g;
+							data[baseIndex + 2]    = col.b;
+							data[baseIndex + 3]    = col.a;
 						}
 					}
+					SDL_UnlockSurface( pm );
 				}
 			}
 		}
@@ -1320,23 +1315,24 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 		for ( int i = 0; i < 4; ++i )
 		{
 			auto pm    = sprite->pixmap( season, i, 0 );
-			QImage img = pm.toImage();
 
 			int startIndex = 8192 * ( 4 * id + i );
 
-			if ( img.height() == 64 && img.width() == 32 )
+			if ( pm->h == 64 && pm->w == 32 )
 			{
+				SDL_LockSurface( pm );
 				for ( int y = 0; y < 64; ++y )
 				{
 					for ( int x = 0; x < 32; ++x )
 					{
-						QColor col = img.pixelColor( x, y );
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y )]     = col.red();
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.green();
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.blue();
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.alpha();
+						const auto col = getPixelColor( pm, x, y );
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y )]     = col.r;
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
+						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
 					}
 				}
+				SDL_UnlockSurface( pm );
 			}
 		}
 	}
@@ -1346,12 +1342,13 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 {
 	int tex        = sprite->uID / 512;
 	int id         = sprite->uID % 512;
-	QString season = GameState::seasonString;
+	const auto season = GameState::seasonString.toStdString();
 
 	for ( int i = 0; i < 4; ++i )
 	{
 		auto pm    = sprite->pixmap( season, i, 0 );
-		QImage img = pm.toImage();
+
+		SDL_LockSurface( pm );
 
 		int startIndex = 8192 * ( 4 * id + i );
 
@@ -1367,11 +1364,11 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 
 			for ( int y = 16; y < 48; ++y )
 			{
-				QColor col = img.pixelColor( x, y - 16 );
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = col.red();
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.green();
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.blue();
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.alpha();
+				const auto col = getPixelColor( pm, x, y - 16 );
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = col.r;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
+				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
 			}
 			for ( int y = 48; y < 64; ++y )
 			{
@@ -1381,6 +1378,8 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 			}
 		}
+
+		SDL_UnlockSurface( pm );
 	}
 }
 
@@ -1444,24 +1443,27 @@ void SpriteFactory::forceUpdate()
 	m_textureAdded = true;
 }
 
-QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material )
+SDL_Surface* SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material )
 {
 	if ( baseSprite.isEmpty() )
 	{
 		return m_baseSprites["EmptyWall"];
 	}
 
-	QPixmap pm = m_baseSprites[baseSprite];
-	tintPixmap( pm, Global::util->string2QColor( DBH::materialColor( material ) ) );
-	return pm;
+	auto* pm     = m_baseSprites[baseSprite];
+	auto* result = createPixmap( pm->w, pm->h );
+
+	copyPixmap( result, pm, 0, 0 );
+	tintPixmap( result, string2SDLColor( DBH::materialColor( material ).toStdString() ) );
+	return result;
 }
 
 Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVariantList components, QVariantList componentsBack, bool isDead )
 {
 	QMutexLocker ml( &m_mutex );
-	QPixmap pmfr( 32, 32 );
-	pmfr.fill( QColor( 0, 0, 0, 0 ) );
-	QPainter painter( &pmfr );
+	auto pmfr = createPixmap( 32, 32 );
+	SDL_FillRect( pmfr, nullptr, 0x00000000 );
+
 	//spdlog::debug(" =================================================");
 	for ( auto vcm : components )
 	{
@@ -1475,21 +1477,21 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 
 		if ( cm.value( "HasBase" ).toBool() )
 		{
-			painter.drawPixmap( 0, 0, m_baseSprites[baseSprite + "Base"] );
+			copyPixmap( pmfr, m_baseSprites[baseSprite + "Base"], 0, 0 );
 		}
 
 		QString tint = cm.value( "Tint" ).toString();
 		bool isHair  = cm.value( "IsHair" ).toBool();
 		if ( tint.isEmpty() )
 		{
-			painter.drawPixmap( 0, 0, m_baseSprites[baseSprite] );
+			copyPixmap( pmfr, m_baseSprites[baseSprite], 0, 0 );
 		}
 		else
 		{
 			if ( tint == "Material" )
 			{
 				auto pm = getTintedBaseSprite( baseSprite, cm.value( "Material" ).toString() );
-				painter.drawPixmap( 0, 0, pm );
+				copyPixmap( pmfr, pm, 0, 0 );
 			}
 			else
 			{
@@ -1497,26 +1499,20 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 				int colorInt = tint.toInt( &ok );
 				if ( ok )
 				{
-					QPixmap pm = m_baseSprites[baseSprite];
-					if ( isHair )
-					{
-						tintPixmap( pm, m_hairColors[colorInt] );
-					}
-					else
-					{
-						tintPixmap( pm, m_colors[colorInt] );
-					}
-					painter.drawPixmap( 0, 0, pm );
+					auto* pm = m_baseSprites[baseSprite];
+					copyPixmap( pmfr, pm, 0, 0 );
+					const auto color = isHair ? m_hairColors[colorInt] : m_colors[colorInt];
+					tintPixmap( pmfr, color );
 				}
 			}
 		}
 	}
-	QImage img   = pmfr.toImage();
-	QPixmap pmfl = QPixmap::fromImage( img.mirrored( true, false ) );
+	auto *pmfl = clonePixmap(pmfr);
+	flipPixmap( pmfl, true, false );
 
-	QPixmap pmbr( 32, 32 );
-	pmbr.fill( QColor( 0, 0, 0, 0 ) );
-	QPainter painter2( &pmbr );
+	auto* pmbr = createPixmap( 32, 32 );
+	SDL_FillRect(pmbr, nullptr, 0x00000000);
+
 	//spdlog::debug("---------------------------------");
 	for ( auto vcm : componentsBack )
 	{
@@ -1530,20 +1526,20 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 
 		if ( cm.value( "HasBase" ).toBool() )
 		{
-			painter2.drawPixmap( 0, 0, m_baseSprites[baseSprite + "Base"] );
+			copyPixmap( pmbr, m_baseSprites[baseSprite + "Base"], 0, 0 );
 		}
 		QString tint = cm.value( "Tint" ).toString();
 		bool isHair  = cm.value( "IsHair" ).toBool();
 		if ( tint.isEmpty() )
 		{
-			painter2.drawPixmap( 0, 0, m_baseSprites[baseSprite] );
+			copyPixmap( pmbr, m_baseSprites[baseSprite], 0, 0 );
 		}
 		else
 		{
 			if ( tint == "Material" )
 			{
 				auto pm = getTintedBaseSprite( baseSprite, cm.value( "Material" ).toString() );
-				painter2.drawPixmap( 0, 0, pm );
+				copyPixmap( pmbr, pm, 0, 0 );
 			}
 			else
 			{
@@ -1551,22 +1547,17 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 				int colorInt = tint.toInt( &ok );
 				if ( ok )
 				{
-					QPixmap pm = m_baseSprites[baseSprite];
-					if ( isHair )
-					{
-						tintPixmap( pm, m_hairColors[colorInt] );
-					}
-					else
-					{
-						tintPixmap( pm, m_colors[colorInt] );
-					}
-					painter2.drawPixmap( 0, 0, pm );
+					auto* pm = m_baseSprites[baseSprite];
+					copyPixmap( pmbr, pm, 0, 0 );
+					const auto color = isHair ? m_hairColors[colorInt] : m_colors[colorInt];
+					tintPixmap( pmbr, color );
 				}
 			}
 		}
 	}
-	img          = pmbr.toImage();
-	QPixmap pmbl = QPixmap::fromImage( img.mirrored( true, false ) );
+
+	auto *pmbl = clonePixmap(pmbr);
+	flipPixmap( pmbl, true, false );
 
 	SpritePixmap* sfr = nullptr;
 	SpritePixmap* sfl = nullptr;
@@ -1575,10 +1566,10 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 
 	if ( isDead )
 	{
-		sfr = new SpritePixmap( pmfr.transformed( QTransform().rotate( 90 ) ) );
-		sfl = new SpritePixmap( pmfl.transformed( QTransform().rotate( 90 ) ) );
-		sbl = new SpritePixmap( pmbl.transformed( QTransform().rotate( 90 ) ) );
-		sbr = new SpritePixmap( pmbr.transformed( QTransform().rotate( 90 ) ) );
+		sfr = new SpritePixmap( rotatePixmap90Clone( pmfr ) );
+		sfl = new SpritePixmap( rotatePixmap90Clone( pmfl ) );
+		sbl = new SpritePixmap( rotatePixmap90Clone( pmbl ) );
+		sbr = new SpritePixmap( rotatePixmap90Clone( pmbr ) );
 	}
 	else
 	{
@@ -1645,43 +1636,26 @@ Sprite* SpriteFactory::getCreatureSprite( const unsigned int id, unsigned int& s
 	return nullptr;
 }
 
-void SpriteFactory::tintPixmap( QPixmap& pm, QColor color )
-{
-	QImage img = pm.toImage();
-
-	for ( int x = 0; x < img.size().width(); ++x )
-	{
-		for ( int y = 0; y < img.size().height(); ++y )
-		{
-			QColor col = img.pixelColor( x, y );
-			col.setRedF( qMin( 1., col.redF() * color.redF() ) );
-			col.setGreenF( qMin( 1., col.greenF() * color.greenF() ) );
-			col.setBlueF( qMin( 1., col.blueF() * color.blueF() ) );
-			col.setAlphaF( qMin( 1., col.alphaF() * color.alphaF() ) );
-			img.setPixelColor( x, y, col );
-		}
-	}
-	pm = QPixmap::fromImage( img );
-}
-
-QPixmap SpriteFactory::pixmap( QString name )
+SDL_Surface* SpriteFactory::pixmap( QString name )
 {
 	if ( m_pixmapSources.contains( name ) )
 	{
 		return m_pixmapSources[name];
 	}
 	spdlog::debug( "Pixmap {} doesn't exist", name.toStdString() );
-	return QPixmap( 32, 32 );
+	throw std::runtime_error( "Pixmap missing" );
+//	return QPixmap( 32, 32 );
 }
 
-QPixmap SpriteFactory::baseSprite( QString id )
+SDL_Surface* SpriteFactory::baseSprite( QString id )
 {
 	if ( m_baseSprites.contains( id ) )
 	{
 		return m_baseSprites[id];
 	}
 	spdlog::debug( "Base sprite {} doesn't exist", id.toStdString() );
-	return QPixmap( 32, 32 );
+	throw std::runtime_error( "Pixmap missing" );
+//	return QPixmap( 32, 32 );
 }
 
 unsigned int SpriteFactory::thoughtBubbleID( QString sid )

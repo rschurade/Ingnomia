@@ -25,8 +25,6 @@
 #include "../eventconnector.h"
 #include "TileInfoModel.h"
 
-#include <QPainter>
-
 ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	QObject( parent )
 {

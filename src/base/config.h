@@ -26,6 +26,10 @@
 
 #include "containersHelper.h"
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -45,7 +49,7 @@ private:
 	ConfigVariant get_variant(const QString &key);
 
 public:
-	Config();
+	Config( const fs::path& gamePath );
 	~Config();
 
 	template<class T>
