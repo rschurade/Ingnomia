@@ -1,0 +1,203 @@
+#include <bgfx_shader.sh>
+
+#ifdef PAINT_SOLID
+    #define HAS_COLOR 1
+#endif
+
+#if defined(PAINT_LINEAR) || defined(PAINT_RADIAL) || defined(PAINT_PATTERN)
+    #define HAS_UV0 1
+#endif
+
+#ifdef CLAMP_PATTERN
+    #define HAS_RECT 1
+#endif
+
+#if defined(REPEAT_PATTERN) || defined(MIRRORU_PATTERN) || defined(MIRRORV_PATTERN) || defined(MIRROR_PATTERN)
+    #define HAS_RECT 1
+    #define HAS_TILE 1
+#endif
+
+#ifdef EFFECT_PATH_AA
+    #define HAS_COVERAGE 1
+#endif
+
+#if defined(EFFECT_SDF) || defined(EFFECT_SDF_LCD)
+    #define HAS_UV1 1
+    #define HAS_ST1 1
+    #define SDF_SCALE 7.96875
+    #define SDF_BIAS 0.50196078431
+    #define SDF_AA_FACTOR 0.65
+    #define SDF_BASE_MIN 0.125
+    #define SDF_BASE_MAX 0.25
+    #define SDF_BASE_DEV -0.65
+#endif
+
+#ifdef EFFECT_OPACITY
+    #define HAS_UV1 1
+#endif
+
+#ifdef EFFECT_SHADOW
+    #define HAS_UV1 1
+    #define HAS_RECT 1
+#endif
+
+#ifdef EFFECT_BLUR
+    #define HAS_UV1 1
+#endif
+
+#ifdef EFFECT_DOWNSAMPLE
+    #define HAS_UV0 1
+    #define HAS_UV1 1
+    #define HAS_UV2 1
+    #define HAS_UV3 1
+#endif
+
+#ifdef EFFECT_UPSAMPLE
+    #define HAS_COLOR 1
+    #define HAS_UV0 1
+    #define HAS_UV1 1
+#endif
+
+SAMPLER2D(s_pattern, 0);
+SAMPLER2D(s_ramps, 1);
+SAMPLER2D(s_image, 2);
+SAMPLER2D(s_glyphs, 3);
+SAMPLER2D(s_shadow, 4);
+
+#define VEC4_SIZE 4
+
+uniform vec4 u_cbuffer0_fs[8 / VEC4_SIZE];
+uniform vec4 u_cbuffer1_fs[128 / VEC4_SIZE];
+
+void main() {
+
+    // paint modes:
+
+    #ifdef PAINT_SOLID
+        vec4 paint = v_color0;
+        float opacity_ = 1.0;
+    #endif
+
+    #ifdef PAINT_LINEAR
+        vec4 paint = texture2D(s_ramps, v_uv0);
+        float opacity_ = u_cbuffer0_fs[0][0];
+    #endif
+
+    #ifdef PAINT_RADIAL
+        float dd = u_cbuffer0_fs[1][0] * v_uv0.x - u_cbuffer0_fs[1][1] * v_uv0.y;
+        float u = u_cbuffer0_fs[0][0] *
+        v_uv0.x + u_cbuffer0_fs[0][1] *
+        v_uv0.y + u_cbuffer0_fs[0][2] * 
+        sqrt(v_uv0.x * v_uv0.x + v_uv0.y * v_uv0.y - dd * dd);
+        vec4 paint = texture2D(s_ramps, vec2(u, u_cbuffer0_fs[1][2]));
+        float opacity_ = u_cbuffer0_fs[0][3];
+    #endif
+
+    #ifdef PAINT_PATTERN
+
+        #ifdef CLAMP_PATTERN
+            float inside = (v_uv0 == clamp(v_uv0, v_rect.xy, v_rect.zw)) ? 1.0 : 0.0;
+            vec4 paint = inside * texture2D(s_pattern, v_uv0);
+        #endif
+
+        #if defined(REPEAT_PATTERN) || defined(MIRRORU_PATTERN) || defined(MIRRORV_PATTERN) || defined(MIRROR_PATTERN)
+            
+            vec2 uv = (v_uv0 - v_tile.xy) / v_tile.zw;
+            #if defined(REPEAT_PATTERN)
+                uv = fract(uv);
+            #endif
+
+            #if defined(MIRRORU_PATTERN)
+                uv.x = abs(uv.x - 2.0 * floor((uv.x - 1.0) / 2.0) - 2.0);
+                uv.y = fract(uv.y);
+            #endif
+
+            #if defined(MIRRORV_PATTERN)
+                uv.x = fract(uv.x);
+                uv.y = abs(uv.y - 2.0 * floor((uv.y - 1.0) / 2.0) - 2.0);
+            #endif
+
+            #if defined(MIRROR_PATTERN)
+                uv = abs(uv - 2.0 * floor((uv - 1.0) / 2.0) - 2.0);
+            #endif
+
+            uv = uv * v_tile.zw + v_tile.xy;
+            float inside = (uv == clamp(uv, v_rect.xy, v_rect.zw)) ? 1.0 : 0.0;
+            vec4 paint = inside * texture2DGrad(s_pattern, uv, dFdx(v_uv0), dFdy(v_uv0));
+        #endif
+        
+        #if !defined(CLAMP_PATTERN) && !defined(REPEAT_PATTERN) && !defined(MIRRORU_PATTERN) && !defined(MIRRORV_PATTERN) && !defined(MIRROR_PATTERN)
+            vec4 paint = texture2D(s_pattern, v_uv0);
+        #endif
+        float opacity_ = u_cbuffer0_fs[0][0];
+    #endif
+
+    // effects:
+
+    #ifdef EFFECT_RGBA
+        gl_FragColor = u_cbuffer0_fs[0];
+    #endif
+
+    #ifdef EFFECT_MASK
+        gl_FragColor = vec4_splat(1.0);
+    #endif
+
+    #ifdef EFFECT_CLEAR
+        gl_FragColor = vec4_splat(0.0);
+    #endif
+
+     #if defined(EFFECT_PATH)
+        gl_FragColor = opacity_ * paint;
+    #endif
+
+    #if defined(EFFECT_PATH_AA)
+        gl_FragColor = (opacity_ * v_coverage) * paint;
+    #endif
+
+    #if defined(EFFECT_OPACITY)
+        gl_FragColor = texture2D(s_image, v_uv1) * (opacity_ * paint.a);
+    #endif
+
+    #ifdef EFFECT_SHADOW
+        vec4 shadowColor = u_cbuffer1_fs[0];
+        vec2 offset = vec2(u_cbuffer1_fs[1][0], -u_cbuffer1_fs[1][1]);
+        vec2 uv = clamp(v_uv1 - offset, v_rect.xy, v_rect.zw);
+        float alpha = mix(texture2D(s_image, uv).a, texture2D(s_shadow, uv).a, u_cbuffer1_fs[1][2]);
+        vec4 img = texture2D(s_image, clamp(v_uv1, v_rect.xy, v_rect.zw));
+        gl_FragColor = (img + (1.0 - img.a) * (shadowColor * alpha)) * (opacity_ * paint.a);
+    #endif
+
+    #ifdef EFFECT_BLUR
+        gl_FragColor = mix
+        (
+            texture2D(s_image, v_uv1),
+            texture2D(s_shadow, v_uv1),
+            u_cbuffer1_fs[0][0]
+        ) * (opacity_ * paint.a);
+    #endif
+
+    #if defined(EFFECT_SDF)
+        vec4 color = texture2D(s_glyphs, v_uv1);
+        float distance = SDF_SCALE * (color.r - SDF_BIAS);
+        vec2 grad = dFdx(v_st1);
+
+        float gradLen = length(grad);
+        float scale = 1.0 / gradLen;
+        float base = SDF_BASE_DEV * (1.0 - (clamp(scale, SDF_BASE_MIN, SDF_BASE_MAX) - SDF_BASE_MIN) / (SDF_BASE_MAX - SDF_BASE_MIN));
+        float range = SDF_AA_FACTOR * gradLen;
+        float alpha = smoothstep(base - range, base + range, distance);
+        gl_FragColor = (alpha * opacity_) * paint;
+    #endif
+
+    #ifdef EFFECT_DOWNSAMPLE
+        gl_FragColor = (
+          texture2D(s_pattern, v_uv0)
+        + texture2D(s_pattern, v_uv1)
+        + texture2D(s_pattern, v_uv2)
+        + texture2D(s_pattern, v_uv3)) * 0.25;
+    #endif
+
+    #ifdef EFFECT_UPSAMPLE
+        gl_FragColor = mix(texture2D(s_image, v_uv1), texture2D(s_pattern, v_uv0), v_color0.a);
+    #endif
+}

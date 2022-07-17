@@ -710,7 +710,7 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 
 	if ( !m_spriteDefinitions.contains( spriteSID ) )
 	{
-		qDebug() << "***ERROR*** sprite definition " << spriteSID << " for item " << itemSID << " doesn't exist.";
+		spdlog::error( "***ERROR*** sprite definition '{}' for item '{}' doesn't exist.", spriteSID.toStdString(), itemSID.toStdString() );
 		//abort();
 	}
 	DefNode* dn    = m_spriteDefinitions.at( spriteSID );

@@ -144,7 +144,8 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 	}
 }
 
-int main( int argc, char* argv[] )
+int oldMain( int argc, char* argv[] )
+//int main( int argc, char* argv[] )
 {
 	setupCrashHandler();
 	clearLog();
@@ -237,24 +238,24 @@ int main( int argc, char* argv[] )
 
 
 	//MainWindow w;
-	MainWindow w;
-	
-	w.setIcon( QIcon( QCoreApplication::applicationDirPath() + "/content/icon.png" ) );
-	w.resize( width, height );
-	if (Global::cfg->object().contains( "WindowPosX" ) && Global::cfg->object().contains( "WindowPosY" ))
-	{
-		w.setPosition( Global::cfg->get<double>( "WindowPosX" ), Global::cfg->get<double>( "WindowPosY" ) );
-	}
-	else
-	{
-		const QPoint halfSize( width / 2, height / 2 );
-		w.setPosition( screenRect.center() - halfSize );
-	}
-	w.show();
-	if( Global::cfg->get_or_default<bool>( "fullscreen" , false ) )
-	{
-		w.onFullScreen( true );
-	}
+//	MainWindow w;
+//
+//	w.setIcon( QIcon( QCoreApplication::applicationDirPath() + "/content/icon.png" ) );
+//	w.resize( width, height );
+//	if (Global::cfg->object().contains( "WindowPosX" ) && Global::cfg->object().contains( "WindowPosY" ))
+//	{
+//		w.setPosition( Global::cfg->get<double>( "WindowPosX" ), Global::cfg->get<double>( "WindowPosY" ) );
+//	}
+//	else
+//	{
+//		const QPoint halfSize( width / 2, height / 2 );
+//		w.setPosition( screenRect.center() - halfSize );
+//	}
+//	w.show();
+//	if( Global::cfg->get_or_default<bool>( "fullscreen" , false ) )
+//	{
+//		w.onFullScreen( true );
+//	}
 
 	auto ret = a.exec();
 

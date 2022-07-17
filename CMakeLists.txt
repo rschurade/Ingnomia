@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo CACHE STRING INTERNAL FORCE)
 
 # Project version, 4 numbers representation
-set(DEFAULT_VERSION "0.8.11.0" CACHE STRING "Version" FORCE)
+set(DEFAULT_VERSION "0.9.0.0" CACHE STRING "Version" FORCE)
 # Set from CI only
 set(BUILD_ID "0" CACHE INTERNAL "")
 set(GIT_REPO "" CACHE INTERNAL "")
@@ -34,6 +34,7 @@ find_package(fmt REQUIRED)
 
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
 
+find_package(BGFX REQUIRED)
 find_package(RangesV3 REQUIRED)
 
 find_package(NlohmannJson REQUIRED)
@@ -43,6 +44,7 @@ find_package(googletest REQUIRED)
 find_package(PlatformFolders REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_Image REQUIRED)
+find_package(STB REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
@@ -106,7 +108,7 @@ add_subdirectory(src) # Sources list
 add_subdirectory(test) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${stb_SOURCE_DIR})
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
@@ -126,6 +128,7 @@ target_link_libraries(${PROJECT_NAME}
 		Pal::Sigslot
 		fmt::fmt
 
+		bgfx bx bimg
 		range-v3::range-v3
 
 		nlohmann_json::nlohmann_json

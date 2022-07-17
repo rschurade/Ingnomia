@@ -1,0 +1,54 @@
+#include <bgfx_shader.sh>
+
+#define VEC4_SIZE 4
+
+uniform vec4 u_cbuffer1_vs;
+
+void main() {
+    gl_Position = mul(vec4(a_position, 0.0, 1.0), u_proj);
+    
+    #ifdef HAS_COLOR
+        #ifdef SRGB
+            v_color0.r = srgbToLinear(a_color0.r);
+            v_color0.g = srgbToLinear(a_color0.g);
+            v_color0.b = srgbToLinear(a_color0.b);
+            v_color0.a = a_color0.a;
+        #else
+            v_color0 = a_color0;
+        #endif
+    #endif
+    #ifdef DOWNSAMPLE
+        v_uv0 = a_texcoord0 + vec2(a_texcoord1.x, a_texcoord1.y);
+        v_uv1 = a_texcoord0 + vec2(a_texcoord1.x, -a_texcoord1.y);
+        v_uv2 = a_texcoord0 + vec2(-a_texcoord1.x, a_texcoord1.y);
+        v_uv3 = a_texcoord0 + vec2(-a_texcoord1.x, -a_texcoord1.y);
+    #else
+        #ifdef HAS_UV0
+            v_uv0 = a_texcoord0;
+        #endif
+
+        #ifdef HAS_UV1
+            v_uv1 = a_texcoord1;
+        #endif
+    #endif
+
+    #ifdef HAS_SDF
+        v_st1 = a_texcoord1 * u_cbuffer1_vs.xy;
+    #endif
+
+    #ifdef HAS_COVERAGE
+        v_coverage = a_texcoord5;
+    #endif
+
+    #ifdef HAS_RECT
+        v_rect = a_texcoord2;
+    #endif
+
+    #ifdef HAS_TILE
+        v_tile = a_texcoord3;
+    #endif
+
+    #ifdef HAS_IMAGE_POSITION
+        v_imagePos = a_texcoord4;
+    #endif
+}
