@@ -44,9 +44,9 @@ public:
 	~IO();
 
 	static fs::path getDataFolder();
-	static bool createFolders( const fs::path& exePath );
+	static bool createFolders();
 	static bool saveConfig();
-	static bool loadOriginalConfig( const fs::path& exePath, json& jd );
+	static bool loadOriginalConfig( json& jd );
 
 	bool saveGameExists();
 

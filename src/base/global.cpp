@@ -35,6 +35,7 @@ Util* Global::util = nullptr;
 Selection* Global::sel = nullptr;
 NewGameSettings* Global::newGameSettings = nullptr;
 Config* Global::cfg = nullptr;
+fs::path Global::exePath;
 
 Logger Global::m_logger;
 

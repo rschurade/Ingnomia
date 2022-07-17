@@ -160,8 +160,10 @@ fs::path IO::getTempFolder()
 	return getDataFolder() / "tmp";
 }
 
-bool IO::createFolders( const fs::path& exePath )
+bool IO::createFolders()
 {
+	const fs::path& exePath = Global::exePath;
+
 	const fs::path& folder = getDataFolder();
 	if ( !fs::exists( folder ) )
 	{
@@ -215,10 +217,10 @@ bool IO::createFolders( const fs::path& exePath )
 	return fs::exists( getDataFolder() / "save" );
 }
 
-bool IO::loadOriginalConfig( const fs::path& exePath, json& jd )
+bool IO::loadOriginalConfig( json& jd )
 {
 	spdlog::debug("load standard config");
-	return IO::loadFile( exePath / "content" / "JSON" / "config.json", jd );
+	return IO::loadFile( Global::exePath / "content" / "JSON" / "config.json", jd );
 }
 
 std::string IO::save( bool autosave )

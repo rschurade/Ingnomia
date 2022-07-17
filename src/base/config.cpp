@@ -19,6 +19,7 @@
 
 #include "../base/io.h"
 #include "containersHelper.h"
+#include "global.h"
 #include "spdlog/spdlog.h"
 
 #include <QCoreApplication>
@@ -61,10 +62,10 @@ ConfigVariant jsonToConfigVariant(const json& v) {
 	}
 }
 
-Config::Config( const fs::path& gamePath )
+Config::Config()
 {
 	QMutexLocker lock( &m_mutex );
-	IO::createFolders( gamePath );
+	IO::createFolders();
 
 	//check if Ingnomia folder in /Documents/My Games exist
 	const fs::path& folder = IO::getDataFolder();
@@ -73,7 +74,7 @@ Config::Config( const fs::path& gamePath )
 
 	if ( !IO::loadFile( folder / "settings" / "config.json", jd ) )
 	{
-		if( !IO::loadOriginalConfig( gamePath, jd ) )
+		if( !IO::loadOriginalConfig( jd ) )
 		{
 			return;
 		}
@@ -117,7 +118,7 @@ Config::Config( const fs::path& gamePath )
 	{
 		m_settings.insert_or_assign( "uiscale", 1.0 );
 	}
-	m_settings.insert_or_assign( "dataPath", fs::path( gamePath ) / "content" );
+	m_settings.insert_or_assign( "dataPath", fs::path( Global::exePath ) / "content" );
 
 	m_valid = true;
 

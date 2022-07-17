@@ -36,8 +36,6 @@ AggregatorSound::AggregatorSound( EventConnector* parent ) :
 	QObject( parent )
 {
 	//sf::SoundBuffer buffer;
-	QString exePath = QCoreApplication::applicationDirPath();
-
 	parent->signalCameraPosition.connect( &AggregatorSound::onCameraPosition, this );
 	auto device    = std::make_shared<AL::Device>();
 	m_audioContext = std::make_shared<AL::Context>( device );
@@ -71,18 +69,18 @@ void AggregatorSound::init( Game* game )
 	for ( auto& sound : soundList )
 	{
 		QString soundID  = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
-		QString filename = sound.value( "SoundFile" ).toString();
-		QString exePath  = QCoreApplication::applicationDirPath();
-		filename         = exePath + "/content/audio/" + filename;
+		auto filename = sound.value( "SoundFile" ).toString().toStdString();
+		const auto& exePath  = Global::exePath;
+		filename         = exePath / "content" / "audio" / filename;
 
 		try
 		{
-			m_buffers.insert_or_assign( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename.toStdString() ) );
-			spdlog::debug( "loaded sound {} {}", soundID.toStdString(), filename.toStdString());
+			m_buffers.insert_or_assign( soundID, std::make_shared<AL::Buffer>( m_audioContext, filename ) );
+			spdlog::debug( "loaded sound {} {}", soundID.toStdString(), filename );
 		}
 		catch ( ... )
 		{
-			spdlog::debug( "unable to load sound {} {}", soundID.toStdString(), filename.toStdString());
+			spdlog::debug( "unable to load sound {} {}", soundID.toStdString(), filename );
 		}
 	}
 }

@@ -49,7 +49,7 @@ private:
 	ConfigVariant get_variant(const QString &key);
 
 public:
-	Config( const fs::path& gamePath );
+	Config();
 	~Config();
 
 	template<class T>

@@ -30,6 +30,10 @@
 #include <QVariant>
 #include <QtGlobal>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
 class EventConnector;
 class Util;
 class Logger;
@@ -94,6 +98,7 @@ public:
 	static Selection* sel;
 	static NewGameSettings* newGameSettings;
 	static Config* cfg;
+	static fs::path exePath;
 
 private:
 	static Logger m_logger;

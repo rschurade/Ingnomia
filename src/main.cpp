@@ -170,7 +170,8 @@ int main( int argc, char* argv[] )
 	QCoreApplication::setApplicationName( PROJECT_NAME );
 	QCoreApplication::setApplicationVersion( PROJECT_VERSION );
 
-	Global::cfg = new Config( QCoreApplication::applicationDirPath().toStdString() );
+	Global::exePath = QCoreApplication::applicationDirPath().toStdString();
+	Global::cfg = new Config();
 
 	if ( !Global::cfg->valid() )
 	{

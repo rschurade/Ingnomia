@@ -540,7 +540,7 @@ void NewGameSettings::loadPresets()
 {
 	json sd;
 
-	const auto exePath = fs::path( QCoreApplication::applicationDirPath().toStdString() );
+	const auto& exePath = Global::exePath;
 
 	bool ok = IO::loadFile( exePath / "content" / "JSON" / "embarkpresets.json", sd );
 	if ( ok )
