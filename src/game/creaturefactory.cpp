@@ -110,7 +110,7 @@ Monster* CreatureFactory::createMonster( QString type, int level, Position pos, 
 
 	for ( auto row : attribs )
 	{
-		QString attributeID = row.value( "ID" ).toString();
+		const auto attributeID = row.value( "ID" ).toString().toStdString();
 
 		monster->addAttribute( attributeID, rand() % 10 + 1 );
 	}
@@ -119,7 +119,7 @@ Monster* CreatureFactory::createMonster( QString type, int level, Position pos, 
 
 	for ( auto skill : skills )
 	{
-		QString skillID = skill.value( "ID" ).toString();
+		const auto skillID = skill.value( "ID" ).toString().toStdString();
 
 		auto group = skill.value( "SkillGroup" ).toString();
 		if ( group == "Combat" || group == "Defense" )

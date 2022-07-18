@@ -38,7 +38,7 @@ AggregatorPopulation::AggregatorPopulation( QObject* parent ) :
 		for( auto skillID : group.value( "SkillID" ).toString().split( "|" ) )
 		{
 			GuiSkillInfo gsi;
-			gsi.sid = skillID;
+			gsi.sid = skillID.toStdString();
 			gsi.name = S::s( "$SkillName_" + skillID );
 			gsi.group = group.value( "ID" ).toString();
 			gsi.color = group.value( "Color" ).toString();
@@ -57,8 +57,8 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 {
 	if( !g ) return;
 
-	const auto professions = g->gm()->professions();
-	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	const auto& professions = g->gm()->professions();
+	signalProfessionList( professions );
 
 	m_populationInfo.gnomes.clear();
 
@@ -147,7 +147,7 @@ void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 	}
 }
 
-void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, QString skillID, bool value )
+void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, const std::string& skillID, bool value )
 {
 	if( !g ) return;
 	auto gnome = g->gm()->gnome( gnomeID );
@@ -171,7 +171,7 @@ void AggregatorPopulation::onSetAllSkills( unsigned int gnomeID, bool value )
 	}
 }
 	
-void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
+void AggregatorPopulation::onSetAllGnomes( const std::string& skillID, bool value )
 {
 	if( !g ) return;
 	for( auto gnome : g->gm()->gnomes() )
@@ -181,13 +181,13 @@ void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
 	onRequestPopulationUpdate();
 }
 
-void AggregatorPopulation::onSetProfession( unsigned int gnomeID, QString profession )
+void AggregatorPopulation::onSetProfession( unsigned int gnomeID, const std::string& profession )
 {
 	if( !g ) return;
 	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
-		QString oldProf = gnome->profession();
+		const auto& oldProf = gnome->profession();
 		if( oldProf != profession )
 		{
 			gnome->selectProfession( profession );
@@ -196,7 +196,7 @@ void AggregatorPopulation::onSetProfession( unsigned int gnomeID, QString profes
 	}
 }
 
-void AggregatorPopulation::onSortGnomes( QString mode )
+void AggregatorPopulation::onSortGnomes( const std::string& mode )
 {
 	if( !g ) return;
 	if( m_sortMode != mode )
@@ -279,46 +279,46 @@ void AggregatorPopulation::onRequestProfessions()
 {
 	if( !g ) return;
 	const auto professions = g->gm()->professions();
-	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( professions );
 }
 	
-void AggregatorPopulation::onRequestSkills( QString profession )
+void AggregatorPopulation::onRequestSkills( const std::string& profession )
 {
 	if( !g ) return;
 	m_profSkills.clear();
 
 	auto skillIDs = g->gm()->professionSkills( profession );
-	for( auto skillID : skillIDs )
+	for( const auto& skillID : skillIDs )
 	{
 		GuiSkillInfo gsi;
 		gsi.sid = skillID;
-		gsi.name = S::s( "$SkillName_" + skillID );		
-		
+		gsi.name = S::s( "$SkillName_" + QString::fromStdString(skillID) );
+
 		m_profSkills.append( gsi );
 	}
 
 	signalProfessionSkills( profession, m_profSkills );
 }
 
-void AggregatorPopulation::onUpdateProfession( QString name, QString newName, QStringList skills )
+void AggregatorPopulation::onUpdateProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills )
 {
 	if( !g ) return;
 	g->gm()->modifyProfession( name, newName, skills );
 }
 
-void AggregatorPopulation::onDeleteProfession( QString name )
+void AggregatorPopulation::onDeleteProfession( const std::string& name )
 {
 	if( !g ) return;
 	g->gm()->removeProfession( name );
-	const auto professions = g->gm()->professions();
-	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	const auto& professions = g->gm()->professions();
+	signalProfessionList( professions );
 }
 	
 void AggregatorPopulation::onNewProfession()
 {
 	if( !g ) return;
-	QString name = g->gm()->addProfession();
-	const auto professions = g->gm()->professions();
-	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	const auto& name = g->gm()->addProfession();
+	const auto& professions = g->gm()->professions();
+	signalProfessionList( professions );
 	signalSelectEditProfession( name );
 }

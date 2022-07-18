@@ -55,7 +55,7 @@ class Job
 private:
 	unsigned int m_id = 0;
 	QString m_type;
-	QString m_requiredSkill;
+	std::string m_requiredSkill;
 	QString m_description;
 	quint8 m_rotation  = 0;
 	bool m_noJobSprite = false;
@@ -113,8 +113,8 @@ public:
 	QString type() const;
 	void setType( QString type );
 
-	QString requiredSkill() const;
-	void setRequiredSkill( QString skill );
+	const std::string& requiredSkill() const;
+	void setRequiredSkill( const std::string& skill );
 
 	void setDescription( QString desc );
 	QString description() const;

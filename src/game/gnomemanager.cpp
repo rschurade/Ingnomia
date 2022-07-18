@@ -34,6 +34,8 @@
 
 #include <QElapsedTimer>
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QStandardPaths>
 
 #include "spdlog/spdlog.h"
@@ -393,22 +395,12 @@ QList<Gnome*> GnomeManager::gnomesSorted()
 
 void GnomeManager::saveProfessions()
 {
-	QVariantList pl;
-	for ( const auto &entry : m_profs )
-	{
-		QVariantMap pm;
-		pm.insert( "Name", entry.first );
-		pm.insert( "Skills", entry.second );
-		pl.append( pm );
-	}
-
-	QJsonDocument sd = QJsonDocument::fromVariant( pl );
-	IO::saveFile( IO::getDataFolder() / "settings" / "profs.json", sd );
+	IO::saveFile( IO::getDataFolder() / "settings" / "profs.json", m_profs );
 }
 
 void GnomeManager::loadProfessions()
 {
-	QJsonDocument sd;
+	json sd;
 	if ( !IO::loadFile( IO::getDataFolder() / "settings" / "profs.json", sd ) )
 	{
 		// if it doesn't exist get from /content/JSON
@@ -422,57 +414,60 @@ void GnomeManager::loadProfessions()
 			return;
 		}
 	}
-	auto profList = sd.toVariant().toList();
 
 	m_profs.clear();
 
-	for ( auto vprof : profList )
+	for ( auto vprof : sd )
 	{
-		QString name       = vprof.toMap().value( "Name" ).toString();
-		QStringList skills = vprof.toMap().value( "Skills" ).toStringList();
+		const auto& name   = vprof.at( "Name" ).get<std::string>();
+		const auto& skills   = vprof.at( "Skills" ).get<std::vector<std::string>>();
 		m_profs.insert_or_assign( name, skills );
 	}
 
 	if ( !m_profs.contains( "Gnomad" ) )
 	{
 		QStringList skills = DB::ids( "Skills" );
-		m_profs.insert_or_assign( "Gnomad", skills );
+		std::vector<std::string> skillsStd;
+		for ( const auto& item : skills ) {
+			skillsStd.push_back(item.toStdString());
+		}
+		m_profs.insert_or_assign( "Gnomad", skillsStd );
 		saveProfessions();
 	}
 }
 
-QStringList GnomeManager::professionSkills( QString profession )
+const std::vector<std::string>& GnomeManager::professionSkills( const std::string& profession )
 {
 	if ( const auto &it = m_profs.find( profession ); it != m_profs.end() )
 	{
 		return it->second;
 	}
-	return QStringList();
+	return {};
 }
 
-QString GnomeManager::addProfession()
+const std::string& GnomeManager::addProfession()
 {
-	QString name = "NewProfession";
-	
+	std::string name = "NewProfession";
+
 	if( !m_profs.contains( name ) )
 	{
-		m_profs.insert_or_assign( name, QStringList() );
+		m_profs.insert_or_assign( name, std::vector<std::string>() );
 		saveProfessions();
 		return name;
 	}
 	int suffixNumber = 1;
 
-	while( m_profs.contains( name + QString::number( suffixNumber ) ) )
+	while( m_profs.contains( name + std::to_string( suffixNumber ) ) )
 	{
 		++suffixNumber;
 	}
-	name += QString::number( suffixNumber );
-	m_profs.insert_or_assign( name, QStringList() );
+	name += std::to_string( suffixNumber );
+	m_profs.insert_or_assign( name, std::vector<std::string>() );
 	saveProfessions();
 	return name;
 }
 
-void GnomeManager::addProfession( QString name, QStringList skills )
+void GnomeManager::addProfession( const std::string& name, const std::vector<std::string>& skills )
 {
 	if ( !m_profs.contains( name ) )
 	{
@@ -481,7 +476,7 @@ void GnomeManager::addProfession( QString name, QStringList skills )
 	}
 }
 
-void GnomeManager::removeProfession( QString name )
+void GnomeManager::removeProfession( const std::string& name )
 {
 	if ( name == "Gnomad" )
 		return;
@@ -490,7 +485,7 @@ void GnomeManager::removeProfession( QString name )
 	saveProfessions();
 }
 
-void GnomeManager::modifyProfession( QString name, QString newName, QStringList skills )
+void GnomeManager::modifyProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills )
 {
 	if ( name == "Gnomad" )
 		return;

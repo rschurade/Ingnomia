@@ -258,7 +258,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 
 			m_tileInfo.jobPriority           = QString::number( job->priority() );
-			m_tileInfo.requiredSkill         = job->requiredSkill();
+			m_tileInfo.requiredSkill         = QString::fromStdString(job->requiredSkill());
 			m_tileInfo.requiredToolAvailable = rt.available ? "Yes" : "No";
 
 			for ( auto rim : job->requiredItems() )

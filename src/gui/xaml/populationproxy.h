@@ -33,18 +33,18 @@ public:
 	~PopulationProxy();
 
 	void setParent( IngnomiaGUI::PopulationModel* parent );
-	void setSkillActive( unsigned int gnomeID, QString skillID, bool value );
+	void setSkillActive( unsigned int gnomeID, const std::string& skillID, bool value );
 
 	void setAllSkillsForGnome( unsigned int gnomeID, bool value );
-	void setSkillForAllGnomes( QString skillID, bool value );
+	void setSkillForAllGnomes( const std::string& skillID, bool value );
 
-	void setProfession( unsigned int gnomeID, QString profession );
+	void setProfession( unsigned int gnomeID, const std::string& profession );
 
-	void sortGnomes( QString mode );
+	void sortGnomes( const std::string& mode );
 
 	void requestSchedules();
 	void requestProfessions();
-	void requestSkills( QString profession );
+	void requestSkills( const std::string& profession );
 
 	void setAllHours( unsigned int gnomeID, ScheduleActivity activitiy );
 	void setHourForAll( int hour, ScheduleActivity activitiy );
@@ -52,8 +52,8 @@ public:
 
 	void setCurrentActivity( ScheduleActivity activitiy );
 
-	void updateProfession( QString name, QString newName, QStringList skills );
-	void deleteProfession( QString name );
+	void updateProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills );
+	void deleteProfession( const std::string& name );
 	void newProfession();
 
 private:
@@ -62,30 +62,30 @@ private:
 
 private slots:
 	void onUpdateInfo( const GuiPopulationInfo& info );
-	void onProfessionList( const QStringList& professions );
-	void onProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills );
+	void onProfessionList( const std::vector<std::string>& professions );
+	void onProfessionSkills( const std::string& profession, const QList<GuiSkillInfo>& skills );
 	void onUpdateSingleGnome( const GuiGnomeInfo& gnome );
 
 	void onUpdateSchedules( const GuiScheduleInfo& info );
 	void onScheduleUpdateSingleGnome( const GuiGnomeScheduleInfo& info );
-	void onSelectEditProfession( const QString name );
+	void onSelectEditProfession( const std::string& name );
 
 public: // signals:
-	sigslot::signal<unsigned int /*gnomeID*/, QString /*skillID*/, bool /*value*/> signalSetSkillActive;
+	sigslot::signal<unsigned int /*gnomeID*/, const std::string& /*skillID*/, bool /*value*/> signalSetSkillActive;
 
 	sigslot::signal<unsigned int /*gnomeID*/, bool /*value*/> signalSetAllSkills;
-	sigslot::signal<QString /*skillID*/, bool /*value*/> signalSetAllGnomes;
-	sigslot::signal<unsigned int /*gnomeID*/, QString /*profession*/> signalSetProfession;
-	sigslot::signal<QString /*mode*/> signalSortGnomes;
+	sigslot::signal<const std::string& /*skillID*/, bool /*value*/> signalSetAllGnomes;
+	sigslot::signal<unsigned int /*gnomeID*/, const std::string& /*profession*/> signalSetProfession;
+	sigslot::signal<const std::string& /*mode*/> signalSortGnomes;
 
 	sigslot::signal<> signalRequestSchedules;
 	sigslot::signal<> signalRequestProfessions;
-	sigslot::signal<QString /*profession*/> signalRequestSkills;
+	sigslot::signal<const std::string& /*profession*/> signalRequestSkills;
 	sigslot::signal<unsigned int /*gnomeID*/, int /*hour*/, ScheduleActivity /*activitiy*/> signalSetSchedule;
 	sigslot::signal<unsigned int /*gnomeID*/, ScheduleActivity /*activitiy*/> signalSetAllHours;
 	sigslot::signal<int /*hour*/, ScheduleActivity /*activitiy*/> signalSetHourForAll;
 
-	sigslot::signal<QString /*name*/, QString /*newName*/, QStringList /*skills*/> signalUpdateProfession;
-	sigslot::signal<QString /*name*/> signalDeleteProfession;
+	sigslot::signal<const std::string& /*name*/, const std::string& /*newName*/, const std::vector<std::string>& /*skills*/> signalUpdateProfession;
+	sigslot::signal<const std::string& /*name*/> signalDeleteProfession;
 	sigslot::signal<> signalNewProfession;
 };

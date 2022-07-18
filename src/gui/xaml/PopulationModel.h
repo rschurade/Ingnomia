@@ -108,7 +108,7 @@ private:
 	Noesis::String m_name;
 	unsigned int m_id;
 	Noesis::String m_idString;
-	QString m_professionName;
+	std::string m_professionName;
 
 	Noesis::ObservableCollection<GnomeSkill>* GetSkills() const
 	{
@@ -189,8 +189,8 @@ public:
 	PopulationModel();
 
 	void updateInfo( const GuiPopulationInfo& info );
-	void updateProfessionList( const QStringList& professions );
-	void updateProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills );
+	void updateProfessionList( const std::vector<std::string>& professions );
+	void updateProfessionSkills( const std::string& profession, const QList<GuiSkillInfo>& skills );
 	void updateSingleGnome( const GuiGnomeInfo& gnome );
 
 	void updateSchedules( const GuiScheduleInfo& info );

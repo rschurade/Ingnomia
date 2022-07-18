@@ -62,7 +62,7 @@ void CreatureInfoProxy::requestProfessionList()
 	signalRequestProfessionList();
 }
 
-void CreatureInfoProxy::onProfessionList( const QStringList& profs )
+void CreatureInfoProxy::onProfessionList( const std::vector<std::string>& profs )
 {
 	if ( m_parent )
 	{
@@ -70,7 +70,7 @@ void CreatureInfoProxy::onProfessionList( const QStringList& profs )
 	}
 }
 
-void CreatureInfoProxy::setProfession( unsigned int gnomeID, QString profession )
+void CreatureInfoProxy::setProfession( unsigned int gnomeID, const std::string& profession )
 {
 	signalSetProfession( gnomeID, profession );
 }

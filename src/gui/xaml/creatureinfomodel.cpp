@@ -61,12 +61,12 @@ void CreatureInfoModel::updateEmptySlotImages( const absl::btree_map< QString, s
 	m_emptyPicsInitialized = true;
 }
 
-void CreatureInfoModel::updateProfessionList( const QStringList& professions )
+void CreatureInfoModel::updateProfessionList( const std::vector<std::string>& professions )
 {
 	m_professions->Clear();
 	for( const auto& prof : professions )
 	{
-		m_professions->Add( MakePtr<ProfItem>( prof.toStdString().c_str() ) );
+		m_professions->Add( MakePtr<ProfItem>( prof.c_str() ) );
 	}
 	OnPropertyChanged( "Professions" );
 }

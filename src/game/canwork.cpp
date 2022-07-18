@@ -166,22 +166,22 @@ void CanWork::serialize( QVariantMap& out )
 	}
 }
 
-bool CanWork::getSkillActive( QString id )
+bool CanWork::getSkillActive( const std::string& id )
 {
 	if ( m_skillActive.contains( id ) )
 	{
-		return m_skillActive.value( id ).toBool();
+		return m_skillActive.at( id );
 	}
 	return false;
 }
 
-void CanWork::setSkillActive( QString id, bool active )
+void CanWork::setSkillActive( const std::string& id, bool active )
 {
 	m_skillActive[id] = active;
 
 	if ( m_job )
 	{
-		QString skillID = m_job->requiredSkill();
+		const auto& skillID = m_job->requiredSkill();
 
 		if ( ( id == skillID ) && !active )
 		{
@@ -189,7 +189,7 @@ void CanWork::setSkillActive( QString id, bool active )
 		}
 	}
 
-	QString group = DB::select( "SkillGroup", "Skills", id ).toString();
+	QString group = DB::select( "SkillGroup", "Skills", QString::fromStdString(id) ).toString();
 	if ( group == "Combat" || group == "Defense" )
 	{
 		return;
@@ -197,7 +197,7 @@ void CanWork::setSkillActive( QString id, bool active )
 
 	if ( active )
 	{
-		if ( !m_skillPriorities.contains( id ) )
+		if ( std::find(m_skillPriorities.begin(), m_skillPriorities.end(), id) == m_skillPriorities.end() )
 		{
 			m_skillPriorities.push_back( id );
 		}
@@ -206,9 +206,9 @@ void CanWork::setSkillActive( QString id, bool active )
 	{
 		for ( int i = 0; i < m_skillPriorities.size(); ++i )
 		{
-			if ( m_skillPriorities[i] == id )
+			if ( m_skillPriorities.at(i) == id )
 			{
-				m_skillPriorities.removeAt( i );
+				m_skillPriorities.erase( m_skillPriorities.begin() + i );
 				break;
 			}
 		}
@@ -232,7 +232,7 @@ void CanWork::setAllSkillsActive( bool active )
 	}
 	for ( auto& p : m_skillActive )
 	{
-		p = active;
+		p.second = active;
 	}
 }
 
@@ -369,9 +369,9 @@ void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 {
 	if ( skillGain.toString().isEmpty() )
 	{
-		QString skillID = job->requiredSkill();
-		float current   = m_skills.value( skillID ).toFloat() + 1;
-		m_skills.insert( skillID, current );
+		const auto& skillID = job->requiredSkill();
+		const auto current   = m_skills.at( skillID ) + 1;
+		m_skills.insert_or_assign( skillID, current );
 
 		if ( skillID == "Hauling" )
 		{
@@ -389,10 +389,10 @@ void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 	}
 
 	QVariantMap sgm = skillGain.toMap();
-	QString skillID = sgm.value( "SkillID" ).toString();
-	float gain      = 0;
+	auto skillID = sgm.value( "SkillID" ).toString().toStdString();
+	int gain      = 0;
 
-	if ( skillID.isEmpty() )
+	if ( skillID.empty() )
 	{
 		skillID = job->requiredSkill();
 	}
@@ -401,16 +401,16 @@ void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 
 	if ( gain > 0 )
 	{
-		float current = m_skills.value( skillID ).toFloat();
-		m_skills.insert( skillID, current + gain );
+		int current = m_skills.at( skillID );
+		m_skills.insert_or_assign( skillID, current + gain );
 		//if( Global::debugMode )	qDebug() << name() << " gain skill: " << skillID << gain;
 	}
 }
 
-void CanWork::gainSkill( QString skillID, int gain )
+void CanWork::gainSkill( const std::string& skillID, int gain )
 {
-	int current = m_skills.value( skillID ).toInt();
-	m_skills.insert( skillID, current + gain );
+	int current = m_skills.at( skillID );
+	m_skills.insert_or_assign( skillID, current + gain );
 	//if( Global::debugMode )	qDebug() << name() << " gain skill: " << skillID << gain;
 }
 
@@ -497,12 +497,12 @@ double CanWork::parseValue( QVariant v )
 	else if ( var.startsWith( "$Attrib" ) )
 	{
 		var.remove( 0, 7 );
-		return m_attributes.value( var ).toDouble();
+		return m_attributes.at( var.toStdString() );
 	}
 	else if ( var.startsWith( "$" ) )
 	{
 		var.remove( 0, 1 );
-		return m_skills.value( var ).toDouble();
+		return m_skills.at( var.toStdString() );
 	}
 	else
 	{

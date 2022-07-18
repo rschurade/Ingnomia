@@ -43,9 +43,9 @@ JobManager::JobManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
-	for ( auto job : DB::jobIds() )
+	for ( const auto& job : DB::jobIds() )
 	{
-		m_jobsPerType.insert_or_assign( job, QMultiHash<int, unsigned int>() );
+		m_jobsPerType.insert_or_assign( job.toStdString(), QMultiHash<int, unsigned int>() );
 	}
 
 	m_skillToInt.insert_or_assign( "Mining", SK_Mining );
@@ -97,22 +97,22 @@ JobManager::JobManager( Game* parent ) :
 
 	for ( auto skillID : DB::ids( "Skills" ) )
 	{
-		QStringList jobs;
+		std::vector<std::string> jobs;
 		for( auto jobID : DB::jobIds() )
 		{
 			auto dbjob = DB::job( jobID );
 			if( dbjob->SkillID == skillID )
 			{
-				jobs.append( jobID );
+				jobs.push_back( jobID.toStdString() );
 			}
 		}
-		m_jobIDs.insert_or_assign( skillID, jobs );
+		m_jobIDs.insert_or_assign( skillID.toStdString(), jobs );
 	}
 
 	auto skillList = DB::execQuery2( "SELECT DISTINCT \"SkillID\" FROM Crafts" );
 	for( auto skill : skillList )
 	{
-		m_workshopSkills.insert( skill.toString() );
+		m_workshopSkills.insert( skill.toString().toStdString() );
 	}
 }
 
@@ -144,7 +144,7 @@ void JobManager::onTick()
 			{
 				if ( requiredItemsAvail( jobID ) )
 				{
-					m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+					m_jobsPerType[job->type().toStdString()].insert( job->priority(), job->id() );
 				}
 				else
 				{
@@ -302,7 +302,7 @@ void JobManager::addLoadedJob( QVariant vals )
 
 	if ( isReachable( job->id(), 0 ) )
 	{
-		m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+		m_jobsPerType[job->type().toStdString()].insert( job->priority(), job->id() );
 	}
 	else
 	{
@@ -472,7 +472,7 @@ void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 	}
 }
 
-unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Position& gnomePos )
+unsigned int JobManager::getJob( const std::vector<std::string>& skills, unsigned int gnomeID, Position& gnomePos )
 {
 	for ( auto skillID : skills )
 	{
@@ -504,7 +504,7 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		auto possibleJobIDs = m_jobIDs.at( skillID );
 		if( m_workshopSkills.contains( skillID ) )
 		{
-			possibleJobIDs.push_front( "CraftAtWorkshop" );
+			possibleJobIDs.insert( possibleJobIDs.begin(), "CraftAtWorkshop" );
 		}
 		unsigned int regionID = g->w()->regionMap().regionID( gnomePos );
 		for ( int prio = 9; prio >= 0; --prio )
@@ -740,7 +740,7 @@ void JobManager::finishJob( unsigned int jobID )
 
 				if ( isReachable( j, 0 ) && !m_jobList[j]->componentMissing() )
 				{
-					m_jobsPerType[m_jobList[j]->type()].insert( m_jobList[j]->priority(), j );
+					m_jobsPerType[m_jobList[j]->type().toStdString()].insert( m_jobList[j]->priority(), j );
 				}
 			}
 		}
@@ -1099,11 +1099,11 @@ void JobManager::raisePrio( Position& pos )
 		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( job->priority() < 9 )
 		{
-			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )
+			if ( m_jobsPerType[job->type().toStdString()].count( job->priority(), job->id() ) )
 			{
 				//job is in m_jobsPerType so move it
-				m_jobsPerType[job->type()].remove( job->priority(), job->id() );
-				m_jobsPerType[job->type()].insert( job->priority() + 1, job->id() );
+				m_jobsPerType[job->type().toStdString()].remove( job->priority(), job->id() );
+				m_jobsPerType[job->type().toStdString()].insert( job->priority() + 1, job->id() );
 			}
 			job->raisePrio();
 		}
@@ -1127,11 +1127,11 @@ void JobManager::lowerPrio( Position& pos )
 		QSharedPointer<Job> job = m_jobList.at( jobID );
 		if ( job->priority() > 0 )
 		{
-			if ( m_jobsPerType[job->type()].count( job->priority(), job->id() ) )
+			if ( m_jobsPerType[job->type().toStdString()].count( job->priority(), job->id() ) )
 			{
 				//job is in m_jobsPerType so move it
-				m_jobsPerType[job->type()].remove( job->priority(), job->id() );
-				m_jobsPerType[job->type()].insert( job->priority() - 1, job->id() );
+				m_jobsPerType[job->type().toStdString()].remove( job->priority(), job->id() );
+				m_jobsPerType[job->type().toStdString()].insert( job->priority() - 1, job->id() );
 			}
 			job->lowerPrio();
 		}

@@ -23,8 +23,10 @@
 #include "../base/priorityqueue.h"
 #include "../game/anatomy.h"
 #include "object.h"
+#include "range/v3/view/map.hpp"
 
 #include <QPointer>
+
 #include <absl/container/flat_hash_map.h>
 
 class Game;
@@ -185,12 +187,12 @@ public:
 
 	void setImmobile( bool immobile );
 
-	void addAttribute( QString id, int level );
-	int attribute( QString id ) const;
-	void addSkill( QString id, int level );
-	int getSkillLevel( QString id ) const;
-	void setSkillLevel( QString id, int level );
-	int getSkillXP( QString id ) const;
+	void addAttribute( const std::string& id, int level );
+	int attribute( const std::string& id ) const;
+	void addSkill( const std::string& id, int level );
+	int getSkillLevel( const std::string& id ) const;
+	void setSkillLevel( const std::string& id, int level );
+	int getSkillXP( const std::string& id ) const;
 
 	virtual void updateMoveSpeed() = 0;
 	int moveSpeed() const;
@@ -232,7 +234,11 @@ public:
 	virtual void updateAttackValues();
 
 	QStringList needIDs() const;
-	QStringList availableSkillIDs() const;
+
+	auto availableSkillIDs() const
+	{
+		return m_skills | ranges::views::keys;
+	}
 
 	bool isOnMission() const
 	{
@@ -338,10 +344,10 @@ protected:
 
 	QVariantMap m_btBlackBoard;
 
-	QVariantMap m_attributes;
-	QVariantMap m_skills;
-	QVariantMap m_skillActive;
-	QStringList m_skillPriorities;
+	absl::flat_hash_map<std::string, int> m_attributes;
+	absl::flat_hash_map<std::string, int> m_skills;
+	absl::flat_hash_map<std::string, bool> m_skillActive;
+	std::vector<std::string> m_skillPriorities;
 	QVariantMap m_needs;
 
 	Equipment m_equipment;

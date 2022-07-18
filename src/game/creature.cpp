@@ -18,6 +18,7 @@
 #include "creature.h"
 
 #include "../base/behaviortree/bt_factory.h"
+#include "../base/containersHelper.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/logger.h"
@@ -45,11 +46,19 @@ Creature::Creature( const Position& pos, QString name, Gender gender, QString sp
 {
 }
 
+static absl::flat_hash_map<std::string, int> fromQMap(QVariantMap map) {
+	absl::flat_hash_map<std::string, int> result;
+	for ( const auto& item : map.toStdMap() ) {
+		result[item.first.toStdString()] = item.second.toInt();
+	}
+	return result;
+}
+
 Creature::Creature( QVariantMap in, Game* game ) :
 	g( game ),
 	Object( in ),
-	m_attributes( in.value( "Attributes" ).toMap() ),
-	m_skills( in.value( "Skills" ).toMap() ),
+	m_attributes( fromQMap(in.value( "Attributes" ).toMap()) ),
+	m_skills( fromQMap(in.value( "Skills" ).toMap()) ),
 	//absl::btree_map<QString, unsigned int> m_spriteUIDs;
 	m_spriteUIDs( in.value( "spritUIDs" ).toMap() ),
 	m_spriteDef( in.value( "SpriteDef" ).toList() ),
@@ -160,6 +169,14 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	}
 }
 
+static QVariantMap toQMap(const absl::flat_hash_map<std::string, int> map) {
+	QVariantMap result;
+	for ( const auto& item : map ) {
+		result[QString::fromStdString(item.first)] = item.second;
+	}
+	return result;
+}
+
 void Creature::serialize( QVariantMap& out ) const
 {
 	out.insert( "Species", m_species );
@@ -173,8 +190,8 @@ void Creature::serialize( QVariantMap& out ) const
 		}
 		out.insert( "CurrentPath", curPa );
 	}
-	out.insert( "Attributes", m_attributes );
-	out.insert( "Skills", m_skills );
+	out.insert( "Attributes", toQMap(m_attributes) );
+	out.insert( "Skills", toQMap(m_skills) );
 
 	out.insert( "BTBlackBoard", m_btBlackBoard );
 
@@ -310,45 +327,37 @@ void Creature::loadBehaviorTree( QString id )
 	}
 }
 
-void Creature::addAttribute( QString id, int level )
+void Creature::addAttribute( const std::string& id, int level )
 {
-	m_attributes.insert( id, level );
+	m_attributes.insert_or_assign( id, level );
 }
 
-int Creature::attribute( QString id ) const
+int Creature::attribute( const std::string& id ) const
 {
-	if ( m_attributes.contains( id ) )
-	{
-		return m_attributes[id].toInt();
-	}
-	return 0;
+	return maps::at_or_default( m_attributes, id, 0 );
 }
 
-void Creature::addSkill( QString id, int level )
+void Creature::addSkill( const std::string& id, int level )
 {
-	m_skills.insert( id, level );
-	m_skillActive.insert( id, false );
+	m_skills.insert_or_assign( id, level );
+	m_skillActive.insert_or_assign( id, false );
 }
 
-int Creature::getSkillLevel( QString id ) const
+int Creature::getSkillLevel( const std::string& id ) const
 {
 	if ( m_skills.contains( id ) )
 	{
-		return Global::util->reverseFib( m_skills.value( id ).toInt() );
+		return Global::util->reverseFib( m_skills.at( id ) );
 	}
 	return -1;
 }
 
-int Creature::getSkillXP( QString id ) const
+int Creature::getSkillXP( const std::string& id ) const
 {
-	if ( m_skills.contains( id ) )
-	{
-		return m_skills.value( id ).toInt();
-	}
-	return -1;
+	return maps::at_or_default( m_skills, id, -1 );
 }
 
-void Creature::setSkillLevel( QString id, int level )
+void Creature::setSkillLevel( const std::string& id, int level )
 {
 	m_skills[id] = level;
 }
@@ -1160,11 +1169,6 @@ void Creature::log( QString txt )
 QStringList Creature::needIDs() const
 {
 	return m_needs.keys();
-}
-
-QStringList Creature::availableSkillIDs() const
-{
-	return m_skills.keys();
 }
 
 BT_RESULT Creature::conditionAlarm( bool halt )

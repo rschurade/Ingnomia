@@ -55,7 +55,7 @@ public:
 	CreatureInfoModel();
 
 	void updateInfo( const GuiCreatureInfo& info );
-	void updateProfessionList( const QStringList& professions );
+	void updateProfessionList( const std::vector<std::string>& professions );
 
 	void updateEmptySlotImages( const absl::btree_map< QString, std::vector<unsigned char> >& pics );
 

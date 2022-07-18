@@ -81,7 +81,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 
 	for ( auto row : attribs )
 	{
-		QString attributeID = row.value( "ID" ).toString();
+		const auto attributeID = row.value( "ID" ).toString().toStdString();
 
 		gnome->addAttribute( attributeID, rand() % 10 + 1 );
 	}
@@ -102,7 +102,7 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 
 	for ( auto skill : skills )
 	{
-		QString skillID = skill.value( "ID" ).toString();
+		const auto skillID = skill.value( "ID" ).toString().toStdString();
 
 		gnome->addSkill( skillID, rand() % 2000 );
 		gnome->setSkillActive( skillID, true );
@@ -150,7 +150,7 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 
 	for ( auto row : attribs )
 	{
-		QString attributeID = row.value( "ID" ).toString();
+		const auto attributeID = row.value( "ID" ).toString().toStdString();
 
 		gnome->addAttribute( attributeID, rand() % 10 + 1 );
 	}
@@ -166,9 +166,9 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 
 	auto skills = DB::selectRows( "Skills" );
 
-	for ( auto skill : skills )
+	for ( const auto& skill : skills )
 	{
-		QString skillID = skill.value( "ID" ).toString();
+		const auto skillID = skill.value( "ID" ).toString().toStdString();
 
 		gnome->addSkill( skillID, rand() % 2000 );
 		gnome->setSkillActive( skillID, true );

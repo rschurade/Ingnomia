@@ -799,7 +799,7 @@ bool Workshop::createJobFromCraftJob( CraftJob& cj )
 		job->setConversionMaterial( cj.conversionMaterial );
 		job->setMaterial( cj.resultMaterial );
 		job->setAmount( cj.itemsPerCraft );
-		job->setRequiredSkill( cj.skillID );
+		job->setRequiredSkill( cj.skillID.toStdString() );
 		job->setPosItemInput( m_properties.posIn );
 		job->setPosItemOutput( m_properties.posOut );
 		job->setDescription( Global::util->itemName( cj.itemSID ) );

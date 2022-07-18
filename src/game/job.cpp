@@ -31,7 +31,7 @@ Job::Job( QVariantMap in )
 {
 	m_id            = in.value( "ID" ).toUInt();
 	m_type          = in.value( "Type" ).toString();
-	m_requiredSkill = in.value( "RequiredSkill" ).toString();
+	m_requiredSkill = in.value( "RequiredSkill" ).toString().toStdString();
 	m_description   = in.value( "Description" ).toString();
 	m_rotation      = in.value( "Rotation" ).value<quint8>();
 	m_noJobSprite   = in.value( "NoJobSprite" ).toBool();
@@ -92,7 +92,7 @@ QVariant Job::serialize() const
 	QVariantMap out;
 	out.insert( "ID", m_id );
 	out.insert( "Type", m_type );
-	out.insert( "RequiredSkill", m_requiredSkill );
+	out.insert( "RequiredSkill", QString::fromStdString(m_requiredSkill) );
 	out.insert( "Description", m_description );
 	out.insert( "Rotation", m_rotation );
 	out.insert( "NoJobSprite", m_noJobSprite );
@@ -215,11 +215,11 @@ void Job::setType( QString type )
 	m_type = type;
 }
 
-QString Job::requiredSkill() const
+const std::string& Job::requiredSkill() const
 {
 	return m_requiredSkill;
 }
-void Job::setRequiredSkill( QString skill )
+void Job::setRequiredSkill( const std::string& skill )
 {
 	m_requiredSkill = skill;
 }

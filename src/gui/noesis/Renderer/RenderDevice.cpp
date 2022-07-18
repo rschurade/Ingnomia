@@ -16,7 +16,7 @@
 namespace AppGUI
 {
 RenderDevice::RenderDevice( const SDL_MainWindow* window, const bgfx::ViewId viewID ) :
-	ViewID_ { viewID }
+	ViewID_ { viewID }, m_activeRenderTarget( nullptr )
 {
 	bgfx::setViewName( viewID, "GUI-Frontend" );
 	bgfx::setViewMode( viewID, bgfx::ViewMode::Sequential );
@@ -168,6 +168,7 @@ auto RenderDevice::GetCaps() const -> const Noesis::DeviceCaps&
 
 auto RenderDevice::SetRenderTarget( Noesis::RenderTarget* const surface ) -> void
 {
+	m_activeRenderTarget = (AppGUI::RenderTarget*)surface;
 }
 
 auto RenderDevice::ResolveRenderTarget(
@@ -185,7 +186,9 @@ auto RenderDevice::CreateRenderTarget(
 	const bool needsStencil ) -> Noesis::Ptr<Noesis::RenderTarget>
 {
 	Noesis::Ptr<RenderTarget> surface { *new RenderTarget { width, height } };
-	const bgfx::TextureHandle stencil { bgfx::createTexture2D( width, height, false, 0, bgfx::TextureFormat::D24S8 ) };
+	const bgfx::TextureHandle stencil = needsStencil
+		? bgfx::createTexture2D( width, height, false, 0, bgfx::TextureFormat::D24S8 )
+		: (bgfx::TextureHandle)BGFX_INVALID_HANDLE;
 	const std::array<bgfx::TextureHandle, 1> attachments { dynamic_cast<Texture*>( surface->GetTexture() )->Handle };
 	const bgfx::FrameBufferHandle frameBuffer { bgfx::createFrameBuffer( attachments.size(), attachments.data(), false ) };
 	surface->StencilHandle = stencil;

@@ -39,7 +39,10 @@ fs::path getLogPath()
 
 void clearLog( const fs::path& logPath )
 {
-	fs::resize_file( logPath, 0 );
+	if ( fs::exists( logPath ) )
+	{
+		fs::resize_file( logPath, 0 );
+	}
 }
 
 void redirectLogToFile( const fs::path& logPath )

@@ -72,7 +72,7 @@ void PopulationProxy::onUpdateInfo( const GuiPopulationInfo& info )
 	}
 }
 
-void PopulationProxy::setSkillActive( unsigned int gnomeID, QString skillID, bool value )
+void PopulationProxy::setSkillActive( unsigned int gnomeID, const std::string& skillID, bool value )
 {
 	signalSetSkillActive( gnomeID, skillID, value );
 }
@@ -82,12 +82,12 @@ void PopulationProxy::setAllSkillsForGnome( unsigned int gnomeID, bool value )
 	signalSetAllSkills( gnomeID, value );
 }
 	
-void PopulationProxy::setSkillForAllGnomes( QString skillID, bool value )
+void PopulationProxy::setSkillForAllGnomes( const std::string& skillID, bool value )
 {
 	signalSetAllGnomes( skillID, value );
 }
 
-void PopulationProxy::onProfessionList( const QStringList& professions )
+void PopulationProxy::onProfessionList( const std::vector<std::string>& professions )
 {
 	if( m_parent )
 	{
@@ -95,7 +95,7 @@ void PopulationProxy::onProfessionList( const QStringList& professions )
 	}
 }
 
-void PopulationProxy::onProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills )
+void PopulationProxy::onProfessionSkills( const std::string& profession, const QList<GuiSkillInfo>& skills )
 {
 	if( m_parent )
 	{
@@ -103,7 +103,7 @@ void PopulationProxy::onProfessionSkills( const QString profession, const QList<
 	}
 }
 
-void PopulationProxy::setProfession( unsigned int gnomeID, QString profession )
+void PopulationProxy::setProfession( unsigned int gnomeID, const std::string& profession )
 {
 	signalSetProfession( gnomeID, profession );
 }
@@ -116,7 +116,7 @@ void PopulationProxy::onUpdateSingleGnome( const GuiGnomeInfo& gnome )
 	}
 }
 
-void PopulationProxy::sortGnomes( QString mode )
+void PopulationProxy::sortGnomes( const std::string& mode )
 { 
 	signalSortGnomes( mode );
 }
@@ -167,17 +167,17 @@ void PopulationProxy::requestProfessions()
 	signalRequestProfessions();
 }
 	
-void PopulationProxy::requestSkills( QString profession )
+void PopulationProxy::requestSkills( const std::string& profession )
 {
 	signalRequestSkills( profession );
 }
 
-void PopulationProxy::updateProfession( QString name, QString newName, QStringList skills )
+void PopulationProxy::updateProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills )
 {
 	signalUpdateProfession( name, newName, skills );
 }
 
-void PopulationProxy::deleteProfession( QString name )
+void PopulationProxy::deleteProfession( const std::string& name )
 {
 	signalDeleteProfession( name );
 }
@@ -187,10 +187,10 @@ void PopulationProxy::newProfession()
 	signalNewProfession();
 }
 
-void PopulationProxy::onSelectEditProfession( const QString name )
+void PopulationProxy::onSelectEditProfession( const std::string& name )
 {
 	if( m_parent )
 	{
-		m_parent->selectEditProfession( name );
+		m_parent->selectEditProfession( QString::fromStdString(name) );
 	}
 }

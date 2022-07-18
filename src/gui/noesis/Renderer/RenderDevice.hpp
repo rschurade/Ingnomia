@@ -91,5 +91,6 @@ private:
 	std::array<bgfx::ShaderHandle, VertexShaderCount_> VertexShaders_ {};
 	std::array<bgfx::ShaderHandle, FragmentShaderCount_> FragmentShaders_ {}; // -1 because we do not support custom effect
 	std::array<bgfx::ProgramHandle, FragmentShaderCount_> Programs_ {};
+	AppGUI::RenderTarget* m_activeRenderTarget;
 };
 } // namespace AppGUI

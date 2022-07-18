@@ -75,14 +75,22 @@ Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 Gnome::Gnome( QVariantMap& in, Game* game ) :
 	CanWork( in, game )
 {
-	m_skillActive     = in.value( "SkillActive" ).toMap();
-	m_skillPriorities = in.value( "SkillPriorities" ).toStringList();
+	const auto tmpSkillActive = in.value( "SkillActive" ).toMap();
+	m_skillActive.clear();
+	for ( const auto& item : tmpSkillActive.toStdMap() ) {
+		m_skillActive[item.first.toStdString()] = item.second.toBool();
+	}
+	const auto tmp = in.value( "SkillPriorities" ).toStringList();
+	m_skillPriorities.clear();
+	for ( const auto& item : tmp ) {
+		m_skillPriorities.push_back( item.toStdString() );
+	}
 
 	m_needs = in.value( "Needs" ).toMap();
 
 	if ( in.contains( "Profession" ) )
 	{
-		m_profession = in.value( "Profession" ).toString();
+		m_profession = in.value( "Profession" ).toString().toStdString();
 	}
 	else
 	{
@@ -150,13 +158,21 @@ void Gnome::serialize( QVariantMap& out )
 
 	////////////////////////////////////////////////////////////////////////////////////
 
-	out.insert( "SkillActive", m_skillActive );
-	out.insert( "SkillPriorities", m_skillPriorities );
+	QVariantMap tmpSkillActive;
+	for ( const auto& item : m_skillActive ) {
+		tmpSkillActive[QString::fromStdString(item.first)] = item.second;
+	}
+	out.insert( "SkillActive", tmpSkillActive );
+	QStringList tmpSkillPrio;
+	for ( const auto& item : m_skillPriorities ) {
+		tmpSkillPrio.push_back(QString::fromStdString(item));
+	}
+	out.insert( "SkillPriorities", tmpSkillPrio );
 	//basic needs
 	out.insert( "Needs", m_needs );
 	out.insert( "Equipment", m_equipment.serialize() );
 
-	out.insert( "Profession", m_profession );
+	out.insert( "Profession", QString::fromStdString(m_profession) );
 
 	
 
@@ -587,7 +603,7 @@ int Gnome::need( QString id )
 	return 0;
 }
 
-void Gnome::selectProfession( QString profession )
+void Gnome::selectProfession( const std::string& profession )
 {
 	if ( m_profession != profession )
 	{
@@ -886,7 +902,7 @@ void Gnome::updateLight( Position oldPos, Position newPos )
 #endif
 }
 
-QString Gnome::getActivity()
+const std::string& Gnome::getActivity()
 {
 	if ( m_job )
 	{

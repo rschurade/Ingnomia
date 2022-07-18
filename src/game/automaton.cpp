@@ -316,12 +316,12 @@ void Automaton::installCore( unsigned int itemID )
 			loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
 			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
 			{
-				QString skillID = row2.value( "SkillID" ).toString();
+				const auto skillID = row2.value( "SkillID" ).toString().toStdString();
 				int value       = row2.value( "SkillValue" ).toInt();
 
-				m_skills.insert( skillID, value );
-				m_skillActive.insert( skillID, true );
-				m_skillPriorities.append( skillID );
+				m_skills.insert_or_assign( skillID, value );
+				m_skillActive.insert_or_assign( skillID, true );
+				m_skillPriorities.push_back( skillID );
 			}
 		}
 	}

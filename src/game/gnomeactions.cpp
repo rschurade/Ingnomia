@@ -618,7 +618,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 				m_workPositionQueue.put( ss, m_position.distSquare( ss ) + hasJob * 10 );
 			}
 		}
-		QString logText( "Got a new " + S::s( "$SkillName_" + m_job->requiredSkill() ) + " job" );
+		QString logText( "Got a new " + S::s( "$SkillName_" + QString::fromStdString(m_job->requiredSkill()) ) + " job" );
 		log( logText );
 
 		if ( Global::debugMode )
@@ -1664,8 +1664,8 @@ BT_RESULT Gnome::actionWork( bool halt )
 		{
 			m_currentTask = m_taskList.takeFirst();
 
-			QString skillID = m_job->requiredSkill();
-			float current   = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+			const auto& skillID = m_job->requiredSkill();
+			float current   = Global::util->reverseFib( m_skills.at( skillID ) );
 			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
 
 			ticks                = qMax( 10., qMin( 1000., ticks - ( ( ticks / 20. ) * current ) ) );
@@ -1715,8 +1715,8 @@ BT_RESULT Gnome::actionWork( bool halt )
 		{
 			m_currentTask = m_taskList.takeFirst();
 
-			QString skillID = m_job->requiredSkill();
-			float current   = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+			const auto& skillID = m_job->requiredSkill();
+			float current   = Global::util->reverseFib( m_skills.at( skillID ) );
 			float ticks     = getDurationTicks( m_currentTask.value( "Duration" ), m_job );
 			if ( ticks > 0 )
 			{
@@ -1833,8 +1833,8 @@ BT_RESULT Gnome::actionButcherAnimal( bool halt )
 	{
 		m_currentAction = "butcher animal";
 
-		QString skillID      = m_job->requiredSkill();
-		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+		const auto& skillID      = m_job->requiredSkill();
+		float current        = Global::util->reverseFib( m_skills.at( skillID ) );
 		m_totalDurationTicks = 50; //TODO get that number from DB
 		m_taskFinishTick     = GameState::tick + 50;
 	}
@@ -1921,8 +1921,8 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 	{
 		m_currentAction = "dye animal";
 
-		QString skillID      = m_job->requiredSkill();
-		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+		const auto& skillID      = m_job->requiredSkill();
+		float current        = Global::util->reverseFib( m_skills.at( skillID ) );
 		m_totalDurationTicks = 50; //TODO get that number from DB
 		m_taskFinishTick     = GameState::tick + 50;
 	}
@@ -1980,8 +1980,8 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 	{
 		m_currentAction = "harvest animal";
 
-		QString skillID      = m_job->requiredSkill();
-		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+		const auto& skillID      = m_job->requiredSkill();
+		float current        = Global::util->reverseFib( m_skills.at( skillID ) );
 		m_totalDurationTicks = 100;
 		m_taskFinishTick     = GameState::tick + 100;
 	}
@@ -2048,8 +2048,8 @@ BT_RESULT Gnome::actionTameAnimal( bool halt )
 	{
 		m_currentAction = "tame animal";
 
-		QString skillID      = m_job->requiredSkill();
-		float current        = Global::util->reverseFib( m_skills.value( skillID ).toUInt() );
+		const auto& skillID      = m_job->requiredSkill();
+		float current        = Global::util->reverseFib( m_skills.at( skillID ) );
 		m_totalDurationTicks = 100;
 		m_taskFinishTick     = GameState::tick + 100;
 	}

@@ -44,7 +44,7 @@ private:
 	QList<Gnome*> m_gnomes;
 	QList<Gnome*> m_deadGnomes;
 	absl::btree_map<unsigned int, Gnome*> m_gnomesByID;
-	absl::btree_map<QString, QStringList> m_profs;
+	absl::btree_map<std::string, std::vector<std::string>> m_profs;
 
 	QList<Gnome*> m_specialGnomes;
 	QList<Automaton*> m_automatons;
@@ -57,16 +57,18 @@ public:
 
 	void loadProfessions();
 	void saveProfessions();
-	auto professions()
+	std::vector<std::string> professions()
 	{
-		return m_profs | ranges::views::keys;
+		const auto keysView = m_profs | ranges::views::keys;
+		std::vector<std::string> keys(keysView.begin(), keysView.end());
+		return keys;
 	}
 
-	QStringList professionSkills( QString profession );
-	QString addProfession();
-	void addProfession( QString name, QStringList skills );
-	void removeProfession( QString name );
-	void modifyProfession( QString name, QString newName, QStringList skills );
+	const std::vector<std::string>& professionSkills( const std::string& profession );
+	const std::string& addProfession();
+	void addProfession( const std::string& name, const std::vector<std::string>& skills );
+	void removeProfession( const std::string& name );
+	void modifyProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills );
 
 	void addGnome( Position pos );
 	void addGnome( QVariantMap values );
@@ -126,6 +128,6 @@ private:
 	void getUninstallJob( Automaton* a );
 
 public: // signals:
-	sigslot::signal<unsigned int /*id*/, QString /*skillID*/> signalGnomeActivity;
+	sigslot::signal<unsigned int /*id*/, const std::string& /*skillID*/> signalGnomeActivity;
 	sigslot::signal<unsigned int /*id*/> signalGnomeDeath;
 };

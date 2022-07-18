@@ -38,17 +38,17 @@ private:
 	QPointer<Game> g;
 
 	absl::flat_hash_map<unsigned int, QSharedPointer<Job>> m_jobList;
-	absl::flat_hash_map<QString, QMultiHash<int, unsigned int>> m_jobsPerType;
+	absl::flat_hash_map<std::string, QMultiHash<int, unsigned int>> m_jobsPerType;
 
-	absl::flat_hash_map<QString, int> m_skillToInt;
+	absl::flat_hash_map<std::string, int> m_skillToInt;
 
 	absl::flat_hash_map<Position, unsigned int> m_jobPositions;
 
 	QQueue<unsigned int> m_returnedJobQueue;
 
-	absl::flat_hash_map<QString, QStringList> m_jobIDs;
+	absl::flat_hash_map<std::string, std::vector<std::string>> m_jobIDs;
 
-	absl::btree_set<QString> m_workshopSkills;
+	absl::btree_set<std::string> m_workshopSkills;
 
 	int m_startIndex;
 
@@ -75,7 +75,7 @@ public:
 	//QSharedPointer<Job> getJob( QVariantList& profs, Position& pos );
 	//QSharedPointer<Job> getJob( unsigned int jobID );
 
-	unsigned int getJob( QStringList profs, unsigned int gnomeID, Position& pos );
+	unsigned int getJob( const std::vector<std::string>& profs, unsigned int gnomeID, Position& pos );
 	QSharedPointer<Job> getJob( unsigned int jobID );
 	QSharedPointer<Job> getJobAtPos( Position pos );
 

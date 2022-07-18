@@ -34,7 +34,7 @@ public:
 
 	void setParent( IngnomiaGUI::CreatureInfoModel* parent );
 	void requestProfessionList();
-	void setProfession( unsigned int gnomeID, QString profession );
+	void setProfession( unsigned int gnomeID, const std::string& profession );
 
 	void requestEmptySlotImages();
 
@@ -44,11 +44,11 @@ private:
 
 private slots:
 	void onUpdateInfo( const GuiCreatureInfo& info );
-	void onProfessionList( const QStringList& profs );
+	void onProfessionList( const std::vector<std::string>& profs );
 	void onEmptyPics( const absl::btree_map< QString, std::vector<unsigned char> >& emptyPics );
 public: // signals:
 	sigslot::signal<unsigned int /*creatureID*/> signalRequestCreatureUpdate;
 	sigslot::signal<> signalRequestProfessionList;
-	sigslot::signal<unsigned int /*gnomeID*/, QString /*profession*/> signalSetProfession;
+	sigslot::signal<unsigned int /*gnomeID*/, const std::string& /*profession*/> signalSetProfession;
 	sigslot::signal<> signalRequestEmptySlotImages;
 };

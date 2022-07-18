@@ -83,12 +83,12 @@ QString Util::materialType( QString materialID )
 	return DB::select( "Type", "Materials", materialID ).toString();
 }
 
-QString Util::requiredSkill( QString jobID )
+const std::string& Util::requiredSkill( QString jobID )
 {
 	auto dbjb = DB::job( jobID );
 	if( dbjb )
 	{
-		return dbjb->SkillID;
+		return dbjb->SkillID.toStdString();
 	}
 	return "";
 }

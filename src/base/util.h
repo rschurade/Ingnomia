@@ -48,7 +48,7 @@ public:
 
 	QString materialType( QString materialID );
 
-	QString requiredSkill( QString jobID );
+	const std::string& requiredSkill( QString jobID );
 	QString requiredMagicSkill( QString spellID );
 	QString requiredTool( QString jobID );
 	int requiredToolLevel( QString jobID, Position pos );

@@ -32,8 +32,8 @@ public:
 
 	virtual CreatureTickResult onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged ) = 0;
 
-	bool getSkillActive( QString id );
-	void setSkillActive( QString id, bool active );
+	bool getSkillActive( const std::string& id );
+	void setSkillActive( const std::string& id, bool active );
 	void clearAllSkills();
 	void setAllSkillsActive( bool active );
 
@@ -71,7 +71,7 @@ protected:
 
 	void gainTech( QVariant techGain, QSharedPointer<Job> job );
 	void gainSkill( QVariant skillGain, QSharedPointer<Job> job );
-	void gainSkill( QString skill, int value );
+	void gainSkill( const std::string& skill, int value );
 	double parseValue( QVariant v );
 	double parseGain( QVariantMap gainMap );
 

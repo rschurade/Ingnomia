@@ -57,7 +57,7 @@ GnomeSkill::GnomeSkill( const GuiSkillInfo& skill, unsigned int gnomeID, Populat
 	m_level	= QString::number( skill.level ).toStdString().c_str();
 	m_checked   = skill.active;
 	m_color = skill.color.toStdString().c_str();
-	m_skillID = skill.sid.toStdString().c_str();
+	m_skillID = skill.sid.c_str();
 }
 
 const char* GnomeSkill::GetName() const
@@ -276,12 +276,12 @@ PopulationModel::PopulationModel()
 	m_professions = *new ObservableCollection<ProfItem>();
 }
 
-void PopulationModel::updateProfessionList( const QStringList& professions )
+void PopulationModel::updateProfessionList( const std::vector<std::string>& professions )
 {
 	m_professions->Clear();
 	for( const auto& prof : professions )
 	{
-		m_professions->Add( MakePtr<ProfItem>( prof.toStdString().c_str() ) );
+		m_professions->Add( MakePtr<ProfItem>( prof.c_str() ) );
 	}
 	if( m_professions->Count() > 0 )
 	{
@@ -502,7 +502,7 @@ ProfItem* PopulationModel::GetProfession() const
 	return m_selectedProfession;
 }
 
-void PopulationModel::updateProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills )
+void PopulationModel::updateProfessionSkills( const std::string& profession, const QList<GuiSkillInfo>& skills )
 {
 	m_profSkills->Clear();
 
@@ -602,13 +602,13 @@ void PopulationModel::sendModifiedProfession()
 {
 	if( m_selectedProfession )
 	{
-		QStringList skills;
+		std::vector<std::string> skills;
 		for( int i = 0; i < m_profSkills->Count(); ++i )
 		{
-			skills.append( m_profSkills->Get( i )->GetID() );
+			skills.emplace_back( m_profSkills->Get( i )->GetID() );
 		}
 
-		QString oldName = m_selectedProfession->GetName();
+		std::string oldName = m_selectedProfession->GetName();
 		m_selectedProfession->SetName( m_profName.Str() );
 		/*
 		QString name = m_selectedProfession->GetName();
@@ -669,7 +669,7 @@ void PopulationModel::onDeleteProfCmd( BaseComponent* param )
 {
 	if( m_selectedProfession )
 	{
-		QString name = m_selectedProfession->GetName();
+		std::string name = m_selectedProfession->GetName();
 		m_proxy->deleteProfession( name );
 	}
 }

@@ -1,4 +1,5 @@
-/*	
+
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -81,13 +82,13 @@ private:
 public slots:
 	void onRequestCreatureUpdate( unsigned int creatureID );
 	void onRequestProfessionList();
-	void onSetProfession( unsigned int gnomeID, QString profession );
+	void onSetProfession( unsigned int gnomeID, const std::string& profession );
 
 	void onRequestEmptySlotImages();
 
 public: // signals:
 	sigslot::signal<const GuiCreatureInfo& /*info*/> signalCreatureUpdate;
-	sigslot::signal<const QStringList& /*profs*/> signalProfessionList;
+	sigslot::signal<const std::vector<std::string>& /*profs*/> signalProfessionList;
 	
 	sigslot::signal<const absl::btree_map< QString, std::vector<unsigned char> >& /*emptyPics*/> signalEmptyPics;
 

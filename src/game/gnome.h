@@ -53,13 +53,13 @@ public:
 	void addNeed( QString id, int level );
 	int need( QString id );
 
-	void selectProfession( QString profession );
+	void selectProfession( const std::string& profession );
 
-	QString profession()
+	const std::string& profession()
 	{
 		return m_profession;
 	}
-	void setProfession( QString profession )
+	void setProfession( const std::string& profession )
 	{
 		selectProfession( profession );
 	}
@@ -68,16 +68,16 @@ public:
 
 	void setJobAborted( QString caller );
 
-	QStringList skillPrios()
+	const std::vector<std::string>& skillPrios()
 	{
 		return m_skillPriorities;
 	}
-	void setSkillPrios( QStringList prioList )
+	void setSkillPrios( const std::vector<std::string>& prioList )
 	{
 		m_skillPriorities = prioList;
 	}
 
-	QString getActivity();
+	const std::string& getActivity();
 
 	void setOwnedRoom( unsigned int id );
 	unsigned int ownedRoom();
@@ -106,7 +106,7 @@ public:
 protected:
 	float m_gainFromSleep = 0.035f;
 
-	QString m_profession = "Gnomad";
+	std::string m_profession = "Gnomad";
 
 	bool m_hungryLog     = false;
 	bool m_veryHungryLog = false;

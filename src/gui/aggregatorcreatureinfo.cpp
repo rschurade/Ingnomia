@@ -58,7 +58,7 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 	{
 		m_info.name = gnome->name();
 		m_info.id = id;
-		m_info.profession = gnome->profession();
+		m_info.profession = QString::fromStdString(gnome->profession());
 
 		m_info.str = gnome->attribute( "Str" );
 		m_info.con = gnome->attribute( "Con" );
@@ -183,16 +183,16 @@ void AggregatorCreatureInfo::onRequestProfessionList()
 {
 	if( !g ) return;
 	const auto professions = g->gm()->professions();
-	signalProfessionList( QStringList(professions.begin(), professions.end()) );
+	signalProfessionList( professions );
 }
 
-void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
+void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, const std::string& profession )
 {
 	if( !g ) return;
 	auto gnome = g->gm()->gnome( gnomeID );
 	if( gnome )
 	{
-		QString oldProf = gnome->profession();
+		const auto& oldProf = gnome->profession();
 		if( oldProf != profession )
 		{
 			gnome->selectProfession( profession );
