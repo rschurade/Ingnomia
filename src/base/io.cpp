@@ -46,6 +46,7 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
+#include "../version.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -56,7 +57,6 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QSaveFile>
-#include <QStandardPaths>
 
 #include <unordered_set>
 
@@ -65,6 +65,8 @@
 #include <fstream>
 
 #include "spdlog/spdlog.h"
+
+fs::path dataFolder;
 
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
@@ -147,12 +149,14 @@ bool IO::saveConfig()
 
 fs::path IO::getDataFolder()
 {
-#ifdef _WIN32
-	return QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/My Games/Ingnomia";
-#else
-	// corresponds to ~/.local/share/<APPNAME> on Linux
-	return QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ).toStdString();
-#endif
+	if (dataFolder.string().size() == 0)
+	{
+		auto* pathStr   = SDL_GetPrefPath( "Roest", PROJECT_NAME );
+		dataFolder = fs::path( pathStr );
+		SDL_free( pathStr );
+	}
+
+	return dataFolder;
 }
 
 fs::path IO::getTempFolder()
