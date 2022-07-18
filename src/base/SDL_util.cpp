@@ -74,8 +74,29 @@ SDL_Surface* clonePixmap( const SDL_Surface* src ) {
 	return result;
 }
 
-void flipPixmap( const SDL_Surface* surface, bool flipH, bool flipV ) {
-	throw std::runtime_error("TODO: Flip pixmap");
+void flipPixmap( SDL_Surface* surface, bool flipH, bool flipV ) {
+	if (flipH) {
+		// FIXME: This only works for 32 bit images
+		assert(surface->format->BitsPerPixel == 32);
+		// FIXME: This only works for images where pitch == width * bpp
+		assert(surface->pitch == surface->w * surface->format->BytesPerPixel);
+
+		SDL_LockSurface(surface);
+		const auto w2 = floor(surface->w / 2.0);
+		auto* pixels = reinterpret_cast<uint32_t*>(surface->pixels);
+		for ( int y = 0; y < surface->h; ++y )
+		{
+			const auto yOff = y * surface->pitch;
+			for ( int x = 0; x < w2; ++x )
+			{
+				std::swap(pixels[yOff + x], pixels[yOff + surface->w - x]);
+			}
+		}
+		SDL_UnlockSurface(surface);
+	}
+	if (flipV) {
+		throw std::runtime_error("TODO: Flip pixmap V");
+	}
 }
 
 void rotatePixmap90( const SDL_Surface* surface ) {

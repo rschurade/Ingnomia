@@ -18,8 +18,8 @@ void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y );
 void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h );
 void tintPixmap( SDL_Surface* surface, SDL_Color color );
 SDL_Surface* clonePixmap( const SDL_Surface* src );
-void flipPixmap( const SDL_Surface* surface, bool flipH, bool flipV );
-void rotatePixmap90( const SDL_Surface* surface );
+void flipPixmap( SDL_Surface* surface, bool flipH, bool flipV );
+void rotatePixmap90( SDL_Surface* surface );
 SDL_Surface* flipPixmapClone( const SDL_Surface* surface, bool flipH, bool flipV );
 SDL_Surface* rotatePixmap90Clone( const SDL_Surface* surface );
 

@@ -81,7 +81,7 @@ void Automaton::init()
 		QString itemSID = g->inv()->itemSID( m_core );
 
 		auto row = DB::selectRow( "Automaton_Cores", itemSID );
-		loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
+		loadBehaviorTree( row.value( "BehaviorTree" ).toString().toStdString() );
 
 		if ( m_btBlackBoard.contains( "State" ) )
 		{
@@ -313,7 +313,7 @@ void Automaton::installCore( unsigned int itemID )
 
 			auto row = DB::selectRow( "Automaton_Cores", itemSID );
 
-			loadBehaviorTree( row.value( "BehaviorTree" ).toString() );
+			loadBehaviorTree( row.value( "BehaviorTree" ).toString().toStdString() );
 			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
 			{
 				const auto skillID = row2.value( "SkillID" ).toString().toStdString();

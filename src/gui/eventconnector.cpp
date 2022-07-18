@@ -45,6 +45,8 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
+#include <SDL_Thread.h>
+
 
 EventConnector::EventConnector( GameManager* parent ) :
 	gm( parent ),
@@ -254,7 +256,11 @@ void EventConnector::emitInMenu( bool value )
 	
 void EventConnector::onStartNewGame()
 {
-	gm->startNewGame();
+	// TODO: We need to keep track of thread lifetime, be able to cancel it, etc. Also refactor...
+	SDL_CreateThread( []( void* data ) -> int
+					  { ((GameManager*)data)->startNewGame();
+						  return 0; },
+					  "Start New Game", gm );
 }
 
 void EventConnector::onContinueLastGame()

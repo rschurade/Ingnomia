@@ -317,13 +317,13 @@ void Creature::processCooldowns( quint64 tickNumber )
 	m_jobCooldown -= diff;
 }
 
-void Creature::loadBehaviorTree( QString id )
+void Creature::loadBehaviorTree( const std::string& id )
 {
 	m_behaviorTree.reset( BT_Factory::load( Global::behaviorTree( id ), m_behaviors, m_btBlackBoard ) );
 
 	if ( !m_behaviorTree )
 	{
-		spdlog::critical("failed to load behavior tree! {}", id.toStdString());
+		spdlog::critical("failed to load behavior tree! {}", id);
 	}
 }
 

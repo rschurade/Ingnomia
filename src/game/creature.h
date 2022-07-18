@@ -290,7 +290,7 @@ public:
 protected:
 	QPointer<Game> g;
 
-	virtual void loadBehaviorTree( QString id ) final;
+	virtual void loadBehaviorTree( const std::string& id ) final;
 	virtual void initTaskMap() = 0;
 
 	void processCooldowns( quint64 tickNumber );

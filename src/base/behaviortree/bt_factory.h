@@ -34,7 +34,7 @@ public:
 	BT_Factory()  = delete;
 	~BT_Factory() = delete;
 
-	static BT_Node* load( const pugi::xml_node& root, BT_ActionMap& actions, QVariantMap& blackboard );
+	static BT_Node* load( const pugi::xml_document& doc, BT_ActionMap& actions, QVariantMap& blackboard );
 
 private:
 	static BT_Node* createBTNode( const pugi::xml_node& treeElement, BT_Node* parent, const pugi::xml_node& documentRoot, BT_ActionMap& actions, QVariantMap& blackboard );

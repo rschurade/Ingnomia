@@ -154,7 +154,7 @@ void Animal::init()
 
 	m_anatomy.init( "Animal", m_aquatic );
 
-	loadBehaviorTree( m_btName );
+	loadBehaviorTree( m_btName.toStdString() );
 
 	if ( m_btBlackBoard.contains( "State" ) )
 	{
@@ -297,7 +297,7 @@ void Animal::setState( int state )
 
 	m_stateMap = DB::selectRows( "Animals_States", "ID", m_species ).at( state );
 
-	loadBehaviorTree( m_stateMap.value( "BehaviorTree" ).toString() );
+	loadBehaviorTree( m_stateMap.value( "BehaviorTree" ).toString().toStdString() );
 
 	updateSprite();
 

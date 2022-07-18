@@ -61,9 +61,8 @@ TEST(SimpleTest1, BasicParsing) {
 	QVariantMap blackBoard;
 
 	const auto xml = loadXml(contentSimple1);
-	const auto root = xml.document_element();
 
-	const auto* node = BT_Factory::load(root, result, blackBoard);
+	const auto* node = BT_Factory::load(xml, result, blackBoard);
 	EXPECT_EQ(node->status(), BT_RESULT::IDLE);
 	EXPECT_NE(dynamic_cast<const BT_NodeFallbackStar*>( node ), nullptr);
 }
@@ -85,9 +84,8 @@ TEST(SimpleTest2, BasicParsing) {
 	QVariantMap blackBoard;
 
 	const auto xml = loadXml(contentSimple2);
-	const auto root = xml.document_element();
 
-	const auto* node = BT_Factory::load(root, result, blackBoard);
+	const auto* node = BT_Factory::load(xml, result, blackBoard);
 	EXPECT_EQ(node->status(), BT_RESULT::IDLE);
 	EXPECT_NE(dynamic_cast<const BT_NodeFallbackStar*>( node ), nullptr);
 }

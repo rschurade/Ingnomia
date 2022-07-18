@@ -46,8 +46,9 @@ public:
 };
 }
 
-BT_Node* BT_Factory::load( const pugi::xml_node& root, BT_ActionMap& actions, QVariantMap& blackboard )
+BT_Node* BT_Factory::load( const pugi::xml_document& doc, BT_ActionMap& actions, QVariantMap& blackboard )
 {
+	const auto &root = doc.document_element();
 	const std::string mainTree = root.attribute( "main_tree_to_execute" ).value();
 
 	BT_Node* behaviorTree = getTree( mainTree, root, actions, blackboard );

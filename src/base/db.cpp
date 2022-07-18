@@ -60,9 +60,9 @@ void DB::init()
 	auto statements = sql.split( ";" );
 	for( auto s: statements )
 	{
-		if ( !destQuery.exec( s ) )
+		if ( !s.isEmpty() && !destQuery.exec( s ) )
 		{
-			spdlog::debug("{}", destQuery.lastError().text().toStdString());
+			spdlog::debug("Init error: '{}' for query '{}'", destQuery.lastError().text().toStdString(), s.toStdString());
 		}
 	}
 }

@@ -70,7 +70,7 @@ void Monster::init()
 	g->w()->insertCreatureAtPosition( m_position, m_id );
 
 	initTaskMap();
-	loadBehaviorTree( m_btName );
+	loadBehaviorTree( m_btName.toStdString() );
 	generateAggroList();
 
 	if ( m_btBlackBoard.contains( "State" ) )

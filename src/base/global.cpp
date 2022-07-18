@@ -67,7 +67,7 @@ bool Global::debugMode = false;
 bool Global::debugOpenGL = false;
 bool Global::debugSound = false;
 
-absl::btree_map<QString, pugi::xml_node> Global::m_behaviorTrees;
+absl::btree_map<std::string, pugi::xml_document> Global::m_behaviorTrees;
 
 QStringList Global::needIDs;
 absl::btree_map<QString, float> Global::needDecays;
@@ -246,26 +246,32 @@ bool Global::loadBehaviorTrees()
 
 		pugi::xml_document xml;
 		const auto& xmlPath = fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "ai" / xmlName.toStdString();
-		xml.load_file( xmlPath.c_str() );
+		if (!fs::exists(xmlPath)) {
+			spdlog::critical( "Cannot read XML at {}", xmlPath.string() );
+			abort();
+		}
+		const auto result = xml.load_file( xmlPath.c_str() );
+		if (!result) {
+			spdlog::critical( "Cannot parse XML at {}", xmlPath.string() );
+			abort();
+		}
 
-		const auto& root = xml.document_element();
-		m_behaviorTrees.insert_or_assign( id, root );
+		m_behaviorTrees.insert_or_assign( id.toStdString(), std::move(xml) );
 	}
 	return true;
 }
 
-const pugi::xml_node& Global::behaviorTree( QString id )
+const pugi::xml_document& Global::behaviorTree( const std::string& id )
 {
 	return m_behaviorTrees.at( id );
 }
 
-bool Global::addBehaviorTree( QString id, QString path )
+bool Global::addBehaviorTree( const std::string& id, const std::string& path )
 {
 	pugi::xml_document xml;
-	xml.load_file( path.toStdString().c_str() );
+	xml.load_file( path.c_str() );
 
-	const auto& root = xml.document_element();
-	m_behaviorTrees.insert_or_assign( id, root );
+	m_behaviorTrees.insert_or_assign( id, std::move(xml) );
 
 	return true;
 }

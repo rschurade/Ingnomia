@@ -51,7 +51,7 @@ public:
 
 	static Logger& logger();
 
-	static const pugi::xml_node& behaviorTree( QString id );
+	static const pugi::xml_document& behaviorTree( const std::string& id );
 
 	//static KeyBindings& keyBindings();
 	static bool wallsLowered;
@@ -82,7 +82,7 @@ public:
 
 	static unsigned int dirtUID;
 
-	static bool addBehaviorTree( QString id, QString path );
+	static bool addBehaviorTree( const std::string& id, const std::string& path );
 
 	static absl::flat_hash_map<Qt::Key, Noesis::Key> keyConvertMap;
 
@@ -105,7 +105,7 @@ private:
 
 	//static KeyBindings m_keyBindings;
 
-	static absl::btree_map<QString, pugi::xml_node> m_behaviorTrees;
+	static absl::btree_map<std::string, pugi::xml_document> m_behaviorTrees;
 	static bool loadBehaviorTrees();
 	static void initKeyConvert();
 };
