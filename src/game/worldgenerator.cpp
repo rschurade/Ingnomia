@@ -80,7 +80,7 @@ World* WorldGenerator::generateTopology()
 
 	m_mushroomLevel = m_dimZ - 70;
 
-	m_seed = ngs->seed().toInt();
+	m_seed = std::stoi( ngs->seed() );
 	m_random.SetSeed( m_seed );
 	m_random.SetFrequency( (FN_DECIMAL)0.02 );
 	m_random.SetFractalOctaves( 1 );
@@ -150,7 +150,7 @@ void WorldGenerator::addLife()
 
 	int maxVeinLength = m_dimX / 2;
 
-	GameState::kingdomName = ngs->kingdomName();
+	GameState::kingdomName = QString::fromStdString( ngs->kingdomName() );
 
 	spdlog::debug("world generator - life - done");
 
@@ -338,9 +338,9 @@ void WorldGenerator::addPlantsAndTrees()
 
 	QStringList trees;
 
-	for ( auto tree : allTrees )
+	for ( const auto& tree : allTrees )
 	{
-		if ( ngs->isChecked( tree ) )
+		if ( ngs->isChecked( tree.toStdString() ) )
 		{
 			trees.push_back( tree );
 		}
@@ -350,7 +350,7 @@ void WorldGenerator::addPlantsAndTrees()
 	QStringList plants;
 	for ( auto plant : allplants )
 	{
-		if ( DB::select( "AllowInWild", "Plants", plant ).toBool() && ngs->isChecked( plant ) )
+		if ( DB::select( "AllowInWild", "Plants", plant ).toBool() && ngs->isChecked( plant.toStdString() ) )
 		{
 			plants.push_back( plant );
 		}
@@ -495,9 +495,9 @@ void WorldGenerator::addAnimals()
 	QStringList waterKeys;
 	QStringList mushroomKeys;
 	auto ids = DB::ids( "Animals" );
-	for ( auto id : ids )
+	for ( const auto& id : ids )
 	{
-		if ( ngs->isChecked( id ) )
+		if ( ngs->isChecked( id.toStdString() ) )
 		{
 			if ( DB::select( "Aquatic", "Animals", id ).toBool() )
 			{
@@ -563,7 +563,7 @@ void WorldGenerator::addAnimals()
 
 						int count = maps::at_or_default(countPerType, type, 0);
 
-						if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
+						if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type.toStdString() ) )
 						{
 							g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
 							countPerType.insert_or_assign( type, count + 1 );
@@ -577,7 +577,7 @@ void WorldGenerator::addAnimals()
 
 					int count = maps::at_or_default(countPerType, type, 0);
 
-					if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type ) )
+					if ( count < ngs->globalMaxPerType() && count < ngs->maxAnimalsPerType( type.toStdString() ) )
 					{
 						g->cm()->addCreature( CreatureType::ANIMAL, type, pos, rand() % 2 == 0 ? Gender::MALE : Gender::FEMALE, true, false );
 						countPerType.insert_or_assign( type, count + 1 );
@@ -695,25 +695,25 @@ void WorldGenerator::addGnomesAndStartingItems()
 
 		for ( int i = 0; i < amount; ++i )
 		{
-			g->cm()->addCreature( CreatureType::ANIMAL, sa.type, thisPos, sa.gender == "Male" ? Gender::MALE : Gender::FEMALE, true, true );
+			g->cm()->addCreature( CreatureType::ANIMAL, QString::fromStdString(sa.type), thisPos, sa.gender == "Male" ? Gender::MALE : Gender::FEMALE, true, true );
 		}
 	}
 
 	auto sil = ngs->startingItems();
 	for ( auto si : sil )
 	{
-		if ( !si.mat2.isEmpty() ) //( type == "CombinedItem" )
+		if ( !si.mat2.empty() ) //( type == "CombinedItem" )
 		{
 			//qDebug() << "create combined item " << entry.value( "ItemID" ).toString() << entry.value( "Components" );
 			int amount = si.amount;
 			Position thisPos( pos + offsets[( id % 3 ) + 6] );
 			w->getFloorLevelBelow( thisPos, false );
 
-			QVariantMap row = DB::selectRow( "Items", si.itemSID );
+			QVariantMap row = DB::selectRow( "Items", QString::fromStdString(si.itemSID) );
 
-			if ( DB::numRows( "Items_Components", si.itemSID ) > 1 )
+			if ( DB::numRows( "Items_Components", QString::fromStdString(si.itemSID) ) > 1 )
 			{
-				auto comps = DB::selectRows( "Items_Components", si.itemSID );
+				auto comps = DB::selectRows( "Items_Components", QString::fromStdString(si.itemSID) );
 
 				QString itemSID1 = comps.first().value( "ItemID" ).toString();
 				QString itemSID2 = comps.last().value( "ItemID" ).toString();
@@ -722,10 +722,10 @@ void WorldGenerator::addGnomesAndStartingItems()
 				{
 					QList<unsigned int> newComponents;
 
-					newComponents.append( g->inv()->createItem( pos, itemSID1, si.mat1 ) );
-					newComponents.append( g->inv()->createItem( pos, itemSID2, si.mat2 ) );
+					newComponents.append( g->inv()->createItem( pos, itemSID1, QString::fromStdString(si.mat1) ) );
+					newComponents.append( g->inv()->createItem( pos, itemSID2, QString::fromStdString(si.mat2) ) );
 
-					g->inv()->createItem( thisPos, si.itemSID, newComponents );
+					g->inv()->createItem( thisPos, QString::fromStdString(si.itemSID), newComponents );
 
 					for ( auto vItem : newComponents )
 					{
@@ -739,7 +739,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 		else
 		{
 			int amount        = si.amount;
-			QString container = DB::select( "AllowedContainers", "Items", si.itemSID ).toString();
+			QString container = DB::select( "AllowedContainers", "Items", QString::fromStdString(si.itemSID) ).toString();
 			Position thisPos( pos + offsets[( id % 3 ) + 6] );
 			w->getFloorLevelBelow( thisPos, false );
 			/*
@@ -764,7 +764,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 			{
 				for ( int i = 0; i < amount; ++i )
 				{
-					g->inv()->createItem( thisPos, si.itemSID, si.mat1 );
+					g->inv()->createItem( thisPos, QString::fromStdString(si.itemSID), QString::fromStdString(si.mat1) );
 				}
 			}
 		}

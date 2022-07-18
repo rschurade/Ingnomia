@@ -123,7 +123,7 @@ void NeighborManager::addRandomKingdom( KingdomType type )
 	nk.id = GameState::createID();
 
 	nk.discovered = false;
-	nk.name       = S::gi().randomKingdomName();
+	nk.name       = QString::fromStdString( S::gi().randomKingdomName() );
 	nk.type       = type;
 	nk.distance   = rand() % 180 + 72;
 	nk.wealth     = ( KingdomWealth )( rand() % ( (int)KingdomWealth::VERYRICH + 1 ) );

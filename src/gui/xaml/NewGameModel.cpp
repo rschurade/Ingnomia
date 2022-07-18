@@ -47,15 +47,15 @@ const char* Preset::GetName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-GameItem::GameItem( QString name, QString sid )
+GameItem::GameItem( const std::string& name, const std::string& sid )
 {
-	_name = name.toStdString().c_str();
-	_sid  = sid.toStdString().c_str();
+	_name = name.c_str();
+	_sid  = sid.c_str();
 }
 
-GameItem::GameItem( QString name, QString sid, int amount ) :
-	_name( name.toStdString().c_str() ),
-	_sid( sid.toStdString().c_str() ),
+GameItem::GameItem( const std::string& name, const std::string& sid, int amount ) :
+	_name( name.c_str() ),
+	_sid( sid.c_str() ),
 	m_amount( amount )
 {
 	m_amountString = QString::number( amount ).toStdString().c_str();
@@ -115,27 +115,27 @@ void GameItem::setChecked( bool value )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-StartItem::StartItem( QString name, QString mat1, QString mat2, int amount )
+StartItem::StartItem( const std::string& name, const std::string& mat1, const std::string& mat2, int amount )
 {
-	_tag = ( name + "_" + mat1 + "_" + mat2 ).toStdString().c_str();
+	_tag = ( name + "_" + mat1 + "_" + mat2 ).c_str();
 
-	_name = S::s( "$ItemName_" + name ).toStdString().c_str();
-	if ( !mat1.isEmpty() )
+	_name = S::s( "$ItemName_" + QString::fromStdString(name) ).toStdString().c_str();
+	if ( !mat1.empty() )
 	{
-		_mat1 = S::s( "$MaterialName_" + mat1 ).toStdString().c_str();
+		_mat1 = S::s( "$MaterialName_" + QString::fromStdString(mat1) ).toStdString().c_str();
 	}
-	if ( !mat2.isEmpty() )
+	if ( !mat2.empty() )
 	{
-		_mat2 = S::s( "$MaterialName_" + mat2 ).toStdString().c_str();
+		_mat2 = S::s( "$MaterialName_" + QString::fromStdString(mat2) ).toStdString().c_str();
 	}
 	_amount = QString::number( amount ).toStdString().c_str();
 }
 
-StartAnimal::StartAnimal( QString type, QString gender, int amount )
+StartAnimal::StartAnimal( const std::string& type, const std::string& gender, int amount )
 {
-	_tag    = ( type + "_" + gender ).toStdString().c_str();
-	_type   = S::s( "$CreatureName_" + type ).toStdString().c_str();
-	_gender = gender.toStdString().c_str();
+	_tag    = ( type + "_" + gender ).c_str();
+	_type   = S::s( "$CreatureName_" + QString::fromStdString(type) ).toStdString().c_str();
+	_gender = gender.c_str();
 	_amount = QString::number( amount ).toStdString().c_str();
 }
 
@@ -165,8 +165,8 @@ NewGameModel::NewGameModel() :
 	_allowedPlants      = *new ObservableCollection<GameItem>();
 	_allowedTrees       = *new ObservableCollection<GameItem>();
 
-	_kingdomName  = Global::newGameSettings->kingdomName().toStdString().c_str();
-	_seed         = Global::newGameSettings->seed().toStdString().c_str();
+	_kingdomName  = Global::newGameSettings->kingdomName().c_str();
+	_seed         = Global::newGameSettings->seed().c_str();
 	_itemAmount   = "1";
 	_animalAmount = "1";
 
@@ -187,7 +187,7 @@ NewGameModel::NewGameModel() :
 	diKeys.sort();
 	for ( auto key : diKeys )
 	{
-		_items->Add( MakePtr<GameItem>( S::s( "$ItemName_" + key ), key ) );
+		_items->Add( MakePtr<GameItem>( S::s( "$ItemName_" + key ).toStdString(), key.toStdString() ) );
 	}
 	SetSelectedItem( _items->Get( 0 ) );
 
@@ -198,7 +198,7 @@ NewGameModel::NewGameModel() :
 	{
 		if ( DB::select( "Pasture", "Animals", animal ).toBool() || DB::select( "Embark", "Animals", animal ).toBool() )
 		{
-			_animals->Add( MakePtr<GameItem>( S::s( "$CreatureName_" + animal ), animal ) );
+			_animals->Add( MakePtr<GameItem>( S::s( "$CreatureName_" + animal ).toStdString(), animal.toStdString() ) );
 		}
 	}
 	SetSelectedAnimal( _animals->Get( 0 ) );
@@ -276,14 +276,14 @@ const DelegateCommand* NewGameModel::GetRemoveAnimal() const
 void NewGameModel::OnRandomKingdomName( BaseComponent* param )
 {
 	Global::newGameSettings->setRandomName();
-	_kingdomName = Global::newGameSettings->kingdomName().toStdString().c_str();
+	_kingdomName = Global::newGameSettings->kingdomName().c_str();
 	OnPropertyChanged( "KingdomName" );
 }
 
 void NewGameModel::OnRandomSeed( BaseComponent* param )
 {
 	Global::newGameSettings->setRandomSeed();
-	_seed = Global::newGameSettings->seed().toStdString().c_str();
+	_seed = Global::newGameSettings->seed().c_str();
 	OnPropertyChanged( "Seed" );
 }
 
@@ -340,7 +340,7 @@ void NewGameModel::OnAddItem( BaseComponent* param )
 		mat2 = _selectedItemMaterial2->sid();
 	}
 
-	Global::newGameSettings->addStartingItem( itemSID, mat1, mat2, amount );
+	Global::newGameSettings->addStartingItem( itemSID.toStdString(), mat1.toStdString(), mat2.toStdString(), amount );
 
 	updateStartingItems();
 }
@@ -365,7 +365,7 @@ void NewGameModel::OnAddAnimal( BaseComponent* param )
 		gender = _selectedGender->sid();
 	}
 
-	Global::newGameSettings->addStartingAnimal( type, gender, amount );
+	Global::newGameSettings->addStartingAnimal( type.toStdString(), gender.toStdString(), amount );
 
 	updateStartingAnimals();
 }
@@ -519,7 +519,7 @@ void NewGameModel::SetKingdomName( const char* value )
 {
 	if ( Global::newGameSettings->setKingdomName( value ) )
 	{
-		_kingdomName = Global::newGameSettings->kingdomName().toStdString().c_str();
+		_kingdomName = Global::newGameSettings->kingdomName().c_str();
 		OnPropertyChanged( "KingdomName" );
 	}
 }
@@ -533,7 +533,7 @@ void NewGameModel::SetSeed( const char* value )
 {
 	if ( Global::newGameSettings->setSeed( value ) )
 	{
-		_seed = Global::newGameSettings->seed().toStdString().c_str();
+		_seed = Global::newGameSettings->seed().c_str();
 		OnPropertyChanged( "Seed" );
 	}
 }
@@ -666,8 +666,8 @@ void NewGameModel::SetSelectedItem( GameItem* item )
 		_itemMaterials1->Clear();
 		_itemMaterials2->Clear();
 
-		QStringList mats1;
-		QStringList mats2;
+		std::vector<std::string> mats1;
+		std::vector<std::string> mats2;
 
 		Global::newGameSettings->materialsForItem( item->sid(), mats1, mats2 );
 
@@ -675,7 +675,7 @@ void NewGameModel::SetSelectedItem( GameItem* item )
 		{
 			for ( auto mat : mats1 )
 			{
-				_itemMaterials1->Add( MakePtr<GameItem>( S::s( "$MaterialName_" + mat ), mat ) );
+				_itemMaterials1->Add( MakePtr<GameItem>( S::s( "$MaterialName_" + QString::fromStdString(mat) ).toStdString(), mat ) );
 			}
 			SetSelectedMaterial1( _itemMaterials1->Get( 0 ) );
 		}
@@ -683,7 +683,7 @@ void NewGameModel::SetSelectedItem( GameItem* item )
 		{
 			for ( auto mat : mats2 )
 			{
-				_itemMaterials2->Add( MakePtr<GameItem>( S::s( "$MaterialName_" + mat ), mat ) );
+				_itemMaterials2->Add( MakePtr<GameItem>( S::s( "$MaterialName_" + QString::fromStdString(mat) ).toStdString(), mat ) );
 			}
 			SetSelectedMaterial2( _itemMaterials2->Get( 0 ) );
 		}

@@ -69,24 +69,24 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(JsonPreset, Name, startingItems)
 
 struct StartingItem
 {
-	QString itemSID;
-	QString mat1;
-	QString mat2;
+	std::string itemSID;
+	std::string mat1;
+	std::string mat2;
 	int amount = 1;
 };
 
 struct StartingAnimal
 {
-	QString type;
-	QString gender;
+	std::string type;
+	std::string gender;
 	int amount = 1;
 };
 
 struct CheckableItem
 {
-	QString sid;
-	QString name;
-	QString type;
+	std::string sid;
+	std::string name;
+	std::string type;
 	bool isChecked;
 	int max;
 };
@@ -104,14 +104,15 @@ public:
 	void setRandomName();
 	void setRandomSeed();
 
-	bool setKingdomName( QString value );
-	bool setSeed( QString value );
+	bool setKingdomName( const std::string& value );
+	bool setSeed( const std::string& value );
 
-	QString kingdomName()
+	const std::string& kingdomName()
 	{
 		return m_kingdomName;
 	}
-	QString seed()
+
+	const std::string& seed()
 	{
 		return m_seed;
 	}
@@ -172,7 +173,7 @@ public:
 	{
 		return m_numWildAnimals;
 	}
-	int maxAnimalsPerType( QString type );
+	int maxAnimalsPerType( const std::string& type );
 	
 
 	bool setWorldSize( int value );
@@ -190,18 +191,18 @@ public:
 	bool setMaxPerType( int value );
 	bool setNumWildAnimals( int value );
 
-	void materialsForItem( QString item, QStringList& mats1, QStringList& mats2 );
-	void addStartingItem( QString itemSID, QString mat1, QString mat2, int amount );
-	void removeStartingItem( QString tag );
+	void materialsForItem( const std::string& item, std::vector<std::string>& mats1, std::vector<std::string>& mats2 );
+	void addStartingItem( const std::string& itemSID, const std::string& mat1, const std::string& mat2, int amount );
+	void removeStartingItem( const std::string& tag );
 
-	void addStartingAnimal( QString type, QString gender, int amount );
-	void removeStartingAnimal( QString tag );
+	void addStartingAnimal( const std::string& type, const std::string& gender, int amount );
+	void removeStartingAnimal( const std::string& tag );
 
-	QList<StartingItem> startingItems()
+	std::vector<StartingItem> startingItems()
 	{
 		return m_startingItems;
 	}
-	QList<StartingAnimal> startingAnimals()
+	std::vector<StartingAnimal> startingAnimals()
 	{
 		return m_startingAnimals;
 	}
@@ -217,10 +218,10 @@ public:
 	bool savePreset( const std::vector<JsonStartingItem>& items );
 	bool onSavePreset();
 
-	bool isChecked( QString sid );
-	void setChecked( QString sid, bool value );
+	bool isChecked( const std::string& sid );
+	void setChecked( const std::string& sid, bool value );
 
-	void setAmount( QString sid, int value );
+	void setAmount( const std::string& sid, int value );
 
 private:
 	void loadEmbarkMap();
@@ -230,10 +231,10 @@ private:
 	void setStartingItems( const std::vector<JsonStartingItem>& sil );
 	void collectStartItems( std::vector<JsonStartingItem>& sil );
 
-	std::vector<CheckableItem> filterCheckableItems( const QString& itemType );
+	std::vector<CheckableItem> filterCheckableItems( const std::string& itemType );
 
-	QString m_kingdomName;
-	QString m_seed;
+	std::string m_kingdomName;
+	std::string m_seed;
 
 	int m_worldSize      = 100;
 	int m_zLevels        = 130;
@@ -251,15 +252,15 @@ private:
 
 	bool m_isPeaceful = true;
 
-	QList<StartingItem> m_startingItems;
-	QList<StartingAnimal> m_startingAnimals;
+	std::vector<StartingItem> m_startingItems;
+	std::vector<StartingAnimal> m_startingAnimals;
 
-	QStringList materials( QString itemSID );
+	std::vector<std::string> materials( const std::string& itemSID );
 
 	std::vector<JsonPreset> m_standardPresets;
 	std::vector<JsonPreset> m_userPresets;
 
 	std::string m_selectedPreset;
 
-	absl::btree_map<QString, CheckableItem> m_checkableItems;
+	absl::btree_map<std::string, CheckableItem> m_checkableItems;
 };

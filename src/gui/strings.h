@@ -66,7 +66,7 @@ public:
 	static void insertString( QString key, QString string );
 
 	QString numberWord( int number );
-	QString randomKingdomName();
+	std::string randomKingdomName();
 };
 
 typedef Strings S;

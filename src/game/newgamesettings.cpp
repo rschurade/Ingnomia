@@ -20,15 +20,15 @@
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/io.h"
+#include "../base/stringsHelper.h"
 #include "../gui/strings.h"
 
-#include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QStandardPaths>
 
 #include <random>
+#include <range/v3/action/split.hpp>
 #include <range/v3/view.hpp>
 
 #include "spdlog/spdlog.h"
@@ -87,60 +87,55 @@ NewGameSettings::~NewGameSettings()
 
 void NewGameSettings::save()
 {
-	QVariantMap embarkMap;
-
-	embarkMap.insert( "dimX", m_worldSize );
-    embarkMap.insert( "dimY", m_worldSize );
-    embarkMap.insert( "dimZ", m_zLevels );
-    embarkMap.insert( "flatness", m_flatness );
-    embarkMap.insert( "groundLevel", m_ground );
-    //embarkMap.insert( "hasOcean", m_oc
-    embarkMap.insert( "maxPerType", m_maxPerType );
-    embarkMap.insert( "numAnimals", m_numWildAnimals );
-    embarkMap.insert( "numGnomes", m_numGnomes );
-    embarkMap.insert( "oceanSize", m_oceanSize );
-    embarkMap.insert( "peaceful", m_isPeaceful );
-    embarkMap.insert( "plantDensity", m_plantDensity );
-    embarkMap.insert( "riverSize", m_riverSize );
-    embarkMap.insert( "rivers", m_rivers );
-    embarkMap.insert( "seed", m_seed );
-	embarkMap.insert( "startingZone", m_startZone );
-    embarkMap.insert( "treeDensity", m_treeDensity );
-
-	QVariantMap allowedAnimals;
-	QVariantMap allowedPlants;
-	QVariantMap allowedTrees;
+	absl::flat_hash_map<std::string, int> allowedAnimals;
+	absl::flat_hash_map<std::string, bool> allowedPlants;
+	absl::flat_hash_map<std::string, bool> allowedTrees;
 
 	for( const auto& ci : m_checkableItems | ranges::views::values )
 	{
 		if( ci.type == "Animal" )
 		{
-			allowedAnimals.insert( ci.sid, ci.max );
+			allowedAnimals[ci.sid] = ci.max;
 		}
 		else if( ci.type == "Plant" )
 		{
-			allowedPlants.insert( ci.sid, ci.isChecked );
+			allowedPlants[ci.sid] = ci.isChecked;
 		}
 		else if( ci.type == "Tree" )
 		{
-			allowedTrees.insert( ci.sid, ci.isChecked );
+			allowedTrees[ci.sid] = ci.isChecked;
 		}
 	}
-	embarkMap.insert( "allowedAnimals", allowedAnimals );
-	embarkMap.insert( "allowedPlants", allowedPlants );
-	embarkMap.insert( "allowedTrees", allowedTrees );
 
 	std::vector<JsonStartingItem> startItems;
 	collectStartItems( startItems );
 
-	// FIXME: Remove this intermediate step after we completely remove QJsonDocument
-	json tmp = startItems;
-	const auto tmpStr = QString::fromStdString( tmp.dump() );
-	QJsonDocument doc = QJsonDocument::fromJson( tmpStr.toUtf8() );
-	embarkMap.insert( "startingItems", doc.toVariant().toList() );
+	const auto embarkMap = json {
+		{ "dimX", m_worldSize },
+		{ "dimY", m_worldSize },
+		{ "dimZ", m_zLevels },
+		{ "flatness", m_flatness },
+		{ "groundLevel", m_ground },
+		// { "hasOcean", m_oc },
+		{ "maxPerType", m_maxPerType },
+		{ "numAnimals", m_numWildAnimals },
+		{ "numGnomes", m_numGnomes },
+		{ "oceanSize", m_oceanSize },
+		{ "peaceful", m_isPeaceful },
+		{ "plantDensity", m_plantDensity },
+		{ "riverSize", m_riverSize },
+		{ "rivers", m_rivers },
+		{ "seed", m_seed },
+		{ "startingZone", m_startZone },
+		{ "treeDensity", m_treeDensity },
 
-	QJsonDocument sd = QJsonDocument::fromVariant( embarkMap );
-	IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", sd );
+		{ "allowedAnimals", allowedAnimals },
+		{ "allowedPlants", allowedPlants },
+		{ "allowedTrees", allowedTrees },
+		{ "startingItems", startItems }
+	};
+
+	IO::saveFile( IO::getDataFolder() / "settings" / "newgame.json", embarkMap );
 
 	savePreset( startItems );
 }
@@ -149,23 +144,23 @@ void NewGameSettings::collectStartItems( std::vector<JsonStartingItem>& sil )
 {
 	for( const auto& si : m_startingItems )
 	{
-		if( si.mat2.isEmpty() )
+		if( si.mat2.empty() )
 		{
 			sil.emplace_back(JsonNormalItem{
-				{ si.amount, si.itemSID.toStdString(), "Item" },
-				si.mat1.toStdString()
+				{ si.amount, si.itemSID, "Item" },
+				si.mat1
 			});
 		}
 		else
 		{
-			auto rows = DB::selectRows( "Items_Components", si.itemSID );
+			auto rows = DB::selectRows( "Items_Components", QString::fromStdString(si.itemSID) );
 			if( rows.size() > 1 )
 			{
 				sil.emplace_back(JsonCombinedItem{
-					{ si.amount, si.itemSID.toStdString(), "CombinedItem" },
+					{ si.amount, si.itemSID, "CombinedItem" },
 					{
-						{rows[0].value( "ItemID" ).toString().toStdString(), si.mat1.toStdString()},
-						{rows[1].value( "ItemID" ).toString().toStdString(), si.mat2.toStdString()}
+						{rows[0].value( "ItemID" ).toString().toStdString(), si.mat1},
+						{rows[1].value( "ItemID" ).toString().toStdString(), si.mat2}
 					}
 				});
 			}
@@ -174,8 +169,8 @@ void NewGameSettings::collectStartItems( std::vector<JsonStartingItem>& sil )
 	for( const auto& si : m_startingAnimals )
 	{
 		sil.emplace_back(JsonAnimalItem{
-			{ si.amount, si.type.toStdString(), "Animal" },
-			si.gender.toStdString()
+			{ si.amount, si.type, "Animal" },
+			si.gender
 		});
 	}
 }
@@ -206,8 +201,8 @@ void NewGameSettings::loadEmbarkMap()
 	for ( const auto& id : trees )
 	{
 		const auto& key = id.toStdString();
-		CheckableItem ci { id, S::s( "$ItemName_" + id ), "Tree", allowedTrees.contains( key ) && allowedTrees.at( key ).get<bool>(), 0 };
-		m_checkableItems.insert_or_assign( id, ci );
+		CheckableItem ci { key, S::s( "$ItemName_" + id ).toStdString(), "Tree", allowedTrees.contains( key ) && allowedTrees.at( key ).get<bool>(), 0 };
+		m_checkableItems.insert_or_assign( key, ci );
 	}
 
 	auto allplants = DB::ids( "Plants", "Type", "Plant" );
@@ -218,8 +213,8 @@ void NewGameSettings::loadEmbarkMap()
 		if ( DB::select( "AllowInWild", "Plants", id ).toBool() )
 		{
 			const auto& key = id.toStdString();
-			CheckableItem ci { id, S::s( "$MaterialName_" + id ), "Plant", allowedPlants.contains(key) && allowedPlants.at( key ).get<bool>(), 0 };
-			m_checkableItems.insert_or_assign( id, ci );
+			CheckableItem ci { key, S::s( "$MaterialName_" + id ).toStdString(), "Plant", allowedPlants.contains(key) && allowedPlants.at( key ).get<bool>(), 0 };
+			m_checkableItems.insert_or_assign( key, ci );
 		}
 	}
 
@@ -233,8 +228,8 @@ void NewGameSettings::loadEmbarkMap()
 		{
 			const auto& key = id.toStdString();
 			const auto containsKey = allowedAnimals.contains( key );
-			CheckableItem ci { id, S::s( "$CreatureName_" + id ), "Animal", containsKey, containsKey && allowedAnimals.at( key ).get<int>() };
-			m_checkableItems.insert_or_assign( id, ci );
+			CheckableItem ci { key, S::s( "$CreatureName_" + id ).toStdString(), "Animal", containsKey, containsKey && allowedAnimals.at( key ).get<int>() };
+			m_checkableItems.insert_or_assign( key, ci );
 		}
 	}
 
@@ -242,7 +237,7 @@ void NewGameSettings::loadEmbarkMap()
 	setStartingItems( sil );
 
 	// QString m_kingdomName not in embark map, we want to change it on every embark
-	m_seed = QString::fromStdString( embarkMap.at( "seed" ).get<std::string>() );
+	m_seed = embarkMap.at( "seed" ).get<std::string>();
 
 	m_worldSize    = embarkMap.at( "dimX" ).get<int>();
 	m_zLevels      = embarkMap.at( "dimZ" ).get<int>();
@@ -274,10 +269,10 @@ void NewGameSettings::setRandomSeed()
 
 	auto random_integer = uni( rng );
 
-	m_seed = QString::number( random_integer );
+	m_seed = std::to_string( random_integer );
 }
 
-bool NewGameSettings::setKingdomName( QString value )
+bool NewGameSettings::setKingdomName( const std::string& value )
 {
 	if ( m_kingdomName != value )
 	{
@@ -287,7 +282,7 @@ bool NewGameSettings::setKingdomName( QString value )
 	return false;
 }
 
-bool NewGameSettings::setSeed( QString value )
+bool NewGameSettings::setSeed( const std::string& value )
 {
 	if ( m_seed != value )
 	{
@@ -400,59 +395,59 @@ bool NewGameSettings::setPlantDensity( int value )
 	return false;
 }
 
-void NewGameSettings::materialsForItem( QString item, QStringList& mats1, QStringList& mats2 )
+void NewGameSettings::materialsForItem( const std::string& item, std::vector<std::string>& mats1, std::vector<std::string>& mats2 )
 {
-	QVariantMap row = DB::selectRow( "Items", item );
+	QVariantMap row = DB::selectRow( "Items", QString::fromStdString(item) );
 
-	if ( DB::numRows( "Items_Components", item ) )
+	if ( DB::numRows( "Items_Components", QString::fromStdString(item) ) )
 	{
-		auto comps = DB::selectRows( "Items_Components", item );
+		auto comps = DB::selectRows( "Items_Components", QString::fromStdString(item) );
 
-		for ( auto mat : materials( comps.first().value( "ItemID" ).toString() ) )
+		for ( auto mat : materials( comps.first().value( "ItemID" ).toString().toStdString() ) )
 		{
-			mats1.append( mat );
+			mats1.push_back( mat );
 		}
-		for ( auto mat : materials( comps.last().value( "ItemID" ).toString() ) )
+		for ( auto mat : materials( comps.last().value( "ItemID" ).toString().toStdString() ) )
 		{
-			mats2.append( mat );
+			mats2.push_back( mat );
 		}
 	}
 	else
 	{
 		for ( auto mat : materials( item ) )
 		{
-			mats1.append( mat );
+			mats1.push_back( mat );
 		}
 	}
 }
 
-QStringList NewGameSettings::materials( QString itemSID )
+std::vector<std::string> NewGameSettings::materials( const std::string& itemSID )
 {
-	QVariantMap row = DB::selectRow( "Items", itemSID );
+	QVariantMap row = DB::selectRow( "Items", QString::fromStdString(itemSID) );
 
-	QStringList out;
+	std::vector<std::string> out;
 
 	if ( !row.value( "AllowedMaterials" ).toString().isEmpty() )
 	{
-		for ( auto mat : row.value( "AllowedMaterials" ).toString().split( "|" ) )
+		for ( const auto& mat : row.value( "AllowedMaterials" ).toString().split( "|" ) )
 		{
-			out.append( mat );
+			out.push_back( mat.toStdString() );
 		}
 	}
 	if ( !row.value( "AllowedMaterialTypes" ).toString().isEmpty() )
 	{
-		for ( auto type : row.value( "AllowedMaterialTypes" ).toString().split( "|" ) )
+		for ( const auto& type : row.value( "AllowedMaterialTypes" ).toString().split( "|" ) )
 		{
-			for ( auto mat : DB::select2( "ID", "Materials", "Type", type ) )
+			for ( const auto& mat : DB::select2( "ID", "Materials", "Type", type ) )
 			{
-				out.append( mat.toString() );
+				out.push_back( mat.toString().toStdString() );
 			}
 		}
 	}
 	return out;
 }
 
-void NewGameSettings::addStartingItem( QString itemSID, QString mat1, QString mat2, int amount )
+void NewGameSettings::addStartingItem( const std::string& itemSID, const std::string& mat1, const std::string& mat2, int amount )
 {
 	if ( amount <= 0 )
 	{
@@ -467,15 +462,15 @@ void NewGameSettings::addStartingItem( QString itemSID, QString mat1, QString ma
 		}
 	}
 	StartingItem si { itemSID, mat1, mat2, amount };
-	m_startingItems.append( si );
+	m_startingItems.push_back( si );
 }
 
-void NewGameSettings::removeStartingItem( QString tag )
+void NewGameSettings::removeStartingItem( const std::string& tag )
 {
-	auto tl = tag.split( "_" );
-	QString itemSID;
-	QString mat1;
-	QString mat2;
+	auto tl = ranges::actions::split( tag, "_" );
+	std::string itemSID;
+	std::string mat1;
+	std::string mat2;
 	if ( tl.size() > 1 )
 	{
 		itemSID = tl[0];
@@ -490,13 +485,13 @@ void NewGameSettings::removeStartingItem( QString tag )
 		auto si = m_startingItems[i];
 		if ( itemSID == si.itemSID && mat1 == si.mat1 && mat2 == si.mat2 )
 		{
-			m_startingItems.removeAt( i );
+			m_startingItems.erase( m_startingItems.begin() + i );
 			return;
 		}
 	}
 }
 
-void NewGameSettings::addStartingAnimal( QString type, QString gender, int amount )
+void NewGameSettings::addStartingAnimal( const std::string& type, const std::string& gender, int amount )
 {
 	if ( amount <= 0 )
 	{
@@ -511,14 +506,14 @@ void NewGameSettings::addStartingAnimal( QString type, QString gender, int amoun
 		}
 	}
 	StartingAnimal sa { type, gender, amount };
-	m_startingAnimals.append( sa );
+	m_startingAnimals.push_back( sa );
 }
 
-void NewGameSettings::removeStartingAnimal( QString tag )
+void NewGameSettings::removeStartingAnimal( const std::string& tag )
 {
-	auto tl = tag.split( "_" );
-	QString type;
-	QString gender;
+	auto tl = ranges::actions::split( tag, "_" );
+	std::string type;
+	std::string gender;
 
 	if ( tl.size() > 1 )
 	{
@@ -530,7 +525,7 @@ void NewGameSettings::removeStartingAnimal( QString tag )
 		auto sa = m_startingAnimals[i];
 		if ( type == sa.type && gender == sa.gender )
 		{
-			m_startingAnimals.removeAt( i );
+			m_startingAnimals.erase( m_startingAnimals.begin() + i );
 			return;
 		}
 	}
@@ -693,32 +688,32 @@ void NewGameSettings::setStartingItems( const std::vector<JsonStartingItem>& sil
 	{
 		if ( const JsonNormalItem* item = std::get_if<JsonNormalItem>( &sipm ) )
 		{
-			auto itemSID = QString::fromStdString( item->ItemID );
-			auto mat1    = QString::fromStdString( item->MaterialID );
+			const auto& itemSID = item->ItemID;
+			const auto& mat1    = item->MaterialID;
 			int amount      = item->Amount;
 			StartingItem si { itemSID, mat1, "", amount };
-			m_startingItems.append( si );
+			m_startingItems.push_back( si );
 		} else if ( const JsonCombinedItem* item = std::get_if<JsonCombinedItem>( &sipm ) )
 		{
-			auto itemSID = QString::fromStdString( item->ItemID );
+			const auto& itemSID = item->ItemID;
 			int amount      = item->Amount;
-			auto components = item->Components;
+			const auto& components = item->Components;
 			if ( components.size() == 2 )
 			{
-				auto mat1 = QString::fromStdString(components[0].MaterialID);
-				auto mat2 = QString::fromStdString(components[1].MaterialID);
+				const auto& mat1 = components[0].MaterialID;
+				const auto& mat2 = components[1].MaterialID;
 
 				StartingItem si { itemSID, mat1, mat2, amount };
-				m_startingItems.append( si );
+				m_startingItems.push_back( si );
 			}
 		} else if ( const JsonAnimalItem* item = std::get_if<JsonAnimalItem>( &sipm ) )
 		{
-			QString type   = QString::fromStdString(item->ItemID);
-			QString gender = QString::fromStdString(item->Gender);
-			gender.replace( 0, 1, gender[0].toUpper() );
+			const auto& type   = item->ItemID;
+			auto gender = item->Gender;
+			gender[0] = str::toUpper( gender[0] );
 			int amount = item->Amount;
 			StartingAnimal si { type, gender, amount };
-			m_startingAnimals.append( si );
+			m_startingAnimals.push_back( si );
 		}
 	}
 }
@@ -753,7 +748,7 @@ std::vector<CheckableItem> NewGameSettings::animals()
 	return filterCheckableItems( "Animal" );
 }
 
-bool NewGameSettings::isChecked( QString sid )
+bool NewGameSettings::isChecked( const std::string& sid )
 {
 	if ( m_checkableItems.contains( sid ) )
 	{
@@ -763,7 +758,7 @@ bool NewGameSettings::isChecked( QString sid )
 	return false;
 }
 
-void NewGameSettings::setChecked( QString sid, bool value )
+void NewGameSettings::setChecked( const std::string& sid, bool value )
 {
 	if ( m_checkableItems.contains( sid ) )
 	{
@@ -802,7 +797,7 @@ bool NewGameSettings::setNumWildAnimals( int value )
 	return false;
 }
 
-int NewGameSettings::maxAnimalsPerType( QString type )
+int NewGameSettings::maxAnimalsPerType( const std::string& type )
 {
 	if( m_checkableItems.contains( type ) )
 	{
@@ -812,7 +807,7 @@ int NewGameSettings::maxAnimalsPerType( QString type )
 	return 0;
 }
 
-void NewGameSettings::setAmount( QString sid, int value )
+void NewGameSettings::setAmount( const std::string& sid, int value )
 {
 	if ( m_checkableItems.contains( sid ) )
 	{
@@ -821,7 +816,7 @@ void NewGameSettings::setAmount( QString sid, int value )
 	}
 }
 
-std::vector<CheckableItem> NewGameSettings::filterCheckableItems( const QString& itemType )
+std::vector<CheckableItem> NewGameSettings::filterCheckableItems( const std::string& itemType )
 {
 	std::vector<CheckableItem> result;
 	const auto &values = ranges::views::values(m_checkableItems);

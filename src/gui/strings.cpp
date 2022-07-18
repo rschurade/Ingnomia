@@ -69,7 +69,7 @@ void Strings::insertString( QString key, QString string )
 	m_table.insert_or_assign( key, string );
 }
 
-QString Strings::randomKingdomName()
+std::string Strings::randomKingdomName()
 {
 	auto ruleList = DB::selectRows( "Namerules_Rule", "Faction" );
 
@@ -82,7 +82,7 @@ QString Strings::randomKingdomName()
 		name += " ";
 	}
 	name.remove( name.size() - 1, 1 );
-	return name;
+	return name.toStdString();
 }
 
 QString Strings::replaceNamePart( QString part )

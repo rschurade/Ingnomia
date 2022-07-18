@@ -52,8 +52,8 @@ private:
 class GameItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
-	GameItem( QString name, QString sid );
-	GameItem( QString name, QString sid, int amount );
+	GameItem( const std::string& name, const std::string& sid );
+	GameItem( const std::string& name, const std::string& sid, int amount );
 
 	const char* GetName() const;
 	bool isChecked() const;
@@ -78,7 +78,7 @@ private:
 struct StartItem : public Noesis::BaseComponent
 {
 public:
-	StartItem( QString name, QString mat1, QString mat2, int amount );
+	StartItem( const std::string& name, const std::string& mat1, const std::string& mat2, int amount );
 
 	Noesis::String _tag;
 	Noesis::String _name;
@@ -93,7 +93,7 @@ public:
 struct StartAnimal : public Noesis::BaseComponent
 {
 public:
-	StartAnimal( QString type, QString gender, int amount );
+	StartAnimal( const std::string& type, const std::string& gender, int amount );
 
 	Noesis::String _tag;
 	Noesis::String _type;

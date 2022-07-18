@@ -111,7 +111,7 @@ bool SpriteFactory::init()
 				pm = IMG_Load( tilesheetStd.c_str() );
 				if ( !pm )
 				{
-					spdlog::debug( "SpriteFactory: failed to load  {}", tilesheet.toStdString() );
+					spdlog::debug( "SpriteFactory: failed to load '{}': {}", tilesheet.toStdString(), IMG_GetError() );
 					return false;
 				}
 			} else {
@@ -426,7 +426,10 @@ SDL_Surface* SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 		auto *dst = createPixmap( dimX, dimY );
 		Uint32 maskMagenta = dst->format->Rmask | dst->format->Bmask;
 		copyPixmap( dst, m_pixmapSources[sourcePNG], x, y, dimX, dimY );
-		SDL_SetColorKey( dst, true, maskMagenta );
+		if ( SDL_SetColorKey( dst, true, maskMagenta ) )
+		{
+			spdlog::debug("Cannot set color key: {}", SDL_GetError());
+		}
 
 		return dst;
 	}

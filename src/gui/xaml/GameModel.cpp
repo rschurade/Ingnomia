@@ -1350,7 +1350,7 @@ void GameModel::updateWatchList( const QList<GuiWatchedItem>& list )
 	m_watchList->Clear();
 	for( const auto& item : list )
 	{
-		m_watchList->Add( MakePtr<GameItem>( item.guiString, "" ) );
+		m_watchList->Add( MakePtr<GameItem>( item.guiString.toStdString(), "" ) );
 	}
 	OnPropertyChanged( "WatchList" );
 }
