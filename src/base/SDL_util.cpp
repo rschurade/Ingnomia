@@ -86,7 +86,7 @@ void flipPixmap( SDL_Surface* surface, bool flipH, bool flipV ) {
 		auto* pixels = reinterpret_cast<uint32_t*>(surface->pixels);
 		for ( int y = 0; y < surface->h; ++y )
 		{
-			const auto yOff = y * surface->pitch;
+			const auto yOff = y * surface->w;
 			for ( int x = 0; x < w2; ++x )
 			{
 				std::swap(pixels[yOff + x], pixels[yOff + surface->w - x]);
