@@ -29,7 +29,7 @@ public:
 	static QString spriteID( QString itemID );
 	static bool spriteIsRandom( QString spriteID );
 	static bool spriteHasAnim( QString spriteID );
-	static QString materialColor( QString materialID );
+	static std::string materialColor( const std::string& materialID );
 
 	static int materialToolLevel( QString material );
 
@@ -58,7 +58,7 @@ private:
 	static absl::btree_map<QString, QString> m_spriteIDCache;
 	static absl::btree_map<QString, bool> m_spriteIsRandomCache;
 	static absl::btree_map<QString, bool> m_spriteHasAnimCache;
-	static absl::btree_map<QString, QString> m_materialColorCache;
+	static absl::btree_map<std::string, std::string> m_materialColorCache;
 
 	static absl::btree_map<QString, int> m_materialToolLevelCache;
 	static absl::btree_map<int, bool> m_itemIsContainerCache;

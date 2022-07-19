@@ -17,6 +17,8 @@
 */
 #include "db.h"
 
+#include "dbstructs.h"
+
 #include "../base/config.h"
 #include "../game/item.h"
 #include "containersHelper.h"
@@ -60,7 +62,7 @@ void DB::init()
 	auto statements = sql.split( ";" );
 	for( auto s: statements )
 	{
-		if ( !s.isEmpty() && !destQuery.exec( s ) )
+		if ( !s.trimmed().isEmpty() && !destQuery.exec( s ) )
 		{
 			spdlog::debug("Init error: '{}' for query '{}'", destQuery.lastError().text().toStdString(), s.toStdString());
 		}

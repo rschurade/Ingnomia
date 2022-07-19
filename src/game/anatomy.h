@@ -80,5 +80,5 @@ private:
 
 	absl::flat_hash_map<CreaturePart, AnatomyPart> m_parts;
 
-	CreaturePart lookupCreaturePart(const QString &key);
+	CreaturePart lookupCreaturePart(const std::string& key);
 };

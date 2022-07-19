@@ -32,7 +32,7 @@ Anatomy::~Anatomy()
 {
 }
 
-CreaturePart Anatomy::lookupCreaturePart(const QString &key)
+CreaturePart Anatomy::lookupCreaturePart(const std::string& key)
 {
 	if ( const auto& it = Global::creaturePartLookUp.find( key ); it != Global::creaturePartLookUp.end() )
 	{
@@ -63,8 +63,8 @@ void Anatomy::init( QString type, bool isAquatic )
 	for ( auto row : rows )
 	{
 		AnatomyPart ap;
-		ap.id     = lookupCreaturePart( row.value( "ID2" ).toString() );
-		ap.parent = lookupCreaturePart( row.value( "Parent" ).toString() );
+		ap.id     = lookupCreaturePart( row.value( "ID2" ).toString().toStdString() );
+		ap.parent = lookupCreaturePart( row.value( "Parent" ).toString().toStdString() );
 
 		QString sh = row.value( "Height" ).toString();
 		if ( sh == "High" )
@@ -92,8 +92,8 @@ void Anatomy::init( QString type, bool isAquatic )
 
 	for ( auto row : rows )
 	{
-		auto id     = lookupCreaturePart( row.value( "ID2" ).toString() );
-		auto parent = lookupCreaturePart( row.value( "Parent" ).toString() );
+		auto id     = lookupCreaturePart( row.value( "ID2" ).toString().toStdString() );
+		auto parent = lookupCreaturePart( row.value( "Parent" ).toString().toStdString() );
 
 		m_parts[parent].children.append( id );
 	}

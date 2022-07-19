@@ -17,6 +17,8 @@
 */
 #include "dbhelper.h"
 
+#include "dbstructs.h"
+
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "containersHelper.h"
@@ -25,7 +27,7 @@
 absl::btree_map<QString, QString> DBHelper::m_spriteIDCache;
 absl::btree_map<QString, bool> DBHelper::m_spriteIsRandomCache;
 absl::btree_map<QString, bool> DBHelper::m_spriteHasAnimCache;
-absl::btree_map<QString, QString> DBHelper::m_materialColorCache;
+absl::btree_map<std::string, std::string> DBHelper::m_materialColorCache;
 absl::btree_map<QString, int> DBHelper::m_materialToolLevelCache;
 absl::btree_map<int, bool> DBHelper::m_itemIsContainerCache;
 absl::btree_map<int, QString> DBHelper::m_qualitySIDCache;
@@ -79,14 +81,14 @@ bool DBHelper::spriteHasAnim( QString spriteID )
 	return hasAnim;
 }
 
-QString DBHelper::materialColor( QString materialID )
+std::string DBHelper::materialColor( const std::string& materialID )
 {
 	QMutexLocker ml( &m_mutex );
 	if ( m_materialColorCache.contains( materialID ) )
 	{
 		return m_materialColorCache.at( materialID );
 	}
-	QString color = DB::select( "Color", "Materials", materialID ).toString();
+	const auto color = DB::select( "Color", "Materials", QString::fromStdString(materialID) ).toString().toStdString();
 	m_materialColorCache.insert_or_assign( materialID, color );
 	return color;
 }

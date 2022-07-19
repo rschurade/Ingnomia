@@ -166,7 +166,7 @@ bool SpriteFactory::init()
 			}
 			*/
 		}
-		m_baseSprites.insert_or_assign( row.value( "ID" ).toString(), extractPixmap( tilesheet, row ) );
+		m_baseSprites.insert_or_assign( row.value( "ID" ).toString().toStdString(), extractPixmap( tilesheet, row ) );
 	}
 	
 	QList<QVariantMap> spriteList = DB::selectRows( "Sprites" );
@@ -370,9 +370,9 @@ bool SpriteFactory::init()
 		m_numFrames   = 1;
 		parseDef( root, row );
 		root->numFrames = m_numFrames;
-		if ( root->childs.empty() && root->baseSprite.isEmpty() )
+		if ( root->childs.empty() && root->baseSprite.empty() )
 		{
-			root->baseSprite = root->value;
+			root->baseSprite = root->value.toStdString();
 		}
 		m_spriteDefinitions.insert_or_assign( root->value, root );
 	}
@@ -772,7 +772,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	parent->effect          = def.value( "Effect" ).toString().toStdString();
 	parent->offset          = def.value( "Offset" ).toString();
 	parent->tint            = def.value( "Tint" ).toString().toStdString();
-	parent->baseSprite      = def.value( "BaseSprite" ).toString();
+	parent->baseSprite      = def.value( "BaseSprite" ).toString().toStdString();
 	parent->defaultMaterial = def.value( "DefaultMaterial" ).toString();
 	parent->hasTransp       = def.value( "HasTransp" ).toBool();
 
@@ -907,7 +907,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	}
 	materialID          = qMin( materialID, materialSIDs.size() - 1 );
 	std::string materialSID = materialSIDs[materialID].toStdString();
-	if ( !node->baseSprite.isEmpty() )
+	if ( !node->baseSprite.empty() )
 	{
 		SDL_Surface* pm      = m_baseSprites.at( node->baseSprite );
 		SpritePixmap* sprite = new SpritePixmap( pm, m_offset.toStdString() );
@@ -1059,7 +1059,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const std::string& season, const QString rotation, const int animFrame )
 {
 	QString materialSID = *materialSIDs.begin();
-	if ( !node->baseSprite.isEmpty() )
+	if ( !node->baseSprite.empty() )
 	{
 		return;
 	}
@@ -1446,9 +1446,9 @@ void SpriteFactory::forceUpdate()
 	m_textureAdded = true;
 }
 
-SDL_Surface* SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material )
+SDL_Surface* SpriteFactory::getTintedBaseSprite( const std::string& baseSprite, const std::string& material )
 {
-	if ( baseSprite.isEmpty() )
+	if ( baseSprite.empty() )
 	{
 		return m_baseSprites["EmptyWall"];
 	}
@@ -1457,57 +1457,55 @@ SDL_Surface* SpriteFactory::getTintedBaseSprite( QString baseSprite, QString mat
 	auto* result = createPixmap( pm->w, pm->h );
 
 	copyPixmap( result, pm, 0, 0 );
-	tintPixmap( result, string2SDLColor( DBH::materialColor( material ).toStdString() ) );
+	tintPixmap( result, string2SDLColor( DBH::materialColor( material ) ) );
 	return result;
 }
 
-Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVariantList components, QVariantList componentsBack, bool isDead )
+Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const std::vector<DBS::Creature_Parts>& components, const std::vector<DBS::Creature_Parts>& componentsBack, bool isDead )
 {
 	QMutexLocker ml( &m_mutex );
 	auto pmfr = createPixmap( 32, 32 );
 	SDL_FillRect( pmfr, nullptr, 0x00000000 );
 
 	//spdlog::debug(" =================================================");
-	for ( auto vcm : components )
+	for ( auto cm : components )
 	{
-		auto cm = vcm.toMap();
-		if ( cm.value( "Hidden" ).toBool() )
+		if ( cm.Hidden )
 			continue;
 
-		QString baseSprite = cm.value( "BaseSprite" ).toString();
+		const auto& baseSprite = cm.BaseSprite;
 
-		//if( !baseSprite.isEmpty() ) qDebug() << baseSprite << cm.value( "Tint" ).toString() << cm.value( "Material" ).toString();
+		//if( !baseSprite.empty() ) qDebug() << baseSprite << cm.value( "Tint" ).toString() << cm.value( "Material" ).toString();
 
-		if ( cm.value( "HasBase" ).toBool() )
+		if ( cm.HasBase )
 		{
 			copyPixmap( pmfr, m_baseSprites[baseSprite + "Base"], 0, 0 );
 		}
 
-		QString tint = cm.value( "Tint" ).toString();
-		bool isHair  = cm.value( "IsHair" ).toBool();
-		if ( tint.isEmpty() )
+		const auto& tint = cm.Tint;
+		const auto& isHair  = cm.IsHair;
+		if ( std::get_if<std::monostate>( &tint ) )
 		{
 			copyPixmap( pmfr, m_baseSprites[baseSprite], 0, 0 );
 		}
-		else
+		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
-			if ( tint == "Material" )
+			if ( *str == "Material" )
 			{
-				auto pm = getTintedBaseSprite( baseSprite, cm.value( "Material" ).toString() );
+				auto pm = getTintedBaseSprite( baseSprite, cm.Material );
 				copyPixmap( pmfr, pm, 0, 0 );
 			}
 			else
 			{
-				bool ok;
-				int colorInt = tint.toInt( &ok );
-				if ( ok )
-				{
-					auto* pm = m_baseSprites[baseSprite];
-					copyPixmap( pmfr, pm, 0, 0 );
-					const auto color = isHair ? m_hairColors[colorInt] : m_colors[colorInt];
-					tintPixmap( pmfr, color );
-				}
+				spdlog::debug( "Got an unexpected tint: {}", *str );
 			}
+		}
+		else if ( const auto* colorInt = std::get_if<int>( &tint ) )
+		{
+			auto* pm = m_baseSprites[baseSprite];
+			copyPixmap( pmfr, pm, 0, 0 );
+			const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
+			tintPixmap( pmfr, color );
 		}
 	}
 	auto *pmfl = clonePixmap(pmfr);
@@ -1517,45 +1515,43 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 	SDL_FillRect(pmbr, nullptr, 0x00000000);
 
 	//spdlog::debug("---------------------------------");
-	for ( auto vcm : componentsBack )
+	for ( auto cm : componentsBack )
 	{
-		auto cm = vcm.toMap();
-		if ( cm.value( "Hidden" ).toBool() )
+		if ( cm.Hidden )
 			continue;
 
-		QString baseSprite = cm.value( "BaseSprite" ).toString();
+		const auto& baseSprite = cm.BaseSprite;
 
-		//if( !baseSprite.isEmpty() ) qDebug() << baseSprite << cm.value( "Tint" ).toString() << cm.value( "Material" ).toString();
+		//if( !baseSprite.empty() ) qDebug() << baseSprite << cm.value( "Tint" ).toString() << cm.value( "Material" ).toString();
 
-		if ( cm.value( "HasBase" ).toBool() )
+		if ( cm.HasBase )
 		{
 			copyPixmap( pmbr, m_baseSprites[baseSprite + "Base"], 0, 0 );
 		}
-		QString tint = cm.value( "Tint" ).toString();
-		bool isHair  = cm.value( "IsHair" ).toBool();
-		if ( tint.isEmpty() )
+		const auto& tint = cm.Tint;
+		const auto& isHair  = cm.IsHair;
+		if ( std::get_if<std::monostate>( &tint ) )
 		{
 			copyPixmap( pmbr, m_baseSprites[baseSprite], 0, 0 );
 		}
-		else
+		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
-			if ( tint == "Material" )
+			if ( *str == "Material" )
 			{
-				auto pm = getTintedBaseSprite( baseSprite, cm.value( "Material" ).toString() );
+				auto pm = getTintedBaseSprite( baseSprite, cm.Material );
 				copyPixmap( pmbr, pm, 0, 0 );
 			}
 			else
 			{
-				bool ok;
-				int colorInt = tint.toInt( &ok );
-				if ( ok )
-				{
-					auto* pm = m_baseSprites[baseSprite];
-					copyPixmap( pmbr, pm, 0, 0 );
-					const auto color = isHair ? m_hairColors[colorInt] : m_colors[colorInt];
-					tintPixmap( pmbr, color );
-				}
+				spdlog::debug( "Got an unexpected tint: {}", *str );
 			}
+		}
+		else if ( const auto* colorInt = std::get_if<int>( &tint ) )
+		{
+			auto* pm = m_baseSprites[baseSprite];
+			copyPixmap( pmbr, pm, 0, 0 );
+			const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
+			tintPixmap( pmbr, color );
 		}
 	}
 
@@ -1650,13 +1646,13 @@ SDL_Surface* SpriteFactory::pixmap( QString name )
 //	return QPixmap( 32, 32 );
 }
 
-SDL_Surface* SpriteFactory::baseSprite( QString id )
+SDL_Surface* SpriteFactory::baseSprite( const std::string& id )
 {
 	if ( m_baseSprites.contains( id ) )
 	{
 		return m_baseSprites[id];
 	}
-	spdlog::debug( "Base sprite {} doesn't exist", id.toStdString() );
+	spdlog::debug( "Base sprite {} doesn't exist", id );
 	throw std::runtime_error( "Pixmap missing" );
 //	return QPixmap( 32, 32 );
 }

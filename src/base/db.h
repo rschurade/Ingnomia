@@ -19,7 +19,6 @@
 
 #include "../base/counter.h"
 #include "../base/dbhelper.h"
-#include "../base/dbstructs.h"
 #include "../base/position.h"
 
 #include <QPointer>
@@ -33,6 +32,11 @@
 typedef DBHelper DBH;
 
 class Item;
+
+namespace DBS {
+	class Workshop;
+	class Job;
+}
 
 class DB
 {

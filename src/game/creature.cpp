@@ -61,8 +61,8 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	m_skills( fromQMap(in.value( "Skills" ).toMap()) ),
 	//absl::btree_map<QString, unsigned int> m_spriteUIDs;
 	m_spriteUIDs( in.value( "spritUIDs" ).toMap() ),
-	m_spriteDef( in.value( "SpriteDef" ).toList() ),
-	m_spriteDefBack( in.value( "SpriteDefBack" ).toList() ),
+	m_spriteDef( DBS::fromList<DBS::Creature_Parts>( in.value( "SpriteDef" ).toList() ) ),
+	m_spriteDefBack( DBS::fromList<DBS::Creature_Parts>( in.value( "SpriteDefBack" ).toList() ) ),
 	//float m_moveDelay;
 	//m_moveDelay( in.value( "MoveDelay" ).toFloat() ),
 	m_moveDelay( 250 ),
@@ -197,8 +197,8 @@ void Creature::serialize( QVariantMap& out ) const
 
 	//absl::btree_map<QString, unsigned int> m_spriteUIDs;
 	out.insert( "spritUIDs", m_spriteUIDs );
-	out.insert( "SpriteDef", m_spriteDef );
-	out.insert( "SpriteDefBack", m_spriteDefBack );
+	out.insert( "SpriteDef", DBS::toList( m_spriteDef ) );
+	out.insert( "SpriteDefBack", DBS::toList( m_spriteDefBack ) );
 	//float m_moveDelay;
 	out.insert( "MoveDelay", m_moveDelay );
 	out.insert( "MoveCooldown", m_moveCooldown );

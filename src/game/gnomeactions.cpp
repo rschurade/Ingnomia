@@ -1158,7 +1158,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 		return false;
 	}
 
-	auto part = Global::creaturePartLookUp.at( slot );
+	auto part = Global::creaturePartLookUp.at( slot.toStdString() );
 
 	QString item     = uniform->parts[slot].item;
 	QString material = uniform->parts[slot].material;
@@ -2589,7 +2589,7 @@ bool Gnome::equipItem()
 		unsigned int materialUID = g->inv()->materialUID( itemID );
 		QString materialSID      = g->inv()->materialSID( itemID );
 
-		auto part = Global::creaturePartLookUp.at( slot );
+		auto part = Global::creaturePartLookUp.at( slot.toStdString() );
 
 		auto& itemSlot = m_equipment.getSlot( part );
 		if ( itemSlot.itemID )

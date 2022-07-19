@@ -224,26 +224,22 @@ void Gnome::init()
 	}
 }
 
-void Gnome::setConcealed( QString part, bool concealed )
+void Gnome::setConcealed( const std::string& part, bool concealed )
 {
-	for ( int k = 0; k < m_spriteDef.size(); ++k )
+	for ( auto& cm : m_spriteDef )
 	{
-		auto cm = m_spriteDef[k].toMap();
-		if ( cm.value( "Part" ).toString() == part )
+		if ( cm.Part == part )
 		{
-			cm.insert( "Hidden", concealed );
-			m_spriteDef.replace( k, cm );
+			cm.Hidden = concealed;
 			break;
 		}
 	}
 
-	for ( int k = 0; k < m_spriteDefBack.size(); ++k )
+	for ( auto& cm : m_spriteDefBack )
 	{
-		auto cm = m_spriteDefBack[k].toMap();
-		if ( cm.value( "Part" ).toString() == part )
+		if ( cm.Part == part )
 		{
-			cm.insert( "Hidden", concealed );
-			m_spriteDefBack.replace( k, cm );
+			cm.Hidden = concealed;
 			break;
 		}
 	}
@@ -259,7 +255,7 @@ void Gnome::updateSprite()
 	m_renderParamsChanged = true;
 }
 
-QVariantList Gnome::createSpriteDef( QString type, bool isBack )
+std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBack )
 {
 	auto parts = DB::selectRows( "Creature_Parts", type );
 
@@ -269,22 +265,23 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 		ordered.insert( pm.value( "Order" ).toString(), pm );
 	}
 
+	// FIXME: This is unused?
 	Uniform* uniform = nullptr;
 	if ( m_roleID )
 	{
 		uniform = g->mil()->uniform( m_roleID );
 	}
 
-	QVariantList def;
+	std::vector<DBS::Creature_Parts> def;
 	for ( auto vpm : ordered )
 	{
-		auto pm = vpm.toMap();
+		auto pm = DBS::Creature_Parts::from(vpm.toMap());
 
-		CreaturePart part = Global::creaturePartLookUp.at( pm.value( "Part" ).toString() );
+		CreaturePart part = Global::creaturePartLookUp.at( pm.Part );
 
-		QString tint = pm.value( "Tint" ).toString();
+		const auto& tint = pm.Tint;
 
-		QString bs = pm.value( "BaseSprite" ).toString();
+		auto bs = pm.BaseSprite;
 
 		bool hairConcealed = false;
 		if ( m_equipment.head.itemID )
@@ -318,18 +315,18 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 				break;
 
 			case CP_HAIR:
-				pm.insert( "Tint", m_equipment.hairColor );
-				bs = m_equipment.hair;
-				pm.insert( "IsHair", true );
-				pm.insert( "Hidden", hairConcealed );
+				pm.Tint = m_equipment.hairColor;
+				bs = m_equipment.hair.toStdString();
+				pm.IsHair = true;
+				pm.Hidden = hairConcealed;
 				break;
 			case CP_FACIAL_HAIR:
-				pm.insert( "Tint", m_equipment.hairColor );
-				bs = m_equipment.facialHair;
+				pm.Tint = m_equipment.hairColor;
+				bs = m_equipment.facialHair.toStdString();
 				break;
 			case CP_CLOTHING:
-				pm.insert( "Tint", m_equipment.shirtColor );
-				bs = m_equipment.shirt;
+				pm.Tint = m_equipment.shirtColor;
+				bs = m_equipment.shirt.toStdString();
 				break;
 			case CP_BOOTS:
 				break;
@@ -340,114 +337,115 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 				if ( m_equipment.head.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.head.itemID );
+					bs += g->inv()->itemGroup( m_equipment.head.itemID ).toStdString();
 					bs += "HeadArmor";
+					// FIXME: This is unused?
 					hairConcealed = true;
-					pm.insert( "Material", m_equipment.head.material );
+					pm.Material = m_equipment.head.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_TORSO:
 				if ( m_equipment.chest.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.chest.itemID );
+					bs += g->inv()->itemGroup( m_equipment.chest.itemID ).toStdString();
 					bs += "ChestArmor";
-					pm.insert( "Material", m_equipment.chest.material );
+					pm.Material = m_equipment.chest.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_LEFT_ARM:
 				if ( m_equipment.arm.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
 					bs += "LeftArmArmor";
-					pm.insert( "Material", m_equipment.arm.material );
+					pm.Material = m_equipment.arm.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_RIGHT_ARM:
 				if ( m_equipment.arm.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
 					bs += "RightArmArmor";
-					pm.insert( "Material", m_equipment.arm.material );
+					pm.Material = m_equipment.arm.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_LEFT_HAND:
 				if ( m_equipment.hand.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
 					bs += "LeftHandArmor";
-					pm.insert( "Material", m_equipment.hand.material );
+					pm.Material = m_equipment.hand.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_RIGHT_HAND:
 				if ( m_equipment.hand.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
 					bs += "RightHandArmor";
-					pm.insert( "Material", m_equipment.hand.material );
+					pm.Material = m_equipment.hand.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_LEFT_FOOT:
 				if ( m_equipment.foot.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
 					bs += "LeftFootArmor";
-					pm.insert( "Material", m_equipment.foot.material );
+					pm.Material = m_equipment.foot.material.toStdString();
 				}
 				break;
 			case CP_ARMOR_RIGHT_FOOT:
 				if ( m_equipment.foot.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
 					bs += "RightFootArmor";
-					pm.insert( "Material", m_equipment.foot.material );
+					pm.Material = m_equipment.foot.material.toStdString();
 				}
 				break;
 			case CP_LEFT_HAND_HELD:
 				if ( m_equipment.leftHandHeld.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.leftHandHeld.item;
+					bs += m_equipment.leftHandHeld.item.toStdString();
 					bs += "Left";
-					pm.insert( "Material", m_equipment.leftHandHeld.material );
-					pm.insert( "HasBase", true );
+					pm.Material = m_equipment.leftHandHeld.material.toStdString();
+					pm.HasBase = true;
 				}
 				break;
 			case CP_RIGHT_HAND_HELD:
 				if ( m_equipment.rightHandHeld.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.rightHandHeld.item;
+					bs += m_equipment.rightHandHeld.item.toStdString();
 					bs += "Right";
-					pm.insert( "Material", m_equipment.leftHandHeld.material );
-					pm.insert( "HasBase", true );
+					pm.Material = m_equipment.rightHandHeld.material.toStdString();
+					pm.HasBase = true;
 				}
 				break;
 			case CP_BACK:
 				if ( isBack && m_equipment.back.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.back.item;
-					pm.insert( "Material", m_equipment.leftHandHeld.material );
+					bs += m_equipment.back.item.toStdString();
+					pm.Material = m_equipment.back.material.toStdString();
 				}
 				break;
 		}
 		
 
-		if ( isBack && !bs.endsWith( "Back" ) )
+		if ( isBack && !bs.ends_with( "Back" ) )
 		{
 			bs += "Back";
 		}
 
-		pm.insert( "BaseSprite", bs );
+		pm.BaseSprite = bs;
 
-		def.append( pm );
+		def.push_back( pm );
 	}
 	return def;
 }

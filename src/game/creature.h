@@ -19,6 +19,7 @@
 
 #include "../base/behaviortree/bt_factory.h"
 #include "../base/behaviortree/bt_node.h"
+#include "../base/dbstructs.h"
 #include "../base/pathfinder.h"
 #include "../base/priorityqueue.h"
 #include "../game/anatomy.h"
@@ -328,8 +329,8 @@ protected:
 	quint64 m_expires = 0;
 
 	//variables formerlin in QVariantMap Creature::m_variables
-	QVariantList m_spriteDef;
-	QVariantList m_spriteDefBack;
+	std::vector<DBS::Creature_Parts> m_spriteDef;
+	std::vector<DBS::Creature_Parts> m_spriteDefBack;
 
 	QVariantMap m_spriteUIDs;
 	QString m_thoughtBubble    = "";

@@ -94,24 +94,23 @@ void Monster::updateSprite()
 		ordered.insert( pm.value( "Order" ).toString(), pm );
 	}
 
-	QVariantMap randTemp;
+	absl::flat_hash_map<std::string, int> randTemp;
 
-	QVariantList def;
+	std::vector<DBS::Creature_Parts> def;
 	for ( auto vpm : ordered )
 	{
-		auto pm = vpm.toMap();
-		if ( pm.value( "BaseSprite" ).toString().startsWith( "#" ) )
+		auto pm = DBS::Creature_Parts::from(vpm.toMap());
+		if ( pm.BaseSprite.starts_with( "#" ) )
 		{
-			QString bsa = pm.value( "BaseSprite" ).toString();
-			bsa.remove( 0, 1 );
-			auto bsl = bsa.split( "|" );
+			const auto& bsa = pm.BaseSprite;
+			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );
 			int rn = rand() % bsl.size();
-			randTemp.insert( pm.value( "Part" ).toString() + "Rand", rn );
-			pm.insert( "BaseSprite", bsl[rn] );
+			randTemp[pm.Part + "Rand"] = rn;
+			pm.BaseSprite = bsl[rn] | ranges::to<std::string>();
 		}
-		def.append( pm );
+		def.push_back( pm );
 	}
 
 	auto partsBack = DB::selectRows( "Creature_Parts", m_species + "Back" );
@@ -122,21 +121,20 @@ void Monster::updateSprite()
 		orderedBack.insert( pm.value( "Order" ).toString(), pm );
 	}
 
-	QVariantList defBack;
+	std::vector<DBS::Creature_Parts> defBack;
 	for ( auto vpm : orderedBack )
 	{
-		auto pm = vpm.toMap();
-		if ( pm.value( "BaseSprite" ).toString().startsWith( "#" ) )
+		auto pm = DBS::Creature_Parts::from(vpm.toMap());
+		if ( pm.BaseSprite.starts_with( "#" ) )
 		{
-			QString bsa = pm.value( "BaseSprite" ).toString();
-			bsa.remove( 0, 1 );
-			auto bsl = bsa.split( "|" );
+			const auto& bsa = pm.BaseSprite;
+			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );
-			int rn = randTemp.value( pm.value( "Part" ).toString() + "Rand" ).toInt();
-			pm.insert( "BaseSprite", bsl[rn] + "Back" );
+			int rn = randTemp.at( pm.Part + "Rand" );
+			pm.BaseSprite = (bsl[rn] | ranges::to<std::string>()) + "Back";
 		}
-		defBack.append( pm );
+		defBack.push_back( pm );
 	}
 
 	m_spriteID = g->sf()->setCreatureSprite( m_id, def, defBack, isDead() )->uID;

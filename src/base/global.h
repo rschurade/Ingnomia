@@ -86,7 +86,7 @@ public:
 
 	static absl::flat_hash_map<Qt::Key, Noesis::Key> keyConvertMap;
 
-	static absl::btree_map<QString, CreaturePart> creaturePartLookUp;
+	static absl::btree_map<std::string, CreaturePart> creaturePartLookUp;
 	static absl::btree_map<CreaturePart, QString> creaturePartToString;
 
 	static Noesis::Key keyConvert( Qt::Key key );

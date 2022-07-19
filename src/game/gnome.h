@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../base/behaviortree/bt_node.h"
+#include "../base/dbstructs.h"
 #include "canwork.h"
 
 #include <functional>
@@ -38,7 +39,7 @@ public:
 	virtual void serialize( QVariantMap& out );
 
 	virtual void updateSprite();
-	QVariantList createSpriteDef( QString type, bool isBack );
+	std::vector<DBS::Creature_Parts> createSpriteDef( QString type, bool isBack );
 
 	virtual CreatureTickResult onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
@@ -125,7 +126,7 @@ protected:
 
 	void initTaskMap();
 
-	void setConcealed( QString part, bool concealed );
+	void setConcealed( const std::string& part, bool concealed );
 	bool checkUniformItem( QString slot, Uniform* uniform, bool& dropped );
 	bool m_uniformWorn             = false;
 	quint64 m_nextUniformCheckTick = 0;

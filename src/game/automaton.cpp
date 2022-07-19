@@ -23,6 +23,8 @@
 #include "../game/inventory.h"
 #include "../gfx/spritefactory.h"
 
+#include "range/v3/action/split.hpp"
+
 Automaton::Automaton( Position pos, unsigned int automatonItem, Game* game ) :
 	Gnome( pos, "Automaton", Gender::UNDEFINED, game ),
 	m_automatonItem( automatonItem )
@@ -109,17 +111,17 @@ void Automaton::init()
 
 void Automaton::updateSprite()
 {
-	QString material = g->inv()->materialSID( m_automatonItem );
+	const auto material = g->inv()->materialSID( m_automatonItem ).toStdString();
 
 	auto components = g->inv()->components( m_automatonItem );
-	absl::btree_map<QString, QString> compMats;
+	absl::btree_map<std::string, std::string> compMats;
 	for ( auto vcomp : components )
 	{
 		auto comp = vcomp.toMap();
-		auto it = comp.value( "ItSID" ).toString();
-		auto ma = comp.value( "MaSID" ).toString();
+		auto it = comp.value( "ItSID" ).toString().toStdString();
+		auto ma = comp.value( "MaSID" ).toString().toStdString();
 
-		if ( it.endsWith( "Leg" ) || it.endsWith( "Arm" ) )
+		if ( it.ends_with( "Leg" ) || it.ends_with( "Arm" ) )
 		{
 			if ( compMats.contains( it + "Left" ) )
 			{
@@ -139,47 +141,39 @@ void Automaton::updateSprite()
 	auto parts      = DB::selectRows( "Creature_Parts", itemSID );
 
 	QVariantMap ordered;
-	for ( auto pm : parts )
+	for ( const auto& pm : parts )
 	{
 		ordered.insert( pm.value( "Order" ).toString(), pm );
 	}
 
-	QVariantMap randTemp;
+	absl::flat_hash_map<std::string, int> randTemp;
 
-	QVariantList def;
-	for ( auto vpm : ordered )
+	std::vector<DBS::Creature_Parts> def;
+	for ( const auto& vpm : ordered )
 	{
-		auto pm = vpm.toMap();
-		if ( pm.value( "BaseSprite" ).toString().startsWith( "#" ) )
+		auto pm = DBS::Creature_Parts::from(vpm.toMap());
+		if ( pm.BaseSprite.starts_with( "#" ) )
 		{
-			QString bsa = pm.value( "BaseSprite" ).toString();
-			bsa.remove( 0, 1 );
-			auto bsl = bsa.split( "|" );
+			auto bsa = pm.BaseSprite;
+			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );
 			int rn = rand() % bsl.size();
-			randTemp.insert( pm.value( "Part" ).toString() + "Rand", rn );
-			pm.insert( "BaseSprite", bsl[rn] );
+			randTemp[pm.Part + "Rand"] = rn;
+			pm.BaseSprite = bsl[rn] | ranges::to<std::string>();
 		}
-		QString idPart = pm.value( "ID" ).toString() + pm.value( "Part" ).toString();
+		const auto idPart = pm.ID + pm.Part;
 		if ( const auto it = compMats.find( idPart ); it != compMats.end() )
 		{
-			pm.insert( "Material", it->second );
+			pm.Material = it->second;
 		}
 		else
 		{
-			pm.insert( "Material", material );
+			pm.Material = material;
 		}
-		if ( idPart == "AutomatonEye" )
+		if ( idPart != "AutomatonEye" || m_fuel > 0 )
 		{
-			if ( m_fuel > 0 )
-			{
-				def.append( pm );
-			}
-		}
-		else
-		{
-			def.append( pm );
+			def.push_back( pm );
 		}
 	}
 
@@ -191,43 +185,34 @@ void Automaton::updateSprite()
 		orderedBack.insert( pm.value( "Order" ).toString(), pm );
 	}
 
-	QVariantList defBack;
+	std::vector<DBS::Creature_Parts> defBack;
 	for ( auto vpm : orderedBack )
 	{
-		auto pm = vpm.toMap();
-		if ( pm.value( "BaseSprite" ).toString().startsWith( "#" ) )
+		auto pm = DBS::Creature_Parts::from(vpm.toMap());
+		if ( pm.BaseSprite.starts_with( "#" ) )
 		{
-			QString bsa = pm.value( "BaseSprite" ).toString();
-			bsa.remove( 0, 1 );
-			auto bsl = bsa.split( "|" );
+			const auto& bsa = pm.BaseSprite;
+			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );
-			int rn = randTemp.value( pm.value( "Part" ).toString() + "Rand" ).toInt();
-			pm.insert( "BaseSprite", bsl[rn] + "Back" );
+			int rn = randTemp.at( pm.Part + "Rand" );
+			pm.BaseSprite = (bsl[rn] | ranges::to<std::string>()) + std::string("Back");
 		}
-		QString aid = pm.value( "ID" ).toString();
-		aid.chop( 4 );
-		QString idPart = aid + pm.value( "Part" ).toString();
+		const auto aid = pm.ID | ranges::views::drop(4) | ranges::to<std::string>();
+		const auto idPart = aid + pm.Part;
 
 		if ( const auto it = compMats.find( idPart ); it != compMats.end() )
 		{
-			pm.insert( "Material", it->second );
+			pm.Material = it->second;
 		}
 		else
 		{
-			pm.insert( "Material", material );
+			pm.Material = material;
 		}
 
-		if ( idPart == "AutomatonFlame" )
+		if ( idPart != "AutomatonFlame" || m_fuel > 0 )
 		{
-			if ( m_fuel > 0 )
-			{
-				defBack.append( pm );
-			}
-		}
-		else
-		{
-			defBack.append( pm );
+			defBack.push_back( pm );
 		}
 	}
 

@@ -1,8 +1,8 @@
+#pragma once
+
 #include "../base/position.h"
 
 #include <QString>
-
-
 
 namespace DBS
 {
@@ -230,12 +230,51 @@ struct Creature_Layouts {
 };
 
 struct Creature_Parts {
-	QString ID;
-	QString Part;
-	QString BaseSprite;
+	std::string ID;
+	std::string Part;
+	std::string BaseSprite;
 	int Order;
-	QString Tint;
-	QString Conceales;
+	std::variant<std::monostate, std::string, int> Tint;
+	std::string Conceales;
+	// Not from DB
+	bool IsHair = false;
+	bool Hidden = false;
+	bool HasBase = false;
+	std::string Material;
+
+	static Creature_Parts from(const QMap<QString, QVariant>& map) {
+		return Creature_Parts {
+			.ID = map.value("ID").toString().toStdString(),
+			.Part = map.value("Part").toString().toStdString(),
+			.BaseSprite = map.value("BaseSprite").toString().toStdString(),
+			.Order = map.value("Order").toInt(),
+			.Tint = map.value("Tint").toString().toStdString(),
+			.Conceales = map.value("Conceales").toString().toStdString(),
+		};
+	}
+
+	QVariantMap toMap() const {
+		QVariantMap result;
+
+		result["ID"]         = QString::fromStdString( ID );
+		result["Part"]       = QString::fromStdString( Part );
+		result["BaseSprite"] = QString::fromStdString( BaseSprite );
+		result["Order"]      = Order;
+		QVariant qTint;
+
+		if ( const auto* str = std::get_if<std::string>( &Tint ) )
+		{
+			qTint = QString::fromStdString( *str );
+		}
+		else if ( const auto* num = std::get_if<int>( &Tint ) )
+		{
+			qTint = *num;
+		}
+		result["Tint"] = qTint;
+		result["Conceales"]  = QString::fromStdString( Conceales );
+
+		return result;
+	}
 };
 
 struct EmbeddedMaterials {
@@ -843,5 +882,25 @@ struct Workshop {
 
 	QList<Workshop_Component> components;
 };
+
+template<typename T>
+std::vector<T> fromList(const QList<QVariant>& list) {
+	std::vector<T> result;
+	for ( const auto& item : list )
+	{
+		result.push_back( T::from( item.toMap() ) );
+	}
+	return result;
+}
+
+template<typename T>
+QList<QVariant> toList(const std::vector<T>& vector) {
+	QList<QVariant> result;
+	for ( const auto& item : vector )
+	{
+		result.push_back( item.toMap() );
+	}
+	return result;
+}
 
 }

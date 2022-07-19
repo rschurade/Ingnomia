@@ -74,7 +74,7 @@ absl::btree_map<QString, float> Global::needDecays;
 
 unsigned int Global::dirtUID = 0;
 
-absl::btree_map<QString, CreaturePart> Global::creaturePartLookUp;
+absl::btree_map<std::string, CreaturePart> Global::creaturePartLookUp;
 absl::btree_map<CreaturePart, QString> Global::creaturePartToString;
 
 absl::btree_set<QString> Global::craftable;

@@ -17,6 +17,7 @@
 */
 #pragma once
 
+#include "../base/dbstructs.h"
 #include "../gfx/sprite.h"
 
 #include <QBitmap>
@@ -58,7 +59,7 @@ struct DefNode
 	std::string effect;
 	std::string tint;
 	QString value;
-	QString baseSprite;
+	std::string baseSprite;
 	QString defaultMaterial;
 	int depth;
 	int numFrames;
@@ -101,7 +102,7 @@ private:
 
 	// base sprites and sources for creation
 	absl::flat_hash_map<QString, SDL_Surface*> m_pixmapSources;
-	absl::btree_map<QString, SDL_Surface*> m_baseSprites;
+	absl::btree_map<std::string, SDL_Surface*> m_baseSprites;
 	absl::btree_map<QString, DefNode*> m_spriteDefinitions;
 	absl::btree_map<QString, QVariantMap> m_spriteDefVMs;
 
@@ -142,7 +143,7 @@ private:
 
 	void createStandardSprites();
 
-	SDL_Surface* getTintedBaseSprite( QString baseSprite, QString material );
+	SDL_Surface* getTintedBaseSprite( const std::string& baseSprite, const std::string& material );
 
 	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	
@@ -150,7 +151,7 @@ private:
 
 	SDL_Surface* pixmap( QString name );
 
-	SDL_Surface* baseSprite( QString id );
+	SDL_Surface* baseSprite( const std::string& id );
 
 	QMutex m_mutex;
 
@@ -166,7 +167,7 @@ public:
 	Sprite* createAnimalSprite( const QString spriteSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	Sprite* getSprite( const int id );
 
-	Sprite* setCreatureSprite( const unsigned int gnomeUID, QVariantList components, QVariantList componentsBack, bool isDead = false );
+	Sprite* setCreatureSprite( const unsigned int gnomeUID, const std::vector<DBS::Creature_Parts>& components, const std::vector<DBS::Creature_Parts>& componentsBack, bool isDead = false );
 	//unsigned int setAutomatonSprite( const unsigned int automatonID, const unsigned int id );
 	Sprite* getCreatureSprite( const unsigned int id, unsigned int& spriteID );
 
