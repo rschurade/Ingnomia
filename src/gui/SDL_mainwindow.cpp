@@ -287,7 +287,7 @@ void SDL_MainWindow::noesisInit()
 
 	this->signalMouse.connect( &AppGUI::Events::OnMousePositionCallback );
 	this->signalKeyDown.connect( &AppGUI::Events::OnKeyDownCallback );
-	this->signalKeyUp.connect( &AppGUI::Events::OnKeyDownCallback );
+	this->signalKeyUp.connect( &AppGUI::Events::OnKeyUpCallback );
 	this->signalMouseDown.connect( &AppGUI::Events::OnMouseButtonDownCallback );
 	this->signalMouseUp.connect( &AppGUI::Events::OnMouseButtonUpCallback );
 	this->signalMouseWheel.connect( &AppGUI::Events::OnMouseWheelCallback );

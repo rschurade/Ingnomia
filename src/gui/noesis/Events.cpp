@@ -99,7 +99,7 @@ namespace AppGUI::Events
             case SDLK_COMMA:           return Noesis::Key_OemComma;
             case SDLK_MINUS:           return Noesis::Key_OemMinus;
             case SDLK_PERIOD:          return Noesis::Key_OemPeriod;
-            case SDLK_SLASH:           return Noesis::Key_S;
+            case SDLK_SLASH:           return Noesis::Key_OemQuestion;  // TODO: Check if this works
             case SDLK_0:               return Noesis::Key_D0;
             case SDLK_1:               return Noesis::Key_D1;
             case SDLK_2:               return Noesis::Key_D2;
@@ -158,8 +158,8 @@ namespace AppGUI::Events
             case SDLK_DELETE:          return Noesis::Key_Delete;
             case SDLK_RIGHT:           return Noesis::Key_Right;
             case SDLK_LEFT:            return Noesis::Key_Left;
-            case SDLK_DOWN:            return Noesis::Key_Up;
-            case SDLK_UP:              return Noesis::Key_Down;
+            case SDLK_DOWN:            return Noesis::Key_Down;
+            case SDLK_UP:              return Noesis::Key_Up;
             case SDLK_PAGEUP:          return Noesis::Key_PageUp;
             case SDLK_PAGEDOWN:        return Noesis::Key_PageDown;
             case SDLK_HOME:            return Noesis::Key_Home;
