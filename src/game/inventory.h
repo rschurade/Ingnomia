@@ -175,7 +175,7 @@ public:
 
 	int countItemsAtPos( Position& pos );
 
-	absl::flat_hash_map<unsigned int, Item>& allItems()
+	absl::flat_hash_map<unsigned int, std::unique_ptr<Item>>& allItems()
 	{
 		return m_items;
 	}
@@ -226,7 +226,7 @@ private:
 	int m_dimY;
 	int m_dimZ;
 
-	absl::flat_hash_map<unsigned int, Item> m_items;
+	absl::flat_hash_map<unsigned int, std::unique_ptr<Item>> m_items;
 
 	PositionHash m_positionHash;
 	absl::flat_hash_map<QString, absl::flat_hash_map<QString, absl::flat_hash_map<unsigned int, Item*>>> m_hash;
@@ -244,7 +244,7 @@ private:
 	absl::btree_map<unsigned int, unsigned char> m_foodItems;
 	absl::btree_map<unsigned int, unsigned char> m_drinkItems;
 
-	void addObject( Item& object, const QString& itemID, const QString& materialID );
+	void addObject( std::unique_ptr<Item> object, const QString& itemID, const QString& materialID );
 	void init();
 
 	Item* getItem( unsigned int itemUID );

@@ -504,71 +504,71 @@ void IO::sanitize()
 
 		for ( auto& item : g->inv()->allItems() | ranges::views::values )
 		{
-			const auto job = item.isInJob();
+			const auto job = item->isInJob();
 			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
 			{
-				item.setInJob( 0 );
-				spdlog::warn("item {} {} had illegal job", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+				item->setInJob( 0 );
+				spdlog::warn("item {} {} had illegal job", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 			}
-			const bool carried    = 0 != carriedItems.count( item.id() );
-			const bool construced = 0 != constructedItems.count( item.id() );
+			const bool carried    = 0 != carriedItems.count( item->id() );
+			const bool construced = 0 != constructedItems.count( item->id() );
 
 			if ( carried && construced )
 			{
-				spdlog::warn("item {} {} is both carried around and installed somewhere simultaniously", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+				spdlog::warn("item {} {} is both carried around and installed somewhere simultaniously", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 				continue;
 			}
 
 			// Items which should be in world
-			if ( item.isHeldBy() != 0 && !construced && !carried )
+			if ( item->isHeldBy() != 0 && !construced && !carried )
 			{
-				g->inv()->putDownItem( item.id(), item.getPos() );
-				item.setIsConstructed( false );
-				spdlog::warn("item {} {} found lost in space", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+				g->inv()->putDownItem( item->id(), item->getPos() );
+				item->setIsConstructed( false );
+				spdlog::warn("item {} {} found lost in space", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 			}
 			if ( carried )
 			{
-				auto realOwner = carriedItems[item.id()];
-				if ( item.isHeldBy() != realOwner )
+				auto realOwner = carriedItems[item->id()];
+				if ( item->isHeldBy() != realOwner )
 				{
-					g->inv()->pickUpItem( item.id(), realOwner );
+					g->inv()->pickUpItem( item->id(), realOwner );
 				}
-				if ( item.isConstructed() )
+				if ( item->isConstructed() )
 				{
-					g->inv()->setConstructed( item.id(), false );
-					spdlog::warn("item {} {} found constructed on a gnome", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+					g->inv()->setConstructed( item->id(), false );
+					spdlog::warn("item {} {} found constructed on a gnome", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 				}
 			}
 			// Items in world
 			if ( !carried && !construced )
 			{
-				if ( item.isConstructed() )
+				if ( item->isConstructed() )
 				{
-					g->inv()->setConstructed( item.id(), false );
-					item.setIsConstructed( false );
-					g->inv()->putDownItem( item.id(), item.getPos() );
-					spdlog::warn("item {} {} found glued to the floor", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+					g->inv()->setConstructed( item->id(), false );
+					item->setIsConstructed( false );
+					g->inv()->putDownItem( item->id(), item->getPos() );
+					spdlog::warn("item {} {} found glued to the floor", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 				}
 			}
 			// Items in construction
 			if ( construced )
 			{
-				auto realOwner = constructedItems[item.id()];
-				if ( item.isHeldBy() != realOwner )
+				auto realOwner = constructedItems[item->id()];
+				if ( item->isHeldBy() != realOwner )
 				{
 					if ( realOwner != 0 )
 					{
-						g->inv()->pickUpItem( item.id(), realOwner );
+						g->inv()->pickUpItem( item->id(), realOwner );
 					}
 					else
 					{
-						g->inv()->putDownItem( item.id(), item.getPos() );
+						g->inv()->putDownItem( item->id(), item->getPos() );
 					}
 				}
-				if ( !item.isConstructed() )
+				if ( !item->isConstructed() )
 				{
-					g->inv()->setConstructed( item.id(), true );
-					spdlog::warn("item {} {} found broken loose", QString::number( item.id() ).toStdString(), item.itemSID().toStdString() );
+					g->inv()->setConstructed( item->id(), true );
+					spdlog::warn("item {} {} found broken loose", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
 				}
 			}
 		}
@@ -1132,7 +1132,7 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 	{
 		auto itemID   = keys[i];
 		auto& item    = items[itemID];
-		QJsonValue jv = QJsonValue::fromVariant( item.serialize() );
+		QJsonValue jv = QJsonValue::fromVariant( item->serialize() );
 		ja.append( jv );
 
 		++i;

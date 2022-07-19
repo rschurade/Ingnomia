@@ -175,7 +175,7 @@ Item* Inventory::getItem( unsigned int itemUID )
 	auto it = m_items.find( itemUID );
 	if ( it != m_items.end() )
 	{
-		return &it->second;
+		return it->second.get();
 	}
 	return nullptr;
 }
@@ -193,15 +193,16 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 {
 	DBH::itemUID( itemSID );
 	//qDebug() << "create item " << pos.toString() << baseItem << material;
-	Item obj( pos, itemSID, materialSID );
+	auto obj = std::make_unique<Item>( pos, itemSID, materialSID );
 	Sprite* sprite = g->m_sf->createSprite( itemSID, { materialSID } );
 	if ( sprite )
 	{
-		obj.setSpriteID( sprite->uID );
+		obj->setSpriteID( sprite->uID );
 	}
-	addObject( obj, itemSID, materialSID );
+	const auto id = obj->id();
+	addObject( std::move(obj), itemSID, materialSID );
 
-	return obj.id();
+	return id;
 }
 
 unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigned int> components )
@@ -237,7 +238,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 		QString firstCompSID = compList.first().toMap().value( "ItemID" ).toString();
 		DBH::itemUID( firstCompSID );
 		QString firstMat     = materialSID( components.first() );
-		Item obj( pos, itemSID, firstMat );
+		auto obj = std::make_unique<Item>( pos, itemSID, firstMat );
 
 		QStringList materialSIDs;
 
@@ -250,7 +251,7 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 				unsigned int maID = item->materialUID();
 				materialSIDs.push_back( item->materialSID() );
 				ItemMaterial im = { itID, maID };
-				obj.addComponent( im );
+				obj->addComponent( im );
 			}
 		}
 
@@ -258,11 +259,12 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 		Sprite* sprite = g->m_sf->createSprite( itemSID, materialSIDs );
 		if ( sprite )
 		{
-			obj.setSpriteID( sprite->uID );
+			obj->setSpriteID( sprite->uID );
 		}
-		addObject( obj, itemSID, firstMat );
+		const auto id = obj->id();
+		addObject( std::move(obj), itemSID, firstMat );
 
-		return obj.id();
+		return id;
 	}
 }
 
@@ -285,22 +287,22 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	}
 	DBH::itemUID( values.value( "ItemSID" ).toString() );
 	//Item obj( pos, baseItem, material );
-	Item obj( values );
+	auto obj = std::make_unique<Item>( values );
 
-	QString baseItem = obj.itemSID();
-	QString material = obj.materialSID();
+	QString baseItem = obj->itemSID();
+	QString material = obj->materialSID();
 	//qDebug() << "inventory create item " << baseItem << material;
 
 	QString spr    = DBH::spriteID( baseItem );
 	Sprite* sprite = nullptr;
-	if ( obj.components().isEmpty() )
+	if ( obj->components().isEmpty() )
 	{
 		sprite = g->m_sf->createSprite( baseItem, { material } );
 	}
 	else
 	{
 		QList<QString> materialSIDs;
-		for ( auto comp : obj.components() )
+		for ( auto comp : obj->components() )
 		{
 			materialSIDs.push_back( DBH::materialSID( comp.materialUID ) );
 		}
@@ -309,12 +311,13 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	}
 	if ( sprite )
 	{
-		obj.setSpriteID( sprite->uID );
+		obj->setSpriteID( sprite->uID );
 	}
 
-	addObject( obj, baseItem, material );
+	const auto id = obj->id();
+	addObject( std::move(obj), baseItem, material );
 
-	return obj.id();
+	return id;
 }
 
 Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
@@ -329,10 +332,11 @@ Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
 	return m_octrees[itemSID][materialSID];
 }
 
-void Inventory::addObject( Item& object, const QString& itemID, const QString& materialID )
+void Inventory::addObject( std::unique_ptr<Item> object, const QString& itemID, const QString& materialID )
 {
-	m_items.insert_or_assign( object.id(), object );
-	Item* item = getItem( object.id() );
+	const auto key = object->id();
+	m_items.insert_or_assign( key, std::move(object) );
+	Item* item = getItem( key );
 	
 	Octree* ot = octree( itemID, materialID );
 
@@ -354,7 +358,7 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		
 		if ( !item->isConstructed() && !item->isInContainer() )
 		{
-			g->m_world->setItemSprite( item->getPos(), object.spriteID() );
+			g->m_world->setItemSprite( item->getPos(), item->spriteID() );
 		}
 
 		if ( item->isConstructed() || item->isInStockpile() )
@@ -363,13 +367,13 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		}
 	}
 
-	if ( object.nutritionalValue() != 0 )
+	if ( item->nutritionalValue() != 0 )
 	{
-		m_foodItems.insert_or_assign( object.id(), object.nutritionalValue() );
+		m_foodItems.insert_or_assign( item->id(), item->nutritionalValue() );
 	}
-	if ( object.drinkValue() != 0 )
+	if ( item->drinkValue() != 0 )
 	{
-		m_drinkItems.insert_or_assign( object.id(), object.drinkValue() );
+		m_drinkItems.insert_or_assign( item->id(), item->drinkValue() );
 	}
 
 	if ( m_hash[itemID].contains( materialID ) )
