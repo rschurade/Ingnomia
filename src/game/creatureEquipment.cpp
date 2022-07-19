@@ -22,8 +22,8 @@
 QVariantMap EquipmentItem::serialize()
 {
 	QVariantMap out;
-	out.insert( "Item", item );
-	out.insert( "Material", material );
+	out.insert( "Item", QString::fromStdString(item) );
+	out.insert( "Material", QString::fromStdString(material) );
 	out.insert( "ItemID", itemID );
 	out.insert( "MaterialID", materialID );
 	out.insert( "AllMats", allMats );
@@ -32,16 +32,16 @@ QVariantMap EquipmentItem::serialize()
 
 EquipmentItem::EquipmentItem( const QVariantMap& in )
 {
-	item       = in.value( "Item" ).toString();
-	material   = in.value( "Material" ).toString();
+	item       = in.value( "Item" ).toString().toStdString();
+	material   = in.value( "Material" ).toString().toStdString();
 	itemID     = in.value( "ItemID" ).toUInt();
 	materialID = in.value( "MaterialID" ).toUInt();
 	allMats	   = in.value( "AllMats" ).toStringList();
 }
 
-QList<unsigned int> Equipment::wornItems() const
+std::vector<unsigned int> Equipment::wornItems() const
 {
-	QList<unsigned int> items;
+	std::vector<unsigned int> items;
 	EquipmentItem const *const equipmentSlots[] = {
 		&head,
 		&chest,
@@ -57,7 +57,7 @@ QList<unsigned int> Equipment::wornItems() const
 	{
 		if (slot->itemID)
 		{
-			items.append( slot->itemID );
+			items.push_back( slot->itemID );
 		}
 	}
 	return items;
@@ -67,10 +67,10 @@ QVariantMap Equipment::serialize()
 {
 	QVariantMap vEqui;
 
-	vEqui.insert( "Hair", hair );
-	vEqui.insert( "FacialHair", facialHair );
+	vEqui.insert( "Hair", QString::fromStdString(hair) );
+	vEqui.insert( "FacialHair", QString::fromStdString(facialHair) );
 	vEqui.insert( "HairColor", hairColor );
-	vEqui.insert( "Shirt", shirt );
+	vEqui.insert( "Shirt", QString::fromStdString(shirt) );
 	vEqui.insert( "ShirtColor", shirtColor );
 
 	vEqui.insert( "UniformID", uniformID );
@@ -93,10 +93,10 @@ QVariantMap Equipment::serialize()
 
 Equipment::Equipment( const QVariantMap& in )
 {
-	hair       = in.value( "Hair" ).toString();
-	facialHair = in.value( "FacialHair" ).toString();
+	hair       = in.value( "Hair" ).toString().toStdString();
+	facialHair = in.value( "FacialHair" ).toString().toStdString();
 	hairColor  = in.value( "HairColor" ).toInt();
-	shirt      = in.value( "Shirt" ).toString();
+	shirt      = in.value( "Shirt" ).toString().toStdString();
 	shirtColor = in.value( "ShirtColor" ).toInt();
 
 	uniformID = in.value( "UniformID" ).toUInt();
@@ -130,7 +130,7 @@ void Equipment::clearAllItems()
 float Equipment::getDamageReduction( CreaturePart part )
 {
 	unsigned int itemID = 0;
-	QString itemSID;
+	std::string itemSID;
 	float reduction = 0.0;
 	switch ( part )
 	{
@@ -167,23 +167,23 @@ float Equipment::getDamageReduction( CreaturePart part )
 	}
 	if ( itemID )
 	{ // TODO put these values on a dtabase table
-		if ( itemSID.startsWith( "Leather" ) )
+		if ( itemSID.starts_with( "Leather" ) )
 		{
 			reduction = 2.0;
 		}
-		else if ( itemSID.startsWith( "Bone" ) )
+		else if ( itemSID.starts_with( "Bone" ) )
 		{
 			reduction = 3.0;
 		}
-		else if ( itemSID.startsWith( "Chain" ) )
+		else if ( itemSID.starts_with( "Chain" ) )
 		{
 			reduction = 4.0;
 		}
-		else if ( itemSID.startsWith( "Plate" ) )
+		else if ( itemSID.starts_with( "Plate" ) )
 		{
 			reduction = 6.0;
 		}
-		else if ( itemSID.startsWith( "Heavy" ) )
+		else if ( itemSID.starts_with( "Heavy" ) )
 		{
 			reduction = 8.0;
 		}

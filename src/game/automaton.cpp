@@ -152,9 +152,9 @@ void Automaton::updateSprite()
 	for ( const auto& vpm : ordered )
 	{
 		auto pm = DBS::Creature_Parts::from(vpm.toMap());
-		if ( pm.BaseSprite.starts_with( "#" ) )
+		if ( pm.BaseSprite && pm.BaseSprite->starts_with( "#" ) )
 		{
-			auto bsa = pm.BaseSprite;
+			const auto& bsa = *pm.BaseSprite;
 			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -189,9 +189,9 @@ void Automaton::updateSprite()
 	for ( auto vpm : orderedBack )
 	{
 		auto pm = DBS::Creature_Parts::from(vpm.toMap());
-		if ( pm.BaseSprite.starts_with( "#" ) )
+		if ( pm.BaseSprite && pm.BaseSprite->starts_with( "#" ) )
 		{
-			const auto& bsa = pm.BaseSprite;
+			const auto& bsa = *pm.BaseSprite;
 			auto bsl = ranges::actions::split( bsa | ranges::views::drop(1), "|" );
 
 			srand( std::chrono::system_clock::now().time_since_epoch().count() );

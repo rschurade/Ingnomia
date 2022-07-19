@@ -252,9 +252,9 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 
 			auto rt = job->requiredTool();
-			if ( !rt.type.isEmpty() )
+			if ( !rt.type.empty() )
 			{
-				m_tileInfo.requiredTool = rt.type + " level " + QString::number( rt.level );
+				m_tileInfo.requiredTool = rt.type + " level " + std::to_string( rt.level );
 			}
 
 			m_tileInfo.jobPriority           = QString::number( job->priority() );

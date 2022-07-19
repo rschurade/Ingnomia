@@ -374,7 +374,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	m_jobWorker             = tileInfo.jobWorker.toStdString().c_str();
 	m_jobPriority           = tileInfo.jobPriority.toStdString().c_str();
 	m_requiredSkill         = tileInfo.requiredSkill.toStdString().c_str();
-	m_requiredTool          = tileInfo.requiredTool.toStdString().c_str();
+	m_requiredTool          = tileInfo.requiredTool.c_str();
 	m_requiredToolAvailable = tileInfo.requiredToolAvailable.toStdString().c_str();
 	m_workablePosition      = tileInfo.workPositions.toStdString().c_str();
 

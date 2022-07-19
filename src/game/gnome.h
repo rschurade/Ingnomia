@@ -93,9 +93,9 @@ public:
 
 	Equipment equipment();
 
-	QString rightHandItem();
-	QString rightHandAttackSkill();
-	QString rightHandAttackValue();
+	std::string rightHandItem();
+	std::string rightHandAttackSkill();
+	std::string rightHandAttackValue();
 
 	void updateAttackValues();
 	bool attack( DamageType dt, AnatomyHeight da, int skill, int strength, Position sourcePos, unsigned int attackerID );

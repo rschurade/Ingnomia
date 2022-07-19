@@ -529,8 +529,8 @@ bool CanWork::dropEquippedItem()
 			auto uniform = g->mil()->uniform( m_roleID );
 			if ( uniform )
 			{
-				QString rhi = uniform->parts.at("RightHandHeld").item;
-				QString rhm = uniform->parts.at("RightHandHeld").material;
+				const auto rhi = uniform->parts.at("RightHandHeld").item.toStdString();
+				const auto rhm = uniform->parts.at("RightHandHeld").material.toStdString();
 				if ( rhi == m_equipment.rightHandHeld.item && ( rhm == "any" || rhm == m_equipment.rightHandHeld.material ) )
 				{
 					return true;

@@ -83,7 +83,7 @@ QString Util::materialType( QString materialID )
 	return DB::select( "Type", "Materials", materialID ).toString();
 }
 
-const std::string& Util::requiredSkill( QString jobID )
+std::string Util::requiredSkill( QString jobID )
 {
 	auto dbjb = DB::job( jobID );
 	if( dbjb )
@@ -98,12 +98,12 @@ QString Util::requiredMagicSkill( QString spellID )
 	return DB::select( "SkillID", "Spells", spellID ).toString();
 }
 
-QString Util::requiredTool( QString jobID )
+std::string Util::requiredTool( QString jobID )
 {
 	auto dbjb = DB::job( jobID );
 	if( dbjb )
 	{
-		return dbjb->RequiredToolItemID;
+		return dbjb->RequiredToolItemID.toStdString();
 	}
 	return "";
 }

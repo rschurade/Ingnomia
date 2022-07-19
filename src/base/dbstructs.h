@@ -232,7 +232,7 @@ struct Creature_Layouts {
 struct Creature_Parts {
 	std::string ID;
 	std::string Part;
-	std::string BaseSprite;
+	std::optional<std::string> BaseSprite;
 	int Order;
 	std::variant<std::monostate, std::string, int> Tint;
 	std::string Conceales;
@@ -243,12 +243,14 @@ struct Creature_Parts {
 	std::string Material;
 
 	static Creature_Parts from(const QMap<QString, QVariant>& map) {
+		const auto baseSprite = map.value("BaseSprite").toString().toStdString();
+		const auto tint = map.value("Tint").toString().toStdString();
 		return Creature_Parts {
 			.ID = map.value("ID").toString().toStdString(),
 			.Part = map.value("Part").toString().toStdString(),
-			.BaseSprite = map.value("BaseSprite").toString().toStdString(),
+			.BaseSprite = !baseSprite.empty() ? std::optional<std::string>(baseSprite) : std::nullopt,
 			.Order = map.value("Order").toInt(),
-			.Tint = map.value("Tint").toString().toStdString(),
+			.Tint = !tint.empty() ? std::variant<std::monostate, std::string, int>(tint) : std::monostate(),
 			.Conceales = map.value("Conceales").toString().toStdString(),
 		};
 	}
@@ -258,7 +260,7 @@ struct Creature_Parts {
 
 		result["ID"]         = QString::fromStdString( ID );
 		result["Part"]       = QString::fromStdString( Part );
-		result["BaseSprite"] = QString::fromStdString( BaseSprite );
+		result["BaseSprite"] = BaseSprite->empty() ? QString::fromStdString( BaseSprite.value() ) : nullptr;
 		result["Order"]      = Order;
 		QVariant qTint;
 

@@ -518,7 +518,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 					QSharedPointer<Job> job( new Job );
 					job->setType( "HauleMultipleItems" );
 					job->setRequiredSkill( "Hauling" );
-					job->setRequiredTool( carryContainer, 0 );
+					job->setRequiredTool( carryContainer.toStdString(), 0 );
 					job->setStockpile( m_id );
 					job->setPos( infi->pos );
 					job->setPosItemInput( infi->pos );

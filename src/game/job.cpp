@@ -46,7 +46,7 @@ Job::Job( QVariantMap in )
 	m_jobIsWorked = in.value( "JobIsWorked" ).toBool();
 	m_workedBy    = in.value( "JobWorkedBy" ).toUInt();
 
-	m_requiredTool.type  = in.value( "RequiredTool" ).toString();
+	m_requiredTool.type  = in.value( "RequiredTool" ).toString().toStdString();
 	m_requiredTool.level = in.value( "RequiredToolLevel" ).toInt();
 
 	auto ril = in.value( "RequiredItems" ).toList();
@@ -107,7 +107,7 @@ QVariant Job::serialize() const
 	out.insert( "JobIsWorked", m_jobIsWorked );
 	out.insert( "JobWorkedBy", m_workedBy );
 
-	out.insert( "RequiredTool", m_requiredTool.type );       // QString tool
+	out.insert( "RequiredTool", QString::fromStdString(m_requiredTool.type) );       // QString tool
 	out.insert( "RequiredToolLevel", m_requiredTool.level ); // int level
 
 	QVariantList ril;
@@ -453,12 +453,12 @@ RequiredTool Job::requiredTool() const
 	return m_requiredTool;
 }
 
-void Job::setRequiredTool( QString toolID, quint8 level )
+void Job::setRequiredTool( const std::string& toolID, quint8 level )
 {
 	m_requiredTool.type  = toolID;
 	m_requiredTool.level = level;
 
-	if ( toolID.isEmpty() )
+	if ( toolID.empty() )
 	{
 		m_requiredTool.available = true;
 	}

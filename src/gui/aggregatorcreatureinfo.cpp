@@ -215,11 +215,11 @@ void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 	}
 	else
 	{
-		mats.append( eItem.material );
-		mats.append( "Pine" );
+		mats.push_back( QString::fromStdString(eItem.material) );
+		mats.push_back( "Pine" );
 	}
 
-	auto sprite = g->sf()->createSprite( "UI" + eItem.item, mats );
+	auto sprite = g->sf()->createSprite( QString::fromStdString("UI" + eItem.item), mats );
 	if( sprite )
 	{
 		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
@@ -243,7 +243,7 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 		return; 
 	}
 	QStringList mats;
-	mats.append( eItem.material );
+	mats.append( QString::fromStdString(eItem.material) );
 
 	auto sprite = g->sf()->createSprite( "UI" + uItem.type + slot, mats );
 	if( sprite )

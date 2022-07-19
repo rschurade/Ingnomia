@@ -143,7 +143,7 @@ private:
 
 	void createStandardSprites();
 
-	SDL_Surface* getTintedBaseSprite( const std::string& baseSprite, const std::string& material );
+	SDL_Surface* getTintedBaseSprite( const std::optional<std::string>& baseSprite, const std::string& material );
 
 	Sprite* createSprite2( const QString itemSID, QStringList materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
 	

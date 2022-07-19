@@ -1446,14 +1446,14 @@ void SpriteFactory::forceUpdate()
 	m_textureAdded = true;
 }
 
-SDL_Surface* SpriteFactory::getTintedBaseSprite( const std::string& baseSprite, const std::string& material )
+SDL_Surface* SpriteFactory::getTintedBaseSprite( const std::optional<std::string>& baseSprite, const std::string& material )
 {
-	if ( baseSprite.empty() )
+	if ( !baseSprite || baseSprite->empty() )
 	{
 		return m_baseSprites["EmptyWall"];
 	}
 
-	auto* pm     = m_baseSprites[baseSprite];
+	auto* pm     = m_baseSprites.at(*baseSprite);
 	auto* result = createPixmap( pm->w, pm->h );
 
 	copyPixmap( result, pm, 0, 0 );
@@ -1479,14 +1479,16 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 
 		if ( cm.HasBase )
 		{
-			copyPixmap( pmfr, m_baseSprites[baseSprite + "Base"], 0, 0 );
+			assert(baseSprite && "Sprite with \"Base\" should have \"BaseSprite\" defined");
+			copyPixmap( pmfr, m_baseSprites[*baseSprite + "Base"], 0, 0 );
 		}
 
 		const auto& tint = cm.Tint;
 		const auto& isHair  = cm.IsHair;
 		if ( std::get_if<std::monostate>( &tint ) )
 		{
-			copyPixmap( pmfr, m_baseSprites[baseSprite], 0, 0 );
+			assert(baseSprite && "Sprite without \"Tint\" should have \"BaseSprite\" defined");
+			copyPixmap( pmfr, m_baseSprites.at(*baseSprite), 0, 0 );
 		}
 		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
@@ -1502,10 +1504,13 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		}
 		else if ( const auto* colorInt = std::get_if<int>( &tint ) )
 		{
-			auto* pm = m_baseSprites[baseSprite];
-			copyPixmap( pmfr, pm, 0, 0 );
-			const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
-			tintPixmap( pmfr, color );
+			if (baseSprite)
+			{
+				auto* pm = m_baseSprites.at(*baseSprite);
+				copyPixmap( pmfr, pm, 0, 0 );
+				const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
+				tintPixmap( pmfr, color );
+			}
 		}
 	}
 	auto *pmfl = clonePixmap(pmfr);
@@ -1526,13 +1531,15 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 
 		if ( cm.HasBase )
 		{
-			copyPixmap( pmbr, m_baseSprites[baseSprite + "Base"], 0, 0 );
+			assert(baseSprite && "Sprite with \"Base\" should have \"BaseSprite\" defined");
+			copyPixmap( pmbr, m_baseSprites[*baseSprite + "Base"], 0, 0 );
 		}
 		const auto& tint = cm.Tint;
 		const auto& isHair  = cm.IsHair;
 		if ( std::get_if<std::monostate>( &tint ) )
 		{
-			copyPixmap( pmbr, m_baseSprites[baseSprite], 0, 0 );
+			assert(baseSprite && "Sprite without \"Tint\" should have \"BaseSprite\" defined");
+			copyPixmap( pmbr, m_baseSprites.at(*baseSprite), 0, 0 );
 		}
 		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
@@ -1548,10 +1555,13 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		}
 		else if ( const auto* colorInt = std::get_if<int>( &tint ) )
 		{
-			auto* pm = m_baseSprites[baseSprite];
-			copyPixmap( pmbr, pm, 0, 0 );
-			const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
-			tintPixmap( pmbr, color );
+			if (baseSprite)
+			{
+				auto* pm = m_baseSprites.at(*baseSprite);
+				copyPixmap( pmbr, pm, 0, 0 );
+				const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
+				tintPixmap( pmbr, color );
+			}
 		}
 	}
 

@@ -233,12 +233,12 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	// need to figure out how to check rt 'inuse' & 'reachable'
 	job->setRequiredToolAvailable( true );
 
-	if ( rt.type.isEmpty() )
+	if ( rt.type.empty() )
 	{
 		return true;
 	}
 
-	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type, false );
+	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( QString::fromStdString(rt.type), false );
 
 	for ( auto key : mc | ranges::views::keys )
 	{

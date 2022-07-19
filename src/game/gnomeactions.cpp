@@ -703,7 +703,7 @@ BT_RESULT Gnome::actionInitJob( bool halt )
 			bool hasItems = m_job->requiredItems().size() == claimedItems().size();
 			if ( Global::debugMode )
 				log( "Has items: " + hasItems ? "true" : "false" );
-			g->jm()->setJobBeingWorked( m_jobID, m_job->requiredTool().type.isEmpty() && hasItems );
+			g->jm()->setJobBeingWorked( m_jobID, m_job->requiredTool().type.empty() && hasItems );
 			//log( "Init " + S::s( "$SkillName_" + m_job->requiredSkill() ) + " job done." );
 
 			return BT_RESULT::SUCCESS;
@@ -1009,7 +1009,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 		}
 	}
 
-	g->jm()->setJobBeingWorked( m_jobID, m_job->requiredTool().type.isEmpty() );
+	g->jm()->setJobBeingWorked( m_jobID, m_job->requiredTool().type.empty() );
 	if ( Global::debugMode )
 		log( "actionClaimItems success" );
 
@@ -1039,7 +1039,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		return BT_RESULT::FAILURE;
 	}
 	auto rt = m_job->requiredTool();
-	if ( rt.type.isEmpty() || m_type == CreatureType::AUTOMATON )
+	if ( rt.type.empty() || m_type == CreatureType::AUTOMATON )
 	{
 		setCurrentTarget( m_position );
 		return BT_RESULT::SUCCESS;
@@ -1050,7 +1050,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 
 	if ( equippedItem )
 	{
-		if ( g->inv()->itemSID( equippedItem ) == rt.type && equippedToolLevel >= rt.level )
+		if ( g->inv()->itemSID( equippedItem ).toStdString() == rt.type && equippedToolLevel >= rt.level )
 		{
 			// gnome already has the required tool equipped
 			setCurrentTarget( m_position );
@@ -1071,7 +1071,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		}
 	}
 	//no item equipped
-	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( rt.type );
+	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( QString::fromStdString(rt.type) );
 
 	for ( auto key : mc | ranges::views::keys )
 	{
@@ -1081,7 +1081,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 			if ( tl >= rt.level )
 			{
 				// there are a number of tools of the required level in the world
-				auto tool = g->inv()->getClosestItem( m_position, true, rt.type, key );
+				auto tool = g->inv()->getClosestItem( m_position, true, QString::fromStdString(rt.type), key );
 				if ( tool )
 				{
 					m_job->setToolPosition( g->inv()->getItemPos( tool ) );
@@ -1110,7 +1110,7 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 		return BT_RESULT::FAILURE;
 	}
 
-	if ( m_job->requiredTool().type.isEmpty() || m_type == CreatureType::AUTOMATON )
+	if ( m_job->requiredTool().type.empty() || m_type == CreatureType::AUTOMATON )
 	{
 		//log( "No tool required" );
 		g->jm()->setJobBeingWorked( m_jobID, true );
@@ -1134,9 +1134,9 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 		{
 			g->inv()->pickUpItem( claimedTool, m_id );
 			m_equipment.rightHandHeld.itemID     = claimedTool;
-			m_equipment.rightHandHeld.item       = g->inv()->itemSID( claimedTool );
+			m_equipment.rightHandHeld.item       = g->inv()->itemSID( claimedTool ).toStdString();
 			m_equipment.rightHandHeld.materialID = g->inv()->materialUID( claimedTool );
-			m_equipment.rightHandHeld.material   = g->inv()->materialSID( claimedTool );
+			m_equipment.rightHandHeld.material   = g->inv()->materialSID( claimedTool ).toStdString();
 
 			m_btBlackBoard.remove( "ClaimedTool" );
 
@@ -1160,11 +1160,11 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 
 	auto part = Global::creaturePartLookUp.at( slot.toStdString() );
 
-	QString item     = uniform->parts[slot].item;
-	QString material = uniform->parts[slot].material;
+	std::string item     = uniform->parts[slot].item.toStdString();
+	std::string material = uniform->parts[slot].material.toStdString();
 
-	QString wiSID         = "";
-	QString wiMat         = "";
+	std::string wiSID         = "";
+	std::string wiMat         = "";
 	unsigned int wornItem = 0;
 
 	switch ( part )
@@ -1247,13 +1247,13 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 	{
 		if ( wiSID != item || ( ( wiMat != material ) && ( material != "any" ) ) )
 		{
-			log( "Drop item:" + wiMat + " " + wiSID + " looking for:" + material + " " + item );
+			log( QString::fromStdString( fmt::format( "Drop item: '{}' '{}' looking for: '{}' '{}'", wiMat, wiSID, material, item ) ) );
 			//drop current item
 			dropped = true;
 			g->inv()->putDownItem( wornItem, m_position );
 			g->inv()->setInJob( wornItem, 0 );
 
-			if ( item == "none" || item.isEmpty() )
+			if ( item == "none" || item.empty() )
 			{
 				return true;
 			}
@@ -1264,9 +1264,9 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 		}
 	}
 
-	if ( !item.isEmpty() )
+	if ( !item.empty() )
 	{
-		auto itemToGet = g->inv()->getClosestItem( m_position, true, item, material );
+		auto itemToGet = g->inv()->getClosestItem( m_position, true, QString::fromStdString(item), QString::fromStdString(material) );
 
 		if ( itemToGet )
 		{
@@ -2599,9 +2599,9 @@ bool Gnome::equipItem()
 			g->inv()->setInJob( itemSlot.itemID, 0 );
 		}
 		itemSlot.itemID     = itemID;
-		itemSlot.item       = itemSID;
+		itemSlot.item       = itemSID.toStdString();
 		itemSlot.materialID = materialUID;
-		itemSlot.material   = materialSID;
+		itemSlot.material   = materialSID.toStdString();
 		if ( part == CP_LEFT_HAND_HELD )
 		{
 			equipHand( itemID, "Left" );

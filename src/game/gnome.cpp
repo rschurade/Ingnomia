@@ -35,6 +35,7 @@
 #include "../gfx/spritefactory.h"
 #include "../gui/strings.h"
 #include "spdlog/spdlog.h"
+#include "fmt/format.h"
 
 #include <QElapsedTimer>
 #include <QFile>
@@ -44,20 +45,20 @@ Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 {
 	m_ignoreNoPass = false;
 
-	int shirt         = rand() % 14 + 1;
-	m_equipment.shirt = "GnomeShirt" + QString::number( shirt );
-	int hair          = rand() % 14 + 1;
-	m_equipment.hair  = "GnomeHair" + QString::number( hair );
+	int shirt         = rand() % 15 + 1;
+	m_equipment.shirt = fmt::format( "GnomeShirt{}", shirt );
+	int hair          = rand() % 15 + 1;
+	m_equipment.hair  = fmt::format( "GnomeHair{}", hair );
 
 	auto numHairColors = DB::ids( "HairColors" ).size();
 
 	m_equipment.hairColor  = rand() % numHairColors;
 	m_equipment.shirtColor = rand() % 6;
 
-	int fhair = rand() % 15;
+	int fhair = rand() % 15 + 1;
 	if ( m_gender == Gender::MALE )
 	{
-		m_equipment.facialHair = "GnomeFacialHair" + QString::number( fhair );
+		m_equipment.facialHair = fmt::format("GnomeFacialHair{}", fhair);
 	}
 
 	m_type = CreatureType::GNOME;
@@ -279,9 +280,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 
 		CreaturePart part = Global::creaturePartLookUp.at( pm.Part );
 
-		const auto& tint = pm.Tint;
-
-		auto bs = pm.BaseSprite;
+		auto bs = pm.BaseSprite.value_or( "" );
 
 		bool hairConcealed = false;
 		if ( m_equipment.head.itemID )
@@ -316,17 +315,17 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 
 			case CP_HAIR:
 				pm.Tint = m_equipment.hairColor;
-				bs = m_equipment.hair.toStdString();
+				bs = m_equipment.hair;
 				pm.IsHair = true;
 				pm.Hidden = hairConcealed;
 				break;
 			case CP_FACIAL_HAIR:
 				pm.Tint = m_equipment.hairColor;
-				bs = m_equipment.facialHair.toStdString();
+				bs = m_equipment.facialHair;
 				break;
 			case CP_CLOTHING:
 				pm.Tint = m_equipment.shirtColor;
-				bs = m_equipment.shirt.toStdString();
+				bs = m_equipment.shirt;
 				break;
 			case CP_BOOTS:
 				break;
@@ -341,7 +340,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs += "HeadArmor";
 					// FIXME: This is unused?
 					hairConcealed = true;
-					pm.Material = m_equipment.head.material.toStdString();
+					pm.Material = m_equipment.head.material;
 				}
 				break;
 			case CP_ARMOR_TORSO:
@@ -350,7 +349,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.chest.itemID ).toStdString();
 					bs += "ChestArmor";
-					pm.Material = m_equipment.chest.material.toStdString();
+					pm.Material = m_equipment.chest.material;
 				}
 				break;
 			case CP_ARMOR_LEFT_ARM:
@@ -359,7 +358,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
 					bs += "LeftArmArmor";
-					pm.Material = m_equipment.arm.material.toStdString();
+					pm.Material = m_equipment.arm.material;
 				}
 				break;
 			case CP_ARMOR_RIGHT_ARM:
@@ -368,7 +367,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
 					bs += "RightArmArmor";
-					pm.Material = m_equipment.arm.material.toStdString();
+					pm.Material = m_equipment.arm.material;
 				}
 				break;
 			case CP_ARMOR_LEFT_HAND:
@@ -377,7 +376,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
 					bs += "LeftHandArmor";
-					pm.Material = m_equipment.hand.material.toStdString();
+					pm.Material = m_equipment.hand.material;
 				}
 				break;
 			case CP_ARMOR_RIGHT_HAND:
@@ -386,7 +385,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
 					bs += "RightHandArmor";
-					pm.Material = m_equipment.hand.material.toStdString();
+					pm.Material = m_equipment.hand.material;
 				}
 				break;
 			case CP_ARMOR_LEFT_FOOT:
@@ -395,7 +394,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
 					bs += "LeftFootArmor";
-					pm.Material = m_equipment.foot.material.toStdString();
+					pm.Material = m_equipment.foot.material;
 				}
 				break;
 			case CP_ARMOR_RIGHT_FOOT:
@@ -404,16 +403,16 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 					bs = "Gnome";
 					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
 					bs += "RightFootArmor";
-					pm.Material = m_equipment.foot.material.toStdString();
+					pm.Material = m_equipment.foot.material;
 				}
 				break;
 			case CP_LEFT_HAND_HELD:
 				if ( m_equipment.leftHandHeld.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.leftHandHeld.item.toStdString();
+					bs += m_equipment.leftHandHeld.item;
 					bs += "Left";
-					pm.Material = m_equipment.leftHandHeld.material.toStdString();
+					pm.Material = m_equipment.leftHandHeld.material;
 					pm.HasBase = true;
 				}
 				break;
@@ -421,9 +420,9 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.rightHandHeld.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.rightHandHeld.item.toStdString();
+					bs += m_equipment.rightHandHeld.item;
 					bs += "Right";
-					pm.Material = m_equipment.rightHandHeld.material.toStdString();
+					pm.Material = m_equipment.rightHandHeld.material;
 					pm.HasBase = true;
 				}
 				break;
@@ -431,19 +430,19 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( isBack && m_equipment.back.itemID )
 				{
 					bs = "Gnome";
-					bs += m_equipment.back.item.toStdString();
-					pm.Material = m_equipment.back.material.toStdString();
+					bs += m_equipment.back.item;
+					pm.Material = m_equipment.back.material;
 				}
 				break;
 		}
 		
 
-		if ( isBack && !bs.ends_with( "Back" ) )
+		if ( !bs.empty() && isBack && !bs.ends_with( "Back" ) )
 		{
 			bs += "Back";
 		}
 
-		pm.BaseSprite = bs;
+		pm.BaseSprite = bs.empty() ? std::nullopt : std::optional<std::string>(bs);
 
 		def.push_back( pm );
 	}
@@ -973,19 +972,19 @@ Equipment Gnome::equipment()
 	return m_equipment;
 }
 
-QString Gnome::rightHandItem()
+std::string Gnome::rightHandItem()
 {
-	return m_equipment.rightHandHeld.material + " " + m_equipment.rightHandHeld.item;
+	return fmt::format("{} {}", m_equipment.rightHandHeld.material, m_equipment.rightHandHeld.item);
 }
 
-QString Gnome::rightHandAttackSkill()
+std::string Gnome::rightHandAttackSkill()
 {
-	return QString::number( m_rightHandAttackSkill );
+	return std::to_string( m_rightHandAttackSkill );
 }
 
-QString Gnome::rightHandAttackValue()
+std::string Gnome::rightHandAttackValue()
 {
-	return QString::number( m_rightHandAttackValue );
+	return std::to_string( m_rightHandAttackValue );
 }
 
 void Gnome::updateAttackValues()

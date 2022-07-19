@@ -86,8 +86,8 @@ enum class CreatureTickResult : unsigned char
 
 struct EquipmentItem
 {
-	QString item            = "";
-	QString material        = "";
+	std::string item            = "";
+	std::string material        = "";
 	unsigned int itemID     = 0;
 	unsigned int materialID = 0;
 	QStringList allMats;
@@ -100,10 +100,10 @@ struct EquipmentItem
 
 struct Equipment
 {
-	QString hair       = "GnomeHair1";
-	QString facialHair = "";
+	std::string hair       = "GnomeHair1";
+	std::string facialHair = "";
 	int hairColor      = 0;
-	QString shirt      = "GnomeShirt1";
+	std::string shirt      = "GnomeShirt1";
 	int shirtColor     = 0;
 
 	unsigned int uniformID = 0;
@@ -119,7 +119,7 @@ struct Equipment
 	EquipmentItem rightHandHeld;
 	EquipmentItem back;
 
-	QList<unsigned int> wornItems() const;
+	std::vector<unsigned int> wornItems() const;
 	QVariantMap serialize();
 	void clearAllItems();
 	Equipment( const QVariantMap& in );

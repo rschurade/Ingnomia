@@ -42,7 +42,7 @@ struct RequiredItem
 
 struct RequiredTool
 {
-	QString type;
+	std::string type;
 	quint8 level = 0;
 
 	// only used for GUI info display
@@ -195,7 +195,7 @@ public:
 	unsigned int workedBy() const;
 
 	RequiredTool requiredTool() const;
-	void setRequiredTool( QString toolID, quint8 level );
+	void setRequiredTool( const std::string& toolID, quint8 level );
 	void setRequiredToolAvailable( bool avail );
 
 	void setConversionMaterial( QString material );
