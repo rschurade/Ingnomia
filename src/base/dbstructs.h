@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../base/position.h"
+#include "containersHelper.h"
 
 #include <QString>
 
@@ -248,7 +249,7 @@ struct Creature_Parts {
 		return Creature_Parts {
 			.ID = map.value("ID").toString().toStdString(),
 			.Part = map.value("Part").toString().toStdString(),
-			.BaseSprite = !baseSprite.empty() ? std::optional<std::string>(baseSprite) : std::nullopt,
+			.BaseSprite = vars::opt(baseSprite),
 			.Order = map.value("Order").toInt(),
 			.Tint = !tint.empty() ? std::variant<std::monostate, std::string, int>(tint) : std::monostate(),
 			.Conceales = map.value("Conceales").toString().toStdString(),
@@ -859,30 +860,30 @@ struct Words_Verb {
 
 struct Workshop_Component {
 	int Amount = 0;
-	QString ItemID;
-	QString MaterialItem;
+	std::optional<std::string> ItemID;
+	std::optional<std::string> MaterialItem;
 	Position Offset;
-	QString Required;
-	QString Forbidden;
-	QString SpriteID;
-	QString SpriteID2;
-	QString Type;
-	QString WallRotation;
+	std::optional<std::string> Required;
+	std::optional<std::string> Forbidden;
+	std::optional<std::string> SpriteID;
+	std::optional<std::string> SpriteID2;
+	std::optional<std::string> Type;
+	std::optional<std::string> WallRotation;
 	bool IsFloor = false;
 };
 
 struct Workshop {
-	QString ID;
-	QStringList Crafts;
-	QString GUI;
+	std::string ID;
+	std::vector<std::string> Crafts;
+	std::optional<std::string> GUI;
 	Position InputTile;
 	Position OutputTile;
-	QString Size;
+	std::string Size;
 	bool NoAutoGenerate = false;
-	QString Icon;
-	QString Tab;
+	std::optional<std::string> Icon;
+	std::string Tab;
 
-	QList<Workshop_Component> components;
+	std::vector<Workshop_Component> components;
 };
 
 template<typename T>

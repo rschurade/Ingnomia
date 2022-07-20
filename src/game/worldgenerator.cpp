@@ -99,6 +99,7 @@ World* WorldGenerator::generateTopology()
 
 	if ( ngs->rivers() > 0 )
 	{
+		signalStatus( "Create rivers." );
 		createRivers();
 	}
 
@@ -167,7 +168,7 @@ void WorldGenerator::initMateralVectors()
 		QVariantMap row = DB::selectRow( "TerrainMaterials", id );
 		TerrainMaterial m;
 		m.key       = id;
-		m.rowid     = DBH::materialUID( id );
+		m.rowid     = DBH::materialUID( id.toStdString() );
 		m.type      = row["Type"].toString();
 		m.wall      = row["WallSprite"].toString();
 		m.shortwall = row["ShortWallSprite"].toString();
@@ -199,6 +200,7 @@ void WorldGenerator::setStoneLayers()
 {
 	QElapsedTimer timer;
 	timer.start();
+	signalStatus( "Filling stone floor..." );
 	for ( int z = 0; z < m_dimZ; ++z )
 	{
 		if ( timer.elapsed() > 3000 )
@@ -207,9 +209,9 @@ void WorldGenerator::setStoneLayers()
 			timer.restart();
 		}
 		fillFloor( z, m_mats, m_matsInLevel );
-		QCoreApplication::processEvents();
 	}
 
+	signalStatus( "Filling floor mushroom biome..." );
 	for ( int z = 0; z < 7; ++z )
 	{
 		if ( timer.elapsed() > 3000 )
@@ -218,7 +220,6 @@ void WorldGenerator::setStoneLayers()
 			timer.restart();
 		}
 		fillFloorMushroomBiome( z, m_mats, m_matsInLevel );
-		QCoreApplication::processEvents();
 	}
 }
 
@@ -233,7 +234,7 @@ void WorldGenerator::setMetalsAndGems()
 		QVariantMap row = DB::selectRow( "EmbeddedMaterials", id );
 		EmbeddedMaterial m;
 		m.key     = id;
-		m.rowid   = DBH::materialUID( id );
+		m.rowid   = DBH::materialUID( id.toStdString() );
 		m.type    = row["Type"].toString();
 		m.wall    = row["WallSprite"].toString();
 		m.lowest  = row["Lowest"].toInt();
@@ -256,10 +257,10 @@ void WorldGenerator::setMetalsAndGems()
 				QString embedded = getRandomEmbedded( pos.x, pos.y, pos.z, embeddeds );
 				if ( !embedded.isEmpty() )
 				{
-					int rowid = DBH::materialUID( embedded );
+					int rowid = DBH::materialUID( embedded.toStdString() );
 					for ( auto pos : pw )
 					{
-						unsigned short spriteUID = g->sf()->createSprite( embeddeds[embedded].wall, { embedded } )->uID;
+						unsigned short spriteUID = g->sf()->createSprite( embeddeds[embedded].wall.toStdString(), { embedded.toStdString() } )->uID;
 
 						setEmbedded3x3( world, pos, rowid, spriteUID );
 						//clear3x3( world, pos );
@@ -281,14 +282,20 @@ void WorldGenerator::initSunLight()
 	int sandRowid = DBH::materialUID( "Sand" );
 	int dirtRowid = DBH::materialUID( "Dirt" );
 
-	for ( int y = 1; y < m_dimY - 1; ++y )
+	const auto lenX = m_dimX - 1;
+	const auto lenY = m_dimY - 1;
+	const auto lenZ = m_dimZ - 1;
+
+	const auto zOff = lenZ * m_dimX * m_dimY;
+	for ( int y = 1; y < lenY; ++y )
 	{
-		for ( int x = 1; x < m_dimX - 1; ++x )
+		const auto yOff = y * m_dimX;
+		for ( int x = 1; x < lenX; ++x )
 		{
-			Position pos( x, y, m_dimZ - 1 );
+			Position pos( x, y, lenZ );
 			w->getFloorLevelBelow( pos, true );
 
-			Tile& tile = world[x + y * m_dimX + pos.z * m_dimX * m_dimY];
+			Tile& tile = world[x + yOff + zOff];
 
 			if ( ( tile.flags & TileFlag::TF_WATER ) && tile.floorType == FloorType::FT_SOLIDFLOOR )
 			{
@@ -715,17 +722,17 @@ void WorldGenerator::addGnomesAndStartingItems()
 			{
 				auto comps = DB::selectRows( "Items_Components", QString::fromStdString(si.itemSID) );
 
-				QString itemSID1 = comps.first().value( "ItemID" ).toString();
-				QString itemSID2 = comps.last().value( "ItemID" ).toString();
+				const auto itemSID1 = comps.first().value( "ItemID" ).toString().toStdString();
+				const auto itemSID2 = comps.last().value( "ItemID" ).toString().toStdString();
 
 				for ( int i = 0; i < amount; ++i )
 				{
-					QList<unsigned int> newComponents;
+					std::vector<unsigned int> newComponents;
 
-					newComponents.append( g->inv()->createItem( pos, itemSID1, QString::fromStdString(si.mat1) ) );
-					newComponents.append( g->inv()->createItem( pos, itemSID2, QString::fromStdString(si.mat2) ) );
+					newComponents.push_back( g->inv()->createItem( pos, itemSID1, si.mat1 ) );
+					newComponents.push_back( g->inv()->createItem( pos, itemSID2, si.mat2 ) );
 
-					g->inv()->createItem( thisPos, QString::fromStdString(si.itemSID), newComponents );
+					g->inv()->createItem( thisPos, si.itemSID, newComponents );
 
 					for ( auto vItem : newComponents )
 					{
@@ -739,7 +746,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 		else
 		{
 			int amount        = si.amount;
-			QString container = DB::select( "AllowedContainers", "Items", QString::fromStdString(si.itemSID) ).toString();
+			const auto& container = DB::select( "AllowedContainers", "Items", QString::fromStdString(si.itemSID) ).toString();
 			Position thisPos( pos + offsets[( id % 3 ) + 6] );
 			w->getFloorLevelBelow( thisPos, false );
 			/*
@@ -764,7 +771,7 @@ void WorldGenerator::addGnomesAndStartingItems()
 			{
 				for ( int i = 0; i < amount; ++i )
 				{
-					g->inv()->createItem( thisPos, QString::fromStdString(si.itemSID), QString::fromStdString(si.mat1) );
+					g->inv()->createItem( thisPos, si.itemSID, si.mat1 );
 				}
 			}
 		}
@@ -841,11 +848,15 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 	unsigned short dirtMat = DBH::materialUID( "Dirt" );
 	auto dirtSprite        = g->sf()->createSprite( "MushroomGrassWithDetail", { "Grass", "None" } )->uID;
 
-	for ( int y = 3; y < m_dimY - 3; ++y )
+	const auto lenX = m_dimX - 3;
+	const auto lenY = m_dimY - 3;
+	const auto zOff = z * m_dimX * m_dimY;
+	for ( int y = 3; y < lenY; ++y )
 	{
-		for ( int x = 3; x < m_dimX - 3; ++x )
+		const auto yOff = y * m_dimX;
+		for ( int x = 3; x < lenX; ++x )
 		{
-			Tile& tile          = world[x + y * m_dimX + z * m_dimX * m_dimY];
+			Tile& tile          = world[x + yOff + zOff];
 			tile.floorType      = FloorType::FT_NOFLOOR;
 			tile.floorMaterial  = 0;
 			tile.wallType       = WallType::WT_NOWALL;
@@ -861,9 +872,9 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 			{
 				//if( m_random.GetPerlinFractal( x, y, z ) > 0.00001 )
 				//if( fBm( x, y, z ) )
-				if ( zz - ( m_heightMap[x + m_dimX + y * m_dimX * 2] * 3. ) < 0 )
+				if ( zz - ( m_heightMap[x + m_dimX + yOff * 2] * 3. ) < 0 )
 				{
-					mat                = mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + m_dimX + y * m_dimX * 2] ) )]];
+					mat                = mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + m_dimX + yOff * 2] ) )]];
 					unsigned short key = mat.rowid;
 
 					tile.floorType     = FloorType::FT_SOLIDFLOOR;
@@ -874,9 +885,9 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 					}
 					else
 					{
-						tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor, { mat.key } )->uID;
+						tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor.toStdString(), { mat.key.toStdString() } )->uID;
 						mat.floorSprite                                                                   = tile.floorSpriteUID;
-						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
+						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + yOff] ) )]] = mat;
 					}
 					tile.wallType     = ( WallType )( WallType::WT_SOLIDWALL | WallType::WT_ROUGH | WallType::WT_VIEWBLOCKING | WallType::WT_MOVEBLOCKING );
 					tile.wallMaterial = key;
@@ -886,11 +897,11 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 					}
 					else
 					{
-						tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall, { mat.key } )->uID;
+						tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall.toStdString(), { mat.key.toStdString() } )->uID;
 						mat.wallSprite                                                                    = tile.wallSpriteUID;
-						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
+						mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + yOff] ) )]] = mat;
 						// TODO: Is this a bug?
-						g->sf()->createSprite( mat.shortwall, { mat.key } );
+						g->sf()->createSprite( mat.shortwall.toStdString(), { mat.key.toStdString() } );
 					}
 					if ( m_fow )
 					{
@@ -899,7 +910,7 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 				}
 				else
 				{
-					Tile& tileBelow = world[x + y * m_dimX + ( z - 1 ) * m_dimX * m_dimY];
+					Tile& tileBelow = world[x + yOff + ( z - 1 ) * m_dimX * m_dimY];
 					if ( tileBelow.wallType & WallType::WT_ROUGH )
 					{
 						tile.floorType      = FloorType::FT_SOLIDFLOOR;
@@ -915,20 +926,22 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, std::vector<TerrainMaterial
 	}
 }
 
-void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel )
+void WorldGenerator::fillFloor( const int z, std::vector<TerrainMaterial>& mats, std::vector<int>& matsinLevel )
 {
 	auto& world = w->world();
 
 	TerrainMaterial mat;
 
+	const auto zOff = z * m_dimX * m_dimY;
 	for ( int y = 0; y < m_dimY; ++y )
 	{
+		const auto yOff = y * m_dimX;
 		for ( int x = 0; x < m_dimX; ++x )
 		{
-			mat                = mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]];
+			mat                = mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + yOff] ) )]];
 			unsigned short key = mat.rowid;
 
-			Tile& tile          = world[x + y * m_dimX + z * m_dimX * m_dimY];
+			Tile& tile          = world[x + yOff + zOff];
 			tile.floorType      = FloorType::FT_NOFLOOR;
 			tile.floorMaterial  = 0;
 			tile.wallType       = WallType::WT_NOWALL;
@@ -944,7 +957,7 @@ void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::
 			{
 				//if( m_random.GetPerlinFractal( x, y, z ) > 0.00001 )
 				//if( fBm( x, y, z ) )
-				if ( z - m_heightMap[x + y * m_dimX] > 0 )
+				if ( z - m_heightMap[x + yOff] > 0 )
 				{
 					if ( mat.key != "Air" )
 					{
@@ -956,9 +969,9 @@ void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::
 						}
 						else
 						{
-							tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor, { mat.key } )->uID;
+							tile.floorSpriteUID                                                               = g->sf()->createSprite( mat.floor.toStdString(), { mat.key.toStdString() } )->uID;
 							mat.floorSprite                                                                   = tile.floorSpriteUID;
-							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
+							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + yOff] ) )]] = mat;
 						}
 						tile.wallType     = ( WallType )( WallType::WT_SOLIDWALL | WallType::WT_ROUGH | WallType::WT_VIEWBLOCKING | WallType::WT_MOVEBLOCKING );
 						tile.wallMaterial = key;
@@ -968,11 +981,11 @@ void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::
 						}
 						else
 						{
-							tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall, { mat.key } )->uID;
+							tile.wallSpriteUID                                                                = g->sf()->createSprite( mat.wall.toStdString(), { mat.key.toStdString() } )->uID;
 							mat.wallSprite                                                                    = tile.wallSpriteUID;
-							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + y * m_dimX] ) )]] = mat;
+							mats[matsinLevel[qMin( m_dimZ - 1, qMax( 0, z - m_heightMap[x + yOff] ) )]] = mat;
 							// TODO: Is this a bug?
-							g->sf()->createSprite( mat.shortwall, { mat.key } );
+							g->sf()->createSprite( mat.shortwall.toStdString(), { mat.key.toStdString() } );
 						}
 						if ( m_fow )
 						{
@@ -981,7 +994,7 @@ void WorldGenerator::fillFloor( int z, std::vector<TerrainMaterial>& mats, std::
 					}
 					else
 					{
-						Tile& tileBelow = world[x + y * m_dimX + ( z - 1 ) * m_dimX * m_dimY];
+						Tile& tileBelow = world[x + yOff + ( z - 1 ) * m_dimX * m_dimY];
 						if ( tileBelow.wallType & WallType::WT_ROUGH )
 						{
 							tile.floorType      = FloorType::FT_SOLIDFLOOR;
@@ -1148,11 +1161,13 @@ float WorldGenerator::perlinRandWhiteNoise( int x, int y, int z )
 
 void WorldGenerator::clear3x3( std::vector<Tile>& world, Position& pos )
 {
-	for ( int x = pos.x - 1; x < pos.x + 2; ++x )
+	const auto zOff = pos.z * m_dimX * m_dimY;
+	for ( int y = pos.y - 1; y < pos.y + 2; ++y )
 	{
-		for ( int y = pos.y - 1; y < pos.y + 2; ++y )
+		const auto yOff = y * m_dimX;
+		for ( int x = pos.x - 1; x < pos.x + 2; ++x )
 		{
-			Tile& tile         = world[x + y * m_dimX + pos.z * m_dimX * m_dimY];
+			Tile& tile         = world[x + yOff + zOff];
 			tile.wallSpriteUID = 0;
 			tile.flags         = TileFlag::TF_WALKABLE;
 			tile.wallType      = WallType::WT_NOWALL;
@@ -1164,11 +1179,13 @@ void WorldGenerator::clear3x3( std::vector<Tile>& world, Position& pos )
 void WorldGenerator::setEmbedded3x3( std::vector<Tile>& world, Position& pos, unsigned short embeddedMaterial, unsigned short spriteID )
 {
 	// TODO changed it to 2x2
-	for ( int x = pos.x - 1; x < pos.x + 1; ++x )
+	const auto zOff = pos.z * m_dimX * m_dimY;
+	for ( int y = pos.y - 1; y < pos.y + 1; ++y )
 	{
-		for ( int y = pos.y - 1; y < pos.y + 1; ++y )
+		const auto yOff = y * m_dimX;
+		for ( int x = pos.x - 1; x < pos.x + 1; ++x )
 		{
-			Tile& tile = world[x + y * m_dimX + pos.z * m_dimX * m_dimY];
+			Tile& tile = world[x + yOff + zOff];
 
 			if ( tile.wallType & WallType::WT_SOLIDWALL )
 			{
@@ -1338,12 +1355,14 @@ void WorldGenerator::decreaseHeight( int x, int y, int diff )
 	w->getFloorLevelBelow( pos, true );
 
 	auto& world = w->world();
+	
+	const auto yOff = y * m_dimX;
 
 	for ( int i = 0; i < diff; ++i )
 	{
 		if ( pos.z - i > 92 )
 		{
-			Tile& tile = world[x + y * m_dimX + ( pos.z - i ) * m_dimX * m_dimY];
+			Tile& tile = world[x + yOff + ( pos.z - i ) * m_dimX * m_dimY];
 
 			tile.wallType      = WT_NOWALL;
 			tile.wallMaterial  = 0;
@@ -1411,9 +1430,12 @@ int WorldGenerator::getLowestZonYLine( int y )
 
 void WorldGenerator::fillWater( int x, int y, int z )
 {
+	const auto yOff = y * m_dimX;
+	const auto zOff = z * m_dimX * m_dimY;
+
 	while ( z > 1 )
 	{
-		Tile& tile = w->world()[x + y * m_dimX + z * m_dimX * m_dimY];
+		Tile& tile = w->world()[x + yOff + zOff];
 		if ( !(bool)( tile.wallType & WT_SOLIDWALL ) )
 		{
 			w->addWater( Position( x, y, z ), 10 );
@@ -1612,13 +1634,16 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 {
 	int size = ngs->riverSize();
 	int sandRowID = DBH::materialUID( "Sand" );
+
+	const auto zOff = pos.z * m_dimX * m_dimY;
 	for ( int x = pos.x - size; x < pos.x + size + 1; ++x )
 	{
 		for ( int y = pos.y - size; y < pos.y + size + 1; ++y )
 		{
+			const auto yOff = y * m_dimX;
 			if ( x > 0 && x < m_dimX - 1 && y > 0 && y < m_dimY - 1 )
 			{
-				Tile& tile         = world[x + y * m_dimX + pos.z * m_dimX * m_dimY];
+				Tile& tile         = world[x + yOff + zOff];
 				tile.wallSpriteUID = 0;
 				tile.flags         = TileFlag::TF_NONE;
 				tile.wallType      = WallType::WT_NOWALL;
@@ -1628,7 +1653,7 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 				tile.floorMaterial  = 0;
 				tile.floorSpriteUID = 0;
 
-				Tile& tile2         = world[x + y * m_dimX + ( pos.z - 1 ) * m_dimX * m_dimY];
+				Tile& tile2         = world[x + yOff + ( pos.z - 1 ) * m_dimX * m_dimY];
 				tile2.wallSpriteUID = 0;
 				tile2.flags         = TileFlag::TF_NONE;
 				tile2.wallType      = WallType::WT_NOWALL;
@@ -1638,7 +1663,7 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 				tile2.floorMaterial  = 0;
 				tile2.floorSpriteUID = 0;
 
-				Tile& tile3         = world[x + y * m_dimX + ( pos.z - 2 ) * m_dimX * m_dimY];
+				Tile& tile3         = world[x + yOff + ( pos.z - 2 ) * m_dimX * m_dimY];
 				tile3.wallSpriteUID = 0;
 				tile3.flags         = TileFlag::TF_NONE;
 				tile3.wallType      = WallType::WT_NOWALL;
@@ -1649,7 +1674,7 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 
 				for ( int z = pos.z; z < m_dimZ - 1; ++z )
 				{
-					Tile& tile         = world[x + y * m_dimX + z * m_dimX * m_dimY];
+					Tile& tile         = world[x + yOff + z * m_dimX * m_dimY];
 					tile.wallSpriteUID = 0;
 					tile.flags         = TileFlag::TF_NONE;
 					tile.wallType      = WallType::WT_NOWALL;
@@ -1773,7 +1798,7 @@ void WorldGenerator::placeLairs()
 							tile.flags         = TileFlag::TF_NONE;
 							tile.wallSpriteUID = 0;
 							//tile.wallMaterial = 0;
-							w->createRamp( x + xx, y + yy, z + zz, DBH::materialSID( tile.wallMaterial ) );
+							w->createRamp( x + xx, y + yy, z + zz, QString::fromStdString(DBH::materialSID( tile.wallMaterial )) );
 						}
 						break;
 					}
@@ -1797,11 +1822,12 @@ bool WorldGenerator::checkPlacement( int xLoc, int yLoc, int zLoc, int xSize, in
 	auto& world = w->world();
 	for ( int z = zLoc; z < zSize; ++z )
 	{
+		const auto zOff = z * m_dimX * m_dimY;
 		for ( int x = xLoc; x < xSize; ++x )
 		{
 			for ( int y = yLoc; y < ySize; ++y )
 			{
-				Tile& tile = world[x + y * m_dimX + z * m_dimX * m_dimY];
+				Tile& tile = world[x + y * m_dimX + zOff];
 				if ( !(bool)( tile.wallType & WT_SOLIDWALL ) )
 				{
 					return false;

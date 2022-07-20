@@ -212,7 +212,7 @@ void Farm::onTick( quint64 tick )
 				}
 				if ( tile.flags & TileFlag::TF_TILLED )
 				{
-					auto item = g->inv()->getClosestItem( m_fields.begin()->second.pos, true, m_properties.seedItem, m_properties.plantType );
+					auto item = g->inv()->getClosestItem( m_fields.begin()->second.pos, true, m_properties.seedItem.toStdString(), m_properties.plantType.toStdString() );
 					if ( item == 0 )
 					{
 						continue;
@@ -237,7 +237,7 @@ void Farm::updateAutoFarmer()
 {
 	QString seedMaterialID = DB::select( "Material", "Plants", m_properties.plantType ).toString();
 
-	unsigned int countSeed = g->inv()->itemCount( m_properties.seedItem, seedMaterialID );
+	unsigned int countSeed = g->inv()->itemCount( m_properties.seedItem.toStdString(), seedMaterialID.toStdString() );
 
 	auto hl = DB::selectRows( "Plants_OnHarvest_HarvestedItem", m_properties.plantType );
 
@@ -258,7 +258,7 @@ void Farm::updateAutoFarmer()
 	unsigned int countItem2 = 0;
 	if ( !item1ID.isEmpty() )
 	{
-		countItem1 = g->inv()->itemCount( item1ID, material1ID );
+		countItem1 = g->inv()->itemCount( item1ID.toStdString(), material1ID.toStdString() );
 	}
 
 	for ( auto hi : hl )
@@ -272,14 +272,14 @@ void Farm::updateAutoFarmer()
 	}
 	if ( !item2ID.isEmpty() )
 	{
-		countItem2 = g->inv()->itemCount( item2ID, material2ID );
+		countItem2 = g->inv()->itemCount( item2ID.toStdString(), material2ID.toStdString() );
 	}
 	bool harvestOn  = false;
 	bool harvestOff = false;
 
 	if ( m_properties.autoHarvestSeed )
 	{
-		unsigned int count = g->inv()->itemCount( m_properties.seedItem, seedMaterialID );
+		unsigned int count = g->inv()->itemCount( m_properties.seedItem.toStdString(), seedMaterialID.toStdString() );
 		unsigned int min   = m_properties.autoHarvestSeedMin;
 		unsigned int max   = m_properties.autoHarvestSeedMax;
 		if ( count < min )
@@ -293,7 +293,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem1 && !item1ID.isEmpty() )
 	{
-		unsigned int count = g->inv()->itemCount( item1ID, material1ID );
+		unsigned int count = g->inv()->itemCount( item1ID.toStdString(), material1ID.toStdString() );
 		unsigned int min   = m_properties.autoHarvestItem1Min;
 		unsigned int max   = m_properties.autoHarvestItem1Max;
 		if ( count < min )
@@ -307,7 +307,7 @@ void Farm::updateAutoFarmer()
 	}
 	if ( m_properties.autoHarvestItem2 && !item2ID.isEmpty() )
 	{
-		unsigned int count = g->inv()->itemCount( item2ID, material2ID );
+		unsigned int count = g->inv()->itemCount( item2ID.toStdString(), material2ID.toStdString() );
 		unsigned int min   = m_properties.autoHarvestItem2Min;
 		unsigned int max   = m_properties.autoHarvestItem2Max;
 		if ( count < min )

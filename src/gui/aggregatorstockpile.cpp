@@ -93,7 +93,7 @@ bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 		auto active = m_info.filter.getActive();
 		for ( auto entry : active )
 		{
-			int count = sp->count( entry.first, entry.second );
+			int count = sp->count( entry.first.toStdString(), entry.second.toStdString() );
 			//if( count > 0 )
 			{
 				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );
@@ -131,7 +131,7 @@ void AggregatorStockpile::onUpdateAfterTick()
 		auto active = m_info.filter.getActive();
 		for ( auto entry : active )
 		{
-			int count = sp->count( entry.first, entry.second );
+			int count = sp->count( entry.first.toStdString(), entry.second.toStdString() );
 			//if( count > 0 )
 			{
 				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );

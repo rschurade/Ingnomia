@@ -84,7 +84,7 @@ void Filter::update()
 	{
 		for ( const auto& group : inv->groups( category ) )
 		{
-			m_categories[category].addGroup( group );
+			m_categories[QString::fromStdString(category)].addGroup( QString::fromStdString(group) );
 		}
 	}
 	for ( const auto& category : inv->categories() )
@@ -95,7 +95,7 @@ void Filter::update()
 			{
 				for ( const auto& material : inv->materials( category, group, item ) )
 				{
-					addItem( category, group, item, material );
+					addItem( QString::fromStdString(category), QString::fromStdString(group), QString::fromStdString(item), QString::fromStdString(material) );
 				}
 			}
 		}

@@ -68,8 +68,8 @@ void AggregatorInventory::init( Game* game )
 		{
 			for ( const auto& item : g->inv()->items( cat, group ) )
 			{
-				m_itemToCategoryCache.insert_or_assign( item, cat );
-				m_itemToGroupCache.insert_or_assign( item, group );
+				m_itemToCategoryCache.insert_or_assign( QString::fromStdString(item), QString::fromStdString(cat) );
+				m_itemToGroupCache.insert_or_assign( QString::fromStdString(item), QString::fromStdString(group) );
 			}
 		}
 	}
@@ -80,23 +80,23 @@ void AggregatorInventory::init( Game* game )
 		// Reference is valid until first updateWatchedItem only
 		const auto& gwi = GameState::watchedItemList[i];
 		QString key = gwi.category + gwi.group + gwi.item + gwi.material;
-		m_watchedItems.insert( key );
+		m_watchedItems.insert( key.toStdString() );
 
-		if( m_watchedItems.contains( gwi.category ) && gwi.category == key )
+		if( m_watchedItems.contains( gwi.category.toStdString() ) && gwi.category == key )
 		{
-			updateWatchedItem( gwi.category );
+			updateWatchedItem( gwi.category.toStdString() );
 		}
-		else if( m_watchedItems.contains( gwi.category + gwi.group ) && gwi.category + gwi.group == key  )
+		else if( m_watchedItems.contains( (gwi.category + gwi.group).toStdString() ) && gwi.category + gwi.group == key  )
 		{
-			updateWatchedItem( gwi.category, gwi.group );
+			updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString() );
 		}
-		else if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item ) && gwi.category + gwi.group + gwi.item == key )
+		else if( m_watchedItems.contains( (gwi.category + gwi.group + gwi.item).toStdString() ) && gwi.category + gwi.group + gwi.item == key )
 		{
-			updateWatchedItem( gwi.category, gwi.group, gwi.item );
+			updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString(), gwi.item.toStdString() );
 		}
 		else //if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item + gwi.material ) && gwi.category + gwi.group + gwi.item + gwi.material == key )
 		{
-			updateWatchedItem( gwi.category, gwi.group, gwi.item, gwi.material );
+			updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString(), gwi.item.toStdString(), gwi.material.toStdString() );
 		}
 	}
 }
@@ -105,42 +105,45 @@ void AggregatorInventory::onRequestCategories()
 {
 	if( !g ) return;
 	m_categories.clear();
-	for ( const auto& cat : g->inv()->categories() )
+	for ( const auto& _cat : g->inv()->categories() )
 	{
+		const auto cat = QString::fromStdString(_cat);
 		GuiInventoryCategory gic;
 		gic.id = cat;
 		gic.name = S::s( "$CategoryName_" + cat );
-		gic.watched = m_watchedItems.contains( cat );
+		gic.watched = m_watchedItems.contains( cat.toStdString() );
 
-		for ( const auto& group : g->inv()->groups( cat ) )
+		for ( const auto& _group : g->inv()->groups( _cat ) )
 		{
+			const auto group = QString::fromStdString(_group);
 			GuiInventoryGroup gig;
 			gig.id = group;
 			gig.name = S::s( "$GroupName_" + group );
 			gig.cat = cat;
-			gig.watched = m_watchedItems.contains( cat + group );
+			gig.watched = m_watchedItems.contains( (cat + group).toStdString() );
 
-			for ( const auto& item : g->inv()->items( cat, group ) )
+			for ( const auto& _item : g->inv()->items( _cat, _group ) )
 			{
+				const auto item = QString::fromStdString(_item);
 				GuiInventoryItem gii;
 				gii.id = item;
 				gii.name = S::s( "$ItemName_" + item );
 				gii.cat = cat;
 				gii.group = group;
-				gii.watched = m_watchedItems.contains( cat + group + item );
+				gii.watched = m_watchedItems.contains( (cat + group + item).toStdString() );
 
-				for ( const auto& mat : g->inv()->materials( cat, group, item ) )
+				for ( const auto& mat : g->inv()->materials( _cat, _group, _item ) )
 				{
-					auto result   = g->inv()->itemCountDetailed( item, mat );
+					auto result   = g->inv()->itemCountDetailed( item.toStdString(), mat );
 					//if( result.total > 0 )
 					{
 						GuiInventoryMaterial gim;
-						gim.id = mat;
-						gim.name = S::s( "$MaterialName_" + mat );
+						gim.id = QString::fromStdString(mat);
+						gim.name = S::s( "$MaterialName_" + QString::fromStdString(mat) );
 						gim.cat = cat;
 						gim.group = group;
 						gim.item = item;
-						gim.watched = m_watchedItems.contains( cat + group + item + mat );
+						gim.watched = m_watchedItems.contains( (cat + group + item).toStdString() + mat );
 						gim.countTotal = result.total; 
 						gim.countInJob = result.inJob; 
 						gim.countInStockpiles = result.inStockpile;
@@ -244,11 +247,11 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 				}
 			}
 
-			QStringList mats;
+			std::vector<std::string> mats;
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			const auto pm = Global::util->createWorkshopImage( gbi.id, mats );
+			const auto pm = Global::util->createWorkshopImage( gbi.id.toStdString(), mats );
 			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
 			gbi.iconWidth = pm->w;
 			gbi.iconHeight = pm->h;
@@ -266,11 +269,11 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 
 			}
 
-			QStringList mats;
+			std::vector<std::string> mats;
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			const auto pm = Global::util->createConstructionImage( gbi.id, mats );
+			const auto pm = Global::util->createConstructionImage( gbi.id.toStdString(), mats );
 
 			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
 			gbi.iconWidth = pm->w;
@@ -302,11 +305,11 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 			}
 
 
-			QStringList mats;
+			std::vector<std::string> mats;
 			for ( int i = 0; i < 25; ++i )
 				mats.push_back( "None" );
 
-			const auto pm = Global::util->createItemImage( gbi.id, mats );
+			const auto pm = Global::util->createItemImage( gbi.id.toStdString(), mats );
 			Global::util->createBufferForNoesisImage( pm.get(), gbi.buffer );
 			gbi.iconWidth = pm->w;
 			gbi.iconHeight = pm->h;
@@ -318,21 +321,21 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 {
 	if( !g ) return;
-	auto mats = g->inv()->materialCountsForItem( gbri.itemID );
+	auto mats = g->inv()->materialCountsForItem( gbri.itemID.toStdString() );
 
 	gbri.availableMats.append( { "any", mats["any"] } );
 	for ( auto key : mats | ranges::views::keys )
 	{
 		if ( key != "any" )
 		{
-			gbri.availableMats.append( { key, mats[key] } );
+			gbri.availableMats.append( { QString::fromStdString(key), mats[key] } );
 		}
 	}
 }
 
 void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 {
-	QString key = gwi.category + gwi.group + gwi.item + gwi.material;
+	const auto key = (gwi.category + gwi.group + gwi.item + gwi.material).toStdString();
 	if( active )
 	{
 		m_watchedItems.insert( key );
@@ -352,21 +355,21 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 		}
 	}
 
-	if( m_watchedItems.contains( gwi.category ) && gwi.category == key )
+	if( m_watchedItems.contains( gwi.category.toStdString() ) && gwi.category.toStdString() == key )
 	{
-		updateWatchedItem( gwi.category );
+		updateWatchedItem( gwi.category.toStdString() );
 	}
-	else if( m_watchedItems.contains( gwi.category + gwi.group ) && gwi.category + gwi.group == key  )
+	else if( m_watchedItems.contains( (gwi.category + gwi.group).toStdString() ) && (gwi.category + gwi.group).toStdString() == key  )
 	{
-		updateWatchedItem( gwi.category, gwi.group );
+		updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString() );
 	}
-	else if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item ) && gwi.category + gwi.group + gwi.item == key )
+	else if( m_watchedItems.contains( (gwi.category + gwi.group + gwi.item).toStdString() ) && (gwi.category + gwi.group + gwi.item).toStdString() == key )
 	{
-		updateWatchedItem( gwi.category, gwi.group, gwi.item );
+		updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString(), gwi.item.toStdString() );
 	}
 	else //if( m_watchedItems.contains( gwi.category + gwi.group + gwi.item + gwi.material ) && gwi.category + gwi.group + gwi.item + gwi.material == key )
 	{
-		updateWatchedItem( gwi.category, gwi.group, gwi.item, gwi.material );
+		updateWatchedItem( gwi.category.toStdString(), gwi.group.toStdString(), gwi.item.toStdString(), gwi.material.toStdString() );
 	}
 
 
@@ -374,10 +377,10 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 }
 
     
-void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
+void AggregatorInventory::onAddItem( const std::string& itemSID, const std::string& materialSID )
 {
-	QString cat = m_itemToCategoryCache.at( itemSID );
-	QString group = m_itemToGroupCache.at( itemSID );
+	const auto cat = m_itemToCategoryCache.at( QString::fromStdString(itemSID) ).toStdString();
+	const auto group = m_itemToGroupCache.at( QString::fromStdString(itemSID) ).toStdString();
 
 	if( m_watchedItems.contains( cat ) )
 	{
@@ -397,10 +400,10 @@ void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
 	}
 }
 
-void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
+void AggregatorInventory::onRemoveItem( const std::string& itemSID, const std::string& materialSID )
 {
-	QString cat = m_itemToCategoryCache.at( itemSID );
-	QString group = m_itemToGroupCache.at( itemSID );
+	const auto cat = m_itemToCategoryCache.at( QString::fromStdString(itemSID) ).toStdString();
+	const auto group = m_itemToGroupCache.at( QString::fromStdString(itemSID) ).toStdString();
 
 	if( m_watchedItems.contains( cat ) )
 	{
@@ -420,11 +423,11 @@ void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
 	}
 }
 
-void AggregatorInventory::updateWatchedItem( QString cat )
+void AggregatorInventory::updateWatchedItem( const std::string& cat )
 {
 	for( auto& gwi : GameState::watchedItemList )
 	{
-		if( gwi.category == cat && gwi.group.isEmpty() && gwi.item.isEmpty() && gwi.material.isEmpty() )
+		if( gwi.category == QString::fromStdString(cat) && gwi.group.isEmpty() && gwi.item.isEmpty() && gwi.material.isEmpty() )
 		{
 			gwi.count = 0;
 			for ( const auto& group : g->inv()->groups( cat ) )
@@ -437,18 +440,18 @@ void AggregatorInventory::updateWatchedItem( QString cat )
 					}
 				}
 			}
-			gwi.guiString = S::s( "$CategoryName_" + cat ) + ": " + QString::number( gwi.count );
+			gwi.guiString = S::s( "$CategoryName_" + QString::fromStdString(cat) ) + ": " + QString::number( gwi.count );
 			break;
 		}
 	}
 	signalWatchList( GameState::watchedItemList );
 }
     
-void AggregatorInventory::updateWatchedItem( QString cat, QString group )
+void AggregatorInventory::updateWatchedItem( const std::string& cat, const std::string& group )
 {
 	for( auto& gwi : GameState::watchedItemList )
 	{
-		if( gwi.category == cat && gwi.group == group && gwi.item.isEmpty() && gwi.material.isEmpty() )
+		if( gwi.category == QString::fromStdString(cat) && gwi.group == QString::fromStdString(group) && gwi.item.isEmpty() && gwi.material.isEmpty() )
 		{
 			gwi.count = 0;
 
@@ -459,7 +462,7 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 					gwi.count += g->inv()->itemCount( item, mat );
 				}
 			}
-			gwi.guiString = S::s( "$GroupName_" + group ) + ": " + QString::number( gwi.count );
+			gwi.guiString = S::s( "$GroupName_" + QString::fromStdString(group) ) + ": " + QString::number( gwi.count );
 
 			break;
 		}
@@ -467,32 +470,32 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 	signalWatchList( GameState::watchedItemList );
 }
 
-void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item )
+void AggregatorInventory::updateWatchedItem( const std::string& cat, const std::string& group, const std::string& item )
 {
 	for( auto& gwi : GameState::watchedItemList )
 	{
-		if( gwi.category == cat && gwi.group == group && gwi.item == item && gwi.material.isEmpty() )
+		if( gwi.category == QString::fromStdString(cat) && gwi.group == QString::fromStdString(group) && gwi.item == QString::fromStdString(item) && gwi.material.isEmpty() )
 		{
 			gwi.count = 0;
 			for ( const auto& mat : g->inv()->materials( cat, group, item ) )
 			{
 				gwi.count += g->inv()->itemCount( item, mat );
 			}
-			gwi.guiString = S::s( "$ItemName_" + item ) + ": " + QString::number( gwi.count );
+			gwi.guiString = S::s( "$ItemName_" + QString::fromStdString(item) ) + ": " + QString::number( gwi.count );
 			break;
 		}
 	}
 	signalWatchList( GameState::watchedItemList );
 }
 
-void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item, QString mat )
+void AggregatorInventory::updateWatchedItem( const std::string& cat, const std::string& group, const std::string& item, const std::string& mat )
 {
 	for( auto& gwi : GameState::watchedItemList )
 	{
-		if( gwi.category == cat && gwi.group == group && gwi.item == item && gwi.material == mat )
+		if( gwi.category == QString::fromStdString(cat) && gwi.group == QString::fromStdString(group) && gwi.item == QString::fromStdString(item) && gwi.material == QString::fromStdString(mat) )
 		{
 			gwi.count = g->inv()->itemCount( item, mat );
-			gwi.guiString = S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + item ) + ": " + QString::number( gwi.count );
+			gwi.guiString = S::s( "$MaterialName_" + QString::fromStdString(mat) ) + " " + S::s( "$ItemName_" + QString::fromStdString(item) ) + ": " + QString::number( gwi.count );
 			break;
 		}
 	}

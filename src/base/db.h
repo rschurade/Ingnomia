@@ -34,8 +34,8 @@ typedef DBHelper DBH;
 class Item;
 
 namespace DBS {
-	class Workshop;
-	class Job;
+	struct Workshop;
+	struct Job;
 }
 
 class DB
@@ -79,9 +79,9 @@ public:
 	static bool removeRows( QString table, QString id );
 	static bool addTranslation( QString id, QString text );
 
-	static QSharedPointer<DBS::Workshop> workshop( QString id );
-	static QSharedPointer<DBS::Job> job( QString id );
-	static std::vector<QString> jobIds();
+	static DBS::Workshop* workshop( const std::string& id );
+	static DBS::Job* job( const std::string& id );
+	static std::vector<std::string> jobIds();
 
 private:
 	static QSqlDatabase& getDB();
@@ -94,8 +94,8 @@ private:
 
 	static absl::btree_map<Qt::HANDLE, QSqlDatabase> m_connections;
 
-	static absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> m_workshops;
-	static absl::flat_hash_map<QString, QSharedPointer<DBS::Job>> m_jobs;
+	static absl::flat_hash_map<std::string, std::unique_ptr<DBS::Workshop>> m_workshops;
+	static absl::flat_hash_map<std::string, std::unique_ptr<DBS::Job>> m_jobs;
 
 	DB()  = delete;
 	~DB() = delete;

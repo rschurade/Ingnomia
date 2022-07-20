@@ -21,7 +21,6 @@
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
-#include "../base/global.h"
 #include "../base/util.h"
 #include "../game/game.h"
 #include "../game/gnomemanager.h"
@@ -33,7 +32,6 @@
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gfx/spritefactory.h"
-#include "../gui/strings.h"
 #include "spdlog/spdlog.h"
 #include "fmt/format.h"
 
@@ -336,7 +334,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.head.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.head.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.head.itemID );
 					bs += "HeadArmor";
 					// FIXME: This is unused?
 					hairConcealed = true;
@@ -347,7 +345,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.chest.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.chest.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.chest.itemID );
 					bs += "ChestArmor";
 					pm.Material = m_equipment.chest.material;
 				}
@@ -356,7 +354,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.arm.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
 					bs += "LeftArmArmor";
 					pm.Material = m_equipment.arm.material;
 				}
@@ -365,7 +363,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.arm.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.arm.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.arm.itemID );
 					bs += "RightArmArmor";
 					pm.Material = m_equipment.arm.material;
 				}
@@ -374,7 +372,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.hand.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
 					bs += "LeftHandArmor";
 					pm.Material = m_equipment.hand.material;
 				}
@@ -383,7 +381,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.hand.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.hand.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.hand.itemID );
 					bs += "RightHandArmor";
 					pm.Material = m_equipment.hand.material;
 				}
@@ -392,7 +390,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.foot.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
 					bs += "LeftFootArmor";
 					pm.Material = m_equipment.foot.material;
 				}
@@ -401,7 +399,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 				if ( m_equipment.foot.itemID )
 				{
 					bs = "Gnome";
-					bs += g->inv()->itemGroup( m_equipment.foot.itemID ).toStdString();
+					bs += g->inv()->itemGroup( m_equipment.foot.itemID );
 					bs += "RightFootArmor";
 					pm.Material = m_equipment.foot.material;
 				}
@@ -442,7 +440,7 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 			bs += "Back";
 		}
 
-		pm.BaseSprite = bs.empty() ? std::nullopt : std::optional<std::string>(bs);
+		pm.BaseSprite = vars::opt(bs);
 
 		def.push_back( pm );
 	}

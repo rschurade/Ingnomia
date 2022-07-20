@@ -387,7 +387,7 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	}
 	SetSelectedPriority( m_prios->Get( qMin( qMax( 0, info.priority ), m_prios->Count() ) ) );
 
-	if ( m_gui.isEmpty() )
+	if ( m_gui )
 	{
 		SetAcceptGenerated( info.acceptGenerated );
 		SetAutoCraftMissing( info.autoCraftMissing );
@@ -425,7 +425,7 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 		m_catchFish   = info.catchFish;
 		m_processFish = info.processFish;
 	}
-	spdlog::debug("{}", m_gui.toStdString());
+	spdlog::debug("{}", *m_gui);
 
 	m_proxy->unblockWriteBack();
 
@@ -496,7 +496,7 @@ WsPriority* WorkshopModel::GetSelectedPriority() const
 
 const char* WorkshopModel::GetNormalVisible() const
 {
-	if ( m_gui.isEmpty() )
+	if ( m_gui )
 	{
 		return "Visible";
 	}

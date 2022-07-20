@@ -44,7 +44,7 @@ class Item : public Object
 {
 public:
 	Item();
-	Item( Position& pos, QString itemSID, QString materialSID );
+	Item( Position& pos, const std::string& itemSID, const std::string& materialSID );
 	Item( QVariantMap in );
 	Item( const Item& other );
 	~Item();
@@ -56,9 +56,9 @@ public:
 
 	QString getPixmapSID() const;
 	QString getDesignation() const;
-	QString itemSID() const;
-	QString materialSID() const;
-	QString combinedSID() const;
+	std::string itemSID() const;
+	std::string materialSID() const;
+	std::string combinedSID() const;
 
 	bool insertItem( unsigned int itemID );
 	bool removeItem( unsigned int itemID );

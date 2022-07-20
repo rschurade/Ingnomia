@@ -368,7 +368,7 @@ private:
 	bool m_catchFish          = false;
 	bool m_processFish        = false;
 
-	QString m_gui;
+	std::optional<std::string> m_gui;
 
 	NS_DECLARE_REFLECTION( WorkshopModel, NotifyPropertyChangedBase )
 };

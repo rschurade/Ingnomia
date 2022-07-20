@@ -189,7 +189,7 @@ void CanWork::setSkillActive( const std::string& id, bool active )
 		}
 	}
 
-	QString group = DB::select( "SkillGroup", "Skills", QString::fromStdString(id) ).toString();
+	const auto group  = DB::select( "SkillGroup", "Skills", QString::fromStdString(id) ).toString();
 	if ( group == "Combat" || group == "Defense" )
 	{
 		return;
@@ -421,7 +421,7 @@ void CanWork::gainTech( QVariant techGain, QSharedPointer<Job> job )
 		techGain = DB::selectRow( "Crafts_TechGain", job->craftID() );
 	}
 	QVariantMap tgm = techGain.toMap();
-	QString techID  = tgm.value( "TechID" ).toString();
+	const auto techID   = tgm.value( "TechID" ).toString();
 	float gain      = 0;
 
 	if ( techID.isEmpty() )
@@ -488,7 +488,7 @@ double CanWork::parseGain( QVariantMap gainMap )
 
 double CanWork::parseValue( QVariant v )
 {
-	QString var = v.toString();
+	auto var  = v.toString();
 	if ( var.startsWith( "$Tech" ) )
 	{
 		var.remove( 0, 1 );
@@ -572,7 +572,7 @@ void CanWork::equipHand( unsigned int item, QString side )
 				m_leftHandHasWeapon = false;
 			}
 
-			m_lightIntensity = DB::select( "LightIntensity", "Items", g->inv()->itemSID( item ) ).toInt();
+			m_lightIntensity = DB::select( "LightIntensity", "Items", QString::fromStdString(g->inv()->itemSID( item )) ).toInt();
 			if ( m_lightIntensity )
 			{
 				g->w()->addLight( m_id, m_position, m_lightIntensity );
@@ -635,10 +635,10 @@ bool CanWork::mineFloor()
 	Position pos( m_job->pos() + offset );
 	auto mat = g->w()->removeFloor( pos, m_position );
 
-	QString materialSID = "None";
+	std::string materialSID = "None";
 	QString type        = "None";
 	materialSID         = DBH::materialSID( mat );
-	type                = DB::select( "Type", "Materials", materialSID ).toString();
+	type                = DB::select( "Type", "Materials", QString::fromStdString(materialSID) ).toString();
 
 	if ( type == "Soil" )
 	{
@@ -790,14 +790,14 @@ bool CanWork::constructAnimate()
 	if ( con.contains( "IntermediateSprites" ) )
 	{
 		QVariantList isl = con.value( "IntermediateSprites" ).toList();
-		QString spriteID;
+		std::string spriteID;
 		QString type;
 		QString offset;
 		int percent;
 		for ( auto isv : isl )
 		{
 			auto ism = isv.toMap();
-			spriteID = ism.value( "SpriteID" ).toString();
+			spriteID = ism.value( "SpriteID" ).toString().toStdString();
 			type     = ism.value( "Type" ).toString();
 			offset   = ism.value( "Offset" ).toString();
 			percent  = ism.value( "Percent" ).toInt();
@@ -809,7 +809,7 @@ bool CanWork::constructAnimate()
 		}
 		Position pos( m_job->pos() + offset );
 
-		QStringList materials;
+		std::vector<std::string> materials;
 
 		if ( !claimedItems().empty() )
 		{
@@ -819,14 +819,14 @@ bool CanWork::constructAnimate()
 			}
 		}
 		// paint the intermediate sprite and return
-		if ( !spriteID.isEmpty() )
+		if ( !spriteID.empty() )
 		{
 			bool isFloor = false;
 			if ( type == "Floor" )
 			{
 				isFloor = true;
 			}
-			Sprite* s = g->sf()->createSprite( spriteID, { materials.first() } );
+			Sprite* s = g->sf()->createSprite( spriteID, { *materials.begin() } );
 			g->w()->setJobSprite( pos, s->uID, m_job->rotation(), isFloor, m_jobID, false );
 			return true;
 		}
@@ -859,8 +859,8 @@ bool CanWork::constructDugStairs()
 		return false;
 	}
 	unsigned itemID     = cil.first();
-	QString materialSID = g->inv()->materialSID( itemID );
-	QString type        = DB::select( "Type", "Materials", materialSID ).toString();
+	const auto materialSID = g->inv()->materialSID( itemID );
+	const auto type        = DB::select( "Type", "Materials", QString::fromStdString(materialSID) ).toString();
 
 	bool result = false;
 	if ( type == "Soil" || type == "Sand" || type == "Clay" )
@@ -901,8 +901,8 @@ bool CanWork::constructDugRamp()
 	}
 	unsigned itemID = cil.first();
 
-	QString materialSID = g->inv()->materialSID( itemID );
-	QString type        = DB::select( "Type", "Materials", materialSID ).toString();
+	const auto materialSID = g->inv()->materialSID( itemID );
+	const auto type        = DB::select( "Type", "Materials", QString::fromStdString(materialSID) ).toString();
 
 	if ( type == "Soil" || type == "Sand" || type == "Clay" )
 	{
@@ -982,18 +982,18 @@ bool CanWork::createItem()
 		for ( auto item : items )
 		{
 			QVariantMap im      = item.toMap();
-			QString materialSID = "None";
-			QString type        = "None";
+			std::string materialSID = "None";
+			const auto type         = "None";
 			if ( im.contains( "Material" ) )
 			{
-				materialSID = im.value( "Material" ).toString();
+				materialSID = im.value( "Material" ).toString().toStdString();
 			}
-			QString condition = im.value( "Condition" ).toString();
+			const auto condition  = im.value( "Condition" ).toString();
 			if ( condition == "MaterialType" )
 			{
 				if ( type == im.value( "ConditionValue" ).toString() )
 				{
-					g->inv()->createItem( pos, im.value( "ItemID" ).toString(), materialSID );
+					g->inv()->createItem( pos, im.value( "ItemID" ).toString().toStdString(), materialSID );
 					return true;
 				}
 			}
@@ -1138,7 +1138,7 @@ bool CanWork::craft()
 		qIndex = qMin( qSize - 1, qIndex + 1 );
 	}
 
-	QString resultMaterial = m_job->material();
+	const auto resultMaterial  = m_job->material();
 
 	for ( int i = 0; i < m_job->amount(); ++i )
 	{
@@ -1155,15 +1155,15 @@ bool CanWork::craft()
 						auto item = claimedItems().first();
 
 						auto sourceMaterial = g->inv()->materialSID( item );
-						auto material       = Global::util->randomMetalSliver( sourceMaterial );
-						unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), material );
+						auto material       = Global::util->randomMetalSliver( QString::fromStdString(sourceMaterial) );
+						unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), material.toStdString() );
 						g->inv()->setMadeBy( itemID, id() );
 					}
 				}
 			}
 			else
 			{
-				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), resultMaterial );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), resultMaterial.toStdString() );
 				g->inv()->setMadeBy( itemID, id() );
 				g->inv()->setQuality( itemID, qIndex );
 			}
@@ -1175,7 +1175,8 @@ bool CanWork::craft()
 				return false;
 			}
 
-			unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), claimedItems() );
+			const auto claimed = claimedItems();
+			unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), std::vector<unsigned int>(claimed.begin(), claimed.end()) );
 			g->inv()->setMadeBy( itemID, id() );
 			g->inv()->setQuality( itemID, qIndex );
 			if ( m_job->item() == "Automaton" )
@@ -1205,12 +1206,12 @@ bool CanWork::craft()
 						sourceItem = item;
 					}
 				}
-				QString sourceMaterial = g->inv()->materialSID( sourceItem );
-				QString dyeMaterial    = g->inv()->materialSID( dyeItem );
+				const auto sourceMaterial  = g->inv()->materialSID( sourceItem );
+				const auto dyeMaterial     = g->inv()->materialSID( dyeItem );
 
-				QString targetMaterial = Global::util->addDyeMaterial( sourceMaterial, dyeMaterial );
+				const auto targetMaterial  = Global::util->addDyeMaterial( QString::fromStdString(sourceMaterial), QString::fromStdString(dyeMaterial) );
 
-				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), targetMaterial );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), targetMaterial.toStdString() );
 				g->inv()->setMadeBy( itemID, id() );
 				g->inv()->setQuality( itemID, g->inv()->quality( sourceItem ) );
 			}
@@ -1222,13 +1223,13 @@ bool CanWork::craft()
 					return false;
 				}
 				unsigned int sourceItem = claimedItems().first();
-				QString sourceMaterial  = g->inv()->materialSID( sourceItem );
-				QString dyeColor        = DB::select( "Color", "Materials", sourceMaterial ).toString();
+				const auto sourceMaterial   = g->inv()->materialSID( sourceItem );
+				const auto dyeColor         = DB::select( "Color", "Materials", QString::fromStdString(sourceMaterial) ).toString();
 				auto keys               = DB::ids( "Materials", "Type", "Dye" );
 				int id                  = 0;
 				for ( auto key : keys )
 				{
-					QString keyColor = DB::select( "Color", "Materials", key ).toString();
+					const auto keyColor  = DB::select( "Color", "Materials", key ).toString();
 					if ( keyColor == dyeColor )
 					{
 						m_equipment.hairColor = id;
@@ -1241,15 +1242,15 @@ bool CanWork::craft()
 			else if ( m_job->conversionMaterial() == "$Leather" )
 			{
 				unsigned int sourceItem = claimedItems().first();
-				QString sourceMaterial  = g->inv()->materialSID( sourceItem );
+				const auto sourceMaterial   = g->inv()->materialSID( sourceItem );
 
-				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), sourceMaterial + "Leather" );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), sourceMaterial + "Leather" );
 				g->inv()->setMadeBy( itemID, id() );
 				g->inv()->setQuality( itemID, qIndex );
 			}
 			else
 			{
-				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item(), m_job->conversionMaterial() );
+				unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), m_job->item().toStdString(), m_job->conversionMaterial().toStdString() );
 				g->inv()->setMadeBy( itemID, id() );
 				g->inv()->setQuality( itemID, qIndex );
 			}
@@ -1300,7 +1301,7 @@ bool CanWork::butcherFish()
 {
 	for ( auto itemUID : claimedItems() )
 	{
-		QString materialSID = g->inv()->materialSID( itemUID );
+		const auto materialSID  = g->inv()->materialSID( itemUID );
 
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "FishBone", materialSID );
@@ -1313,7 +1314,7 @@ bool CanWork::butcherCorpse()
 {
 	for ( auto itemUID : claimedItems() )
 	{
-		QString materialSID = g->inv()->materialSID( itemUID );
+		const auto materialSID  = g->inv()->materialSID( itemUID );
 
 		g->inv()->createItem( m_job->posItemOutput(), "Meat", materialSID );
 		g->inv()->createItem( m_job->posItemOutput(), "Bone", materialSID );
@@ -1331,12 +1332,12 @@ bool CanWork::fish()
 
 bool CanWork::prepareSpell()
 {
-	QString jobID = m_job->type();
+	const auto jobID  = m_job->type();
 
 	QStringList jobParts = jobID.split( "_" );
-	QString spellID      = jobParts.last();
+	const auto spellID       = jobParts.last();
 
-	QString radiusString = DB::select( "Radius", "Spells", spellID ).toString();
+	const auto radiusString  = DB::select( "Radius", "Spells", spellID ).toString();
 	bool ok              = false;
 	int radius           = radiusString.toInt( &ok );
 	if ( !ok )
@@ -1387,9 +1388,9 @@ bool CanWork::castSpellAnimate()
 
 bool CanWork::finishSpell()
 {
-	QString jobID        = m_job->type();
+	const auto jobID         = m_job->type();
 	QStringList jobParts = jobID.split( "_" );
-	QString spellID      = jobParts.last();
+	const auto spellID       = jobParts.last();
 
 	auto spellMap        = DB::selectRow( "Spells", spellID );
 	QVariantList reqs    = spellMap.value( "EffectRequirements" ).toList();
@@ -1400,7 +1401,7 @@ bool CanWork::finishSpell()
 		bool effected = true;
 		for ( auto vReq : reqs )
 		{
-			QString sReq = vReq.toString();
+			const auto sReq  = vReq.toString();
 			if ( sReq == "Plant" )
 			{
 				effected &= g->w()->plants().contains( pos.toInt() );
@@ -1419,7 +1420,7 @@ bool CanWork::finishSpell()
 		{
 			for ( auto vEffect : effects )
 			{
-				QString sEffect = vEffect.toString();
+				const auto sEffect  = vEffect.toString();
 				if ( sEffect == "Reveal" )
 				{
 					g->w()->clearTileFlag( pos, TileFlag::TF_UNDISCOVERED );

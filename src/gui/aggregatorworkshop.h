@@ -72,7 +72,7 @@ struct GuiWorkshopInfo
 	bool catchFish        = false;
 	bool processFish      = false;
 
-	QString gui;
+	std::optional<std::string> gui;
 
 	QList<GuiWorkshopProduct> products;
 

@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "creature.h"
+#include "../stringsHelper.h"
 
 #include "spdlog/spdlog.h"
 
@@ -26,7 +27,7 @@ QVariantMap EquipmentItem::serialize()
 	out.insert( "Material", QString::fromStdString(material) );
 	out.insert( "ItemID", itemID );
 	out.insert( "MaterialID", materialID );
-	out.insert( "AllMats", allMats );
+	out.insert( "AllMats", str::toStringList(allMats) );
 	return out;
 }
 
@@ -36,7 +37,7 @@ EquipmentItem::EquipmentItem( const QVariantMap& in )
 	material   = in.value( "Material" ).toString().toStdString();
 	itemID     = in.value( "ItemID" ).toUInt();
 	materialID = in.value( "MaterialID" ).toUInt();
-	allMats	   = in.value( "AllMats" ).toStringList();
+	allMats    = str::fromStringList( in.value( "AllMats" ).toStringList() );
 }
 
 std::vector<unsigned int> Equipment::wornItems() const

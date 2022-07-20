@@ -8,20 +8,18 @@
 
 #include <string>
 #include <algorithm>
+#include <vector>
+#include <QStringList>
 
 namespace str
 {
-	std::string toUpper(const std::string& str) {
-		auto result = str;
-		// FIXME: This is not I18N safe, replace with ICU
-		std::transform(result.begin(), result.end(), result.begin(), ::toupper);
-		return result;
-	}
+	std::string toUpper(const std::string& str);
 
-	char toUpper(const char c) {
-		// FIXME: This is not I18N safe, replace with ICU
-		return std::toupper(c);
-	}
+	char toUpper(const char c);
+
+	QStringList toStringList(const std::vector<std::string>& vector);
+
+	std::vector<std::string> fromStringList(const QStringList& list);
 }
 
 #endif // INGNOMIA_STRINGSHELPER_H

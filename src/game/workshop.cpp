@@ -70,7 +70,7 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	sourceItems = in.value( "SourceItems" ).toList();
 	itemsToSell = in.value( "ItemsToSell" ).toList();
 
-	auto dbws = DB::workshop( type );
+	auto dbws = DB::workshop( type.toStdString() );
 	if( dbws )
 	{
 		gui = dbws->GUI;
@@ -194,7 +194,7 @@ Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 	m_properties.pos      = pos;
 	m_name                = S::s( "$WorkshopName_" + type );
 
-	auto dbws = DB::workshop( type );
+	auto dbws = DB::workshop( type.toStdString() );
 	if( dbws )
 	{
 		auto& spl = dbws->components;
@@ -422,7 +422,7 @@ void Workshop::onTick( quint64 tick )
 					}
 				}
 
-				int existing = g->inv()->itemCountWithInJob( cj.itemSID, materialID );
+				int existing = g->inv()->itemCountWithInJob( cj.itemSID.toStdString(), materialID.toStdString() );
 				if ( existing >= cj.numItemsToCraft )
 				{
 					cj.paused = true;
@@ -511,7 +511,7 @@ void Workshop::checkAutoGenerate( CraftJob cj )
 	//int numToBuild = jm.value( "CraftNumberValue" ).toInt();
 	for ( auto ri : reqItems )
 	{
-		int avail = g->inv()->itemCount( ri.itemSID, ri.materialSID );
+		int avail = g->inv()->itemCount( ri.itemSID.toStdString(), ri.materialSID.toStdString() );
 		if ( avail >= ri.amount )
 		{
 			continue;
@@ -1008,16 +1008,16 @@ bool Workshop::checkItemsAvailable( CraftJob& cj )
 		QString materialID      = ri.materialSID;
 		bool requireSame        = ri.requireSame;
 
-		QList<unsigned int> items;
+		std::vector<unsigned int> items;
 
 		if( materialID == "any" && requireSame )
 		{
 			// will always return 0 if item count is less than needed
 			ri.avail = 0;
-			QList<QString> materials = g->inv()->materialsForItem( itemID, count );
-			for ( auto mat : materials )
+			const auto materials = g->inv()->materialsForItem( itemID.toStdString(), count );
+			for ( const auto& mat : materials )
 			{
-				items = g->inv()->getClosestItems( m_properties.posIn, true, itemID, mat, count );
+				items = g->inv()->getClosestItems( m_properties.posIn, true, itemID.toStdString(), mat, count );
 				if ( items.size() < count )
 				{
 					continue;
@@ -1028,7 +1028,7 @@ bool Workshop::checkItemsAvailable( CraftJob& cj )
 		}
 		else
 		{
-			items = g->inv()->getClosestItems( m_properties.posIn, true, itemID, materialID, count );
+			items = g->inv()->getClosestItems( m_properties.posIn, true, itemID.toStdString(), materialID.toStdString(), count );
 			ri.avail = items.size();
 		}
 

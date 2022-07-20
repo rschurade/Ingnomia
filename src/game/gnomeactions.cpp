@@ -18,10 +18,7 @@
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
-#include "../base/global.h"
-#include "../base/logger.h"
 #include "../base/pathfinder.h"
-#include "../base/position.h"
 #include "../base/util.h"
 #include "../game/creaturemanager.h"
 #include "../game/eventmanager.h"
@@ -29,7 +26,6 @@
 #include "../game/gnomemanager.h"
 #include "../game/inventory.h"
 #include "../game/militarymanager.h"
-#include "../game/neighbormanager.h"
 #include "../game/plant.h"
 #include "../game/room.h"
 #include "../game/roommanager.h"
@@ -44,7 +40,6 @@
 #include "../gui/strings.h"
 #include "game.h"
 #include "gnome.h"
-#include "gnomemanager.h"
 
 #include <QElapsedTimer>
 
@@ -383,7 +378,7 @@ BT_RESULT Gnome::actionEat( bool halt )
 		m_taskFinishTick = GameState::tick + Global::util->ticksPerMinute * 15; // TODO set duration depending on food item or other circumstances
 		unsigned int carriedItem = m_carriedItems.first();
 		//printf("eat %s \n", g->inv()->itemSID( carriedItem ).toStdString().c_str() );
-		g->sm()->playEffect("actionEat" , m_position, g->inv()->itemSID( carriedItem ) );
+		g->sm()->playEffect("actionEat" , m_position, QString::fromStdString(g->inv()->itemSID( carriedItem )) );
 		
 	}
 
@@ -412,7 +407,7 @@ BT_RESULT Gnome::actionEat( bool halt )
 	m_needs.insert( "Hunger", newVal );
 	m_startedEating = true;
 
-	QString logText( "I just ate a " + S::s( "$ItemName_" + g->inv()->itemSID( carriedItem ) ) + "." );
+	QString logText( "I just ate a " + S::s( "$ItemName_" + QString::fromStdString(g->inv()->itemSID( carriedItem )) ) + "." );
 	//m_log.append( logText );
 
 	g->inv()->destroyObject( carriedItem );
@@ -444,7 +439,7 @@ BT_RESULT Gnome::actionDrink( bool halt )
 		
 		unsigned int carriedItem = m_carriedItems.first();
 		//printf("drink %s %d\n", g->inv()->itemSID( carriedItem ).toStdString().c_str(), g->inv()->quality( carriedItem ) );
-		g->sm()->playEffect("actionDrink" , m_position, g->inv()->itemSID( carriedItem ) );
+		g->sm()->playEffect("actionDrink" , m_position, QString::fromStdString(g->inv()->itemSID( carriedItem )) );
 	}
 
 	if ( GameState::tick < m_taskFinishTick )
@@ -472,7 +467,7 @@ BT_RESULT Gnome::actionDrink( bool halt )
 	m_needs.insert( "Thirst", newVal );
 	m_startedDrinking = false;
 
-	QString logText( "I just drank a " + S::s( "$ItemName_" + g->inv()->itemSID( carriedItem ) ) + "." );
+	QString logText( "I just drank a " + S::s( "$ItemName_" + QString::fromStdString(g->inv()->itemSID( carriedItem )) ) + "." );
 	//m_log.append( logText );
 
 	g->inv()->destroyObject( carriedItem );
@@ -544,7 +539,7 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 	}
 
 	m_itemToPickUp = 0;
-	log( "Picked up an item. " + g->inv()->materialSID( m_itemToPickUp ) + " " + g->inv()->itemSID( m_itemToPickUp ) );
+	log( QString::fromStdString("Picked up an item. " + g->inv()->materialSID( m_itemToPickUp ) + " " + g->inv()->itemSID( m_itemToPickUp )) );
 	return BT_RESULT::SUCCESS;
 }
 
@@ -713,8 +708,11 @@ BT_RESULT Gnome::actionInitJob( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
-bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int count, bool requireSame, QStringList restriction )
+bool Gnome::claimFromLinkedStockpile( QString _itemSID, QString _materialSID, int count, bool requireSame, QStringList restriction )
 {
+	const auto itemSID = _itemSID.toStdString();
+	const auto materialSID = _materialSID.toStdString();
+
 	if ( !m_job )
 	{
 		return false;
@@ -727,13 +725,13 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 		// is the whole needed number in the stockpile?
 		if ( materialSID == "any" )
 		{
-			QList<QString> materials = g->inv()->materialsForItem( itemSID, count );
+			const auto materials = g->inv()->materialsForItem( itemSID, count );
 
 			if ( requireSame )
 			{
 				for ( auto mat : materials )
 				{
-					bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
+					bool matAllowed = ( restriction.empty() || restriction.contains( QString::fromStdString(mat) ) );
 					if ( matAllowed )
 					{
 						if ( sp->count( itemSID, mat ) < count )
@@ -791,7 +789,7 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 						{
 							// if exists get item from that position
 							item = g->inv()->getItemAtPos( spf->pos, true, itemSID, "any" );
-							if ( item && restriction.contains( g->inv()->materialSID( item ) ) )
+							if ( item && restriction.contains( QString::fromStdString(g->inv()->materialSID( item )) ) )
 							{
 								g->inv()->moveItemToPos( item, m_job->posItemInput() );
 								sp->setInfiNotFull( spf->pos );
@@ -870,8 +868,8 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 		Workshop* ws = g->wsm()->workshopAt( m_job->pos() );
 		for ( auto component : m_job->requiredItems() )
 		{
-			QString itemSID         = component.itemSID;
-			QString materialSID     = component.materialSID;
+			const auto itemSID         = component.itemSID.toStdString();
+			const auto materialSID     = component.materialSID.toStdString();
 			bool requireSame        = component.requireSame;
 			QStringList restriction = component.materialRestriction;
 			if ( restriction.size() == 1 && restriction.first().isEmpty() )
@@ -882,7 +880,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 			int count        = component.count;
 			int countClaimed = 0;
 			// check if item exists in linked stockpile
-			if ( claimFromLinkedStockpile( itemSID, materialSID, count, requireSame, restriction ) )
+			if ( claimFromLinkedStockpile( QString::fromStdString(itemSID), QString::fromStdString(materialSID), count, requireSame, restriction ) )
 			{
 				continue;
 			}
@@ -891,7 +889,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 			{
 				if ( requireSame && materialSID == "any" )
 				{
-					QList<QString> materials = g->inv()->materialsForItem( itemSID, count );
+					const auto materials = g->inv()->materialsForItem( itemSID, count );
 					if ( materials.empty() )
 					{
 						return BT_RESULT::FAILURE;
@@ -899,7 +897,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 					bool found = false;
 					for ( auto mat : materials )
 					{
-						bool matAllowed = ( restriction.empty() || restriction.contains( mat ) );
+						bool matAllowed = ( restriction.empty() || restriction.contains( QString::fromStdString(mat) ) );
 						if ( matAllowed )
 						{
 							auto items = g->inv()->getClosestItems( m_job->pos(), true, itemSID, mat, count );
@@ -919,7 +917,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 					if ( !found )
 					{
 						if ( Global::debugMode )
-							log( "failed to claim: " + itemSID + " " + materialSID );
+							log( QString::fromStdString("failed to claim: " + itemSID + " " + materialSID) );
 						//abortJob( "claimMaterial() not enough" );
 						return BT_RESULT::FAILURE;
 					}
@@ -936,7 +934,7 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 						else
 						{
 							if ( Global::debugMode )
-								log( "failed to claim: " + itemSID + " " + materialSID );
+								log( QString::fromStdString("failed to claim: " + itemSID + " " + materialSID) );
 							//abortJob( "claimMaterial() not enough" );
 							return BT_RESULT::FAILURE;
 						}
@@ -957,10 +955,10 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 		for ( auto component : m_job->requiredItems() )
 		{
 			int count          = component.count;
-			QString itemID     = component.itemSID;
-			QString materialID = component.materialSID;
+			const auto itemID     = component.itemSID.toStdString();
+			const auto materialID = component.materialSID.toStdString();
 			if ( Global::debugMode )
-				log( "claim " + QString::number( count ) + " " + materialID + " " + itemID );
+				log( QString::fromStdString("claim " + std::to_string( count ) + " " + materialID + " " + itemID) );
 
 			QStringList restrictions = component.materialRestriction;
 			if ( restrictions.size() == 1 && restrictions.first().isEmpty() )
@@ -970,10 +968,10 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 
 			if ( materialID == "any" && !restrictions.empty() )
 			{
-				absl::btree_set<QString> matTypes;
-				for ( auto type : restrictions )
+				absl::btree_set<std::string> matTypes;
+				for ( const auto& type : restrictions )
 				{
-					matTypes.insert( type );
+					matTypes.insert( type.toStdString() );
 					unsigned int item = g->inv()->getClosestItem2( m_job->pos(), true, itemID, matTypes );
 					if ( item )
 					{
@@ -1050,7 +1048,7 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 
 	if ( equippedItem )
 	{
-		if ( g->inv()->itemSID( equippedItem ).toStdString() == rt.type && equippedToolLevel >= rt.level )
+		if ( g->inv()->itemSID( equippedItem ) == rt.type && equippedToolLevel >= rt.level )
 		{
 			// gnome already has the required tool equipped
 			setCurrentTarget( m_position );
@@ -1071,17 +1069,17 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 		}
 	}
 	//no item equipped
-	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( QString::fromStdString(rt.type) );
+	const auto& mc = g->inv()->materialCountsForItem( rt.type );
 
-	for ( auto key : mc | ranges::views::keys )
+	for ( const auto& entry : mc )
 	{
-		if ( mc[key] > 0 )
+		if ( entry.second > 0 )
 		{
-			int tl = Global::util->toolLevel( key );
+			int tl = Global::util->toolLevel( QString::fromStdString(entry.first) );
 			if ( tl >= rt.level )
 			{
 				// there are a number of tools of the required level in the world
-				auto tool = g->inv()->getClosestItem( m_position, true, QString::fromStdString(rt.type), key );
+				auto tool = g->inv()->getClosestItem( m_position, true, rt.type, entry.first );
 				if ( tool )
 				{
 					m_job->setToolPosition( g->inv()->getItemPos( tool ) );
@@ -1134,9 +1132,9 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 		{
 			g->inv()->pickUpItem( claimedTool, m_id );
 			m_equipment.rightHandHeld.itemID     = claimedTool;
-			m_equipment.rightHandHeld.item       = g->inv()->itemSID( claimedTool ).toStdString();
+			m_equipment.rightHandHeld.item       = g->inv()->itemSID( claimedTool );
 			m_equipment.rightHandHeld.materialID = g->inv()->materialUID( claimedTool );
-			m_equipment.rightHandHeld.material   = g->inv()->materialSID( claimedTool ).toStdString();
+			m_equipment.rightHandHeld.material   = g->inv()->materialSID( claimedTool );
 
 			m_btBlackBoard.remove( "ClaimedTool" );
 
@@ -1266,7 +1264,7 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 
 	if ( !item.empty() )
 	{
-		auto itemToGet = g->inv()->getClosestItem( m_position, true, QString::fromStdString(item), QString::fromStdString(material) );
+		auto itemToGet = g->inv()->getClosestItem( m_position, true, item, material );
 
 		if ( itemToGet )
 		{
@@ -1574,7 +1572,7 @@ BT_RESULT Gnome::actionDropItem( bool halt )
 			g->inv()->putDownItem( carriedItem, m_position );
 			if ( m_job->stockpile() != 0 )
 			{
-				log( "Put " + g->inv()->materialSID( carriedItem ) + " " + g->inv()->itemSID( carriedItem ) + " into stockpile at " + m_position.toString() );
+				log( QString::fromStdString("Put " + g->inv()->materialSID( carriedItem ) + " " + g->inv()->itemSID( carriedItem ) + " into stockpile at " + m_position.toString().toStdString()) );
 				g->spm()->insertItem( m_job->stockpile(), m_position, carriedItem );
 			}
 			//m_job->removeClaimedItem2( item );
@@ -1609,7 +1607,7 @@ BT_RESULT Gnome::actionDropAllItems( bool halt )
 			g->inv()->putDownItem( item, m_position );
 			if ( m_job->stockpile() != 0 )
 			{
-				log( "Put " + g->inv()->materialSID( item ) + " " + g->inv()->itemSID( item ) + " into stockpile at " + m_position.toString() );
+				log( QString::fromStdString("Put " + g->inv()->materialSID( item ) + " " + g->inv()->itemSID( item ) + " into stockpile at " + m_position.toString().toStdString()) );
 				g->spm()->insertItem( m_job->stockpile(), m_position, item );
 			}
 		}
@@ -1866,7 +1864,7 @@ BT_RESULT Gnome::actionButcherAnimal( bool halt )
 		for ( auto obv : onbutchlist )
 		{
 			auto obm       = obv;
-			QString itemID = obm.value( "ItemID" ).toString();
+			const auto itemID = obm.value( "ItemID" ).toString().toStdString();
 			int amount     = obm.value( "Amount" ).toInt();
 			if ( a->isYoung() )
 			{
@@ -2000,7 +1998,7 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 		QString dye  = a->dye();
 
 		int amount     = a->numProduce();
-		QString itemID = a->producedItem();
+		const auto itemID = a->producedItem().toStdString();
 
 		if ( !dye.isEmpty() )
 		{
@@ -2585,9 +2583,9 @@ bool Gnome::equipItem()
 		QString slot = m_btBlackBoard.value( "ClaimedUniformItemSlot" ).toString();
 		m_btBlackBoard.remove( "ClaimedUniformItemSlot" );
 
-		QString itemSID          = g->inv()->itemSID( itemID );
+		const auto itemSID          = g->inv()->itemSID( itemID );
 		unsigned int materialUID = g->inv()->materialUID( itemID );
-		QString materialSID      = g->inv()->materialSID( itemID );
+		const auto materialSID      = g->inv()->materialSID( itemID );
 
 		auto part = Global::creaturePartLookUp.at( slot.toStdString() );
 
@@ -2599,9 +2597,9 @@ bool Gnome::equipItem()
 			g->inv()->setInJob( itemSlot.itemID, 0 );
 		}
 		itemSlot.itemID     = itemID;
-		itemSlot.item       = itemSID.toStdString();
+		itemSlot.item       = itemSID;
 		itemSlot.materialID = materialUID;
-		itemSlot.material   = materialSID.toStdString();
+		itemSlot.material   = materialSID;
 		if ( part == CP_LEFT_HAND_HELD )
 		{
 			equipHand( itemID, "Left" );

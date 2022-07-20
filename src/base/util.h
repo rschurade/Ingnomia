@@ -48,10 +48,10 @@ public:
 
 	QString materialType( QString materialID );
 
-	std::string requiredSkill( QString jobID );
-	QString requiredMagicSkill( QString spellID );
-	std::string requiredTool( QString jobID );
-	int requiredToolLevel( QString jobID, Position pos );
+	std::string requiredSkill( const std::string& jobID );
+	std::string requiredMagicSkill( const std::string& spellID );
+	std::string requiredTool( const std::string& jobID );
+	int requiredToolLevel( const std::string& jobID, Position pos );
 	int requiredToolLevelByWallMaterial( Position pos );
 	int requiredToolLevelByFloorMaterial( Position pos );
 	int toolLevel( unsigned int itemUID );
@@ -122,11 +122,11 @@ public:
 	void debugVM( QVariantMap vm, QString name );
 
 	PixmapPtr smallPixmap( Sprite* sprite, const std::string& season, int rotation );
-	PixmapPtr createWorkshopImage( const QString& workshopID, const QStringList& m_mats );
-	PixmapPtr createItemImage( const QString& constructionID, const QStringList& mats );
-	PixmapPtr createItemImage2( const QString& constructionID, const QStringList& mats );
-	PixmapPtr createConstructionImage( const QString& constructionID, const QStringList& mats );
-	Sprite* getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const QStringList& mats );
+	PixmapPtr createWorkshopImage( const std::string& workshopID, const std::vector<std::string>& m_mats );
+	PixmapPtr createItemImage( const std::string& constructionID, const std::vector<std::string>& mats );
+	PixmapPtr createItemImage2( const std::string& constructionID, const std::vector<std::string>& mats );
+	PixmapPtr createConstructionImage( const std::string& constructionID, const std::vector<std::string>& mats );
+	Sprite* getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const std::vector<std::string>& mats );
 
 	void createBufferForNoesisImage( const SDL_Surface* pm, std::vector<unsigned char>& buffer );
 

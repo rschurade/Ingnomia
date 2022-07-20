@@ -32,11 +32,14 @@ Item::Item() :
 {
 }
 
-Item::Item( Position& pos, QString itemSID, QString materialSID ) :
+Item::Item( Position& pos, const std::string& _itemSID, const std::string& _materialSID ) :
 	Object( pos )
 {
-	m_itemUID     = DBH::itemUID( itemSID );
-	m_materialUID = DBH::materialUID( materialSID );
+	const auto itemSID = QString::fromStdString(_itemSID);
+	const auto materialSID = QString::fromStdString(_materialSID);
+
+	m_itemUID     = DBH::itemUID( _itemSID );
+	m_materialUID = DBH::materialUID( _materialSID );
 	int value     = DB::select( "Value", "Items", itemSID ).toFloat() * DB::select( "Value", "Materials", materialSID ).toFloat();
 	setValue( value );
 	{
@@ -62,9 +65,9 @@ Item::Item( QVariantMap in ) :
 	m_position = Position( in.value( "Position" ).toString() );
 	m_spriteID = in.value( "SpriteID" ).toUInt();
 	*/
-	QString itemSID = in.value( "ItemSID" ).toString();
+	const auto itemSID = in.value( "ItemSID" ).toString().toStdString();
 	m_itemUID       = DBH::itemUID( itemSID );
-	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString() );
+	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString().toStdString() );
 	m_isInStockpile = in.value( "InStockpile" ).toUInt();
 	m_isInJob       = in.value( "InJob" ).toUInt();
 	m_isUsedBy      = in.value( "IsUsedBy" ).toUInt();
@@ -109,8 +112,8 @@ Item::Item( QVariantMap in ) :
 		for ( auto item : vlc )
 		{
 			QVariantMap cvm = item.toMap();
-			ItemMaterial im = { (unsigned int)DBH::itemUID( cvm.value( "ItSID" ).toString() ),
-								(unsigned int)DBH::materialUID( cvm.value( "MaSID" ).toString() ) };
+			ItemMaterial im = { (unsigned int)DBH::itemUID( cvm.value( "ItSID" ).toString().toStdString() ),
+								(unsigned int)DBH::materialUID( cvm.value( "MaSID" ).toString().toStdString() ) };
 			m_extraData->components.append( im );
 		}
 	}
@@ -129,8 +132,8 @@ Item::Item( QVariantMap in ) :
 		{
 			m_extraData = new ItemExtraData;
 		}
-		m_extraData->capacity    = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
-		m_extraData->requireSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
+		m_extraData->capacity    = DB::select( "Capacity", "Containers", QString::fromStdString(itemSID) ).value<unsigned char>();
+		m_extraData->requireSame = DB::select( "RequireSame", "Containers", QString::fromStdString(itemSID) ).toBool();
 	}
 }
 
@@ -180,8 +183,8 @@ QVariant Item::serialize() const
 	out.insert( "Position", m_position.toString() );
 	out.insert( "SpriteID", m_spriteID );
 	*/
-	out.insert( "ItemSID", itemSID() );
-	out.insert( "MaterialSID", materialSID() );
+	out.insert( "ItemSID", QString::fromStdString(itemSID()) );
+	out.insert( "MaterialSID", QString::fromStdString(materialSID()) );
 	out.insert( "InStockpile", m_isInStockpile );
 	out.insert( "InJob", m_isInJob );
 	out.insert( "InContainer", m_isInContainer );
@@ -212,8 +215,8 @@ QVariant Item::serialize() const
 			for ( auto comp : m_extraData->components )
 			{
 				QVariantMap vm;
-				vm.insert( "ItSID", DBH::itemSID( comp.itemUID ) );
-				vm.insert( "MaSID", DBH::materialSID( comp.materialUID ) );
+				vm.insert( "ItSID", QString::fromStdString(DBH::itemSID( comp.itemUID )) );
+				vm.insert( "MaSID", QString::fromStdString(DBH::materialSID( comp.materialUID )) );
 				vli.push_back( vm );
 			}
 			out.insert( "Components", vli );
@@ -234,25 +237,25 @@ unsigned short Item::itemUID() const
 
 QString Item::getPixmapSID() const
 {
-	return DBH::spriteID( DBH::itemSID( m_itemUID ) ) + "_" + DBH::materialSID( m_materialUID );
+	return QString::fromStdString(DBH::spriteID( DBH::itemSID( m_itemUID ) ) + "_" + DBH::materialSID( m_materialUID ));
 }
 
 QString Item::getDesignation() const
 {
-	return S::s( "$MaterialName_" + DBH::materialSID( m_materialUID ) ) + " " + S::s( "$ItemName_" + DBH::itemSID( m_itemUID ) );
+	return S::s( "$MaterialName_" + QString::fromStdString(DBH::materialSID( m_materialUID )) ) + " " + S::s( "$ItemName_" + QString::fromStdString(DBH::itemSID( m_itemUID )) );
 }
 
-QString Item::itemSID() const
+std::string Item::itemSID() const
 {
 	return DBH::itemSID( m_itemUID );
 }
 
-QString Item::materialSID() const
+std::string Item::materialSID() const
 {
 	return DBH::materialSID( m_materialUID );
 }
 
-QString Item::combinedSID() const
+std::string Item::combinedSID() const
 {
 	return DBH::itemSID( m_itemUID ) + "_" + DBH::materialSID( m_materialUID );
 }
@@ -351,7 +354,7 @@ void Item::setUsedBy( unsigned int creatureID )
 
 unsigned char Item::stackSize() const
 {
-	return DB::select( "StackSize", "Items", DBH::itemSID( m_itemUID ) ).toUInt();
+	return DB::select( "StackSize", "Items", QString::fromStdString(DBH::itemSID( m_itemUID )) ).toUInt();
 }
 
 bool Item::isConstructed() const
@@ -478,17 +481,17 @@ void Item::setColor( QString color )
 
 int Item::attackValue() const
 {
-	return DB::select( "AttackValue", "Items", DBH::itemSID( m_itemUID ) ).toInt();
+	return DB::select( "AttackValue", "Items", QString::fromStdString(DBH::itemSID( m_itemUID )) ).toInt();
 }
 
 bool Item::isWeapon() const
 {
-	return DB::select( "AttackValue", "Items", DBH::itemSID( m_itemUID ) ).toInt() > 0;
+	return DB::select( "AttackValue", "Items", QString::fromStdString(DBH::itemSID( m_itemUID )) ).toInt() > 0;
 }
 
 bool Item::isTool() const
 {
-	return DB::select( "IsTool", "Items", DBH::itemSID( m_itemUID ) ).toBool();
+	return DB::select( "IsTool", "Items", QString::fromStdString(DBH::itemSID( m_itemUID )) ).toBool();
 }
 
 bool Item::insertItem( unsigned int itemID )

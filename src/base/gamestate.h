@@ -120,10 +120,10 @@ public:
 
 	static QList<GuiWatchedItem> watchedItemList;
 
-	static absl::flat_hash_map<QString, int> materialSID2ID;
-	static absl::flat_hash_map<int, QString> materialID2SID;
-	static absl::flat_hash_map<QString, int> itemSID2ID;
-	static absl::flat_hash_map<int, QString> itemID2SID;
+	static absl::flat_hash_map<std::string, int> materialSID2ID;
+	static absl::flat_hash_map<int, std::string> materialID2SID;
+	static absl::flat_hash_map<std::string, int> itemSID2ID;
+	static absl::flat_hash_map<int, std::string> itemID2SID;
 
 private:
 	static unsigned int nextID;

@@ -165,7 +165,7 @@ void Grove::onTick( quint64 tick )
 					QString mat    = DB::select( "Material", "Plants", m_properties.treeType ).toString();
 					QString seedID = DB::select( "SeedItemID", "Plants", m_properties.treeType ).toString();
 
-					auto item = g->inv()->getClosestItem( m_fields.begin()->second->pos, true, seedID, mat );
+					auto item = g->inv()->getClosestItem( m_fields.begin()->second->pos, true, seedID.toStdString(), mat.toStdString() );
 					if ( item == 0 )
 					{
 						continue;
@@ -219,7 +219,7 @@ void Grove::updateAutoForester()
 {
 	if ( m_properties.autoPick )
 	{
-		unsigned int count = g->inv()->itemCount( "Fruit", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "Fruit", m_properties.treeType.toStdString() );
 		unsigned int min   = m_properties.autoPickMin;
 		unsigned int max   = m_properties.autoPickMax;
 		if ( count < min )
@@ -233,7 +233,7 @@ void Grove::updateAutoForester()
 	}
 	if ( m_properties.autoFell )
 	{
-		unsigned int count = g->inv()->itemCount( "RawWood", m_properties.treeType );
+		unsigned int count = g->inv()->itemCount( "RawWood", m_properties.treeType.toStdString() );
 		unsigned int min   = m_properties.autoFellMin;
 		unsigned int max   = m_properties.autoFellMax;
 		if ( count < min )

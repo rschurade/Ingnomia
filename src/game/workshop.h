@@ -102,9 +102,9 @@ struct WorkshopProperties
 	QVariantList itemsToSell;
 
 	// not saved in game, always loaded from DB
-	QString gui;
+	std::optional<std::string> gui;
 	bool noAutoGenerate = false;
-	QStringList crafts;
+	std::vector<std::string> crafts;
 
 	void serialize( QVariantMap& out );
 	WorkshopProperties() {};
@@ -234,12 +234,12 @@ public:
 		return m_jobList;
 	}
 
-	QString gui()
+	const std::optional<std::string>& gui()
 	{
 		return m_properties.gui;
 	}
 
-	const QStringList& crafts()
+	const std::vector<std::string>& crafts()
 	{
 		return m_properties.crafts;
 	}

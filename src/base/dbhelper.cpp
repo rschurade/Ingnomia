@@ -24,9 +24,9 @@
 #include "containersHelper.h"
 #include "spdlog/spdlog.h"
 
-absl::btree_map<QString, QString> DBHelper::m_spriteIDCache;
-absl::btree_map<QString, bool> DBHelper::m_spriteIsRandomCache;
-absl::btree_map<QString, bool> DBHelper::m_spriteHasAnimCache;
+absl::btree_map<std::string, std::string> DBHelper::m_spriteIDCache;
+absl::btree_map<std::string, bool> DBHelper::m_spriteIsRandomCache;
+absl::btree_map<std::string, bool> DBHelper::m_spriteHasAnimCache;
 absl::btree_map<std::string, std::string> DBHelper::m_materialColorCache;
 absl::btree_map<QString, int> DBHelper::m_materialToolLevelCache;
 absl::btree_map<int, bool> DBHelper::m_itemIsContainerCache;
@@ -45,38 +45,38 @@ QStringList DBHelper::getWorkPositions( QString jobID )
 }
 */
 
-QString DBH::spriteID( QString itemID )
+std::string DBH::spriteID( const std::string& itemID )
 {
 	QMutexLocker ml( &m_mutex );
 	if ( m_spriteIDCache.contains( itemID ) )
 	{
 		return m_spriteIDCache.at( itemID );
 	}
-	QString spriteID = DB::select( "SpriteID", "Items", itemID ).toString();
+	const auto spriteID = DB::select( "SpriteID", "Items", QString::fromStdString(itemID) ).toString().toStdString();
 	m_spriteIDCache.insert_or_assign( itemID, spriteID );
 	return spriteID;
 }
 
-bool DBHelper::spriteIsRandom( QString spriteID )
+bool DBHelper::spriteIsRandom( const std::string& spriteID )
 {
 	QMutexLocker ml( &m_mutex );
 	if ( m_spriteIsRandomCache.contains( spriteID ) )
 	{
 		return m_spriteIsRandomCache.at( spriteID );
 	}
-	bool isRandom = DB::select( "HasRandom", "Sprites", spriteID ).toBool();
+	bool isRandom = DB::select( "HasRandom", "Sprites", QString::fromStdString(spriteID) ).toBool();
 	m_spriteIsRandomCache.insert_or_assign( spriteID, isRandom );
 	return isRandom;
 }
 
-bool DBHelper::spriteHasAnim( QString spriteID )
+bool DBHelper::spriteHasAnim( const std::string& spriteID )
 {
 	QMutexLocker ml( &m_mutex );
 	if ( m_spriteHasAnimCache.contains( spriteID ) )
 	{
 		return m_spriteHasAnimCache.at( spriteID );
 	}
-	bool hasAnim = DB::select( "Anim", "Sprites", spriteID ).toBool();
+	bool hasAnim = DB::select( "Anim", "Sprites", QString::fromStdString(spriteID) ).toBool();
 	m_spriteHasAnimCache.insert_or_assign( spriteID, hasAnim );
 	return hasAnim;
 }
@@ -108,7 +108,7 @@ int DBHelper::materialToolLevel( QString material )
 	return tl;
 }
 
-int DBH::materialUID( QString material )
+int DBH::materialUID( const std::string& material )
 {
 	if( !GameState::materialSID2ID.contains( material ) )
 	{
@@ -118,7 +118,7 @@ int DBH::materialUID( QString material )
 	return GameState::materialSID2ID.at( material );
 }
 
-QString DBH::materialSID( int material )
+std::string DBH::materialSID( int material )
 {
 	if ( const auto &it = GameState::materialID2SID.find( material ); it != GameState::materialID2SID.end() )
 	{
@@ -128,7 +128,7 @@ QString DBH::materialSID( int material )
 	return "NONE";
 }
 
-int DBH::itemUID( QString item )
+int DBH::itemUID( const std::string& item )
 {
 	if( !GameState::itemSID2ID.contains( item ) )
 	{
@@ -138,7 +138,7 @@ int DBH::itemUID( QString item )
 	return GameState::itemSID2ID.at( item );
 }
 
-QString DBH::itemSID( int item )
+std::string DBH::itemSID( int item )
 {
 	if ( const auto &it = GameState::itemID2SID.find( item ); it != GameState::itemID2SID.end() )
 	{
@@ -155,7 +155,7 @@ bool DBHelper::itemIsContainer( int item )
 	{
 		return m_itemIsContainerCache.at( item );
 	}
-	bool isContainer = DB::select( "IsContainer", "Items", DBH::itemSID( item ) ).toBool();
+	bool isContainer = DB::select( "IsContainer", "Items", QString::fromStdString(DBH::itemSID( item )) ).toBool();
 	m_itemIsContainerCache.insert_or_assign( item, isContainer );
 	return isContainer;
 }
@@ -206,7 +206,7 @@ absl::btree_map<QString, QMultiMap<QString, QString>> DBHelper::workshopPossible
 
 	absl::btree_map<QString, QMultiMap<QString, QString>> workshopProduces;
 
-	auto dbws = DB::workshop( workshopId );
+	auto dbws = DB::workshop( workshopId.toStdString() );
 	if( !dbws )
 	{
 		// this should never be reached
@@ -217,12 +217,12 @@ absl::btree_map<QString, QMultiMap<QString, QString>> DBHelper::workshopPossible
 	for ( const auto& craftId : craftIds )
 	{
 		QMultiMap<QString, QString> craftVariants;
-		auto itemSID = DB::select( "ItemID", "Crafts", craftId ).toString();
+		auto itemSID = DB::select( "ItemID", "Crafts", QString::fromStdString(craftId) ).toString();
 		// can this workshop craft an item of that material?
-		auto possibleResultMatTypes = DB::select( "ResultMaterialTypes", "Crafts", craftId ).toString().split( "|" );
+		auto possibleResultMatTypes = DB::select( "ResultMaterialTypes", "Crafts", QString::fromStdString(craftId) ).toString().split( "|" );
 		for ( const auto& materialType : possibleResultMatTypes )
 		{
-			craftVariants.insertMulti( materialType, craftId );
+			craftVariants.insertMulti( materialType, QString::fromStdString(craftId) );
 		}
 		workshopProduces.insert_or_assign( itemSID, craftVariants );
 	}

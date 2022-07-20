@@ -208,18 +208,20 @@ void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 	{
 		return;
 	}
-	QStringList mats;
-	if( eItem.allMats.size() )
+	std::vector<std::string> mats;
+	if( !eItem.allMats.empty() )
 	{
-		mats = eItem.allMats;
+		for ( const auto& item : eItem.allMats ) {
+			mats.push_back( item );
+		}
 	}
 	else
 	{
-		mats.push_back( QString::fromStdString(eItem.material) );
+		mats.push_back( eItem.material );
 		mats.push_back( "Pine" );
 	}
 
-	auto sprite = g->sf()->createSprite( QString::fromStdString("UI" + eItem.item), mats );
+	auto sprite = g->sf()->createSprite( "UI" + eItem.item, mats );
 	if( sprite )
 	{
 		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
@@ -242,10 +244,10 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 	{
 		return; 
 	}
-	QStringList mats;
-	mats.append( QString::fromStdString(eItem.material) );
+	std::vector<std::string> mats;
+	mats.push_back( eItem.material );
 
-	auto sprite = g->sf()->createSprite( "UI" + uItem.type + slot, mats );
+	auto sprite = g->sf()->createSprite( ("UI" + uItem.type + slot).toStdString(), mats );
 	if( sprite )
 	{
 		const auto* pm = sprite->pixmap( "Spring", 0, 0 );
@@ -264,10 +266,10 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 {
 	if( !g ) return;
-	QStringList mats; 
-	mats.append( "any" );
+	std::vector<std::string> mats;
+	mats.push_back( "any" );
 	
-	auto sprite = g->sf()->createSprite( spriteID, mats );
+	auto sprite = g->sf()->createSprite( spriteID.toStdString(), mats );
 	if( sprite )
 	{
 		const auto* pm = sprite->pixmap( "Spring", 0, 0 );

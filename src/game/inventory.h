@@ -26,7 +26,6 @@
 #include <absl/container/flat_hash_map.h>
 #include <QList>
 #include <absl/container/btree_map.h>
-#include <QString>
 
 #include <vector>
 
@@ -55,9 +54,9 @@ public:
 
 	bool itemExists( unsigned int itemID );
 
-	unsigned int createItem( Position pos, QString itemSID, QString material );
-	unsigned int createItem( Position pos, QString itemSID, QList<unsigned int> components );
-	unsigned int createItem( Position pos, QString itemSID, QVariantList components );
+	unsigned int createItem( Position pos, const std::string& itemSID, const std::string& material );
+	unsigned int createItem( Position pos, const std::string& itemSID, std::vector<unsigned int> components );
+	unsigned int createItem( Position pos, const std::string& itemSID, QVariantList components );
 	unsigned int createItem( const QVariantMap& values );
 
 	void destroyObject( unsigned int id );
@@ -65,25 +64,25 @@ public:
 	unsigned int getFirstObjectAtPosition( const Position& pos );
 	bool getObjectsAtPosition( const Position& pos, PositionEntry& pe );
 
-	unsigned int getClosestItem( const Position& pos, bool allowInStockpile, QString itemID, QString materialID = "any" );
+	unsigned int getClosestItem( const Position& pos, bool allowInStockpile, const std::string& itemID, const std::string& materialID = "any" );
 	//from construction dialog with materialTypes selected any
-	unsigned int getClosestItem2( const Position& pos, bool allowInStockpile, QString itemID, absl::btree_set<QString> materialTypes );
-	unsigned int getItemAtPos( const Position& pos, bool allowInStockpile, QString itemID, QString materialID = "any" );
+	unsigned int getClosestItem2( const Position& pos, bool allowInStockpile, const std::string& itemID, absl::btree_set<std::string> materialTypes );
+	unsigned int getItemAtPos( const Position& pos, bool allowInStockpile, const std::string& itemID, const std::string& materialID = "any" );
 
-	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QList<QPair<QString, QString>> filter, int count );
+	std::vector<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, std::vector<QPair<std::string, std::string>> filter, int count );
 
 	/**
 	* get closest items with connected region check
 	*/
-	QList<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count );
-	bool checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID = "any" );
-	QList<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, absl::btree_set<QPair<QString, QString>> filter );
+	std::vector<unsigned int> getClosestItems( const Position& pos, bool allowInStockpile, const std::string& itemSID, const std::string& materialSID, int count );
+	bool checkReachableItems( Position pos, bool allowInStockpile, int count, const std::string& itemSID, const std::string& materialSID = "any" );
+	std::vector<unsigned int> getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, absl::btree_set<QPair<std::string, std::string>> filter );
 
 	unsigned int getFoodItem( Position& pos );
 	unsigned int getDrinkItem( Position& pos );
 
-	QList<unsigned int> tradeInventory( QString itemSID, QString materialSID );
-	QList<unsigned int> tradeInventory( QString itemSID, QString materialSID, unsigned char quality );
+	std::vector<unsigned int> tradeInventory( const std::string& itemSID, const std::string& materialSID );
+	std::vector<unsigned int> tradeInventory( const std::string& itemSID, const std::string& materialSID, unsigned char quality );
 
 	void moveItemToPos( unsigned int item, const Position& newPos );
 
@@ -92,18 +91,18 @@ public:
 	unsigned int isHeldBy( unsigned int id );
 
 
-	QList<QString> categories();
-	QList<QString> groups( QString category );
-	QList<QString> items( QString category, QString group );
-	std::vector<QString> materials( QString category, QString group, QString item );
+	std::vector<std::string> categories();
+	std::vector<std::string> groups( const std::string& category );
+	std::vector<std::string> items( const std::string& category, const std::string& group );
+	std::vector<std::string> materials( const std::string& category, const std::string& group, const std::string& item );
 
-	bool isInGroup( QString category, QString group, unsigned int itemUID );
+	bool isInGroup( const std::string& category, const std::string& group, unsigned int itemUID );
 
-	absl::btree_map<QString, int> materialCountsForItem( QString itemID, bool allowInJob = false );
-	unsigned int itemCount( QString itemID, QString materialID );
-	unsigned int itemCountWithInJob( QString itemID, QString materialID );
-	unsigned int itemCountInStockpile( QString itemID, QString materialID );
-	unsigned int itemCountNotInStockpile( QString itemID, QString materialID );
+	absl::btree_map<std::string, int> materialCountsForItem( const std::string& itemID, bool allowInJob = false );
+	unsigned int itemCount( const std::string& itemID, const std::string& materialID );
+	unsigned int itemCountWithInJob( const std::string& itemID, const std::string& materialID );
+	unsigned int itemCountInStockpile( const std::string& itemID, const std::string& materialID );
+	unsigned int itemCountNotInStockpile( const std::string& itemID, const std::string& materialID );
 
 	struct ItemCountDetailed
 	{
@@ -115,7 +114,7 @@ public:
 		unsigned int loose;
 		unsigned int totalValue;
 	};
-	ItemCountDetailed itemCountDetailed( QString itemID, QString materialID );
+	ItemCountDetailed itemCountDetailed( const std::string& itemID, const std::string& materialID );
 
 
 	bool isContainer( unsigned int item );
@@ -137,13 +136,13 @@ public:
 	void putItemInContainer( unsigned int id, unsigned int container );
 	void removeItemFromContainer( unsigned int id );
 
-	QString pixmapID( unsigned int item );
-	QString designation( unsigned int item );
-	QString itemSID( unsigned int item );
+	std::string pixmapID( unsigned int item );
+	std::string designation( unsigned int item );
+	std::string itemSID( unsigned int item );
 	unsigned int itemUID( unsigned int item );
-	QString materialSID( unsigned int item );
+	std::string materialSID( unsigned int item );
 	unsigned int materialUID( unsigned int item );
-	QString combinedID( unsigned int item );
+	std::string combinedID( unsigned int item );
 	unsigned int spriteID( unsigned int item );
 
 	Position getItemPos( unsigned int item );
@@ -168,7 +167,7 @@ public:
 
 	bool isTool( unsigned int item );
 
-	void setColor( unsigned int item, QString color );
+	void setColor( unsigned int item, const std::string& color );
 	unsigned int color( unsigned int item );
 
 	const absl::btree_set<unsigned int>& itemsInContainer( unsigned int container );
@@ -180,7 +179,7 @@ public:
 		return m_items;
 	}
 
-	QList<QString> materialsForItem( QString itemSID, int count );
+	std::vector<std::string> materialsForItem( const std::string& itemSID, int count );
 
 	bool isSameTypeAndMaterial( unsigned int item, unsigned int item2 );
 
@@ -188,7 +187,7 @@ public:
 
 	int distanceSquare( unsigned int itemID, Position pos );
 
-	unsigned int getTradeValue( QString itemSID, QString materialSID, unsigned int quality );
+	unsigned int getTradeValue( const std::string& itemSID, const std::string& materialSID, unsigned int quality );
 	bool itemTradeAvailable( unsigned int itemUID );
 
 	Position getPosition( unsigned int itemID );
@@ -209,9 +208,9 @@ public:
 	bool itemsChanged();
 	void setItemsChanged();
 
-	QString itemGroup( unsigned int itemID );
+	std::string itemGroup( unsigned int itemID );
 
-	QList<QString> allMats( unsigned int itemID );
+	std::vector<std::string> allMats( unsigned int itemID );
 
 	ItemHistory* itemHistory();
 
@@ -220,7 +219,7 @@ private:
 
 	QPointer<ItemHistory> m_itemHistory;
 
-	Octree* octree( const QString& itemSID, const QString& materialSID );
+	Octree* octree( const std::string& itemSID, const std::string& materialSID );
 
 	int m_dimX;
 	int m_dimY;
@@ -229,22 +228,22 @@ private:
 	absl::flat_hash_map<unsigned int, std::unique_ptr<Item>> m_items;
 
 	PositionHash m_positionHash;
-	absl::flat_hash_map<QString, absl::flat_hash_map<QString, absl::flat_hash_map<unsigned int, Item*>>> m_hash;
-	absl::flat_hash_map<QString, absl::flat_hash_map<QString, Octree*>> m_octrees;
+	absl::flat_hash_map<std::string, absl::flat_hash_map<std::string, absl::flat_hash_map<unsigned int, Item*>>> m_hash;
+	absl::flat_hash_map<std::string, absl::flat_hash_map<std::string, Octree*>> m_octrees;
 
-	QList<QString> m_categoriesSorted;
-	absl::btree_map<QString, QList<QString>> m_groupsSorted;
-	absl::btree_map<QString, absl::btree_map<QString, QList<QString>>> m_itemsSorted;
+	std::vector<std::string> m_categoriesSorted;
+	absl::btree_map<std::string, std::vector<std::string>> m_groupsSorted;
+	absl::btree_map<std::string, absl::btree_map<std::string, std::vector<std::string>>> m_itemsSorted;
 
-	absl::flat_hash_map<QString, QStringList> m_materialsInTypes;
+	absl::flat_hash_map<std::string, std::vector<std::string>> m_materialsInTypes;
 
-	QStringList m_foodItemLookup;
-	QStringList m_drinkItemLookup;
+	std::vector<std::string> m_foodItemLookup;
+	std::vector<std::string> m_drinkItemLookup;
 
 	absl::btree_map<unsigned int, unsigned char> m_foodItems;
 	absl::btree_map<unsigned int, unsigned char> m_drinkItems;
 
-	void addObject( std::unique_ptr<Item> object, const QString& itemID, const QString& materialID );
+	void addObject( std::unique_ptr<Item> object, const std::string& itemID, const std::string& materialID );
 	void init();
 
 	Item* getItem( unsigned int itemUID );
@@ -254,6 +253,6 @@ private:
 	bool m_itemsChanged = false; //flag is used for updating the stock overview
 
 public: // signals:
-	sigslot::signal<QString /*itemSID*/, QString /*materialSID*/> signalAddItem;
-	sigslot::signal<QString /*itemSID*/, QString /*materialSID*/> signalRemoveItem;
+	sigslot::signal<const std::string& /*itemSID*/, const std::string& /*materialSID*/> signalAddItem;
+	sigslot::signal<const std::string& /*itemSID*/, const std::string& /*materialSID*/> signalRemoveItem;
 };

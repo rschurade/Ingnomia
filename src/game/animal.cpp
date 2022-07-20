@@ -191,7 +191,7 @@ void Animal::updateSprite()
 		auto rows = DB::selectRows( "Creature_Layouts", spriteName );
 		for ( const auto& row : rows )
 		{
-			auto spriteSID = row.value( "Sprite" ).toString();
+			auto spriteSID = row.value( "Sprite" ).toString().toStdString();
 			Sprite* sprite = g->sf()->createAnimalSprite( spriteSID );
 			if ( sprite )
 			{
@@ -205,11 +205,11 @@ void Animal::updateSprite()
 		Sprite* sprite = nullptr;
 		if ( m_dye.isEmpty() )
 		{
-			sprite = g->sf()->createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() );
+			sprite = g->sf()->createAnimalSprite( m_stateMap.value( "SpriteID" ).toString().toStdString() );
 		}
 		else
 		{
-			sprite = g->sf()->createAnimalSprite( m_stateMap.value( "SpriteID" ).toString() + m_dye );
+			sprite = g->sf()->createAnimalSprite( (m_stateMap.value( "SpriteID" ).toString() + m_dye).toStdString() );
 		}
 		if ( sprite )
 		{
@@ -444,7 +444,7 @@ void Animal::move( Position oldPos )
 			for ( const auto& row : rows )
 			{
 				Position offset( row.value( "Offset" ) );
-				g->w()->setWallSprite( m_position + offset, g->sf()->createSprite( row.value( "Sprite" ).toString(), { "none" } )->uID );
+				g->w()->setWallSprite( m_position + offset, g->sf()->createSprite( row.value( "Sprite" ).toString().toStdString(), { "none" } )->uID );
 			}
 		}
 	}
@@ -636,7 +636,7 @@ BT_RESULT Animal::actionProduce( bool halt )
 			QString produce = def.value( "ItemID" ).toString();
 			for ( int i = 0; i < def.value( "Amount" ).toInt(); ++i )
 			{
-				g->inv()->createItem( m_position, def.value( "ItemID" ).toString(), { m_species } );
+				g->inv()->createItem( m_position, def.value( "ItemID" ).toString().toStdString(), { m_species } );
 			}
 		}
 		else

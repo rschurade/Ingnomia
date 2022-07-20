@@ -318,7 +318,7 @@ void Plant::updateState()
 			return;
 		}
 		m_isMulti        = isMulti;
-		QString spriteID = sm.value( "SpriteID" ).toString();
+		const auto spriteID = sm.value( "SpriteID" ).toString().toStdString();
 
 		m_matureWood  = sm.value( "Fell" ).toBool();
 		m_harvestable = sm.value( "Harvest" ).toBool();
@@ -345,7 +345,7 @@ void Plant::updateState()
 		}
 		if ( !m_isMulti )
 		{
-			m_sprite = g->sf()->createSprite( spriteID, { DB::select( "Material", "Plants", m_plantID ).toString() } );
+			m_sprite = g->sf()->createSprite( spriteID, { DB::select( "Material", "Plants", m_plantID ).toString().toStdString() } );
 			g->w()->setWallSprite( m_position, m_sprite->uID );
 		}
 		else
@@ -405,12 +405,12 @@ bool Plant::fell()
 	if ( m_isTree )
 	{
 		auto rows = DB::selectRows( "Plants_OnFell", m_plantID );
-		QString itemID;
-		QString materialID;
+		std::string itemID;
+		std::string materialID;
 		for ( auto row : rows )
 		{
-			itemID     = row.value( "ItemID" ).toString();
-			materialID = row.value( "MaterialID" ).toString();
+			itemID     = row.value( "ItemID" ).toString().toStdString();
+			materialID = row.value( "MaterialID" ).toString().toStdString();
 
 			if ( row.value( "Random" ).toInt() > 0 )
 			{
@@ -480,8 +480,8 @@ bool Plant::harvest( Position& pos )
 		auto harvItemsList = DB::selectRows( "Plants_OnHarvest_HarvestedItem", m_plantID );
 		for ( auto harvItem : harvItemsList )
 		{
-			QString itemID     = harvItem.value( "ItemID" ).toString();
-			QString materialID = harvItem.value( "MaterialID" ).toString();
+			const auto itemID     = harvItem.value( "ItemID" ).toString().toStdString();
+			const auto materialID = harvItem.value( "MaterialID" ).toString().toStdString();
 			if ( harvItem.contains( "Chance" ) )
 			{
 				float chance = harvItem.value( "Chance" ).toFloat();
@@ -574,7 +574,7 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 	{
 		Position offset( vm.value( "Offset" ).toString() );
 
-		QString spriteID = vm.value( "SpriteID" ).toString();
+		auto spriteID = vm.value( "SpriteID" ).toString().toStdString();
 
 		if ( offset == Position( 0, 0, 0 ) )
 		{

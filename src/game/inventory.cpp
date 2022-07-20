@@ -78,32 +78,32 @@ void Inventory::init()
 
 	for ( auto categoryMap : DB::selectRows( "ItemGrouping" ) )
 	{
-		QString categoryID = categoryMap.value( "ID" ).toString();
+		const auto categoryID = categoryMap.value( "ID" ).toString().toStdString();
 		//spdlog::debug( "-- {}", categoryID.toStdString() );
 
 		m_categoriesSorted.push_back( categoryID );
 		m_groupsSorted[categoryID];
 		m_itemsSorted[categoryID];
 
-		auto groupList = DB::execQuery2( "SELECT DISTINCT \"ItemGroup\" FROM Items WHERE \"Category\" = \"" + categoryID + "\"" );
+		auto groupList = DB::execQuery2( "SELECT DISTINCT \"ItemGroup\" FROM Items WHERE \"Category\" = \"" + QString::fromStdString(categoryID) + "\"" );
 		for ( auto group : groupList )
 		{
-			QString groupID = group.toString();
+			const auto groupID = group.toString().toStdString();
 			//spdlog::debug( "---- {}", groupID.toStdString() );
 			m_groupsSorted[categoryID].push_back( groupID );
 			m_itemsSorted[categoryID][groupID];
 
-			auto vItemList = DB::execQuery2( "SELECT ID FROM Items WHERE \"Category\" = \"" + categoryID + "\" AND \"ItemGroup\" = \"" + groupID + "\"" );
+			auto vItemList = DB::execQuery2( QString::fromStdString("SELECT ID FROM Items WHERE \"Category\" = \"" + categoryID + "\" AND \"ItemGroup\" = \"" + groupID + "\"") );
 
 			for ( auto vItem : vItemList )
 			{
-				QString itemID = vItem.toString();
+				const auto itemID = vItem.toString().toStdString();
 				m_itemsSorted[categoryID][groupID].push_back( itemID );
 				m_hash[itemID];
 
-				for ( auto materialID : Global::util->possibleMaterialsForItem( itemID ) )
+				for ( auto materialID : Global::util->possibleMaterialsForItem( QString::fromStdString(itemID) ) )
 				{
-					m_hash[itemID].insert_or_assign( materialID, absl::flat_hash_map<unsigned int, Item*>() );
+					m_hash[itemID].insert_or_assign( materialID.toStdString(), absl::flat_hash_map<unsigned int, Item*>() );
 				}
 			}
 		}
@@ -111,30 +111,30 @@ void Inventory::init()
 
 	for ( auto row : DB::selectRows( "Materials" ) )
 	{
-		m_materialsInTypes[row.value( "Type" ).toString()].append( row.value( "ID" ).toString() );
+		m_materialsInTypes[row.value( "Type" ).toString().toStdString()].push_back( row.value( "ID" ).toString().toStdString() );
 	}
-	PriorityQueue<QString, int> pqFood;
-	PriorityQueue<QString, int> pqDrink;
+	PriorityQueue<std::string, int> pqFood;
+	PriorityQueue<std::string, int> pqDrink;
 	for ( auto row : DB::selectRows( "Items" ) )
 	{
 		int eatVal = row.value( "EatValue" ).toInt();
 		if ( eatVal > 0 )
 		{
-			pqFood.put( row.value( "ID" ).toString(), eatVal );
+			pqFood.put( row.value( "ID" ).toString().toStdString(), eatVal );
 		}
 		int drinkVal = row.value( "DrinkValue" ).toInt();
 		if ( drinkVal > 0 )
 		{
-			pqDrink.put( row.value( "ID" ).toString(), drinkVal );
+			pqDrink.put( row.value( "ID" ).toString().toStdString(), drinkVal );
 		}
 	}
 	while ( !pqFood.empty() )
 	{
-		m_foodItemLookup.push_front( pqFood.get() );
+		m_foodItemLookup.insert( m_foodItemLookup.begin(), pqFood.get() );
 	}
 	while ( !pqDrink.empty() )
 	{
-		m_drinkItemLookup.push_front( pqDrink.get() );
+		m_drinkItemLookup.insert( m_drinkItemLookup.begin(), pqDrink.get() );
 	}
 }
 
@@ -145,7 +145,7 @@ void Inventory::saveFilter()
 	{
 		for ( const auto& materialID : m_hash[itemID] | ranges::views::keys )
 		{
-			filter.append( itemID + "_" + materialID );
+			filter.append( QString::fromStdString( fmt::format( "{}_{}", itemID, materialID ) ) );
 		}
 	}
 	GameState::itemFilter = filter;
@@ -160,12 +160,12 @@ void Inventory::loadFilter()
 		auto comp  = entry.split( "_" );
 		if ( comp.size() == 2 )
 		{
-			m_hash[comp[0]].insert_or_assign( comp[1], absl::flat_hash_map<unsigned int, Item*>() );
+			m_hash[comp[0].toStdString()].insert_or_assign( comp[1].toStdString(), absl::flat_hash_map<unsigned int, Item*>() );
 
 			int x = Global::dimX / 2;
 			int y = Global::dimY / 2;
 			int z = Global::dimZ / 2;
-			m_octrees[comp[0]].insert_or_assign( comp[1], new Octree( x, y, z, x, y, z ) );
+			m_octrees[comp[0].toStdString()].insert_or_assign( comp[1].toStdString(), new Octree( x, y, z, x, y, z ) );
 		}
 	}
 }
@@ -189,7 +189,7 @@ bool Inventory::itemExists( unsigned int itemID )
 	return false;
 }
 
-unsigned int Inventory::createItem( Position pos, QString itemSID, QString materialSID )
+unsigned int Inventory::createItem( Position pos, const std::string& itemSID, const std::string& materialSID )
 {
 	DBH::itemUID( itemSID );
 	//qDebug() << "create item " << pos.toString() << baseItem << material;
@@ -205,24 +205,24 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 	return id;
 }
 
-unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigned int> components )
+unsigned int Inventory::createItem( Position pos, const std::string& itemSID, std::vector<unsigned int> components )
 {
 	DBH::itemUID( itemSID );
 	//qDebug() << "create item " << pos.toString() << itemSID << components;
-	QVariantList compList = DB::select2( "ItemID", "Items_Components", "ID", itemSID );
+	QVariantList compList = DB::select2( "ItemID", "Items_Components", "ID", QString::fromStdString(itemSID) );
 
 	if ( compList.isEmpty() )
 	{ // item has no components, we use the first material
-		if ( components.size() )
+		if ( !components.empty() )
 		{
-			auto item = getItem( components.first() );
+			auto item = getItem( *components.begin() );
 			if ( item )
 			{
 				return createItem( pos, itemSID, item->materialSID() );
 			}
 			else
 			{
-				spdlog::debug( "####### component item {} for createItem {} at {} doesn't exist", components.first(), itemSID.toStdString(), pos.toString().toStdString() );
+				spdlog::debug( "####### component item {} for createItem {} at {} doesn't exist", *components.begin(), itemSID, pos.toString().toStdString() );
 				return 0;
 			}
 		}
@@ -235,12 +235,12 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 	else
 	{
 		// first component decides the material of the item for material level bonuses and other things
-		QString firstCompSID = compList.first().toMap().value( "ItemID" ).toString();
+		const auto firstCompSID = compList.first().toMap().value( "ItemID" ).toString().toStdString();
 		DBH::itemUID( firstCompSID );
-		QString firstMat     = materialSID( components.first() );
+		const auto firstMat     = materialSID( *components.begin() );
 		auto obj = std::make_unique<Item>( pos, itemSID, firstMat );
 
-		QStringList materialSIDs;
+		std::vector<std::string> materialSIDs;
 
 		for ( auto UID : components )
 		{
@@ -268,9 +268,11 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 	}
 }
 
-unsigned int Inventory::createItem( Position pos, QString itemSID, QVariantList components )
+unsigned int Inventory::createItem( Position pos, const std::string& itemSID, QVariantList components )
 {
-	return createItem( pos, itemSID, Global::util->variantList2UInt( components ) );
+	const auto uintList = Global::util->variantList2UInt( components );
+
+	return createItem( pos, itemSID, std::vector<unsigned int>(uintList.begin(), uintList.end()) );
 }
 
 unsigned int Inventory::createItem( const QVariantMap& values )
@@ -285,15 +287,15 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 		spdlog::debug( "missing materialSID {} at {}", values.value( "ID" ).toUInt(), values.value( "Position" ).toString().toStdString() );
 		return 0;
 	}
-	DBH::itemUID( values.value( "ItemSID" ).toString() );
+	DBH::itemUID( values.value( "ItemSID" ).toString().toStdString() );
 	//Item obj( pos, baseItem, material );
 	auto obj = std::make_unique<Item>( values );
 
-	QString baseItem = obj->itemSID();
-	QString material = obj->materialSID();
+	const auto baseItem = obj->itemSID();
+	const auto material = obj->materialSID();
 	//qDebug() << "inventory create item " << baseItem << material;
 
-	QString spr    = DBH::spriteID( baseItem );
+	const auto spr = DBH::spriteID( baseItem );
 	Sprite* sprite = nullptr;
 	if ( obj->components().isEmpty() )
 	{
@@ -301,7 +303,7 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	}
 	else
 	{
-		QList<QString> materialSIDs;
+		std::vector<std::string> materialSIDs;
 		for ( auto comp : obj->components() )
 		{
 			materialSIDs.push_back( DBH::materialSID( comp.materialUID ) );
@@ -320,7 +322,7 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	return id;
 }
 
-Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
+Octree* Inventory::octree( const std::string& itemSID, const std::string& materialSID )
 {
 	if ( !m_octrees.contains( itemSID ) || !m_octrees[itemSID].contains( materialSID ) )
 	{
@@ -332,7 +334,7 @@ Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
 	return m_octrees[itemSID][materialSID];
 }
 
-void Inventory::addObject( std::unique_ptr<Item> object, const QString& itemID, const QString& materialID )
+void Inventory::addObject( std::unique_ptr<Item> object, const std::string& itemID, const std::string& materialID )
 {
 	const auto key = object->id();
 	m_items.insert_or_assign( key, std::move(object) );
@@ -416,8 +418,8 @@ void Inventory::destroyObject( unsigned int id )
 				removeItemFromContainer( id );
 			}
 
-			QString materialSID = DBH::materialSID( item->materialUID() );
-			QString itemSID     = DBH::itemSID( item->itemUID() );
+			const auto materialSID = DBH::materialSID( item->materialUID() );
+			const auto itemSID     = DBH::itemSID( item->itemUID() );
 
 			Position pos = item->getPos();
 			Octree* ot = octree( itemSID, materialSID );
@@ -492,18 +494,18 @@ int Inventory::countItemsAtPos( Position& pos )
 	return 0;
 }
 
-unsigned int Inventory::getClosestItem( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID )
+unsigned int Inventory::getClosestItem( const Position& pos, bool allowInStockpile, const std::string& itemSID, const std::string& materialSID )
 {
 	auto out = getClosestItems( pos, allowInStockpile, itemSID, materialSID, 1 );
-	if ( !out.isEmpty() )
+	if ( !out.empty() )
 	{
-		return out.first();
+		return *out.begin();
 	}
 
 	return 0;
 }
 
-unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, QString itemSID, absl::btree_set<QString> materialTypes )
+unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockpile, const std::string& itemSID, absl::btree_set<std::string> materialTypes )
 {
 	for ( auto matType : materialTypes )
 	{
@@ -519,7 +521,7 @@ unsigned int Inventory::getClosestItem2( const Position& pos, bool allowInStockp
 	return 0;
 }
 
-bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int count, QString itemSID, QString materialSID )
+bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int count, const std::string& itemSID, const std::string& materialSID )
 {
 	int thisCount  = 0;
 	int partitions = 0;
@@ -560,7 +562,7 @@ bool Inventory::checkReachableItems( Position pos, bool allowInStockpile, int co
 	return thisCount >= count;
 }
 
-unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID )
+unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile, const std::string& itemSID, const std::string& materialSID )
 {
 	if ( m_positionHash.contains( pos.toInt() ) )
 	{
@@ -608,9 +610,9 @@ unsigned int Inventory::getItemAtPos( const Position& pos, bool allowInStockpile
 	return 0;
 }
 
-QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowInStockpile, QString itemSID, QString materialSID, int count )
+std::vector<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowInStockpile, const std::string& itemSID, const std::string& materialSID, int count )
 {
-	QList<unsigned int> out;
+	std::vector<unsigned int> out;
 
 	auto predicate = [&out, this, allowInStockpile, pos, count]( unsigned int itemID ) -> bool {
 		auto item = getItem( itemID );
@@ -619,7 +621,7 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 		{
 			if ( g->m_world->regionMap().checkConnectedRegions( pos, item->getPos() ) && g->m_world->fluidLevel( item->getPos() ) < 6 )
 			{
-				out.append( itemID );
+				out.push_back( itemID );
 				if ( out.size() == count )
 				{
 					return false;
@@ -646,27 +648,28 @@ QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowI
 	return out;
 }
 
-QList<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowInStockpile, QList<QPair<QString, QString>> filter, int count )
+std::vector<unsigned int> Inventory::getClosestItems( const Position& pos, bool allowInStockpile, std::vector<QPair<std::string, std::string>> filter, int count )
 {
-	QList<unsigned int> out;
+	std::vector<unsigned int> out;
 
 	for ( const auto& filterItem : filter )
 	{
 		auto& itemSID     = filterItem.first;
 		auto& materialSID = filterItem.second;
 
-		out.append( getClosestItems( pos, allowInStockpile, itemSID, materialSID, count ) );
+		const auto closestItems = getClosestItems( pos, allowInStockpile, itemSID, materialSID, count );
+		out.insert( out.end(), closestItems.begin(), closestItems.end() );
 	}
 	return out;
 }
 
-QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, absl::btree_set<QPair<QString, QString>> filter )
+std::vector<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpileID, Position& pos, bool allowInStockpile, absl::btree_set<QPair<std::string, std::string>> filter )
 {
-	QString itemSID;
-	QString materialSID;
+	std::string itemSID;
+	std::string materialSID;
 
-	QList<unsigned int> out;
-	QList<unsigned int> items;
+	std::vector<unsigned int> out;
+	std::vector<unsigned int> items;
 
 	for ( const auto& filterItem : filter )
 	{
@@ -678,13 +681,15 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 			for ( auto material : m_octrees[itemSID] | ranges::views::keys )
 			{
 				Octree* ot = octree( itemSID, material );
-				items += ot->query( pos.x, pos.y, pos.z );
+				const auto newItems = ot->query( pos.x, pos.y, pos.z );
+				items.insert( items.end(), newItems.begin(), newItems.end() );
 			}
 		}
 		else
 		{
 			Octree* ot = octree( itemSID, materialSID );
-			items += ot->query( pos.x, pos.y, pos.z );
+			const auto newItems = ot->query( pos.x, pos.y, pos.z );
+			items.insert( items.end(), newItems.begin(), newItems.end() );
 		}
 
 		for ( auto itemID : items )
@@ -700,14 +705,14 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 				else if ( !item->isInStockpile() )
 				{
 					//item isnt in stockpile
-					out.append( itemID );
+					out.push_back( itemID );
 				}
 				else
 				{
 					// item is in stockpile so we need to check if we can pull from stockpiles and if the source stockpile allows it
 					if ( allowInStockpile && g->m_spm->hasPriority( stockpileID, item->isInStockpile() ) && g->m_spm->allowsPull( item->isInStockpile() ) )
 					{
-						out.append( itemID );
+						out.push_back( itemID );
 					}
 				}
 			}
@@ -716,9 +721,9 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 	return out;
 }
 
-QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString materialSID )
+std::vector<unsigned int> Inventory::tradeInventory( const std::string& itemSID, const std::string& materialSID )
 {
-	QList<unsigned int> out;
+	std::vector<unsigned int> out;
 
 	if ( m_hash.contains( itemSID ) )
 	{
@@ -728,7 +733,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 			{
 				if ( item->isInStockpile() && item->isFree() )
 				{
-					out.append( item->id() );
+					out.push_back( item->id() );
 				}
 			}
 		}
@@ -737,9 +742,9 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 	return out;
 }
 
-QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString materialSID, unsigned char quality )
+std::vector<unsigned int> Inventory::tradeInventory( const std::string& itemSID, const std::string& materialSID, unsigned char quality )
 {
-	QList<unsigned int> out;
+	std::vector<unsigned int> out;
 
 	if ( m_hash.contains( itemSID ) )
 	{
@@ -749,7 +754,7 @@ QList<unsigned int> Inventory::tradeInventory( QString itemSID, QString material
 			{
 				if ( item->isInStockpile() && item->isFree() && item->quality() == quality )
 				{
-					out.append( item->id() );
+					out.push_back( item->id() );
 				}
 			}
 		}
@@ -842,8 +847,8 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 
 				if ( inItem )
 				{
-					QString inItemSID = inItem->itemSID();
-					QString inMatSID  = inItem->materialSID();
+					const auto inItemSID = inItem->itemSID();
+					const auto inMatSID  = inItem->materialSID();
 
 					Octree* ot2 = octree( inItemSID, inMatSID );
 					ot2->removeItem( pos.x, pos.y, pos.z, inItemID );
@@ -896,8 +901,8 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 
 				if ( inItem )
 				{
-					QString inItemSID = inItem->itemSID();
-					QString inMatSID  = inItem->materialSID();
+					const auto inItemSID = inItem->itemSID();
+					const auto inMatSID  = inItem->materialSID();
 					if( m_octrees.contains( inItemSID ) )
 					{
 						if( m_octrees[inItemSID].contains( inMatSID ) )
@@ -942,20 +947,20 @@ unsigned int Inventory::isHeldBy( unsigned int id )
 	return false;
 }
 
-QList<QString> Inventory::categories()
+std::vector<std::string> Inventory::categories()
 {
 	return m_categoriesSorted;
 }
 
-QList<QString> Inventory::groups( QString category )
+std::vector<std::string> Inventory::groups( const std::string& category )
 {
 	if ( m_groupsSorted.contains( category ) )
 	{
 		return m_groupsSorted[category];
 	}
-	return QList<QString>();
+	return std::vector<std::string>();
 }
-QList<QString> Inventory::items( QString category, QString group )
+std::vector<std::string> Inventory::items( const std::string& category, const std::string& group )
 {
 	if ( m_itemsSorted.contains( category ) )
 	{
@@ -964,12 +969,12 @@ QList<QString> Inventory::items( QString category, QString group )
 			return m_itemsSorted[category][group];
 		}
 	}
-	return QList<QString>();
+	return std::vector<std::string>();
 }
 
-std::vector<QString> Inventory::materials( QString category, QString group, QString item )
+std::vector<std::string> Inventory::materials( const std::string& category, const std::string& group, const std::string& item )
 {
-	std::vector<QString> result;
+	std::vector<std::string> result;
 	if ( m_hash.contains( item ) )
 	{
 		for (const auto &key : m_hash[item] | ranges::views::keys) {
@@ -979,26 +984,26 @@ std::vector<QString> Inventory::materials( QString category, QString group, QStr
 	return result;
 }
 
-bool Inventory::isInGroup( QString category, QString group, unsigned int itemID )
+bool Inventory::isInGroup( const std::string& category, const std::string& group, unsigned int itemID )
 {
 	if ( m_itemsSorted.contains( category ) )
 	{
 		if ( m_itemsSorted[category].contains( group ) )
 		{
-			QList<QString> items = m_itemsSorted[category][group];
+			std::vector<std::string> items = m_itemsSorted[category][group];
 			auto item            = getItem( itemID );
 			if ( item )
 			{
-				return items.contains( item->itemSID() );
+				return std::find( items.begin(), items.end(), item->itemSID() ) != items.end();
 			}
 		}
 	}
 	return false;
 }
 
-absl::btree_map<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allowInJob )
+absl::btree_map<std::string, int> Inventory::materialCountsForItem( const std::string& itemSID, bool allowInJob )
 {
-	absl::btree_map<QString, int> mats;
+	absl::btree_map<std::string, int> mats;
 
 	mats.insert_or_assign( "any", 0 );
 
@@ -1034,7 +1039,7 @@ absl::btree_map<QString, int> Inventory::materialCountsForItem( QString itemSID,
 	return mats;
 }
 
-unsigned int Inventory::itemCount( QString itemID, QString materialID )
+unsigned int Inventory::itemCount( const std::string& itemID, const std::string& materialID )
 {
 	unsigned int result = 0;
 
@@ -1071,7 +1076,7 @@ unsigned int Inventory::itemCount( QString itemID, QString materialID )
 	return result;
 }
 
-unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
+unsigned int Inventory::itemCountWithInJob( const std::string& itemID, const std::string& materialID )
 {
 	unsigned int result = 0;
 
@@ -1108,7 +1113,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 	return result;
 }
 
-unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID )
+unsigned int Inventory::itemCountInStockpile( const std::string& itemID, const std::string& materialID )
 {
 	unsigned int result = 0;
 
@@ -1145,7 +1150,7 @@ unsigned int Inventory::itemCountInStockpile( QString itemID, QString materialID
 	return result;
 }
 
-unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materialID )
+unsigned int Inventory::itemCountNotInStockpile( const std::string& itemID, const std::string& materialID )
 {
 	unsigned int result = 0;
 
@@ -1182,7 +1187,7 @@ unsigned int Inventory::itemCountNotInStockpile( QString itemID, QString materia
 	return result;
 }
 
-Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QString materialID )
+Inventory::ItemCountDetailed Inventory::itemCountDetailed( const std::string& itemID, const std::string& materialID )
 {
 	ItemCountDetailed result = { 0, 0, 0, 0, 0, 0, 0 };
 
@@ -1475,30 +1480,30 @@ void Inventory::removeItemFromContainer( unsigned int id )
 	}
 }
 
-QString Inventory::pixmapID( unsigned int id )
+std::string Inventory::pixmapID( unsigned int id )
 {
 	// return DBH::spriteID( DBH::itemSID( m_itemUID ) ) + "_" + DBH::materialSID( m_materialUID );
 	auto item = getItem( id );
 	if ( item )
 	{
-		return item->getPixmapSID();
+		return item->getPixmapSID().toStdString();
 	}
 
 	return "";
 }
 
-QString Inventory::designation( unsigned int id )
+std::string Inventory::designation( unsigned int id )
 {
 	//return S::s( "$MaterialName_" + DBH::materialSID( m_materialUID ) ) + " " + S::s( "$ItemName_" + DBH::itemSID( m_itemUID ) );
 	auto item = getItem( id );
 	if ( item )
 	{
-		return item->getDesignation();
+		return item->getDesignation().toStdString();
 	}
 	return "";
 }
 
-QString Inventory::itemSID( unsigned int id )
+std::string Inventory::itemSID( unsigned int id )
 {
 	auto item = getItem( id );
 	if ( item )
@@ -1518,7 +1523,7 @@ unsigned int Inventory::itemUID( unsigned int id )
 	return 0;
 }
 
-QString Inventory::materialSID( unsigned int id )
+std::string Inventory::materialSID( unsigned int id )
 {
 	auto item = getItem( id );
 	if ( item )
@@ -1538,7 +1543,7 @@ unsigned int Inventory::materialUID( unsigned int id )
 	return 0;
 }
 
-QString Inventory::combinedID( unsigned int id )
+std::string Inventory::combinedID( unsigned int id )
 {
 	auto item = getItem( id );
 	if ( item )
@@ -1669,12 +1674,12 @@ bool Inventory::isTool( unsigned int id )
 	return false;
 }
 
-void Inventory::setColor( unsigned int id, QString color )
+void Inventory::setColor( unsigned int id, const std::string& color )
 {
 	auto item = getItem( id );
 	if ( item )
 	{
-		item->setColor( color );
+		item->setColor( QString::fromStdString(color) );
 	}
 }
 
@@ -1688,11 +1693,11 @@ unsigned int Inventory::color( unsigned int id )
 	return 0;
 }
 
-QList<QString> Inventory::materialsForItem( QString itemSID, int count )
+std::vector<std::string> Inventory::materialsForItem( const std::string& itemSID, int count )
 {
-	QList<QString> out;
+	std::vector<std::string> out;
 
-	absl::btree_map<QString, int> matCount = materialCountsForItem( itemSID );
+	absl::btree_map<std::string, int> matCount = materialCountsForItem( itemSID );
 	for ( auto mc = matCount.begin(); mc != matCount.end(); ++mc )
 	{
 		if ( mc->first != "any" )
@@ -1749,13 +1754,13 @@ int Inventory::distanceSquare( unsigned int itemID, Position pos )
 	return 0;
 }
 
-unsigned int Inventory::getTradeValue( QString itemSID, QString materialSID, unsigned int quality )
+unsigned int Inventory::getTradeValue( const std::string& itemSID, const std::string& materialSID, unsigned int quality )
 {
 	auto modifiers = DB::select2( "Modifier", "Quality", "Rank", (int)quality );
 	if ( modifiers.size() )
 	{
 		auto modifier = modifiers.first().toFloat();
-		int value     = DB::select( "Value", "Items", itemSID ).toFloat() * DB::select( "Value", "Materials", materialSID ).toFloat() * modifier;
+		int value     = DB::select( "Value", "Items", QString::fromStdString(itemSID) ).toFloat() * DB::select( "Value", "Materials", QString::fromStdString(materialSID) ).toFloat() * modifier;
 		return value;
 	}
 	return 0;
@@ -1891,40 +1896,40 @@ void Inventory::setItemsChanged()
 	m_itemsChanged = true;
 }
 
-QString Inventory::itemGroup( unsigned int itemID )
+std::string Inventory::itemGroup( unsigned int itemID )
 {
 	auto item = getItem( itemID );
 	if ( item )
 	{
-		return DBH::itemGroup( item->itemSID() );
+		return DBH::itemGroup( QString::fromStdString(item->itemSID()) ).toStdString();
 	}
 	return "";
 }
 
-QList<QString> Inventory::allMats( unsigned int itemID )
+std::vector<std::string> Inventory::allMats( unsigned int itemID )
 {
 	auto item = getItem( itemID );
 	if ( item )
 	{
-		QStringList out;
+		std::vector<std::string> out;
 
 		auto comps = item->components();
 		if( comps.size() )
 		{
 			for( const auto& comp : comps )
 			{
-				out.append( DBH::materialSID( comp.materialUID ) );
+				out.push_back( DBH::materialSID( comp.materialUID ) );
 			}
 		}
 		else
 		{
-			out.append( item->materialSID() );
+			out.push_back( item->materialSID() );
 		}
 
 
 		return out;
 	}
-	return QStringList();
+	return {};
 }
 
 ItemHistory* Inventory::itemHistory()

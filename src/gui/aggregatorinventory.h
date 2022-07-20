@@ -155,7 +155,7 @@ private:
     
     QList<GuiBuildItem> m_buildItems;
 
-    absl::btree_set<QString> m_watchedItems;
+    absl::btree_set<std::string> m_watchedItems;
 
     absl::btree_map<BuildSelection, QString> m_buildSelection2String;
     absl::btree_map<BuildSelection, BuildItemType> m_buildSelection2buildItem;
@@ -166,10 +166,10 @@ private:
     absl::flat_hash_map<QString, QString> m_itemToGroupCache;
     absl::flat_hash_map<QString, QString> m_itemToCategoryCache;
 
-    void updateWatchedItem( QString cat );
-    void updateWatchedItem( QString cat, QString group );
-    void updateWatchedItem( QString cat, QString group, QString item );
-    void updateWatchedItem( QString cat, QString group, QString item, QString mat );
+    void updateWatchedItem( const std::string& cat );
+    void updateWatchedItem( const std::string& cat, const std::string& group );
+    void updateWatchedItem( const std::string& cat, const std::string& group, const std::string& item );
+    void updateWatchedItem( const std::string& cat, const std::string& group, const std::string& item, const std::string& mat );
 
 public slots:
 	void onRequestCategories();
@@ -178,8 +178,8 @@ public slots:
 	
     void onSetActive( bool active, const GuiWatchedItem& gwi );
 
-    void onAddItem( QString itemSID, QString materialSID );
-    void onRemoveItem( QString itemSID, QString materialSID );
+    void onAddItem( const std::string& itemSID, const std::string& materialSID );
+    void onRemoveItem( const std::string& itemSID, const std::string& materialSID );
 
 public: // signals:
 	sigslot::signal<const QList<GuiInventoryCategory>& /*categories*/> signalInventoryCategories;

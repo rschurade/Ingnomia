@@ -102,23 +102,23 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 
 		if ( (bool)( tile.wallType & WT_SOLIDWALL ) && (bool)tile.wallMaterial )
 		{
-			QString wallSID = DBH::materialSID( tile.wallMaterial );
-			QString wType   = DB::select( "Type", "Materials", wallSID ).toString();
-			m_tileInfo.wall = "Wall: " + S::s( "$MaterialName_" + wallSID ) + " " + S::s( "$GroupName_" + wType ).toLower();
+			const auto wallSID = DBH::materialSID( tile.wallMaterial );
+			QString wType   = DB::select( "Type", "Materials", QString::fromStdString(wallSID) ).toString();
+			m_tileInfo.wall = "Wall: " + S::s( "$MaterialName_" + QString::fromStdString(wallSID) ) + " " + S::s( "$GroupName_" + wType ).toLower();
 		}
 
 		if ( tile.embeddedMaterial )
 		{
-			QString embeddedSID = DBH::materialSID( tile.embeddedMaterial );
-			QString eType       = DB::select( "Type", "Materials", embeddedSID ).toString();
-			m_tileInfo.embedded = "Embedded: " + S::s( "$MaterialName_" + embeddedSID ) + " " + S::s( "$GroupName_" + eType ).toLower();
+			const auto embeddedSID = DBH::materialSID( tile.embeddedMaterial );
+			QString eType       = DB::select( "Type", "Materials", QString::fromStdString(embeddedSID) ).toString();
+			m_tileInfo.embedded = "Embedded: " + S::s( "$MaterialName_" + QString::fromStdString(embeddedSID) ) + " " + S::s( "$GroupName_" + eType ).toLower();
 		}
 
 		if ( tile.floorMaterial )
 		{
-			QString floorSID = DBH::materialSID( tile.floorMaterial );
-			QString fType    = DB::select( "Type", "Materials", floorSID ).toString();
-			m_tileInfo.floor = "Floor: " + S::s( "$MaterialName_" + floorSID ) + " " + S::s( "$GroupName_" + fType ).toLower();
+			const auto floorSID = DBH::materialSID( tile.floorMaterial );
+			QString fType    = DB::select( "Type", "Materials", QString::fromStdString(floorSID) ).toString();
+			m_tileInfo.floor = "Floor: " + S::s( "$MaterialName_" + QString::fromStdString(floorSID) ) + " " + S::s( "$GroupName_" + fType ).toLower();
 		}
 
 		if ( g->w()->plants().contains( pos.toInt() ) )
@@ -147,7 +147,7 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			for ( auto item : pe )
 			{
 				QString itext = "";
-				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
+				QString info = S::s( "$MaterialName_" + QString::fromStdString(g->inv()->materialSID( item )) ) + " " + S::s( "$ItemName_" + QString::fromStdString(g->inv()->itemSID( item )) );
 				
 				if( g->inv()->isConstructed( item ) )
 				{
@@ -408,7 +408,7 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 		auto active = m_spInfo.filter.getActive();
 		for ( auto entry : active )
 		{
-			int count = sp->count( entry.first, entry.second );
+			int count = sp->count( entry.first.toStdString(), entry.second.toStdString() );
 			if ( count > 0 )
 			{
 				//QIcon icon( Global::util->smallPixmap( Global::sf().createSprite( entry.first, { entry.second } ), season, 0 ) );

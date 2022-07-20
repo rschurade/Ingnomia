@@ -26,18 +26,18 @@ class DBHelper
 public:
 	//static QStringList getWorkPositions( QString jobID );
 
-	static QString spriteID( QString itemID );
-	static bool spriteIsRandom( QString spriteID );
-	static bool spriteHasAnim( QString spriteID );
+	static std::string spriteID( const std::string& itemID );
+	static bool spriteIsRandom( const std::string& spriteID );
+	static bool spriteHasAnim( const std::string& spriteID );
 	static std::string materialColor( const std::string& materialID );
 
 	static int materialToolLevel( QString material );
 
-	static int materialUID( QString material );
-	static QString materialSID( int material );
+	static int materialUID( const std::string& material );
+	static std::string materialSID( int material );
 
-	static int itemUID( QString item );
-	static QString itemSID( int item );
+	static int itemUID( const std::string& item );
+	static std::string itemSID( int item );
 	static bool itemIsContainer( int item );
 
 	static int rowID( QString table, QString id );
@@ -55,9 +55,9 @@ private:
 	DBHelper()  = delete;
 	~DBHelper() = delete;
 
-	static absl::btree_map<QString, QString> m_spriteIDCache;
-	static absl::btree_map<QString, bool> m_spriteIsRandomCache;
-	static absl::btree_map<QString, bool> m_spriteHasAnimCache;
+	static absl::btree_map<std::string, std::string> m_spriteIDCache;
+	static absl::btree_map<std::string, bool> m_spriteIsRandomCache;
+	static absl::btree_map<std::string, bool> m_spriteHasAnimCache;
 	static absl::btree_map<std::string, std::string> m_materialColorCache;
 
 	static absl::btree_map<QString, int> m_materialToolLevelCache;

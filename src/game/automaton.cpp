@@ -80,9 +80,9 @@ void Automaton::init()
 
 	if ( m_core )
 	{
-		QString itemSID = g->inv()->itemSID( m_core );
+		const auto itemSID = g->inv()->itemSID( m_core );
 
-		auto row = DB::selectRow( "Automaton_Cores", itemSID );
+		auto row = DB::selectRow( "Automaton_Cores", QString::fromStdString(itemSID) );
 		loadBehaviorTree( row.value( "BehaviorTree" ).toString().toStdString() );
 
 		if ( m_btBlackBoard.contains( "State" ) )
@@ -111,7 +111,7 @@ void Automaton::init()
 
 void Automaton::updateSprite()
 {
-	const auto material = g->inv()->materialSID( m_automatonItem ).toStdString();
+	const auto material = g->inv()->materialSID( m_automatonItem );
 
 	auto components = g->inv()->components( m_automatonItem );
 	absl::btree_map<std::string, std::string> compMats;
@@ -137,8 +137,8 @@ void Automaton::updateSprite()
 			compMats.insert_or_assign( it, ma );
 		}
 	}
-	QString itemSID = g->inv()->itemSID( m_automatonItem );
-	auto parts      = DB::selectRows( "Creature_Parts", itemSID );
+	const auto itemSID = g->inv()->itemSID( m_automatonItem );
+	auto parts      = DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID) );
 
 	QVariantMap ordered;
 	for ( const auto& pm : parts )
@@ -177,7 +177,7 @@ void Automaton::updateSprite()
 		}
 	}
 
-	auto partsBack = DB::selectRows( "Creature_Parts", itemSID + "Back" );
+	auto partsBack = DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID + "Back") );
 
 	QVariantMap orderedBack;
 	for ( auto pm : partsBack )
@@ -290,16 +290,16 @@ void Automaton::installCore( unsigned int itemID )
 	//install core
 	if ( itemID )
 	{
-		QString itemSID = g->inv()->itemSID( itemID );
-		if ( itemSID.startsWith( "AutomatonCore" ) )
+		const auto itemSID = g->inv()->itemSID( itemID );
+		if ( itemSID.starts_with( "AutomatonCore" ) )
 		{
 			m_core = itemID;
 			g->inv()->pickUpItem( itemID, m_id );
 
-			auto row = DB::selectRow( "Automaton_Cores", itemSID );
+			auto row = DB::selectRow( "Automaton_Cores", QString::fromStdString(itemSID) );
 
 			loadBehaviorTree( row.value( "BehaviorTree" ).toString().toStdString() );
-			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", itemSID ) )
+			for ( auto row2 : DB::selectRows( "Automaton_Cores_Skills", QString::fromStdString(itemSID) ) )
 			{
 				const auto skillID = row2.value( "SkillID" ).toString().toStdString();
 				int value       = row2.value( "SkillValue" ).toInt();

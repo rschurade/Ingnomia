@@ -90,7 +90,7 @@ struct EquipmentItem
 	std::string material        = "";
 	unsigned int itemID     = 0;
 	unsigned int materialID = 0;
-	QStringList allMats;
+	std::vector<std::string> allMats;
 
 	QVariantMap serialize();
 	EquipmentItem( const QVariantMap& in );

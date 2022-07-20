@@ -18,6 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <string>
+#include <vector>
+#include <optional>
+
 namespace maps
 {
 
@@ -58,3 +62,19 @@ const T& get_or_default( const std::variant<Args...>& variant, const T& defval )
 }
 
 }
+
+namespace lists
+{
+template <class T>
+T takeFirst( std::vector<T>& vector )
+{
+	const auto first = *vector.begin();
+	vector.erase( vector.begin() );
+	return first;
+}
+}
+
+namespace vars
+{
+std::optional<std::string> opt( const std::string& str );
+} // namespace vars

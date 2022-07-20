@@ -101,10 +101,10 @@ int GameState::viewLevel = 100;
 
 QList<GuiWatchedItem> GameState::watchedItemList;
 
-absl::flat_hash_map<QString, int> GameState::materialSID2ID;
-absl::flat_hash_map<int, QString> GameState::materialID2SID;
-absl::flat_hash_map<QString, int> GameState::itemSID2ID;
-absl::flat_hash_map<int, QString> GameState::itemID2SID;
+absl::flat_hash_map<std::string, int> GameState::materialSID2ID;
+absl::flat_hash_map<int, std::string> GameState::materialID2SID;
+absl::flat_hash_map<std::string, int> GameState::itemSID2ID;
+absl::flat_hash_map<int, std::string> GameState::itemID2SID;
 
 
 bool GameState::init()
@@ -212,14 +212,14 @@ void GameState::serialize( QVariantMap& out )
 	QVariantMap vmIDs;
 	for( auto key : GameState::materialSID2ID | ranges::views::keys )
 	{
-		vmIDs.insert( key, materialSID2ID.at( key ) );
+		vmIDs.insert( QString::fromStdString(key), materialSID2ID.at( key ) );
 	}
 	out.insert( "mats2ids", vmIDs );
 
 	QVariantMap viIDs;
 	for( auto key : GameState::itemSID2ID | ranges::views::keys )
 	{
-		viIDs.insert( key, itemSID2ID.at( key ) );
+		viIDs.insert( QString::fromStdString(key), itemSID2ID.at( key ) );
 	}
 	out.insert( "items2ids", viIDs );
 
@@ -366,16 +366,16 @@ void GameState::load( QVariantMap& vals )
 		for( auto id : DB::ids( "Items" ) )
 		{
 			int rowid = DBH::rowID( "Items", id );
-			itemID2SID.insert_or_assign( rowid, id );
-			itemSID2ID.insert_or_assign( id, rowid );
+			itemID2SID.insert_or_assign( rowid, id.toStdString() );
+			itemSID2ID.insert_or_assign( id.toStdString(), rowid );
 		}
 	}
 	else
 	{
 		for( auto key : viIDs.keys() )
 		{
-			itemID2SID.insert_or_assign( viIDs.value( key ).toInt(), key );
-			itemSID2ID.insert_or_assign( key, viIDs.value( key ).toInt() );
+			itemID2SID.insert_or_assign( viIDs.value( key ).toInt(), key.toStdString() );
+			itemSID2ID.insert_or_assign( key.toStdString(), viIDs.value( key ).toInt() );
 		}
 	}
 
@@ -388,16 +388,16 @@ void GameState::load( QVariantMap& vals )
 		for( auto id : DB::ids( "Materials" ) )
 		{
 			int rowid = DBH::rowID( "Materials", id );
-			materialID2SID.insert_or_assign( rowid, id );
-			materialSID2ID.insert_or_assign( id, rowid );
+			materialID2SID.insert_or_assign( rowid, id.toStdString() );
+			materialSID2ID.insert_or_assign( id.toStdString(), rowid );
 		}
 	}
 	else
 	{
 		for( auto key : vmIDs.keys() )
 		{
-			materialID2SID.insert_or_assign( vmIDs.value( key ).toInt(), key );
-			materialSID2ID.insert_or_assign( key, vmIDs.value( key ).toInt() );
+			materialID2SID.insert_or_assign( vmIDs.value( key ).toInt(), key.toStdString() );
+			materialSID2ID.insert_or_assign( key.toStdString(), vmIDs.value( key ).toInt() );
 		}
 	}
 }

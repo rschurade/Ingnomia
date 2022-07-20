@@ -355,7 +355,7 @@ void AggregatorSelection::updateSelection()
 			else if ( action == "BuildItem" )
 			{
 				QVariantMap sprite;
-				sprite.insert( "SpriteID", DBH::spriteID( Global::sel->itemID() ) );
+				sprite.insert( "SpriteID", QString::fromStdString(DBH::spriteID( Global::sel->itemID().toStdString() )) );
 				sprite.insert( "Offset", "0 0 0" );
 				sprite.insert( "Type", "Furniture" );
 				sprite.insert( "Material", Global::sel->material() );
@@ -365,7 +365,7 @@ void AggregatorSelection::updateSelection()
 			{
 				spriteIDs = DB::selectRows( "Actions_Tiles", "ID", action );
 			}
-			for ( auto asi : spriteIDs )
+			for ( const auto& asi : spriteIDs )
 			{
 				QVariantMap entry = asi;
 				if ( !entry.value( "SpriteID" ).toString().isEmpty() )
@@ -384,19 +384,19 @@ void AggregatorSelection::updateSelection()
 
 					Sprite* addSpriteValid = nullptr;
 
-					QStringList mats;
-					for ( auto mv : entry.value( "Material" ).toList() )
+					std::vector<std::string> mats;
+					for ( const auto& mv : entry.value( "Material" ).toList() )
 					{
-						mats.push_back( mv.toString() );
+						mats.push_back( mv.toString().toStdString() );
 					}
 
 					if ( entry.contains( "Material" ) )
 					{
-						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), mats );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString().toStdString(), mats );
 					}
 					else
 					{
-						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString(), { "None" } );
+						addSpriteValid = Global::eventConnector->game()->sf()->createSprite( entry["SpriteID"].toString().toStdString(), { "None" } );
 					}
 					Position offset( 0, 0, 0 );
 					if ( entry.contains( "Offset" ) )

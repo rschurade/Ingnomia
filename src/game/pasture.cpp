@@ -334,7 +334,7 @@ void Pasture::onTick( quint64 tick, int& count )
 			for ( auto foodString : m_properties.foodSettings )
 			{
 				auto fsl = foodString.split( "_" );
-				if ( g->inv()->itemCount( fsl[0], fsl[1] ) > 0 )
+				if ( g->inv()->itemCount( fsl[0].toStdString(), fsl[1].toStdString() ) > 0 )
 				{
 					for ( auto& field : m_fields | ranges::views::values )
 					{

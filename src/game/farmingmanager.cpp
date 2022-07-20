@@ -522,7 +522,7 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 
 bool FarmingManager::addUtil( Position pos, unsigned int itemID )
 {
-	QString itemSID = g->m_inv->itemSID( itemID );
+	const auto itemSID = g->m_inv->itemSID( itemID );
 
 	if ( itemSID == "Shed" )
 	{

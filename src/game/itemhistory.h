@@ -30,7 +30,7 @@ struct IH_values
 
 struct IH_dayData
 {
-	absl::btree_map<QString, absl::btree_map<QString, IH_values>> data;
+	absl::btree_map<std::string, absl::btree_map<std::string, IH_values>> data;
 };
 
 struct IH_day
@@ -56,30 +56,30 @@ public:
 	void reset();
 	void init();
 	void onTick( bool dayChanged );
-	void plusItem( QString itemSID, QString materialSID );
-	void minusItem( QString itemSID, QString materialSID );
+	void plusItem( const std::string& itemSID, const std::string& materialSID );
+	void minusItem( const std::string& itemSID, const std::string& materialSID );
 
 	void finishStart()
 	{
 		m_startUp = false;
 	}
 
-	absl::btree_map<QString, absl::btree_set<QString>> allItems()
+	absl::btree_map<std::string, absl::btree_set<std::string>> allItems()
 	{
 		return m_itemsPresent;
 	}
 
-	absl::btree_map<QString, std::vector<IH_values>> getHistory( QString itemSID );
+	absl::btree_map<std::string, std::vector<IH_values>> getHistory( const std::string& itemSID );
 
-	absl::btree_map<QString, std::vector<IH_values>> getRandomHistory( QString itemSID );
+	absl::btree_map<std::string, std::vector<IH_values>> getRandomHistory( const std::string& itemSID );
 
 private:
 	void newDay();
 
-	QList<IH_day> m_data;
+	std::vector<IH_day> m_data;
 	IH_day m_currentDay;
 
-	absl::btree_map<QString, absl::btree_set<QString>> m_itemsPresent;
+	absl::btree_map<std::string, absl::btree_set<std::string>> m_itemsPresent;
 
 	bool m_startUp = true;
 };

@@ -35,6 +35,7 @@
 #include <filesystem>
 
 #include <range/v3/view.hpp>
+#include <range/v3/action/split.hpp>
 
 namespace fs = std::filesystem;
 
@@ -44,8 +45,8 @@ Counter<QString> DB::m_counter;
 absl::btree_map<Qt::HANDLE, QSqlDatabase> DB::m_connections;
 
 
-absl::flat_hash_map<QString, QSharedPointer<DBS::Workshop>> DB::m_workshops;
-absl::flat_hash_map<QString, QSharedPointer<DBS::Job>> DB::m_jobs;
+absl::flat_hash_map<std::string, std::unique_ptr<DBS::Workshop>> DB::m_workshops;
+absl::flat_hash_map<std::string, std::unique_ptr<DBS::Job>> DB::m_jobs;
 
 void DB::init()
 {
@@ -75,43 +76,47 @@ void DB::initStructs()
 	auto rows = DB::selectRows( "Workshops" );
 	for( const auto& row : rows )
 	{
-		QSharedPointer<DBS::Workshop> ws( new DBS::Workshop );
-		ws->ID = row.value( "ID" ).toString();
-		ws->Crafts = row.value( "Crafts" ).toString().split( "|" );
-		ws->GUI = row.value( "GUI" ).toString();
+		auto ws = std::make_unique<DBS::Workshop>();
+
+		const auto gui = row.value( "GUI" ).toString().toStdString();
+		const auto icon = row.value( "Icon" ).toString().toStdString();
+
+		ws->ID = row.value( "ID" ).toString().toStdString();
+		ws->Crafts = ranges::actions::split( row.value( "Crafts" ).toString().toStdString(), '|' ) | ranges::to<std::vector<std::string>>();
+		ws->GUI = vars::opt(gui);
 		ws->InputTile = Position( row.value( "InputTile" ) );
 		ws->OutputTile = row.value( "OutputTile" ).toString();
-		ws->Size = row.value( "Size" ).toString();
+		ws->Size = row.value( "Size" ).toString().toStdString();
 		ws->NoAutoGenerate = row.value( "NoAutoGenerate" ).toBool();
-		ws->Icon = row.value( "Icon" ).toString();
-		ws->Tab = row.value( "Tab" ).toString();
-		
-		auto crows = DB::selectRows( "Workshops_Components", ws->ID );
+		ws->Icon = vars::opt( icon );
+		ws->Tab = row.value( "Tab" ).toString().toStdString();
+
+		auto crows = DB::selectRows( "Workshops_Components", QString::fromStdString(ws->ID) );
 		for( const auto& crow : crows )
 		{
-			DBS::Workshop_Component wsc;
-			wsc.Amount = crow.value( "Amount" ).toInt();
-			wsc.ItemID = crow.value( "ItemID" ).toString();
-			wsc.MaterialItem = crow.value( "MaterialItem" ).toString();
-			wsc.Offset = Position( crow.value( "Offset" ) );
-			wsc.Required = crow.value( "Required" ).toString();
-			wsc.Forbidden = crow.value( "Forbidden" ).toString();
-			wsc.SpriteID = crow.value( "SpriteID" ).toString();
-			wsc.SpriteID2 = crow.value( "SpriteID2" ).toString();
-			wsc.Type = crow.value( "Type" ).toString();
-			wsc.WallRotation = crow.value( "WallRotation" ).toString();
-			wsc.IsFloor = crow.value( "IsFloor" ).toBool();
-			ws->components.append( wsc );
+			ws->components.emplace_back( DBS::Workshop_Component {
+				.Amount       = crow.value( "Amount" ).toInt(),
+				.ItemID       = vars::opt(crow.value( "ItemID" ).toString().toStdString()),
+				.MaterialItem = vars::opt(crow.value( "MaterialItem" ).toString().toStdString()),
+				.Offset       = Position( crow.value( "Offset" ) ),
+				.Required     = vars::opt(crow.value( "Required" ).toString().toStdString()),
+				.Forbidden    = vars::opt(crow.value( "Forbidden" ).toString().toStdString()),
+				.SpriteID     = vars::opt(crow.value( "SpriteID" ).toString().toStdString()),
+				.SpriteID2    = vars::opt(crow.value( "SpriteID2" ).toString().toStdString()),
+				.Type         = vars::opt(crow.value( "Type" ).toString().toStdString()),
+				.WallRotation = vars::opt(crow.value( "WallRotation" ).toString().toStdString()),
+				.IsFloor      = crow.value( "IsFloor" ).toBool() } );
 		}
-		
-		m_workshops.insert_or_assign( ws->ID, ws );
+
+		m_workshops.insert_or_assign( ws->ID, std::move(ws) );
 	}
 
 	m_jobs.clear();
 	rows = DB::selectRows( "Jobs" );
 	for( const auto& row : rows )
 	{
-		QSharedPointer<DBS::Job> job( new DBS::Job );
+		auto job = std::make_unique<DBS::Job>();
+
 		job->ID = row.value( "ID" ).toString();
 		job->ConstructionType = row.value( "ConstructionType" ).toString();
 		job->MayTrapGnome = row.value( "MayTrapGnome" ).toBool();
@@ -145,7 +150,7 @@ void DB::initStructs()
 			js.Type = srow.value( "Type" ).toString();
 			job->sprites.append( js );
 		}
-		m_jobs.insert_or_assign( job->ID, job );
+		m_jobs.insert_or_assign( job->ID.toStdString(), std::move(job) );
 	}
 }
 
@@ -692,23 +697,29 @@ bool DB::addTranslation( QString id, QString text )
 	return ok;
 }
 
-QSharedPointer<DBS::Workshop> DB::workshop( QString id )
+DBS::Workshop* DB::workshop( const std::string& id )
 {
-	return maps::at_or_default( DB::m_workshops, id, (QSharedPointer<DBS::Workshop>)nullptr );
-}
-
-QSharedPointer<DBS::Job> DB::job( QString id )
-{
-	if( DB::m_jobs.contains( id ) )
+	const auto it = DB::m_workshops.find( id );
+	if ( it == DB::m_workshops.end() )
 	{
-		return DB::m_jobs.at( id );
+		return nullptr;
 	}
-	return nullptr;
+	return it->second.get();
 }
 
-std::vector<QString> DB::jobIds()
+DBS::Job* DB::job( const std::string& id )
 {
-	std::vector<QString> keys;
+	const auto it = DB::m_jobs.find( id );
+	if ( it == DB::m_jobs.end() )
+	{
+		return nullptr;
+	}
+	return it->second.get();
+}
+
+std::vector<std::string> DB::jobIds()
+{
+	std::vector<std::string> keys;
 	for ( const auto& key : DB::m_jobs | ranges::views::keys ) {
 		keys.push_back(key);
 	}

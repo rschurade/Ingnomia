@@ -39,14 +39,14 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 	if( !g ) return;
 	materials.clear();
 
-	auto mats = g->inv()->materialCountsForItem( sid );
+	auto mats = g->inv()->materialCountsForItem( sid.toStdString() );
 
 	auto allowedMats = Global::util->possibleMaterials( row.value( "AllowedMaterial" ).toString(), row.value( "AllowedMaterialType" ).toString() );
 	if ( !allowedMats.isEmpty() )
 	{
 		for ( auto mat : allowedMats )
 		{
-			materials.append( GuiWorkshopMaterial { mat, mats[mat] } );
+			materials.append( GuiWorkshopMaterial { mat, mats[mat.toStdString()] } );
 		}
 		return;
 	}
@@ -60,7 +60,7 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 	mats.erase( "any" );
 	for ( auto key : mats | ranges::views::keys )
 	{
-		materials.append( GuiWorkshopMaterial { key, mats[key] } );
+		materials.append( GuiWorkshopMaterial { QString::fromStdString(key), mats[key] } );
 	}
 }
 
@@ -141,18 +141,18 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 
 			m_info.products.clear();
 
-			if ( m_info.gui.isEmpty() )
+			if ( !m_info.gui )
 			{
 				for ( auto craft : ws->crafts() )
 				{
 					GuiWorkshopProduct gwp;
 					gwp.g = g;
-					gwp.sid = craft;
+					gwp.sid = QString::fromStdString(craft);
 					gwp.updateComponents();
 					m_info.products.append( gwp );
 				}
 			}
-			else if ( m_info.gui == "Butcher" )
+			else if ( *m_info.gui == "Butcher" )
 			{
 				m_info.butcherExcess  = ws->butcherExcess();
 				m_info.butcherCorpses = ws->butcherCorpses();
@@ -388,14 +388,14 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 					int count = g->inv()->itemCountInStockpile( item, mat );
 					if( count > 0 )
 					{
-						QList<unsigned int> itemList = g->inv()->tradeInventory( item, mat );
+						const auto itemList = g->inv()->tradeInventory( item, mat );
 
 						Counter<unsigned int> counter;
 						absl::btree_map<unsigned int, unsigned int>values;
 						absl::btree_map<int, QList<unsigned int>> vlItems;
 						for( auto itemUID : itemList )
 						{
-							if( DB::select( "HasQuality", "Items", item ).toBool() )
+							if( DB::select( "HasQuality", "Items", QString::fromStdString(item) ).toBool() )
 							{
 								int qual = g->inv()->quality( itemUID );
 								counter.add( qual );
@@ -413,19 +413,19 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 
 							QString qName;
 							QString qID;
-							if( DB::select( "HasQuality", "Items", item ).toBool() )
+							if( DB::select( "HasQuality", "Items", QString::fromStdString(item) ).toBool() )
 							{
 								qID = DBH::qualitySID( (int)key );
 								qName= S::s( "$QualityName_" + qID ) + " ";
 							}
 
-							gti.itemSID = item;
-							gti.materialSIDorGender = mat;
+							gti.itemSID = QString::fromStdString(item);
+							gti.materialSIDorGender = QString::fromStdString(mat);
 							gti.value = g->inv()->getTradeValue( item, mat, key );
 							gti.quality = key; 
 							gti.count = vlItems[(int)key].size();
 
-							gti.name = qName + S::s( "$MaterialName_" + mat ) + " " + S::s( "$ItemName_" + item ) + " (" + QString::number( gti.value ) + ")";
+							gti.name = qName + S::s( "$MaterialName_" + QString::fromStdString(mat) ) + " " + S::s( "$ItemName_" + QString::fromStdString(item) ) + " (" + QString::number( gti.value ) + ")";
 							
 							m_playerStock.append( gti );
 						}
@@ -614,17 +614,17 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 					{
 						if ( item.reserved > 0 )
 						{
-							QList<unsigned int> sellItems;
+							std::vector<unsigned int> sellItems;
 							if ( DB::select( "HasQuality", "Items", item.itemSID ).toBool() )
 							{
-								sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender, item.quality );
+								sellItems = g->inv()->tradeInventory( item.itemSID.toStdString(), item.materialSIDorGender.toStdString(), item.quality );
 							}
 							else
 							{
-								sellItems = g->inv()->tradeInventory( item.itemSID, item.materialSIDorGender );
+								sellItems = g->inv()->tradeInventory( item.itemSID.toStdString(), item.materialSIDorGender.toStdString() );
 							}
 
-							auto valuePerItem = g->inv()->getTradeValue( item.itemSID, item.materialSIDorGender, item.quality );
+							auto valuePerItem = g->inv()->getTradeValue( item.itemSID.toStdString(), item.materialSIDorGender.toStdString(), item.quality );
 
 							if ( sellItems.size() < item.reserved )
 							{
@@ -665,7 +665,7 @@ void AggregatorWorkshop::onTrade( unsigned int workshopID )
 							{
 								for( int i = 0; i < item.reserved; ++i )
 								{
-									g->inv()->createItem( workshop->outputPos(), item.itemSID, item.materialSID );
+									g->inv()->createItem( workshop->outputPos(), item.itemSID.toStdString(), item.materialSID.toStdString() );
 								}
 							}
 							item.amount = qMax( 0, item.amount - item.reserved );

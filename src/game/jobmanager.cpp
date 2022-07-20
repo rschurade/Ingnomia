@@ -45,7 +45,7 @@ JobManager::JobManager( Game* parent ) :
 {
 	for ( const auto& job : DB::jobIds() )
 	{
-		m_jobsPerType.insert_or_assign( job.toStdString(), QMultiHash<int, unsigned int>() );
+		m_jobsPerType.insert_or_assign( job, QMultiHash<int, unsigned int>() );
 	}
 
 	m_skillToInt.insert_or_assign( "Mining", SK_Mining );
@@ -103,7 +103,7 @@ JobManager::JobManager( Game* parent ) :
 			auto dbjob = DB::job( jobID );
 			if( dbjob->SkillID == skillID )
 			{
-				jobs.push_back( jobID.toStdString() );
+				jobs.push_back( jobID );
 			}
 		}
 		m_jobIDs.insert_or_assign( skillID.toStdString(), jobs );
@@ -178,7 +178,7 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 		bool found = false;
 		for ( auto pos : job->possibleWorkPositions() )
 		{
-			if ( g->inv()->checkReachableItems( pos, true, rim.count, rim.itemSID, rim.materialSID ) )
+			if ( g->inv()->checkReachableItems( pos, true, rim.count, rim.itemSID.toStdString(), rim.materialSID.toStdString() ) )
 			{
 				found         = true;
 				rim.available = true;
@@ -238,17 +238,17 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 		return true;
 	}
 
-	absl::btree_map<QString, int> mc = g->inv()->materialCountsForItem( QString::fromStdString(rt.type), false );
+	absl::btree_map<std::string, int> mc = g->inv()->materialCountsForItem( rt.type, false );
 
-	for ( auto key : mc | ranges::views::keys )
+	for ( const auto& item : mc )
 	{
-		if ( mc[key] > 0 )
+		if ( item.second > 0 )
 		{
 			if ( rt.level == 0 )
 			{
 				return true;
 			}
-			int tl = DBH::materialToolLevel( key );
+			int tl = DBH::materialToolLevel( QString::fromStdString(item.first) );
 			if ( tl >= rt.level )
 			{
 				return true;
@@ -324,10 +324,10 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	job->setRotation( rotation );
 	job->setNoJobSprite( noJobSprite );
 		
-	job->setRequiredSkill( Global::util->requiredSkill( type ) );
-	job->setRequiredTool( Global::util->requiredTool( type ), Global::util->requiredToolLevel( type, pos ) );
+	job->setRequiredSkill( Global::util->requiredSkill( type.toStdString() ) );
+	job->setRequiredTool( Global::util->requiredTool( type.toStdString() ), Global::util->requiredToolLevel( type.toStdString(), pos ) );
 
-	auto dbjb = DB::job( type );
+	auto dbjb = DB::job( type.toStdString() );
 	if( dbjb )
 	{
 		job->setMayTrap( dbjb->MayTrapGnome );
@@ -356,14 +356,14 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 
 	QSharedPointer<Job> job( new Job );
 	job->setType( type );
-	job->setRequiredSkill( Global::util->requiredSkill( type ) );
+	job->setRequiredSkill( Global::util->requiredSkill( type.toStdString() ) );
 	job->setPos( pos );
 	job->setItem( item );
 	job->setMaterial( materials.first() );
 	job->setRotation( rotation );
 	job->setNoJobSprite( noJobSprite );
 	QString constructionID;
-	auto dbjb = DB::job( type );
+	auto dbjb = DB::job( type.toStdString() );
 	if( dbjb )
 	{
 		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
@@ -400,7 +400,7 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 		int cID = 0;
 		for ( auto comp : components )
 		{
-			QString itemID = comp.value( "ItemID" ).toString();
+			const auto itemID = comp.value( "ItemID" ).toString();
 			if ( !itemID.isEmpty() )
 			{
 				int amount = comp.value( "Amount" ).toInt();
@@ -413,7 +413,7 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 					// not used right now
 				}
 				//qDebug() << "require item " << itemID << materials[cID];
-				int itemCount = g->inv()->itemCount( itemID, materials[cID] );
+				int itemCount = g->inv()->itemCount( itemID.toStdString(), materials[cID].toStdString() );
 				if ( itemCount - amount < 0 )
 				{
 					//qDebug() << "require " << amount << " items " << itemID << materials[cID] << " there are " << itemCount << " in the world";
@@ -789,7 +789,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 			else if ( type == "BuildItem" )
 			{
 				QVariantMap sprite;
-				sprite.insert( "SpriteID", DBH::spriteID( job->item() ) );
+				sprite.insert( "SpriteID", QString::fromStdString( DBH::spriteID( job->item().toStdString() ) ) );
 				sprite.insert( "Offset", "0 0 0" );
 				sprite.insert( "Type", "Item" );
 				components.push_back( sprite );
@@ -827,7 +827,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 					{
 						cm.insert( "SpriteID", cm.value( "SpriteIDOverride" ).toString() );
 					}
-					Sprite* sprite  = g->sf()->createSprite( cm["SpriteID"].toString(), { mat } );
+					Sprite* sprite  = g->sf()->createSprite( cm["SpriteID"].toString().toStdString(), { mat.toStdString() } );
 					sprite->opacity = 0.5;
 
 					bool isFloor = false;
@@ -904,7 +904,7 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 					if ( !entry.value( "SpriteID" ).toString().isEmpty() )
 					{
 						QString spriteID = entry["SpriteID"].toString();
-						Sprite* sprite   = g->sf()->createSprite( spriteID, { "None" } );
+						Sprite* sprite   = g->sf()->createSprite( spriteID.toStdString(), { "None" } );
 						sprite->opacity  = 0.5;
 						Position offset( 0, 0, 0 );
 						if ( entry.contains( "Offset" ) )

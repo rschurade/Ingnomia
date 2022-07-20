@@ -368,9 +368,9 @@ void World::updateFenceSprite( Position pos )
 		Position constrPos( pos + offset );
 		unsigned int tid       = constrPos.toInt();
 		Tile& tile             = getTile( tid );
-		QString materialID     = DBH::materialSID( tile.wallMaterial );
-		QString spriteSID      = sp.value( "SpriteID" ).toString() + suffix;
-		unsigned int spriteUID = g->sf()->createSprite( spriteSID, { materialID } )->uID;
+		const auto materialID     = DBH::materialSID( tile.wallMaterial );
+		const auto spriteSID      = sp.value( "SpriteID" ).toString() + suffix;
+		unsigned int spriteUID = g->sf()->createSprite( spriteSID.toStdString(), { materialID } )->uID;
 
 		tile.wallSpriteUID = spriteUID;
 	}
@@ -391,9 +391,9 @@ void World::updatePipeSprite( Position pos )
 	QString suffix = "Rot";
 
 	unsigned int itemUID = constr.value( "Item" ).toUInt();
-	QString itemSID      = g->inv()->itemSID( itemUID );
+	const auto itemSID      = g->inv()->itemSID( itemUID );
 
-	if ( itemSID.startsWith( "Pump" ) )
+	if ( itemSID.starts_with( "Pump" ) )
 	{
 		return;
 	}
@@ -415,7 +415,7 @@ void World::updatePipeSprite( Position pos )
 		suffix += "W";
 	}
 
-	auto spl = DB::selectRows( "Constructions_Sprites", "ID", itemSID );
+	auto spl = DB::selectRows( "Constructions_Sprites", "ID", QString::fromStdString(itemSID) );
 	for ( auto sp : spl )
 	{
 		Position offset;
@@ -423,9 +423,9 @@ void World::updatePipeSprite( Position pos )
 		Position constrPos( pos + offset );
 		unsigned int tid       = constrPos.toInt();
 		Tile& tile             = getTile( tid );
-		QString materialID     = DBH::materialSID( tile.wallMaterial );
-		QString spriteSID      = sp.value( "SpriteID" ).toString() + suffix;
-		unsigned int spriteUID = g->sf()->createSprite( spriteSID, { materialID } )->uID;
+		const auto materialID     = DBH::materialSID( tile.wallMaterial );
+		const auto spriteSID      = sp.value( "SpriteID" ).toString() + suffix;
+		unsigned int spriteUID = g->sf()->createSprite( spriteSID.toStdString(), { materialID } )->uID;
 
 		tile.wallSpriteUID = spriteUID;
 	}
@@ -509,7 +509,7 @@ void World::plant( Position pos, unsigned int baseItem )
 	QStringList plants = DB::ids( "Plants", "Type", "Plant" );
 	for ( auto plant : plants )
 	{
-		if ( DB::select( "Material", "Plants", plant ).toString() == g->inv()->materialSID( baseItem ) )
+		if ( DB::select( "Material", "Plants", plant ).toString().toStdString() == g->inv()->materialSID( baseItem ) )
 		{
 			Plant plant_( pos, plant, false, g );
 			m_plants.insert_or_assign( pos.toInt(), plant_ );
@@ -700,7 +700,7 @@ void World::removeGrass( Position pos )
 
 		Tile& tile           = getTile( pos );
 		tile.vegetationLevel = 0;
-		QString materialSID  = DBH::materialSID( tile.floorMaterial );
+		const auto materialSID  = DBH::materialSID( tile.floorMaterial );
 
 		if ( tile.floorType & FT_SOLIDFLOOR && materialSID == "Dirt" )
 		{
@@ -1263,14 +1263,14 @@ void World::updateRampAtPos( Position pos )
 		return;
 	}
 
-	QString mat = DBH::materialSID( tile.wallMaterial );
+	const auto mat = DBH::materialSID( tile.wallMaterial );
 
 	tileAbove.floorType = FloorType::FT_RAMPTOP;
 
 	tile.wallType = WallType::WT_RAMP;
 	tile.flags += TileFlag::TF_WALKABLE;
 
-	setRampSprites( tile, tileAbove, sum, north, east, south, west, mat );
+	setRampSprites( tile, tileAbove, sum, north, east, south, west, QString::fromStdString(mat) );
 
 	updateWalkable( pos );
 	updateWalkable( pos.aboveOf() );
@@ -1329,13 +1329,13 @@ void World::createRamp( int x, int y, int z, TerrainMaterial mat )
 	if ( tile.wallType != WallType::WT_NOWALL )
 		return;
 
-	unsigned short key = DBH::materialUID( mat.key );
+	unsigned short key = DBH::materialUID( mat.key.toStdString() );
 
 	if ( ( tileBelow.wallType & WallType::WT_ROUGH ) && ( tile.wallType == WallType::WT_NOWALL ) && ( tile.floorType == FloorType::FT_NOFLOOR ) )
 	{
 		tile.floorType      = FloorType::FT_SOLIDFLOOR;
 		tile.floorMaterial  = key;
-		tile.floorSpriteUID = g->sf()->createSprite( mat.floor, { mat.key } )->uID;
+		tile.floorSpriteUID = g->sf()->createSprite( mat.floor.toStdString(), { mat.key.toStdString() } )->uID;
 	}
 
 	bool north = m_world[x + ( y - 1 ) * m_dimX + offset].wallType & WallType::WT_ROUGH;
@@ -1386,7 +1386,7 @@ void World::createRamp( int x, int y, int z )
 	{
 		tile.floorType      = FloorType::FT_SOLIDFLOOR;
 		tile.floorMaterial  = tileBelow.wallMaterial;
-		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", DBH::materialSID( tileBelow.wallMaterial ) ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
+		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", QString::fromStdString(DBH::materialSID( tileBelow.wallMaterial ) ) ).toString().toStdString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
 	}
 
 	bool north = m_world[x + ( y - 1 ) * m_dimX + offset].wallType & WallType::WT_ROUGH;
@@ -1434,7 +1434,7 @@ void World::createRamp( int x, int y, int z )
 		return;
 	}
 	key            = tile.floorMaterial;
-	QString matSID = DBH::materialSID( key );
+	const auto matSID = DBH::materialSID( key );
 
 	tile.wallType     = ( WallType )( WallType::WT_RAMP );
 	tile.wallMaterial = key;
@@ -1444,7 +1444,7 @@ void World::createRamp( int x, int y, int z )
 	tileAbove.floorType     = FloorType::FT_RAMPTOP;
 	tileAbove.floorMaterial = key;
 	
-	setRampSprites( tile, tileAbove, sum, north, east, south, west, matSID );
+	setRampSprites( tile, tileAbove, sum, north, east, south, west, QString::fromStdString(matSID) );
 }
 
 void World::createRamp( Position pos, QString materialSID )
@@ -1469,7 +1469,7 @@ void World::createRamp( int x, int y, int z, QString materialSID )
 	{
 		tile.floorType      = FloorType::FT_SOLIDFLOOR;
 		tile.floorMaterial  = tileBelow.wallMaterial;
-		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", DBH::materialSID( tileBelow.wallMaterial ) ).toString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
+		tile.floorSpriteUID = g->sf()->createSprite( DB::select( "FloorSprite", "TerrainMaterials", QString::fromStdString(DBH::materialSID( tileBelow.wallMaterial ) ) ).toString().toStdString(), { DBH::materialSID( tileBelow.wallMaterial ) } )->uID;
 	}
 
 	bool north = m_world[x + ( y - 1 ) * m_dimX + offset].wallType & WallType::WT_SOLIDWALL;
@@ -1483,7 +1483,7 @@ void World::createRamp( int x, int y, int z, QString materialSID )
 	{
 		return;
 	}
-	unsigned int key = DBH::materialUID( materialSID );
+	unsigned int key = DBH::materialUID( materialSID.toStdString() );
 
 	tile.wallType     = ( WallType )( WallType::WT_RAMP );
 	tile.wallMaterial = key;
@@ -1498,8 +1498,9 @@ void World::createRamp( int x, int y, int z, QString materialSID )
 	setRampSprites( tile, tileAbove, sum, north, east, south, west, materialSID );
 }
 
-void World::setRampSprites( Tile& tile, Tile& tileAbove, int sum, bool north, bool east, bool south, bool west, QString materialSID )
+void World::setRampSprites( Tile& tile, Tile& tileAbove, int sum, bool north, bool east, bool south, bool west, QString _materialSID )
 {
+	const auto materialSID = _materialSID.toStdString();
 	unsigned int ramp      = g->sf()->createSprite( "Ramp", { materialSID } )->uID;
 	unsigned int top       = g->sf()->createSprite( "RampTop", { materialSID } )->uID;
 	unsigned int corner    = g->sf()->createSprite( "CornerRamp", { materialSID } )->uID;
@@ -1633,7 +1634,7 @@ void World::createRampOuterCorners( int x, int y, int z )
 
 	unsigned int key = tile.floorMaterial;
 
-	QString matSID = DBH::materialSID( key );
+	auto matSID = DBH::materialSID( key );
 
 	unsigned int corner = g->sf()->createSprite( "OuterCornerRamp", { matSID } )->uID;
 

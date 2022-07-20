@@ -83,7 +83,7 @@ QString Util::materialType( QString materialID )
 	return DB::select( "Type", "Materials", materialID ).toString();
 }
 
-std::string Util::requiredSkill( QString jobID )
+std::string Util::requiredSkill( const std::string& jobID )
 {
 	auto dbjb = DB::job( jobID );
 	if( dbjb )
@@ -93,12 +93,12 @@ std::string Util::requiredSkill( QString jobID )
 	return "";
 }
 
-QString Util::requiredMagicSkill( QString spellID )
+std::string Util::requiredMagicSkill( const std::string& spellID )
 {
-	return DB::select( "SkillID", "Spells", spellID ).toString();
+	return DB::select( "SkillID", "Spells", QString::fromStdString(spellID) ).toString().toStdString();
 }
 
-std::string Util::requiredTool( QString jobID )
+std::string Util::requiredTool( const std::string& jobID )
 {
 	auto dbjb = DB::job( jobID );
 	if( dbjb )
@@ -108,7 +108,7 @@ std::string Util::requiredTool( QString jobID )
 	return "";
 }
 
-int Util::requiredToolLevel( QString jobID, Position pos )
+int Util::requiredToolLevel( const std::string& jobID, Position pos )
 {
 	auto dbjb = DB::job( jobID );
 	if( !dbjb )
@@ -143,13 +143,13 @@ int Util::requiredToolLevelByWallMaterial( Position pos )
 {
 	int level                   = 0;
 	unsigned short wallMaterial = g->w()->getTile( pos ).wallMaterial;
-	QString wallMatSID          = DBH::materialSID( wallMaterial );
+	const auto wallMatSID       = DBH::materialSID( wallMaterial );
 
-	QString wallMatType = Util::materialType( wallMatSID );
+	QString wallMatType = Util::materialType( QString::fromStdString(wallMatSID) );
 
-	if ( DBH::rowID( "MaterialToToolLevel", wallMatSID ) )
+	if ( DBH::rowID( "MaterialToToolLevel", QString::fromStdString(wallMatSID) ) )
 	{
-		level = DB::select( "RequiredToolLevel", "MaterialToToolLevel", wallMatSID ).toInt();
+		level = DB::select( "RequiredToolLevel", "MaterialToToolLevel", QString::fromStdString(wallMatSID) ).toInt();
 	}
 	else if ( DBH::rowID( "MaterialToToolLevel", wallMatType ) )
 	{
@@ -162,13 +162,13 @@ int Util::requiredToolLevelByFloorMaterial( Position pos )
 	int level                    = 0;
 	unsigned short floorMaterial = g->w()->getTile( pos ).floorMaterial;
 
-	QString floorMatSID = DBH::materialSID( floorMaterial );
+	const auto floorMatSID = DBH::materialSID( floorMaterial );
 
-	QString floorMatType = Util::materialType( floorMatSID );
+	QString floorMatType = Util::materialType( QString::fromStdString(floorMatSID) );
 
-	if ( DBH::rowID( "MaterialToToolLevel", floorMatSID ) )
+	if ( DBH::rowID( "MaterialToToolLevel", QString::fromStdString(floorMatSID) ) )
 	{
-		level = DB::select( "RequiredToolLevel", "MaterialToToolLevel", floorMatSID ).toInt();
+		level = DB::select( "RequiredToolLevel", "MaterialToToolLevel", QString::fromStdString(floorMatSID) ).toInt();
 	}
 	else if ( DBH::rowID( "MaterialToToolLevel", floorMatType ) )
 	{
@@ -180,13 +180,13 @@ int Util::requiredToolLevelByFloorMaterial( Position pos )
 int Util::toolLevel( unsigned int itemUID )
 {
 	int level        = 0;
-	QString material = g->inv()->materialSID( itemUID );
+	const auto material = g->inv()->materialSID( itemUID );
 
-	QString materialType = Util::materialType( material );
+	QString materialType = Util::materialType( QString::fromStdString(material) );
 
-	if ( DBH::rowID( "MaterialToToolLevel", material ) )
+	if ( DBH::rowID( "MaterialToToolLevel", QString::fromStdString(material) ) )
 	{
-		level = DB::select( "ToolLevel", "MaterialToToolLevel", material ).toInt();
+		level = DB::select( "ToolLevel", "MaterialToToolLevel", QString::fromStdString(material) ).toInt();
 	}
 	else if ( DBH::rowID( "MaterialToToolLevel", materialType ) )
 	{
@@ -214,12 +214,12 @@ int Util::toolLevel( QString materialSID )
 
 absl::btree_set<QString> Util::itemsAllowedInContainer( unsigned int containerID )
 {
-	return Global::allowedInContainer.at( g->inv()->itemSID( containerID ) );
+	return Global::allowedInContainer.at( QString::fromStdString(g->inv()->itemSID( containerID )) );
 }
 
 bool Util::itemAllowedInContainer( unsigned int itemID, unsigned int containerID )
 {
-	return Global::allowedInContainer.at( g->inv()->itemSID( containerID ) ).contains( g->inv()->itemSID( itemID ) );
+	return Global::allowedInContainer.at( QString::fromStdString( g->inv()->itemSID( containerID ) ) ).contains( QString::fromStdString( g->inv()->itemSID( itemID ) ) );
 }
 
 void Util::initAllowedInContainer()
@@ -498,10 +498,10 @@ QColor Util::variant2QColor( QVariant color )
 unsigned int Util::createRawMaterialItem( Position pos, unsigned int materialID )
 {
 	//create items from the wall material
-	QString materialSID = "None";
+	std::string materialSID = "None";
 	QString type        = "None";
 	materialSID         = DBH::materialSID( materialID );
-	type                = Util::materialType( materialSID );
+	type                = Util::materialType( QString::fromStdString(materialSID) );
 
 	if ( type == "Soil" )
 	{
@@ -893,7 +893,7 @@ void Util::debugVM( QVariantMap vm, QString name )
 	}
 }
 
-PixmapPtr Util::createWorkshopImage( const QString& workshopID, const QStringList& mats )
+PixmapPtr Util::createWorkshopImage( const std::string& workshopID, const std::vector<std::string>& mats )
 {
 	PixmapPtr result(nullptr, SDL_FreeSurface);
 
@@ -906,16 +906,16 @@ PixmapPtr Util::createWorkshopImage( const QString& workshopID, const QStringLis
 		return result;
 	}
 
-	if ( !dbws->Icon.isEmpty() )
+	if ( dbws->Icon )
 	{
-		const auto path = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "xaml" / "buttons" / dbws->Icon.toStdString();
+		const auto path = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "xaml" / "buttons" / *dbws->Icon;
 		result.reset( IMG_Load( path.c_str() ) );
 		assert( result->w > 0 );
 		return result;
 	}
 	const auto season = GameState::seasonString.toStdString();
 
-	auto coms = DB::selectRows( "Workshops_Components", workshopID );
+	auto coms = DB::selectRows( "Workshops_Components", QString::fromStdString(workshopID) );
 
 	result.reset( createPixmap( 100, 100 ) );
 	SDL_FillRect( result.get(), nullptr, 0x00000000 );
@@ -942,9 +942,9 @@ PixmapPtr Util::createWorkshopImage( const QString& workshopID, const QStringLis
 	return result;
 }
 
-PixmapPtr Util::createItemImage( const QString& itemID, const QStringList& mats )
+PixmapPtr Util::createItemImage( const std::string& itemID, const std::vector<std::string>& mats )
 {
-	auto vsprite = DB::select( "SpriteID", "Items", itemID );
+	auto vsprite = DB::select( "SpriteID", "Items", QString::fromStdString(itemID) );
 	QVariantMap component;
 	component.insert( "SpriteID", vsprite );
 	component.insert( "Offset", "0 0 0" );
@@ -979,9 +979,9 @@ PixmapPtr Util::createItemImage( const QString& itemID, const QStringList& mats 
 	return result;
 }
 
-PixmapPtr Util::createItemImage2( const QString& itemID, const QStringList& mats )
+PixmapPtr Util::createItemImage2( const std::string&itemID, const std::vector<std::string>& mats )
 {
-	auto spriteID = DB::select( "SpriteID", "Items", itemID ).toString();
+	auto spriteID = DB::select( "SpriteID", "Items", QString::fromStdString(itemID) ).toString();
 	
 	const auto season = GameState::seasonString.toStdString();
 
@@ -991,7 +991,7 @@ PixmapPtr Util::createItemImage2( const QString& itemID, const QStringList& mats
 	int x0 = 0;
 	int y0 = 0;
 
-	Sprite* sprite = g->sf()->createSprite( spriteID, mats ) ;
+	Sprite* sprite = g->sf()->createSprite( spriteID.toStdString(), mats ) ;
 	if ( sprite )
 	{
 		auto* srcSurface = sprite->pixmap( season, 0, 0 );
@@ -1001,9 +1001,9 @@ PixmapPtr Util::createItemImage2( const QString& itemID, const QStringList& mats
 	return result;
 }
 
-PixmapPtr Util::createConstructionImage( const QString& constructionID, const QStringList& mats )
+PixmapPtr Util::createConstructionImage( const std::string& constructionID, const std::vector<std::string>& mats )
 {
-	auto sprites = DB::selectRows( "Constructions_Sprites", constructionID );
+	auto sprites = DB::selectRows( "Constructions_Sprites", QString::fromStdString(constructionID) );
 
 	const auto season = GameState::seasonString.toStdString();
 
@@ -1032,9 +1032,9 @@ PixmapPtr Util::createConstructionImage( const QString& constructionID, const QS
 	return result;
 }
 
-Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const QStringList& mats )
+Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const std::vector<std::string>& mats )
 {
-	QStringList materialIDs;
+	std::vector<std::string> materialIDs;
 	int mid = 0;
 	for ( const auto& cm : comps )
 	{
@@ -1067,7 +1067,7 @@ Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned
 
 			if ( !cm.value( "SpriteID" ).toString().isEmpty() )
 			{
-				return g->sf()->createSprite( cm.value( "SpriteID" ).toString(), materialIDs );
+				return g->sf()->createSprite( cm.value( "SpriteID" ).toString().toStdString(), materialIDs );
 			}
 			else
 			{

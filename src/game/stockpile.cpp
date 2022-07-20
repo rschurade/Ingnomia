@@ -119,7 +119,7 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 		{
 			infi->requireSame = g->inv()->requireSame( infi->containerID );
 			//repair capacity
-			infi->capacity = DB::select( "Capacity", "Containers", g->inv()->itemSID( infi->containerID ) ).value<unsigned char>(); 
+			infi->capacity = DB::select( "Capacity", "Containers", QString::fromStdString(g->inv()->itemSID( infi->containerID )) ).value<unsigned char>();
 
 		}
 
@@ -244,10 +244,12 @@ bool Stockpile::onTick( quint64 tick )
 		{
 			auto possibleSloits     = freeSlots();
 			const auto activeFilter = m_filter.getActive();
-			absl::btree_set<QPair<QString, QString>> effectiveFilter;
+			absl::btree_set<QPair<std::string, std::string>> effectiveFilter;
 			if ( possibleSloits.contains( QPair<QString, QString> { "Any", "Any" } ) )
 			{
-				effectiveFilter = activeFilter;
+				for ( const auto& filter : activeFilter ) {
+					effectiveFilter.insert( QPair<std::string, std::string>( filter.first.toStdString(), filter.second.toStdString() ) );
+				}
 			}
 			else
 			{
@@ -255,7 +257,7 @@ bool Stockpile::onTick( quint64 tick )
 				{
 					if ( possibleSloits.contains( filter ) || possibleSloits.contains( QPair<QString, QString> { filter.first, "Any" } ) )
 					{
-						effectiveFilter.insert( filter );
+						effectiveFilter.insert( QPair<std::string, std::string>( filter.first.toStdString(), filter.second.toStdString() ) );
 					}
 				}
 			}
@@ -293,7 +295,7 @@ absl::btree_set<QPair<QString, QString>> Stockpile::freeSlots() const
 				{
 					auto item = *infi->items.begin();
 					// Same item only
-					freeSlots.insert( { g->inv()->itemSID( item ), g->inv()->materialSID( item ) } );
+					freeSlots.insert( { QString::fromStdString(g->inv()->itemSID( item )), QString::fromStdString(g->inv()->materialSID( item )) } );
 				}
 			}
 			else
@@ -306,7 +308,7 @@ absl::btree_set<QPair<QString, QString>> Stockpile::freeSlots() const
 				{
 					auto item = *infi->items.begin();
 					// Same item only
-					freeSlots.insert( { g->inv()->itemSID( item ), g->inv()->materialSID( item ) } );
+					freeSlots.insert( { QString::fromStdString(g->inv()->itemSID( item )), QString::fromStdString(g->inv()->materialSID( item )) } );
 				}
 			}
 		}
@@ -323,23 +325,23 @@ unsigned int Stockpile::getJob()
 	while ( !m_possibleItems.empty() && itemsChecked < 50 )
 	{
 		++itemsChecked;
-		unsigned int item   = m_possibleItems.takeFirst();
-		QString itemSID     = g->inv()->itemSID( item );
-		QString materialSID = g->inv()->materialSID( item );
+		unsigned int item   = lists::takeFirst(m_possibleItems);
+		const auto itemSID     = g->inv()->itemSID( item );
+		const auto materialSID = g->inv()->materialSID( item );
 		bool suspended      = false;
 
 		if ( m_limitWithmaterial )
 		{
-			if ( m_limits.contains( itemSID + materialSID ) )
+			if ( m_limits.contains( QString::fromStdString(itemSID + materialSID) ) )
 			{
-				suspended = m_limits[itemSID + materialSID].suspended;
+				suspended = m_limits[QString::fromStdString(itemSID + materialSID)].suspended;
 			}
 		}
 		else
 		{
-			if ( m_limits.contains( itemSID ) )
+			if ( m_limits.contains( QString::fromStdString(itemSID) ) )
 			{
-				suspended = m_limits[itemSID].suspended;
+				suspended = m_limits[QString::fromStdString(itemSID)].suspended;
 			}
 		}
 
@@ -475,8 +477,8 @@ unsigned int Stockpile::getJob()
 
 unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 {
-	QString itemSID        = g->inv()->itemSID( itemID );
-	QString materialSID    = g->inv()->materialSID( itemID );
+	const auto itemSID        = g->inv()->itemSID( itemID );
+	const auto materialSID    = g->inv()->materialSID( itemID );
 	int freeSpace          = 1;
 	int countItems         = infi->items.size();
 	int countReservedItems = infi->reservedItems.size();
@@ -508,12 +510,12 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 		if ( itemCount > 1 )
 		{
 			// carry container exists?
-			QString carryContainer = Global::util->carryContainerForItem( itemSID );
+			QString carryContainer = Global::util->carryContainerForItem( QString::fromStdString(itemSID) );
 			freeSpace              = qMin( freeSpace, Global::util->capacity( carryContainer ) );
 
 			if ( !carryContainer.isEmpty() )
 			{
-				if ( g->inv()->itemCount( carryContainer, "any" ) > 0 )
+				if ( g->inv()->itemCount( carryContainer.toStdString(), "any" ) > 0 )
 				{
 					QSharedPointer<Job> job( new Job );
 					job->setType( "HauleMultipleItems" );
@@ -534,7 +536,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 					//
 					while ( !m_possibleItems.empty() && freeSpace > 0 )
 					{
-						auto nextItem = m_possibleItems.takeFirst();
+						auto nextItem = lists::takeFirst(m_possibleItems);
 						if ( materialSID != g->inv()->materialSID( nextItem ) || itemSID != g->inv()->itemSID( nextItem ) )
 						{
 							break;
@@ -573,19 +575,19 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 
 	if ( m_limitWithmaterial )
 	{
-		int threshold = m_limits[itemSID + materialSID].suspendThreshold;
+		int threshold = m_limits[QString::fromStdString(itemSID + materialSID)].suspendThreshold;
 		if ( threshold > 0 && countPlusReserved( itemSID, materialSID ) >= threshold )
 		{
-			m_limits[itemSID + materialSID].suspended = true;
+			m_limits[QString::fromStdString(itemSID + materialSID)].suspended = true;
 			m_suspendStatusChanged                    = true;
 		}
 	}
 	else
 	{
-		int threshold = m_limits[itemSID].suspendThreshold;
+		int threshold = m_limits[QString::fromStdString(itemSID)].suspendThreshold;
 		if ( threshold > 0 && countPlusReserved( itemSID ) >= threshold )
 		{
-			m_limits[itemSID].suspended = true;
+			m_limits[QString::fromStdString(itemSID)].suspended = true;
 			m_suspendStatusChanged      = true;
 		}
 	}
@@ -727,21 +729,21 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 				m_fields[pos.toInt()]->isFull = false;
 				m_isFull                      = false;
 			}
-			QString itemSID     = g->inv()->itemSID( itemID );
-			QString materialSID = g->inv()->materialSID( itemID );
+			const auto itemSID     = g->inv()->itemSID( itemID );
+			const auto materialSID = g->inv()->materialSID( itemID );
 			if ( m_limitWithmaterial )
 			{
-				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[itemSID + materialSID].activateThreshold )
+				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[QString::fromStdString(itemSID + materialSID)].activateThreshold )
 				{
-					m_limits[itemSID + materialSID].suspended = false;
+					m_limits[QString::fromStdString(itemSID + materialSID)].suspended = false;
 					m_suspendStatusChanged                    = true;
 				}
 			}
 			else
 			{
-				if ( countPlusReserved( itemSID ) <= m_limits[itemSID].activateThreshold )
+				if ( countPlusReserved( itemSID ) <= m_limits[QString::fromStdString(itemSID)].activateThreshold )
 				{
-					m_limits[itemSID].suspended = false;
+					m_limits[QString::fromStdString(itemSID)].suspended = false;
 					m_suspendStatusChanged      = true;
 				}
 			}
@@ -787,23 +789,23 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 			g->inv()->setInContainer( item, 0 );
 		}
 		// if count of that item type reached suspend threshold, suspend that item
-		QString itemSID     = g->inv()->itemSID( item );
-		QString materialSID = g->inv()->materialSID( item );
+		const auto itemSID     = g->inv()->itemSID( item );
+		const auto materialSID = g->inv()->materialSID( item );
 		if ( m_limitWithmaterial )
 		{
-			int threshold = m_limits[itemSID + materialSID].suspendThreshold;
+			int threshold = m_limits[QString::fromStdString(itemSID + materialSID)].suspendThreshold;
 			if ( threshold > 0 && countPlusReserved( itemSID, materialSID ) >= threshold )
 			{
-				m_limits[itemSID + materialSID].suspended = true;
+				m_limits[QString::fromStdString(itemSID + materialSID)].suspended = true;
 				m_suspendStatusChanged                    = true;
 			}
 		}
 		else
 		{
-			int threshold = m_limits[itemSID].suspendThreshold;
+			int threshold = m_limits[QString::fromStdString(itemSID)].suspendThreshold;
 			if ( threshold > 0 && countPlusReserved( itemSID ) >= threshold )
 			{
-				m_limits[itemSID].suspended = true;
+				m_limits[QString::fromStdString(itemSID)].suspended = true;
 				m_suspendStatusChanged      = true;
 			}
 		}
@@ -832,23 +834,23 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 			{
 				field->stackSize = 1;
 			}
-			QString itemSID     = g->inv()->itemSID( item );
-			QString materialSID = g->inv()->materialSID( item );
+			const auto itemSID     = g->inv()->itemSID( item );
+			const auto materialSID = g->inv()->materialSID( item );
 
 			if ( m_limitWithmaterial )
 			{
-				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[itemSID + materialSID].activateThreshold )
+				if ( countPlusReserved( itemSID, materialSID ) <= m_limits[QString::fromStdString(itemSID + materialSID)].activateThreshold )
 				{
-					m_limits[itemSID + materialSID].suspended = false;
+					m_limits[QString::fromStdString(itemSID + materialSID)].suspended = false;
 					//qDebug() << m_name << "suspend status changed";
 					m_suspendStatusChanged = true;
 				}
 			}
 			else
 			{
-				if ( countPlusReserved( itemSID ) <= m_limits[itemSID].activateThreshold )
+				if ( countPlusReserved( itemSID ) <= m_limits[QString::fromStdString(itemSID)].activateThreshold )
 				{
-					m_limits[itemSID].suspended = false;
+					m_limits[QString::fromStdString(itemSID)].suspended = false;
 					//qDebug() << m_name << "suspend status changed";
 					m_suspendStatusChanged = true;
 				}
@@ -892,7 +894,7 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 			QList<unsigned int> toRemove;
 			for ( auto oi : infi->items )
 			{
-				if ( !filter.contains( g->inv()->combinedID( oi ) ) )
+				if ( !filter.contains( QString::fromStdString(g->inv()->combinedID( oi )) ) )
 				{
 					g->inv()->setInStockpile( oi, false );
 					toRemove.append( oi );
@@ -988,7 +990,7 @@ void Stockpile::removeContainer( unsigned int containerID, Position& pos )
 
 bool Stockpile::allowedInStockpile( unsigned int itemID )
 {
-	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
+	return m_filter.getActiveSimple().contains( QString::fromStdString(g->inv()->combinedID( itemID )) );
 }
 
 QSharedPointer<Job> Stockpile::getJob( unsigned int jobID )
@@ -1053,7 +1055,7 @@ void Stockpile::unlinkWorkshop( unsigned int workshopID )
 	}
 }
 
-int Stockpile::count( QString itemSID, QString materialSID )
+int Stockpile::count( const std::string& itemSID, const std::string& materialSID )
 {
 	int count      = 0;
 	for ( auto spf : m_fields | ranges::views::values )
@@ -1070,7 +1072,7 @@ int Stockpile::count( QString itemSID, QString materialSID )
 	return count;
 }
 
-int Stockpile::count( QString itemSID )
+int Stockpile::count( const std::string& itemSID )
 {
 	int count      = 0;
 	for ( auto spf : m_fields | ranges::views::values )
@@ -1087,7 +1089,7 @@ int Stockpile::count( QString itemSID )
 	return count;
 }
 
-int Stockpile::countPlusReserved( QString itemSID )
+int Stockpile::countPlusReserved( const std::string& itemSID )
 {
 	int count      = 0;
 	for ( auto spf : m_fields | ranges::views::values )
@@ -1111,7 +1113,7 @@ int Stockpile::countPlusReserved( QString itemSID )
 	return count;
 }
 
-int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
+int Stockpile::countPlusReserved( const std::string& itemSID, const std::string& materialSID )
 {
 	int count      = 0;
 	for ( auto spf : m_fields | ranges::views::values )

@@ -115,10 +115,10 @@ public:
 	void linkWorkshop( unsigned int workshopID );
 	void unlinkWorkshop( unsigned int workshopID );
 
-	int count( QString itemSID, QString materialSID );
-	int count( QString itemSID );
-	int countPlusReserved( QString itemSID );
-	int countPlusReserved( QString itemSID, QString materialSID );
+	int count( const std::string& itemSID, const std::string& materialSID );
+	int count( const std::string& itemSID );
+	int countPlusReserved( const std::string& itemSID );
+	int countPlusReserved( const std::string& itemSID, const std::string& materialSID );
 
 	void setPullOthers( bool value );
 	bool pullsOthers();
@@ -162,7 +162,7 @@ private:
 
 	absl::btree_map<unsigned int, InventoryField*> m_fields;
 
-	QList<unsigned int> m_possibleItems;
+	std::vector<unsigned int> m_possibleItems;
 	bool m_filterChanged = true;
 
 	Filter m_filter;

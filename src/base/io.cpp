@@ -66,6 +66,8 @@
 
 #include "spdlog/spdlog.h"
 
+#include "range/v3/algorithm/contains.hpp"
+
 fs::path dataFolder;
 
 IO::IO( Game* game, QObject* parent ) :
@@ -508,14 +510,14 @@ void IO::sanitize()
 			if ( job && !legacyJobs.count( job ) && !g->jm()->getJob( job ) )
 			{
 				item->setInJob( 0 );
-				spdlog::warn("item {} {} had illegal job", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+				spdlog::warn("item {} {} had illegal job", QString::number( item->id() ).toStdString(), item->itemSID() );
 			}
 			const bool carried    = 0 != carriedItems.count( item->id() );
 			const bool construced = 0 != constructedItems.count( item->id() );
 
 			if ( carried && construced )
 			{
-				spdlog::warn("item {} {} is both carried around and installed somewhere simultaniously", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+				spdlog::warn("item {} {} is both carried around and installed somewhere simultaniously", QString::number( item->id() ).toStdString(), item->itemSID() );
 				continue;
 			}
 
@@ -524,7 +526,7 @@ void IO::sanitize()
 			{
 				g->inv()->putDownItem( item->id(), item->getPos() );
 				item->setIsConstructed( false );
-				spdlog::warn("item {} {} found lost in space", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+				spdlog::warn("item {} {} found lost in space", QString::number( item->id() ).toStdString(), item->itemSID() );
 			}
 			if ( carried )
 			{
@@ -536,7 +538,7 @@ void IO::sanitize()
 				if ( item->isConstructed() )
 				{
 					g->inv()->setConstructed( item->id(), false );
-					spdlog::warn("item {} {} found constructed on a gnome", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+					spdlog::warn("item {} {} found constructed on a gnome", QString::number( item->id() ).toStdString(), item->itemSID() );
 				}
 			}
 			// Items in world
@@ -547,7 +549,7 @@ void IO::sanitize()
 					g->inv()->setConstructed( item->id(), false );
 					item->setIsConstructed( false );
 					g->inv()->putDownItem( item->id(), item->getPos() );
-					spdlog::warn("item {} {} found glued to the floor", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+					spdlog::warn("item {} {} found glued to the floor", QString::number( item->id() ).toStdString(), item->itemSID() );
 				}
 			}
 			// Items in construction
@@ -568,7 +570,7 @@ void IO::sanitize()
 				if ( !item->isConstructed() )
 				{
 					g->inv()->setConstructed( item->id(), true );
-					spdlog::warn("item {} {} found broken loose", QString::number( item->id() ).toStdString(), item->itemSID().toStdString() );
+					spdlog::warn("item {} {} found broken loose", QString::number( item->id() ).toStdString(), item->itemSID() );
 				}
 			}
 		}
@@ -587,15 +589,15 @@ void IO::sanitize()
 		{
 			bool valid = true;
 
-			const auto groups    = g->inv()->groups( it->category );
-			const auto items     = g->inv()->items( it->category, it->group );
-			const auto materials = g->inv()->materials( it->category, it->group, it->item );
+			const auto groups    = g->inv()->groups( it->category.toStdString() );
+			const auto items     = g->inv()->items( it->category.toStdString(), it->group.toStdString() );
+			const auto materials = g->inv()->materials( it->category.toStdString(), it->group.toStdString(), it->item.toStdString() );
 
 			if (
-				!categories.contains( it->category ) ||
-				( !it->group.isEmpty() && !groups.contains( it->group ) ) ||
-				( !it->item.isEmpty() && !items.contains( it->item ) ) ||
-				( !it->material.isEmpty() && std::find( materials.begin(), materials.end(), it->material ) == std::end(materials) )
+				!ranges::contains( categories, it->category.toStdString() ) ||
+				( !it->group.isEmpty() && !ranges::contains( groups, it->group.toStdString() ) ) ||
+				( !it->item.isEmpty() && !ranges::contains( items, it->item.toStdString() ) ) ||
+				( !it->material.isEmpty() && !ranges::contains( materials, it->material.toStdString() ) )
 			)
 			{
 				it = GameState::watchedItemList.erase( it );
@@ -870,8 +872,8 @@ QJsonArray IO::jsonArraySprites()
 	for ( const auto& sc : g->sf()->spriteCreations() )
 	{
 		QVariantMap vm;
-		vm.insert( "ItemSID", sc.itemSID );
-		vm.insert( "MaterialSIDs", sc.materialSIDs.join( '_' ) );
+		vm.insert( "ItemSID", QString::fromStdString(sc.itemSID) );
+		vm.insert( "MaterialSIDs", QString::fromStdString(sc.materialSIDs | ranges::views::join( '_' ) | ranges::to<std::string>()) );
 		vm.insert( "Random", Global::util->mapJoin( sc.random ) );
 		vm.insert( "UID", sc.uID );
 		if ( sc.creatureID )
@@ -892,9 +894,11 @@ bool IO::loadSprites( QJsonDocument& jd )
 	for ( const auto& entry : ja.toVariantList() )
 	{
 		QVariantMap em = entry.toMap();
+
+		const auto materialSIDsTmp = ranges::actions::split(em.value( "MaterialSIDs" ).toString().toStdString(), '_' ) | ranges::to<std::vector<std::string>>();
 		SpriteCreation sc;
-		sc.itemSID      = em.value( "ItemSID" ).toString();
-		sc.materialSIDs = em.value( "MaterialSIDs" ).toString().split( "_" );
+		sc.itemSID      = em.value( "ItemSID" ).toString().toStdString();
+		sc.materialSIDs = materialSIDsTmp;
 		sc.random       = Global::util->mapSplit( em.value( "Random" ).toString() );
 		sc.uID          = em.value( "UID" ).toUInt();
 		sc.creatureID   = em.value( "CreatureID" ).toUInt();
