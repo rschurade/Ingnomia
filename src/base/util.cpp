@@ -915,8 +915,6 @@ PixmapPtr Util::createWorkshopImage( const std::string& workshopID, const std::v
 	}
 	const auto season = GameState::seasonString.toStdString();
 
-	auto coms = DB::selectRows( "Workshops_Components", QString::fromStdString(workshopID) );
-
 	result.reset( createPixmap( 100, 100 ) );
 	SDL_FillRect( result.get(), nullptr, 0x00000000 );
 
@@ -927,30 +925,33 @@ PixmapPtr Util::createWorkshopImage( const std::string& workshopID, const std::v
 	{
 		for ( int x = 0; x < 3; ++x )
 		{
-			const int px      = x0 + 16 * x - 16 * y;
-			const int py      = y0 + 8 * y + 8 * x;
 			unsigned char rot = 0;
-			Sprite* sprite    = getSprite( x - 1, y - 1, coms, rot, mats );
+			Sprite* sprite    = getSprite( x - 1, y - 1, dbws->components, rot, mats );
 			if ( sprite )
 			{
+				const int px      = x0 + 16 * x - 16 * y;
+				const int py      = y0 + 8 * y + 8 * x;
+
 				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
 				copyPixmap( result.get(), srcSurface, px, py );
 			}
 		}
 	}
+
 	return result;
 }
 
 PixmapPtr Util::createItemImage( const std::string& itemID, const std::vector<std::string>& mats )
 {
 	auto vsprite = DB::select( "SpriteID", "Items", QString::fromStdString(itemID) );
-	QVariantMap component;
-	component.insert( "SpriteID", vsprite );
-	component.insert( "Offset", "0 0 0" );
+	DBS::Workshop_Component component;
 
-	QList<QVariantMap> comps;
-	comps.append( component );
+	std::vector<DBS::Workshop_Component> comps;
+	comps.emplace_back( DBS::Workshop_Component {
+		.Offset   = Position( 0, 0, 0 ),
+		.SpriteID = vsprite.toString().toStdString(),
+	} );
 
 	const auto season = GameState::seasonString.toStdString();
 
@@ -964,12 +965,12 @@ PixmapPtr Util::createItemImage( const std::string& itemID, const std::vector<st
 	{
 		for ( int x = 0; x < 3; ++x )
 		{
-			const int px      = x0 + 16 * x - 16 * y;
-			const int py      = y0 + 8 * y + 8 * x;
 			unsigned char rot = 0;
 			Sprite* sprite    = getSprite( x - 1, y - 1, comps, rot, mats );
 			if ( sprite )
 			{
+				const int px      = x0 + 16 * x - 16 * y;
+				const int py      = y0 + 8 * y + 8 * x;
 				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
 				copyPixmap( result.get(), srcSurface, px, py );
@@ -1004,6 +1005,11 @@ PixmapPtr Util::createItemImage2( const std::string&itemID, const std::vector<st
 PixmapPtr Util::createConstructionImage( const std::string& constructionID, const std::vector<std::string>& mats )
 {
 	auto sprites = DB::selectRows( "Constructions_Sprites", QString::fromStdString(constructionID) );
+	// TODO: ranges::views::transform?
+	std::vector<DBS::Constructions_Sprites> comp;
+	for ( const auto& item : sprites ) {
+		comp.push_back( DBS::Constructions_Sprites::from( item ) );
+	}
 
 	const auto season = GameState::seasonString.toStdString();
 
@@ -1017,12 +1023,13 @@ PixmapPtr Util::createConstructionImage( const std::string& constructionID, cons
 	{
 		for ( int x = 0; x < 3; ++x )
 		{
-			const int px      = x0 + 16 * x - 16 * y;
-			const int py      = y0 + 8 * y + 8 * x;
 			unsigned char rot = 0;
-			Sprite* sprite    = getSprite( x - 1, y - 1, sprites, rot, mats );
+			Sprite* sprite    = getSprite( x - 1, y - 1, comp, rot, mats );
 			if ( sprite )
 			{
+				const int px      = x0 + 16 * x - 16 * y;
+				const int py      = y0 + 8 * y + 8 * x;
+
 				auto* srcSurface = sprite->pixmap( season, rot, 0 );
 				//painter.drawPixmap( px + sprite->xOffset, py + sprite->yOffset, sprite->pixmap( season, rot ) );
 				copyPixmap( result.get(), srcSurface, px, py );
@@ -1032,29 +1039,29 @@ PixmapPtr Util::createConstructionImage( const std::string& constructionID, cons
 	return result;
 }
 
-Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const std::vector<std::string>& mats )
+Sprite* Util::getSprite( int x, int y, const std::vector<DBS::Workshop_Component>& comps, unsigned char& rot, const std::vector<std::string>& mats )
 {
 	std::vector<std::string> materialIDs;
 	int mid = 0;
 	for ( const auto& cm : comps )
 	{
-		Position pos( cm.value( "Offset" ).toString() );
+		const auto& pos = cm.Offset;
 		if ( pos.x == x && pos.y == y )
 		{
-			if ( !cm.value( "MaterialItem" ).toString().isEmpty() )
+			if ( cm.MaterialItem )
 			{
-				for ( const auto& mat : cm.value( "MaterialItem" ).toString().split( "|" ) )
+				for ( const auto& mat : *cm.MaterialItem | ranges::views::split( '|' ) )
 				{
-					materialIDs.push_back( mats[mat.toInt()] );
+					materialIDs.push_back( mats[std::stoi( mat | ranges::to<std::string>() )] );
 				}
 			}
 			else
 			{
 				materialIDs.push_back( mats[mid] );
 			}
-			if ( !cm.value( "WallRotation" ).toString().isEmpty() )
+			if ( cm.WallRotation )
 			{
-				QString wallRot = cm.value( "WallRotation" ).toString();
+				const auto& wallRot = *cm.WallRotation;
 				if ( wallRot == "FR" )
 					rot = 0;
 				else if ( wallRot == "FL" )
@@ -1065,14 +1072,32 @@ Sprite* Util::getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned
 					rot = 3;
 			}
 
-			if ( !cm.value( "SpriteID" ).toString().isEmpty() )
+			if ( cm.SpriteID )
 			{
-				return g->sf()->createSprite( cm.value( "SpriteID" ).toString().toStdString(), materialIDs );
+				return g->sf()->createSprite( *cm.SpriteID, materialIDs );
 			}
 			else
 			{
 				return nullptr;
 			}
+		}
+		++mid;
+	}
+	return nullptr;
+}
+
+Sprite* Util::getSprite( int x, int y, const std::vector<DBS::Constructions_Sprites>& comps, unsigned char& rot, const std::vector<std::string>& mats )
+{
+	std::vector<std::string> materialIDs;
+	int mid = 0;
+	for ( const auto& cm : comps )
+	{
+		const auto& pos = cm.Offset;
+		if ( pos.x == x && pos.y == y )
+		{
+			materialIDs.push_back( mats[mid] );
+
+			return g->sf()->createSprite( cm.SpriteID, materialIDs );
 		}
 		++mid;
 	}

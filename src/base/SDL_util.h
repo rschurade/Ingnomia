@@ -15,7 +15,7 @@ SDL_Color getPixelColor( const SDL_Surface* surface, uint32_t x, uint32_t y );
 void setPixelColor( SDL_Surface* surface, uint32_t x, uint32_t y, SDL_Color col );
 SDL_Surface* createPixmap( int w, int h );
 void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y );
-void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h );
+void copyPixmapFrom( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h );
 void tintPixmap( SDL_Surface* surface, SDL_Color color );
 SDL_Surface* clonePixmap( const SDL_Surface* src );
 void flipPixmap( SDL_Surface* surface, bool flipH, bool flipV );

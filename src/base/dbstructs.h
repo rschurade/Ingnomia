@@ -152,11 +152,21 @@ struct Constructions_IntermediateSprites {
 };
 
 struct Constructions_Sprites {
-	QString ID;
-	QString Offset;
-	QString SpriteID;
-	QString SpriteIDOverride;
-	QString Type;
+	std::string ID;
+	Position Offset;
+	std::string SpriteID;
+	std::optional<std::string> SpriteIDOverride;
+	std::string Type;
+
+	static Constructions_Sprites from(const QMap<QString, QVariant>& map) {
+		return Constructions_Sprites {
+			.ID               = map.value( "ID" ).toString().toStdString(),
+			.Offset           = Position( map.value( "Offset" ).toString() ),
+			.SpriteID         = map.value( "SpriteID" ).toString().toStdString(),
+			.SpriteIDOverride = vars::opt( map.value( "SpriteIDOverride" ).toString().toStdString() ),
+			.Type             = map.value( "Type" ).toString().toStdString(),
+		};
+	}
 };
 
 struct ConstructionTypes {
@@ -892,6 +902,16 @@ std::vector<T> fromList(const QList<QVariant>& list) {
 	for ( const auto& item : list )
 	{
 		result.push_back( T::from( item.toMap() ) );
+	}
+	return result;
+}
+
+template<typename T>
+std::vector<T> fromList(const QList<QVariantMap>& list) {
+	std::vector<T> result;
+	for ( const auto& item : list )
+	{
+		result.push_back( T::from( item ) );
 	}
 	return result;
 }

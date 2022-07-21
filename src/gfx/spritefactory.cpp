@@ -100,18 +100,17 @@ bool SpriteFactory::init()
 	auto rows   = DB::selectRows( "BaseSprites" );
 	for ( auto row : rows )
 	{
-		QString tilesheet = row.value( "Tilesheet" ).toString();
+		const auto tilesheet = row.value( "Tilesheet" ).toString().toStdString();
 		if ( !m_pixmapSources.contains( tilesheet ) )
 		{
-			auto imgPath = fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "tilesheet" / tilesheet.toStdString();
+			auto imgPath = fs::path( Global::cfg->get<std::string>( "dataPath" ) ) / "tilesheet" / tilesheet;
 			SDL_Surface* pm;
 			if ( !fs::exists(imgPath) )
 			{
-				const auto tilesheetStd = tilesheet.toStdString();
-				pm = IMG_Load( tilesheetStd.c_str() );
+				pm = IMG_Load( tilesheet.c_str() );
 				if ( !pm )
 				{
-					spdlog::debug( "SpriteFactory: failed to load '{}': {}", tilesheet.toStdString(), IMG_GetError() );
+					spdlog::debug( "SpriteFactory: failed to load '{}': {}", tilesheet, IMG_GetError() );
 					return false;
 				}
 			} else {
@@ -166,7 +165,8 @@ bool SpriteFactory::init()
 			}
 			*/
 		}
-		m_baseSprites.insert_or_assign( row.value( "ID" ).toString().toStdString(), extractPixmap( tilesheet, row ) );
+		const auto spriteID = row.value( "ID" ).toString().toStdString();
+		m_baseSprites.insert_or_assign( spriteID, extractPixmap( tilesheet, row ) );
 	}
 	
 	QList<QVariantMap> spriteList = DB::selectRows( "Sprites" );
@@ -411,7 +411,7 @@ void SpriteFactory::createStandardSprites()
 	}
 }
 
-SDL_Surface* SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
+SDL_Surface* SpriteFactory::extractPixmap( const std::string& sourcePNG, QVariantMap def )
 {
 	QString rect = def.value( "SourceRectangle" ).toString();
 
@@ -425,11 +425,7 @@ SDL_Surface* SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 
 		auto *dst = createPixmap( dimX, dimY );
 		Uint32 maskMagenta = dst->format->Rmask | dst->format->Bmask;
-		copyPixmap( dst, m_pixmapSources[sourcePNG], x, y, dimX, dimY );
-		if ( SDL_SetColorKey( dst, true, maskMagenta ) )
-		{
-			spdlog::debug("Cannot set color key: {}", SDL_GetError());
-		}
+		copyPixmapFrom( dst, m_pixmapSources.at(sourcePNG), x, y, dimX, dimY );
 
 		return dst;
 	}
@@ -1479,7 +1475,7 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		if ( cm.HasBase )
 		{
 			assert(baseSprite && "Sprite with \"Base\" should have \"BaseSprite\" defined");
-			copyPixmap( pmfr, m_baseSprites[*baseSprite + "Base"], 0, 0 );
+			copyPixmap( pmfr, m_baseSprites.at(*baseSprite + "Base"), 0, 0 );
 		}
 
 		const auto& tint = cm.Tint;
@@ -1531,8 +1527,9 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		if ( cm.HasBase )
 		{
 			assert(baseSprite && "Sprite with \"Base\" should have \"BaseSprite\" defined");
-			copyPixmap( pmbr, m_baseSprites[*baseSprite + "Base"], 0, 0 );
+			copyPixmap( pmbr, m_baseSprites.at(*baseSprite + "Base"), 0, 0 );
 		}
+
 		const auto& tint = cm.Tint;
 		const auto& isHair  = cm.IsHair;
 		if ( std::get_if<std::monostate>( &tint ) )
@@ -1644,13 +1641,13 @@ Sprite* SpriteFactory::getCreatureSprite( const unsigned int id, unsigned int& s
 	return nullptr;
 }
 
-SDL_Surface* SpriteFactory::pixmap( QString name )
+SDL_Surface* SpriteFactory::pixmap( const std::string& name )
 {
 	if ( m_pixmapSources.contains( name ) )
 	{
 		return m_pixmapSources[name];
 	}
-	spdlog::debug( "Pixmap {} doesn't exist", name.toStdString() );
+	spdlog::debug( "Pixmap {} doesn't exist", name );
 	throw std::runtime_error( "Pixmap missing" );
 //	return QPixmap( 32, 32 );
 }
@@ -1659,7 +1656,7 @@ SDL_Surface* SpriteFactory::baseSprite( const std::string& id )
 {
 	if ( m_baseSprites.contains( id ) )
 	{
-		return m_baseSprites[id];
+		return m_baseSprites.at(id);
 	}
 	spdlog::debug( "Base sprite {} doesn't exist", id );
 	throw std::runtime_error( "Pixmap missing" );

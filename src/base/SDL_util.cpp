@@ -5,9 +5,11 @@
 
 #include "SDL_util.h"
 
-#include <string>
 #include "range/v3/action/split.hpp"
+#include "spdlog/spdlog.h"
+
 #include <algorithm>
+#include <string>
 
 double comp2float(uint8_t comp) {
 	return comp / 255.0;
@@ -20,15 +22,34 @@ uint8_t float2comp(double comp) {
 SDL_Color getPixelColor( const SDL_Surface* surface, uint32_t x, uint32_t y )
 {
 	// FIXME: Expecting 32 bit RGBA surface
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	uint32_t col = *(Uint32*)( (Uint8*)surface->pixels + y * surface->pitch + x * 4 );
 	return reinterpret_cast<SDL_Color const&>( col );
+#else
+	auto* col = ( (Uint8*)surface->pixels + y * surface->pitch + x * 4 );
+	return SDL_Color
+	{
+		.r = col[3],
+		.g = col[2],
+		.b = col[1],
+		.a = col[0],
+	};
+#endif
 }
 
 void setPixelColor( SDL_Surface* surface, uint32_t x, uint32_t y, SDL_Color col )
 {
 	// FIXME: Expecting 32 bit RGBA surface
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	auto *p = (Uint32*)( (Uint8*)surface->pixels + y * surface->pitch + x * 4 );
 	p[0] = reinterpret_cast<Uint32 const&>( col );;
+#else
+	auto *p = ( (Uint8*)surface->pixels + y * surface->pitch + x * 4 );
+	p[3] = col.r;
+	p[2] = col.g;
+	p[1] = col.b;
+	p[0] = col.a;
+#endif
 }
 
 SDL_Surface* createPixmap( int w, int h )
@@ -39,13 +60,21 @@ SDL_Surface* createPixmap( int w, int h )
 void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y )
 {
 	SDL_Rect dstRect { x, y, src->w, src->h };
-	SDL_BlitSurface(src, nullptr, dst, &dstRect);
+	const auto result = SDL_BlitSurface(src, nullptr, dst, &dstRect);
+	if (result) {
+		spdlog::critical("Cannot copy surface: {}", SDL_GetError());
+	}
 }
 
-void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h )
+void copyPixmapFrom( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h )
 {
-	SDL_Rect dstRect { x, y, w, h };
-	SDL_BlitSurface(src, nullptr, dst, &dstRect);
+	SDL_Rect srcRect { x, y, w, h };
+	assert(w <= dst->w && "Pixmap region is bigger than destination width");
+	assert(h <= dst->h && "Pixmap region is bigger than destination height");
+	const auto result = SDL_BlitSurface(src, &srcRect, dst, nullptr);
+	if (result) {
+		spdlog::critical("Cannot copy surface: {}", SDL_GetError());
+	}
 }
 
 void tintPixmap( SDL_Surface* surface, SDL_Color color ){ 

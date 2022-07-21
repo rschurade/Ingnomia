@@ -19,10 +19,11 @@
 
 #include "../base/position.h"
 #include "SDL_util.h"
+#include "dbstructs.h"
 
-#include <QPointer>
 #include <QGridLayout>
 #include <QLayoutItem>
+#include <QPointer>
 #include <QString>
 #include <QStringList>
 #include <QToolButton>
@@ -126,7 +127,8 @@ public:
 	PixmapPtr createItemImage( const std::string& constructionID, const std::vector<std::string>& mats );
 	PixmapPtr createItemImage2( const std::string& constructionID, const std::vector<std::string>& mats );
 	PixmapPtr createConstructionImage( const std::string& constructionID, const std::vector<std::string>& mats );
-	Sprite* getSprite( int x, int y, const QList<QVariantMap>& comps, unsigned char& rot, const std::vector<std::string>& mats );
+	Sprite* getSprite( int x, int y, const std::vector<DBS::Workshop_Component>& comps, unsigned char& rot, const std::vector<std::string>& mats );
+	Sprite* getSprite( int x, int y, const std::vector<DBS::Constructions_Sprites>& comps, unsigned char& rot, const std::vector<std::string>& mats );
 
 	void createBufferForNoesisImage( const SDL_Surface* pm, std::vector<unsigned char>& buffer );
 

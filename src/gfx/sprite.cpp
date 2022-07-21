@@ -79,6 +79,9 @@ SpritePixmap::SpritePixmap( SDL_Surface* pixmap, std::string offset ) :
 		}
 	}
 
+	SDL_UnlockSurface(pixmap);
+	SDL_UnlockSurface(target);
+
 	m_pixmap = target;
 	m_pixmapOwned = true;
 }
@@ -110,11 +113,11 @@ void SpritePixmap::applyEffect( std::string effect )
 	// TODO: Why is this not part of the shader code?
 	if ( effect == "FlipHorizontal" )
 	{
-		flipPixmap( m_pixmap, true, false );
+//		flipPixmap( m_pixmap, true, false );
 	}
 	else if ( effect == "Rot90" )
 	{
-		throw std::runtime_error("TODO: Rot surface 90");
+//		throw std::runtime_error("TODO: Rot surface 90");
 //		QImage img = m_pixmap.toImage();
 //		QImage tmp( 32, 32, QImage::Format::Format_RGBA8888 );
 //		for ( int y = 0; y < 32; ++y )

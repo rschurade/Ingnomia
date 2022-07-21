@@ -97,11 +97,11 @@ private:
 
 	std::string getMaterialType( const std::string& materialSID );
 
-	SDL_Surface* extractPixmap( QString sourcePNG, QVariantMap def );
+	SDL_Surface* extractPixmap( const std::string& sourcePNG, QVariantMap def );
 	unsigned char rotationToChar( QString suffix );
 
 	// base sprites and sources for creation
-	absl::flat_hash_map<QString, SDL_Surface*> m_pixmapSources;
+	absl::flat_hash_map<std::string, SDL_Surface*> m_pixmapSources;
 	absl::btree_map<std::string, SDL_Surface*> m_baseSprites;
 	absl::btree_map<std::string, DefNode*> m_spriteDefinitions;
 	absl::btree_map<std::string, QVariantMap> m_spriteDefVMs;
@@ -149,7 +149,7 @@ private:
 	
 	void printDebug();
 
-	SDL_Surface* pixmap( QString name );
+	SDL_Surface* pixmap( const std::string& name );
 
 	SDL_Surface* baseSprite( const std::string& id );
 
