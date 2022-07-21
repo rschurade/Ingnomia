@@ -236,21 +236,23 @@ auto RenderDevice::CreateTexture(
 		}
 	}
 
-	auto dataSize = 0;
-	auto w        = width;
-	auto h        = height;
-	int level     = static_cast<int>( numLevels );
-	for ( int j = 0; j < level; ++j )
-	{
-		dataSize += w * h * stride;
-		w >>= 1;
-		h >>= 1;
-	}
+	// TODO: Mipmaps, they're part of the **data pointer
+//	auto dataSize = 0;
+//	auto w        = width;
+//	auto h        = height;
+//	int level     = static_cast<int>( numLevels );
+//	for ( int j = 0; j < level; ++j )
+//	{
+//		dataSize += w * h * stride;
+//		w >>= 1;
+//		h >>= 1;
+//	}
+	const auto dataSize = width * height * stride;
 
 	return *new Texture {
 		bgfx::createTexture2D(
-			width, height, numLevels > 1, 1, textureFormat, BGFX_TEXTURE_RT,
-			data ? bgfx::copy( *data, dataSize ) : nullptr ),
+			width, height, false, 1, textureFormat, BGFX_TEXTURE_RT,
+			data ? bgfx::copy( data[0], dataSize ) : nullptr ),
 		width, height, stride, textureFormat == bgfx::TextureFormat::RGBA8
 	};
 }
