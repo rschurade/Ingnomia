@@ -24,6 +24,8 @@
 #include <vector>
 #include <QPointer>
 
+#include <absl/container/flat_hash_set.h>
+
 #include <sigslot/signal.hpp>
 
 class Game;
@@ -115,7 +117,7 @@ private:
 public slots:
 	void onWorldParametersChanged();
 	void onAllTileInfo();
-	void onUpdateAnyTileInfo( const absl::btree_set<unsigned int>& changeSet );
+	void onUpdateAnyTileInfo( const absl::flat_hash_set<unsigned int>& changeSet );
 	void onThoughtBubbleUpdate();
 	void onAxleDataUpdate();
 	void onCenterCamera( const Position& location );

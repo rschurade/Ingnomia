@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+#include <absl/container/flat_hash_set.h>
+
 #include <sigslot/signal.hpp>
 
 class Game;
@@ -119,7 +121,7 @@ private:
 
 public slots:
 	void onShowTileInfo( unsigned int tileID );
-	void onUpdateAnyTileInfo( const absl::btree_set<unsigned int>& changeSet );
+	void onUpdateAnyTileInfo( const absl::flat_hash_set<unsigned int>& changeSet );
 	void onUpdateTileInfo( unsigned int tileID );
 	void onRequestStockpileItems( unsigned int tileID );
 	void onSetTennant( unsigned int designationID, unsigned int gnomeID );

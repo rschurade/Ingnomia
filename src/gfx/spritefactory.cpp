@@ -445,7 +445,7 @@ unsigned char SpriteFactory::rotationToChar( const QString suffix )
 	return rot;
 }
 
-Sprite* SpriteFactory::createSprite( const std::string& itemSID, const std::vector<std::string>& materialSIDs, const absl::btree_map<int, int>& random )
+Sprite* SpriteFactory::createSprite( const std::string& itemSID, const std::vector<std::string>& materialSIDs, const absl::flat_hash_map<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
 	auto key = itemSID;
@@ -528,7 +528,7 @@ Sprite* SpriteFactory::createSprite( const std::string& itemSID, const std::vect
 
 // used for loading definitions, doesn't check if sprite exists as it will not exist and 
 // doesn't create short walls because they are in the definition anyway
-Sprite* SpriteFactory::createSprite2( const std::string& itemSID, const std::vector<std::string>& materialSIDs, const absl::btree_map<int, int>& random )
+Sprite* SpriteFactory::createSprite2( const std::string& itemSID, const std::vector<std::string>& materialSIDs, const absl::flat_hash_map<int, int>& random )
 {
 	auto key = itemSID;
 	m_randomNumbers.clear();
@@ -595,7 +595,7 @@ Sprite* SpriteFactory::createSprite2( const std::string& itemSID, const std::vec
 	return sprite;
 }
 
-Sprite* SpriteFactory::createAnimalSprite( const std::string& spriteSID, const absl::btree_map<int, int>& random )
+Sprite* SpriteFactory::createAnimalSprite( const std::string& spriteSID, const absl::flat_hash_map<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
 	auto key = spriteSID;
@@ -1260,8 +1260,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 				for ( int i = 0; i < 32; ++i )
 				{
-					std::vector<uint8_t> data( bytes );
-					m_pixelData.push_back( data );
+					m_pixelData.emplace_back( std::vector<uint8_t>(bytes) );
 				}
 			}
 
@@ -1305,8 +1304,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 			for ( int i = 0; i < 32; ++i )
 			{
-				std::vector<uint8_t> data( bytes );
-				m_pixelData.push_back( data );
+				m_pixelData.emplace_back( std::vector<uint8_t>(bytes) );
 			}
 		}
 

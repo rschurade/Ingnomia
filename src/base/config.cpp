@@ -45,19 +45,15 @@ void to_json(json& j, const ConfigVariant& item) {
 
 ConfigVariant jsonToConfigVariant(const json& v) {
 	if (v.type() == nlohmann::detail::value_t::string) {
-		spdlog::debug("Type string");
 		return { v.get<std::string>() };
 	} else if (v.type() == nlohmann::detail::value_t::number_float) {
-		spdlog::debug("Type double");
 		return { v.get<double>() };
 	} else if (v.type() == nlohmann::detail::value_t::number_integer || v.type() == nlohmann::detail::value_t::number_unsigned) {
-		spdlog::debug("Type int or long");
 		return { v.get<int>() };
 	} else if (v.type() == nlohmann::detail::value_t::boolean) {
-		spdlog::debug("Type bool");
 		return { v.get<bool>() };
 	} else {
-		spdlog::debug("Fatal error: Cannot convert QVariant to ConfigVariant!");
+		spdlog::critical("Fatal error: Cannot convert QVariant to ConfigVariant!");
 		abort();
 	}
 }

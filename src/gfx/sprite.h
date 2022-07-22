@@ -54,7 +54,7 @@ public:
 	float opacity    = 1.0;
 	bool anim        = false;
 	bool hasTransp   = false;
-	absl::btree_map<int, int> randomNumbers;
+	absl::flat_hash_map<int, int> randomNumbers;
 	std::string m_type = "";
 };
 

@@ -30,6 +30,7 @@
 #include <QMutex>
 
 #include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_set.h>
 #include <vector>
 
 class Animal;
@@ -98,7 +99,7 @@ private:
 	QList<Position> m_aquifiers;
 	QList<Position> m_deaquifiers;
 
-	absl::btree_set<unsigned int> m_updatedTiles;
+	absl::flat_hash_set<unsigned int> m_updatedTiles;
 
 	absl::btree_map<QString, CONSTRUCTION_ID> m_constructionSID2ENUM;
 	absl::btree_map<QString, CONSTR_ITEM_ID> m_constrItemSID2ENUM;
@@ -289,7 +290,7 @@ public:
 	bool noTree( const Position pos, const int xRange, const int yRange );
 	bool noShroom( const Position pos, const int xRange, const int yRange );
 
-	absl::btree_set<unsigned int> updatedTiles();
+	absl::flat_hash_set<unsigned int> updatedTiles();
 	void addToUpdateList( const unsigned int uID );
 	void addToUpdateList( const Position pos );
 	void addToUpdateList( const unsigned short x, const unsigned short y, const unsigned short z );

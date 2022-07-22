@@ -66,7 +66,7 @@ void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 	onUpdateTileInfo( tileID );
 }
 
-void AggregatorTileInfo::onUpdateAnyTileInfo( const absl::btree_set<unsigned int>& changeSet )
+void AggregatorTileInfo::onUpdateAnyTileInfo( const absl::flat_hash_set<unsigned int>& changeSet )
 {
 	if( !g ) return;
 	if ( changeSet.contains( m_currentTileID ) )

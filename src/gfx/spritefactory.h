@@ -69,14 +69,14 @@ struct DefNode
 	bool hasTransp = false;
 
 	//DefNode* parent;
-	absl::btree_map<std::string, DefNode*> childs;
+	absl::flat_hash_map<std::string, DefNode*> childs;
 };
 
 struct SpriteCreation
 {
 	std::string itemSID;
 	std::vector<std::string> materialSIDs;
-	absl::btree_map<int, int> random;
+	absl::flat_hash_map<int, int> random;
 	unsigned int uID        = 0;
 	unsigned int creatureID = 0;
 };
@@ -110,7 +110,7 @@ private:
 
 	// cached DB values for faster lookup
 	std::vector<std::string> m_seasons;
-	absl::btree_map<std::string, std::string> m_materialTypes;
+	absl::flat_hash_map<std::string, std::string> m_materialTypes;
 
 	//pixel data for array textures
 	std::vector<std::vector<uint8_t>> m_pixelData;
@@ -123,7 +123,7 @@ private:
 	QString m_offset  = "";
 	float m_opacity   = 1.0;
 	float m_numFrames = 1;
-	absl::btree_map<int, int> m_randomNumbers;
+	absl::flat_hash_map<int, int> m_randomNumbers;
 
 	std::vector<SDL_Color> m_colors;
 	std::vector<SDL_Color> m_hairColors;
@@ -145,7 +145,7 @@ private:
 
 	SDL_Surface* getTintedBaseSprite( const std::optional<std::string>& baseSprite, const std::string& material );
 
-	Sprite* createSprite2( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
+	Sprite* createSprite2( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
 	
 	void printDebug();
 
@@ -163,8 +163,8 @@ public:
 
 	
 
-	Sprite* createSprite( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
-	Sprite* createAnimalSprite( const std::string& spriteSID, const absl::btree_map<int, int>& random = absl::btree_map<int, int>() );
+	Sprite* createSprite( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
+	Sprite* createAnimalSprite( const std::string& spriteSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
 	Sprite* getSprite( const int id );
 
 	Sprite* setCreatureSprite( const unsigned int gnomeUID, const std::vector<DBS::Creature_Parts>& components, const std::vector<DBS::Creature_Parts>& componentsBack, bool isDead = false );

@@ -23,7 +23,7 @@
 #include <QPointer>
 #include <QObject>
 #include <QElapsedTimer>
-#include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_set.h>
 
 #include <sigslot/signal.hpp>
 
@@ -177,7 +177,7 @@ public: // signals:
 	sigslot::signal<unsigned int /*id, QString /*title*/, QString /*msg*/, bool /*pause*/, bool /*yesno*/> signalEvent;
 	sigslot::signal<> signalStartAutoSave;
 	sigslot::signal<> signalEndAutoSave;
-	sigslot::signal<const absl::btree_set<unsigned int> & /*changeSet*/> signalUpdateTileInfo;
+	sigslot::signal<const absl::flat_hash_set<unsigned int> & /*changeSet*/> signalUpdateTileInfo;
 	sigslot::signal<> signalUpdateStockpile;
 };
 

@@ -261,7 +261,7 @@ void AggregatorRenderer::onAllTileInfo()
 	}
 }
 
-void AggregatorRenderer::onUpdateAnyTileInfo( const absl::btree_set<unsigned int>& changeSet )
+void AggregatorRenderer::onUpdateAnyTileInfo( const absl::flat_hash_set<unsigned int>& changeSet )
 {
 	if( !g ) return;
 	// Bake tile updates

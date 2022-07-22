@@ -311,26 +311,23 @@ void Util::string2Tile( Tile& tile, QString data, QString seperator )
 	}
 }
 
-QString Util::mapJoin( absl::btree_map<int, int> data, QString seperator )
+std::string Util::mapJoin( absl::flat_hash_map<int, int> data, const std::string& seperator )
 {
-	QString out;
+	std::string out;
 	if ( !data.empty() )
 	{
 		for ( const auto& rp : data )
 		{
-			out += QString::number( rp.first );
-			out += seperator;
-			out += QString::number( rp.second );
-			out += seperator;
+			out += fmt::format("{0}{2}{1}{2}", std::to_string( rp.first ), std::to_string( rp.second ), seperator);
 		}
-		out.chop( 1 );
+		out.pop_back();
 	}
 	return out;
 }
 
-absl::btree_map<int, int> Util::mapSplit( QString data, QString seperator )
+absl::flat_hash_map<int, int> Util::mapSplit( QString data, QString seperator )
 {
-	absl::btree_map<int, int> m;
+	absl::flat_hash_map<int, int> m;
 	if ( !data.isEmpty() )
 	{
 		QStringList dl = data.split( seperator );

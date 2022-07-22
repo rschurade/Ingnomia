@@ -874,7 +874,7 @@ QJsonArray IO::jsonArraySprites()
 		QVariantMap vm;
 		vm.insert( "ItemSID", QString::fromStdString(sc.itemSID) );
 		vm.insert( "MaterialSIDs", QString::fromStdString(sc.materialSIDs | ranges::views::join( '_' ) | ranges::to<std::string>()) );
-		vm.insert( "Random", Global::util->mapJoin( sc.random ) );
+		vm.insert( "Random", QString::fromStdString(Global::util->mapJoin( sc.random )) );
 		vm.insert( "UID", sc.uID );
 		if ( sc.creatureID )
 		{

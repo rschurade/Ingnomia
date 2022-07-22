@@ -1147,8 +1147,7 @@ std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength 
 
 float WorldGenerator::perlinRandWhiteNoise( int x, int y, int z )
 {
-	FastNoise fn;
-	fn.SetSeed( m_seed );
+	FastNoise fn(m_seed);
 	fn.SetFrequency( (FN_DECIMAL)0.02 );
 	fn.SetNoiseType( FastNoise::NoiseType::WhiteNoise );
 
