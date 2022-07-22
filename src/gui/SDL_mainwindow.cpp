@@ -161,6 +161,8 @@ SDL_MainWindow::SDL_MainWindow()
 //	Global::eventConnector->signalInitView.connect( &SDL_MainWindow::onInitViewAfterLoad, this ); // TODO: Qt::QueuedConnection
 
 	noesisInit();
+
+	m_renderer.initialize();
 }
 
 SDL_MainWindow::~SDL_MainWindow()
@@ -254,6 +256,7 @@ void SDL_MainWindow::mainLoop()
 		bgfx::touch( mainViewId );
 		bgfx::setViewClear( mainViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH );
 
+		m_renderer.render();
 		m_noesisContext->Frame();
 
 		bgfx::frame();

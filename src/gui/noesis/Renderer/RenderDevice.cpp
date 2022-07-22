@@ -1,6 +1,7 @@
 #include "RenderDevice.hpp"
 
 #include "../../../base/global.h"
+#include "../../../bgfxUtils.h"
 #include "Shaders.hpp"
 #include "spdlog/spdlog.h"
 
@@ -8,7 +9,6 @@
 #include <cstdint>
 #include <span>
 #include <string_view>
-#include <fstream>
 
 #include <bgfx/bgfx.h>
 #include <bx/math.h>
@@ -33,64 +33,15 @@ RenderDevice::RenderDevice( const SDL_MainWindow* window, const bgfx::ViewId vie
 	this->Height_ = window->getFBHeight();
 }
 
-const bgfx::Memory* loadFileContent(const fs::path& _file)
-{
-	std::ifstream fileStream(_file, std::ios::ate);
-	const auto fLength = (size_t)fileStream.tellg();
-	fileStream.seekg(0);
-	const auto mem = bgfx::alloc(fLength + 1);
-	mem->data[fLength] = 0;
-	fileStream.read(reinterpret_cast<char *>(mem->data), fLength);
-	return mem;
-}
-
-bgfx::ShaderHandle LoadCompiledShader( const fs::path& shaderPath )
-{
-	auto mem = loadFileContent(shaderPath);
-	return bgfx::createShader(mem);
-}
-
-template <const std::size_t Count>
-static auto LoadShaders( const std::span<const std::string_view, Count> names, const std::span<bgfx::ShaderHandle, Count> out, const std::string& suffix, const std::string& rendererType ) -> void
-{
-	assert( names.size() == out.size() && "Size mismatch!" );
-	static const fs::path shaderDir { Global::exePath / "content" / "shaders" / "noesis" };
-	for ( std::size_t i {}; i < names.size(); ++i )
-	{
-		const fs::path fileName { shaderDir / fmt::format("{}_{}_{}.bin", names[i], suffix, rendererType ) };
-		const bgfx::ShaderHandle handle { LoadCompiledShader( fileName ) };
-		out[i] = handle;
-	}
-}
-
 auto RenderDevice::CreatePrograms() -> void
 {
 	spdlog::info( "Vertex shaders generation date: {}", ::VertexVersion );
 	spdlog::info( "Fragment shaders generation date: {}", ::FragmentVersion );
 
-	std::string rendererType;
-	switch (bgfx::getRendererType() )
-	{
-		case bgfx::RendererType::Noop:
-		case bgfx::RendererType::Direct3D9: rendererType = "dx9";   break;
-		case bgfx::RendererType::Direct3D11:
-		case bgfx::RendererType::Direct3D12: rendererType = "dx11";  break;
-		case bgfx::RendererType::Agc:
-		case bgfx::RendererType::Gnm: rendererType = "pssl";  break;
-		case bgfx::RendererType::Metal: rendererType = "metal"; break;
-		case bgfx::RendererType::Nvn: rendererType = "nvn";   break;
-		case bgfx::RendererType::OpenGL: rendererType = "glsl";  break;
-		case bgfx::RendererType::OpenGLES: rendererType = "essl";  break;
-		case bgfx::RendererType::Vulkan:
-		case bgfx::RendererType::WebGPU: rendererType = "spirv"; break;
+	static const fs::path shaderDir { Global::exePath / "content" / "shaders" / "noesis" };
 
-		case bgfx::RendererType::Count:
-			assert(false && "You should not be here!");
-			break;
-	}
-
-	LoadShaders<VertexShaderCount_>( ::VertexShaders, this->VertexShaders_, "v", rendererType );
-	LoadShaders<FragmentShaderCount_>( ::FragmentShaders, this->FragmentShaders_, "f", rendererType );
+	LoadShaders<VertexShaderCount_>( ::VertexShaders, this->VertexShaders_, "v", shaderDir );
+	LoadShaders<FragmentShaderCount_>( ::FragmentShaders, this->FragmentShaders_, "f", shaderDir );
 
 	for ( std::size_t i {}; i < FragmentShaderCount_; ++i )
 	{

@@ -5,15 +5,16 @@ $output v_texcoord0
 
 #include <bgfx_shader.sh>
 
-uniform uvec3 uWorldSize;
+uniform uvec4 uWorldSize;
 uniform mat4 uTransform;
-uniform uvec3 uRenderMin;
-uniform uvec3 uRenderMax;
+uniform uvec4 uRenderMin;
+uniform uvec4 uRenderMax;
+
+uniform uvec4 tile;
+
 uniform int uWorldRotation;
 
-uniform uvec3 tile;
-
-uvec3 rotate(uvec3 pos)
+uvec3 rotate(uvec4 pos)
 {
 	uvec3 ret = uvec3(0, 0, pos.z);
 	switch ( uWorldRotation )

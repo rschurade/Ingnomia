@@ -8,6 +8,8 @@
 #include <bx/bx.h>
 #include <SDL_syswm.h>
 
+#include <fstream>
+
 void* sdlNativeWindowHandle(SDL_Window* _window)
 {
 	SDL_SysWMinfo wmi;
@@ -84,4 +86,21 @@ void bgfxUninitializePlatformData(SDL_Window* _window)
 	}
 #		endif
 #	endif
+}
+
+const bgfx::Memory* loadFileContent(const fs::path& _file)
+{
+	std::ifstream fileStream(_file, std::ios::ate);
+	const auto fLength = (size_t)fileStream.tellg();
+	fileStream.seekg(0);
+	const auto mem = bgfx::alloc(fLength + 1);
+	mem->data[fLength] = 0;
+	fileStream.read(reinterpret_cast<char *>(mem->data), fLength);
+	return mem;
+}
+
+bgfx::ShaderHandle LoadCompiledShader( const fs::path& shaderPath )
+{
+	auto mem = loadFileContent(shaderPath);
+	return bgfx::createShader(mem);
 }

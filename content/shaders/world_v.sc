@@ -46,10 +46,10 @@ $output v_texcoord1, v_texcoord2, v_texcoord3
 #define WATER_FLOOR             0x20u
 #define WATER_ONFLOOR           0x40u
 
-uniform uvec3 uWorldSize;
 uniform mat4 uTransform;
-uniform uvec3 uRenderMin;
-uniform uvec3 uRenderMax;
+uniform uvec4 uWorldSize;
+uniform uvec4 uRenderMin;
+uniform uvec4 uRenderMax;
 uniform int uWorldRotation;
 
 // DO NOT CHANGE, must match game internal layout

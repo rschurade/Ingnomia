@@ -6,6 +6,8 @@
 #ifndef INGNOMIA_SDL_MAINWINDOW_H
 #define INGNOMIA_SDL_MAINWINDOW_H
 
+#include "SDL_mainrenderer.h"
+
 #include <SDL_keycode.h>
 
 #include <sigslot/signal.hpp>
@@ -45,6 +47,7 @@ private:
 
 	SDL_Window* m_sdlWindow;
 	AppGUI::Context* m_noesisContext;
+	SDL_MainRenderer m_renderer;
 
 	bool m_done = false;
 	int m_width, m_height;
