@@ -131,24 +131,24 @@ bool SpriteFactory::init()
 	}
 
 	auto matIds = DB::ids( "Materials" );
-	for ( auto id : matIds )
+	for ( const auto& id : matIds )
 	{
 		m_materialTypes.insert_or_assign( id.toStdString(), DB::select( "Type", "Materials", id ).toString().toStdString() );
 	}
 
-	for ( auto color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
+	for ( const auto& color : DB::select2( "Color", "Materials", "Type", "Dye" ) )
 	{
 		m_colors.push_back( string2SDLColor( color.toString().toStdString() ) );
 	}
 
-	for ( auto color : DB::selectRows( "HairColors" ) )
+	for ( const auto& color : DB::selectRows( "HairColors" ) )
 	{
 		m_hairColors.push_back( string2SDLColor( color.value( "Color" ).toString().toStdString() ) );
 	}
 
 	bool loaded = true;
 	auto rows   = DB::selectRows( "BaseSprites" );
-	for ( auto row : rows )
+	for ( const auto& row : rows )
 	{
 		const auto tilesheet = row.value( "Tilesheet" ).toString().toStdString();
 		if ( !m_pixmapSources.contains( tilesheet ) )
@@ -167,53 +167,6 @@ bool SpriteFactory::init()
 				pm = IMG_Load( imgPath.c_str() );
 			}
 			m_pixmapSources.insert_or_assign( tilesheet, pm );
-			/*
-			if( tilesheet == "default.png" )
-			{
-				absl::btree_set<QString>unused;
-				int count = 0;
-				for( auto r : DB::selectRows( "BaseSprites" ) )
-				{
-					if( r.value( "Tilesheet"  ).toString() == "default.png" )
-					if( DB::numRows( "Sprites", r.value( "ID" ).toString() ) == 0 )
-						if( DB::numRows2( "Sprites", r.value( "ID" ).toString() ) == 0 )
-							if( DB::numRows2( "Sprites_ByMaterialTypes", r.value( "ID" ).toString() ) == 0 )
-								if( DB::numRows2( "Sprites_ByMaterials", r.value( "ID" ).toString() ) == 0 )
-									if( DB::numRows2( "Sprites_Combine", r.value( "ID" ).toString() ) == 0 )
-										if( DB::numRows2( "Sprites_Frames", r.value( "ID" ).toString() ) == 0 )
-											if( DB::numRows2( "Sprites_Random", r.value( "ID" ).toString() ) == 0 )
-												if( DB::numRows2( "Sprites_Rotations", r.value( "ID" ).toString() ) == 0 )
-													if( DB::numRows2( "Sprites_Seasons", r.value( "ID" ).toString() ) == 0 )
-														if( DB::numRows2( "Sprites_Seasons_Rotations", r.value( "ID" ).toString() ) == 0 )
-														{
-															qDebug() << count++ << r.value( "ID" ).toString() << r.value( "Tilesheet" ).toString();
-															unused.insert( r.value( "ID" ).toString() );
-														}
-				}
-
-
-				int width = pm.width();
-				int height = pm.height();
-				QPixmap newPM( width, height );
-				
-				newPM.fill( Qt::transparent);
-				QPainter painter( &newPM );
-				
-				for( auto r : DB::selectRows( "BaseSprites" ) )
-				{
-					if( r.value( "Tilesheet" ).toString() == "default.png" )
-					{
-						if( !unused.contains( r.value( "ID" ).toString() ) )
-						{
-							auto p = r.value( "SourceRectangle" ).toString().split( " " );
-							auto sp = pm.copy( p[0].toInt(), p[1].toInt(), 32, 36 );
-							painter.drawPixmap( p[0].toInt(), p[1].toInt(), sp );
-						}
-					}
-				}
-				newPM.save( Global::cfg->get( "dataPath" ).toString() + "/tilesheet2/" + tilesheet );
-			}
-			*/
 		}
 		const auto spriteID = row.value( "ID" ).toString().toStdString();
 		m_baseSprites.insert_or_assign( spriteID, extractPixmap( tilesheet, row ) );
@@ -237,9 +190,9 @@ bool SpriteFactory::init()
 			sprite.remove( "DefaultMaterial" );
 		}
 
-		if ( DB::numRows( "Sprites_ByMaterials", spriteID ) )
+		auto rows = DB::selectRows( "Sprites_ByMaterials", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_ByMaterials", spriteID );
 			QVariantList byMaterials;
 			for ( auto entry : rows )
 			{
@@ -256,9 +209,9 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "ByMaterials", byMaterials );
 		}
-		if ( DB::numRows( "Sprites_ByMaterialTypes", spriteID ) )
+		rows = DB::selectRows( "Sprites_ByMaterialTypes", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_ByMaterialTypes", spriteID );
 			QVariantList byMaterialTypes;
 			for ( auto entry : rows )
 			{
@@ -276,28 +229,31 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "ByMaterialTypes", byMaterialTypes );
 		}
-		if ( DB::numRows( "Sprites_Combine", spriteID ) )
+		rows = DB::selectRows( "Sprites_Combine", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_Combine", spriteID );
 			QVariantList combine;
 			for ( auto entry : rows )
 			{
 				QVariantMap cm;
-				if ( entry.value( "BaseSprite" ).toString().isEmpty() )
+				const auto& baseSprite = entry.value( "BaseSprite" ).toString();
+				if ( baseSprite.isEmpty() )
 				{
 					cm.insert( "Sprite", entry.value( "Sprite" ).toString() );
 				}
 				else
 				{
-					cm.insert( "BaseSprite", entry.value( "BaseSprite" ).toString() );
+					cm.insert( "BaseSprite", baseSprite );
 				}
-				if ( !entry.value( "Tint" ).toString().isEmpty() )
+				const auto& tint = entry.value( "Tint" ).toString();
+				if ( !tint.isEmpty() )
 				{
-					cm.insert( "Tint", entry.value( "Tint" ).toString() );
+					cm.insert( "Tint", tint );
 				}
-				if ( !entry.value( "Offset" ).toString().isEmpty() )
+				const auto& offset = entry.value( "Offset" ).toString();
+				if ( !offset.isEmpty() )
 				{
-					cm.insert( "Offset", entry.value( "Offset" ).toString() );
+					cm.insert( "Offset", offset );
 				}
 
 				combine.append( cm );
@@ -305,9 +261,9 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "Combine", combine );
 		}
-		if ( DB::numRows( "Sprites_Frames", spriteID ) )
+		rows = DB::selectRows( "Sprites_Frames", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_Frames", spriteID );
 			QVariantList frames;
 			for ( auto entry : rows )
 			{
@@ -318,20 +274,21 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "Frames", frames );
 		}
-		if ( DB::numRows( "Sprites_Random", spriteID ) )
+		rows = DB::selectRows( "Sprites_Random", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_Random", spriteID );
 			QVariantList random;
 			for ( auto entry : rows )
 			{
 				QVariantMap cm;
-				if ( entry.value( "BaseSprite" ).toString().isEmpty() )
+				const auto& baseSprite = entry.value( "BaseSprite" ).toString();
+				if ( baseSprite.isEmpty() )
 				{
 					cm.insert( "Sprite", entry.value( "Sprite" ).toString() );
 				}
 				else
 				{
-					cm.insert( "BaseSprite", entry.value( "BaseSprite" ).toString() );
+					cm.insert( "BaseSprite", baseSprite );
 				}
 				cm.insert( "Weight", entry.value( "Weight" ).toInt() );
 
@@ -340,24 +297,26 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "Random", random );
 		}
-		if ( DB::numRows( "Sprites_Rotations", spriteID ) )
+		rows = DB::selectRows( "Sprites_Rotations", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_Rotations", spriteID );
 			QVariantList rotations;
 			for ( auto entry : rows )
 			{
 				QVariantMap cm;
-				if ( entry.value( "BaseSprite" ).toString().isEmpty() )
+				const auto& baseSprite = entry.value( "BaseSprite" ).toString();
+				if ( baseSprite.isEmpty() )
 				{
 					cm.insert( "Sprite", entry.value( "Sprite" ).toString() );
 				}
 				else
 				{
-					cm.insert( "BaseSprite", entry.value( "BaseSprite" ).toString() );
+					cm.insert( "BaseSprite", baseSprite );
 				}
-				if ( !entry.value( "Effect" ).toString().isEmpty() )
+				const auto& effect = entry.value( "Effect" ).toString();
+				if ( !effect.isEmpty() )
 				{
-					cm.insert( "Effect", entry.value( "Effect" ).toString() );
+					cm.insert( "Effect", effect );
 				}
 				cm.insert( "Rotation", entry.value( "Rotation" ).toString() );
 
@@ -366,16 +325,17 @@ bool SpriteFactory::init()
 			sprite.remove( "BaseSprite" );
 			sprite.insert( "Rotations", rotations );
 		}
-		if ( DB::numRows( "Sprites_Seasons", spriteID ) )
+		rows = DB::selectRows( "Sprites_Seasons", spriteID );
+		if ( !rows.empty() )
 		{
-			auto rows = DB::selectRows( "Sprites_Seasons", spriteID );
 			QVariantList seasons;
 			for ( auto entry : rows )
 			{
 				QVariantMap cm;
-				if ( !entry.value( "BaseSprite" ).toString().isEmpty() )
+				const auto baseSprite = entry.value( "BaseSprite" ).toString();
+				if ( !baseSprite.isEmpty() )
 				{
-					cm.insert( "BaseSprite", entry.value( "BaseSprite" ).toString() );
+					cm.insert( "BaseSprite", baseSprite );
 				}
 				cm.insert( "Season", entry.value( "Season" ) );
 
@@ -397,28 +357,19 @@ bool SpriteFactory::init()
 		}
 	}
 
-	/* only for debug purpose
-	QJsonArray ja;
-	for ( auto sprite : spriteList )
-	{
-		QJsonValue jv = QJsonValue::fromVariant( sprite );
-		ja.append( jv );
-	}
-	IO::saveFile( "spriteconv.json", ja );
-	*/
-
-	for ( auto row : spriteList )
+	for ( const auto& row : spriteList )
 	{
 		m_spriteDefVMs.insert_or_assign( row.value( "ID" ).toString().toStdString(), row );
 	}
 
-	for ( auto row : spriteList )
+	for ( const auto& row : spriteList )
 	{
 		DefNode* root = new DefNode;
 		root->type    = DefNodeType::Root;
 		root->value   = row.value( "ID" ).toString().toStdString();
 		m_numFrames   = 1;
 		parseDef( root, row );
+		// TODO: Not sure how this makes sense? `parseDef()` is within a recursive call chain, so this value will always be the very last one?
 		root->numFrames = m_numFrames;
 		if ( root->childs.empty() && root->baseSprite.empty() )
 		{
@@ -794,14 +745,14 @@ Sprite* SpriteFactory::createSpriteMaterial( const std::string& itemSID, const s
 
 void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 {
-	if ( def.contains( "Sprite" ) )
+	QVariantMap::iterator it;
+	if ( (it = def.find( "Sprite" )) != def.end() )
 	{
-		const auto spriteID = def.value( "Sprite" ).toString().toStdString();
+		const auto spriteID = it->toString().toStdString();
 		if ( !spriteID.empty() )
 		{
 			QVariant tint   = def.value( "Tint" );
 			QVariant effect = def.value( "Effect" );
-			QVariant offset = def.value( "Offset" );
 
 			def             = m_spriteDefVMs.at( spriteID );
 			if ( tint.isValid() )
@@ -837,9 +788,9 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		}
 	}
 	*/
-	if ( def.contains( "ByMaterials" ) )
+	if ( (it = def.find( "ByMaterials" )) != def.end() )
 	{
-		for ( auto item : def.value( "ByMaterials" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
@@ -850,9 +801,9 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			parseDef( child, item.toMap() );
 		}
 	}
-	if ( def.contains( "ByMaterialTypes" ) )
+	if ( (it = def.find( "ByMaterialTypes" )) != def.end() )
 	{
-		for ( auto item : def.value( "ByMaterialTypes" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
@@ -863,9 +814,9 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			parseDef( child, item.toMap() );
 		}
 	}
-	if ( def.contains( "Seasons" ) )
+	if ( (it = def.find( "Seasons" )) != def.end() )
 	{
-		for ( auto item : def.value( "Seasons" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
@@ -876,9 +827,9 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			parseDef( child, item.toMap() );
 		}
 	}
-	if ( def.contains( "Rotations" ) )
+	if ( (it = def.find( "Rotations" )) != def.end() )
 	{
-		for ( auto item : def.value( "Rotations" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
@@ -889,11 +840,12 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			parseDef( child, item.toMap() );
 		}
 	}
-	if ( def.contains( "Frames" ) )
+	if ( (it = def.find( "Frames" )) != def.end() )
 	{
 		int index   = 0;
-		m_numFrames = def.value( "Frames" ).toList().size();
-		for ( auto item : def.value( "Frames" ).toList() )
+		const auto frames = it->toList();
+		m_numFrames = frames.size();
+		for ( const auto& item : frames )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
@@ -903,7 +855,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			parseDef( child, item.toMap() );
 		}
 	}
-	if ( def.contains( "Random" ) )
+	if ( (it = def.find( "Random" )) != def.end() )
 	{
 		int index            = 0;
 		DefNode* randomNode  = new DefNode;
@@ -912,7 +864,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		randomNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 		parent->childs.insert_or_assign( "RandomNode", randomNode );
 
-		for ( auto item : def.value( "Random" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = randomNode->depth + 1;
@@ -924,7 +876,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		}
 	}
 
-	if ( def.contains( "Combine" ) )
+	if ( (it = def.find( "Combine" )) != def.end() )
 	{
 		int index             = 0;
 		DefNode* combineNode  = new DefNode;
@@ -933,7 +885,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 		combineNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 		parent->childs.insert_or_assign( "CombineNode", combineNode );
 
-		for ( auto item : def.value( "Combine" ).toList() )
+		for ( const auto& item : it->toList() )
 		{
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
