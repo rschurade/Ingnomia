@@ -30,47 +30,7 @@
 
 struct SDL_Surface;
 
-struct DefNode
-{
-	DefNode()
-	{
-		//parent = 0;
-
-		type       = "";
-		offset     = "";
-		effect     = "";
-		tint       = "";
-		value      = "";
-		baseSprite = "";
-		depth      = 0;
-		childPos   = "1";
-		numFrames  = 1;
-	};
-	~DefNode()
-	{
-		for( auto& child : childs | ranges::views::values )
-		{
-			delete child;
-		}
-	}
-
-	QString type;
-	QString offset;
-	std::string effect;
-	std::string tint;
-	std::string value;
-	std::string baseSprite;
-	std::string defaultMaterial;
-	int depth;
-	int numFrames;
-	QString childPos;
-	QList<int> randomWeights;
-	bool rot90 = false;
-	bool hasTransp = false;
-
-	//DefNode* parent;
-	absl::flat_hash_map<std::string, DefNode*> childs;
-};
+struct DefNode;
 
 struct SpriteCreation
 {
@@ -113,7 +73,7 @@ private:
 	absl::flat_hash_map<std::string, std::string> m_materialTypes;
 
 	//pixel data for array textures
-	std::vector<std::vector<uint8_t>> m_pixelData;
+	absl::flat_hash_map<uint32_t, std::vector<uint8_t>> m_pixelData;
 	int m_texesUsed = 0;
 
 	bool m_textureAdded         = false;
@@ -157,11 +117,11 @@ private:
 
 	bool init();
 
+	std::vector<uint8_t>& getOrCreatePixelDataAt( int tex );
+
 public:
 	SpriteFactory();
 	~SpriteFactory();
-
-	
 
 	Sprite* createSprite( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
 	Sprite* createAnimalSprite( const std::string& spriteSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
@@ -178,8 +138,6 @@ public:
 
 	void createSprites( QList<SpriteCreation> scl );
 
-	
-
 	bool textureAdded();
 	bool creatureTextureAdded();
 
@@ -191,6 +149,6 @@ public:
 	
 	unsigned int size();
 	
-	std::vector<uint8_t> pixelData( int index );
+	const std::vector<uint8_t>& pixelData( int index );
 	
 };

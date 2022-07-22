@@ -66,11 +66,12 @@ Game::Game( QObject* parent ) :
 	QObject( parent )
 {
 	spdlog::debug("init game...");
-	
+
 	m_upsTimer.start();
 
 	m_sf.reset( new SpriteFactory() );
-	
+	spdlog::debug("done sprite factory...");
+
 	#pragma region initStuff
 	DB::select( "Value_", "Time", "MillisecondsSlow" );
 

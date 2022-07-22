@@ -32,6 +32,56 @@
 
 #include <SDL_image.h>
 
+enum class DefNodeType {
+	Unknown, Root,
+	ByItem, ByMaterial, ByMaterialType,
+	Season, Rotation, Frame, RandomNode, Random,
+	CombineNode, Combine
+};
+
+struct DefNode
+{
+	DefNode()
+	{
+		//parent = 0;
+
+		type       = DefNodeType::Unknown;
+		offset     = "";
+		effect     = "";
+		tint       = "";
+		value      = "";
+		baseSprite = "";
+		depth      = 0;
+		childPos   = "1";
+		numFrames  = 1;
+	};
+
+	~DefNode()
+	{
+		for( auto& child : childs | ranges::views::values )
+		{
+			delete child;
+		}
+	}
+
+	DefNodeType type;
+	QString offset;
+	std::string effect;
+	std::string tint;
+	std::string value;
+	std::string baseSprite;
+	std::string defaultMaterial;
+	int depth;
+	int numFrames;
+	QString childPos;
+	QList<int> randomWeights;
+	bool rot90 = false;
+	bool hasTransp = false;
+
+	//DefNode* parent;
+	absl::flat_hash_map<std::string, DefNode*> childs;
+};
+
 SpriteFactory::SpriteFactory()
 {
 	init();
@@ -365,7 +415,7 @@ bool SpriteFactory::init()
 	for ( auto row : spriteList )
 	{
 		DefNode* root = new DefNode;
-		root->type    = "root";
+		root->type    = DefNodeType::Root;
 		root->value   = row.value( "ID" ).toString().toStdString();
 		m_numFrames   = 1;
 		parseDef( root, row );
@@ -780,7 +830,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child = new DefNode;
 			child->depth = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type = "ByItem";
+			child->type = DefNodeType::ByItem;
 			child->value = item.toMap().value( "ItemID" ).toString();
 			parent->childs.insert( child->value, child );
 			parseDef( child, item.toMap() );
@@ -794,7 +844,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type     = "ByMaterial";
+			child->type     = DefNodeType::ByMaterial;
 			child->value    = item.toMap().value( "MaterialID" ).toString().toStdString();
 			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
@@ -807,7 +857,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type     = "ByMaterialType";
+			child->type     = DefNodeType::ByMaterialType;
 			child->value    = item.toMap().value( "MaterialType" ).toString().toStdString();
 			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
@@ -820,7 +870,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type     = "Season";
+			child->type     = DefNodeType::Season;
 			child->value    = item.toMap().value( "Season" ).toString().toStdString();
 			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
@@ -833,7 +883,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type     = "Rotation";
+			child->type     = DefNodeType::Rotation;
 			child->value    = item.toMap().value( "Rotation" ).toString().toStdString();
 			parent->childs.insert_or_assign( child->value, child );
 			parseDef( child, item.toMap() );
@@ -848,7 +898,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
-			child->type     = "Frame";
+			child->type     = DefNodeType::Frame;
 			parent->childs.insert_or_assign( "Frame" + std::to_string( index++ ), child );
 			parseDef( child, item.toMap() );
 		}
@@ -857,7 +907,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	{
 		int index            = 0;
 		DefNode* randomNode  = new DefNode;
-		randomNode->type     = "RandomNode";
+		randomNode->type     = DefNodeType::RandomNode;
 		randomNode->depth    = parent->depth + 1;
 		randomNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 		parent->childs.insert_or_assign( "RandomNode", randomNode );
@@ -867,7 +917,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = randomNode->depth + 1;
 			child->childPos = randomNode->childPos + QString::number( randomNode->childs.size() + 1 );
-			child->type     = "Random";
+			child->type     = DefNodeType::Random;
 			randomNode->childs.insert_or_assign( "Random" + std::to_string( index++ ), child );
 			randomNode->randomWeights.push_back( item.toMap().value( "Weight" ).toInt() );
 			parseDef( child, item.toMap() );
@@ -878,7 +928,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	{
 		int index             = 0;
 		DefNode* combineNode  = new DefNode;
-		combineNode->type     = "CombineNode";
+		combineNode->type     = DefNodeType::CombineNode;
 		combineNode->depth    = parent->depth + 1;
 		combineNode->childPos = parent->childPos + QString::number( parent->childs.size() + 1 );
 		parent->childs.insert_or_assign( "CombineNode", combineNode );
@@ -888,7 +938,7 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 			DefNode* child  = new DefNode;
 			child->depth    = parent->depth + 1;
 			child->childPos = combineNode->childPos + QString::number( combineNode->childs.size() + 1 );
-			child->type     = "Combine";
+			child->type     = DefNodeType::Combine;
 			combineNode->childs.insert_or_assign( "Combine" + std::to_string( index++ ), child );
 			parseDef( child, item.toMap() );
 		}
@@ -913,7 +963,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const std::string& it
 		return sprite;
 	}
 
-	if ( node->childs.size() && node->childs.begin()->second->type == "Rotation" )
+	if ( node->childs.size() && node->childs.begin()->second->type == DefNodeType::Rotation )
 	{
 		SpriteRotations* sr = new SpriteRotations;
 
@@ -927,7 +977,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const std::string& it
 		sr->hasTransp = node->hasTransp;
 		return sr;
 	}
-	if ( node->childs.size() && node->childs.begin()->second->type == "Season" )
+	if ( node->childs.size() && node->childs.begin()->second->type == DefNodeType::Season )
 	{
 		SpriteSeasons* ss = new SpriteSeasons;
 		for ( auto child : node->childs | ranges::views::values )
@@ -943,7 +993,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const std::string& it
 	{
 		return getBaseSprite( temp, itemSID, materialSIDs );
 	}
-	if ( node->childs.size() && node->childs.begin()->second->type == "Frame" )
+	if ( node->childs.size() && node->childs.begin()->second->type == DefNodeType::Frame )
 	{
 		SpriteFrames* sf = new SpriteFrames;
 		for ( auto child : node->childs | ranges::views::values )
@@ -956,7 +1006,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const std::string& it
 		return sf;
 	}
 
-	if ( node->type == "CombineNode" && node->childs.size() > 1 )
+	if ( node->type == DefNodeType::CombineNode && node->childs.size() > 1 )
 	{
 		Sprite* s = getBaseSprite( node->childs.at("Combine0"), itemSID, materialSIDs, materialID );
 
@@ -989,7 +1039,7 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const std::string& it
 		s->hasTransp = node->hasTransp;
 		return s;
 	}
-	if ( node->type == "RandomNode" )
+	if ( node->type == DefNodeType::RandomNode )
 	{
 		int randomNumber = m_randomNumbers.at( node->childPos.toInt() );
 		const auto &childKey    = "Random" + std::to_string( randomNumber );
@@ -1077,24 +1127,24 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const std::string&
 		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
-	const auto frameKey = "Frame" + std::to_string( animFrame );
+	const auto frameKey = fmt::format( "Frame{}", animFrame );
 	if ( maps::try_at( childs, frameKey, temp ) )
 	{
 		getBaseSpriteDryRun( temp, itemSID, materialSIDs, season, rotation, animFrame );
 		return;
 	}
 
-	if ( node->type == "CombineNode" && childs.size() > 1 )
+	if ( node->type == DefNodeType::CombineNode && childs.size() > 1 )
 	{
 		getBaseSpriteDryRun( childs.at("Combine0"), itemSID, materialSIDs, season, rotation, animFrame );
 
 		for ( int i = 1; i < childs.size(); ++i )
 		{
-			getBaseSpriteDryRun( childs.at("Combine" + std::to_string( i )), itemSID, materialSIDs, season, rotation, animFrame );
+			getBaseSpriteDryRun( childs.at(fmt::format( "Combine{}", i )), itemSID, materialSIDs, season, rotation, animFrame );
 		}
 		return;
 	}
-	if ( node->type == "RandomNode" )
+	if ( node->type == DefNodeType::RandomNode )
 	{
 		QList<int> weights = node->randomWeights;
 		//spdlog::debug( "{}", weights.toStdString() );
@@ -1238,6 +1288,20 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 	m_spriteCreations = scl;
 }
 
+std::vector<uint8_t>& SpriteFactory::getOrCreatePixelDataAt( int tex ) {
+	const auto it = m_pixelData.find( tex );
+	if ( it == m_pixelData.end() )
+	{
+		int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
+		int bytes            = 32 * 64 * 4 * maxArrayTextures;
+
+		m_pixelData.insert_or_assign( tex, std::vector<uint8_t>( bytes ) );
+		return m_pixelData.at( tex );
+	} else {
+		return it->second;
+	}
+}
+
 void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 {
 	auto season = GameState::seasonString.toStdString();
@@ -1253,16 +1317,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 			m_texesUsed = std::max( m_texesUsed, tex + 1 );
 			int id      = ( sprite->uID + frame ) % 512;
 
-			if ( m_pixelData.size() < tex + 1 )
-			{
-				int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
-				int bytes            = 32 * 64 * 4 * maxArrayTextures;
-
-				for ( int i = 0; i < 32; ++i )
-				{
-					m_pixelData.emplace_back( std::vector<uint8_t>(bytes) );
-				}
-			}
+			auto& texData = getOrCreatePixelDataAt( tex );
 
 			for ( int i = 0; i < 4; ++i )
 			{
@@ -1273,7 +1328,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 				if ( pm->h == 64 && pm->w == 32 )
 				{
 					SDL_LockSurface( pm );
-					auto data = m_pixelData[tex].data();
+					auto data = texData.data();
 					for ( int y = 0; y < 64; ++y )
 					{
 						for ( int x = 0; x < 32; ++x )
@@ -1297,16 +1352,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 		m_texesUsed = std::max( m_texesUsed, tex + 1 );
 		int id      = sprite->uID % 512;
 
-		if ( m_pixelData.size() < tex + 1 )
-		{
-			int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
-			int bytes            = 32 * 64 * 4 * maxArrayTextures;
-
-			for ( int i = 0; i < 32; ++i )
-			{
-				m_pixelData.emplace_back( std::vector<uint8_t>(bytes) );
-			}
-		}
+		auto& texData = getOrCreatePixelDataAt( tex );
 
 		for ( int i = 0; i < 4; ++i )
 		{
@@ -1322,10 +1368,10 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 					for ( int x = 0; x < 32; ++x )
 					{
 						const auto col = getPixelColor( pm, x, y );
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y )]     = col.r;
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
-						m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
+						texData[startIndex + ( x * 4 + 128 * y )]     = col.r;
+						texData[startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
+						texData[startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
+						texData[startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
 					}
 				}
 				SDL_UnlockSurface( pm );
@@ -1340,6 +1386,8 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 	int id         = sprite->uID % 512;
 	const auto season = GameState::seasonString.toStdString();
 
+	auto& texData = getOrCreatePixelDataAt( tex );
+
 	for ( int i = 0; i < 4; ++i )
 	{
 		auto pm    = sprite->pixmap( season, i, 0 );
@@ -1352,26 +1400,26 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 		{
 			for ( int y = 0; y < 16; ++y )
 			{
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 			}
 
 			for ( int y = 16; y < 48; ++y )
 			{
 				const auto col = getPixelColor( pm, x, y - 16 );
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = col.r;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
+				texData[startIndex + ( x * 4 + 128 * y )] = col.r;
+				texData[startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
+				texData[startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
+				texData[startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
 			}
 			for ( int y = 48; y < 64; ++y )
 			{
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 1 )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 2 )] = 0;
-				m_pixelData[tex][startIndex + ( x * 4 + 128 * y + 3 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
+				texData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
 			}
 		}
 
@@ -1679,7 +1727,7 @@ unsigned int SpriteFactory::size()
 	return m_spriteIDs.size();
 }
 
-std::vector<uint8_t> SpriteFactory::pixelData( int index )
+const std::vector<uint8_t>& SpriteFactory::pixelData( int index )
 {
 	QMutexLocker ml( &m_mutex );
 	return m_pixelData[index];
