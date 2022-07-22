@@ -89,6 +89,10 @@ World* WorldGenerator::generateTopology()
 	m_random.SetNoiseType( FastNoise::NoiseType::CubicFractal );
 	m_random.SetFractalType( FastNoise::FractalType::Billow );
 
+	m_whiteNoise.SetSeed( m_seed );
+	m_whiteNoise.SetFrequency( (FN_DECIMAL)0.02 );
+	m_whiteNoise.SetNoiseType( FastNoise::NoiseType::WhiteNoise );
+
 	signalStatus( "Create height map." );
 	createHeightMap( m_dimX, m_dimY );
 	initMateralVectors();
@@ -629,15 +633,15 @@ void WorldGenerator::addGnomesAndStartingItems()
 	int num = ngs->numGnomes();
 
 	std::vector<Position> offsets;
-	offsets.push_back( Position( 0, 0, 0 ) );
-	offsets.push_back( Position( -1, 0, 0 ) );
-	offsets.push_back( Position( 1, 0, 0 ) );
-	offsets.push_back( Position( -1, -1, 0 ) );
-	offsets.push_back( Position( 0, -1, 0 ) );
-	offsets.push_back( Position( 1, -1, 0 ) );
-	offsets.push_back( Position( -1, 1, 0 ) );
-	offsets.push_back( Position( 0, 1, 0 ) );
-	offsets.push_back( Position( 1, 1, 0 ) );
+	offsets.emplace_back( 0, 0, 0 );
+	offsets.emplace_back( -1, 0, 0 );
+	offsets.emplace_back( 1, 0, 0 );
+	offsets.emplace_back( -1, -1, 0 );
+	offsets.emplace_back( 0, -1, 0 );
+	offsets.emplace_back( 1, -1, 0 );
+	offsets.emplace_back( -1, 1, 0 );
+	offsets.emplace_back( 0, 1, 0 );
+	offsets.emplace_back( 1, 1, 0 );
 
 	int x = m_dimX / 2;
 	int y = m_dimY / 2;
@@ -1080,7 +1084,7 @@ std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength 
 
 	if ( x > 1 && x < m_dimX - 2 && y > 1 && y < m_dimY - 2 )
 	{
-		out.push_back( Position( x, y, z ) );
+		out.emplace_back( x, y, z );
 	}
 
 	float noiseLength = perlinRandWhiteNoise( x, y );
@@ -1138,7 +1142,7 @@ std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength 
 
 		if ( x > 1 && x < m_dimX - 2 && y > 1 && y < m_dimY - 2 )
 		{
-			out.push_back( Position( x, y, z ) );
+			out.emplace_back( x, y, z );
 		}
 	}
 
@@ -1147,15 +1151,10 @@ std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength 
 
 float WorldGenerator::perlinRandWhiteNoise( int x, int y, int z )
 {
-	FastNoise fn(m_seed);
-	fn.SetFrequency( (FN_DECIMAL)0.02 );
-	fn.SetNoiseType( FastNoise::NoiseType::WhiteNoise );
-
-	if ( z == -1 )
-	{
-		return ( fn.GetNoise( x, y ) + 1.0 ) / 2.;
-	}
-	return ( fn.GetNoise( x, y, z ) + 1.0 ) / 2.;
+	return ( ( z == -1
+				   ? m_whiteNoise.GetNoise( x, y )
+				   : m_whiteNoise.GetNoise( x, y, z ) )
+			 + 1.0 ) / 2.;
 }
 
 void WorldGenerator::clear3x3( std::vector<Tile>& world, Position& pos )
@@ -1618,7 +1617,7 @@ std::vector<Position> WorldGenerator::riverWorm( Position pos, int dir, int num,
 
 		if ( x > 1 && x < m_dimX - 2 && y > 1 && y < m_dimY - 2 )
 		{
-			out.push_back( Position( x, y, z ) );
+			out.emplace_back( x, y, z );
 		}
 		else
 		{

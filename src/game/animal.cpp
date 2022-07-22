@@ -845,7 +845,7 @@ BT_RESULT Animal::actionFindPrey( bool halt )
 		Animal* prey = g->cm()->getClosestAnimal( m_position, sPrey );
 		if ( prey )
 		{
-			QList<Position> neighbs = Global::util->neighbors8( prey->getPos() );
+			const auto& neighbs     = Global::util->neighbors8( prey->getPos() );
 			auto distances          = PriorityQueue<Position, int>();
 			for ( const auto& neigh : neighbs )
 			{

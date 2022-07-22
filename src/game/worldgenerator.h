@@ -117,7 +117,7 @@ private:
 
 	int m_mushroomLevel = 0;
 
-	FastNoise m_random;
+	FastNoise m_random, m_whiteNoise;
 
 	std::vector<TerrainMaterial> m_mats;
 	std::vector<int> m_matsInLevel;

@@ -672,21 +672,21 @@ Position Util::borderPos( bool& found )
 	}
 }
 
-QList<Position> Util::neighbors8( Position pos )
+std::vector<Position> Util::neighbors8( Position pos )
 {
-	QList<Position> out;
+	std::vector<Position> out;
 	int x = pos.x;
 	int y = pos.y;
 	int z = pos.z;
 
-	out.push_back( Position( x - 1, y - 1, z ) );
-	out.push_back( Position( x - 1, y, z ) );
-	out.push_back( Position( x - 1, y + 1, z ) );
-	out.push_back( Position( x, y - 1, z ) );
-	out.push_back( Position( x, y + 1, z ) );
-	out.push_back( Position( x + 1, y - 1, z ) );
-	out.push_back( Position( x + 1, y, z ) );
-	out.push_back( Position( x + 1, y + 1, z ) );
+	out.emplace_back( x - 1, y - 1, z );
+	out.emplace_back( x - 1, y, z );
+	out.emplace_back( x - 1, y + 1, z );
+	out.emplace_back( x, y - 1, z );
+	out.emplace_back( x, y + 1, z );
+	out.emplace_back( x + 1, y - 1, z );
+	out.emplace_back( x + 1, y, z );
+	out.emplace_back( x + 1, y + 1, z );
 
 	return out;
 }

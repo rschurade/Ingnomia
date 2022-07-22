@@ -101,7 +101,7 @@ public:
 	Position reachableBorderPos( Position pos, bool& found );
 	Position borderPos( bool& found );
 
-	QList<Position> neighbors8( Position pos );
+	std::vector<Position> neighbors8( Position pos );
 
 	QToolButton* createToolButton( QIcon icon, QString text, QString toolTip );
 

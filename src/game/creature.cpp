@@ -140,7 +140,7 @@ Creature::Creature( QVariantMap in, Game* game ) :
 
 	for ( auto cpp : in.value( "CurrentPath" ).toList() )
 	{
-		m_currentPath.push_back( Position( cpp ) );
+		m_currentPath.emplace_back( cpp );
 	}
 
 	if ( in.contains( "BehaviorTreeState" ) )
