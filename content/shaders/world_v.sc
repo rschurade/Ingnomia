@@ -46,10 +46,9 @@ $output v_texcoord1, v_texcoord2, v_texcoord3
 #define WATER_FLOOR             0x20u
 #define WATER_ONFLOOR           0x40u
 
-uniform mat4 uTransform;
-uniform uvec4 uWorldSize;
-uniform uvec4 uRenderMin;
-uniform uvec4 uRenderMax;
+uniform vec4 uWorldSize;
+uniform vec4 uRenderMin;
+uniform vec4 uRenderMax;
 uniform int uWorldRotation;
 
 // DO NOT CHANGE, must match game internal layout
@@ -74,7 +73,7 @@ struct TileData {
 	uint packedLevels;
 };
 
-BUFFER_RO(tileData, TileData, 0);
+BUFFER_RO(tileData, TileData, 2);
 
 uniform bool uWallsLowered;
 uniform bool uPaintFrontToBack;
@@ -302,6 +301,6 @@ void main()
 		v_texcoord3 = uvec4(vFlags, vFlags2, vLightLevel, vVegetationLevel);
 
 		vec3 worldPos = project( rotate( tile ), vVertexCoords.xy, uIsWall );
-		gl_Position = mul(uTransform, vec4( worldPos, 1.0 ));
+		gl_Position = mul(u_proj, vec4( worldPos, 1.0 ));
 	}
 }

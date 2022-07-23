@@ -5,34 +5,34 @@ $output v_texcoord0
 
 #include <bgfx_shader.sh>
 
-uniform mat4 uTransform;
-uniform uvec4 uWorldSize;
-uniform uvec4 uRenderMin;
-uniform uvec4 uRenderMax;
+uniform vec4 uWorldSize;
+uniform vec4 uRenderMin;
+uniform vec4 uRenderMax;
 
-uniform uvec4 tile;
+uniform vec4 tile;
 
 uniform int uWorldRotation;
 
 uvec3 rotate(uvec4 pos)
 {
 	uvec3 ret = uvec3(0, 0, pos.z);
+	uvec4 uWorldSizeU = uvec4(uWorldSize);
 	switch ( uWorldRotation )
 	{
 		default:
 			ret.xy = pos.xy;
 		break;
 		case 1:
-			ret.x = uWorldSize.y - pos.y - 1u;
+			ret.x = uWorldSizeU.y - pos.y - 1u;
 			ret.y = pos.x;
 		break;
 		case 2:
-			ret.x = uWorldSize.x - pos.x - 1u;
-			ret.y = uWorldSize.y - pos.y - 1u;
+			ret.x = uWorldSizeU.x - pos.x - 1u;
+			ret.y = uWorldSizeU.y - pos.y - 1u;
 		break;
 		case 3:
 			ret.x = pos.y;
-			ret.y = uWorldSize.x - pos.x - 1u;
+			ret.y = uWorldSizeU.x - pos.x - 1u;
 		break;
 	}
 	return ret;
@@ -67,11 +67,11 @@ void main()
 {
 	v_texcoord0 = vec2( a_position.x, 1.0 - a_position.y );
 
-	vec3 worldPos = project( rotate( tile ), a_position.xy, true);
+	vec3 worldPos = project( rotate( uvec4(tile) ), a_position.xy, true);
 
 	// Offset relative to owning creature
 	worldPos.x += 8.0;
 	worldPos.y += 16.0;
 
-	gl_Position = mul(uTransform, vec4( worldPos, 1.0 ));
+	gl_Position = mul(u_proj, vec4( worldPos, 1.0 ));
 }

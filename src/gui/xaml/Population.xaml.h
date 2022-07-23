@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #ifndef __PopulationWindow_H__
-#define __PopulastionPage_H__
+#define __PopulationWindow_H__
 
 #include <NoesisPCH.h>
 

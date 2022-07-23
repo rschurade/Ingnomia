@@ -5,14 +5,18 @@
 
 #include "SDL_mainrenderer.h"
 
+#include "../base/config.h"
 #include "../base/global.h"
 #include "../bgfxUtils.h"
+#include "../game/game.h"
+#include "../game/world.h"
+#include "../gamestate.h"
 #include "../gui/aggregatorrenderer.h"
 #include "../gui/aggregatorselection.h"
 #include "../gui/eventconnector.h"
-#include "../game/game.h"
-#include "../game/world.h"
 #include "spdlog/spdlog.h"
+
+#include <bx/math.h>
 
 SDL_MainRenderer::SDL_MainRenderer() : m_initialized(false)
 {
@@ -91,7 +95,6 @@ void SDL_MainRenderer::initialize()
 	m_uWorldSize = bgfx::createUniform("uWorldSize", bgfx::UniformType::Vec4);
 	m_uRenderMin = bgfx::createUniform("uRenderMin", bgfx::UniformType::Vec4);
 	m_uRenderMax = bgfx::createUniform("uRenderMax", bgfx::UniformType::Vec4);
-	m_uTransform = bgfx::createUniform("uTransform", bgfx::UniformType::Mat4);
 //	m_uWorldRotation = bgfx::createUniform("uWorldRotation", bgfx::UniformType::Vec4);
 //	m_uTickNumber = bgfx::createUniform("uTickNumber", bgfx::UniformType::Vec4);
 
@@ -101,6 +104,42 @@ void SDL_MainRenderer::initialize()
 	vl.begin().add(bgfx::Attrib::Position, sizeof(TileDataUpdate) / sizeof(float), bgfx::AttribType::Float).end();
 	m_tileDataUpdateHandle = bgfx::createDynamicVertexBuffer((1 << 16) + 2, vl);
 
+	constexpr std::array<float, 3 * 8> vertices = {
+		// Wall layer
+		0.f, .8f, 1.f, // top left
+		0.f, .2f, 1.f, // bottom left
+		1.f, .8f, 1.f, // top right
+		1.f, .2f, 1.f, // bottom right
+
+		// floor layer
+		0.f, .5f, 0.f, // top left
+		0.f, .2f, 0.f, // bottom left
+		1.f, .5f, 0.f, // top right
+		1.f, .2f, 0.f, // bottom right
+	};
+
+	constexpr std::array<uint16_t, 3 * 6> indices = {
+		0, 1, 3, // Wall 1
+		2, 0, 3, // Wall 2
+		4, 5, 7, // Floor 1
+		6, 4, 7, // Floor 2
+		// Wall again for BTF rendering
+		0, 1, 3, // Wall 1
+		2, 0, 3, // Wall 2
+	};
+
+	bgfx::VertexLayout layout;
+	layout
+		.begin()
+		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+		.end();
+	auto* vertexMem = bgfx::copy(&vertices, vertices.size() * sizeof(vertices[0]));
+	m_vertexBuffer = bgfx::createVertexBuffer(vertexMem, layout);
+
+	auto* indexMem = bgfx::copy(&indices, indices.size() * sizeof(indices[0]));
+	m_indicesBuffer = bgfx::createIndexBuffer(indexMem);
+
+	updateRenderParams();
 }
 
 void SDL_MainRenderer::render() {
@@ -140,6 +179,13 @@ void SDL_MainRenderer::paintTiles( bgfx::ViewId viewId )
 	bgfx::setViewName(viewId, "Tiles");
 #endif
 	bgfx::touch(viewId);
+	bgfx::setViewRect(viewId, 0, 0, m_fbWidth, m_fbHeight);
+	bgfx::setViewTransform(viewId, nullptr, m_projection);
+
+	bgfx::setIndexBuffer(m_indicesBuffer);
+	bgfx::setVertexBuffer(0, m_vertexBuffer);
+
+	bgfx::setBuffer(2, m_tileDataHandle, bgfx::Access::Read);
 
 	bgfx::submit(viewId, m_Programs[m_ProgramWorld]);
 }
@@ -150,6 +196,8 @@ void SDL_MainRenderer::paintSelection( bgfx::ViewId viewId )
 	bgfx::setViewName(viewId, "Selection");
 #endif
 	bgfx::touch(viewId);
+	bgfx::setViewRect(viewId, 0, 0, m_fbWidth, m_fbHeight);
+	bgfx::setViewTransform(viewId, nullptr, m_projection);
 
 	bgfx::submit(viewId, m_Programs[m_ProgramSelection]);
 }
@@ -160,6 +208,8 @@ void SDL_MainRenderer::paintThoughtBubbles( bgfx::ViewId viewId )
 	bgfx::setViewName(viewId, "ThoughtBubbles");
 #endif
 	bgfx::touch(viewId);
+	bgfx::setViewRect(viewId, 0, 0, m_fbWidth, m_fbHeight);
+	bgfx::setViewTransform(viewId, nullptr, m_projection);
 
 	bgfx::submit(viewId, m_Programs[m_ProgramThoughtBubble]);
 }
@@ -220,10 +270,10 @@ void SDL_MainRenderer::onUpdateSelection( const absl::btree_map<unsigned int, Se
 
 void SDL_MainRenderer::onCenterCameraPosition( const Position& target )
 {
-//	m_moveX     = 16 * (-target.x + target.y);
-//	m_moveY     = 8 * ( -target.x - target.y );
-//	m_viewLevel = target.z;
-//	onRenderParamsChanged();
+	m_moveX     = 16 * (-target.x + target.y);
+	m_moveY     = 8 * ( -target.x - target.y );
+	m_viewLevel = target.z;
+	onRenderParamsChanged();
 }
 
 
@@ -250,4 +300,50 @@ void SDL_MainRenderer::uploadTileData( const std::vector<TileDataUpdate>& tileDa
 	const float updateSize[4] { static_cast<float>(tileData.size()), 0.0f, 0.0f, 0.0f };
 	bgfx::setUniform(m_uUpdateSize, &updateSize );
 	bgfx::dispatch(0, m_Programs[m_ProgramWorldUpdate], ( tileData.size() + 63 ) / 64, 1, 1 );
+}
+
+void SDL_MainRenderer::resize(int fbWidth, int fbHeight)
+{
+	m_fbWidth = fbWidth;
+	m_fbHeight = fbHeight;
+
+	onRenderParamsChanged();
+}
+
+void SDL_MainRenderer::onRenderParamsChanged()
+{
+	updateRenderParams();
+	// TODO
+}
+
+void SDL_MainRenderer::updateRenderParams()
+{
+	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_fbWidth * m_fbWidth + m_fbHeight * m_fbHeight ) / 12 ) / m_scale ) );
+
+	m_renderDepth = Global::cfg->get_or_default<int>( "renderDepth" , 0 );
+
+	m_viewLevel = GameState::viewLevel;
+
+	m_volume.min = { 0, 0, qMin( qMax( m_viewLevel - m_renderDepth, 0 ), Global::dimZ - 1 ) };
+	m_volume.max = { Global::dimX - 1, Global::dimY - 1, qMin( m_viewLevel, Global::dimZ - 1 ) };
+
+	m_lightMin = Global::cfg->get_or_default<double>( "lightMin" , 0 );
+	if ( m_lightMin < 0.01 )
+		m_lightMin = 0.3f;
+
+	m_debug   = Global::debugMode;
+
+	const bgfx::Caps* caps = bgfx::getCaps();
+
+	//	constexpr auto centering = 0.5f;
+	bx::mtxOrtho(
+		m_projection
+		, -m_fbWidth / 2, m_fbWidth / 2
+		, -m_fbHeight / 2, m_fbHeight / 2
+		, -( m_volume.max.x + m_volume.max.y + m_volume.max.z + 1 ), -m_volume.min.z
+		, 0.0f
+		, caps->homogeneousDepth
+	);
+	bx::mtxScale( m_projection, m_scale );
+	bx::mtxTranslate( m_projection, m_moveX, -m_moveY, 0 );
 }

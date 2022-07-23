@@ -162,6 +162,7 @@ SDL_MainWindow::SDL_MainWindow()
 
 	noesisInit();
 
+	m_renderer.resize( m_fbWidth, m_fbHeight );
 	m_renderer.initialize();
 }
 
@@ -277,6 +278,7 @@ void SDL_MainWindow::onResize( int w, int h ) {
 	bgfx::reset( m_fbWidth, m_fbHeight, BGFX_RESET_VSYNC | BGFX_RESET_HIDPI );
 	bgfx::setViewRect( mainViewId, 0, 0, m_fbWidth, m_fbHeight );
 
+	m_renderer.resize(m_fbWidth, m_fbHeight);
 	m_noesisContext->Resize( m_fbWidth, m_fbHeight );
 }
 

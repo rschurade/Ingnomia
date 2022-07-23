@@ -21,6 +21,8 @@ public:
 
 	void initialize();
 
+	void resize(int fbWidth, int fbHeight);
+
 	void render();
 
 	void cleanupWorld();
@@ -41,9 +43,36 @@ private:
 	bool m_inMenu = true;
 	bool m_initialized = false;
 
-	bgfx::UniformHandle m_uWorldSize, m_uRenderMin, m_uRenderMax, m_uTransform, m_uWorldRotation, m_uTickNumber;
+	int m_fbWidth, m_fbHeight;
+	float m_projection[16];
+
+	float m_moveX       = 0;
+	float m_moveY       = 0;
+	float m_scale       = 1.0;
+	int m_rotation      = 0;
+	int m_renderSize    = 100;
+	int m_viewLevel     = 100;
+	int m_renderDepth   = 10;
+	float m_lightMin    = 0.3f;
+	bool m_debug        = false;
+
+	struct RenderVolume
+	{
+		Position min;
+		Position max;
+		inline Position size() const
+		{
+			// Min and max are inclusive
+			return max - min + Position( 1, 1, 1 );
+		}
+	};
+	RenderVolume m_volume;
+
+	bgfx::UniformHandle m_uWorldSize, m_uRenderMin, m_uRenderMax, m_uWorldRotation, m_uTickNumber;
 	bgfx::UniformHandle m_uUpdateSize;
 	bgfx::DynamicVertexBufferHandle m_tileDataHandle, m_tileDataUpdateHandle;
+	bgfx::VertexBufferHandle m_vertexBuffer;
+	bgfx::IndexBufferHandle m_indicesBuffer;
 
 	std::vector<std::vector<TileDataUpdate>> m_pendingUpdates;
 	ThoughtBubbleInfo m_thoughBubbles;
@@ -59,6 +88,9 @@ private:
 
 	void updateWorld();
 	void uploadTileData( const std::vector<TileDataUpdate>& tileData );
+
+	void onRenderParamsChanged();
+	void updateRenderParams();
 
 public: // signals:
 	sigslot::signal<> redrawRequired;

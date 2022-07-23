@@ -67,13 +67,6 @@ uniform bool uPaintFrontToBack;
 
 uniform bool uShowJobs;
 
-const float waterAlpha = 0.6;
-const float flSize =  ( 1.0 / 32. );
-const int rightWallOffset = 4;
-const int leftWallOffset = 8;
-
-const vec3 perceivedBrightness = vec3(0.299, 0.587, 0.114);
-
 vec4 getTexel( uint spriteID, uint rot, uint animFrame, vec2 texcoord )
 {
 	uint absoluteId = ( spriteID + animFrame ) * 4u;
@@ -88,6 +81,13 @@ vec4 getTexel( uint spriteID, uint rot, uint animFrame, vec2 texcoord )
 
 void main()
 {
+	const float waterAlpha = 0.6;
+	const float flSize =  ( 1.0 / 32. );
+	const int rightWallOffset = 4;
+	const int leftWallOffset = 8;
+
+	const vec3 perceivedBrightness = vec3(0.299, 0.587, 0.114);
+
 	vec4 texel = vec4( 0,  0,  0, 0 );
 	
 	uint rot = 0u;
