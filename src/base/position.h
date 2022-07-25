@@ -30,6 +30,12 @@ class Sprite;
 struct Position
 {
 	constexpr Position() = default;
+
+	constexpr Position( const Position& other ) :
+		x( other.x ), y( other.y ), z( other.z )
+	{
+	}
+
 	Position& operator=( const Position& other ) = default;
 
 	constexpr Position( int _x, int _y, int _z ) :
