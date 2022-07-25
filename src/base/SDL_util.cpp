@@ -57,20 +57,20 @@ SDL_Surface* createPixmap( int w, int h )
 	return SDL_CreateRGBSurfaceWithFormat( 0, w, h, 32, SDL_PIXELFORMAT_RGBA8888 );
 }
 
-void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int x, int y )
+void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int dstX, int dstY )
 {
-	SDL_Rect dstRect { x, y, src->w, src->h };
+	SDL_Rect dstRect { dstX, dstY, src->w, src->h };
 	const auto result = SDL_BlitSurface(src, nullptr, dst, &dstRect);
 	if (result) {
 		spdlog::critical("Cannot copy surface: {}", SDL_GetError());
 	}
 }
 
-void copyPixmapFrom( SDL_Surface* dst, SDL_Surface* src, int x, int y, int w, int h )
+void copyPixmapFrom( SDL_Surface* dst, SDL_Surface* src, int srcX, int srcY, int srcW, int srcH )
 {
-	SDL_Rect srcRect { x, y, w, h };
-	assert(w <= dst->w && "Pixmap region is bigger than destination width");
-	assert(h <= dst->h && "Pixmap region is bigger than destination height");
+	SDL_Rect srcRect { srcX, srcY, srcW, srcH };
+	assert(srcW <= dst->w && "Pixmap region is bigger than destination width");
+	assert(srcH <= dst->h && "Pixmap region is bigger than destination height");
 	const auto result = SDL_BlitSurface(src, &srcRect, dst, nullptr);
 	if (result) {
 		spdlog::critical("Cannot copy surface: {}", SDL_GetError());
@@ -118,7 +118,7 @@ void flipPixmap( SDL_Surface* surface, bool flipH, bool flipV ) {
 			const auto yOff = y * surface->w;
 			for ( int x = 0; x < w2; ++x )
 			{
-				std::swap(pixels[yOff + x], pixels[yOff + surface->w - x]);
+				std::swap(pixels[yOff + x], pixels[yOff + surface->w - x - 1]);
 			}
 		}
 		SDL_UnlockSurface(surface);
