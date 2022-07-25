@@ -33,6 +33,10 @@
 #include "../game/world.h"
 #include "spdlog/spdlog.h"
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 Creature::Creature( const Position& pos, QString name, Gender gender, QString species, Game* game ) :
 	g( game ),
 	Object( pos ),
@@ -1219,3 +1223,67 @@ bool Creature::equipmentChanged()
 	m_equipmentChanged = false;
 	return tmp;
 }
+
+
+#ifdef _DEBUG
+void Creature::showDebug()
+{
+	Object::showDebug();
+
+	if ( ImGui::BeginTabItem( "Creature" ) )
+	{
+		Debug::Input( "Immobile", &m_immobile );
+		Debug::Input( "Aquatic", &m_aquatic );
+		Debug::Input( "Ignore NoPass", &m_ignoreNoPass );
+		Debug::Input( "Is Dead", &m_isDead );
+		Debug::Input( "To Destroy", &m_toDestroy );
+		Debug::Input( "Gone off map", &m_goneOffMap );
+		Debug::Input( "Equipment changed", &m_equipmentChanged );
+		Debug::Input( "Has transparency", &m_hasTransparency );
+
+		Debug::Spacing();
+		Debug::Text( "Expires: %d", m_expires );
+		Debug::Text( "Thought Bubble: %s", m_thoughtBubble.toUtf8().data() );
+		Debug::Input( "Current target position", &m_currentTargetPosition );
+		Debug::Text( "Facing: %d", m_facing );
+		Debug::Text( "Facing after move: %d", m_facingAfterMove );
+		Debug::Text( "Current attack target: %d", m_currentAttackTarget );
+		Debug::Input( "Role ID", &m_roleID );
+		Debug::Input( "Follow ID", &m_followID );
+		Debug::Input( "Follow Position", &m_followPosition );
+		Debug::Text( "State: %d", m_state );
+		Debug::Input( "Move delay", &m_moveDelay );
+		Debug::Input( "Move cooldown", &m_moveCooldown );
+		Debug::Input( "Move speed", &m_moveSpeed );
+		Debug::Text( "Current action: %s", m_currentAction.toUtf8().data() );
+
+		Debug::Separator();
+		Debug::Input( "Global Cooldown", &m_globalCooldown );
+		Debug::Input( "Kick Cooldown", &m_kickCooldown );
+		Debug::Input( "Bite Cooldown", &m_biteCooldown );
+		Debug::Input( "Left Hand Cooldown", &m_leftHandCooldown );
+		Debug::Input( "Right Hand Cooldown", &m_rightHandCooldown );
+		Debug::Input( "Special Attack CoolDown", &m_specialAttackCoolDown );
+		Debug::Input( "Job Cooldown", &m_jobCooldown );
+
+		Debug::Spacing();
+
+		Debug::Input( "Left Hand Attack Value", &m_leftHandAttackValue );
+		Debug::Input( "Left Hand Attack Skill", &m_leftHandAttackSkill );
+		Debug::Input( "Right Hand Attack Value", &m_rightHandAttackValue );
+		Debug::Input( "Right Hand Attack Skill", &m_rightHandAttackSkill );
+
+		Debug::Spacing();
+
+		Debug::Input( "Left Hand Armed", &m_leftHandArmed );
+		Debug::Input( "Right Hand Armed", &m_rightHandArmed );
+		Debug::Input( "Left Hand Has Weapon", &m_leftHandHasWeapon );
+
+		Debug::Spacing();
+		Debug::Input( "Is on mission", &m_isOnMission );
+		Debug::Input( "Mission", &m_mission );
+
+		ImGui::EndTabItem();
+	}
+}
+#endif

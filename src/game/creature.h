@@ -439,6 +439,11 @@ protected:
 	void destroyClaimedItems();
 
 	Creature* resolveTarget( unsigned int creatureId );
+
+#ifdef _DEBUG
+public:
+	virtual void showDebug() override;
+#endif
 };
 
 struct CreatureCompare

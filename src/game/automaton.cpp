@@ -25,6 +25,10 @@
 
 #include "range/v3/action/split.hpp"
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 Automaton::Automaton( Position pos, unsigned int automatonItem, Game* game ) :
 	Gnome( pos, "Automaton", Gender::UNDEFINED, game ),
 	m_automatonItem( automatonItem )
@@ -374,3 +378,23 @@ void Automaton::fillUp( int burnValue )
 	m_fuel = burnValue;
 	updateSprite();
 }
+
+#ifdef _DEBUG
+void Automaton::showDebug()
+{
+	Gnome::showDebug();
+
+	if (ImGui::BeginTabItem("Automaton"))
+	{
+		Debug::Input("Automaton item", &m_automatonItem);
+		Debug::Input("Core", &m_core);
+		Debug::Input("Fuel", &m_fuel);
+		Debug::Input("Refuel", &m_refuel);
+		Debug::Text("Core type: %s", m_coreType.toUtf8().data());
+		Debug::Input("Uninstall core", &m_uninstallCore);
+		Debug::Input("Maintenance Job Changed", &m_maintJobChanged);
+
+		ImGui::EndTabItem();
+	}
+}
+#endif

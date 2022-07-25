@@ -111,4 +111,9 @@ protected:
 	bool uninstall();
 	bool fillTrough();
 	bool soundAlarm();
+
+#ifdef _DEBUG
+public:
+	virtual void showDebug() override;
+#endif
 };

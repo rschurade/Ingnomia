@@ -49,6 +49,10 @@
 
 #include "spdlog/spdlog.h"
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double> expression_t;
 typedef exprtk::parser<double> parser_t;
@@ -1570,3 +1574,35 @@ bool CanWork::soundAlarm()
 	}
 	return false;
 }
+
+
+#ifdef _DEBUG
+void CanWork::showDebug()
+{
+	Creature::showDebug();
+
+	if (ImGui::BeginTabItem("Can Work")) {
+		Debug::Input( "JobID", &m_jobID );
+		Debug::Input( "Work Position", &m_workPosition );
+		Debug::Input( "Assigned workshop", &m_assignedWorkshop );
+		Debug::Input( "Total duration ticks", &m_totalDurationTicks );
+		Debug::Input( "Task finish tick", &m_taskFinishTick );
+		Debug::Input( "Repeat job?", &m_repeatJob );
+		Debug::Input( "Job changed?", &m_jobChanged );
+
+		Debug::Spacing();
+		Debug::Input( "Animal", &m_animal );
+		Debug::Input( "Item to pick up", &m_itemToPickUp );
+
+		Debug::Spacing();
+		Debug::Input( "Started eating?", &m_startedEating );
+		Debug::Input( "Started drinking?", &m_startedDrinking );
+
+		Debug::Spacing();
+		Debug::Input( "Train counter", &m_trainCounter );
+		Debug::Input( "Training ground", &m_trainingGround );
+
+		ImGui::EndTabItem();
+	}
+}
+#endif

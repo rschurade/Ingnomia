@@ -40,6 +40,10 @@
 
 #include "spdlog/spdlog.h"
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 GnomeManager::GnomeManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -625,3 +629,23 @@ int GnomeManager::numGnomes()
 {
 	return m_gnomes.size();
 }
+
+#ifdef _DEBUG
+void GnomeManager::showDebug()
+{
+	ImGui::Text("Gnomes: %d", m_gnomes.size());
+	ImGui::Text("Special gnomes: %d", m_specialGnomes.size());
+	ImGui::Text("Dead gnomes: %d", m_deadGnomes.size());
+	ImGui::Text("Automatons: %d", m_automatons.size());
+
+	if (ImGui::BeginTabBar("gnomeManagerTabBar")) {
+		static int gnomesId = 0, specialGnomesId = 0, deadGnomesId = 0, automatonsId = 0;
+		Debug::TabItemWithList("Gnomes", m_gnomes, gnomesId);
+		Debug::TabItemWithList("Special gnomes", m_specialGnomes, specialGnomesId);
+		Debug::TabItemWithList("Dead gnomes", m_deadGnomes, deadGnomesId);
+		Debug::TabItemWithList("Automatons", m_automatons, automatonsId);
+		ImGui::EndTabBar();
+	}
+
+}
+#endif

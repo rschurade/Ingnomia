@@ -79,6 +79,7 @@ namespace fs = std::filesystem;
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #ifdef _DEBUG
+#include "../debug/debugmanager.h"
 #include "../debug/imgui/bgfx_imgui.h"
 #include "../game/game.h"
 #include "../gfx/spritefactory.h"
@@ -110,6 +111,11 @@ void SDL_MainWindow::initializeBGFX()
 
 #ifdef _DEBUG
 	imguiCreate();
+
+	auto& style = ImGui::GetStyle();
+	style.WindowRounding = 5.0f;
+	style.PopupRounding = 3.0f;
+
 #endif
 }
 
@@ -189,57 +195,6 @@ SDL_MainWindow::~SDL_MainWindow()
 	SDL_DestroyWindow( m_sdlWindow );
 }
 
-#ifdef _DEBUG
-
-static const std::string debugSpawning[] = {
-	"Gnome",
-	"Trader",
-	"Goblin"
-};
-
-constexpr ImVec2 SpawnButtonSize(150, 0);
-
-DebugProxy *_debugProxy;
-
-void showDebug() {
-	auto *game = Global::eventConnector->game();
-	if (game == nullptr) return;
-
-	if (_debugProxy == nullptr) {
-		_debugProxy = new DebugProxy(nullptr);
-	}
-
-	ImGui::Begin("Debug");
-
-	const auto texUsed = game->sf()->texesUsed();
-
-	ImGui::Text("Used textures: %d", texUsed);
-	ImGui::Separator();
-	for ( const auto& item : debugSpawning ) {
-		const auto lbl = fmt::format("Spawn {}", item);
-		if (ImGui::Button(lbl.c_str(), SpawnButtonSize)) {
-			_debugProxy->spawnCreature(item);
-		}
-	}
-	ImGui::Separator();
-	if (ImGui::Button("Dump textures")) {
-		int depth = Global::cfg->get<int>( "MaxArrayTextures" );
-		fs::path outPath("/tmp/ing");
-		fs::create_directories(outPath);
-
-		constexpr auto imageBytes = SpriteWidth * SpriteHeight * SpriteBytesPerPixel;
-		for ( int j = 0; j < texUsed; ++j )
-		{
-			auto *pixData = game->sf()->pixelData( j );
-			fs::path outFile = outPath / fmt::format("{}.png", j);
-			IMG_SavePNG(pixData, outFile.c_str());
-		}
-	}
-
-	ImGui::End();
-}
-#endif
-
 // Mostly from ImGui's SDL2 backend
 void SDL_MainWindow::updateImGuiIO()
 {
@@ -309,6 +264,7 @@ void SDL_MainWindow::updateImGuiIO()
 
 void SDL_MainWindow::mainLoop()
 {
+	DebugManager debugMan;
 	SDL_Event ev;
 	SDL_Keymod lastMod;
 	while ( !m_done )
@@ -428,7 +384,7 @@ void SDL_MainWindow::mainLoop()
 #if _DEBUG
 		imguiBeginFrame(scrollX, scrollY, m_sdlWindow, 0xFF);
 
-		showDebug();
+		debugMan.showDebug();
 
 		imguiEndFrame();
 #endif

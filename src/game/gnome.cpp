@@ -38,6 +38,10 @@
 #include <QElapsedTimer>
 #include <QFile>
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 	CanWork( pos, name, gender, "Gnome", game )
 {
@@ -1090,3 +1094,40 @@ void Gnome::setAllowedCarryItems( bool bandages, bool food, bool drinks )
 	m_carryFood     = food;
 	m_carryDrinks   = drinks;
 }
+
+#ifdef _DEBUG
+void Gnome::showDebug()
+{
+	CanWork::showDebug();
+	
+	if (ImGui::BeginTabItem("Gnome"))
+	{
+		Debug::Input( "Gain from sleep", &m_gainFromSleep );
+
+		Debug::Text( "Profession: %s", m_profession.c_str() );
+
+		Debug::Input( "HungryLog", &m_hungryLog );
+		Debug::Input( "VeryHungryLog", &m_veryHungryLog );
+		Debug::Input( "ThirstyLog", &m_thirstyLog );
+		Debug::Input( "VeryThirstLog", &m_veryThirstLog );
+		Debug::Input( "SleepyLog", &m_sleepyLog );
+
+		Debug::Spacing();
+
+		Debug::Input( "CarryBandages", &m_carryBandages );
+		Debug::Input( "CarryFood", &m_carryFood );
+		Debug::Input( "CarryDrinks", &m_carryDrinks );
+
+		Debug::Spacing();
+		Debug::Input( "CarriedBandages", &m_carriedBandages );
+		Debug::Input( "CarriedFood", &m_carriedFood );
+		Debug::Input( "CarriedDrinks", &m_carriedDrinks );
+		Debug::Spacing();
+
+		Debug::Input( "UniformWorn", &m_uniformWorn );
+		Debug::Input( "NextUniformCheckTick", &m_nextUniformCheckTick );
+
+		ImGui::EndTabItem();
+	}
+}
+#endif

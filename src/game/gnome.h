@@ -201,4 +201,9 @@ protected:
 	BT_RESULT actionDoMission( bool halt );
 	BT_RESULT actionLeaveForMission( bool halt );
 	BT_RESULT actionReturnFromMission( bool halt );
+
+#ifdef _DEBUG
+public:
+	virtual void showDebug() override;
+#endif
 };

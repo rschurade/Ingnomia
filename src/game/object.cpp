@@ -19,6 +19,10 @@
 
 #include "../base/gamestate.h"
 
+#ifdef _DEBUG
+#include "../debug/debugutils.h"
+#endif
+
 Object::Object()
 {
 }
@@ -72,3 +76,16 @@ void Object::setSpriteID( unsigned int id )
 {
 	m_spriteID = id;
 }
+
+#ifdef _DEBUG
+void Object::showDebug()
+{
+	if (ImGui::BeginTabItem("Object")) {
+		Debug::Text("ID: %d", m_id);
+		Debug::Text("Sprite ID: %d", m_spriteID);
+		Debug::Input("Position", &m_position );
+
+		ImGui::EndTabItem();
+	}
+}
+#endif

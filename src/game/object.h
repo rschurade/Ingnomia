@@ -51,4 +51,9 @@ protected:
 	Position m_position;
 
 	unsigned int m_spriteID;
+
+#ifdef _DEBUG
+public:
+	virtual void showDebug();
+#endif
 };

@@ -72,4 +72,9 @@ protected:
 
 	QWeakPointer<Job> m_maintenaceJob;
 	bool m_maintJobChanged       = false;
+
+#ifdef _DEBUG
+public:
+	virtual void showDebug() override;
+#endif
 };

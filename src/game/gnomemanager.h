@@ -130,4 +130,9 @@ private:
 public: // signals:
 	sigslot::signal<unsigned int /*id*/, const std::string& /*skillID*/> signalGnomeActivity;
 	sigslot::signal<unsigned int /*id*/> signalGnomeDeath;
+
+#ifdef _DEBUG
+public:
+	void showDebug();
+#endif
 };
