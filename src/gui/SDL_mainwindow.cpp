@@ -159,7 +159,7 @@ SDL_MainWindow::SDL_MainWindow()
 	initializeBGFX();
 
 	const auto iconPath = Global::exePath / "content" / "icon.png";
-	auto* iconImg       = IMG_Load( iconPath.c_str() );
+	auto* iconImg       = IMG_Load( iconPath.string().c_str() );
 	SDL_SetWindowIcon( m_sdlWindow, iconImg );
 	SDL_FreeSurface( iconImg );
 
@@ -195,6 +195,7 @@ SDL_MainWindow::~SDL_MainWindow()
 	SDL_DestroyWindow( m_sdlWindow );
 }
 
+#ifdef _DEBUG
 // Mostly from ImGui's SDL2 backend
 void SDL_MainWindow::updateImGuiIO()
 {
@@ -262,15 +263,20 @@ void SDL_MainWindow::updateImGuiIO()
 	}
 }
 
+#endif // _DEBUG
+
 void SDL_MainWindow::mainLoop()
 {
+#ifdef _DEBUG
 	DebugManager debugMan;
+#endif
+
 	SDL_Event ev;
 	SDL_Keymod lastMod;
 	while ( !m_done )
 	{
-		ImGuiIO& io = ImGui::GetIO();
 #ifdef _DEBUG
+		ImGuiIO& io = ImGui::GetIO();
 		updateImGuiIO();
 #endif
 		float scrollX = 0, scrollY = 0;
@@ -381,7 +387,7 @@ void SDL_MainWindow::mainLoop()
 				}
 			}
 		}
-#if _DEBUG
+#ifdef _DEBUG
 		imguiBeginFrame(scrollX, scrollY, m_sdlWindow, 0xFF);
 
 		debugMan.showDebug();

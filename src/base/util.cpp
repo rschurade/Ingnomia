@@ -945,7 +945,6 @@ PixmapPtr Util::createWorkshopImage( const std::string& workshopID, const std::v
 PixmapPtr Util::createItemImage( const std::string& itemID, const std::vector<std::string>& mats )
 {
 	auto vsprite = DB::select( "SpriteID", "Items", QString::fromStdString(itemID) );
-	DBS::Workshop_Component component;
 
 	std::vector<DBS::Workshop_Component> comps;
 	comps.emplace_back( DBS::Workshop_Component {

@@ -31,7 +31,7 @@ fs::path getLogPath()
 
 	if ( fs::exists( folder ) )
 	{
-		fileName = folder / fileName;
+		fileName = ( folder / fileName ).string();
 	}
 
 	return fileName;
@@ -96,6 +96,7 @@ int main( int argc, char* argv[] )
 	const auto logPath = getLogPath();
 	clearLog( logPath );
 	//	redirectLogToFile(logPath);
+	spdlog::set_level( spdlog::level::debug );
 
 	spdlog::info( "{} version {}", PROJECT_NAME, PROJECT_VERSION );
 
@@ -142,6 +143,10 @@ int main( int argc, char* argv[] )
 }
 
 #ifdef _WIN32
+#ifndef _WINDEF_
+typedef uint32_t DWORD;
+#endif
+
 extern "C"
 {
 	// Request use of dedicated GPUs for NVidia/AMD/iGPU mixed setups

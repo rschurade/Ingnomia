@@ -1316,7 +1316,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 		{
 			for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 			{
-				m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
+				m_texesUsed = std::max( m_texesUsed, static_cast<int>(m_lastTexId + 1) );
 
 				auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
@@ -1338,7 +1338,7 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 		for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 		{
-			m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
+			m_texesUsed = std::max( m_texesUsed, static_cast<int>(m_lastTexId + 1) );
 			auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
 			dstX = m_lastTexCellX * SpriteWidth;
@@ -1373,7 +1373,7 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 
 	for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 	{
-		m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
+		m_texesUsed = std::max( m_texesUsed, static_cast<int>(m_lastTexId + 1) );
 		auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
 		dstX = m_lastTexCellX * SpriteWidth;

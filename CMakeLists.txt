@@ -180,7 +180,7 @@ get_target_property(SOURCE_LIST ${PROJECT_NAME} SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCE_LIST})
 
 if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -fpermissive -g3 -ggdb")
+	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g3 -ggdb")
 	# Kill some overly verbose warnings
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas -Wno-unused-parameter")
 	# But treat likely errors as actual errors

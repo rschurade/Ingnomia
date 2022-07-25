@@ -870,30 +870,30 @@ struct Words_Verb {
 
 struct Workshop_Component {
 	int Amount = 0;
-	std::optional<std::string> ItemID;
-	std::optional<std::string> MaterialItem;
+	std::optional<std::string> ItemID = std::nullopt;
+	std::optional<std::string> MaterialItem = std::nullopt;
 	Position Offset;
-	std::optional<std::string> Required;
-	std::optional<std::string> Forbidden;
-	std::optional<std::string> SpriteID;
-	std::optional<std::string> SpriteID2;
-	std::optional<std::string> Type;
-	std::optional<std::string> WallRotation;
+	std::optional<std::string> Required = std::nullopt;
+	std::optional<std::string> Forbidden = std::nullopt;
+	std::optional<std::string> SpriteID = std::nullopt;
+	std::optional<std::string> SpriteID2 = std::nullopt;
+	std::optional<std::string> Type = std::nullopt;
+	std::optional<std::string> WallRotation = std::nullopt;
 	bool IsFloor = false;
 };
 
 struct Workshop {
 	std::string ID;
-	std::vector<std::string> Crafts;
-	std::optional<std::string> GUI;
+	std::vector<std::string> Crafts = {};
+	std::optional<std::string> GUI = std::nullopt;
 	Position InputTile;
 	Position OutputTile;
 	std::string Size;
 	bool NoAutoGenerate = false;
-	std::optional<std::string> Icon;
-	std::string Tab;
+	std::optional<std::string> Icon = std::nullopt;
+	std::string Tab = "";
 
-	std::vector<Workshop_Component> components;
+	std::vector<Workshop_Component> components = {};
 };
 
 template<typename T>
