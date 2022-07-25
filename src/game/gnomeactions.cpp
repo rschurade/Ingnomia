@@ -697,7 +697,7 @@ BT_RESULT Gnome::actionInitJob( bool halt )
 
 			bool hasItems = m_job->requiredItems().size() == claimedItems().size();
 			if ( Global::debugMode )
-				log( "Has items: " + hasItems ? "true" : "false" );
+				log( "Has items: " + ( hasItems ? QString( "true" ) : QString( "false" ) ) );
 			g->jm()->setJobBeingWorked( m_jobID, m_job->requiredTool().type.empty() && hasItems );
 			//log( "Init " + S::s( "$SkillName_" + m_job->requiredSkill() ) + " job done." );
 

@@ -45,7 +45,7 @@
 #include "../game/plant.h"
 #include "../game/world.h"
 
-#include <SDL_Thread.h>
+#include <SDL_thread.h>
 
 
 EventConnector::EventConnector( GameManager* parent ) :

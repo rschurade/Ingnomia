@@ -125,7 +125,7 @@ void Animal::serialize( QVariantMap& out )
 }
 
 Animal::Animal() :
-	Creature( Position(), "", Gender::UNDEFINED, "", g )
+	Creature( Position(), "", Gender::UNDEFINED, "", nullptr )
 {
 	initTaskMap();
 }

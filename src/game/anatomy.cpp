@@ -394,7 +394,7 @@ AnatomyHeight Anatomy::randomAttackHeight() const
 
 void Anatomy::heal()
 {
-	if ( m_status | AS_WOUNDED )
+	if ( m_status & AS_WOUNDED )
 	{
 		bool stillWounded = false;
 
