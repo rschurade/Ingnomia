@@ -73,8 +73,14 @@ private:
 	absl::flat_hash_map<std::string, std::string> m_materialTypes;
 
 	//pixel data for array textures
-	absl::flat_hash_map<uint32_t, std::vector<uint8_t>> m_pixelData;
+	absl::flat_hash_map<uint32_t, SDL_Surface*> m_pixelData;
 	int m_texesUsed = 0;
+
+	uint32_t m_lastTexId:8 = 0;
+	uint32_t m_lastTexCellX:12 = 0;
+	uint32_t m_lastTexCellY:12 = 0;
+
+	void calculateNextTexCoords();
 
 	bool m_textureAdded         = false;
 	bool m_creatureTextureAdded = false;
@@ -99,11 +105,10 @@ private:
 	void addPixmapToPixelData( Sprite* sprite );
 	void addPixmapToPixelData32( Sprite* sprite );
 
-	void addEmptyRows( int startIndex, int rows, std::vector<uint8_t>& pixelData );
-
 	void createStandardSprites();
 
 	SDL_Surface* getTintedBaseSprite( const std::optional<std::string>& baseSprite, const std::string& material );
+	SDL_Surface* getTintedBaseSprite( const std::optional<std::string>& baseSprite, const SDL_Color& material );
 
 	Sprite* createSprite2( const std::string& itemSID, const std::vector<std::string>& materialSID, const absl::flat_hash_map<int, int>& random = absl::flat_hash_map<int, int>() );
 	
@@ -117,7 +122,7 @@ private:
 
 	bool init();
 
-	std::vector<uint8_t>& getOrCreatePixelDataAt( int tex );
+	SDL_Surface* getOrCreatePixelDataAt( int tex );
 
 public:
 	SpriteFactory();
@@ -144,11 +149,10 @@ public:
 	void forceUpdate();
 
 	unsigned int thoughtBubbleID( QString sid );
-	
+
 	int texesUsed();
-	
+
 	unsigned int size();
-	
-	const std::vector<uint8_t>& pixelData( int index );
-	
+
+	SDL_Surface* pixelData( int index );
 };

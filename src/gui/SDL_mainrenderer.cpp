@@ -14,6 +14,8 @@
 #include "../gui/aggregatorrenderer.h"
 #include "../gui/aggregatorselection.h"
 #include "../gui/eventconnector.h"
+#include "../gfx/spritefactory.h"
+#include "../gfx/constants.h"
 #include "spdlog/spdlog.h"
 
 #include <bx/math.h>
@@ -92,6 +94,7 @@ void SDL_MainRenderer::initialize()
 		m_Programs[j + FragmentShaders.size()] = bgfx::createProgram( m_ComputeShaders[j], true );
 	}
 
+	// TODO: Destroy resources on shutdown
 	m_uWorldSize = bgfx::createUniform("uWorldSize", bgfx::UniformType::Vec4);
 	m_uRenderMin = bgfx::createUniform("uRenderMin", bgfx::UniformType::Vec4);
 	m_uRenderMax = bgfx::createUniform("uRenderMax", bgfx::UniformType::Vec4);
@@ -99,6 +102,19 @@ void SDL_MainRenderer::initialize()
 //	m_uTickNumber = bgfx::createUniform("uTickNumber", bgfx::UniformType::Vec4);
 
 	m_uUpdateSize = bgfx::createUniform("uUpdateSize", bgfx::UniformType::Vec4);
+	m_uTexture = bgfx::createUniform("uTexture", bgfx::UniformType::Sampler);
+
+	int textureSize = Global::cfg->get<int>( "TextureSize" );
+
+	const bgfx::Caps* caps = bgfx::getCaps();
+	if (caps->limits.maxTextureSize < textureSize) {
+		throw std::runtime_error(fmt::format("Cannot support {} textures, max. texture size is {}, GPU is probably too old!", textureSize, caps->limits.maxTextureSize));
+	}
+	if (caps->limits.maxTextureLayers < TextureLayers) {
+		throw std::runtime_error(fmt::format("Cannot support {} texture layers, max. texture layers is {}, GPU is probably too old!", TextureLayers, caps->limits.maxTextureLayers));
+	}
+	// TODO: Check texture format support, we don't want to have it emulated...
+	m_texture = bgfx::createTexture2D(textureSize, textureSize, false, TextureLayers, bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_UVW_CLAMP | BGFX_SAMPLER_POINT);
 
 	bgfx::VertexLayout vl;
 	vl.begin().add(bgfx::Attrib::Position, sizeof(TileDataUpdate) / sizeof(float), bgfx::AttribType::Float).end();
@@ -158,6 +174,7 @@ void SDL_MainRenderer::render() {
 	}
 
 	updateWorld();
+	updateTextures();
 
 	auto viewId = 1;
 
@@ -173,6 +190,30 @@ void SDL_MainRenderer::render() {
 	}
 }
 
+void SDL_MainRenderer::updateTextures()
+{
+	auto* sf = Global::eventConnector->game()->sf();
+	if ( sf->textureAdded() || sf->creatureTextureAdded() )
+	{
+#ifdef _DEBUG
+		bgfx::setMarker( "update textures" );
+#endif
+
+		const auto m_texesUsed = sf->texesUsed();
+
+		for ( int layerIdx = 0; layerIdx < m_texesUsed; ++layerIdx )
+		{
+			auto* pixData = sf->pixelData( layerIdx );
+
+			// TODO: We can also update only sprites that have changed, instead of a few dozen MB each time...
+			SDL_LockSurface(pixData);
+			auto *mem = bgfx::copy(pixData->pixels, pixData->pitch * pixData->h);
+			bgfx::updateTexture2D(m_texture, layerIdx, 0, 0, 0, pixData->w, pixData->h, mem);
+			SDL_UnlockSurface(pixData);
+		}
+	}
+}
+
 void SDL_MainRenderer::paintTiles( bgfx::ViewId viewId )
 {
 #if _DEBUG
@@ -181,6 +222,7 @@ void SDL_MainRenderer::paintTiles( bgfx::ViewId viewId )
 	bgfx::touch(viewId);
 	bgfx::setViewRect(viewId, 0, 0, m_fbWidth, m_fbHeight);
 	bgfx::setViewTransform(viewId, nullptr, m_projection);
+	bgfx::setTexture(0, m_uTexture, m_texture);
 
 	bgfx::setIndexBuffer(m_indicesBuffer);
 	bgfx::setVertexBuffer(0, m_vertexBuffer);

@@ -23,6 +23,7 @@
 #include "../base/gamestate.h"
 #include "../base/io.h"
 #include "../base/util.h"
+#include "../gfx/constants.h"
 #include "../fmt_formats.h"
 #include "spdlog/spdlog.h"
 
@@ -38,6 +39,8 @@ enum class DefNodeType {
 	Season, Rotation, Frame, RandomNode, Random,
 	CombineNode, Combine
 };
+
+static int _textureSize, _texNumSpritesX, _texNumSpritesY, _spritesPerTex;
 
 struct DefNode
 {
@@ -84,11 +87,20 @@ struct DefNode
 
 SpriteFactory::SpriteFactory()
 {
+	_textureSize = Global::cfg->get<int>( "TextureSize" );
+	_texNumSpritesX = _textureSize / SpriteWidth;
+	_texNumSpritesY = _textureSize / SpriteHeight;
+	_spritesPerTex = (_textureSize / SpriteWidth) * (_textureSize / SpriteHeight);
+
 	init();
 }
 
 SpriteFactory::~SpriteFactory()
 {
+	for ( const auto& entry : m_pixelData )
+	{
+		SDL_FreeSurface(entry.second);
+	}
 	for( auto& sprite : m_sprites )
 	{
 		delete sprite;
@@ -425,7 +437,6 @@ SDL_Surface* SpriteFactory::extractPixmap( const std::string& sourcePNG, QVarian
 		int dimY = rl[3].toInt();
 
 		auto *dst = createPixmap( dimX, dimY );
-		Uint32 maskMagenta = dst->format->Rmask | dst->format->Bmask;
 		copyPixmapFrom( dst, m_pixmapSources.at(sourcePNG), x, y, dimX, dimY );
 
 		return dst;
@@ -1236,21 +1247,49 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 			}
 		}
 	}
-	spdlog::debug( "Used{}array textures", m_texesUsed );
+	spdlog::debug( "Used {} array textures", m_texesUsed );
 	m_spriteCreations = scl;
 }
 
-std::vector<uint8_t>& SpriteFactory::getOrCreatePixelDataAt( int tex ) {
+SDL_Surface* SpriteFactory::getOrCreatePixelDataAt( int tex ) {
 	const auto it = m_pixelData.find( tex );
 	if ( it == m_pixelData.end() )
 	{
-		int maxArrayTextures = Global::cfg->get<int>( "MaxArrayTextures" );
-		int bytes            = 32 * 64 * 4 * maxArrayTextures;
-
-		m_pixelData.insert_or_assign( tex, std::vector<uint8_t>( bytes ) );
-		return m_pixelData.at( tex );
+		auto* pixmap = createPixmap( _textureSize, _textureSize );
+		m_pixelData.insert_or_assign( tex, pixmap );
+		return pixmap;
 	} else {
 		return it->second;
+	}
+}
+
+// TODO: Make static & visible outside if needed
+void spriteTexCoordsFromId(const auto id, int& x, int& y) {
+	x = (id % _texNumSpritesX) * SpriteWidth;
+	y = (std::floor((double)id / _texNumSpritesX)) * SpriteHeight;
+
+	spdlog::debug("Used coords for id {}: {}x{}", id, x, y);
+}
+
+// TODO: All this can be replaced with a single `cellId`, and calculate the rest of the parameters from it
+void SpriteFactory::calculateNextTexCoords() {
+	m_lastTexCellX++;
+
+	if ( m_lastTexCellX >= _texNumSpritesX )
+	{
+		m_lastTexCellX = 0;
+		m_lastTexCellY++;
+
+		if ( m_lastTexCellY >= _texNumSpritesY )
+		{
+			m_lastTexCellY = 0;
+			m_lastTexId++;
+
+			if ( m_lastTexId >= TextureLayers )
+			{
+				throw std::runtime_error( "Tried to use more textures than available layers" );
+			}
+		}
 	}
 }
 
@@ -1261,72 +1300,56 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 	{
 		season = "Spring";
 	}
+
+	constexpr auto skipFrameData = SpriteWidth * SpriteHeight * SpriteBytesPerPixel;
+
+	int dstX, dstY;
+
+	sprite->texDataBaseId = m_lastTexId;
+	sprite->texDataBaseCellX = m_lastTexCellX;
+	sprite->texDataBaseCellY = m_lastTexCellY;
+
+	const auto baseId = sprite->uID * SpriteNumFrames * SpriteNumRotations;
 	if ( sprite->anim )
 	{
-		for ( int frame = 0; frame < 4; ++frame )
+		for ( int frameIdx = 0; frameIdx < SpriteNumFrames; ++frameIdx )
 		{
-			int tex     = ( sprite->uID + frame ) / 512;
-			m_texesUsed = std::max( m_texesUsed, tex + 1 );
-			int id      = ( sprite->uID + frame ) % 512;
-
-			auto& texData = getOrCreatePixelDataAt( tex );
-
-			for ( int i = 0; i < 4; ++i )
+			for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 			{
-				auto pm    = sprite->pixmap( season, i, frame );
+				m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
 
-				int startIndex = 8192 * ( 4 * id + i );
+				auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
-				if ( pm->h == 64 && pm->w == 32 )
+				dstX = m_lastTexCellX * SpriteWidth;
+				dstY = m_lastTexCellY * SpriteHeight;
+				calculateNextTexCoords();
+
+				auto pm = sprite->pixmap( season, rotIdx, frameIdx );
+
+				if ( pm->h == SpriteHeight && pm->w == SpriteWidth )
 				{
-					SDL_LockSurface( pm );
-					auto data = texData.data();
-					for ( int y = 0; y < 64; ++y )
-					{
-						for ( int x = 0; x < 32; ++x )
-						{
-							const auto col         = getPixelColor( pm, x, y );
-							const size_t baseIndex = startIndex + ( x * 4 + 128 * y );
-							data[baseIndex + 0]    = col.r;
-							data[baseIndex + 1]    = col.g;
-							data[baseIndex + 2]    = col.b;
-							data[baseIndex + 3]    = col.a;
-						}
-					}
-					SDL_UnlockSurface( pm );
+					copyPixmap(texData, pm, dstX, dstY);
 				}
 			}
 		}
 	}
 	else
 	{
-		int tex     = sprite->uID / 512;
-		m_texesUsed = std::max( m_texesUsed, tex + 1 );
-		int id      = sprite->uID % 512;
 
-		auto& texData = getOrCreatePixelDataAt( tex );
-
-		for ( int i = 0; i < 4; ++i )
+		for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 		{
-			auto pm    = sprite->pixmap( season, i, 0 );
+			m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
+			auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
-			int startIndex = 8192 * ( 4 * id + i );
+			dstX = m_lastTexCellX * SpriteWidth;
+			dstY = m_lastTexCellY * SpriteHeight;
+			calculateNextTexCoords();
 
-			if ( pm->h == 64 && pm->w == 32 )
+			auto pm    = sprite->pixmap( season, rotIdx, 0 );
+
+			if ( pm->h == SpriteHeight && pm->w == SpriteWidth )
 			{
-				SDL_LockSurface( pm );
-				for ( int y = 0; y < 64; ++y )
-				{
-					for ( int x = 0; x < 32; ++x )
-					{
-						const auto col = getPixelColor( pm, x, y );
-						texData[startIndex + ( x * 4 + 128 * y )]     = col.r;
-						texData[startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
-						texData[startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
-						texData[startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
-					}
-				}
-				SDL_UnlockSurface( pm );
+				copyPixmap( texData, pm, dstX, dstY );
 			}
 		}
 	}
@@ -1334,62 +1357,32 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 
 void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 {
-	int tex        = sprite->uID / 512;
-	int id         = sprite->uID % 512;
+	constexpr auto PixmapHeight = 32;
+
+	constexpr auto spriteFrameBytes = SpriteWidth * SpriteHeight * SpriteBytesPerPixel;
+
+	const auto baseId = sprite->uID * SpriteNumFrames * SpriteNumRotations;
+
 	const auto season = GameState::seasonString.toStdString();
 
-	auto& texData = getOrCreatePixelDataAt( tex );
 
-	for ( int i = 0; i < 4; ++i )
+	int dstX, dstY;
+
+	// We expect `sprite` to have never been stored
+	calculateNextTexCoords();
+
+	for ( int rotIdx = 0; rotIdx < SpriteNumRotations; ++rotIdx )
 	{
-		auto pm    = sprite->pixmap( season, i, 0 );
+		m_texesUsed = std::max( m_texesUsed, m_lastTexId + 1 );
+		auto* texData = getOrCreatePixelDataAt( m_lastTexId );
 
-		SDL_LockSurface( pm );
+		dstX = m_lastTexCellX * SpriteWidth;
+		dstY = m_lastTexCellY * SpriteHeight;
+		calculateNextTexCoords();
 
-		int startIndex = 8192 * ( 4 * id + i );
+		auto pm = sprite->pixmap( season, rotIdx, 0 );
 
-		for ( int x = 0; x < 32; ++x )
-		{
-			for ( int y = 0; y < 16; ++y )
-			{
-				texData[startIndex + ( x * 4 + 128 * y )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
-			}
-
-			for ( int y = 16; y < 48; ++y )
-			{
-				const auto col = getPixelColor( pm, x, y - 16 );
-				texData[startIndex + ( x * 4 + 128 * y )] = col.r;
-				texData[startIndex + ( x * 4 + 128 * y + 1 )] = col.g;
-				texData[startIndex + ( x * 4 + 128 * y + 2 )] = col.b;
-				texData[startIndex + ( x * 4 + 128 * y + 3 )] = col.a;
-			}
-			for ( int y = 48; y < 64; ++y )
-			{
-				texData[startIndex + ( x * 4 + 128 * y )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
-				texData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
-			}
-		}
-
-		SDL_UnlockSurface( pm );
-	}
-}
-
-void SpriteFactory::addEmptyRows( int startIndex, int rows, std::vector<uint8_t>& pixelData )
-{
-	for ( int y = 0; y < rows; ++y )
-	{
-		for ( int x = 0; x < 32; ++x )
-		{
-			pixelData[startIndex + ( x * 4 + 128 * y )] = 0;
-			pixelData[startIndex + ( x * 4 + 128 * y + 1 )] = 0;
-			pixelData[startIndex + ( x * 4 + 128 * y + 2 )] = 0;
-			pixelData[startIndex + ( x * 4 + 128 * y + 3 )] = 0;
-		}
+		copyPixmap(texData, pm, dstX, dstY + (SpriteHeight - PixmapHeight) / 2);
 	}
 }
 
@@ -1441,16 +1434,19 @@ void SpriteFactory::forceUpdate()
 
 SDL_Surface* SpriteFactory::getTintedBaseSprite( const std::optional<std::string>& baseSprite, const std::string& material )
 {
+	return getTintedBaseSprite( baseSprite, string2SDLColor( DBH::materialColor( material ) ) );
+}
+
+SDL_Surface* SpriteFactory::getTintedBaseSprite( const std::optional<std::string>& baseSprite, const SDL_Color& color )
+{
 	if ( !baseSprite || baseSprite->empty() )
 	{
 		return m_baseSprites["EmptyWall"];
 	}
 
 	auto* pm     = m_baseSprites.at(*baseSprite);
-	auto* result = createPixmap( pm->w, pm->h );
-
-	copyPixmap( result, pm, 0, 0 );
-	tintPixmap( result, string2SDLColor( DBH::materialColor( material ) ) );
+	auto* result = clonePixmap( pm );
+	tintPixmap( result, color );
 	return result;
 }
 
@@ -1481,14 +1477,20 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		if ( std::get_if<std::monostate>( &tint ) )
 		{
 			assert(baseSprite && "Sprite without \"Tint\" should have \"BaseSprite\" defined");
-			copyPixmap( pmfr, m_baseSprites.at(*baseSprite), 0, 0 );
+			// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+			copyPixmapFrom( pmfr, m_baseSprites.at(*baseSprite), 0, 0, 32, 32 );
 		}
 		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
 			if ( *str == "Material" )
 			{
-				auto pm = getTintedBaseSprite( baseSprite, cm.Material );
-				copyPixmap( pmfr, pm, 0, 0 );
+				if ( baseSprite )
+				{
+					auto pm = getTintedBaseSprite( baseSprite, cm.Material );
+					// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+					copyPixmapFrom( pmfr, pm, 0, 0, 32, 32 );
+					SDL_FreeSurface( pm );
+				}
 			}
 			else
 			{
@@ -1499,10 +1501,11 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		{
 			if (baseSprite)
 			{
-				auto* pm = m_baseSprites.at(*baseSprite);
-				copyPixmap( pmfr, pm, 0, 0 );
 				const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
-				tintPixmap( pmfr, color );
+				auto pm = getTintedBaseSprite( baseSprite, color );
+				// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+				copyPixmapFrom( pmfr, pm, 0, 0, 32, 32 );
+				SDL_FreeSurface( pm );
 			}
 		}
 	}
@@ -1533,14 +1536,20 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		if ( std::get_if<std::monostate>( &tint ) )
 		{
 			assert(baseSprite && "Sprite without \"Tint\" should have \"BaseSprite\" defined");
-			copyPixmap( pmbr, m_baseSprites.at(*baseSprite), 0, 0 );
+			// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+			copyPixmapFrom( pmbr, m_baseSprites.at(*baseSprite), 0, 0, 32, 32 );
 		}
 		else if ( const auto* str = std::get_if<std::string>( &tint ) )
 		{
 			if ( *str == "Material" )
 			{
-				auto pm = getTintedBaseSprite( baseSprite, cm.Material );
-				copyPixmap( pmbr, pm, 0, 0 );
+				if ( baseSprite )
+				{
+					auto pm = getTintedBaseSprite( baseSprite, cm.Material );
+					// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+					copyPixmapFrom( pmbr, pm, 0, 0, 32, 32 );
+					SDL_FreeSurface( pm );
+				}
 			}
 			else
 			{
@@ -1551,10 +1560,11 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		{
 			if (baseSprite)
 			{
-				auto* pm = m_baseSprites.at(*baseSprite);
-				copyPixmap( pmbr, pm, 0, 0 );
 				const auto color = isHair ? m_hairColors[*colorInt] : m_colors[*colorInt];
-				tintPixmap( pmbr, color );
+				auto pm = getTintedBaseSprite( baseSprite, color );
+				// TODO: BaseSprites can be 32x36, so we copy only 32x32. Is this correct?
+				copyPixmapFrom( pmbr, pm, 0, 0, 32, 32 );
+				SDL_FreeSurface( pm );
 			}
 		}
 	}
@@ -1573,6 +1583,11 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, const 
 		sfl = new SpritePixmap( rotatePixmap90Clone( pmfl ) );
 		sbl = new SpritePixmap( rotatePixmap90Clone( pmbl ) );
 		sbr = new SpritePixmap( rotatePixmap90Clone( pmbr ) );
+
+		SDL_FreeSurface( pmfr );
+		SDL_FreeSurface( pmfl );
+		SDL_FreeSurface( pmbr );
+		SDL_FreeSurface( pmbl );
 	}
 	else
 	{
@@ -1679,7 +1694,7 @@ unsigned int SpriteFactory::size()
 	return m_spriteIDs.size();
 }
 
-const std::vector<uint8_t>& SpriteFactory::pixelData( int index )
+SDL_Surface* SpriteFactory::pixelData( int index )
 {
 	QMutexLocker ml( &m_mutex );
 	return m_pixelData[index];

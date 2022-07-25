@@ -49,6 +49,12 @@ public:
 
 	unsigned int uID = 0;
 	std::string sID      = "";
+
+	// This points to the first sprite stored on a texture, but animated/rotated sprites have more after this
+	uint32_t texDataBaseId:8 = 0;
+	uint32_t texDataBaseCellX:12 = 0;
+	uint32_t texDataBaseCellY:12 = 0;
+
 	char xOffset     = 0;
 	char yOffset     = 0;
 	float opacity    = 1.0;
@@ -75,8 +81,6 @@ public:
 	void combine( Sprite* other, std::string season, unsigned char rotation, unsigned char animationStep );
 
 	SDL_Surface* m_pixmap;
-	// FIXME: Remove this and do proper resource management, probably with std::shared_ptr in this case
-	bool m_pixmapOwned;
 };
 
 class SpriteSeasons : public Sprite

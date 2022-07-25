@@ -70,7 +70,9 @@ private:
 
 	bgfx::UniformHandle m_uWorldSize, m_uRenderMin, m_uRenderMax, m_uWorldRotation, m_uTickNumber;
 	bgfx::UniformHandle m_uUpdateSize;
+	bgfx::UniformHandle m_uTexture;
 	bgfx::DynamicVertexBufferHandle m_tileDataHandle, m_tileDataUpdateHandle;
+	bgfx::TextureHandle m_texture;
 	bgfx::VertexBufferHandle m_vertexBuffer;
 	bgfx::IndexBufferHandle m_indicesBuffer;
 
@@ -87,6 +89,7 @@ private:
 	void paintAxles( bgfx::ViewId viewId );
 
 	void updateWorld();
+	void updateTextures();
 	void uploadTileData( const std::vector<TileDataUpdate>& tileData );
 
 	void onRenderParamsChanged();

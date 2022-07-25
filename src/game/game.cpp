@@ -56,7 +56,6 @@
 #include "../gui/aggregatorcreatureinfo.h"
 
 #include <QElapsedTimer>
-#include <QTimer>
 
 #include <time.h>
 
@@ -145,6 +144,13 @@ void Game::setWorld( int dimX, int dimY, int dimZ )
 	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
+Uint32 CallGameLoop(Uint32 interval, void *param) {
+	auto* g = static_cast<Game*>(param);
+	g->loop();
+
+	return g->m_currentTimerInterval;
+}
+
 void Game::start()
 {
 	spdlog::debug("Starting game");
@@ -157,13 +163,12 @@ void Game::start()
 		signalPause( true );
 	}
 
-	if ( m_timer )
+	if ( m_timer != 0 )
 	{
 		stop();
 	}
-	m_timer = new QTimer( this );
-	connect( m_timer, &QTimer::timeout, this, &Game::loop );
-	m_timer->start( m_millisecondsSlow );
+	m_currentTimerInterval = m_millisecondsSlow;
+	m_timer = SDL_AddTimer(m_currentTimerInterval, CallGameLoop, this);
 }
 
 void Game::stop()
@@ -171,8 +176,8 @@ void Game::stop()
 	spdlog::debug("Stop game");
 	if ( m_timer )
 	{
-		m_timer->stop();
-		delete m_timer;
+		SDL_RemoveTimer(m_timer);
+		m_timer = 0;
 	}
 }
 
@@ -490,10 +495,10 @@ void Game::setGameSpeed( GameSpeed speed )
 	switch( m_gameSpeed )
 	{
 		case GameSpeed::Normal:
-			m_timer->setInterval( m_millisecondsSlow );
+			m_currentTimerInterval = m_millisecondsSlow;
 			break;
 		case GameSpeed::Fast:
-			m_timer->setInterval( m_millisecondsFast );
+			m_currentTimerInterval = m_millisecondsFast;
 			break;
 	}
 }
@@ -508,18 +513,10 @@ void Game::setPaused( bool value )
 	m_paused = value;
 	if (m_paused) 
 	{
-		m_timer->setInterval( m_millisecondsSlow*2 );
+		m_currentTimerInterval = m_millisecondsSlow*2;
 	}
 	else {
-		switch( m_gameSpeed )
-		{
-			case GameSpeed::Normal:
-				m_timer->setInterval( m_millisecondsSlow );
-				break;
-			case GameSpeed::Fast:
-				m_timer->setInterval( m_millisecondsFast );
-				break;
-		}
+		setGameSpeed(m_gameSpeed);
 	}
 	
 }

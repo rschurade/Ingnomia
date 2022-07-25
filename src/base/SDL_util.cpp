@@ -60,6 +60,9 @@ SDL_Surface* createPixmap( int w, int h )
 void copyPixmap( SDL_Surface* dst, SDL_Surface* src, int dstX, int dstY )
 {
 	SDL_Rect dstRect { dstX, dstY, src->w, src->h };
+	assert(dstRect.x + dstRect.w <= dst->w && "Destination region W is bigger than destination width");
+	assert(dstRect.y + dstRect.h <= dst->h && "Destination region H is bigger than destination height");
+
 	const auto result = SDL_BlitSurface(src, nullptr, dst, &dstRect);
 	if (result) {
 		spdlog::critical("Cannot copy surface: {}", SDL_GetError());

@@ -19,6 +19,7 @@
 
 #include "../base/SDL_util.h"
 #include "../base/db.h"
+#include "../gfx/constants.h"
 #include "range/v3/action/split.hpp"
 #include "spdlog/spdlog.h"
 
@@ -63,27 +64,12 @@ SpritePixmap::SpritePixmap( SDL_Surface* pixmap, std::string offset ) :
 		yOffset = std::stoi( osl[1] );
 	}
 
-	auto* target = createPixmap( 32, 64 );
+	auto* target = createPixmap( SpriteWidth, SpriteHeight );
 	SDL_FillRect(target, nullptr, 0x00000000);
 
-	SDL_LockSurface(pixmap);
-	SDL_LockSurface(target);
-
-	for ( int y = 0; y < pixmap->h; ++y )
-	{
-		for ( int x = 0; x < pixmap->w; ++x )
-		{
-			if ( y > 63 )
-				spdlog::debug("SpritePixmap::SpritePixmap {}", sID);
-			setPixelColor(target, std::min( 31, x + xOffset ), std::max( 0, std::min( 63, y + yOffset + 16 ) ), getPixelColor( pixmap, x, y ) );
-		}
-	}
-
-	SDL_UnlockSurface(pixmap);
-	SDL_UnlockSurface(target);
+	copyPixmap(target, pixmap, xOffset, yOffset);
 
 	m_pixmap = target;
-	m_pixmapOwned = true;
 }
 
 SpritePixmap::SpritePixmap( const SpritePixmap& other ) :
@@ -91,11 +77,12 @@ SpritePixmap::SpritePixmap( const SpritePixmap& other ) :
 {
 	m_type   = "pixmap";
 	m_pixmap = other.m_pixmap;
-	m_pixmapOwned = false;
+	m_pixmap->refcount++;
 }
 
 SpritePixmap::~SpritePixmap()
 {
+	SDL_FreeSurface(m_pixmap);
 }
 
 SDL_Surface* SpritePixmap::pixmap( std::string season, unsigned char rotation, unsigned char animationStep )
@@ -106,6 +93,7 @@ SDL_Surface* SpritePixmap::pixmap( std::string season, unsigned char rotation, u
 void SpritePixmap::setPixmap( SDL_Surface* pm, std::string season, unsigned char rotation )
 {
 	m_pixmap = pm;
+	m_pixmap->refcount++;
 }
 
 void SpritePixmap::applyEffect( std::string effect )
@@ -113,35 +101,28 @@ void SpritePixmap::applyEffect( std::string effect )
 	// TODO: Why is this not part of the shader code?
 	if ( effect == "FlipHorizontal" )
 	{
-//		flipPixmap( m_pixmap, true, false );
+		auto *old = m_pixmap;
+		m_pixmap  = clonePixmap(old);
+		SDL_FreeSurface(old);
+
+		flipPixmap( m_pixmap, true, false );
 	}
 	else if ( effect == "Rot90" )
 	{
-//		throw std::runtime_error("TODO: Rot surface 90");
-//		QImage img = m_pixmap.toImage();
-//		QImage tmp( 32, 32, QImage::Format::Format_RGBA8888 );
-//		for ( int y = 0; y < 32; ++y )
-//		{
-//			for ( int x = 0; x < 32; ++x )
-//			{
-//				if ( y + 16 > 63 )
-//					spdlog::debug( "SpritePixmap::applyEffect 1 {}", sID );
-//				tmp.setPixelColor( x, y, img.pixelColor( x, y + 16 ) );
-//			}
-//		}
-//		QPixmap pm = QPixmap::fromImage( tmp );
-//		pm         = pm.transformed( QTransform().rotate( 90 ) );
-//		tmp        = pm.toImage();
-//		for ( int y = 0; y < 32; ++y )
-//		{
-//			for ( int x = 0; x < 32; ++x )
-//			{
-//				if ( y > 63 )
-//					spdlog::debug( "SpritePixmap::applyEffect 2 {}", sID );
-//				img.setPixelColor( x, y + 16, tmp.pixelColor( x, y ) );
-//			}
-//		}
-//		m_pixmap = QPixmap::fromImage( img );
+		auto *old = m_pixmap;
+		m_pixmap  = clonePixmap(old);
+		SDL_FreeSurface(old);
+
+		SDL_LockSurface(m_pixmap);
+		// Expecting pixmap to be 32 bit
+		for ( int y = 0; y < m_pixmap->h; ++y )
+		{
+			for ( int x = 0; x < m_pixmap->w; ++x )
+			{
+
+			}
+		}
+		SDL_UnlockSurface(m_pixmap);
 	}
 }
 

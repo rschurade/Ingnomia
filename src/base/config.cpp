@@ -116,6 +116,12 @@ Config::Config()
 	}
 	m_settings.insert_or_assign( "dataPath", Global::exePath / "content" );
 
+	if ( !m_settings.contains( "TextureSize" ) )
+	{
+		// TODO: Change default to 4096
+		m_settings.insert_or_assign( "TextureSize", 2048 );
+	}
+
 	m_valid = true;
 
 }

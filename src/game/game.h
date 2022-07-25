@@ -120,13 +120,14 @@ private:
 	QScopedPointer<SpriteFactory> m_sf;
 	QScopedPointer<PathFinder> m_pf;
 
-	QPointer<QTimer> m_timer;
-	
+	int m_timer = 0;
+
 	QElapsedTimer m_upsTimer;
 	int m_upsCounter;
 	int m_upsCounter1;
 	int m_avgLoopTime;
 
+	int m_currentTimerInterval;
 	int m_millisecondsSlow = 50;
 	int m_millisecondsFast = 5;
 
@@ -161,6 +162,8 @@ private:
 	QPointer<NeighborManager> m_neighborManager;
 	QPointer<MilitaryManager> m_militaryManager;
 	QPointer<SoundManager> m_soundManager;
+
+	friend uint32_t CallGameLoop(uint32_t interval, void *param);
 
 public slots:
 	void loop();
