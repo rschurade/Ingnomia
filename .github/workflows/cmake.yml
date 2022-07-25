@@ -18,15 +18,18 @@ jobs:
         config:
           - {
             os: 'windows-2019',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-win-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
+            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-win-3.1.5-Indie.zip',
+            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_154.zip',
           }
           - {
             os: 'ubuntu-18.04',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
+            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.1.5-Indie.zip',
+            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_154.zip',
+          }
+          - {
+            os: 'macos-10.15',
+            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-macos-3.1.5-Indie.zip',
+            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_154.zip',
           }
     runs-on: ${{ matrix.config.os }}
 
@@ -87,25 +90,6 @@ jobs:
         pathSource: ${{ steps.download-bugsplat.outputs.file-path }}
         pathTarget: bugsplat_sdk
 
-    - name: Install OpenAL Linux
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: sudo apt-get -yq install libopenal-dev
-
-    - name: Download OpenAL Windows
-      if: (startsWith(matrix.config.os, 'windows'))
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-openal
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/openal.zip'
-
-    - name: Unpack OpenAL Windows
-      if: (startsWith(matrix.config.os, 'windows'))
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-openal.outputs.file-path }}
-        pathTarget: openal_sdk
-
     - name: Download Tilesheets
       uses: carlosperate/download-file-action@v1.0.3
       id: download-tilesheet
@@ -153,7 +137,7 @@ jobs:
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
         BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
       run: |
-        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DOPENAL_ROOT=../openal_sdk -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
