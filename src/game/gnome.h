@@ -78,7 +78,7 @@ public:
 		m_skillPriorities = prioList;
 	}
 
-	const std::string& getActivity();
+	std::string getActivity();
 
 	void setOwnedRoom( unsigned int id );
 	unsigned int ownedRoom();

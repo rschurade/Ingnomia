@@ -65,7 +65,7 @@ public:
 	}
 
 	const std::vector<std::string>& professionSkills( const std::string& profession );
-	const std::string& addProfession();
+	std::string addProfession();
 	void addProfession( const std::string& name, const std::vector<std::string>& skills );
 	void removeProfession( const std::string& name );
 	void modifyProfession( const std::string& name, const std::string& newName, const std::vector<std::string>& skills );

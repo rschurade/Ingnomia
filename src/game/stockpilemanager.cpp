@@ -276,6 +276,8 @@ QSharedPointer<Job> StockpileManager::getJob( unsigned int jobID )
 			return sp->getJob( jobID );
 		}
 	}
+
+	return nullptr;
 }
 
 bool StockpileManager::hasJobID( unsigned int jobID ) const

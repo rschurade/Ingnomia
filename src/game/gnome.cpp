@@ -890,7 +890,7 @@ void Gnome::updateLight( Position oldPos, Position newPos )
 #endif
 }
 
-const std::string& Gnome::getActivity()
+std::string Gnome::getActivity()
 {
 	if ( m_job )
 	{

@@ -587,6 +587,7 @@ Position Util::reachableBorderPos( Position fromPos, bool& found )
 Position Util::borderPos( bool& found )
 {
 	Position pos;
+	found = false;
 	int border = rand() % 4;
 	switch ( border )
 	{
@@ -670,6 +671,8 @@ Position Util::borderPos( bool& found )
 				break;
 		}
 	}
+
+	return {};
 }
 
 std::vector<Position> Util::neighbors8( Position pos )

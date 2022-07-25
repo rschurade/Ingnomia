@@ -442,10 +442,11 @@ const std::vector<std::string>& GnomeManager::professionSkills( const std::strin
 	{
 		return it->second;
 	}
+	// FIXME: returning reference to local temporary object
 	return {};
 }
 
-const std::string& GnomeManager::addProfession()
+std::string GnomeManager::addProfession()
 {
 	std::string name = "NewProfession";
 
