@@ -113,7 +113,7 @@ add_subdirectory(src) # Sources list
 add_subdirectory(test) # Sources list
 add_subdirectory(3rdparty) # 3rd party dependencies
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${stb_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
@@ -142,8 +142,8 @@ target_link_libraries(${PROJECT_NAME}
 
 		DearImGui::DearImGui
 
-		${SDL2_LIBRARIES}
-		${SDL2_IMAGE_LIBRARIES}
+		SDL2::SDL2main SDL2::SDL2-static
+		SDL2_image::SDL2_image-static
 )
 
 # Noesis license
