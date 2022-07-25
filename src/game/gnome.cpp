@@ -746,7 +746,7 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	auto elapsed = timer.elapsed();
 	if ( elapsed > 100 )
 	{
-		qDebug() << m_name << "just needed" << elapsed << "ms for bt tick";
+		spdlog::debug( "{} just needed {}ms for bt tick", m_name.toStdString(), elapsed );
 		Global::cfg->set( "Pause", true );
 	}
 #else

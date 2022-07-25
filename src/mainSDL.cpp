@@ -141,16 +141,3 @@ int main( int argc, char* argv[] )
 
 	return 0;
 }
-
-#ifdef _WIN32
-#ifndef _WINDEF_
-typedef uint32_t DWORD;
-#endif
-
-extern "C"
-{
-	// Request use of dedicated GPUs for NVidia/AMD/iGPU mixed setups
-	__declspec( dllexport ) DWORD NvOptimusEnablement                  = 1;
-	__declspec( dllexport ) DWORD AmdPowerXpressRequestHighPerformance = 1;
-}
-#endif // _WIN32

@@ -390,7 +390,7 @@ bool Selection::testTileForJobSelection( const Position& pos )
 		}
 		if( Global::debugMode)
 		{
-			qDebug() << testPos.toString() << QString::number( (quint64)tile->flags, 16 ) << tile->wallType << tile->floorType;
+			spdlog::debug( "{} {} {} {}", testPos.toString().toStdString(), (quint64)tile->flags, tile->wallType, tile->floorType );
 		}
 
 		for ( auto req : required )

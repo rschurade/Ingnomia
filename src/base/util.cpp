@@ -889,7 +889,7 @@ void Util::debugVM( QVariantMap vm, QString name )
 	spdlog::debug( "{}", name.toStdString() );
 	for ( const auto& key : vm.keys() )
 	{
-		qDebug() << key << ":" << vm.value( key ).toString();
+		spdlog::debug( "{}:{}", key.toStdString(), vm.value( key ).toString().toStdString() );
 	}
 }
 

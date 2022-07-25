@@ -560,7 +560,7 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 	auto elapsed = timer.elapsed();
 	if ( elapsed > 100 )
 	{
-		qDebug() << m_name << "JobManager just needed" << elapsed << "ms for getJob";
+		spdlog::debug( "{} JobManager just needed {}ms for getJob", m_name.toStdString(), elapsed );
 		Global::cfg->set( "Pause", true );
 	}
 #else

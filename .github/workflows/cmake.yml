@@ -119,6 +119,10 @@ jobs:
       shell: bash
       run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
 
+    - name: Install Linux packages
+      if: (startsWith(matrix.config.os, 'ubuntu'))
+      run: sudo apt-get install -y xorg-dev
+
     - name: Create Build Environment
       run: cmake -E make_directory build
 

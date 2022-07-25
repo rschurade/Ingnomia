@@ -1,5 +1,6 @@
 include(FetchContent)
 
+set(ALSOFT_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
         OpenALSoft
         GIT_REPOSITORY "https://github.com/kcat/openal-soft.git"

@@ -328,7 +328,7 @@ std::string IO::save( bool autosave )
 	IO::saveFile( folder / "mechanisms.json", IO::jsonArrayMechanisms() );
 	IO::saveFile( folder / "pipes.json", IO::jsonArrayPipes() );
 
-	qDebug() << "saving game took: " + QString::number( timer.elapsed() ) + " ms";
+	spdlog::debug( "saving game took: {}ms", timer.elapsed() );
 
 	if (!oldFolder.empty())
 	{
@@ -1661,7 +1661,7 @@ bool IO::loadFile( const fs::path& url, QJsonDocument& ja )
 		return true;
 	}
 
-	qDebug() << "json parse error in" << QString::fromStdString(url.string()) << error.offset;
+	spdlog::debug( "json parse error in {}:{}", url.string(), error.offset );
 
 	return false;
 }
