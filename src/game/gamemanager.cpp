@@ -150,7 +150,7 @@ void GameManager::continueLastGame()
 	//get last save
 	auto folder = IO::getDataFolder() / "save";
 
-	QDir dir( QString::fromStdString(folder) );
+	QDir dir( QString::fromStdString(folder.string()) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 	dir.setSorting( QDir::Time );
 	if ( !dir.entryList().isEmpty() )
@@ -158,7 +158,7 @@ void GameManager::continueLastGame()
 		auto kingdomDir = dir.entryList().first().toStdString();
 
 		folder = IO::getDataFolder() / "save" / kingdomDir;
-		QDir dir2( QString::fromStdString(folder) );
+		QDir dir2( QString::fromStdString(folder.string()) );
 		dir2.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 		dir2.setSorting( QDir::Time );
 		if ( !dir2.entryList().isEmpty() )

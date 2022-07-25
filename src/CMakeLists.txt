@@ -5,6 +5,9 @@ file(GLOB_RECURSE SOURCE_LIST
 )
 
 list(FILTER SOURCE_LIST EXCLUDE REGEX "base/behaviortree/.*")
+# Remove old QT + OpenGL renderers
+list(FILTER SOURCE_LIST EXCLUDE REGEX "gui/mainwindow.*")
+list(FILTER SOURCE_LIST EXCLUDE REGEX "gui/mainwindowrenderer.*")
 
 target_sources(${PROJECT_NAME}
 	PRIVATE

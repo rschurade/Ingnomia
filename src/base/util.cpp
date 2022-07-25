@@ -909,7 +909,7 @@ PixmapPtr Util::createWorkshopImage( const std::string& workshopID, const std::v
 	if ( dbws->Icon )
 	{
 		const auto path = fs::path(Global::cfg->get<std::string>( "dataPath" )) / "xaml" / "buttons" / *dbws->Icon;
-		result.reset( IMG_Load( path.c_str() ) );
+		result.reset( IMG_Load( path.string().c_str() ) );
 		assert( result->w > 0 );
 		return result;
 	}

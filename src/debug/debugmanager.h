@@ -6,6 +6,9 @@
 #ifndef INGNOMIA_DEBUGMANAGER_H
 #define INGNOMIA_DEBUGMANAGER_H
 
+// TODO: Actually exclude this file from compilation when building for debug
+#ifdef _DEBUG
+
 class DebugManager
 {
 public:
@@ -14,5 +17,7 @@ public:
 	void renderGeneralTab();
 	void renderGnomeManagerTab();
 };
+
+#endif // _DEBUG
 
 #endif // INGNOMIA_DEBUGMANAGER_H

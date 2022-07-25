@@ -142,11 +142,6 @@ int main( int argc, char* argv[] )
 }
 
 #ifdef _WIN32
-INT WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow )
-{
-	return main( 0, nullptr );
-}
-
 extern "C"
 {
 	// Request use of dedicated GPUs for NVidia/AMD/iGPU mixed setups

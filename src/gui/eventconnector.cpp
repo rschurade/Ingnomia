@@ -257,10 +257,11 @@ void EventConnector::emitInMenu( bool value )
 void EventConnector::onStartNewGame()
 {
 	// TODO: We need to keep track of thread lifetime, be able to cancel it, etc. Also refactor...
-	SDL_CreateThread( []( void* data ) -> int
-					  { ((GameManager*)data)->startNewGame();
-						  return 0; },
-					  "Start New Game", gm );
+//	SDL_CreateThread( []( void* data ) -> int
+//					  { ((GameManager*)data)->startNewGame();
+//						  return 0; },
+//					  "Start New Game", gm );
+	gm->startNewGame();
 }
 
 void EventConnector::onContinueLastGame()

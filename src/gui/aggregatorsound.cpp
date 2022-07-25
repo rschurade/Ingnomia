@@ -71,7 +71,7 @@ void AggregatorSound::init( Game* game )
 		QString soundID  = sound.value( "ID" ).toString() + "." + sound.value( "Material" ).toString();
 		auto filename = sound.value( "SoundFile" ).toString().toStdString();
 		const auto& exePath  = Global::exePath;
-		filename         = exePath / "content" / "audio" / filename;
+		filename         = (exePath / "content" / "audio" / filename).string();
 
 		try
 		{

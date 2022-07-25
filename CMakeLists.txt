@@ -26,6 +26,12 @@ if (APPLE)
 	enable_language(OBJCXX)
 endif()
 
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy /Gw /Oi /MP /GS- /W3 /permissive- /await:strict /Zc:__cplusplus /Zc:rvalueCast /Zc:strictStrings /Zc:referenceBinding /Zc:ternary /Zi /w24458 /w34456 /w24702")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CGTHREADS:8 /DEBUG /INCREMENTAL:NO /OPT:REF /OPT:ICF")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob2")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
 find_package(Abseil REQUIRED)
@@ -174,7 +180,7 @@ get_target_property(SOURCE_LIST ${PROJECT_NAME} SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCE_LIST})
 
 if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
+	set(CMAKE_CXX_FLAGS "-Wall -Wextra -fpermissive -g3 -ggdb")
 	# Kill some overly verbose warnings
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas -Wno-unused-parameter")
 	# But treat likely errors as actual errors
@@ -182,9 +188,6 @@ if(UNIX AND NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
 endif()
 
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy /Oi /MP /GS- /W3 /permissive- /w24458 /w34456 /w24702")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CGTHREADS:8 /PROFILE")
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob2")
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 		LINK_FLAGS /SUBSYSTEM:WINDOWS
 	)

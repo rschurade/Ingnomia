@@ -18,6 +18,9 @@
 
 #include <fmt/format.h>
 
+// TODO: Actually exclude this file from compilation when building for debug
+#ifdef _DEBUG
+
 static const std::string debugSpawning[] = {
 	"Gnome",
 	"Trader",
@@ -74,7 +77,7 @@ void DebugManager::renderGeneralTab()
 		if ( ImGui::Button( "Dump textures" ) )
 		{
 			int depth = Global::cfg->get<int>( "MaxArrayTextures" );
-			fs::path outPath( "/tmp/ing" );
+			fs::path outPath( fs::temp_directory_path() / "ing" );
 			fs::create_directories( outPath );
 
 			constexpr auto imageBytes = SpriteWidth * SpriteHeight * SpriteBytesPerPixel;
@@ -82,8 +85,10 @@ void DebugManager::renderGeneralTab()
 			{
 				auto* pixData    = game->sf()->pixelData( j );
 				fs::path outFile = outPath / fmt::format( "{}.png", j );
-				IMG_SavePNG( pixData, outFile.c_str() );
+				IMG_SavePNG( pixData, outFile.string().c_str() );
 			}
+
+			SDL_OpenURL(fmt::format("file://{}", outPath.string()).c_str());
 		}
 
 		ImGui::EndTabItem();
@@ -100,3 +105,5 @@ void DebugManager::renderGnomeManagerTab()
 		ImGui::EndTabItem();
 	}
 }
+
+#endif // _DEBUG

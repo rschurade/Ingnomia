@@ -45,7 +45,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 
 	m_kingdomList.clear();
 
-	QDir dir( QString::fromStdString(sfolder) );
+	QDir dir( QString::fromStdString(sfolder.string()) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 
 	auto entryList = dir.entryList();
@@ -54,7 +54,7 @@ void AggregatorLoadGame::onRequestKingdoms()
 	{
 		const auto kingdomFolder = sfolder / sdir.toStdString();
 
-		QDir kdir( QString::fromStdString(kingdomFolder) );
+		QDir kdir( QString::fromStdString(kingdomFolder.string()) );
 		kdir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 		kdir.setSorting( QDir::Time );
 
@@ -76,11 +76,11 @@ void AggregatorLoadGame::onRequestKingdoms()
 					{
 						QVariantMap vm = vl.first().toMap();
 
-						QFile file( QString::fromStdString(gameFolder / "game.json") );
+						QFile file( QString::fromStdString( ( gameFolder / "game.json" ).string() ) );
 						QFileInfo fi( file );
 
 						GuiSaveInfo gsk;
-						gsk.folder  = kingdomFolder;
+						gsk.folder  = kingdomFolder.string();
 						gsk.name    = vm.value( "kingdomName" ).toString();
 						gsk.version = vm.value( "Version" ).toString().toStdString();
 						gsk.date    = fi.lastModified();
@@ -103,7 +103,7 @@ void AggregatorLoadGame::onRequestSaveGames( const fs::path& path )
 {
 	m_gameList.clear();
 
-	QDir dir( QString::fromStdString(path) );
+	QDir dir( QString::fromStdString(path.string()) );
 	dir.setFilter( QDir::Dirs | QDir::NoDotAndDotDot );
 
 	auto sdirs = dir.entryList();
@@ -112,7 +112,7 @@ void AggregatorLoadGame::onRequestSaveGames( const fs::path& path )
 	{
 		GuiSaveInfo gsi;
 
-		gsi.folder = path / sdir.toStdString();
+		gsi.folder = ( path / sdir.toStdString() ).string();
 		gsi.dir    = sdir;
 
 		QJsonDocument jd;
@@ -137,7 +137,7 @@ void AggregatorLoadGame::onRequestSaveGames( const fs::path& path )
 
 				gsi.name = vm.value( "kingdomName" ).toString();
 
-				QFile file( QString::fromStdString(fs::path(gsi.folder) / "game.json") );
+				QFile file( QString::fromStdString( ( fs::path( gsi.folder ) / "game.json" ).string() ) );
 				QFileInfo fi( file );
 				gsi.date = fi.lastModified();
 

@@ -176,7 +176,7 @@ bool SpriteFactory::init()
 					return false;
 				}
 			} else {
-				pm = IMG_Load( imgPath.c_str() );
+				pm = IMG_Load( imgPath.string().c_str() );
 			}
 			m_pixmapSources.insert_or_assign( tilesheet, pm );
 		}

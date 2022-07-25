@@ -251,7 +251,7 @@ struct Creature_Parts {
 	bool IsHair = false;
 	bool Hidden = false;
 	bool HasBase = false;
-	std::string Material;
+	std::string Material = "";
 
 	static Creature_Parts from(const QMap<QString, QVariant>& map) {
 		const auto baseSprite = map.value("BaseSprite").toString().toStdString();

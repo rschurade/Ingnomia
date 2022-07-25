@@ -540,7 +540,7 @@ void NewGameSettings::loadPresets()
 	bool ok = IO::loadFile( exePath / "content" / "JSON" / "embarkpresets.json", sd );
 	if ( ok )
 	{
-		m_standardPresets = sd;
+		m_standardPresets = (std::vector<JsonPreset>)sd;
 	}
 	else
 	{
@@ -550,7 +550,7 @@ void NewGameSettings::loadPresets()
 	ok = IO::loadFile( IO::getDataFolder() / "settings" / "userpresets.json", sd );
 	if ( ok )
 	{
-		m_userPresets = sd;
+		m_userPresets = (std::vector<JsonPreset>)sd;
 	}
 }
 

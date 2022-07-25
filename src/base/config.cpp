@@ -114,7 +114,7 @@ Config::Config()
 	{
 		m_settings.insert_or_assign( "uiscale", 1.0 );
 	}
-	m_settings.insert_or_assign( "dataPath", Global::exePath / "content" );
+	m_settings.insert_or_assign( "dataPath", (Global::exePath / "content").string() );
 
 	if ( !m_settings.contains( "TextureSize" ) )
 	{

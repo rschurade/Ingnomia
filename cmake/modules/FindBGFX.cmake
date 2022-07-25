@@ -1,5 +1,6 @@
 include(FetchContent)
 
+set(BGFX_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BGFX_OPENGL_VERSION 41 CACHE STRING "Set BGFX OpenGL version to 4.1 (max version on macOS)" FORCE)
 FetchContent_Declare(
         BGFX
