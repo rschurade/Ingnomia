@@ -51,7 +51,7 @@ find_package(DearImGui REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
-add_subdirectory(3rdparty/openal-soft-master)
+find_package(OpenALSoft REQUIRED)
 # Noesis license
 set(NOESIS_LICENSE_NAME "" CACHE STRING "Name")
 set(NOESIS_LICENSE_KEY "" CACHE STRING "Key")
@@ -127,7 +127,7 @@ target_link_libraries(${PROJECT_NAME}
 		NoesisApp
 		fastnoise
 		exprtk
-		OpenAL
+		OpenAL::OpenAL
 		absl::hash
 		absl::flat_hash_map
 		Pal::Sigslot
@@ -215,11 +215,6 @@ get_target_property(STEAM_DLL Steam LOCATION)
 get_target_property(NOESIS_DLL Noesis LOCATION)
 list(APPEND RUNTIME_DLLS ${STEAM_DLL})
 list(APPEND RUNTIME_DLLS ${NOESIS_DLL})
-
-if(WIN32)
-	# On Windows, we want to use bundled OpenAL for guaranteed OpenAL Soft support
-	list(APPEND RUNTIME_DLLS ${OPENAL_DLL})
-endif(WIN32)
 
 install(
 	FILES
