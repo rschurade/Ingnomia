@@ -46,6 +46,9 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_Image REQUIRED)
 find_package(STB REQUIRED)
 
+set(IMGUI_EXTRA_CONFIG "${CMAKE_SOURCE_DIR}/src/debug/imgui/ing_imconfig.h")
+find_package(DearImGui REQUIRED)
+
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
 add_subdirectory(3rdparty/openal-soft-master)
@@ -62,6 +65,8 @@ include(GNUInstallDirs)
 
 # The program itself
 add_executable(${PROJECT_NAME})
+
+string(APPEND CMAKE_CXX_FLAGS_DEBUG " -D_DEBUG")
 
 # C++ version
 set_target_properties(${PROJECT_NAME}
@@ -134,6 +139,8 @@ target_link_libraries(${PROJECT_NAME}
 		nlohmann_json::nlohmann_json
 		pugixml::pugixml
 		sago::platform_folders
+
+		DearImGui::DearImGui
 
 		${SDL2_LIBRARIES}
 		${SDL2_IMAGE_LIBRARIES}

@@ -36,7 +36,7 @@ public:
 private:
 	
 public slots:
-	void onSpawnCreature( QString type );
+	void onSpawnCreature( const std::string& type );
     void onSetWindowSize( int width, int height );
 
 public: // signals:

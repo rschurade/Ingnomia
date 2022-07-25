@@ -32,7 +32,7 @@ public:
 	DebugProxy( QObject* parent = nullptr );
 	void setParent( IngnomiaGUI::DebugModel* parent );
 
-	void spawnCreature( QString type );
+	void spawnCreature( const std::string& type );
 
     void setWindowSize( int width, int height );
 
@@ -44,6 +44,6 @@ private:
 private slots:
 
 public: // signals:
-	sigslot::signal<QString /*type*/> signalSpawnCreature;
+	sigslot::signal<const std::string& /*type*/> signalSpawnCreature;
     sigslot::signal<int /*width*/, int /*height*/> signalSetWindowSize;
 };

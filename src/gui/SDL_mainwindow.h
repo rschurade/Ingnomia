@@ -53,6 +53,10 @@ private:
 	int m_width, m_height;
 	int m_fbWidth, m_fbHeight;
 
+#ifdef _DEBUG
+	void updateImGuiIO();
+#endif
+
 public: // signals:
 	sigslot::signal<int /*w*/, int /*h*/> signalWindowSize;
 	sigslot::signal<int /*level*/> signalViewLevel;

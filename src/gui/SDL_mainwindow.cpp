@@ -7,6 +7,7 @@
 
 #include "../base/config.h"
 #include "../base/global.h"
+#include "../gfx/constants.h"
 #include "../bgfxUtils.h"
 #include "../version.h"
 
@@ -69,12 +70,23 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+#include <bx/bx.h>
+#include <bx/string.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
+#ifdef _DEBUG
+#include "../debug/imgui/bgfx_imgui.h"
+#include "../game/game.h"
+#include "../gfx/spritefactory.h"
+#include "../gui/xaml/debugproxy.h"
+#endif
 
 constexpr auto DefaultScreenScale = 3 / 4.0;
 
-bgfx::ViewId mainViewId = 0xFD;
 bgfx::ViewId guiViewId  = 0xFE;
 
 void SDL_MainWindow::initializeBGFX()
@@ -96,13 +108,17 @@ void SDL_MainWindow::initializeBGFX()
 		throw std::runtime_error( "Cannot initialize BGFX" );
 	}
 
-	bgfx::setViewRect( mainViewId, 0, 0, bgfxInit.resolution.width, bgfxInit.resolution.height );
-
-	bgfx::setViewMode( mainViewId, bgfx::ViewMode::Sequential );
+#ifdef _DEBUG
+	imguiCreate();
+#endif
 }
 
 void uninitializeBGFX( SDL_Window* win )
 {
+#ifdef _DEBUG
+	imguiDestroy();
+#endif
+
 	bgfxUninitializePlatformData( win );
 }
 
@@ -173,89 +189,249 @@ SDL_MainWindow::~SDL_MainWindow()
 	SDL_DestroyWindow( m_sdlWindow );
 }
 
+#ifdef _DEBUG
+
+static const std::string debugSpawning[] = {
+	"Gnome",
+	"Trader",
+	"Goblin"
+};
+
+constexpr ImVec2 SpawnButtonSize(150, 0);
+
+DebugProxy *_debugProxy;
+
+void showDebug() {
+	auto *game = Global::eventConnector->game();
+	if (game == nullptr) return;
+
+	if (_debugProxy == nullptr) {
+		_debugProxy = new DebugProxy(nullptr);
+	}
+
+	ImGui::Begin("Debug");
+
+	const auto texUsed = game->sf()->texesUsed();
+
+	ImGui::Text("Used textures: %d", texUsed);
+	ImGui::Separator();
+	for ( const auto& item : debugSpawning ) {
+		const auto lbl = fmt::format("Spawn {}", item);
+		if (ImGui::Button(lbl.c_str(), SpawnButtonSize)) {
+			_debugProxy->spawnCreature(item);
+		}
+	}
+	ImGui::Separator();
+	if (ImGui::Button("Dump textures")) {
+		int depth = Global::cfg->get<int>( "MaxArrayTextures" );
+		fs::path outPath("/tmp/ing");
+		fs::create_directories(outPath);
+
+		constexpr auto imageBytes = SpriteWidth * SpriteHeight * SpriteBytesPerPixel;
+		for ( int j = 0; j < texUsed; ++j )
+		{
+			auto *pixData = game->sf()->pixelData( j );
+			fs::path outFile = outPath / fmt::format("{}.png", j);
+			IMG_SavePNG(pixData, outFile.c_str());
+		}
+	}
+
+	ImGui::End();
+}
+#endif
+
+// Mostly from ImGui's SDL2 backend
+void SDL_MainWindow::updateImGuiIO()
+{
+	static bool         g_MousePressed[3] = { false, false, false };
+	static SDL_Cursor*  g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
+
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+	if (io.WantSetMousePos)
+		SDL_WarpMouseInWindow(m_sdlWindow, (int)io.MousePos.x, (int)io.MousePos.y);
+	else
+		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+
+	int mx, my;
+	Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
+	io.MouseDown[0] = g_MousePressed[0] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;  // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release       events that are shorter than 1 frame.
+	io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
+	io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
+	g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
+
+#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS)
+	SDL_Window* focused_window = SDL_GetKeyboardFocus();
+	if (m_sdlWindow == focused_window)
+	{
+		if (g_MouseCanUseGlobalState)
+		{
+			// SDL_GetMouseState() gives mouse position seemingly based on the last window entered/focused(?)
+			// The creation of a new windows at runtime and SDL_CaptureMouse both seems to severely mess up with that, so we retrieve that position globally.
+			// Won't use this workaround when on Wayland, as there is no global mouse position.
+			int wx, wy;
+			SDL_GetWindowPosition(focused_window, &wx, &wy);
+			SDL_GetGlobalMouseState(&mx, &my);
+			mx -= wx;
+			my -= wy;
+		}
+		io.MousePos = ImVec2((float)mx, (float)my);
+	}
+
+	// SDL_CaptureMouse() let the OS know e.g. that our imgui drag outside the SDL window boundaries shouldn't e.g. trigger the OS window resize cursor.
+	// The function is only supported from SDL 2.0.4 (released Jan 2016)
+	bool any_mouse_button_down = ImGui::IsAnyMouseDown();
+	SDL_CaptureMouse(any_mouse_button_down ? SDL_TRUE : SDL_FALSE);
+#else
+	if (SDL_GetWindowFlags(m_sdlWindow) & SDL_WINDOW_INPUT_FOCUS)
+		io.MousePos = ImVec2((float)mx, (float)my);
+#endif
+
+	// MouseUpdate //
+
+	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
+		return;
+
+	ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+	if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+	{
+		// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+		SDL_ShowCursor(SDL_FALSE);
+	}
+	else
+	{
+		// Show OS mouse cursor
+		SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+		SDL_ShowCursor(SDL_TRUE);
+	}
+}
+
 void SDL_MainWindow::mainLoop()
 {
 	SDL_Event ev;
 	SDL_Keymod lastMod;
 	while ( !m_done )
 	{
-		SDL_PollEvent( &ev );
-		switch ( ev.type )
-		{
-			// TODO: Window events, input, etc
-			case SDL_QUIT:
+		ImGuiIO& io = ImGui::GetIO();
+#ifdef _DEBUG
+		updateImGuiIO();
+#endif
+		float scrollX = 0, scrollY = 0;
+		while (SDL_PollEvent( &ev )) {
+			switch ( ev.type )
 			{
-				m_done = true;
-				break;
-			}
-			case SDL_KEYDOWN:
-			{
-				const auto& data = ev.key;
-				lastMod          = (SDL_Keymod)data.keysym.mod;
-				signalKeyDown( (SDL_KeyCode)data.keysym.sym, lastMod );
-				break;
-			}
-			case SDL_KEYUP:
-			{
-				const auto& data = ev.key;
-				lastMod          = (SDL_Keymod)data.keysym.mod;
-				signalKeyUp( (SDL_KeyCode)data.keysym.sym, lastMod );
-				break;
-			}
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				const auto& data = ev.button;
-				signalMouseDown( data.button, data.x, data.y );
-				switch ( data.button )
+				// TODO: Window events, input, etc
+				case SDL_QUIT:
 				{
-					case SDL_BUTTON_LEFT:
-					{
-						signalLeftClick( lastMod & KMOD_SHIFT, lastMod & KMOD_CTRL );
-						break;
-					}
-					case SDL_BUTTON_RIGHT:
-					{
-						signalRightClick();
-						break;
-					}
+					m_done = true;
+					break;
 				}
-				break;
-			}
-			case SDL_MOUSEBUTTONUP:
-			{
-				const auto& data = ev.button;
-				signalMouseUp( data.button, data.x, data.y );
-				break;
-			}
-			case SDL_MOUSEMOTION:
-			{
-				const auto& data = ev.motion;
-				signalMouse( data.x, data.y, lastMod & KMOD_SHIFT, lastMod & KMOD_CTRL );
-				break;
-			}
-			case SDL_MOUSEWHEEL:
-			{
-				const auto& data = ev.wheel;
-				int mX, mY;
-				SDL_GetMouseState(&mX, &mY);
-				// TODO: Take direction into account
-				signalMouseWheel(mX, mY, data.preciseX, data.preciseY);
-			}
-			case SDL_WINDOWEVENT:
-			{
-				const auto& data = ev.window;
-				switch ((SDL_WindowEventID)data.event) {
-					case SDL_WINDOWEVENT_RESIZED: {
-						onResize( data.data1, data.data2 );
+				case SDL_KEYDOWN:
+				{
+#ifdef _DEBUG
+					if (io.WantCaptureKeyboard) {
 						break;
 					}
+#endif
+					const auto& data = ev.key;
+					lastMod          = (SDL_Keymod)data.keysym.mod;
+					signalKeyDown( (SDL_KeyCode)data.keysym.sym, lastMod );
+					break;
 				}
-				break;
+				case SDL_KEYUP:
+				{
+#ifdef _DEBUG
+					if (io.WantCaptureKeyboard) {
+						break;
+					}
+#endif
+					const auto& data = ev.key;
+					lastMod          = (SDL_Keymod)data.keysym.mod;
+					signalKeyUp( (SDL_KeyCode)data.keysym.sym, lastMod );
+					break;
+				}
+				case SDL_MOUSEBUTTONDOWN:
+				{
+#ifdef _DEBUG
+					if (io.WantCaptureMouse) {
+						break;
+					}
+#endif
+					const auto& data = ev.button;
+					signalMouseDown( data.button, data.x, data.y );
+					switch ( data.button )
+					{
+						case SDL_BUTTON_LEFT:
+						{
+							signalLeftClick( lastMod & KMOD_SHIFT, lastMod & KMOD_CTRL );
+							break;
+						}
+						case SDL_BUTTON_RIGHT:
+						{
+							signalRightClick();
+							break;
+						}
+					}
+					break;
+				}
+				case SDL_MOUSEBUTTONUP:
+				{
+#ifdef _DEBUG
+					if (io.WantCaptureMouse) {
+						break;
+					}
+#endif
+					const auto& data = ev.button;
+					signalMouseUp( data.button, data.x, data.y );
+					break;
+				}
+				case SDL_MOUSEMOTION:
+				{
+#ifdef _DEBUG
+					if (io.WantCaptureMouse) {
+						break;
+					}
+#endif
+					const auto& data = ev.motion;
+					signalMouse( data.x, data.y, lastMod & KMOD_SHIFT, lastMod & KMOD_CTRL );
+					break;
+				}
+				case SDL_MOUSEWHEEL:
+				{
+					const auto& data = ev.wheel;
+					scrollX = data.preciseX;
+					scrollY = data.preciseY;
+#ifdef _DEBUG
+					if (io.WantCaptureMouse) {
+						break;
+					}
+#endif
+					int mX, mY;
+					SDL_GetMouseState(&mX, &mY);
+					// TODO: Take direction into account
+					signalMouseWheel(mX, mY, data.preciseX, data.preciseY);
+				}
+				case SDL_WINDOWEVENT:
+				{
+					const auto& data = ev.window;
+					switch ((SDL_WindowEventID)data.event) {
+						case SDL_WINDOWEVENT_RESIZED: {
+							onResize( data.data1, data.data2 );
+							break;
+						}
+					}
+					break;
+				}
 			}
 		}
+#if _DEBUG
+		imguiBeginFrame(scrollX, scrollY, m_sdlWindow, 0xFF);
 
-		bgfx::touch( mainViewId );
-		bgfx::setViewClear( mainViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH );
+		showDebug();
+
+		imguiEndFrame();
+#endif
 
 		m_renderer.render();
 		m_noesisContext->Frame();
@@ -276,7 +452,6 @@ void SDL_MainWindow::onResize( int w, int h ) {
 
 	// TODO: Honor initial HIDPI flag
 	bgfx::reset( m_fbWidth, m_fbHeight, BGFX_RESET_VSYNC | BGFX_RESET_HIDPI );
-	bgfx::setViewRect( mainViewId, 0, 0, m_fbWidth, m_fbHeight );
 
 	m_renderer.resize(m_fbWidth, m_fbHeight);
 	m_noesisContext->Resize( m_fbWidth, m_fbHeight );

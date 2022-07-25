@@ -32,7 +32,7 @@ void DebugProxy::setParent( IngnomiaGUI::DebugModel* parent )
 	m_parent = parent;
 }
 
-void DebugProxy::spawnCreature( QString type )
+void DebugProxy::spawnCreature( const std::string& type )
 {
 	signalSpawnCreature( type );
 }

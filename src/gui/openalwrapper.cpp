@@ -11,8 +11,6 @@
 
 using namespace AL;
 
-#define _DEBUG
-
 #ifdef _DEBUG
 #define validate() Object::checkContextActive()
 #else

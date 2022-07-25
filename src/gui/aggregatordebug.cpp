@@ -29,9 +29,9 @@ AggregatorDebug::~AggregatorDebug()
 {
 }
 
-void AggregatorDebug::onSpawnCreature( QString type )
+void AggregatorDebug::onSpawnCreature( const std::string& type )
 {
-	spdlog::debug( "spawn creature: {}", type.toStdString() );
+	spdlog::debug( "spawn creature: {}", type );
 	if( type == "Gnome" )
 	{
 		signalTriggerEvent( EventType::MIGRATION, QVariantMap() );
