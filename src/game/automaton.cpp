@@ -138,20 +138,14 @@ void Automaton::updateSprite()
 		}
 	}
 	const auto itemSID = g->inv()->itemSID( m_automatonItem );
-	auto parts      = DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID) );
-
-	QVariantMap ordered;
-	for ( const auto& pm : parts )
-	{
-		ordered.insert( pm.value( "Order" ).toString(), pm );
-	}
+	auto parts = DBS::fromList<DBS::Creature_Parts>( DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID) ) );
+	std::sort( parts.begin(), parts.end(), []( const auto& a, const auto& b ) { return a.Order > b.Order; } );
 
 	absl::flat_hash_map<std::string, int> randTemp;
 
 	std::vector<DBS::Creature_Parts> def;
-	for ( const auto& vpm : ordered )
+	for ( auto& pm : parts )
 	{
-		auto pm = DBS::Creature_Parts::from(vpm.toMap());
 		if ( pm.BaseSprite && pm.BaseSprite->starts_with( "#" ) )
 		{
 			const auto& bsa = *pm.BaseSprite;
@@ -177,18 +171,12 @@ void Automaton::updateSprite()
 		}
 	}
 
-	auto partsBack = DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID + "Back") );
-
-	QVariantMap orderedBack;
-	for ( auto pm : partsBack )
-	{
-		orderedBack.insert( pm.value( "Order" ).toString(), pm );
-	}
+	auto partsBack = DBS::fromList<DBS::Creature_Parts>( DB::selectRows( "Creature_Parts", QString::fromStdString(itemSID + "Back") ) );
+	std::sort( partsBack.begin(), partsBack.end(), []( const auto& a, const auto& b ) { return a.Order > b.Order; } );
 
 	std::vector<DBS::Creature_Parts> defBack;
-	for ( auto vpm : orderedBack )
+	for ( auto& pm : partsBack )
 	{
-		auto pm = DBS::Creature_Parts::from(vpm.toMap());
 		if ( pm.BaseSprite && pm.BaseSprite->starts_with( "#" ) )
 		{
 			const auto& bsa = *pm.BaseSprite;

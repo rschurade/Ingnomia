@@ -256,13 +256,8 @@ void Gnome::updateSprite()
 
 std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBack )
 {
-	auto parts = DB::selectRows( "Creature_Parts", type );
-
-	QVariantMap ordered;
-	for ( auto pm : parts )
-	{
-		ordered.insert( pm.value( "Order" ).toString(), pm );
-	}
+	auto parts = DBS::fromList<DBS::Creature_Parts>( DB::selectRows( "Creature_Parts", type ) );
+	std::sort( parts.begin(), parts.end(), []( const auto& a, const auto& b ) { return a.Order < b.Order; } );
 
 	// FIXME: This is unused?
 	Uniform* uniform = nullptr;
@@ -272,10 +267,8 @@ std::vector<DBS::Creature_Parts> Gnome::createSpriteDef( QString type, bool isBa
 	}
 
 	std::vector<DBS::Creature_Parts> def;
-	for ( auto vpm : ordered )
+	for ( auto pm : parts )
 	{
-		auto pm = DBS::Creature_Parts::from(vpm.toMap());
-
 		CreaturePart part = Global::creaturePartLookUp.at( pm.Part );
 
 		auto bs = pm.BaseSprite.value_or( "" );
