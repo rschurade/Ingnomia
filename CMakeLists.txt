@@ -22,7 +22,12 @@ project(Ingnomia
 	LANGUAGES "CXX"
 )
 
+# TODO: Remove when removing sqlite3
+enable_language(C)
+
 if (APPLE)
+	# TODO: Remove when removing sqlite3
+	enable_language(OBJC)
 	enable_language(OBJCXX)
 endif()
 
@@ -36,6 +41,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
 find_package(Abseil REQUIRED)
 find_package(Sigslot REQUIRED)
+find_package(sqlite3 REQUIRED)
 find_package(fmt REQUIRED)
 
 find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
@@ -113,6 +119,12 @@ target_sources(${PROJECT_NAME}
 		Changelog.md
 		README.md
 		LICENSE
+		${sqlite3_SOURCE_DIR}/sqlite3.c
+)
+
+target_include_directories(${PROJECT_NAME}
+	PRIVATE
+		${sqlite3_SOURCE_DIR}
 )
 
 add_subdirectory(src) # Sources list
