@@ -119,12 +119,17 @@ jobs:
       shell: bash
       run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
 
+    - name: Install macOS packages
+      if: (startsWith(matrix.config.os, 'macos'))
+      run: brew install ninja
+
     - name: Install Linux packages
       if: (startsWith(matrix.config.os, 'ubuntu'))
-      run: sudo apt-get install -y xorg-dev
+      run: sudo apt-get install -y xorg-dev ninja-build
 
-    - name: Create Build Environment
-      run: cmake -E make_directory build
+    - name: Install Windows packages
+      if: (startsWith(matrix.config.os, 'windows'))
+      run: choco install ninja
 
     - name: Use GCC-10 on Linux
       if: (startsWith(matrix.config.os, 'ubuntu'))
@@ -134,14 +139,13 @@ jobs:
         echo "CXX=g++-10" >> $GITHUB_ENV
 
     - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
       shell: bash
       env:
         NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
         BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
       run: |
-        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=steamworks_sdk/sdk -DNOESIS_ROOT=noesis_sdk -DBUGSPLAT_SDK_ROOT=bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
 
     - name: Build
       working-directory: ${{github.workspace}}/build

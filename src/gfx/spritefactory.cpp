@@ -1263,14 +1263,6 @@ SDL_Surface* SpriteFactory::getOrCreatePixelDataAt( int tex ) {
 	}
 }
 
-// TODO: Make static & visible outside if needed
-void spriteTexCoordsFromId(const auto id, int& x, int& y) {
-	x = (id % _texNumSpritesX) * SpriteWidth;
-	y = (std::floor((double)id / _texNumSpritesX)) * SpriteHeight;
-
-	spdlog::debug("Used coords for id {}: {}x{}", id, x, y);
-}
-
 // TODO: All this can be replaced with a single `cellId`, and calculate the rest of the parameters from it
 void SpriteFactory::calculateNextTexCoords() {
 	m_lastTexCellX++;
