@@ -138,6 +138,13 @@ jobs:
         echo "CC=gcc-10" >> $GITHUB_ENV
         echo "CXX=g++-10" >> $GITHUB_ENV
 
+    - name: Cache Dependencies
+      id: cache-dependencies
+      uses: actions/cache@v3
+      with:
+        path: build/_deps
+        key: dependencies
+
     - name: Configure CMake
       shell: bash
       env:
