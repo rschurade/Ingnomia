@@ -21,7 +21,7 @@
 
 #include <QObject>
 #include <QPointer>
-#include <QPointer>
+#include <QVariantMap>
 
 #include <sigslot/signal.hpp>
 

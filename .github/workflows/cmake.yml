@@ -121,15 +121,15 @@ jobs:
 
     - name: Install macOS packages
       if: (startsWith(matrix.config.os, 'macos'))
-      run: brew install ninja
+      run: |
+        brew install ninja
+        echo "CMAKE_GENERATOR=Ninja" >> $GITHUB_ENV
 
     - name: Install Linux packages
       if: (startsWith(matrix.config.os, 'ubuntu'))
-      run: sudo apt-get install -y xorg-dev ninja-build
-
-    - name: Install Windows packages
-      if: (startsWith(matrix.config.os, 'windows'))
-      run: choco install ninja
+      run: |
+        sudo apt-get install -y xorg-dev libwayland-dev ninja-build
+        echo "CMAKE_GENERATOR=Ninja" >> $GITHUB_ENV
 
     - name: Use GCC-10 on Linux
       if: (startsWith(matrix.config.os, 'ubuntu'))
@@ -145,7 +145,7 @@ jobs:
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
         BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
       run: |
-        cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=steamworks_sdk/sdk -DNOESIS_ROOT=noesis_sdk -DBUGSPLAT_SDK_ROOT=bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=steamworks_sdk/sdk -DNOESIS_ROOT=noesis_sdk -DBUGSPLAT_SDK_ROOT=bugsplat_sdk/bugsplat -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
 
     - name: Build
       working-directory: ${{github.workspace}}/build

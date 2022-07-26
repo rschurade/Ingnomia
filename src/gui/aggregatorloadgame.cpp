@@ -29,6 +29,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QStandardPaths>
+#include <QVariant>
+#include <QVariantMap>
 
 AggregatorLoadGame::AggregatorLoadGame( QObject* parent ) :
 	QObject(parent)

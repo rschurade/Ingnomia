@@ -20,8 +20,8 @@
 #include "../game/creature.h"
 #include "../game/eventmanager.h"
 
-
 #include <QObject>
+#include <QVariantMap>
 
 #include <sigslot/signal.hpp>
 

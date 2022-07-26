@@ -27,6 +27,8 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 
+#include <QVariantMap>
+
 AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 	QObject( parent )
 {

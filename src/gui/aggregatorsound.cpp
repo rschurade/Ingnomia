@@ -31,6 +31,7 @@
 
 #include <QCoreApplication>
 #include <QJsonDocument>
+#include <QVariantMap>
 
 AggregatorSound::AggregatorSound( EventConnector* parent ) :
 	QObject( parent )

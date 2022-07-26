@@ -10,6 +10,8 @@
 
 #include <fstream>
 
+#define ENTRY_CONFIG_USE_WAYLAND 1
+
 void* sdlNativeWindowHandle(SDL_Window* _window)
 {
 	SDL_SysWMinfo wmi;

@@ -26,6 +26,8 @@
 
 #include <range/v3/view.hpp>
 
+#include <QVariantMap>
+
 AggregatorMilitary::AggregatorMilitary( QObject* parent ) :
 	QObject(parent)
 {

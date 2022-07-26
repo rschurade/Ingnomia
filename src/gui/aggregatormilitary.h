@@ -19,8 +19,8 @@
 
 #include "../game/militarymanager.h"
 
-
 #include <QObject>
+#include <QVariantMap>
 
 #include <sigslot/signal.hpp>
 

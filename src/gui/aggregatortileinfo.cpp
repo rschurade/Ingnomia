@@ -39,6 +39,8 @@
 
 #include <range/v3/view.hpp>
 
+#include <QVariant>
+
 AggregatorTileInfo::AggregatorTileInfo( QObject* parent ) :
 	QObject(parent)
 {
