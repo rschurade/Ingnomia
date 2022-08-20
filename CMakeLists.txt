@@ -90,6 +90,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
 
 add_subdirectory(content) # Deployable content
+add_subdirectory(shaders) # Deployable content
+
 # Copy content to target directory
 add_custom_command(TARGET ${PROJECT_NAME}
 	POST_BUILD

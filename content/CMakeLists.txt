@@ -3,7 +3,6 @@ file(
 	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	"*.xml"
 	"*.json"
-	"*.glsl"
 	"*.xaml"
 	"*.ttf"
 	"*.otf"
