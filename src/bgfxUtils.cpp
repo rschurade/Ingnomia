@@ -92,13 +92,14 @@ void bgfxUninitializePlatformData(SDL_Window* _window)
 
 const bgfx::Memory* loadFileContent(const fs::path& _file)
 {
-	std::ifstream fileStream(_file, std::ios::ate);
+	std::ifstream fileStream(_file, std::ios::ate | std::ios::binary);
 	assert( fileStream.good() );
 	const auto fLength = (size_t)fileStream.tellg();
 	fileStream.seekg(0);
 	const auto mem = bgfx::alloc(fLength + 1);
 	mem->data[fLength] = 0;
 	fileStream.read(reinterpret_cast<char *>(mem->data), fLength);
+	assert( fileStream.good() );
 	return mem;
 }
 
