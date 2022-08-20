@@ -41,7 +41,7 @@ private:
 
 public:
 	IO( Game* g, QObject* parent );
-	~IO();
+	~IO() noexcept override;
 
 	static fs::path getDataFolder();
 	static bool createFolders();

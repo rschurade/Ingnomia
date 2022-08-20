@@ -65,7 +65,6 @@
 #include <NsGui/Grid.h>
 #include <NsGui/IRenderer.h>
 #include <NsGui/IntegrationAPI.h>
-#include <NsRender/GLFactory.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -95,6 +94,9 @@ void SDL_MainWindow::initializeBGFX()
 	bgfx::Init bgfxInit;
 	bgfxInit.vendorId = BGFX_PCI_ID_NONE;          // Auto select first device, but we can be smarter and allow to select another using setup
 	bgfxInit.type     = bgfx::RendererType::Count; // Automatically choose a renderer.
+
+	bgfxInit.debug = true;
+	bgfxInit.profile = true;
 
 	bgfxInit.resolution.width  = m_fbWidth;
 	bgfxInit.resolution.height = m_fbHeight;

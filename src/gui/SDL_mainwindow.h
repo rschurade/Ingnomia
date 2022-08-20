@@ -15,7 +15,7 @@
 struct SDL_Window;
 
 namespace Noesis {
-	class IView;
+	struct IView;
 }
 
 namespace AppGUI {

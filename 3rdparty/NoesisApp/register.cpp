@@ -24,9 +24,7 @@
 extern "C" void NsRegisterReflection_NoesisApp()
 {
     PACKAGE_REGISTER(Render, RenderContext);
-    PACKAGE_REGISTER(Render, GLRenderDevice);
     PACKAGE_REGISTER(App, Display);
-    PACKAGE_REGISTER(Render, GLRenderContext);
     PACKAGE_REGISTER(App, Providers);
     PACKAGE_REGISTER(App, Launcher);
     PACKAGE_REGISTER(App, Theme);
@@ -39,9 +37,7 @@ extern "C" void NsRegisterReflection_NoesisApp()
 extern "C" void NsInitPackages_NoesisApp()
 {
     PACKAGE_INIT(Render, RenderContext);
-    PACKAGE_INIT(Render, GLRenderDevice);
     PACKAGE_INIT(App, Display);
-    PACKAGE_INIT(Render, GLRenderContext);
     PACKAGE_INIT(App, Providers);
     PACKAGE_INIT(App, Launcher);
     PACKAGE_INIT(App, Theme);
@@ -59,8 +55,6 @@ extern "C" void NsShutdownPackages_NoesisApp()
     PACKAGE_SHUTDOWN(App, Theme);
     PACKAGE_SHUTDOWN(App, Launcher);
     PACKAGE_SHUTDOWN(App, Providers);
-    PACKAGE_SHUTDOWN(Render, GLRenderContext);
     PACKAGE_SHUTDOWN(App, Display);
-    PACKAGE_SHUTDOWN(Render, GLRenderDevice);
     PACKAGE_SHUTDOWN(Render, RenderContext);
 }

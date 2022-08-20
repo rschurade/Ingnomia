@@ -93,6 +93,7 @@ void bgfxUninitializePlatformData(SDL_Window* _window)
 const bgfx::Memory* loadFileContent(const fs::path& _file)
 {
 	std::ifstream fileStream(_file, std::ios::ate);
+	assert( fileStream.good() );
 	const auto fLength = (size_t)fileStream.tellg();
 	fileStream.seekg(0);
 	const auto mem = bgfx::alloc(fLength + 1);

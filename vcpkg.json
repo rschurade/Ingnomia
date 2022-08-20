@@ -1,0 +1,39 @@
+{
+  "name": "ingnomia",
+  "version": "1.13.0",
+  "builtin-baseline": "f93ba152d55e1d243160e690bc302ffe8638358e",
+  "dependencies": [
+    "abseil",
+    "palsigslot",
+    "sqlite3",
+    "range-v3",
+    "spdlog",
+    "bgfx",
+    "imgui",
+    "sdl2",
+    "sdl2-image",
+    "gtest",
+    "platform-folders",
+    "pugixml",
+    "steamworkssdk",
+    "stb",
+    "openal-soft",
+    "fmt",
+    "nlohmann-json",
+    "qt5-base",
+    "exprtk",
+    "protobuf"
+  ],
+  "overrides": [
+    {
+      "name": "bgfx",
+      "version": "1.0.0",
+      "port-version": 0
+    },
+    {
+      "name": "steamworkssdk",
+      "version": "1.23.0",
+      "port-version": 0
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "default": {
+    "bgfx": {
+      "baseline": "1.0.0",
+      "port-version": 0
+    },
+    "steamworkssdk": {
+      "baseline": "1.23.0",
+      "port-version": 0
+    }
+  }
+}

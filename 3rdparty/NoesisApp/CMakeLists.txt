@@ -12,8 +12,8 @@ set(NOESIS_APP_PACKAGES
 	App/Theme
 	App/Interactivity
 	App/MediaElement
-	Render/GLRenderContext
-	Render/GLRenderDevice
+#	Render/GLRenderContext
+#	Render/GLRenderDevice
 	Render/RenderContext
 )
 
