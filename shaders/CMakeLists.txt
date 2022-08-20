@@ -14,6 +14,12 @@ file(
 	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	"*_CS.shader"
 )
+file(
+	GLOB_RECURSE OTHER_SOURCE_LIST
+	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+	"*.shader"
+	"*.ishader"
+)
 
 target_sources(${PROJECT_NAME}
 	PRIVATE
@@ -112,8 +118,8 @@ add_custom_target(shaders
 		${FS_SOURCE_LIST}
 		${VS_SOURCE_LIST}
 		${CS_SOURCE_LIST}
+		${OTHER_SOURCE_LIST}
 		${GENERATED_LIST}
-		${CMAKE_CURRENT_LIST_FILE}
 )
 
 foreach ( FILE IN LISTS FS_SOURCE_LIST )
@@ -128,4 +134,4 @@ foreach ( FILE IN LISTS CS_SOURCE_LIST )
 	compile_shader("${FILE}" "compute")
 endforeach()
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${FS_SOURCE_LIST} ${VS_SOURCE_LIST} ${CS_SOURCE_LIST})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${FS_SOURCE_LIST} ${VS_SOURCE_LIST} ${CS_SOURCE_LIST} ${OTHER_SOURCE_LIST})
