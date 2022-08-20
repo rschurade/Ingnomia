@@ -9,7 +9,6 @@ $output v_texcoord0
 // This was block1, block2, block3
 $output v_texcoord1, v_texcoord2, v_texcoord3
 
-#include <bgfx_shader.sh>
 #include <bgfx_compute.sh>
 
 #define TF_NONE                 0x00000000u

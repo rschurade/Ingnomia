@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.20.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -89,8 +89,10 @@ set_target_properties(${PROJECT_NAME}
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
 
-add_subdirectory(content) # Deployable content
-add_subdirectory(shaders) # Deployable content
+add_subdirectory(content)
+add_subdirectory(shaders)
+
+add_dependencies(${PROJECT_NAME} content shaders)
 
 # Copy content to target directory
 add_custom_command(TARGET ${PROJECT_NAME}
@@ -98,6 +100,12 @@ add_custom_command(TARGET ${PROJECT_NAME}
 	COMMAND
 		${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/content $<TARGET_FILE_DIR:${PROJECT_NAME}>/content
+	COMMAND
+		${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_BINARY_DIR}/shaders/game $<TARGET_FILE_DIR:${PROJECT_NAME}>/content/shaders/game
+	COMMAND
+		${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_BINARY_DIR}/shaders/noesis $<TARGET_FILE_DIR:${PROJECT_NAME}>/content/shaders/noesis
 )
 
 if(WIN32)

@@ -12,12 +12,6 @@ file(
 	"*License*"
 )
 
-target_sources(${PROJECT_NAME}
-	PRIVATE
-		${SOURCE_LIST}
-		${CMAKE_CURRENT_LIST_FILE}
-)
-
 foreach ( FILE ${SOURCE_LIST} )
     get_filename_component( DIR ${FILE} DIRECTORY )
     install(
@@ -25,3 +19,10 @@ foreach ( FILE ${SOURCE_LIST} )
 		DESTINATION "${CMAKE_INSTALL_BINDIR}/content/${DIR}"
 	)
 endforeach()
+
+add_custom_target(content
+	SOURCES
+		${SOURCE_LIST}
+		${CMAKE_CURRENT_LIST_FILE}
+)
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCE_LIST})

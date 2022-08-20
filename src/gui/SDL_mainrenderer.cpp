@@ -74,11 +74,11 @@ std::array<bgfx::ProgramHandle, VertexShaders.size() + ComputeShaders.size()> m_
 
 void SDL_MainRenderer::initialize()
 {
-	static const fs::path shaderDir { Global::exePath / "content" / "shaders" };
+	static const fs::path shaderDir { Global::exePath / "content" / "shaders" / "game" };
 
-	LoadShaders<VertexShaders.size()>(VertexShaders, m_VertexShaders, "v", shaderDir);
-	LoadShaders<FragmentShaders.size()>(FragmentShaders, m_FragmentShaders, "f", shaderDir);
-	LoadShaders<ComputeShaders.size()>(ComputeShaders, m_ComputeShaders, "c", shaderDir);
+	LoadShaders<VertexShaders.size()>(VertexShaders, m_VertexShaders, "VS", shaderDir);
+	LoadShaders<FragmentShaders.size()>(FragmentShaders, m_FragmentShaders, "FS", shaderDir);
+	LoadShaders<ComputeShaders.size()>(ComputeShaders, m_ComputeShaders, "CS", shaderDir);
 
 	for ( auto j = 0; j < FragmentShaders.size(); ++j )
 	{

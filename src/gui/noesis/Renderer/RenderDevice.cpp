@@ -40,8 +40,8 @@ auto RenderDevice::CreatePrograms() -> void
 
 	static const fs::path shaderDir { Global::exePath / "content" / "shaders" / "noesis" };
 
-	LoadShaders<VertexShaderCount_>( ::VertexShaders, this->VertexShaders_, "v", shaderDir );
-	LoadShaders<FragmentShaderCount_>( ::FragmentShaders, this->FragmentShaders_, "f", shaderDir );
+	LoadShaders<VertexShaderCount_>( ::VertexShaders, this->VertexShaders_, "VS", shaderDir );
+	LoadShaders<FragmentShaderCount_>( ::FragmentShaders, this->FragmentShaders_, "FS", shaderDir );
 
 	for ( std::size_t i {}; i < FragmentShaderCount_; ++i )
 	{

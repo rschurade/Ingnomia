@@ -12,12 +12,7 @@ file(
 file(
 	GLOB_RECURSE CS_SOURCE_LIST
 	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	"*_c.shader"
-)
-file(
-	GLOB_RECURSE CS_SOURCE_LIST
-	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	"*_c.shader"
+	"*_CS.shader"
 )
 
 target_sources(${PROJECT_NAME}
@@ -28,7 +23,7 @@ target_sources(${PROJECT_NAME}
 
 if(WIN32)
 	set(BGFX_PLATFORM "windows")
-	set(BGFX_PROFILES "glsl" "spirv" "dx11")
+	set(BGFX_PROFILES "glsl" "spirv" ) # "dx11"
 elseif(APPLE)
 	set(BGFX_PLATFORM "osx")
 	set(BGFX_PROFILES "metal")
@@ -53,8 +48,12 @@ macro(compile_shader FILE TYPE)
 	get_filename_component(FILE_NAME "${FILE}" NAME_WE)
 	get_filename_component(FILE_BASE "${FILE}" DIRECTORY)
 	set(VARYING_DEF "${CMAKE_CURRENT_SOURCE_DIR}/${FILE_BASE}/varying.def.shader")
+
+	set(OUTPUTS)
+	set(COMMANDS)
 	foreach(PROFILE IN LISTS BGFX_PROFILES)
-		set(FILE_DST "${CMAKE_CURRENT_BINARY_DIR}/${FILE_BASE}/${FILE_NAME}_${PROFILE}.bin")
+		set(FILE_DST "${CMAKE_CURRENT_BINARY_DIR}/${RUNTIME_OUTPUT_DIRECTORY}/${FILE_BASE}/${FILE_NAME}_${PROFILE}.bin")
+		set(FILE_DEP "${FILE_DST}.d")
 
 		if("${PROFILE}" STREQUAL "dx11")
 			if("${TYPE}" STREQUAL "fragment")
@@ -70,12 +69,9 @@ macro(compile_shader FILE TYPE)
 			set(PROFILE "310_es")
 		endif()
 
-		add_custom_command(
-			OUTPUT
-				"${FILE_DST}"
-			DEPENDS
-				"${CMAKE_CURRENT_SOURCE_DIR}/${FILE}"
-				"${VARYING_DEF}"
+		list(APPEND OUTPUTS "${FILE_DST}")
+
+		list(APPEND COMMANDS
 			COMMAND
 				bgfx::shaderc
 					-f "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}"
@@ -86,18 +82,28 @@ macro(compile_shader FILE TYPE)
 					--platform "${BGFX_PLATFORM}"
 					--profile "${PROFILE}"
 					--varyingdef "${VARYING_DEF}"
-			VERBATIM
+					--depends
 		)
-		target_sources(shaders
-			PRIVATE
-				"${FILE_DST}"
-		)
-		list(APPEND GENERATED_LIST "${FILE_DST}")
-	endforeach()
 
-	target_sources(shaders
-		PRIVATE
-			"${FILE}"
+		list(APPEND GENERATED_LIST "${FILE_DST}")
+		install(
+			FILES "${FILE_DST}"
+			DESTINATION "${CMAKE_INSTALL_BINDIR}/content/shaders/${FILE_BASE}"
+		)
+	endforeach()
+	# Only one add_custom_command per main dependency allowed
+	add_custom_command(
+		OUTPUT
+			${OUTPUTS}
+		DEPENDS
+			"${CMAKE_CURRENT_SOURCE_DIR}/${FILE}"
+			"${VARYING_DEF}"
+		MAIN_DEPENDENCY
+			"${CMAKE_CURRENT_SOURCE_DIR}/${FILE}"
+		${COMMANDS}
+		DEPFILE
+			"${FILE_DEP}"
+		VERBATIM
 	)
 endmacro()
 
@@ -106,10 +112,9 @@ add_custom_target(shaders
 		${FS_SOURCE_LIST}
 		${VS_SOURCE_LIST}
 		${CS_SOURCE_LIST}
-	DEPENDS
 		${GENERATED_LIST}
+		${CMAKE_CURRENT_LIST_FILE}
 )
-
 
 foreach ( FILE IN LISTS FS_SOURCE_LIST )
 	compile_shader("${FILE}" "fragment")
@@ -124,5 +129,3 @@ foreach ( FILE IN LISTS CS_SOURCE_LIST )
 endforeach()
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${FS_SOURCE_LIST} ${VS_SOURCE_LIST} ${CS_SOURCE_LIST})
-list(REMOVE_DUPLICATES GENERATED_LIST)
-source_group(TREE "${CMAKE_CURRENT_BINARY_DIR}" PREFIX "Generated" FILES ${GENERATED_LIST})
