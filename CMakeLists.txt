@@ -33,7 +33,7 @@ endif()
 
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy /Gw /Oi /MP /GS- /W3 /bigobj /permissive- /await:strict /Zc:__cplusplus /Zc:rvalueCast /Zc:strictStrings /Zc:referenceBinding /Zc:ternary /Zi /w24458 /w34456 /w24702")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CGTHREADS:8 /DEBUG /INCREMENTAL:NO /OPT:REF /OPT:ICF")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CGTHREADS:8 /DEBUG /INCREMENTAL:NO /OPT:REF /OPT:NOICF")
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob3")
 	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
