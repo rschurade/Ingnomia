@@ -1,0 +1,866 @@
+syntax = "proto3";
+
+package Ingnomia;
+
+message RootMessage {
+  map<string, AI> AI = 1;
+  map<string, Action> Actions = 2;
+  map<string, Anatomy> Anatomy = 3;
+  map<string, Animal> Animals = 4;
+  repeated string Attributes = 5;
+  repeated string BaseItems = 6;
+  map<string, BaseSprite> BaseSprites = 7;
+  repeated string ConstructionTypes = 8;
+  map<string, Construction> Constructions = 9;
+  map<string, Container> Containers = 10;
+  map<string, Creature> Creatures = 11;
+  map<string, Craft> Crafts = 12;
+  map<string, EmbeddedMaterial> EmbeddedMaterials = 13;
+  map<string, Event> Events = 14;
+  map<string, FarmUtil> FarmUtils = 15;
+  repeated string FormationPerks = 16;
+  map<string, HairColor> HairColors = 17;
+  map<string, Hydraulic> Hydraulics = 18;
+  map<string, ItemGrouping> ItemGrouping = 19;
+  map<string, Item> Items = 20;
+  map<string, Job> Jobs = 21;
+  map<string, Lair> Lairs = 22;
+  map<string, Magic> Magic = 23;
+  map<string, MaterialToToolLevel> MaterialToToolLevel = 24;
+  map<string, Materials> Materials = 25;
+  map<string, Mechanism> Mechanism = 26;
+  map<string, Mission> Missions = 27;
+  map<string, Monster> Monsters = 28;
+  map<string, MoveSpeed> MoveSpeed = 29;
+  map<string, NameRule> NameRules = 30;
+  map<string, Name> Names = 31;
+  map<string, Need> Needs = 32;
+  map<string, Plants> Plants = 33;
+  map<string, Quality> Quality = 34;
+  map<string, RandomMetal> RandomMetals = 35;
+  map<string, Season> Seasons = 36;
+  map<string, SkillGroup> SkillGroups = 37;
+  map<string, Skill> Skills = 38;
+  map<string, SoundGroup> Sounds = 39;
+  map<string, Spell> Spells = 40;
+  map<string, Sprite> Sprites = 41;
+  repeated string Tech = 42;
+  map<string, TerrainMaterial> TerrainMaterials = 43;
+  map<string, Time> Time = 44;
+  map<string, Trader> Traders = 45;
+  map<string, Translation> Translation = 46;
+  map<string, TreeLayout> TreeLayouts = 47;
+  map<string, Uniform> Uniform = 48;
+  map<string, Uniforms> Uniforms = 49;
+  map<string, Utility> Utility = 50;
+  repeated string Words = 51;
+  repeated string WordsAdjective = 52;
+  map<string, Word_Verb> WordsVerb = 53;
+  map<string, Word_Number> WordsNumbers = 54;
+  map<string, Word_Noun> WordsNoun = 55;
+  map<string, Word_ActionNoun> WordsActionNoun = 56;
+  map<string, Workshop> Workshops = 57;
+}
+
+message Size {
+  int32 w = 1;
+  int32 h = 2;
+}
+
+message Offset {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Position {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+}
+
+message Rectangle {
+  int32 x = 1;
+  int32 y = 2;
+  int32 w = 3;
+  int32 h = 4;
+}
+
+message Color {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+  uint32 a = 4;
+}
+
+enum RotationType {
+  FR = 0;
+  FL = 1;
+  BR = 2;
+  BL = 3;
+}
+
+// AI
+
+message AI {
+  string BehaviorTree = 1;
+}
+
+// Actions
+
+message Action {
+  optional string Job = 1;
+  optional string ConstructionType = 2;
+  bool ConstructionSelect = 3;
+  bool IsFloor = 4;
+  bool Multi = 5;
+  bool MultiZ = 6;
+  bool Rotate = 7;
+  repeated ActionTiles Tiles = 8;
+}
+
+message ActionTiles {
+  Position Offset = 1;
+  optional string SpriteID = 2;
+  bool IsFloor = 3;
+  repeated string Required = 4;
+  repeated string Forbidden = 5;
+}
+
+// Anatomy
+
+message Anatomy {
+  uint32 Blood = 1;
+  string Root = 2;
+  repeated string LayerOrder = 3;
+  map<string, AnatomyParts> Parts = 4;
+}
+
+message AnatomyParts {
+  string ID2 = 1;
+  optional string Parent = 2;
+  bool IsInside = 3;
+  string Height = 4;
+  string Side = 5;
+  string Facing = 6;
+  uint32 HP = 7;
+  bool IsVital = 8;
+}
+
+// Animals
+
+message Animal {
+  bool AllowInWild = 1;
+  bool Aquatic = 2;
+  string BehaviorTree = 3;
+  optional string Biome = 4;
+  bool Embark = 5;
+  uint32 GestationDays = 6;
+  bool Pasture = 7;
+  uint32 PastureSize = 8;
+  bool IsMulti = 9;
+
+  repeated string Prey = 10;
+  repeated string Food = 11;
+  repeated AnimalOnButcher OnButcher = 12;
+  map<string, AnimalState> States = 13;
+}
+
+message AnimalOnButcher {
+  uint32 Amount = 1;
+  string ItemID = 2;
+  optional string Type = 3;
+}
+
+message AnimalState {
+  string SpriteID = 1;
+  uint32 DaysToNextState = 2;
+  bool Immobile = 3;
+  string BehaviorTree = 4;
+  bool IsAggro = 5;
+  uint32 Attack = 6;
+  uint32 Damage = 7;
+  string Anatomy = 8;
+  map<string, AnimalBehavior> Behavior = 9;
+}
+
+
+message AnimalBehavior {
+  optional string RequiredGender = 1;
+  uint32 Amount = 2;
+  optional string CreatureID = 4;
+  uint32 DaysBetween = 5;
+  uint32 EatTime = 6;
+  optional string EggID = 7;
+  uint32 FoodValue = 8;
+  float HungerPerTick = 9;
+  optional string ItemID = 10;
+  uint32 Speed = 11;
+}
+
+// BaseSprites
+
+message BaseSprite {
+  map<string, Rectangle> Rect = 1;
+}
+
+// Construction
+
+message Construction {
+  bool NoConstruction = 1;
+  bool Rotation = 2;
+  string Type = 3;
+  optional string Category = 4;
+  repeated ConstructionComponent Components = 5;
+  repeated ConstructionIntermediateSprite IntermediateSprites = 6;
+  repeated ConstructionSprite Sprites = 7;
+}
+
+message ConstructionComponent {
+  uint32 Amount = 1;
+  string ItemID = 2;
+  repeated string MaterialTypes = 3;
+  repeated string Materials = 4;
+}
+
+enum ConstructionType {
+  Floor = 0;
+  RampBottom = 1;
+  RampTop = 2;
+  StairsBottom = 3;
+  StairsTop = 4;
+  Wall = 5;
+  WallSeeThrough = 6;
+}
+
+message ConstructionIntermediateSprite {
+  Position Offset = 1;
+  uint32 Percent = 2;
+  string SpriteID = 3;
+  ConstructionType Type = 4;
+}
+
+message ConstructionSprite {
+  Position Offset = 1;
+  string SpriteID = 2;
+  optional string SpriteIDOverride = 3;
+  ConstructionType Type = 4;
+}
+
+// Containers
+
+message Container {
+  bool Buildable = 1;
+  uint32 Capacity = 2;
+  bool RequireSame = 3;
+  optional string Type = 4;
+  optional string Item = 5;
+  repeated ContainerComponents Components = 6;
+  ContainerTiles Tiles = 7;
+}
+
+
+message ContainerComponents {
+  string ItemID = 1;
+}
+
+message ContainerTiles {
+  bool Construction = 1;
+  bool Job = 2;
+  Position Offset = 3;
+  string SpriteID = 4;
+  bool Stockpile = 5;
+}
+
+// Creatures
+
+message Creature {
+  repeated Parts Parts = 1;
+}
+
+message Parts {
+  // TODO: This can also be converted to a map using the `Part` as key?
+  string Part = 1;
+  uint32 Order = 2;
+  optional string Tint = 3;
+  optional string Conceales = 4;
+  // This replaces the # character on `BaseSprite`
+  bool RandomBaseSprite = 5;
+  repeated string BaseSprite = 6;
+}
+
+// Crafts
+
+message CraftComponents {
+  repeated string AllowedMaterial = 1;
+  string AllowedMaterialType = 2;
+  uint32 Amount = 3;
+  string ItemID = 4;
+  bool RequireSame = 5;
+}
+
+message CraftSkillgain {
+  uint32 Value = 1;
+}
+
+message CraftTechgain {
+  string TechID = 1;
+  uint32 Value = 2;
+}
+
+message CraftPrereqs {
+  string Category = 1;
+  string TechGroup = 2;
+  uint32 Value = 3;
+}
+
+message Craft {
+  uint32 Amount = 1;
+  optional string ConversionMaterial = 2;
+  optional string ItemID = 3;
+  uint32 ProductionTime = 4;
+  optional string ResultMaterial = 5;
+  repeated string ResultMaterialTypes = 6;
+  string SkillID = 7;
+  repeated CraftComponents Components = 8;
+  optional CraftPrereqs Prereqs = 9;
+  optional CraftSkillgain SkillGain = 10;
+  optional CraftTechgain TechGain = 11;
+}
+
+// EmbeddedMaterial
+
+message EmbeddedMaterial {
+  int32 Highest = 1;
+  int32 Lowest = 2;
+  string Type = 3;
+  string WallSprite = 4;
+}
+
+// Events
+
+message Event {
+  string Trigger = 1;
+  int32 TriggerCount = 2;
+  string TriggerUnit = 3;
+  int32 NotBeforeDay = 4;
+  bool NotInPeaceful = 5;
+  
+  EventInit Init = 6;
+  optional EventOnAction OnFailure = 7;
+  EventOnAction OnSuccess = 8;
+}
+
+message EventInit {
+  string ID = 1;
+  string Title = 2;
+  string Message = 3;
+  float Min = 4;
+  float Max = 5;
+  bool Pause = 6;
+  string Require = 7;
+  string Location = 8;
+}
+
+message EventOnAction {
+  optional string Message = 1;
+  optional string Title = 2;
+
+  optional string Action = 3;
+  bool CenterCamera = 4;
+  optional string Count = 5;
+  bool Pause = 6;
+}
+
+
+message FarmUtil {
+  bool Buildable = 1;
+  optional string Item = 2;
+}
+
+message HairColor {
+  Color Color = 1;
+}
+
+message Hydraulic {
+  bool Buildable = 1;
+  optional string Item = 2;
+  optional string Sprite = 3;
+}
+
+message ItemGrouping {
+
+}
+
+message Item {
+  optional string SpriteID = 1;
+  string Category = 2;
+  string ItemGroup = 3;
+  uint32 StackSize = 4;
+  bool HasQuality = 5;
+  int32 Value = 6;
+  int32 EatValue = 7;
+  int32 DrinkValue = 8;
+  bool IsContainer = 9;
+  bool IsTool = 10;
+  int32 LightIntensity = 11;
+  bool HasComponents = 12;
+  repeated string AllowedMaterialTypes = 13;
+  repeated string AllowedMaterials = 14;
+  optional string AllowedContainers = 15;
+  optional string CarryContainer = 16;
+  int32 AttackValue = 17;
+  int32 BurnValue = 18;
+
+  repeated ItemTiles Tiles = 19;
+  repeated ItemComponents Components = 20;
+}
+
+message ItemTiles {
+  string Location = 1;
+  Position Offset = 2;
+  repeated string Required = 3;
+  repeated string Forbidden = 4;
+}
+
+message ItemComponents {
+  string ItemID = 1;
+  bool NoMaterial = 2;
+}
+
+message Job {
+  optional string ConstructionType = 1;
+  bool MayTrapGnome = 2;
+  optional string RequiredToolItemID = 3;
+  optional string RequiredToolLevel = 4;
+  optional string SkillGain = 5;
+  string SkillID = 6;
+  optional string TechGain = 7;
+  repeated Position WorkPosition = 8;
+  repeated JobTask Tasks = 9;
+  repeated JobSprite Sprites = 10;
+}
+
+message JobTask {
+  optional string ConstructionID = 1;
+  int32 Duration = 2;
+  // Only used for "CraftAtWorkshop", at least for now...
+  string DurationExpr = 3;
+  optional string Material = 4;
+  Position Offset = 5;
+  string Task = 6;
+}
+
+message JobSprite {
+  enum JobSpriteType {
+    Wall = 0;
+    Floor = 1;
+  }
+
+  Position Offset = 1;
+  bool Rotate = 2;
+  string SpriteID = 3;
+  optional JobSpriteType Type = 4;
+}
+
+message Lair {
+  string Type = 1;
+  string Size = 2;
+  string Layout = 3;
+  repeated LairSpawn Spawns = 4;
+}
+
+message LairSpawn {
+  string Type = 1;
+  Position Offset = 2;
+  int32 Level = 3;
+  int32 Rotation = 4;
+  int32 Gender = 5;
+}
+
+message Magic {
+  Color Color = 1;
+  string Spells = 2;
+}
+
+message MaterialToToolLevel {
+  uint32 RequiredToolLevel = 1;
+  uint32 ToolLevel = 2;
+}
+
+message Materials {
+  Color Color = 1;
+  optional float Strength = 2;
+  string Type = 3;
+  float Value = 4;
+}
+
+message Mechanism {
+  repeated string GUI = 1;
+  bool Buildable = 2;
+  optional string Item = 3;
+  optional string Sprite = 4;
+  int32 MaxFuel = 5;
+  int32 ProducePower = 6;
+  int32 ConsumePower = 7;
+  bool Anim = 8;
+  optional string WallSpriteOn = 9;
+  optional string WallSpriteOff = 10;
+  optional string FloorSpriteOn = 11;
+  optional string FloorSpriteOff = 12;
+  optional string EffectOn = 13;
+  optional string EffectOff = 14;
+}
+
+message Mission {
+  int32 TypeInt = 1;
+  int32 MinGnomes = 2;
+  int32 MaxGnomes = 3;
+  optional string Target = 4;
+  repeated string Actions = 5;
+}
+
+message Monster {
+  string BehaviorTree = 1;
+  optional string Food = 2;
+  repeated MonsterLevel Levels = 3;
+}
+
+message MonsterLevel {
+  int32 Level = 1;
+  string Sprite = 2;
+}
+
+message MoveSpeed {
+  repeated MoveSpeedSpeed Speeds = 1;
+}
+
+message MoveSpeedSpeed {
+  int32 Skill = 1;
+  int32 Speed = 2;
+}
+
+message NameRule {
+  repeated NameRuleData Rule = 1;
+}
+
+message NameRuleData {
+  repeated string Part = 1;
+}
+
+message Name {
+  repeated string Gender = 1;
+}
+
+message Need {
+  Color BarColor = 1;
+  float DecayPerMinute = 2;
+  float GainFromSleep = 3;
+  uint32 Max = 4;
+  string Creature = 5;
+  map<string, State> States = 6;
+
+  message State {
+    string Action = 1;
+    int32 Priority = 2;
+    string ThoughtBubble = 3;
+    float Threshold = 4;
+    repeated Modifier Modifiers = 5;
+
+    message Modifier {
+      enum ModifierType {
+        Attribute = 0;
+        Need = 1;
+      }
+      string Attr = 1;
+      ModifierType Type = 2;
+      int32 Value = 3;
+    }
+  }
+}
+
+message Plants {
+  enum PlantType {
+    Tree = 0;
+    Plant = 1;
+    Mushroom = 2;
+    UndergroundPlant = 3;
+  }
+
+  bool AllowInWild = 1;
+  optional string FruitItemID = 2;
+  string GrowsIn = 3;
+  repeated string GrowsInSeason = 4;
+  optional string IsKilledInSeason = 5;
+  bool IsLarge = 6;
+  optional string LosesFruitInSeason = 7;
+  string Material = 8;
+  int32 NumFruitsPerSeason = 9;
+  optional string SeedItemID = 10;
+  optional string ToolButtonSprite = 11;
+  PlantType Type = 12;
+
+  repeated OnFellAction OnFell = 13;
+  optional OnHarvestAction OnHarvest = 14;
+  // TODO: This feels like it should be a map, but some ID2 are repeated...
+  repeated State States = 15;
+
+  message OnFellAction {
+    string ItemID = 1;
+    string MaterialID = 2;
+    int32 Random = 3;
+  }
+
+  message OnHarvestAction {
+    string Action = 1;
+    repeated HarvestedItemData HarvestedItem = 2;
+
+    message HarvestedItemData {
+      float Chance = 1;
+      string ItemID = 2;
+      string MaterialID = 3;
+    }
+  }
+
+  message State {
+    string ID2 = 1;
+    bool Fell = 2;
+    float GrowTime = 3;
+    float GrowTimeDeviation = 4;
+    bool Harvest = 5;
+    optional string Layout = 6;
+    string SpriteID = 7;
+    bool HasAlpha = 8;
+    int32 LightIntensity = 9;
+  }
+}
+
+message Quality {
+  int32 Rank = 1;
+  float Modifier = 2;
+}
+
+message RandomMetal {
+  int32 Copper = 1;
+  int32 Tin = 2;
+  int32 Malachite = 3;
+  int32 Iron = 4;
+  int32 Lead = 5;
+  int32 Silver = 6;
+  int32 Gold = 7;
+  int32 Platinum = 8;
+}
+
+message Season {
+  string NextSeason = 1;
+  int32 NumDays = 2;
+  // TODO: date time type?
+  string SunRiseFirst = 3;
+  string SunsetFirst = 4;
+}
+
+message SkillGroup {
+  Color Color = 1;
+  int32 Position = 2;
+  repeated string SkillID = 3;
+  string Text = 4;
+}
+
+message Skill {
+  optional string RequiredToolItemID = 1;
+  string SkillGroup = 2;
+}
+
+message SoundGroup {
+  repeated SoundByMaterial SoundByMaterial = 1;
+}
+
+message SoundByMaterial {
+  string SoundFile = 1;
+  optional string Material = 2;
+}
+
+message Spell {
+  string EffectRequirements = 1;
+  string Effects = 2;
+  string Radius = 3;
+  string SkillID = 4;
+}
+
+message Sprite {
+  bool Anim = 1;
+  optional string BaseSprite = 2;
+  bool HasRandom = 3;
+  string Offset = 4;
+  bool Rot90 = 5;
+  optional string Tint = 6;
+  optional string DefaultMaterial = 7;
+  bool HasTransp = 8;
+  
+  repeated SpriteByMaterials ByMaterials = 9;
+  repeated SpriteByMaterialTypes ByMaterialTypes = 10;
+  repeated SpriteCombine Combine = 11;
+  repeated SpriteFrame Frames = 12;
+  repeated SpriteRandom Random = 13;
+  repeated SpriteRotation Rotations = 14;
+  repeated SpriteSeason Seasons = 15;
+}
+
+message SpriteByMaterials {
+  optional string BaseSprite = 1;
+  string Effect = 2;
+  string MaterialID = 3;
+  optional string Sprite = 4;
+}
+
+message SpriteByMaterialTypes {
+  optional string BaseSprite = 1;
+  string MaterialType = 2;
+  optional string Sprite = 3;
+}
+
+message SpriteCombine {
+  optional string BaseSprite = 1;
+  optional Offset Offset = 2;
+  optional string Sprite = 3;
+  optional string Tint = 4;
+}
+
+message SpriteFrame {
+  string BaseSprite = 1;
+}
+
+message SpriteRandom {
+  oneof RandomSprite {
+    string BaseSprite = 1;
+    string Sprite = 2;
+  }
+  float Weight = 3;
+}
+
+message SpriteRotation {
+  string BaseSprite = 1;
+  optional string Effect = 2;
+  optional RotationType Rotation = 3;
+  optional string Sprite = 4;
+}
+
+message SpriteSeason {
+  optional string BaseSprite = 1;
+  string Season = 2;
+
+  repeated SpriteSeasonRotation Rotations = 3;
+}
+
+message SpriteSeasonRotation {
+  string BaseSprite = 1;
+  optional RotationType Rotation = 2;
+}
+
+
+message TerrainMaterial {
+  string FloorSprite = 1;
+  int32 Highest = 2;
+  int32 Lowest = 3;
+  string ShortWallSprite = 4;
+  string Type = 5;
+  string WallSprite = 6;
+}
+
+message Time {
+  int32 Value = 1;
+}
+
+message Trader {
+  repeated TraderItem Items = 2;
+}
+
+message TraderItem {
+  optional string Gender = 1;
+  string Item = 2;
+  optional string Material = 3;
+  int32 Max = 4;
+  int32 Min = 5;
+  optional string Type = 6;
+  int32 Value = 7;
+}
+
+message Translation {
+  string Text = 1;
+}
+
+message TreeLayout {
+  repeated TreeLayoutLayout Layout = 1;
+}
+message TreeLayoutLayout {
+  bool FruitPos = 1;
+  Position Offset = 2;
+  optional RotationType Rotation = 3;
+  string SpriteID = 4;
+}
+
+message Uniform {
+  int32 Sides = 1;
+  repeated UniformSlot Slots = 2;
+}
+
+message UniformSlot {
+  string Type = 1;
+  string ItemID = 2;
+  string MaterialType = 3;
+}
+
+message Uniforms {
+  string Name = 1;
+  bool UserDefined = 2;
+}
+
+message Utility {
+  bool Buildable = 1;
+  optional string Item = 2;
+}
+
+message Word_Verb {
+  string PastParticiple = 1;
+  string PresentParticiple = 2;
+  string SimplePast = 3;
+  string SimplePresent = 4;
+}
+
+message Word_Number {
+  int32 Number = 1;
+}
+
+message Word_Noun {
+  string Plural = 1;
+}
+
+message Word_ActionNoun {
+  string Plural = 1;
+}
+
+message Workshop {
+  repeated string Crafts = 1;
+  optional string GUI = 2;
+  Position InputTile = 3;
+  Position OutputTile = 4;
+  Size Size = 5;
+  bool NoAutoGenerate = 6;
+  optional string Icon = 7;
+  string Tab = 8;
+
+  repeated WorkshopComponent Components = 9;
+}
+
+message WorkshopComponent {
+  int32 Amount = 1;
+  optional string ItemID = 2;
+  repeated string MaterialItem = 3;
+  Position Offset = 4;
+  optional string Required = 5;
+  optional string Forbidden = 6;
+  optional string SpriteID = 7;
+  optional string SpriteID2 = 8;
+  optional string Type = 9;
+  optional RotationType WallRotation = 10;
+  bool IsFloor = 11;
+}

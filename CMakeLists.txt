@@ -32,9 +32,9 @@ if (APPLE)
 endif()
 
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy /Gw /Oi /MP /GS- /W3 /permissive- /await:strict /Zc:__cplusplus /Zc:rvalueCast /Zc:strictStrings /Zc:referenceBinding /Zc:ternary /Zi /w24458 /w34456 /w24702")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy /Gw /Oi /MP /GS- /W3 /bigobj /permissive- /await:strict /Zc:__cplusplus /Zc:rvalueCast /Zc:strictStrings /Zc:referenceBinding /Zc:ternary /Zi /w24458 /w34456 /w24702")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /CGTHREADS:8 /DEBUG /INCREMENTAL:NO /OPT:REF /OPT:ICF")
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob2")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob3")
 	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
@@ -50,6 +50,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(PalSigslot CONFIG REQUIRED)
 find_package(platform_folders CONFIG REQUIRED)
+find_package(protobuf CONFIG REQUIRED)
 find_package(pugixml CONFIG REQUIRED)
 find_package(range-v3 CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
@@ -92,7 +93,7 @@ set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
 add_subdirectory(content)
 add_subdirectory(shaders)
 
-add_dependencies(${PROJECT_NAME} content shaders)
+add_dependencies(${PROJECT_NAME} IngnomiaContent IngnomiaShaders)
 
 # Copy content to target directory
 add_custom_command(TARGET ${PROJECT_NAME}
@@ -139,6 +140,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		Ingnomia::BehaviorTree
+		Ingnomia::Protocol
 
 		Qt5::Core
 		Qt5::Sql

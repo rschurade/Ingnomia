@@ -8,6 +8,7 @@ file(
 	"*.otf"
 	"*.png"
 	"*.sql"
+	"*.textproto"
 	"*.wav"
 	"*License*"
 )
@@ -20,7 +21,7 @@ foreach ( FILE ${SOURCE_LIST} )
 	)
 endforeach()
 
-add_custom_target(content
+add_custom_target(IngnomiaContent
 	SOURCES
 		${SOURCE_LIST}
 		${CMAKE_CURRENT_LIST_FILE}

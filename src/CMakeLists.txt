@@ -17,6 +17,7 @@ target_sources(${PROJECT_NAME}
 )
 
 add_subdirectory(base/behaviortree)
+add_subdirectory(protocol)
 
 if (NOT APPLE)
 	target_precompile_headers(${PROJECT_NAME}

@@ -113,7 +113,7 @@ macro(compile_shader FILE TYPE)
 	)
 endmacro()
 
-add_custom_target(shaders
+add_custom_target(IngnomiaShaders
 	SOURCES
 		${FS_SOURCE_LIST}
 		${VS_SOURCE_LIST}
