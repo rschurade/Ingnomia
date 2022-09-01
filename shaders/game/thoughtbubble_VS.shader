@@ -11,7 +11,7 @@ uniform vec4 uRenderMax;
 
 uniform vec4 tile;
 
-uniform int uWorldRotation;
+uniform uint uWorldRotation;
 
 uvec3 rotate(uvec4 pos)
 {

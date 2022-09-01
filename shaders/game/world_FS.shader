@@ -52,12 +52,12 @@ $input v_texcoord1, v_texcoord2, v_texcoord3
 
 SAMPLER2DARRAY(uTexture, 0);
 
-uniform int uTickNumber;
+uniform uint uTickNumber;
 
-uniform int uUndiscoveredTex;
-uniform int uWaterTex;
+uniform uint uUndiscoveredTex;
+uniform uint uWaterTex;
 
-uniform int uWorldRotation;
+uniform uint uWorldRotation;
 uniform bool uOverlay;
 uniform bool uDebug;
 uniform bool uWallsLowered;

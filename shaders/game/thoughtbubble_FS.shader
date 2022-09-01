@@ -4,7 +4,7 @@ $input v_texcoord0
 
 SAMPLER2DARRAY(uTexture0, 0);
 
-uniform int uType;
+uniform uint uType;
 
 void main()
 {

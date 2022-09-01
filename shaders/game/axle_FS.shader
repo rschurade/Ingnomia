@@ -2,11 +2,11 @@ $input v_texcoord0
 
 #include <bgfx_shader.sh>
 
-uniform int uWorldRotation;
-uniform int uTickNumber;
+uniform uint uWorldRotation;
+uniform uint uTickNumber;
 
-uniform int uSpriteID;
-uniform int uRotation;
+uniform uint uSpriteID;
+uniform uint uRotation;
 uniform bool uAnim;
 
 SAMPLER2DARRAY(uTexture, 0);

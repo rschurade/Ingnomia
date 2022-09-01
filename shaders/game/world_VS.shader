@@ -49,7 +49,7 @@ $output v_texcoord1, v_texcoord2, v_texcoord3
 uniform vec4 uWorldSize;
 uniform vec4 uRenderMin;
 uniform vec4 uRenderMax;
-uniform int uWorldRotation;
+uniform uint uWorldRotation;
 
 // DO NOT CHANGE, must match game internal layout
 struct TileData {
