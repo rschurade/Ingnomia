@@ -58,6 +58,11 @@ AggregatorSound::AggregatorSound( EventConnector* parent ) :
 
 AggregatorSound::~AggregatorSound()
 {
+	AL::Context::Lock lock( m_audioContext );
+	m_activeEffects.clear();
+	m_audioListener.reset();
+	m_occlusionFilter.clear();
+	m_buffers.clear();
 }
 
 void AggregatorSound::init( Game* game )
