@@ -905,7 +905,7 @@ void MainWindowRenderer::updateTextures()
 
 		for ( int i = 0; i < m_texesUsed; ++i )
 		{
-			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).cbegin() );
+			uploadArrayTexture( i, maxArrayTextures, Global::eventConnector->game()->sf()->pixelData( i ).constData() );
 		}
 	}
 }

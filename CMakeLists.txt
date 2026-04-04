@@ -19,7 +19,7 @@ project(Ingnomia
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
-find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql Gui Widgets)
+find_package(Qt6 REQUIRED QUIET COMPONENTS Core Xml Sql Gui Widgets)
 find_package(OpenGL REQUIRED)
 
 find_package(Steam REQUIRED)
@@ -86,11 +86,11 @@ add_subdirectory(3rdparty) # 3rd party dependencies
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
-		Qt5::Core
-		Qt5::Xml
-		Qt5::Sql
-		Qt5::Gui
-		Qt5::Widgets
+		Qt6::Core
+		Qt6::Xml
+		Qt6::Sql
+		Qt6::Gui
+		Qt6::Widgets
 		OpenGL::GL
 		glad
 		Steam

@@ -29,10 +29,10 @@
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QFileIconProvider>
 #include <QStandardPaths>
+#include <QColorSpace>
 #include <QSurfaceFormat>
 #include <QWindow>
 #include <QtWidgets/QApplication>
@@ -130,7 +130,7 @@ void logOutput( QtMsgType type, const QMessageLogContext& context, const QString
 	{
 		std::lock_guard<std::mutex> lock( guard );
 		QTextStream ts( outFile );
-		ts << filedate << " " << message << endl;
+		ts << filedate << " " << message << Qt::endl;
 	}
 }
 
@@ -146,11 +146,7 @@ int main( int argc, char* argv[] )
 #endif // GIT_REPO
 
 	// Disable use of ANGLE, as it supports OpenGL 3.x at most
-	QCoreApplication::setAttribute( Qt::AA_UseDesktopOpenGL );
-	// Require use of shared base context, so OpenGL context won't get invalidated on fullscreen toggles etc.
 	QCoreApplication::setAttribute( Qt::AA_ShareOpenGLContexts );
-	// Enable correct render surface scaling with HDPI setups.
-	QCoreApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 	// Enable fractional DPI support (e.g. 150%)
 	QGuiApplication::setHighDpiScaleFactorRoundingPolicy( Qt::HighDpiScaleFactorRoundingPolicy::PassThrough );
 
@@ -207,7 +203,7 @@ int main( int argc, char* argv[] )
 	auto defaultFormat = QSurfaceFormat::defaultFormat();
 	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
 	defaultFormat.setSwapBehavior( QSurfaceFormat::TripleBuffer );
-	defaultFormat.setColorSpace( QSurfaceFormat::sRGBColorSpace );
+	defaultFormat.setColorSpace( QColorSpace::SRgb );
 	defaultFormat.setDepthBufferSize( 16 );
 	// 0 = unthrottled, 1 = vysnc full FPS, 2 = vsync half FPS
 	defaultFormat.setSwapInterval( 0 );

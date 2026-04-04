@@ -48,7 +48,10 @@ PastureProperties::PastureProperties( QVariantMap& in )
 	maxTroughCapacity = in.value( "MaxTroughCapacity" ).toInt();
 	troughContent     = in.value( "TroughContent" ).toInt();
 
-	foodSettings = in.value( "Food" ).toStringList().toSet();
+	{
+		auto list = in.value( "Food" ).toStringList();
+		foodSettings = QSet<QString>( list.begin(), list.end() );
+	}
 
 	animalSize = DB::select( "PastureSize", "Animals", animalType ).toInt();
 }

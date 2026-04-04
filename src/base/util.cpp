@@ -32,6 +32,7 @@
 
 #include <QComboBox>
 #include <QDebug>
+#include <QRandomGenerator>
 #include <QIcon>
 #include <QJsonDocument>
 #include <QPainter>
@@ -771,7 +772,7 @@ QString Util::getRandomString( int length )
 	QString randomString;
 	for ( int i = 0; i < length; ++i )
 	{
-		int index      = qrand() % possibleCharacters.length();
+		int index      = QRandomGenerator::global()->bounded( possibleCharacters.length() );
 		QChar nextChar = possibleCharacters.at( index );
 		randomString.append( nextChar );
 	}

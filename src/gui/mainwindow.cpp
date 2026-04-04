@@ -398,7 +398,7 @@ void MainWindow::keyboardMove()
 
 void MainWindow::mouseMoveEvent( QMouseEvent* event )
 {
-	auto gp = this->mapFromGlobal( event->globalPos() );
+	auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
 	if ( m_view )
 	{
 		// Mouse movement needs to be handled by both Qt and Noesis, to correctly handle ongoing mouse gestures
@@ -454,7 +454,7 @@ void MainWindow::onInitViewAfterLoad()
 void MainWindow::mousePressEvent( QMouseEvent* event )
 {
 	//qDebug() << "mousePressEvent";
-	auto gp = this->mapFromGlobal( event->globalPos() );
+	auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
 	if ( event->button() & Qt::LeftButton )
 	{
 		if ( m_view )
@@ -501,7 +501,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 	{
 		if ( m_view )
 		{
-			auto gp = this->mapFromGlobal( event->globalPos() );
+			auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
 			if ( isOverGui( gp.x(), gp.y() ) || !m_leftDown )
 			{
 				if ( m_view->MouseButtonUp( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Left ) )
@@ -526,7 +526,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 	{
 		if ( m_view )
 		{
-			auto gp = this->mapFromGlobal( event->globalPos() );
+			auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
 			if ( isOverGui( gp.x(), gp.y() ) || !m_rightDown )
 			{
 				if ( m_view->MouseButtonUp( gp.x(), gp.y(), Noesis::MouseButton::MouseButton_Right ) )
@@ -547,28 +547,27 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 
 void MainWindow::wheelEvent( QWheelEvent* event )
 {
-	QWheelEvent* wEvent = event; //dynamic_cast<QWheelEvent*>( event );
 	if ( m_view )
 	{
-		auto gp = this->mapFromGlobal( event->globalPos() );
+		auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
+		int delta = event->angleDelta().y();
 		if ( isOverGui( gp.x(), gp.y() ) )
 		{
-			if ( m_view->MouseWheel( gp.x(), gp.y(), wEvent->delta() ) )
+			if ( m_view->MouseWheel( gp.x(), gp.y(), delta ) )
 			{
 				idleRenderTick();
 			}
 		}
 		else
 		{
-			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() )
+			if ( (bool)( event->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() )
 			{
 				// Scale the view / do the zoom
-				auto delta = wEvent->delta();
 				m_renderer->scale( pow( 1.002, delta ) );
 			}
 			else
 			{
-				if ( wEvent->delta() > 0 )
+				if ( delta > 0 )
 				{
 					keyboardZPlus( event->modifiers() & Qt::ShiftModifier );
 				}

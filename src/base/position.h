@@ -208,7 +208,7 @@ struct Position
 Q_DECLARE_TYPEINFO( Position, Q_PRIMITIVE_TYPE );
 Q_DECLARE_METATYPE( Position );
 
-constexpr uint qHash( const Position& key, uint seed )
+inline size_t qHash( const Position& key, size_t seed )
 {
 	return qHash( key.toHashBase(), seed );
 }
