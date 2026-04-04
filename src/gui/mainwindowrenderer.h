@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -23,20 +23,14 @@
 
 #include <QElapsedTimer>
 #include <QMatrix4x4>
-#include <QOpenGLBuffer>
-#include <QOpenGLExtraFunctions>
-#include <QOpenGLFunctions>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLWindow>
+#include <QObject>
 
-#include <QOpenGLFunctions_4_3_Core>
+#include <glad/gl.h>
 
 struct Position;
-class QOpenGLTexture;
 class MainWindow;
 
-class MainWindowRenderer : public QObject, protected QOpenGLFunctions_4_3_Core
+class MainWindowRenderer : public QObject
 {
 	Q_OBJECT
 
@@ -48,14 +42,15 @@ public:
 	float scale() { return m_scale; }
 	int moveX() { return m_moveX; }
 	int moveY() { return m_moveY; }
+	bool isInMenu() const { return m_inMenu; }
 
 protected:
-	QOpenGLVertexArrayObject m_vao;
-	QScopedPointer<QOpenGLShaderProgram> m_worldShader;
-	QScopedPointer<QOpenGLShaderProgram> m_worldUpdateShader;
-	QScopedPointer<QOpenGLShaderProgram> m_thoughtBubbleShader;
-	QScopedPointer<QOpenGLShaderProgram> m_selectionShader;
-	QScopedPointer<QOpenGLShaderProgram> m_axleShader;
+	GLuint m_vao = 0;
+	GLuint m_worldShader = 0;
+	GLuint m_worldUpdateShader = 0;
+	GLuint m_thoughtBubbleShader = 0;
+	GLuint m_selectionShader = 0;
+	GLuint m_axleShader = 0;
 
 	GLuint m_textures[32] = { 0 };
 	GLuint m_tileBo       = 0;
@@ -67,15 +62,15 @@ protected:
 
 private:
 	QString copyShaderToString( QString name );
-	QOpenGLShaderProgram* initShader( QString name );
-	QOpenGLShaderProgram* initComputeShader( QString name );
+	GLuint initShader( QString name );
+	GLuint initComputeShader( QString name );
 	bool initShaders();
 
 	void initTextures();
 	void initWorld();
 
 	void paintTiles();
-	void setCommonUniforms( QOpenGLShaderProgram* shader );
+	void setCommonUniforms( GLuint shader );
 	void paintSelection();
 	void paintThoughtBubbles();
 	void paintAxles();
@@ -139,6 +134,12 @@ private:
 	ThoughtBubbleInfo m_thoughBubbles;
 	AxleDataInfo m_axleData;
 	QVector<QVector<TileDataUpdate>> m_pendingUpdates;
+
+	// Shader uniform setting helpers
+	void setUniformi( GLuint shader, const char* name, GLint value );
+	void setUniformf( GLuint shader, const char* name, GLfloat value );
+	void setUniformui( GLuint shader, const char* name, GLuint value );
+	void setUniformMatrix4fv( GLuint shader, const char* name, const QMatrix4x4& matrix );
 
 public slots:
 	void initializeGL();

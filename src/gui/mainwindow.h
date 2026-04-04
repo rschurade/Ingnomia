@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -23,8 +23,10 @@
 #include <NsGui/IView.h>
 
 #include <QElapsedTimer>
-#include <QOpenGLWindow>
+#include <QWindow>
 #include <QTimer>
+
+class QOpenGLContext;
 
 enum class KeyboardMove : unsigned char
 {
@@ -61,10 +63,9 @@ inline KeyboardMove& operator-=( KeyboardMove& a, KeyboardMove b )
 }
 
 struct Position;
-class QOpenGLTexture;
 class MainWindowRenderer;
 
-class MainWindow : public QOpenGLWindow
+class MainWindow : public QWindow
 {
 	Q_OBJECT
 
@@ -77,10 +78,14 @@ public:
 
 	MainWindowRenderer* renderer();
 
+	QOpenGLContext* context() const { return m_context; }
+	void makeCurrent();
+	void doneCurrent();
+
 protected:
-	void paintGL() override;
-	void resizeGL( int w, int h ) override;
-	void initializeGL() override;
+	bool event( QEvent* event ) override;
+	void exposeEvent( QExposeEvent* event ) override;
+	void resizeEvent( QResizeEvent* event ) override;
 
 	void keyPressEvent( QKeyEvent* event ) override;
 	void keyReleaseEvent( QKeyEvent* event ) override;
@@ -92,6 +97,10 @@ protected:
 	void focusOutEvent( QFocusEvent* e ) override;
 
 private:
+	void initializeGL();
+	void paintGL();
+	void resizeGL( int w, int h );
+
 	void noesisInit();
 
 	void keyboardZPlus( bool shift = false, bool ctrl = false );
@@ -105,6 +114,9 @@ private:
 	bool m_isFullScreen = false;
 
 	void onExit();
+
+	QOpenGLContext* m_context = nullptr;
+	bool m_glInitialized = false;
 
 	QTimer* m_timer = nullptr;
 	QElapsedTimer m_keyboardMovementTimer;
@@ -143,7 +155,7 @@ public slots:
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );
-	
+
 
 	void signalKeyPress( int key );
 	void signalUpdateRenderOptions();

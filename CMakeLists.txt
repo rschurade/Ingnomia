@@ -19,7 +19,8 @@ project(Ingnomia
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
-find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
+find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql Gui Widgets)
+find_package(OpenGL REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
@@ -88,7 +89,10 @@ target_link_libraries(${PROJECT_NAME}
 		Qt5::Core
 		Qt5::Xml
 		Qt5::Sql
-		Qt5::OpenGL
+		Qt5::Gui
+		Qt5::Widgets
+		OpenGL::GL
+		glad
 		Steam
 		NoesisApp
 		fastnoise

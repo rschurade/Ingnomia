@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -81,6 +81,11 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QOpenGLContext>
+#include <QSurfaceFormat>
+#include <QExposeEvent>
+
+#include <glad/gl.h>
 
 #include <string>
 
@@ -89,16 +94,30 @@ static MainWindow* instance;
 static QSet<QString> m_noesisMessages;
 
 MainWindow::MainWindow( QWidget* parent ) :
-	QOpenGLWindow()
+	QWindow()
 {
 	qDebug() << "Create main window.";
+
+	// Set up OpenGL surface format
+	QSurfaceFormat format;
+	format.setRenderableType( QSurfaceFormat::OpenGL );
+	format.setProfile( QSurfaceFormat::CoreProfile );
+	format.setVersion( 4, 3 );
+	format.setSwapBehavior( QSurfaceFormat::DoubleBuffer );
+	format.setDepthBufferSize( 24 );
+	format.setStencilBufferSize( 8 );
+	format.setSwapInterval( 0 ); // Disable vsync for max performance
+	setFormat( format );
+
+	setSurfaceType( QWindow::OpenGLSurface );
+
 	connect( Global::eventConnector, &EventConnector::signalExit, this, &MainWindow::onExit );
 	connect( this, &MainWindow::signalWindowSize, Global::eventConnector, &EventConnector::onWindowSize );
 	connect( this, &MainWindow::signalViewLevel, Global::eventConnector, &EventConnector::onViewLevel );
 	connect( this, &MainWindow::signalKeyPress, Global::eventConnector, &EventConnector::onKeyPress );
 	connect( this, &MainWindow::signalTogglePause, Global::eventConnector, &EventConnector::onTogglePause );
 	connect( this, &MainWindow::signalUpdateRenderOptions, Global::eventConnector, &EventConnector::onUpdateRenderOptions );
-		
+
 	connect( this, &MainWindow::signalMouse, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onMouse, Qt::QueuedConnection );
 	connect( this, &MainWindow::signalLeftClick, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onLeftClick, Qt::QueuedConnection );
 	connect( this, &MainWindow::signalRightClick, Global::eventConnector->aggregatorSelection(), &AggregatorSelection::onRightClick, Qt::QueuedConnection );
@@ -125,14 +144,37 @@ MainWindow::~MainWindow()
 		Global::cfg->set( "WindowPosX", this->position().x() );
 		Global::cfg->set( "WindowPosY", this->position().y() );
 	}
-	
+
 	IO::saveConfig();
+
+	if ( m_context )
+	{
+		delete m_context;
+		m_context = nullptr;
+	}
+
 	instance = nullptr;
 }
 
 MainWindow& MainWindow::getInstance()
 {
 	return *instance;
+}
+
+void MainWindow::makeCurrent()
+{
+	if ( m_context )
+	{
+		m_context->makeCurrent( this );
+	}
+}
+
+void MainWindow::doneCurrent()
+{
+	if ( m_context )
+	{
+		m_context->doneCurrent();
+	}
 }
 
 void MainWindow::onExit()
@@ -142,7 +184,7 @@ void MainWindow::onExit()
 
 void MainWindow::toggleFullScreen()
 {
-	QOpenGLWindow* w = this;
+	QWindow* w = this;
 	m_isFullScreen = !m_isFullScreen;
 	if ( m_isFullScreen )
 	{
@@ -161,7 +203,7 @@ void MainWindow::toggleFullScreen()
 
 void MainWindow::onFullScreen( bool value )
 {
-	QOpenGLWindow* w = this;
+	QWindow* w = this;
 	m_isFullScreen = value;
 	Global::cfg->set( "fullscreen", value );
 	if ( value )
@@ -184,7 +226,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 	//qDebug() << "keyPressEvent" << event->key() << " " << event->text() << noesisKey;
 
 	bool ret = false;
-	
+
 	if( qtKey != 32 )
 	{
 		ret = m_view->KeyDown( noesisKey );
@@ -198,7 +240,7 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 			ret |= m_view->Char( c.unicode() );
 		}
 	}
-	
+
 	if ( ret )
 	{
 		idleRenderTick();
@@ -404,7 +446,7 @@ void MainWindow::onInitViewAfterLoad()
 	m_moveX = GameState::moveX;
 	m_moveY = GameState::moveY;
 	m_renderer->move( m_moveX, m_moveY );
-	
+
 	m_renderer->setScale( GameState::scale );
 	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
@@ -518,7 +560,7 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 		}
 		else
 		{
-			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() ) 
+			if ( (bool)( wEvent->modifiers() & Qt::ControlModifier ) ^ Global::cfg->get( "toggleMouseWheel" ).toBool() )
 			{
 				// Scale the view / do the zoom
 				auto delta = wEvent->delta();
@@ -614,8 +656,7 @@ void MainWindow::noesisInit()
 	Noesis::GUI::DisableInspector();
 
 	// Noesis initialization. This must be the first step before using any NoesisGUI functionality
-	Noesis::GUI::SetLicense( licenseName, licenseKey );
-	Noesis::GUI::Init();
+	Noesis::GUI::Init( licenseName, licenseKey );
 
 	installResourceProviders();
 
@@ -658,22 +699,62 @@ void MainWindow::idleRenderTick()
 	// Check for ongoing keyboard movement
 	keyboardMove();
 
-	// Check if redraw is required
-	if ( noesisUpdate() && !m_pendingUpdate )
+	// Always tick Noesis to keep layout/animations current
+	noesisUpdate();
+
+	if ( !m_pendingUpdate )
 	{
-		// Trigger rendering
 		m_pendingUpdate = true;
-		update();
+		requestUpdate();
 	}
-	else
+}
+
+bool MainWindow::event( QEvent* event )
+{
+	if ( event->type() == QEvent::UpdateRequest )
 	{
-		// check again later
-		m_timer->start( 20 );
+		if ( isExposed() && m_glInitialized )
+		{
+			paintGL();
+		}
+		return true;
+	}
+	return QWindow::event( event );
+}
+
+void MainWindow::exposeEvent( QExposeEvent* event )
+{
+	Q_UNUSED( event );
+
+	if ( isExposed() )
+	{
+		if ( !m_glInitialized )
+		{
+			initializeGL();
+			m_glInitialized = true;
+		}
+
+		paintGL();
+	}
+}
+
+void MainWindow::resizeEvent( QResizeEvent* event )
+{
+	QWindow::resizeEvent( event );
+
+	if ( m_glInitialized )
+	{
+		resizeGL( event->size().width(), event->size().height() );
 	}
 }
 
 void MainWindow::paintGL()
 {
+	if ( !m_context )
+		return;
+
+	makeCurrent();
+
 	// Apply latest position
 	keyboardMove();
 
@@ -691,22 +772,23 @@ void MainWindow::paintGL()
 	// because noesis changes it. In this case only framebuffer and viewport need to be restored
 	if ( m_view->GetRenderer()->RenderOffscreen() )
 	{
-		// Restore state managed by QOpenGLWindow
-		makeCurrent();
-		context()->functions()->glViewport( 0, 0, this->width() * devicePixelRatioF(), this->height() * devicePixelRatioF() );
+		// Restore state - bind default framebuffer and set viewport
+		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+		glViewport( 0, 0, this->width() * devicePixelRatio(), this->height() * devicePixelRatio() );
 	}
 
 	// Rendering is done in the active framebuffer
 	m_view->GetRenderer()->Render();
 
-	m_timer->start( 0 );
+	m_context->swapBuffers( this );
+
+	// Use slower tick rate in menu (no game world to render)
+	m_timer->start( m_renderer->isInMenu() ? 16 : 0 );
 	m_pendingUpdate = false;
 }
 
 void MainWindow::resizeGL( int w, int h )
 {
-	QOpenGLWindow::resizeGL( w, h );
-
 	if( !m_isFullScreen )
 	{
 		Global::cfg->set( "WindowWidth", w );
@@ -719,11 +801,12 @@ void MainWindow::resizeGL( int w, int h )
 	}
 	m_renderer->resize( this->width(), this->height() );
 
-	context()->functions()->glViewport( 0, 0, this->width() * devicePixelRatioF(), this->height() * devicePixelRatioF() );
+	makeCurrent();
+	glViewport( 0, 0, this->width() * devicePixelRatio(), this->height() * devicePixelRatio() );
 
 	emit signalWindowSize( this->width(), this->height() );
 
-	update();
+	requestUpdate();
 }
 
 void MainWindow::onSetWindowSize( int width, int height )
@@ -737,13 +820,32 @@ void MainWindow::redraw()
 	{
 		// Trigger rendering
 		m_pendingUpdate = true;
-		update();
+		requestUpdate();
 	}
 }
 
 void MainWindow::initializeGL()
 {
-	QOpenGLWindow::initializeGL();
+	// Create and initialize OpenGL context
+	m_context = new QOpenGLContext( this );
+	m_context->setFormat( requestedFormat() );
+	if ( !m_context->create() )
+	{
+		qCritical() << "Failed to create OpenGL context";
+		return;
+	}
+
+	makeCurrent();
+
+	// Initialize GLAD
+	auto gladLoader = []( const char* name ) -> GLADapiproc {
+		return reinterpret_cast<GLADapiproc>( QOpenGLContext::currentContext()->getProcAddress( name ) );
+	};
+	if ( !gladLoadGL( gladLoader ) )
+	{
+		qCritical() << "Failed to initialize GLAD";
+		return;
+	}
 
 	m_renderer = new MainWindowRenderer( this );
 	m_renderer->initializeGL();
@@ -752,7 +854,7 @@ void MainWindow::initializeGL()
 	m_timer = new QTimer( this );
 	connect( m_timer, &QTimer::timeout, this, &MainWindow::idleRenderTick );
 
-	update();
+	requestUpdate();
 }
 
 MainWindowRenderer* MainWindow::renderer()
