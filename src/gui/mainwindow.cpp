@@ -851,6 +851,10 @@ void MainWindow::initializeGL()
 	m_renderer->initializeGL();
 
 	noesisInit();
+
+	// Trigger initial resize — QOpenGLWindow did this automatically, QWindow does not
+	resizeGL( width(), height() );
+
 	m_timer = new QTimer( this );
 	connect( m_timer, &QTimer::timeout, this, &MainWindow::idleRenderTick );
 
