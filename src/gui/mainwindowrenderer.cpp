@@ -725,10 +725,10 @@ void MainWindowRenderer::paintSelection()
 
 	for ( const auto& sd : m_selectionData )
 	{
-		GLint tile = glGetUniformLocation( m_axleShader, "tile" );
+		GLint tile = glGetUniformLocation( m_selectionShader, "tile" );
 		glUniform3ui( tile, sd.pos.x, sd.pos.y, sd.pos.z );
-		setUniformui( m_selectionShader, "uSpriteID", sd.spriteID );
-		setUniformui( m_selectionShader, "uRotation", sd.localRot );
+		setUniformi( m_selectionShader, "uSpriteID", (GLint)sd.spriteID );
+		setUniformi( m_selectionShader, "uRotation", (GLint)sd.localRot );
 		setUniformi( m_selectionShader, "uValid", sd.valid ? 1 : 0 );
 
 		glDrawArraysInstancedBaseInstance( GL_TRIANGLE_STRIP, 0, 4, 1, 0 );
@@ -754,7 +754,7 @@ void MainWindowRenderer::paintThoughtBubbles()
 	{
 		if ( thoughtBubble.pos.z <= m_viewLevel )
 		{
-			GLint tile = glGetUniformLocation( m_axleShader, "tile" );
+			GLint tile = glGetUniformLocation( m_thoughtBubbleShader, "tile" );
 			glUniform3ui( tile, thoughtBubble.pos.x, thoughtBubble.pos.y, thoughtBubble.pos.z );
 			setUniformui( m_thoughtBubbleShader, "uType", thoughtBubble.sprite );
 			glDrawArraysInstancedBaseInstance( GL_TRIANGLE_STRIP, 0, 4, 1, 0 );
