@@ -31,6 +31,7 @@
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 #include "../game/mechanismmanager.h"
+#include "../game/roommanager.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
@@ -189,6 +190,18 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				m_tileInfo.items.append( git );
 			}
 		}
+		// Show installed objects that are no longer live items (doors, lights, farm utils)
+		if ( tile.flags & TileFlag::TF_DOOR )
+		{
+			Door* door = g->rm()->getDoor( pos.toInt() );
+			if ( door )
+			{
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + door->source.materialSID ) + " " + S::s( "$ItemName_" + door->source.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+
 		if ( ( m_tileInfo.numAnimals + m_tileInfo.numGnomes + m_tileInfo.numMonsters ) > 0 )
 		{
 			if ( m_tileInfo.numGnomes )
