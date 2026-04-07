@@ -975,7 +975,6 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		tile.wallType      = WallType::WT_CONSTRUCTED;
 		if ( sprite->anim )
 		{
-			//qDebug() << "set anim";
 			tile.wallSpriteUID += ANIM_BIT;
 		}
 	}

@@ -127,18 +127,19 @@ void MainWindowRenderer::initializeGL()
 		// Only want to handle these from dedicated graphic debugger
 		if ( type == GL_DEBUG_TYPE_PUSH_GROUP || type == GL_DEBUG_TYPE_POP_GROUP )
 			return;
-		// Suppress high-frequency errors to keep log readable
+		// Rate-limit GL error messages to avoid log spam
+		// Known issue: Noesis GUI generates GL_INVALID_OPERATION errors
 		static int glErrorCount = 0;
 		if ( type == GL_DEBUG_TYPE_ERROR )
 		{
 			++glErrorCount;
 			if ( glErrorCount <= 5 )
 			{
-				qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message << "(count:" << glErrorCount << ")";
+				qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
 			}
 			else if ( glErrorCount == 6 )
 			{
-				qDebug() << "[OpenGL] Suppressing further GL_ERROR messages. Total so far:" << glErrorCount;
+				qDebug() << "[OpenGL] Suppressing further GL_ERROR messages";
 			}
 			return;
 		}
@@ -661,8 +662,8 @@ void MainWindowRenderer::setCommonUniforms( GLuint shader )
 		glUniform3ui( indexMax, m_volume.max.x, m_volume.max.y, m_volume.max.z );
 	}
 	setUniformMatrix4fv( shader, "uTransform", m_projectionMatrix );
-	setUniformui( shader, "uWorldRotation", (GLuint)m_rotation );
-	setUniformui( shader, "uTickNumber", (GLuint)GameState::tick );
+	setUniformi( shader, "uWorldRotation", (GLint)m_rotation );
+	setUniformi( shader, "uTickNumber", (GLint)GameState::tick );
 }
 
 void MainWindowRenderer::paintTiles()
@@ -771,7 +772,7 @@ void MainWindowRenderer::paintThoughtBubbles()
 		{
 			GLint tile = glGetUniformLocation( m_thoughtBubbleShader, "tile" );
 			glUniform3ui( tile, thoughtBubble.pos.x, thoughtBubble.pos.y, thoughtBubble.pos.z );
-			setUniformui( m_thoughtBubbleShader, "uType", thoughtBubble.sprite );
+			setUniformi( m_thoughtBubbleShader, "uType", (GLint)thoughtBubble.sprite );
 			glDrawArraysInstancedBaseInstance( GL_TRIANGLE_STRIP, 0, 4, 1, 0 );
 		}
 	}
@@ -785,7 +786,7 @@ void MainWindowRenderer::paintAxles()
 
 	glUseProgram( m_axleShader );
 	setCommonUniforms( m_axleShader );
-	setUniformui( m_axleShader, "uTickNumber", (unsigned int)GameState::tick );
+	setUniformi( m_axleShader, "uTickNumber", (GLint)GameState::tick );
 
 	for ( int i = 0; i < m_texesUsed; ++i )
 	{
@@ -799,8 +800,8 @@ void MainWindowRenderer::paintAxles()
 		{
 			GLint tile = glGetUniformLocation( m_axleShader, "tile" );
 			glUniform3ui( tile, ad.pos.x, ad.pos.y, ad.pos.z );
-			setUniformui( m_axleShader, "uSpriteID", ad.spriteID );
-			setUniformui( m_axleShader, "uRotation", ad.localRot );
+			setUniformi( m_axleShader, "uSpriteID", (GLint)ad.spriteID );
+			setUniformi( m_axleShader, "uRotation", (GLint)ad.localRot );
 			setUniformf( m_axleShader, "uAnim", ad.anim );
 
 			glDrawArraysInstancedBaseInstance( GL_TRIANGLE_STRIP, 0, 4, 1, 0 );

@@ -32,6 +32,7 @@
 #include "../game/jobmanager.h"
 #include "../game/mechanismmanager.h"
 #include "../game/roommanager.h"
+#include "../game/sourcematerial.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
@@ -198,6 +199,32 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			{
 				GuiItemInfo git;
 				git.text = S::s( "$MaterialName_" + door->source.materialSID ) + " " + S::s( "$ItemName_" + door->source.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+
+		// Check wall/floor construction records for installed items with SourceMaterial
+		auto& wallConstrs = g->w()->wallConstructions();
+		if ( wallConstrs.contains( pos.toInt() ) )
+		{
+			auto constr = wallConstrs.value( pos.toInt() );
+			if ( constr.contains( "Source" ) && !( tile.flags & TileFlag::TF_DOOR ) )
+			{
+				SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + sm.materialSID ) + " " + S::s( "$ItemName_" + sm.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+		auto& floorConstrs = g->w()->floorConstructions();
+		if ( floorConstrs.contains( pos.toInt() ) )
+		{
+			auto constr = floorConstrs.value( pos.toInt() );
+			if ( constr.contains( "Source" ) )
+			{
+				SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + sm.materialSID ) + " " + S::s( "$ItemName_" + sm.itemSID ) + "(b)";
 				m_tileInfo.items.append( git );
 			}
 		}
