@@ -224,7 +224,7 @@ private:
 	QHash<unsigned int, Item> m_items;
 
 	PositionHash m_positionHash;
-	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
+	QHash<QString, QHash<QString, QSet<unsigned int>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
 
 	QList<QString> m_categoriesSorted;
