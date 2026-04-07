@@ -64,7 +64,7 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	acceptGenerated  = in.value( "AcceptGenerated" ).toBool();
 	craftIngredients = in.value( "CraftIngredients" ).toBool();
 
-	sourceItems = in.value( "SourceItems" ).toList();
+	sourceMaterials = SourceMaterial::deserializeList( in.value( "SourceMaterials" ).toList() );
 	itemsToSell = in.value( "ItemsToSell" ).toList();
 
 	auto dbws = DB::workshop( type );
@@ -100,7 +100,7 @@ void WorkshopProperties::serialize( QVariantMap& out )
 	out.insert( "AcceptGenerated", acceptGenerated );
 	out.insert( "CraftIngredients", craftIngredients );
 
-	out.insert( "SourceItems", sourceItems );
+	out.insert( "SourceMaterials", SourceMaterial::serializeList( sourceMaterials ) );
 	out.insert( "ItemsToSell", itemsToSell );
 }
 
@@ -1279,17 +1279,22 @@ int Workshop::rotation()
 
 void Workshop::setSourceItems( QVariantList items )
 {
-	for ( auto item : items )
+	for ( const auto& item : items )
 	{
-		g->inv()->pickUpItem( item.toUInt(), m_id );
-		g->inv()->setConstructed( item.toUInt(), true );
+		unsigned int uid = item.toUInt();
+		m_properties.sourceMaterials.append( SourceMaterial(
+			g->inv()->itemSID( uid ),
+			g->inv()->materialSID( uid ),
+			g->inv()->quality( uid )
+		) );
+		// Do NOT pickUpItem or setConstructed.
+		// canwork.cpp post-loop will destroy these items automatically.
 	}
-	m_properties.sourceItems = items;
 }
 
-QVariantList Workshop::sourceItems()
+const QList<SourceMaterial>& Workshop::getSourceMaterials() const
 {
-	return m_properties.sourceItems;
+	return m_properties.sourceMaterials;
 }
 
 bool Workshop::noAutoGenerate()

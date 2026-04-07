@@ -1102,8 +1102,8 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 	}
 	else if ( g->wsm()->isWorkshop( decPos ) )
 	{
-		Workshop* ws     = g->wsm()->workshopAt( decPos );
-		auto sourceItems = ws->sourceItems();
+		Workshop* ws = g->wsm()->workshopAt( decPos );
+		const auto& sourceMats = ws->getSourceMaterials();
 		ws->destroy();
 
 		QVariantList sprites = ws->sprites();
@@ -1112,7 +1112,7 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 			Position wsPos( spritevm.toMap().value( "Pos" ).toString() );
 			unsigned int tid = wsPos.toInt();
 			Tile& tile       = getTile( tid );
-			
+
 			tile.wallSpriteUID = 0;
 			clearTileFlag( wsPos, TileFlag::TF_WORKSHOP );
 			tile.wallType = WallType::WT_NOWALL;
@@ -1120,10 +1120,15 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 			updateWalkable( wsPos );
 			addToUpdateList( wsPos );
 		}
-		for ( auto vItem : sourceItems )
+
+		// Create fresh items from stored material specs
+		for ( const auto& sm : sourceMats )
 		{
-			g->inv()->putDownItem( vItem.toUInt(), workPos );
-			g->inv()->setConstructed( vItem.toUInt(), false );
+			unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+			if ( newItem && sm.quality > 0 )
+			{
+				g->inv()->setQuality( newItem, sm.quality );
+			}
 		}
 
 		g->wsm()->deleteWorkshop( ws->id() );

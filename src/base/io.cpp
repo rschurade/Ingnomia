@@ -459,14 +459,6 @@ void IO::sanitize()
 			}
 		}
 
-		for ( const auto& workshop : g->wsm()->workshops() )
-		{
-			for ( const auto& item : workshop->sourceItems() )
-			{
-				constructedItems[item.toInt()] = workshop->id();
-			}
-		}
-
 		for ( auto& item : g->inv()->allItems() )
 		{
 			const auto job = item.isInJob();
@@ -535,13 +527,6 @@ void IO::sanitize()
 					g->inv()->setConstructed( item.id(), true );
 					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found broken loose";
 				}
-			}
-		}
-		for ( auto& ws : g->wsm()->workshops() )
-		{
-			for ( auto& vitem : ws->sourceItems() )
-			{
-				g->inv()->pickUpItem( vitem.toUInt(), ws->id() );
 			}
 		}
 	}

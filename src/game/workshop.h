@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../base/position.h"
+#include "../game/sourcematerial.h"
 #include "../game/worldobject.h"
 #include "../game/job.h"
 
@@ -98,7 +99,7 @@ struct WorkshopProperties
 	bool acceptGenerated  = true;
 	bool craftIngredients = true;
 
-	QVariantList sourceItems;
+	QList<SourceMaterial> sourceMaterials;
 	QVariantList itemsToSell;
 
 	// not saved in game, always loaded from DB
@@ -259,7 +260,7 @@ public:
 	int rotation();
 
 	void setSourceItems( QVariantList items );
-	QVariantList sourceItems();
+	const QList<SourceMaterial>& getSourceMaterials() const;
 
 	void checkLinkedStockpile();
 	unsigned int getPossibleStockpile();
