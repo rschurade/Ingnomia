@@ -810,6 +810,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 	if ( item )
 	{
 		item->setHeldBy( creatureID );
+		m_byLocationOwner[creatureID].insert( id );
 
 		//remove from possible stockpile
 		unsigned int stockpileID = item->isInStockpile();
@@ -874,6 +875,12 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 	Item* item = getItem( id );
 	if ( item )
 	{
+		// Remove from location index
+		unsigned int oldOwner = item->isHeldBy();
+		if ( oldOwner != 0 )
+		{
+			m_byLocationOwner[oldOwner].remove( id );
+		}
 		item->setHeldBy( 0 );
 		if ( m_positionHash.contains( newPos.toInt() ) )
 		{
@@ -1313,7 +1320,17 @@ void Inventory::setInJob( unsigned int id, unsigned int job )
 	auto item = getItem( id );
 	if ( item )
 	{
+		// Update claim index
+		unsigned int oldJob = item->isInJob();
+		if ( oldJob != 0 )
+		{
+			m_byClaimOwner[oldJob].remove( id );
+		}
 		item->setInJob( job );
+		if ( job != 0 )
+		{
+			m_byClaimOwner[job].insert( id );
+		}
 	}
 }
 
@@ -1380,7 +1397,17 @@ void Inventory::setIsUsedBy( unsigned int id, unsigned int creatureID )
 	auto item = getItem( id );
 	if ( item )
 	{
+		// Update claim index
+		unsigned int oldOwner = item->isUsedBy();
+		if ( oldOwner != 0 )
+		{
+			m_byClaimOwner[oldOwner].remove( id );
+		}
 		item->setUsedBy( creatureID );
+		if ( creatureID != 0 )
+		{
+			m_byClaimOwner[creatureID].insert( id );
+		}
 	}
 }
 
@@ -1819,6 +1846,39 @@ void Inventory::sanityCheck()
 	}
 	qDebug() << "Removed " << QString::number( removed ) << " invalid items from containers.";
 	qDebug() << "Sanity check took " << timer.elapsed() << "ms";
+}
+
+void Inventory::freeAllClaimedBy( unsigned int ownerID )
+{
+	if ( m_byClaimOwner.contains( ownerID ) )
+	{
+		auto items = m_byClaimOwner[ownerID]; // copy — we're modifying during iteration
+		for ( auto itemID : items )
+		{
+			auto item = getItem( itemID );
+			if ( item )
+			{
+				item->setInJob( 0 );
+				item->setUsedBy( 0 );
+			}
+		}
+		m_byClaimOwner.remove( ownerID );
+	}
+}
+
+void Inventory::dropAllCarriedBy( unsigned int creatureID, Position pos )
+{
+	if ( m_byLocationOwner.contains( creatureID ) )
+	{
+		auto items = m_byLocationOwner[creatureID]; // copy
+		for ( auto itemID : items )
+		{
+			putDownItem( itemID, pos );
+		}
+		m_byLocationOwner.remove( creatureID );
+	}
+	// Also free any claims this creature has
+	freeAllClaimedBy( creatureID );
 }
 
 QVariantList Inventory::components( unsigned int itemID )

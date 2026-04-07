@@ -193,6 +193,10 @@ public:
 
 	void sanityCheck();
 
+	// Bulk cleanup for ownership indices
+	void freeAllClaimedBy( unsigned int ownerID );
+	void dropAllCarriedBy( unsigned int creatureID, Position pos );
+
 	QVariantList components( unsigned int itemID );
 
 	void addToWealth( Item* item );
@@ -226,6 +230,10 @@ private:
 	PositionHash m_positionHash;
 	QHash<QString, QHash<QString, QSet<unsigned int>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
+
+	// Ownership indices for bulk cleanup
+	QHash<unsigned int, QSet<unsigned int>> m_byClaimOwner;    // jobID/creatureID → itemIDs
+	QHash<unsigned int, QSet<unsigned int>> m_byLocationOwner; // creatureID → itemIDs (Carried only)
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;

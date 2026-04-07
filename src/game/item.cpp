@@ -91,6 +91,20 @@ Item::Item( QVariantMap in ) :
 	m_madeBy        = in.value( "MadeBy" ).toUInt();
 	m_quality       = in.value( "Quality" ).toUInt();
 
+	// Derive new ownership state from old flags
+	m_location      = ( m_isHeldBy != 0 ) ? ItemLocation::Carried : ItemLocation::Ground;
+	m_locationOwner = ( m_isHeldBy != 0 ) ? m_isHeldBy : 0;
+	if ( m_isInJob != 0 )
+	{
+		m_claim = ItemClaim::Job;
+		m_claimOwner = m_isInJob;
+	}
+	else if ( m_isUsedBy != 0 )
+	{
+		m_claim = ItemClaim::Equipped;
+		m_claimOwner = m_isUsedBy;
+	}
+
 	if ( in.value( "Extra" ).toBool() )
 	{
 		m_extraData = new ItemExtraData;
@@ -143,6 +157,10 @@ Item::Item( const Item& other ) :
 	m_isInContainer( other.m_isInContainer ),
 	m_isConstructed( other.m_isConstructed ),
 	m_isHeldBy( other.m_isHeldBy ),
+	m_location( other.m_location ),
+	m_locationOwner( other.m_locationOwner ),
+	m_claim( other.m_claim ),
+	m_claimOwner( other.m_claimOwner ),
 	m_value( other.m_value ),
 	m_madeBy( other.m_madeBy ),
 	m_quality( other.m_quality ),
@@ -318,6 +336,17 @@ unsigned int Item::isInJob() const
 void Item::setInJob( unsigned int job )
 {
 	m_isInJob = job;
+	// Dual-write: sync new ownership state
+	if ( job != 0 )
+	{
+		m_claim = ItemClaim::Job;
+		m_claimOwner = job;
+	}
+	else if ( m_claim == ItemClaim::Job )
+	{
+		m_claim = ItemClaim::None;
+		m_claimOwner = 0;
+	}
 }
 
 unsigned int Item::isInContainer() const
@@ -338,6 +367,17 @@ unsigned int Item::isHeldBy() const
 void Item::setHeldBy( unsigned int creatureID )
 {
 	m_isHeldBy = creatureID;
+	// Dual-write: sync new ownership state
+	if ( creatureID != 0 )
+	{
+		m_location = ItemLocation::Carried;
+		m_locationOwner = creatureID;
+	}
+	else
+	{
+		m_location = ItemLocation::Ground;
+		m_locationOwner = 0;
+	}
 }
 
 unsigned int Item::isUsedBy() const
@@ -348,6 +388,17 @@ unsigned int Item::isUsedBy() const
 void Item::setUsedBy( unsigned int creatureID )
 {
 	m_isUsedBy = creatureID;
+	// Dual-write: sync new ownership state
+	if ( creatureID != 0 )
+	{
+		m_claim = ItemClaim::Equipped;
+		m_claimOwner = creatureID;
+	}
+	else if ( m_claim == ItemClaim::Equipped )
+	{
+		m_claim = ItemClaim::None;
+		m_claimOwner = 0;
+	}
 }
 
 unsigned char Item::stackSize() const
@@ -514,4 +565,42 @@ bool Item::removeItem( unsigned int itemID )
 bool Item::isFree() const
 {
 	return !m_isConstructed && ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
+}
+
+void Item::setLocation( ItemLocation loc, unsigned int owner )
+{
+	m_location = loc;
+	m_locationOwner = owner;
+	// Sync old flags
+	switch ( loc )
+	{
+		case ItemLocation::Ground:
+			m_isHeldBy = 0;
+			break;
+		case ItemLocation::Carried:
+			m_isHeldBy = owner;
+			break;
+	}
+}
+
+void Item::setClaim( ItemClaim cl, unsigned int owner )
+{
+	m_claim = cl;
+	m_claimOwner = owner;
+	// Sync old flags
+	switch ( cl )
+	{
+		case ItemClaim::None:
+			m_isInJob = 0;
+			m_isUsedBy = 0;
+			break;
+		case ItemClaim::Job:
+			m_isInJob = owner;
+			m_isUsedBy = 0;
+			break;
+		case ItemClaim::Equipped:
+			m_isUsedBy = owner;
+			m_isInJob = 0;
+			break;
+	}
 }

@@ -787,6 +787,8 @@ void Gnome::die()
 {
 	Creature::die();
 	cleanUpJob( false );
+	// Safety net: drop any items still tracked as carried/claimed by this creature
+	g->inv()->dropAllCarriedBy( id(), m_position );
 	for ( Workshop* w : g->wsm()->workshops() )
 	{
 		if ( w->assignedGnome() == id() )

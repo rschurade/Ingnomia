@@ -19,6 +19,19 @@
 
 #include "object.h"
 
+enum class ItemLocation : uint8_t
+{
+	Ground,    // on a tile, in position index + octree
+	Carried,   // held by a creature, not in position index
+};
+
+enum class ItemClaim : uint8_t
+{
+	None,      // free to be claimed
+	Job,       // reserved for a job
+	Equipped,  // equipped by a creature
+};
+
 struct ItemMaterial
 {
 	unsigned int itemUID;
@@ -115,6 +128,15 @@ public:
 
 	bool isFree() const;
 
+	// New ownership state machine
+	ItemLocation location() const { return m_location; }
+	unsigned int locationOwner() const { return m_locationOwner; }
+	ItemClaim claim() const { return m_claim; }
+	unsigned int claimOwner() const { return m_claimOwner; }
+
+	void setLocation( ItemLocation loc, unsigned int owner = 0 );
+	void setClaim( ItemClaim cl, unsigned int owner = 0 );
+
 private:
 	unsigned short m_materialUID = 0;
 	unsigned short m_itemUID     = 0;
@@ -126,6 +148,12 @@ private:
 	unsigned int m_isInJob       = 0;
 	unsigned int m_isHeldBy      = 0; // indicates the item is carried or equipped by a creature
 	unsigned int m_isUsedBy      = 0;
+
+	// New ownership state (dual-write with old flags above)
+	ItemLocation m_location      = ItemLocation::Ground;
+	unsigned int m_locationOwner = 0;
+	ItemClaim m_claim            = ItemClaim::None;
+	unsigned int m_claimOwner    = 0;
 
 	unsigned short m_value = 0;
 	unsigned int m_madeBy  = 0;

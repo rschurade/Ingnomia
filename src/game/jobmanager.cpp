@@ -1010,6 +1010,9 @@ void JobManager::cancelJob( const Position& pos )
 				GameState::alarmRoomID = 0;
 			}
 
+			// Free any items claimed by this job
+			g->inv()->freeAllClaimedBy( jobID );
+
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
@@ -1039,6 +1042,9 @@ void JobManager::deleteJob( unsigned int jobID )
 				GameState::alarm       = 0;
 				GameState::alarmRoomID = 0;
 			}
+
+			// Free any items claimed by this job
+			g->inv()->freeAllClaimedBy( jobID );
 
 			setJobSprites( jobID, false, true );
 
