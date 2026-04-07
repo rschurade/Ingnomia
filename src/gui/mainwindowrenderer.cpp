@@ -127,6 +127,21 @@ void MainWindowRenderer::initializeGL()
 		// Only want to handle these from dedicated graphic debugger
 		if ( type == GL_DEBUG_TYPE_PUSH_GROUP || type == GL_DEBUG_TYPE_POP_GROUP )
 			return;
+		// Suppress high-frequency errors to keep log readable
+		static int glErrorCount = 0;
+		if ( type == GL_DEBUG_TYPE_ERROR )
+		{
+			++glErrorCount;
+			if ( glErrorCount <= 5 )
+			{
+				qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message << "(count:" << glErrorCount << ")";
+			}
+			else if ( glErrorCount == 6 )
+			{
+				qDebug() << "[OpenGL] Suppressing further GL_ERROR messages. Total so far:" << glErrorCount;
+			}
+			return;
+		}
 		qDebug() << "[OpenGL]" << debugTypes.at( type ) << " " << severities.at(severity) << ":" << message;
 	};
 	glEnable( GL_DEBUG_OUTPUT );

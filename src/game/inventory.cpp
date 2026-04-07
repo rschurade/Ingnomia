@@ -660,13 +660,14 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 	QString materialSID;
 
 	QList<unsigned int> out;
-	QList<unsigned int> items;
+	QSet<unsigned int> seen;
 
 	for ( const auto& filterItem : filter )
 	{
 		itemSID     = filterItem.first;
 		materialSID = filterItem.second;
 
+		QList<unsigned int> items;
 		if ( materialSID == "any" )
 		{
 			for ( auto material : m_octrees[itemSID].keys() )
@@ -683,6 +684,10 @@ QList<unsigned int> Inventory::getClosestItemsForStockpile( unsigned int stockpi
 
 		for ( auto itemID : items )
 		{
+			if ( seen.contains( itemID ) )
+				continue;
+			seen.insert( itemID );
+
 			auto item = getItem( itemID );
 
 			if ( item && item->isFree() )
