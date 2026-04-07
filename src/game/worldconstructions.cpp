@@ -1013,6 +1013,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		case CI_DOOR:
 		case CI_LIGHT:
 		case CI_FARMUTIL:
+		case CI_MECHANISM:
 			destroyAfterInstall = true;
 			break;
 		default:

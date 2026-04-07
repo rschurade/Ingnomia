@@ -46,6 +46,11 @@ struct MechanismData
 	Position pos;
 	unsigned char rot = 0;
 
+	// Cached from item at install time — no inv() queries needed at runtime
+	QString itemSID;
+	QString materialSID;
+	unsigned int spriteID = 0;
+
 	QString gui;
 	QString name;
 

@@ -37,6 +37,9 @@ QVariantMap MechanismData::serialize() const
 	QVariantMap out;
 	out.insert( "Type", type );
 	out.insert( "ItemID", itemID );
+	out.insert( "ItemSID", itemSID );
+	out.insert( "MaterialSID", materialSID );
+	out.insert( "SpriteID", spriteID );
 	out.insert( "Pos", pos.toString() );
 	out.insert( "Rot", rot );
 	out.insert( "Gui", gui );
@@ -60,6 +63,9 @@ void MechanismData::deserialize( QVariantMap in )
 {
 	type            = (MechanismType)in.value( "Type" ).toInt();
 	itemID          = in.value( "ItemID" ).toUInt();
+	itemSID         = in.value( "ItemSID" ).toString();
+	materialSID     = in.value( "MaterialSID" ).toString();
+	spriteID        = in.value( "SpriteID" ).toUInt();
 	pos             = Position( in.value( "Pos" ) );
 	rot             = in.value( "Rot" ).toInt();
 	gui             = in.value( "Gui" ).toString();
@@ -237,7 +243,7 @@ bool MechanismManager::hasGearBox( Position pos )
 	if ( m_floorPositions.contains( pos.toInt() ) )
 	{
 		auto itemID = m_floorPositions[pos.toInt()];
-		return ( g->m_inv->itemSID( itemID ) == "GearBox" );
+		return ( m_mechanisms[itemID].itemSID == "GearBox" );
 	}
 	return false;
 }
@@ -260,7 +266,7 @@ QString MechanismManager::mechanismName( Position pos )
 	unsigned itemID = mechanismID( pos );
 	if ( itemID )
 	{
-		return S::s( "$ItemName_" + g->m_inv->itemSID( itemID ) );
+		return S::s( "$ItemName_" + m_mechanisms[itemID].itemSID );
 	}
 	return "No mechanism";
 }
@@ -282,7 +288,7 @@ unsigned int MechanismManager::mechanismID( Position pos )
 
 bool MechanismManager::hasGUI( unsigned int itemID )
 {
-	QString itemSID = g->m_inv->itemSID( itemID );
+	QString itemSID = m_mechanisms[itemID].itemSID;
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 	if ( !row.value( "GUI" ).toString().isEmpty() )
 	{
@@ -296,7 +302,7 @@ bool MechanismManager::hasGUI( Position pos )
 	unsigned itemID = mechanismID( pos );
 	if ( itemID )
 	{
-		QString itemSID = g->m_inv->itemSID( itemID );
+		QString itemSID = m_mechanisms[itemID].itemSID;
 		auto row        = DB::selectRow( "Mechanism", itemSID );
 		if ( !row.value( "GUI" ).toString().isEmpty() )
 		{
@@ -308,15 +314,14 @@ bool MechanismManager::hasGUI( Position pos )
 
 QString MechanismManager::gui( unsigned int itemID )
 {
-	QString itemSID = g->m_inv->itemSID( itemID );
+	QString itemSID = m_mechanisms[itemID].itemSID;
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 	return row.value( "GUI" ).toString();
 }
 
 void MechanismManager::installItem( MechanismData md )
 {
-	QString itemSID = g->m_inv->itemSID( md.itemID );
-	if ( itemSID == "Axle" )
+	if ( md.itemSID == "Axle" )
 	{
 		m_floorPositions.insert( md.pos.toInt(), md.itemID );
 
@@ -325,28 +330,28 @@ void MechanismManager::installItem( MechanismData md )
 		ad.anim     = false;
 		ad.localRot = md.rot;
 		ad.pos      = md.pos;
-		ad.spriteID = g->m_inv->spriteID( md.itemID );
+		ad.spriteID = md.spriteID;
 
 		m_axleData.insert( md.pos.toInt(), ad );
 	}
-	else if ( itemSID == "GearBox" )
+	else if ( md.itemSID == "GearBox" )
 	{
 		m_floorPositions.insert( md.pos.toInt(), md.itemID );
 	}
-	else if ( itemSID == "SteamEngine" )
+	else if ( md.itemSID == "SteamEngine" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 		g->m_world->setWallSpriteAnim( md.pos, md.active );
 	}
-	else if ( itemSID == "Lever" )
+	else if ( md.itemSID == "Lever" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 	}
-	else if ( itemSID == "PressurePlate" )
+	else if ( md.itemSID == "PressurePlate" )
 	{
 		m_floorPositions.insert( md.pos.toInt(), md.itemID );
 	}
-	else if ( itemSID == "VerticalAxle" )
+	else if ( md.itemSID == "VerticalAxle" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 
@@ -356,15 +361,15 @@ void MechanismManager::installItem( MechanismData md )
 		ad.localRot   = md.rot;
 		ad.pos        = md.pos;
 		ad.isVertical = true;
-		ad.spriteID   = g->m_inv->spriteID( md.itemID );
+		ad.spriteID   = md.spriteID;
 
 		m_axleData.insert( md.pos.toInt(), ad );
 	}
-	else if ( itemSID == "MechanicalWall" )
+	else if ( md.itemSID == "MechanicalWall" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 	}
-	else if ( itemSID == "Pump" )
+	else if ( md.itemSID == "Pump" )
 	{
 		m_wallPositions.insert( md.pos.toInt(), md.itemID );
 		g->flm()->addInput( md.pos, md.itemID );
@@ -375,14 +380,15 @@ void MechanismManager::installItem( MechanismData md )
 
 void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 {
-	QString itemSID = g->m_inv->itemSID( itemID );
-
 	MechanismData md;
-	md.itemID = itemID;
-	md.pos    = pos;
-	md.rot    = rot;
+	md.itemID      = itemID;
+	md.itemSID     = g->m_inv->itemSID( itemID );
+	md.materialSID = g->m_inv->materialSID( itemID );
+	md.spriteID    = g->m_inv->spriteID( itemID );
+	md.pos         = pos;
+	md.rot         = rot;
 
-	auto row = DB::selectRow( "Mechanism", itemSID );
+	auto row = DB::selectRow( "Mechanism", md.itemSID );
 	md.gui   = row.value( "GUI" ).toString();
 
 	md.fuel         = 0;
@@ -392,7 +398,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 
 	md.anim = row.value( "Anim" ).toBool();
 
-	md.type = m_string2Type.value( itemSID );
+	md.type = m_string2Type.value( md.itemSID );
 
 	switch ( md.type )
 	{
@@ -416,7 +422,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.anim     = false;
 			ad.localRot = rot;
 			ad.pos      = pos;
-			ad.spriteID = g->m_inv->spriteID( itemID );
+			ad.spriteID = md.spriteID;
 
 			m_axleData.insert( pos.toInt(), ad );
 		}
@@ -483,7 +489,7 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 			ad.localRot   = rot;
 			ad.pos        = pos;
 			ad.isVertical = true;
-			ad.spriteID   = g->m_inv->spriteID( itemID );
+			ad.spriteID   = md.spriteID;
 
 			m_axleData.insert( pos.toInt(), ad );
 		}
@@ -774,7 +780,7 @@ void MechanismManager::updateNetWorks()
 
 void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 {
-	QString itemSID = g->inv()->itemSID( md.itemID );
+	QString itemSID = md.itemSID;
 	auto row        = DB::selectRow( "Mechanism", itemSID );
 	if( md.inverted )
 	{
@@ -799,12 +805,12 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 				QString floorSpriteOn = row.value( "FloorSpriteOn" ).toString();
 				if ( !wallSpriteOn.isEmpty() )
 				{
-					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOn, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOn, { md.materialSID } )->uID );
 					g->m_world->addToUpdateList( md.pos );
 				}
 				if ( !floorSpriteOn.isEmpty() )
 				{
-					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOn, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOn, { md.materialSID } )->uID );
 					g->m_world->addToUpdateList( md.pos );
 				}
 			}
@@ -815,12 +821,12 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 
 				if ( !wallSpriteOff.isEmpty() )
 				{
-					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOff, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->setWallSprite( md.pos, g->m_sf->createSprite( wallSpriteOff, { md.materialSID } )->uID );
 					g->m_world->addToUpdateList( md.pos );
 				}
 				if ( !floorSpriteOff.isEmpty() )
 				{
-					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOff, { g->m_inv->materialSID( md.itemID ) } )->uID );
+					g->m_world->setFloorSprite( md.pos, g->m_sf->createSprite( floorSpriteOff, { md.materialSID } )->uID );
 					g->m_world->addToUpdateList( md.pos );
 				}
 			}

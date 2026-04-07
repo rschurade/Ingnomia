@@ -203,12 +203,24 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 			}
 		}
 
+		// Check for mechanisms at this position
+		if ( g->mcm()->hasMechanism( pos ) )
+		{
+			unsigned int id = g->mcm()->mechanismID( pos );
+			m_tileInfo.mechInfo = g->mcm()->mechanismData( id );
+			m_tileInfo.mechInfo.name = S::s( "$MaterialName_" + m_tileInfo.mechInfo.materialSID ) + " " + S::s( "$ItemName_" + m_tileInfo.mechInfo.itemSID );
+		}
+		else
+		{
+			m_tileInfo.mechInfo.itemID = 0;
+		}
+
 		// Check wall/floor construction records for installed items with SourceMaterial
 		auto& wallConstrs = g->w()->wallConstructions();
 		if ( wallConstrs.contains( pos.toInt() ) )
 		{
 			auto constr = wallConstrs.value( pos.toInt() );
-			if ( constr.contains( "Source" ) && !( tile.flags & TileFlag::TF_DOOR ) )
+			if ( constr.contains( "Source" ) && !( tile.flags & TileFlag::TF_DOOR ) && !g->mcm()->hasMechanism( pos ) )
 			{
 				SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
 				GuiItemInfo git;
