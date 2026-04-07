@@ -383,3 +383,8 @@ build/
 
 /content/audio
 nul
+
+# Claude Code / AI assistant context (contains private Noesis license key)
+CLAUDE.md
+.claude/
+
