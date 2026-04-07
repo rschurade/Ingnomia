@@ -51,7 +51,10 @@ void DB::init()
 	auto statements = sql.split( ";" );
 	for( auto s: statements )
 	{
-		if ( !destQuery.exec( s ) )
+		auto trimmed = s.trimmed();
+		if ( trimmed.isEmpty() )
+			continue;
+		if ( !destQuery.exec( trimmed ) )
 		{
 			qDebug() << destQuery.lastError();
 		}

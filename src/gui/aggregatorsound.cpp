@@ -36,7 +36,7 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 	//sf::SoundBuffer buffer;
 	QString exePath = QCoreApplication::applicationDirPath();
 
-	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
+	// Camera position connection is made in GameManager::postCreationInit() with QueuedConnection
 	auto device    = std::make_shared<AL::Device>();
 	m_audioContext = std::make_shared<AL::Context>( device );
 	AL::Context::Lock lock( m_audioContext );

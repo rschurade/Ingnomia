@@ -36,7 +36,7 @@ Config::Config()
 	bool ok        = true;
 	QJsonDocument jd;
 
-	if ( !IO::loadFile( folder + "settings/config.json", jd ) )
+	if ( !IO::loadFile( folder + "/settings/config.json", jd ) )
 	{
 		if( !IO::loadOriginalConfig( jd ) )
 		{
