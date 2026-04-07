@@ -115,7 +115,7 @@ Pasture::Pasture( QVariantMap vals, Game* game ) :
 		{
 			grofi->job = g->jm()->getJob( vfm.value( "Job" ).toUInt() );
 		}
-		grofi->util   = vf.toMap().value( "Util" ).toUInt();
+		grofi->utilSID = vf.toMap().value( "UtilSID" ).toString();
 		m_fields.insert( grofi->pos.toInt(), grofi );
 	}
 	if ( m_fields.size() )
@@ -160,7 +160,7 @@ QVariant Pasture::serialize() const
 			QSharedPointer<Job> spJob = field->job.toStrongRef();
 			entry.insert( "Job", spJob->id() );
 		}
-		entry.insert( "Util", field->util );
+		entry.insert( "UtilSID", field->utilSID );
 		tiles.append( entry );
 	}
 	out.insert( "Fields", tiles );
@@ -339,9 +339,9 @@ void Pasture::onTick( quint64 tick, int& count )
 				{
 					for ( auto& field : m_fields )
 					{
-						if ( field->util && !field->job )
+						if ( !field->utilSID.isEmpty() && !field->job )
 						{
-							if ( g->inv()->itemSID( field->util ) == "Trough" )
+							if ( field->utilSID == "Trough" )
 							{
 								auto jobID = g->jm()->addJob( "FillTrough", field->pos, 0, false );
 								auto job = g->jm()->getJob( jobID );
@@ -610,17 +610,16 @@ int Pasture::countTiles()
 	return m_fields.size();
 }
 
-bool Pasture::addUtil( Position pos, unsigned int itemID )
+bool Pasture::addUtil( Position pos, const QString& utilSID )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
-		if ( pf->util == 0 )
+		if ( pf->utilSID.isEmpty() )
 		{
-			pf->util = itemID;
+			pf->utilSID = utilSID;
 
-			//if item is trough
-			if ( g->inv()->itemSID( itemID ) == "Trough" )
+			if ( utilSID == "Trough" )
 			{
 				m_properties.maxTroughCapacity += 20;
 			}
@@ -637,32 +636,28 @@ bool Pasture::removeUtil( Position pos )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
 
-		if ( pf->util != 0 )
+		if ( !pf->utilSID.isEmpty() )
 		{
-			unsigned int itemID = pf->util;
-
-			pf->util = 0;
-
-			//if item is trough
-			if ( g->inv()->itemSID( itemID ) == "Trough" )
+			if ( pf->utilSID == "Trough" )
 			{
 				m_properties.maxTroughCapacity -= 20;
 			}
 
+			pf->utilSID.clear();
 			return true;
 		}
 	}
 	return false;
 }
 
-unsigned int Pasture::util( Position pos )
+QString Pasture::utilSID( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
-		return pf->util;
+		return pf->utilSID;
 	}
-	return 0;
+	return QString();
 }
 
 Position Pasture::randomFieldPos()
@@ -683,9 +678,9 @@ Position Pasture::findShed()
 {
 	for ( auto field : m_fields )
 	{
-		if ( field->util )
+		if ( !field->utilSID.isEmpty() )
 		{
-			if ( g->inv()->itemSID( field->util ) == "Shed" )
+			if ( field->utilSID == "Shed" )
 			{
 				return field->pos;
 			}

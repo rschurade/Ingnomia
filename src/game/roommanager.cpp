@@ -207,12 +207,12 @@ void RoomManager::removeFurniture( Position pos )
 	}
 }
 
-void RoomManager::addDoor( Position pos, unsigned int itemUID, unsigned int materialUID )
+void RoomManager::addDoor( Position pos, const SourceMaterial& source, unsigned int spriteID )
 {
 	Door door;
-	door.pos         = pos;
-	door.itemUID     = itemUID;
-	door.materialUID = materialUID;
+	door.pos      = pos;
+	door.source   = source;
+	door.spriteID = spriteID;
 	m_doors.insert( pos, door );
 }
 
@@ -225,24 +225,15 @@ void RoomManager::loadDoor( QVariantMap vm )
 {
 	Door door;
 	door.pos           = Position( vm.value( "Pos" ).toString() );
-	door.itemUID       = vm.value( "ItemUID" ).toUInt();
-	door.materialUID   = vm.value( "MaterialUID" ).toUInt();
+	door.source        = SourceMaterial::deserialize( vm.value( "Source" ).toMap() );
+	door.spriteID      = vm.value( "SpriteID" ).toUInt();
 	door.name          = vm.value( "Name" ).toString();
 	door.blockGnomes   = vm.value( "BlockGnomes" ).toBool();
 	door.blockAnimals  = vm.value( "BlockAnimals" ).toBool();
 	door.blockMonsters = vm.value( "BlockMonsters" ).toBool();
 	m_doors.insert( door.pos, door );
 
-	g->m_world->getTile( door.pos ).wallSpriteUID = g->m_inv->spriteID( door.itemUID );
-	unsigned int nextItem                         = g->m_inv->getFirstObjectAtPosition( door.pos );
-	if ( nextItem )
-	{
-		g->m_world->setItemSprite( door.pos, g->m_inv->spriteID( nextItem ) );
-	}
-	else
-	{
-		g->m_world->setItemSprite( door.pos, 0 );
-	}
+	g->m_world->getTile( door.pos ).wallSpriteUID = door.spriteID;
 }
 
 Door* RoomManager::getDoor( unsigned int tileUID )

@@ -28,6 +28,7 @@
 #include "../game/inventory.h"
 #include "../game/mechanismmanager.h"
 #include "../game/roommanager.h"
+#include "../game/sourcematerial.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../gfx/sprite.h"
@@ -947,18 +948,15 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	unsigned int itemID = items.first();
 
 	QVariantMap constr;
+	bool isFromParts = false;
+	QVariantList fromPartsItems;
 
 	if ( g->inv()->itemSID( itemID ) != itemSID )
 	{
 		//qDebug() << "create item from components before installing";
-		auto vItems = Global::util->uintList2Variant( items );
-		itemID      = g->inv()->createItem( pos, itemSID, vItems );
-		constr.insert( "Items", vItems );
-		constr.insert( "FromParts", true );
-		for ( auto item : items )
-		{
-			g->inv()->setConstructed( item, true );
-		}
+		fromPartsItems = Global::util->uintList2Variant( items );
+		itemID         = g->inv()->createItem( pos, itemSID, fromPartsItems );
+		isFromParts    = true;
 	}
 
 	QString type  = DB::select( "Category", "Items", g->inv()->itemSID( itemID ) ).toString();
@@ -995,7 +993,50 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 	}
 
-	g->inv()->setConstructed( itemID, true );
+	// Extract SourceMaterial before any potential destruction
+	SourceMaterial sm( g->inv()->itemSID( itemID ), g->inv()->materialSID( itemID ), g->inv()->quality( itemID ) );
+
+	// Determine if this item type can be destroyed after installation
+	// (subsystem caches all needed properties and doesn't query inv() at runtime)
+	//qDebug() << "##" << type << group << itemSID;
+	// TODO remove this workaround
+	if( itemSID == "AlarmBell" )
+	{
+		group = "AlarmBell";
+	}
+
+	bool destroyAfterInstall = false;
+	auto groupEnum = m_constrItemSID2ENUM.value( group );
+	auto typeEnum  = m_constrItemSID2ENUM.value( type );
+
+	switch ( groupEnum )
+	{
+		case CI_DOOR:
+		case CI_LIGHT:
+		case CI_FARMUTIL:
+			destroyAfterInstall = true;
+			break;
+		default:
+			break;
+	}
+
+	if ( destroyAfterInstall )
+	{
+		// Item will be destroyed by canwork post-loop — don't mark as constructed
+	}
+	else
+	{
+		g->inv()->setConstructed( itemID, true );
+		if ( isFromParts )
+		{
+			constr.insert( "Items", fromPartsItems );
+			constr.insert( "FromParts", true );
+			for ( const auto& item : fromPartsItems )
+			{
+				g->inv()->setConstructed( item.toUInt(), true );
+			}
+		}
+	}
 
 	unsigned int nextItem = g->inv()->getFirstObjectAtPosition( pos );
 	if ( nextItem )
@@ -1006,15 +1047,9 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 		setItemSprite( pos, 0 );
 	}
-	//qDebug() << "##" << type << group << itemSID;
-	// TODO remove this workaround
-	if( itemSID == "AlarmBell" )
-	{
-		group = "AlarmBell";
-	}
 
 	addToUpdateList( pos );
-	switch ( m_constrItemSID2ENUM.value( type ) )
+	switch ( typeEnum )
 	{
 		case CI_STORAGE:
 			g->spm()->addContainer( itemID, pos );
@@ -1023,15 +1058,15 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 			g->rm()->addFurniture( itemID, pos );
 			break;
 	}
-	switch ( m_constrItemSID2ENUM.value( group ) )
+	switch ( groupEnum )
 	{
 		case CI_DOOR:
 			setTileFlag( pos, TileFlag::TF_DOOR );
-			g->rm()->addDoor( pos, itemID, g->inv()->materialUID( itemID ) );
+			g->rm()->addDoor( pos, sm, sprite->uID );
 			break;
 		case CI_LIGHT:
 		{
-			int intensity = DB::select( "LightIntensity", "Items", g->inv()->itemSID( itemID ) ).toInt();
+			int intensity = DB::select( "LightIntensity", "Items", itemSID ).toInt();
 			constr.insert( "Light", intensity );
 			if ( intensity )
 			{
@@ -1049,16 +1084,25 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 			return constructPipe( itemSID, pos, itemID );
 			break;
 		case CI_FARMUTIL:
-			g->fm()->addUtil( pos, itemID );
+			g->fm()->addUtil( pos, sm.itemSID );
 			break;
 	}
 
 	constr.insert( "ConstructionID", "Item" );
 	constr.insert( "Pos", pos.toString() );
 	constr.insert( "Rot", rotation );
-	constr.insert( "Item", itemID );
 	constr.insert( "Type", type );
 	constr.insert( "Group", group );
+
+	if ( destroyAfterInstall )
+	{
+		constr.insert( "Source", sm.serialize() );
+		constr.insert( "SpriteID", sprite->uID );
+	}
+	else
+	{
+		constr.insert( "Item", itemID );
+	}
 
 	if ( location == "Wall" )
 	{
@@ -1216,7 +1260,17 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 			tile.wallSpriteUID = 0;
 		}
 
-		if ( constr.value( "FromParts" ).toBool() )
+		if ( constr.contains( "Source" ) )
+		{
+			// Item was destroyed on installation — create fresh item from stored specs
+			SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+			unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+			if ( newItem && sm.quality > 0 )
+			{
+				g->inv()->setQuality( newItem, sm.quality );
+			}
+		}
+		else if ( constr.value( "FromParts" ).toBool() )
 		{
 			for ( auto vItem : constr.value( "Items" ).toList() )
 			{

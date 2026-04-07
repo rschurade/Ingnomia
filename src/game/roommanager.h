@@ -20,6 +20,7 @@
 
 #include "../base/position.h"
 #include "../game/room.h"
+#include "../game/sourcematerial.h"
 
 #include <QSet>
 
@@ -30,12 +31,12 @@ class Game;
 struct Door
 {
 	Position pos;
-	QString name             = "Door";
-	unsigned int itemUID     = 0;
-	unsigned int materialUID = 0;
-	bool blockGnomes         = false;
-	bool blockAnimals        = true;
-	bool blockMonsters       = true;
+	QString name         = "Door";
+	SourceMaterial source;
+	unsigned int spriteID = 0;
+	bool blockGnomes     = false;
+	bool blockAnimals    = true;
+	bool blockMonsters   = true;
 };
 
 class RoomManager : public QObject
@@ -72,7 +73,7 @@ public:
 	QList<unsigned int> getDorms();
 	QList<unsigned int> getDinings();
 
-	void addDoor( Position pos, unsigned int itemID, unsigned int materialUID );
+	void addDoor( Position pos, const SourceMaterial& source, unsigned int spriteID );
 	void removeDoor( Position pos );
 	void loadDoor( QVariantMap vm );
 

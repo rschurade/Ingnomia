@@ -92,12 +92,12 @@ public:
 
 	void removeTile( Position pos, bool includeFarm, bool includePasture, bool includeGrove );
 
-	bool addUtil( Position pos, unsigned int itemID );
+	bool addUtil( Position pos, const QString& itemSID );
 	bool removeUtil( Position pos );
 
-	bool addUtilToPasture( Position pos, unsigned int itemID );
-	bool removeUtilFromPasture( Position pos, unsigned int itemID );
-	unsigned int util( Position pos );
+	bool addUtilToPasture( Position pos, const QString& utilSID );
+	bool removeUtilFromPasture( Position pos );
+	QString utilSID( Position pos );
 
 	bool isBeehive( Position pos );
 	Beehive* getBeehiveAtPos( Position pos );

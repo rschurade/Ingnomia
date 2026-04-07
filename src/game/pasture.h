@@ -35,7 +35,7 @@ struct PastureField
 {
 	Position pos;
 	QWeakPointer<Job> job;
-	unsigned int util = 0;
+	QString utilSID; // "Trough", "Shed", or empty
 };
 
 struct PastureProperties
@@ -100,9 +100,9 @@ public:
 		return m_animals;
 	}
 
-	bool addUtil( Position pos, unsigned int itemID );
+	bool addUtil( Position pos, const QString& utilSID );
 	bool removeUtil( Position pos );
-	unsigned int util( Position pos );
+	QString utilSID( Position pos );
 
 	Position randomFieldPos();
 	Position findShed();

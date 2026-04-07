@@ -1268,8 +1268,8 @@ QJsonArray IO::jsonArrayDoors()
 
 		out.insert( "Pos", door.pos.toString() );
 		out.insert( "Name", door.name );
-		out.insert( "ItemUID", door.itemUID );
-		out.insert( "MaterialUID", door.materialUID );
+		out.insert( "Source", door.source.serialize() );
+		out.insert( "SpriteID", door.spriteID );
 		out.insert( "BlockGnomes", door.blockGnomes );
 		out.insert( "BlockAnimals", door.blockAnimals );
 		out.insert( "BlockMonsters", door.blockMonsters );

@@ -519,24 +519,18 @@ void FarmingManager::removeTile( Position pos, bool includeFarm, bool includePas
 	}
 }
 
-bool FarmingManager::addUtil( Position pos, unsigned int itemID )
+bool FarmingManager::addUtil( Position pos, const QString& itemSID )
 {
-	QString itemSID = g->m_inv->itemSID( itemID );
-
-	if ( itemSID == "Shed" )
+	if ( itemSID == "Shed" || itemSID == "Trough" )
 	{
-		return addUtilToPasture( pos, itemID );
-	}
-	else if ( itemSID == "Trough" )
-	{
-		return addUtilToPasture( pos, itemID );
+		return addUtilToPasture( pos, itemSID );
 	}
 	else if ( itemSID == "BeeHive" )
 	{
 		if ( !m_allBeehiveTiles.contains( pos ) )
 		{
 			auto bh = new Beehive;
-			bh->id  = itemID;
+			bh->id  = pos.toInt(); // use position as ID since item is destroyed
 			bh->pos = pos;
 
 			m_beehives.insert( bh->id, bh );
@@ -572,18 +566,18 @@ bool FarmingManager::removeUtil( Position pos )
 	return false;
 }
 
-bool FarmingManager::addUtilToPasture( Position pos, unsigned int itemID )
+bool FarmingManager::addUtilToPasture( Position pos, const QString& utilSID )
 {
 	Pasture* pasture = getPastureAtPos( pos );
 	if ( pasture )
 	{
-		return pasture->addUtil( pos, itemID );
+		return pasture->addUtil( pos, utilSID );
 	}
 
 	return false;
 }
 
-bool FarmingManager::removeUtilFromPasture( Position pos, unsigned int itemID )
+bool FarmingManager::removeUtilFromPasture( Position pos )
 {
 	Pasture* pasture = getPastureAtPos( pos );
 	if ( pasture )
@@ -594,15 +588,15 @@ bool FarmingManager::removeUtilFromPasture( Position pos, unsigned int itemID )
 	return false;
 }
 
-unsigned int FarmingManager::util( Position pos )
+QString FarmingManager::utilSID( Position pos )
 {
 	Pasture* pasture = getPastureAtPos( pos );
 	if ( pasture )
 	{
-		return pasture->util( pos );
+		return pasture->utilSID( pos );
 	}
 
-	return 0;
+	return QString();
 }
 
 int FarmingManager::farmPriority( unsigned int id )
