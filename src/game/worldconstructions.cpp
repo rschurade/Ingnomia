@@ -1019,6 +1019,14 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		default:
 			break;
 	}
+	switch ( typeEnum )
+	{
+		case CI_STORAGE:
+			destroyAfterInstall = true;
+			break;
+		default:
+			break;
+	}
 
 	if ( destroyAfterInstall )
 	{
@@ -1052,7 +1060,12 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	switch ( typeEnum )
 	{
 		case CI_STORAGE:
-			g->spm()->addContainer( itemID, pos );
+		{
+			unsigned char capacity = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
+			bool reqSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
+			QStringList allowedItems = Global::allowedInContainer.value( itemSID ).values();
+			g->spm()->addContainer( sm, capacity, reqSame, allowedItems, pos );
+		}
 			break;
 		case CI_FURNITURE:
 			g->rm()->addFurniture( itemID, pos );
@@ -1207,7 +1220,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		switch ( m_constrItemSID2ENUM.value( type ) )
 		{
 			case CI_STORAGE:
-				g->spm()->removeContainer( itemID, decPos );
+				g->spm()->removeContainer( decPos );
 				break;
 			case CI_FURNITURE:
 				g->rm()->removeFurniture( decPos );

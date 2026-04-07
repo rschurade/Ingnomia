@@ -290,21 +290,21 @@ bool StockpileManager::hasJobID( unsigned int jobID ) const
 	return false;
 }
 
-void StockpileManager::addContainer( unsigned int containerID, Position& pos )
+void StockpileManager::addContainer( const SourceMaterial& source, unsigned char capacity, bool requireSame, const QStringList& allowedItems, Position& pos )
 {
 	Stockpile* sp = getStockpileAtPos( pos );
 	if ( sp )
 	{
-		sp->addContainer( containerID, pos );
+		sp->addContainer( source, capacity, requireSame, allowedItems, pos );
 	}
 }
 
-void StockpileManager::removeContainer( unsigned int containerID, Position& pos )
+void StockpileManager::removeContainer( Position& pos )
 {
 	Stockpile* sp = getStockpileAtPos( pos );
 	if ( sp )
 	{
-		sp->removeContainer( containerID, pos );
+		sp->removeContainer( pos );
 	}
 }
 

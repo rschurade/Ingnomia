@@ -30,6 +30,8 @@
 #include <QThread>
 #include <QtGlobal>
 
+#include "../game/sourcematerial.h"
+
 class Game;
 
 struct InventoryField
@@ -38,11 +40,15 @@ struct InventoryField
 	bool isFull              = false;
 	unsigned char capacity   = 1;
 	unsigned char stackSize  = 1;
-	unsigned int containerID = 0;
 	QSet<unsigned int> items;
 	QSet<unsigned int> reservedItems;
 
 	bool requireSame = false;
+
+	// Container properties (empty containerSID = no container)
+	SourceMaterial container;
+	bool hasContainer() const { return !container.itemSID.isEmpty(); }
+	QStringList allowedItems; // cached list of item types allowed in this container
 };
 
 struct StockpileItemLimit
@@ -97,8 +103,8 @@ public:
 	bool insertItem( Position pos, unsigned int item );
 	bool removeItem( Position pos, unsigned int item );
 
-	void addContainer( unsigned int containerID, Position& pos );
-	void removeContainer( unsigned int containerID, Position& pos );
+	void addContainer( const SourceMaterial& source, unsigned char capacity, bool requireSame, const QStringList& allowedItems, Position& pos );
+	void removeContainer( Position& pos );
 
 	void setCheckState( bool state, QString category, QString group = "", QString item = "", QString material = "" );
 

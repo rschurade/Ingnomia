@@ -40,8 +40,8 @@ public:
 	void addStockpile( Position& firstClick, QList<QPair<Position, bool>> fields );
 	void load( QVariantMap vals );
 
-	void addContainer( unsigned int containerID, Position& pos );
-	void removeContainer( unsigned int containerID, Position& pos );
+	void addContainer( const SourceMaterial& source, unsigned char capacity, bool requireSame, const QStringList& allowedItems, Position& pos );
+	void removeContainer( Position& pos );
 
 	void removeStockpile( unsigned int id );
 	void removeTile( Position& pos );
