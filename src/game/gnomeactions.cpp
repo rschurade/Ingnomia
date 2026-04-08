@@ -104,10 +104,19 @@ BT_RESULT Gnome::actionSleep( bool halt )
 	unsigned int hour = qMin( 23, GameState::hour );
 	auto activity     = m_schedule[hour];
 
-	if ( newVal >= 100. && activity != ScheduleActivity::Sleep )
+	bool criticalNeed = m_needs["Hunger"].toFloat() < 20 || m_needs["Thirst"].toFloat() < 20;
+
+	if ( ( newVal >= 100. && activity != ScheduleActivity::Sleep ) || criticalNeed )
 	{
 		setThoughtBubble( "" );
-		m_log.append( "Woke up." );
+		if ( criticalNeed )
+		{
+			m_log.append( "Woke up to eat or drink." );
+		}
+		else
+		{
+			m_log.append( "Woke up." );
+		}
 
 		g->rm()->releaseBed( m_id );
 		unclaimAll();
@@ -160,8 +169,11 @@ BT_RESULT Gnome::actionMove( bool halt )
 
 	if ( halt )
 	{
-		//abortJob( "actionMove - halt" );
 		m_currentPath.clear();
+		if ( m_job )
+		{
+			suspendJob();
+		}
 		return BT_RESULT::IDLE;
 	}
 	// gnome has a path, move on path and return
@@ -1606,7 +1618,10 @@ BT_RESULT Gnome::actionWork( bool halt )
 		log( "actionWork" );
 	if ( halt )
 	{
-		//abortJob( "actionWorkJob() - halt" );
+		if ( m_job )
+		{
+			suspendJob();
+		}
 		return BT_RESULT::IDLE;
 	}
 

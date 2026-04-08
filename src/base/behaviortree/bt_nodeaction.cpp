@@ -37,8 +37,7 @@ void BT_NodeAction::halt()
 {
 	if ( m_status == BT_RESULT::RUNNING )
 	{
-		// TODO: re-enable halt callbacks once all action handlers properly clean up
-		// m_callback( true );
+		m_callback( true );
 		m_status = BT_RESULT::IDLE;
 	}
 }

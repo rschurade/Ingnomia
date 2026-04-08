@@ -844,7 +844,7 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 		for ( auto need : Global::needIDs )
 		{
 			//update need values
-			float decay  = Global::needDecays.value( need );
+			float decay  = ( need == "Sleep" ) ? 0.0f : Global::needDecays.value( need ); // DEBUG: disable sleep decay
 			float oldVal = m_needs[need].toFloat();
 			float newVal = oldVal + decay;
 
