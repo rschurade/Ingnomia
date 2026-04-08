@@ -70,7 +70,7 @@ Item::Item( QVariantMap in ) :
 	m_isInJob       = in.value( "InJob" ).toUInt();
 	m_isUsedBy      = in.value( "IsUsedBy" ).toUInt();
 	m_isInContainer = in.value( "InContainer" ).toUInt();
-	m_isConstructed = in.value( "Constructed" ).toBool();
+	// m_isConstructed removed — items are destroyed on construction
 	if( in.contains( "IsHeldBy") )
 	{
 		m_isHeldBy = in.value( "IsHeldBy" ).toUInt();
@@ -155,7 +155,6 @@ Item::Item( const Item& other ) :
 	m_isInStockpile( other.m_isInStockpile ),
 	m_isInJob( other.m_isInJob ),
 	m_isInContainer( other.m_isInContainer ),
-	m_isConstructed( other.m_isConstructed ),
 	m_isHeldBy( other.m_isHeldBy ),
 	m_location( other.m_location ),
 	m_locationOwner( other.m_locationOwner ),
@@ -204,7 +203,6 @@ QVariant Item::serialize() const
 	out.insert( "InStockpile", m_isInStockpile );
 	out.insert( "InJob", m_isInJob );
 	out.insert( "InContainer", m_isInContainer );
-	out.insert( "Constructed", m_isConstructed );
 	out.insert( "IsHeldBy", m_isHeldBy );
 	out.insert( "IsUsedBy", m_isUsedBy );
 	out.insert( "Value", m_value );
@@ -406,15 +404,6 @@ unsigned char Item::stackSize() const
 	return DB::select( "StackSize", "Items", DBH::itemSID( m_itemUID ) ).toUInt();
 }
 
-bool Item::isConstructed() const
-{
-	return m_isConstructed;
-}
-
-void Item::setIsConstructed( bool value )
-{
-	m_isConstructed = value;
-}
 
 void Item::addComponent( ItemMaterial im )
 {
@@ -564,7 +553,7 @@ bool Item::removeItem( unsigned int itemID )
 
 bool Item::isFree() const
 {
-	return !m_isConstructed && ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
+	return ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
 }
 
 void Item::setLocation( ItemLocation loc, unsigned int owner )

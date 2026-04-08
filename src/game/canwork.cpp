@@ -308,7 +308,7 @@ void CanWork::cleanUpJob( bool finished )
 		for ( auto itemID : claimedItems() )
 		{
 			g->inv()->setInJob( itemID, 0 );
-			if ( ( g->inv()->isHeldBy( itemID ) == m_id ) && !g->inv()->isConstructed( itemID ) )
+			if ( g->inv()->isHeldBy( itemID ) == m_id )
 			{
 				g->inv()->putDownItem( itemID, m_position );
 			}
@@ -324,7 +324,7 @@ void CanWork::cleanUpJob( bool finished )
 
 	for ( auto itemID : m_carriedItems )
 	{
-		if ( ( g->inv()->isHeldBy( itemID ) == m_id ) && !g->inv()->isConstructed( itemID ) )
+		if ( g->inv()->isHeldBy( itemID ) == m_id )
 		{
 			g->inv()->putDownItem( itemID, m_position );
 		}
@@ -954,13 +954,8 @@ bool CanWork::construct()
 		for ( auto itemUID : claimedItems() )
 		{
 			g->inv()->setInJob( itemUID, 0 );
-
-			if ( !g->inv()->isConstructed( itemUID ) )
-			{
-				qDebug() << "destroy items after construction";
-				g->inv()->pickUpItem( itemUID, m_id ); // update item sprites on tile
-				g->inv()->destroyObject( itemUID );
-			}
+			g->inv()->pickUpItem( itemUID, m_id );
+			g->inv()->destroyObject( itemUID );
 		}
 		m_claimedItems.clear();
 		return true;

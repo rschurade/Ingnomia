@@ -149,24 +149,6 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				QString itext = "";
 				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
 				
-				if( g->inv()->isConstructed( item ) )
-				{
-					if( g->mcm()->hasMechanism( pos ) )
-					{
-						unsigned int id = g->mcm()->mechanismID( pos );
-						m_tileInfo.mechInfo = g->mcm()->mechanismData( id );
-						m_tileInfo.mechInfo.name = info;
-						if( item == id )
-						{
-							continue;
-						}
-					}
-					else
-					{
-						m_tileInfo.mechInfo.itemID = 0;
-					}
-					itext += "b";
-				}
 				if( g->inv()->isInStockpile( item ) )
 				{
 					itext += "s";

@@ -350,12 +350,12 @@ void Inventory::addObject( Item& object, const QString& itemID, const QString& m
 		Position pos = item->getPos();
 		ot->insertItem( pos.x, pos.y, pos.z, item->id() );
 		
-		if ( !item->isConstructed() && !item->isInContainer() )
+		if ( !item->isInContainer() )
 		{
 			g->m_world->setItemSprite( item->getPos(), object.spriteID() );
 		}
 
-		if ( item->isConstructed() || item->isInStockpile() )
+		if ( item->isInStockpile() )
 		{
 			addToWealth( item );
 		}
@@ -441,7 +441,7 @@ unsigned int Inventory::getFirstObjectAtPosition( const Position& pos )
 		{
 			for ( auto itemUID : m_positionHash[pos.toInt()].values() )
 			{
-				if ( !isConstructed( itemUID ) && !isInContainer( itemUID ) )
+				if ( !isInContainer( itemUID ) )
 				{
 					return itemUID;
 				}
@@ -1021,7 +1021,7 @@ QMap<QString, int> Inventory::materialCountsForItem( QString itemSID, bool allow
 				for ( auto id : it )
 				{
 					auto item = getItem( id );
-					if ( item && ( !item->isInJob() || allowInJob ) && !item->isConstructed() && ( item->isHeldBy() == 0 ) )
+					if ( item && ( !item->isInJob() || allowInJob ) && ( item->isHeldBy() == 0 ) )
 					{
 						mats["any"]++;
 						if ( mats.contains( item->materialSID() ) )
@@ -1092,7 +1092,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 				for ( auto id : it )
 				{
 					auto item = getItem( id );
-					if ( item && !item->isConstructed() )
+					if ( item )
 					{
 						++result;
 					}
@@ -1107,7 +1107,7 @@ unsigned int Inventory::itemCountWithInJob( QString itemID, QString materialID )
 			for ( auto id : m_hash[itemID][materialID] )
 			{
 				auto item = getItem( id );
-				if ( item && !item->isConstructed() )
+				if ( item )
 				{
 					++result;
 				}
@@ -1218,11 +1218,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 						result.equipped++;
 					}
 
-					if ( item->isConstructed() )
-					{
-						result.constructed++;
-					}
-					else if ( item->isInStockpile() )
+					if ( item->isInStockpile() )
 						result.inStockpile++;
 					else
 						result.loose++;
@@ -1250,7 +1246,7 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 				{
 					result.equipped++;
 				}
-				if ( item->isConstructed() )
+				if ( false ) // isConstructed removed
 				{
 					result.constructed++;
 				}
@@ -1350,35 +1346,6 @@ void Inventory::setInContainer( unsigned int id, unsigned int container )
 	if ( item )
 	{
 		item->setInContainer( container );
-	}
-}
-
-bool Inventory::isConstructed( unsigned int id )
-{
-	auto item = getItem( id );
-	if ( item )
-	{
-		return item->isConstructed();
-	}
-	return false;
-}
-
-void Inventory::setConstructed( unsigned int id, bool status )
-{
-	auto item = getItem( id );
-	if ( item )
-	{
-		if ( item->isConstructed() && !status )
-		{
-			removeFromWealth( item );
-			emit signalRemoveItem( itemSID( id ), materialSID( id ) );
-		}
-		item->setIsConstructed( status );
-		if ( status )
-		{
-			addToWealth( item );
-			emit signalAddItem( itemSID( id ), materialSID( id ) );
-		}
 	}
 }
 
@@ -1502,10 +1469,6 @@ void Inventory::removeItemFromContainer( unsigned int id )
 		if ( container )
 		{
 			container->removeItem( id );
-			if ( container->isConstructed() )
-			{
-				g->m_spm->setInfiNotFull( container->getPos() );
-			}
 		}
 	}
 }

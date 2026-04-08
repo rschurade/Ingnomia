@@ -351,11 +351,14 @@ bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVaria
 
 bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 {
+	SourceMaterial sm( g->inv()->itemSID( itemUID ), g->inv()->materialSID( itemUID ), g->inv()->quality( itemUID ) );
+
 	QVariantMap constr;
 	constr.insert( "ConstructionID", "Item" );
 	constr.insert( "Pos", pos.toString() );
-	constr.insert( "Item", itemUID );
+	constr.insert( "Source", sm.serialize() );
 	constr.insert( "Type", "Hydraulics" );
+	constr.insert( "Group", "Hydraulics" );
 
 	m_wallConstructions.insert( pos.toInt(), constr );
 
@@ -383,6 +386,7 @@ bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 		g->mcm()->installItem( itemUID, pos, 0 );
 	}
 
+	// Item will be destroyed by canwork post-loop (not marked as constructed)
 	return true;
 }
 
@@ -398,17 +402,24 @@ bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workP
 	updatePipeSprite( decPos.southOf() );
 	updatePipeSprite( decPos.westOf() );
 
-	unsigned itemID = constr.value( "Item" ).toUInt();
-	g->inv()->setConstructed( itemID, false );
-	g->inv()->moveItemToPos( itemID, workPos );
-
-	QString itemSID = g->inv()->itemSID( constr.value( "Item" ).toUInt() );
+	SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+	unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+	if ( newItem && sm.quality > 0 )
+	{
+		g->inv()->setQuality( newItem, sm.quality );
+	}
 
 	g->flm()->removeAt( decPos );
 
-	if ( itemSID == "Pump" )
+	if ( sm.itemSID == "Pump" )
 	{
-		g->mcm()->uninstallItem( constr.value( "Item" ).toUInt() );
+		// Pump mechanism was already destroyed on install, nothing to uninstall from inventory
+		// MechanismManager tracks it by its own ID
+		auto posID = decPos.toInt();
+		if ( g->mcm()->hasMechanism( decPos ) )
+		{
+			g->mcm()->uninstallItem( g->mcm()->mechanismID( decPos ) );
+		}
 	}
 
 	return true;
@@ -1273,14 +1284,12 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		{
 			for ( auto vItem : constr.value( "Items" ).toList() )
 			{
-				g->inv()->setConstructed( vItem.toUInt(), false );
 				g->inv()->moveItemToPos( vItem.toUInt(), workPos );
 			}
 			g->inv()->destroyObject( itemID );
 		}
 		else
 		{
-			g->inv()->setConstructed( itemID, false );
 			g->inv()->moveItemToPos( itemID, workPos );
 		}
 

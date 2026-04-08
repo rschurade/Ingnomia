@@ -91,8 +91,6 @@ public:
 	unsigned int isUsedBy() const;
 	void setUsedBy( unsigned int creatureID );
 
-	bool isConstructed() const;
-	void setIsConstructed( bool value );
 
 	unsigned char stackSize() const;
 
@@ -140,8 +138,6 @@ public:
 private:
 	unsigned short m_materialUID = 0;
 	unsigned short m_itemUID     = 0;
-
-	bool m_isConstructed = false;
 
 	unsigned int m_isInStockpile = 0;
 	unsigned int m_isInContainer = 0;

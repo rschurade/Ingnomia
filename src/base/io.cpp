@@ -380,7 +380,6 @@ void IO::sanitize()
 		std::unordered_set<unsigned int> legacyJobs;
 
 		std::unordered_map<unsigned int, unsigned int> carriedItems;
-		std::unordered_map<unsigned int, unsigned int> constructedItems;
 		for ( const auto& gnome : g->gm()->gnomes() )
 		{
 			{
@@ -411,53 +410,6 @@ void IO::sanitize()
 				carriedItems[itemID] = gnome->id();
 			}
 		}
-		{
-			const auto& constructions = g->w()->wallConstructions();
-			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
-			{
-				const auto& construction = it.value();
-				if ( construction.contains( "Item" ) )
-				{
-					auto itemID = construction["Item"].toInt();
-					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemID] = 0;
-				}
-				// Items can be either item type IDs or actual item IDs
-				if ( construction.contains( "FromParts" ) )
-				{
-					for ( auto vItem : construction.value( "Items" ).toList() )
-					{
-						auto itemID = vItem.toInt();
-						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemID] = 0;
-					}
-				}
-			}
-		}
-
-		{
-			const auto& constructions = g->w()->floorConstructions();
-			for ( auto it = constructions.cbegin(); it != constructions.cend(); ++it )
-			{
-				const auto& construction = it.value();
-				if ( construction.contains( "Item" ) )
-				{
-					auto itemID = construction["Item"].toInt();
-					assert( constructedItems.count( itemID ) == 0 );
-					constructedItems[itemID] = 0;
-				}
-				// Items can be either item type IDs or actual item IDs
-				if ( construction.contains( "FromParts" ) )
-				{
-					for ( auto vItem : construction.value( "Items" ).toList() )
-					{
-						auto itemID = vItem.toInt();
-						assert( constructedItems.count( itemID ) == 0 );
-						constructedItems[itemID] = 0;
-					}
-				}
-			}
-		}
 
 		for ( auto& item : g->inv()->allItems() )
 		{
@@ -467,20 +419,11 @@ void IO::sanitize()
 				item.setInJob( 0 );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " had illegal job";
 			}
-			const bool carried    = 0 != carriedItems.count( item.id() );
-			const bool construced = 0 != constructedItems.count( item.id() );
+			const bool carried = 0 != carriedItems.count( item.id() );
 
-			if ( carried && construced )
-			{
-				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " is both carried around and installed somewhere simultaniously";
-				continue;
-			}
-
-			// Items which should be in world
-			if ( item.isHeldBy() != 0 && !construced && !carried )
+			if ( item.isHeldBy() != 0 && !carried )
 			{
 				g->inv()->putDownItem( item.id(), item.getPos() );
-				item.setIsConstructed( false );
 				qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found lost in space";
 			}
 			if ( carried )
@@ -489,43 +432,6 @@ void IO::sanitize()
 				if ( item.isHeldBy() != realOwner )
 				{
 					g->inv()->pickUpItem( item.id(), realOwner );
-				}
-				if ( item.isConstructed() )
-				{
-					g->inv()->setConstructed( item.id(), false );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found constructed on a gnome";
-				}
-			}
-			// Items in world
-			if ( !carried && !construced )
-			{
-				if ( item.isConstructed() )
-				{
-					g->inv()->setConstructed( item.id(), false );
-					item.setIsConstructed( false );
-					g->inv()->putDownItem( item.id(), item.getPos() );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found glued to the floor";
-				}
-			}
-			// Items in construction
-			if ( construced )
-			{
-				auto realOwner = constructedItems[item.id()];
-				if ( item.isHeldBy() != realOwner )
-				{
-					if ( realOwner != 0 )
-					{
-						g->inv()->pickUpItem( item.id(), realOwner );
-					}
-					else
-					{
-						g->inv()->putDownItem( item.id(), item.getPos() );
-					}
-				}
-				if ( !item.isConstructed() )
-				{
-					g->inv()->setConstructed( item.id(), true );
-					qWarning() << "item " + QString::number( item.id() ) + " " + item.itemSID() + " found broken loose";
 				}
 			}
 		}

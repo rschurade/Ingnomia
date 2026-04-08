@@ -126,8 +126,6 @@ public:
 
 	
 
-	bool isConstructed( unsigned int id );
-	void setConstructed( unsigned int id, bool status );
 
 	void putItemInContainer( unsigned int id, unsigned int container );
 	void removeItemFromContainer( unsigned int id );
