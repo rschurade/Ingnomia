@@ -1029,23 +1029,8 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 			break;
 	}
 
-	if ( destroyAfterInstall )
-	{
-		// Item will be destroyed by canwork post-loop — don't mark as constructed
-	}
-	else
-	{
-		g->inv()->setConstructed( itemID, true );
-		if ( isFromParts )
-		{
-			constr.insert( "Items", fromPartsItems );
-			constr.insert( "FromParts", true );
-			for ( const auto& item : fromPartsItems )
-			{
-				g->inv()->setConstructed( item.toUInt(), true );
-			}
-		}
-	}
+	// All item types in constructItem are now destroyAfterInstall.
+	// Items will be destroyed by canwork post-loop.
 
 	unsigned int nextItem = g->inv()->getFirstObjectAtPosition( pos );
 	if ( nextItem )
