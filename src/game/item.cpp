@@ -57,44 +57,17 @@ Item::Item( QVariantMap in ) :
 	QString itemSID = in.value( "ItemSID" ).toString();
 	m_itemUID       = DBH::itemUID( itemSID );
 	m_materialUID   = DBH::materialUID( in.value( "MaterialSID" ).toString() );
-	m_isInStockpile = in.value( "InStockpile" ).toUInt();
-	m_isInJob       = in.value( "InJob" ).toUInt();
-	m_isUsedBy      = in.value( "IsUsedBy" ).toUInt();
-	m_isInContainer = in.value( "InContainer" ).toUInt();
-	// m_isConstructed removed — items are destroyed on construction
-	if( in.contains( "IsHeldBy") )
-	{
-		m_isHeldBy = in.value( "IsHeldBy" ).toUInt();
-	}
-	else
-	{
-		if( in.contains( "IsPickedUp" ) )
-		{
-			// legacy save game, need to determine who is holding the item
-			if( in.value( "IsPickedUp" ).toBool() )
-			{
-				m_isHeldBy = 1;
-			}
-		}
-	}
-	
+	m_stockpileID = in.value( "StockpileID" ).toUInt();
+	m_containerID = in.value( "ContainerID" ).toUInt();
+
+	m_location      = static_cast<ItemLocation>( in.value( "Location" ).toUInt() );
+	m_locationOwner = in.value( "LocationOwner" ).toUInt();
+	m_claim         = static_cast<ItemClaim>( in.value( "Claim" ).toUInt() );
+	m_claimOwner    = in.value( "ClaimOwner" ).toUInt();
+
 	m_value         = in.value( "Value" ).toUInt();
 	m_madeBy        = in.value( "MadeBy" ).toUInt();
 	m_quality       = in.value( "Quality" ).toUInt();
-
-	// Derive new ownership state from old flags
-	m_location      = ( m_isHeldBy != 0 ) ? ItemLocation::Carried : ItemLocation::Ground;
-	m_locationOwner = ( m_isHeldBy != 0 ) ? m_isHeldBy : 0;
-	if ( m_isInJob != 0 )
-	{
-		m_claim = ItemClaim::Job;
-		m_claimOwner = m_isInJob;
-	}
-	else if ( m_isUsedBy != 0 )
-	{
-		m_claim = ItemClaim::Equipped;
-		m_claimOwner = m_isUsedBy;
-	}
 
 	if ( in.value( "Extra" ).toBool() )
 	{
@@ -126,14 +99,12 @@ Item::Item( QVariantMap in ) :
 Item::Item( const Item& other ) :
 	m_itemUID( other.m_itemUID ),
 	m_materialUID( other.m_materialUID ),
-	m_isInStockpile( other.m_isInStockpile ),
-	m_isInJob( other.m_isInJob ),
-	m_isInContainer( other.m_isInContainer ),
-	m_isHeldBy( other.m_isHeldBy ),
 	m_location( other.m_location ),
 	m_locationOwner( other.m_locationOwner ),
 	m_claim( other.m_claim ),
 	m_claimOwner( other.m_claimOwner ),
+	m_stockpileID( other.m_stockpileID ),
+	m_containerID( other.m_containerID ),
 	m_value( other.m_value ),
 	m_madeBy( other.m_madeBy ),
 	m_quality( other.m_quality ),
@@ -171,11 +142,12 @@ QVariant Item::serialize() const
 	*/
 	out.insert( "ItemSID", itemSID() );
 	out.insert( "MaterialSID", materialSID() );
-	out.insert( "InStockpile", m_isInStockpile );
-	out.insert( "InJob", m_isInJob );
-	out.insert( "InContainer", m_isInContainer );
-	out.insert( "IsHeldBy", m_isHeldBy );
-	out.insert( "IsUsedBy", m_isUsedBy );
+	out.insert( "StockpileID", m_stockpileID );
+	out.insert( "ContainerID", m_containerID );
+	out.insert( "Location", static_cast<unsigned int>( m_location ) );
+	out.insert( "LocationOwner", m_locationOwner );
+	out.insert( "Claim", static_cast<unsigned int>( m_claim ) );
+	out.insert( "ClaimOwner", m_claimOwner );
 	out.insert( "Value", m_value );
 	out.insert( "MadeBy", m_madeBy );
 	out.insert( "Quality", m_quality );
@@ -243,86 +215,54 @@ int Item::distanceSquare( const Position& pos, int zWeight ) const
 	return ( m_position.x - pos.x ) * ( m_position.x - pos.x ) + ( m_position.y - pos.y ) * ( m_position.y - pos.y ) + ( m_position.z - pos.z ) * ( m_position.z - pos.z ) * zWeight;
 }
 
-unsigned int Item::isInStockpile() const
-{
-	return m_isInStockpile;
-}
-
-void Item::setInStockpile( unsigned int stockpile )
-{
-	m_isInStockpile = stockpile;
-}
-
 unsigned int Item::isInJob() const
 {
-	return m_isInJob;
+	return ( m_claim == ItemClaim::Job ) ? m_claimOwner : 0;
 }
 
 void Item::setInJob( unsigned int job )
 {
-	m_isInJob = job;
-	// Dual-write: sync new ownership state
 	if ( job != 0 )
 	{
-		m_claim = ItemClaim::Job;
-		m_claimOwner = job;
+		setClaim( ItemClaim::Job, job );
 	}
 	else if ( m_claim == ItemClaim::Job )
 	{
-		m_claim = ItemClaim::None;
-		m_claimOwner = 0;
+		setClaim( ItemClaim::None, 0 );
 	}
-}
-
-unsigned int Item::isInContainer() const
-{
-	return m_isInContainer;
-}
-
-void Item::setInContainer( unsigned int container )
-{
-	m_isInContainer = container;
 }
 
 unsigned int Item::isHeldBy() const
 {
-	return m_isHeldBy;
+	return ( m_location == ItemLocation::Carried ) ? m_locationOwner : 0;
 }
 
 void Item::setHeldBy( unsigned int creatureID )
 {
-	m_isHeldBy = creatureID;
-	// Dual-write: sync new ownership state
 	if ( creatureID != 0 )
 	{
-		m_location = ItemLocation::Carried;
-		m_locationOwner = creatureID;
+		setLocation( ItemLocation::Carried, creatureID );
 	}
 	else
 	{
-		m_location = ItemLocation::Ground;
-		m_locationOwner = 0;
+		setLocation( ItemLocation::Ground, 0 );
 	}
 }
 
 unsigned int Item::isUsedBy() const
 {
-	return m_isUsedBy;
+	return ( m_claim == ItemClaim::Equipped ) ? m_claimOwner : 0;
 }
 
 void Item::setUsedBy( unsigned int creatureID )
 {
-	m_isUsedBy = creatureID;
-	// Dual-write: sync new ownership state
 	if ( creatureID != 0 )
 	{
-		m_claim = ItemClaim::Equipped;
-		m_claimOwner = creatureID;
+		setClaim( ItemClaim::Equipped, creatureID );
 	}
 	else if ( m_claim == ItemClaim::Equipped )
 	{
-		m_claim = ItemClaim::None;
-		m_claimOwner = 0;
+		setClaim( ItemClaim::None, 0 );
 	}
 }
 
@@ -461,43 +401,17 @@ bool Item::isTool() const
 
 bool Item::isFree() const
 {
-	return ( m_isInJob == 0 ) && ( m_isHeldBy == 0 ) && ( m_isUsedBy == 0 );
+	return m_location == ItemLocation::Ground && m_claim == ItemClaim::None;
 }
 
 void Item::setLocation( ItemLocation loc, unsigned int owner )
 {
 	m_location = loc;
 	m_locationOwner = owner;
-	// Sync old flags
-	switch ( loc )
-	{
-		case ItemLocation::Ground:
-			m_isHeldBy = 0;
-			break;
-		case ItemLocation::Carried:
-			m_isHeldBy = owner;
-			break;
-	}
 }
 
 void Item::setClaim( ItemClaim cl, unsigned int owner )
 {
 	m_claim = cl;
 	m_claimOwner = owner;
-	// Sync old flags
-	switch ( cl )
-	{
-		case ItemClaim::None:
-			m_isInJob = 0;
-			m_isUsedBy = 0;
-			break;
-		case ItemClaim::Job:
-			m_isInJob = owner;
-			m_isUsedBy = 0;
-			break;
-		case ItemClaim::Equipped:
-			m_isUsedBy = owner;
-			m_isInJob = 0;
-			break;
-	}
 }
