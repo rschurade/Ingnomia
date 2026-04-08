@@ -44,15 +44,6 @@ Item::Item( Position& pos, QString itemSID, QString materialSID ) :
 		setNutritionalValue( DB::select( "EatValue", "Items", itemSID ).toInt() );
 		setDrinkValue( DB::select( "DrinkValue", "Items", itemSID ).toInt() );
 	}
-	if ( DB::select( "IsContainer", "Items", itemSID ).toBool() )
-	{
-		if ( !m_extraData )
-		{
-			m_extraData = new ItemExtraData;
-		}
-		m_extraData->capacity    = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
-		m_extraData->requireSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
-	}
 }
 
 Item::Item( QVariantMap in ) :
@@ -110,14 +101,6 @@ Item::Item( QVariantMap in ) :
 		m_extraData = new ItemExtraData;
 	}
 
-	if ( in.contains( "Items" ) )
-	{
-		QVariantList vli = in.value( "Items" ).toList();
-		for ( auto item : vli )
-		{
-			m_extraData->containedItems.insert( item.toUInt() );
-		}
-	}
 	if ( in.contains( "Components" ) )
 	{
 		QVariantList vlc = in.value( "Components" ).toList();
@@ -137,15 +120,6 @@ Item::Item( QVariantMap in ) :
 	if ( in.contains( "DrinkValue" ) )
 	{
 		m_extraData->drinkValue = in.value( "DrinkValue" ).toUInt();
-	}
-	if ( DBH::itemIsContainer( m_itemUID ) )
-	{
-		if ( !m_extraData )
-		{
-			m_extraData = new ItemExtraData;
-		}
-		m_extraData->capacity    = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
-		m_extraData->requireSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
 	}
 }
 
@@ -173,11 +147,8 @@ Item::Item( const Item& other ) :
 	{
 		m_extraData                   = new ItemExtraData;
 		m_extraData->components       = other.m_extraData->components;
-		m_extraData->containedItems   = other.m_extraData->containedItems;
 		m_extraData->nutritionalValue = other.m_extraData->nutritionalValue;
 		m_extraData->drinkValue       = other.m_extraData->drinkValue;
-		m_extraData->capacity         = other.m_extraData->capacity;
-		m_extraData->requireSame      = other.m_extraData->requireSame;
 	}
 }
 
@@ -216,13 +187,6 @@ QVariant Item::serialize() const
 		out.insert( "EatValue", m_extraData->nutritionalValue );
 		out.insert( "DrinkValue", m_extraData->drinkValue );
 
-		if ( !m_extraData->containedItems.empty() )
-		{
-			QVariantList vli;
-			for ( auto i : m_extraData->containedItems )
-				vli.append( i );
-			out.insert( "Items", vli );
-		}
 		if ( !m_extraData->components.empty() )
 		{
 			QVariantList vli;
@@ -277,43 +241,6 @@ QString Item::combinedSID() const
 int Item::distanceSquare( const Position& pos, int zWeight ) const
 {
 	return ( m_position.x - pos.x ) * ( m_position.x - pos.x ) + ( m_position.y - pos.y ) * ( m_position.y - pos.y ) + ( m_position.z - pos.z ) * ( m_position.z - pos.z ) * zWeight;
-}
-
-bool Item::isContainer() const
-{
-	if ( m_extraData )
-	{
-		return m_extraData->capacity > 0;
-	}
-	return false;
-}
-
-const QSet<unsigned int>& Item::containedItems() const
-{
-	if ( m_extraData )
-	{
-		return m_extraData->containedItems;
-	}
-	static const QSet<unsigned int> nullopt;
-	return nullopt;
-}
-
-unsigned char Item::capacity() const
-{
-	if ( m_extraData )
-	{
-		return m_extraData->capacity;
-	}
-	return 0;
-}
-
-bool Item::requireSame() const
-{
-	if ( m_extraData )
-	{
-		return m_extraData->requireSame;
-	}
-	return false;
 }
 
 unsigned int Item::isInStockpile() const
@@ -530,25 +457,6 @@ bool Item::isWeapon() const
 bool Item::isTool() const
 {
 	return DB::select( "IsTool", "Items", DBH::itemSID( m_itemUID ) ).toBool();
-}
-
-bool Item::insertItem( unsigned int itemID )
-{
-	if ( m_extraData )
-	{
-		m_extraData->containedItems.insert( itemID );
-		return true;
-	}
-	return false;
-}
-
-bool Item::removeItem( unsigned int itemID )
-{
-	if ( m_extraData )
-	{
-		return m_extraData->containedItems.remove( itemID );
-	}
-	return false;
 }
 
 bool Item::isFree() const

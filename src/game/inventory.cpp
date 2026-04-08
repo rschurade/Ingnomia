@@ -405,10 +405,7 @@ void Inventory::destroyObject( unsigned int id )
 				}
 			}
 
-			if ( item->isInContainer() )
-			{
-				removeItemFromContainer( id );
-			}
+			item->setInContainer( 0 );
 
 			QString materialSID = DBH::materialSID( item->materialUID() );
 			QString itemSID     = DBH::itemSID( item->itemUID() );
@@ -821,7 +818,7 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 			removeFromWealth( item );
 		}
 
-		removeItemFromContainer( id );
+		item->setInContainer( 0 );
 
 		const Position& pos = item->getPos();
 		if ( m_positionHash.contains( pos.toInt() ) )
@@ -835,24 +832,6 @@ unsigned int Inventory::pickUpItem( unsigned int id, unsigned int creatureID )
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
 		ot->removeItem( pos.x, pos.y, pos.z, item->id() );
-
-		if ( item->isContainer() )
-		{
-			for ( auto inItemID : item->containedItems() )
-			{
-				auto inItem = getItem( inItemID );
-
-				if ( inItem )
-				{
-					QString inItemSID = inItem->itemSID();
-					QString inMatSID  = inItem->materialSID();
-
-					Octree* ot2 = octree( inItemSID, inMatSID );
-					ot2->removeItem( pos.x, pos.y, pos.z, inItemID );
-					m_positionHash[pos.toInt()].remove( inItemID );
-				}
-			}
-		}
 
 		unsigned int nextItemID = getFirstObjectAtPosition( pos );
 		auto nextItem           = getItem( nextItemID );
@@ -895,32 +874,6 @@ unsigned int Inventory::putDownItem( unsigned int id, const Position& newPos )
 
 		Octree* ot = octree( item->itemSID(), item->materialSID() );
 		ot->insertItem( newPos.x, newPos.y, newPos.z, item->id() );
-			
-		if ( item->isContainer() )
-		{
-			for ( auto inItemID : item->containedItems() )
-			{
-				auto inItem = getItem( inItemID );
-
-				if ( inItem )
-				{
-					QString inItemSID = inItem->itemSID();
-					QString inMatSID  = inItem->materialSID();
-					if( m_octrees.contains( inItemSID ) )
-					{
-						if( m_octrees[inItemSID].contains( inMatSID ) )
-						{
-							auto octree       = m_octrees[inItemSID][inMatSID];
-							if ( octree )
-							{
-								octree->insertItem( newPos.x, newPos.y, newPos.z, inItemID );
-								m_positionHash[newPos.toInt()].insert( inItemID );
-							}
-						}
-					}
-				}
-			}
-		}
 
 		// set new position
 		item->setPos( newPos );
@@ -1268,15 +1221,6 @@ Inventory::ItemCountDetailed Inventory::itemCountDetailed( QString itemID, QStri
 	return ItemCountDetailed();
 }
 
-bool Inventory::isContainer( unsigned int id )
-{
-	auto item = getItem( id );
-	if ( item )
-	{
-		return item->isContainer();
-	}
-	return false;
-}
 
 unsigned int Inventory::isInStockpile( unsigned int id )
 {
@@ -1435,44 +1379,6 @@ void Inventory::setMadeBy( unsigned int id, unsigned int creatureID )
 	}
 }
 
-void Inventory::putItemInContainer( unsigned int id, unsigned int containerID )
-{
-	auto item      = getItem( id );
-	auto container = getItem( containerID );
-	if ( item != 0 && container != 0 )
-	{
-		item->setInContainer( containerID );
-
-		container->insertItem( id );
-
-		unsigned int nextItemID = getFirstObjectAtPosition( container->getPos() );
-		auto nextItem           = getItem( nextItemID );
-		if ( nextItem )
-		{
-			g->m_world->setItemSprite( container->getPos(), nextItem->spriteID() );
-		}
-		else
-		{
-			g->m_world->setItemSprite( container->getPos(), 0 );
-		}
-	}
-}
-
-void Inventory::removeItemFromContainer( unsigned int id )
-{
-	auto item = getItem( id );
-	if ( item )
-	{
-		unsigned int containerID = item->isInContainer();
-		item->setInContainer( 0 );
-		auto container = getItem( containerID );
-		if ( container )
-		{
-			container->removeItem( id );
-		}
-	}
-}
-
 QString Inventory::pixmapID( unsigned int id )
 {
 	// return DBH::spriteID( DBH::itemSID( m_itemUID ) ) + "_" + DBH::materialSID( m_materialUID );
@@ -1585,37 +1491,6 @@ unsigned char Inventory::stackSize( unsigned int id )
 	return 0;
 }
 
-unsigned char Inventory::capacity( unsigned int id )
-{
-	//get from containers
-	auto item = getItem( id );
-	if ( item )
-	{
-		return item->capacity();
-	}
-	return 0;
-}
-
-bool Inventory::requireSame( unsigned int id )
-{
-	auto item = getItem( id );
-	if ( item )
-	{
-		return item->requireSame();
-	}
-	return false;
-}
-
-const QSet<unsigned int>& Inventory::itemsInContainer( unsigned int containerID )
-{
-	auto container = getItem( containerID );
-	if ( container )
-	{
-		return container->containedItems();
-	}
-	static const QSet<unsigned int> nullopt;
-	return nullopt;
-}
 
 unsigned char Inventory::nutritionalValue( unsigned int id )
 {
@@ -1782,32 +1657,9 @@ int Inventory::numDrinkItems()
 void Inventory::sanityCheck()
 {
 	qDebug() << "Starting inventory sanity check ...";
-	qDebug() << "Checking containers";
 	QElapsedTimer timer;
 	timer.start();
-	int removed = 0;
-	for ( const auto& containerType : { QString("Crate"), QString("Barrel"), QString("Sack") } )
-	{
-		if ( !m_hash.contains( containerType ) ) continue;
-		for ( auto ids : m_hash[containerType] )
-		{
-			for ( auto id : ids )
-			{
-				auto container = getItem( id );
-				if ( !container ) continue;
-				auto items = container->containedItems();
-				for ( auto itemID : items )
-				{
-					if ( !itemExists( itemID ) )
-					{
-						++removed;
-						container->removeItem( itemID );
-					}
-				}
-			}
-		}
-	}
-	qDebug() << "Removed " << QString::number( removed ) << " invalid items from containers.";
+	// Container sanity check removed — containers are now stockpile field properties
 	qDebug() << "Sanity check took " << timer.elapsed() << "ms";
 }
 

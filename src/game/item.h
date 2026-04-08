@@ -40,17 +40,12 @@ struct ItemMaterial
 
 struct ItemExtraData
 {
-
 	QList<ItemMaterial> components;
-	QSet<unsigned int> containedItems;
 
 	unsigned char nutritionalValue = 0;
 	unsigned char drinkValue       = 0;
 
 	unsigned int color = 0;
-
-	bool requireSame       = false;
-	unsigned char capacity = 0;
 };
 
 class Item : public Object
@@ -73,12 +68,7 @@ public:
 	QString materialSID() const;
 	QString combinedSID() const;
 
-	bool insertItem( unsigned int itemID );
-	bool removeItem( unsigned int itemID );
-
 	int distanceSquare( const Position& pos, int zWeight = 1 ) const;
-
-	virtual bool isContainer() const;
 
 	unsigned int isInStockpile() const;
 	void setInStockpile( unsigned int stockpile );
@@ -91,17 +81,12 @@ public:
 	unsigned int isUsedBy() const;
 	void setUsedBy( unsigned int creatureID );
 
-
 	unsigned char stackSize() const;
 
 	unsigned short value() const;
 	void setValue( unsigned short value );
 	unsigned int madeBy() const;
 	void setMadeBy( unsigned int creatureID );
-
-	const QSet<unsigned int>& containedItems() const;
-	unsigned char capacity() const;
-	bool requireSame() const;
 
 	void addComponent( ItemMaterial im );
 

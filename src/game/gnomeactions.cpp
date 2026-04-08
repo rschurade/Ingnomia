@@ -503,7 +503,7 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 	}
 	if ( g->inv()->isInContainer( m_itemToPickUp ) )
 	{
-		g->inv()->removeItemFromContainer( m_itemToPickUp );
+		g->inv()->setInContainer( m_itemToPickUp, 0 );
 	}
 
 	m_itemToPickUp = 0;

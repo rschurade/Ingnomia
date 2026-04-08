@@ -113,7 +113,6 @@ public:
 	ItemCountDetailed itemCountDetailed( QString itemID, QString materialID );
 
 
-	bool isContainer( unsigned int item );
 
 	unsigned int isInStockpile( unsigned int id );
 	void setInStockpile( unsigned int id, unsigned int stockpile );
@@ -127,8 +126,6 @@ public:
 	
 
 
-	void putItemInContainer( unsigned int id, unsigned int container );
-	void removeItemFromContainer( unsigned int id );
 
 	QString pixmapID( unsigned int item );
 	QString designation( unsigned int item );
@@ -150,8 +147,6 @@ public:
 	void setQuality( unsigned int item, unsigned char quality );
 
 	unsigned char stackSize( unsigned int item );
-	unsigned char capacity( unsigned int item );
-	bool requireSame( unsigned int item );
 
 	unsigned char nutritionalValue( unsigned int item );
 	unsigned char drinkValue( unsigned int item );
@@ -164,7 +159,6 @@ public:
 	void setColor( unsigned int item, QString color );
 	unsigned int color( unsigned int item );
 
-	const QSet<unsigned int>& itemsInContainer( unsigned int container );
 
 	int countItemsAtPos( Position& pos );
 
