@@ -63,6 +63,7 @@ protected:
 
 	void resetJobVars();
 	void cleanUpJob( bool finished );
+	void suspendJob();
 
 	int getDurationTicks( QVariant value, QSharedPointer<Job> job );
 

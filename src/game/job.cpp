@@ -87,6 +87,17 @@ Job::Job( QVariantMap in )
 
 	m_itemsToHaul = Global::util->variantList2UInt( in.value( "ItemsToHaul" ).toList() );
 	m_spell       = in.value( "Spell" ).toString();
+
+	// Phase and progress
+	m_phase            = static_cast<JobPhase>( in.value( "Phase" ).toUInt() );
+	m_totalWorkTicks   = in.value( "TotalWorkTicks" ).toFloat();
+	m_accumulatedTicks = in.value( "AccumulatedTicks" ).toFloat();
+	m_currentTaskIndex = in.value( "CurrentTaskIndex" ).toInt();
+	m_maxWorkers       = in.value( "MaxWorkers", 1 ).toUInt();
+	m_parentJobID      = in.value( "ParentJobID" ).toUInt();
+	m_itemsDelivered   = in.value( "ItemsDelivered" ).toInt();
+	m_itemsRequired    = in.value( "ItemsRequired" ).toInt();
+	m_haulSubJobs      = Global::util->variantList2UInt( in.value( "HaulSubJobs" ).toList() );
 }
 
 QVariant Job::serialize() const
@@ -148,6 +159,17 @@ QVariant Job::serialize() const
 
 	out.insert( "ItemsToHaul", Global::util->uintList2Variant( m_itemsToHaul ) );
 	out.insert( "Spell", m_spell );
+
+	// Phase and progress
+	out.insert( "Phase", static_cast<unsigned int>( m_phase ) );
+	out.insert( "TotalWorkTicks", m_totalWorkTicks );
+	out.insert( "AccumulatedTicks", m_accumulatedTicks );
+	out.insert( "CurrentTaskIndex", m_currentTaskIndex );
+	out.insert( "MaxWorkers", m_maxWorkers );
+	out.insert( "ParentJobID", m_parentJobID );
+	out.insert( "ItemsDelivered", m_itemsDelivered );
+	out.insert( "ItemsRequired", m_itemsRequired );
+	out.insert( "HaulSubJobs", Global::util->uintList2Variant( m_haulSubJobs ) );
 
 	return out;
 }
@@ -589,4 +611,30 @@ bool Job::destroyOnAbort() const
 void Job::setPrio( int prio )
 {
 	m_priority = qMin( 9, qMax( 0, prio ) );
+}
+
+bool Job::addWorker( unsigned int gnomeID, Position workPos )
+{
+	if ( m_activeWorkers.size() >= m_maxWorkers )
+		return false;
+	m_activeWorkers.insert( gnomeID );
+	m_workerPositions.insert( gnomeID, workPos );
+	m_jobIsWorked = true;
+	m_workedBy = gnomeID; // legacy compat — last worker
+	return true;
+}
+
+void Job::removeWorker( unsigned int gnomeID )
+{
+	m_activeWorkers.remove( gnomeID );
+	m_workerPositions.remove( gnomeID );
+	if ( m_activeWorkers.empty() )
+	{
+		m_jobIsWorked = false;
+		m_workedBy = 0;
+	}
+	else
+	{
+		m_workedBy = *m_activeWorkers.begin();
+	}
 }

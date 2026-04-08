@@ -353,6 +353,28 @@ void CanWork::cleanUpJob( bool finished )
 	}
 }
 
+void CanWork::suspendJob()
+{
+	if ( m_job )
+	{
+		m_job->removeWorker( m_id );
+		if ( m_job->activeWorkers().empty() && m_job->phase() == JobPhase::IN_PROGRESS )
+		{
+			m_job->setPhase( JobPhase::SUSPENDED );
+		}
+		// Don't give back or abort the job — it stays in the job list
+		// Items at the work site stay there
+		// Progress is preserved on the Job
+	}
+	m_currentPath.clear();
+	resetJobVars();
+	m_currentAction = "idle";
+	m_jobID         = 0;
+	m_job.reset();
+	m_jobChanged = true;
+	updateSprite();
+}
+
 int CanWork::getDurationTicks( QVariant value, QSharedPointer<Job> job )
 {
 	if ( value.toString() == "$Craft" )

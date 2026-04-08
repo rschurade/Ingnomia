@@ -19,13 +19,25 @@
 
 #include "../base/position.h"
 
+#include <QHash>
 #include <QList>
+#include <QSet>
 #include <QString>
 #include <QVariant>
 #include <QVariantList>
 #include <QVariantMap>
 
 struct Position;
+
+enum class JobPhase : uint8_t
+{
+	PENDING,      // requirements known, items not yet claimed
+	HAULING,      // items claimed atomically, haul sub-jobs active
+	READY,        // all items at work site, waiting for skilled worker
+	IN_PROGRESS,  // being worked, progress tracked
+	SUSPENDED,    // worker(s) left, progress preserved
+	COMPLETE      // done
+};
 
 struct RequiredItem
 {
@@ -70,6 +82,24 @@ private:
 
 	bool m_jobIsWorked      = false;
 	unsigned int m_workedBy = 0;
+
+	// Job phase and progress
+	JobPhase m_phase = JobPhase::PENDING;
+	float m_totalWorkTicks = 0.0f;
+	float m_accumulatedTicks = 0.0f;
+	int m_currentTaskIndex = 0;
+	QList<QVariantMap> m_taskList; // moved from CanWork
+
+	// Multi-worker support
+	QSet<unsigned int> m_activeWorkers;
+	unsigned int m_maxWorkers = 1;
+	QHash<unsigned int, Position> m_workerPositions;
+
+	// Hauling sub-jobs
+	unsigned int m_parentJobID = 0;
+	QList<unsigned int> m_haulSubJobs;
+	int m_itemsDelivered = 0;
+	int m_itemsRequired = 0;
 
 	RequiredTool m_requiredTool;
 	QList<RequiredItem> m_requiredItems;
@@ -223,4 +253,39 @@ public:
 	void lowerPrio();
 	int priority() const;
 	void setPrio( int prio );
+
+	// Phase
+	JobPhase phase() const { return m_phase; }
+	void setPhase( JobPhase phase ) { m_phase = phase; }
+
+	// Progress
+	float progress() const { return m_totalWorkTicks > 0 ? m_accumulatedTicks / m_totalWorkTicks : 0.0f; }
+	float totalWorkTicks() const { return m_totalWorkTicks; }
+	void setTotalWorkTicks( float ticks ) { m_totalWorkTicks = ticks; }
+	float accumulatedTicks() const { return m_accumulatedTicks; }
+	void addWork( float ticks ) { m_accumulatedTicks += ticks; }
+
+	// Task tracking (moved from CanWork)
+	int currentTaskIndex() const { return m_currentTaskIndex; }
+	void setCurrentTaskIndex( int index ) { m_currentTaskIndex = index; }
+	const QList<QVariantMap>& taskList() const { return m_taskList; }
+	void setTaskList( const QList<QVariantMap>& list ) { m_taskList = list; }
+
+	// Multi-worker
+	const QSet<unsigned int>& activeWorkers() const { return m_activeWorkers; }
+	bool addWorker( unsigned int gnomeID, Position workPos );
+	void removeWorker( unsigned int gnomeID );
+	unsigned int maxWorkers() const { return m_maxWorkers; }
+	void setMaxWorkers( unsigned int max ) { m_maxWorkers = max; }
+	bool canAcceptWorker() const { return m_activeWorkers.size() < m_maxWorkers; }
+
+	// Hauling sub-jobs
+	unsigned int parentJobID() const { return m_parentJobID; }
+	void setParentJobID( unsigned int id ) { m_parentJobID = id; }
+	const QList<unsigned int>& haulSubJobs() const { return m_haulSubJobs; }
+	void addHaulSubJob( unsigned int jobID ) { m_haulSubJobs.append( jobID ); }
+	int itemsDelivered() const { return m_itemsDelivered; }
+	void incrementItemsDelivered() { ++m_itemsDelivered; }
+	int itemsRequired() const { return m_itemsRequired; }
+	void setItemsRequired( int count ) { m_itemsRequired = count; }
 };
