@@ -63,6 +63,10 @@ private:
 	bool insertIntoPositionHash( unsigned int jobID );
 	void removeFromPositionHash( unsigned int jobID );
 
+	void processJobPhases();
+	bool tryAtomicClaimItems( QSharedPointer<Job> job, QList<unsigned int>& claimedItemIDs );
+	void createHaulSubJobs( QSharedPointer<Job> parentJob, const QList<unsigned int>& itemIDs );
+
 public:
 	JobManager() = delete;
 	JobManager( Game* parent );
@@ -102,4 +106,6 @@ public:
 	void deleteJobAt( const Position& pos );
 	void raisePrio( Position& pos );
 	void lowerPrio( Position& pos );
+
+	void onHaulSubJobComplete( unsigned int haulJobID );
 };

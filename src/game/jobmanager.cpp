@@ -122,6 +122,8 @@ JobManager::~JobManager()
 
 void JobManager::onTick()
 {
+	processJobPhases();
+
 	QElapsedTimer timer;
 	timer.start();
 
@@ -334,6 +336,8 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
 	}
 
+	job->setPhase( JobPhase::READY ); // simple jobs have no required items
+
 	m_jobList.insert( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
@@ -433,6 +437,16 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 		//qDebug() << row.value("SeedItemID").toString() << row.value("Material").toString();
 		job->addRequiredItem( 1, row.value( "SeedItemID" ).toString(), row.value( "Material" ).toString(), QStringList() );
 		job->setComponentMissing( true );
+	}
+
+	// Set initial phase based on whether job needs items
+	if ( job->requiredItems().isEmpty() )
+	{
+		job->setPhase( JobPhase::READY );
+	}
+	else
+	{
+		job->setPhase( JobPhase::PENDING );
 	}
 
 	m_jobList.insert( job->id(), job );
@@ -1138,4 +1152,130 @@ void JobManager::lowerPrio( Position& pos )
 			job->lowerPrio();
 		}
 	}
+}
+
+void JobManager::processJobPhases()
+{
+	for ( auto it = m_jobList.begin(); it != m_jobList.end(); ++it )
+	{
+		auto& job = it.value();
+
+		switch ( job->phase() )
+		{
+			case JobPhase::PENDING:
+			{
+				// Jobs with no required items go straight to READY
+				if ( job->requiredItems().isEmpty() )
+				{
+					job->setPhase( JobPhase::READY );
+					break;
+				}
+
+				// Try to atomically claim all required items
+				QList<unsigned int> claimedItemIDs;
+				if ( tryAtomicClaimItems( job, claimedItemIDs ) )
+				{
+					createHaulSubJobs( job, claimedItemIDs );
+					job->setPhase( JobPhase::HAULING );
+				}
+				// else: stay PENDING, try again next tick
+			}
+			break;
+
+			case JobPhase::HAULING:
+			{
+				if ( job->itemsDelivered() >= job->itemsRequired() )
+				{
+					job->setPhase( JobPhase::READY );
+				}
+			}
+			break;
+
+			default:
+				break;
+		}
+	}
+}
+
+bool JobManager::tryAtomicClaimItems( QSharedPointer<Job> job, QList<unsigned int>& claimedItemIDs )
+{
+	claimedItemIDs.clear();
+
+	for ( const auto& req : job->requiredItems() )
+	{
+		for ( int i = 0; i < req.count; ++i )
+		{
+			unsigned int itemID = g->inv()->getClosestItem( job->pos(), true, req.itemSID, req.materialSID );
+			if ( itemID == 0 )
+			{
+				// Can't find an item — release everything and fail
+				for ( auto id : claimedItemIDs )
+				{
+					g->inv()->setInJob( id, 0 );
+				}
+				claimedItemIDs.clear();
+				return false;
+			}
+
+			// Check if it's actually free (not claimed by another job)
+			if ( g->inv()->isInJob( itemID ) != 0 )
+			{
+				// Already claimed — release and fail
+				for ( auto id : claimedItemIDs )
+				{
+					g->inv()->setInJob( id, 0 );
+				}
+				claimedItemIDs.clear();
+				return false;
+			}
+
+			g->inv()->setInJob( itemID, job->id() );
+			claimedItemIDs.append( itemID );
+		}
+	}
+
+	return true;
+}
+
+void JobManager::createHaulSubJobs( QSharedPointer<Job> parentJob, const QList<unsigned int>& itemIDs )
+{
+	parentJob->setItemsRequired( itemIDs.size() );
+
+	Position targetPos = parentJob->posItemInput().isZero() ? parentJob->pos() : parentJob->posItemInput();
+
+	for ( auto itemID : itemIDs )
+	{
+		QSharedPointer<Job> haulJob( new Job );
+		haulJob->setType( "HaulToSite" );
+		haulJob->setRequiredSkill( "Hauling" );
+		haulJob->setPos( targetPos );
+		haulJob->setParentJobID( parentJob->id() );
+		haulJob->addItemToHaul( itemID );
+		haulJob->setPhase( JobPhase::READY ); // haul jobs are immediately ready
+		haulJob->setNoJobSprite( true );
+
+		m_jobList.insert( haulJob->id(), haulJob );
+		m_jobsPerType["HaulToSite"].insert( haulJob->priority(), haulJob->id() );
+
+		parentJob->addHaulSubJob( haulJob->id() );
+	}
+}
+
+void JobManager::onHaulSubJobComplete( unsigned int haulJobID )
+{
+	if ( !m_jobList.contains( haulJobID ) )
+		return;
+
+	auto haulJob = m_jobList.value( haulJobID );
+	unsigned int parentID = haulJob->parentJobID();
+
+	if ( parentID != 0 && m_jobList.contains( parentID ) )
+	{
+		auto parentJob = m_jobList.value( parentID );
+		parentJob->incrementItemsDelivered();
+	}
+
+	// Clean up haul job
+	m_jobsPerType["HaulToSite"].remove( haulJob->priority(), haulJobID );
+	m_jobList.remove( haulJobID );
 }
