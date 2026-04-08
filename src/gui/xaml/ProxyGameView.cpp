@@ -23,6 +23,7 @@
 #include "../aggregatorpopulation.h"
 #include "../aggregatorcreatureinfo.h"
 #include "../aggregatormilitary.h"
+#include "../aggregatordebug.h"
 #include "../aggregatorworkshop.h"
 #include "../eventconnector.h"
 
@@ -64,6 +65,7 @@ ProxyGameView::ProxyGameView( QObject* parent ) :
 
 	connect( this, &ProxyGameView::signalRequestMilitaryUpdate, Global::eventConnector->aggregatorMilitary(), &AggregatorMilitary::onRequestMilitary, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalRequestInventoryUpdate, Global::eventConnector->aggregatorInventory(), &AggregatorInventory::onRequestCategories, Qt::QueuedConnection );
+	connect( this, &ProxyGameView::signalRequestDebugUpdate, Global::eventConnector->aggregatorDebug(), &AggregatorDebug::onRequestGnomeList, Qt::QueuedConnection );
 
 	connect( Global::eventConnector, &EventConnector::signalEvent, this, &ProxyGameView::onEvent, Qt::QueuedConnection );
 	connect( this, &ProxyGameView::signalEventAnswer, Global::eventConnector, &EventConnector::onAnswer, Qt::QueuedConnection );
@@ -234,6 +236,11 @@ void ProxyGameView::requestMilitaryUpdate()
 void ProxyGameView::requestInventoryUpdate()
 {
 	emit signalRequestInventoryUpdate();
+}
+
+void ProxyGameView::requestDebugUpdate()
+{
+	emit signalRequestDebugUpdate();
 }
 
 

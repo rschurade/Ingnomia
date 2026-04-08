@@ -248,6 +248,7 @@ void GameManager::postCreationInit()
 	m_eventConnector->aggregatorTileInfo()->init( m_game );
 	m_eventConnector->aggregatorWorkshop()->init( m_game );
 	m_eventConnector->aggregatorSound()->init( m_game );
+	m_eventConnector->aggregatorDebug()->init( m_game );
 
 	connect( m_game->fm(), &FarmingManager::signalFarmChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdateFarm, Qt::QueuedConnection );
 	connect( m_game->fm(), &FarmingManager::signalPastureChanged, m_eventConnector->aggregatorAgri(), &AggregatorAgri::onUpdatePasture, Qt::QueuedConnection );

@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -20,13 +20,32 @@
 #include "../../base/global.h"
 #include "../eventconnector.h"
 
+#include <NsGui/ObservableCollection.h>
+#include <NsCore/Ptr.h>
+
 #include <QDebug>
 
 DebugProxy::DebugProxy( QObject* parent ) :
 	QObject( parent )
 {
-	connect( this, &DebugProxy::signalSpawnCreature, Global::eventConnector->aggregatorDebug(), &AggregatorDebug::onSpawnCreature, Qt::QueuedConnection );
-    connect( this, &DebugProxy::signalSetWindowSize, Global::eventConnector->aggregatorDebug(), &AggregatorDebug::onSetWindowSize, Qt::QueuedConnection );
+	auto agg = Global::eventConnector->aggregatorDebug();
+	connect( this, &DebugProxy::signalSpawnCreature, agg, &AggregatorDebug::onSpawnCreature, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSetWindowSize, agg, &AggregatorDebug::onSetWindowSize, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSetNeed, agg, &AggregatorDebug::onSetNeed, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalKillGnome, agg, &AggregatorDebug::onKillGnome, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSpawnItem, agg, &AggregatorDebug::onSpawnItem, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSpawnCompositeItem, agg, &AggregatorDebug::onSpawnCompositeItem, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalRequestGnomeList, agg, &AggregatorDebug::onRequestGnomeList, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalRequestItemGroups, agg, &AggregatorDebug::onRequestItemGroups, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalRequestItems, agg, &AggregatorDebug::onRequestItems, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalRequestMaterials, agg, &AggregatorDebug::onRequestMaterials, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSetNeedDecayMultiplier, agg, &AggregatorDebug::onSetNeedDecayMultiplier, Qt::QueuedConnection );
+	connect( this, &DebugProxy::signalSetDisableNeedDecay, agg, &AggregatorDebug::onSetDisableNeedDecay, Qt::QueuedConnection );
+
+	connect( agg, &AggregatorDebug::signalGnomeList, this, &DebugProxy::onGnomeList, Qt::QueuedConnection );
+	connect( agg, &AggregatorDebug::signalItemGroups, this, &DebugProxy::onItemGroups, Qt::QueuedConnection );
+	connect( agg, &AggregatorDebug::signalItems, this, &DebugProxy::onItems, Qt::QueuedConnection );
+	connect( agg, &AggregatorDebug::signalMaterials, this, &DebugProxy::onMaterials, Qt::QueuedConnection );
 }
 
 void DebugProxy::setParent( IngnomiaGUI::DebugModel* parent )
@@ -42,4 +61,95 @@ void DebugProxy::spawnCreature( QString type )
 void DebugProxy::setWindowSize( int width, int height )
 {
     emit signalSetWindowSize( width, height );
+}
+
+void DebugProxy::setNeed( unsigned int gnomeID, QString need, float value )
+{
+	emit signalSetNeed( gnomeID, need, value );
+}
+
+void DebugProxy::killGnome( unsigned int gnomeID )
+{
+	emit signalKillGnome( gnomeID );
+}
+
+void DebugProxy::spawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z )
+{
+	emit signalSpawnItem( itemSID, materialSID, count, x, y, z );
+}
+
+void DebugProxy::spawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z )
+{
+	emit signalSpawnCompositeItem( itemSID, materialSIDs, count, x, y, z );
+}
+
+void DebugProxy::requestGnomeList()
+{
+	emit signalRequestGnomeList();
+}
+
+void DebugProxy::requestItemGroups()
+{
+	emit signalRequestItemGroups();
+}
+
+void DebugProxy::requestItems( QString group )
+{
+	emit signalRequestItems( group );
+}
+
+void DebugProxy::requestMaterials( QString itemSID )
+{
+	emit signalRequestMaterials( itemSID );
+}
+
+void DebugProxy::setNeedDecayMultiplier( float value )
+{
+	emit signalSetNeedDecayMultiplier( value );
+}
+
+void DebugProxy::setDisableNeedDecay( QString need, bool disable )
+{
+	emit signalSetDisableNeedDecay( need, disable );
+}
+
+void DebugProxy::onGnomeList( const QList<QPair<QString, unsigned int>>& gnomes )
+{
+	if ( m_parent )
+	{
+		auto list = m_parent->getGnomeList();
+		// Keep "All Gnomes" entry, clear the rest
+		while ( list->Count() > 1 )
+		{
+			list->RemoveAt( list->Count() - 1 );
+		}
+		for ( const auto& g : gnomes )
+		{
+			list->Add( Noesis::MakePtr<IngnomiaGUI::NameEntry>( g.first, g.second ) );
+		}
+	}
+}
+
+void DebugProxy::onItemGroups( const QStringList& groups )
+{
+	if ( m_parent )
+	{
+		m_parent->updateItemGroups( groups );
+	}
+}
+
+void DebugProxy::onItems( const QStringList& items )
+{
+	if ( m_parent )
+	{
+		m_parent->updateItems( items );
+	}
+}
+
+void DebugProxy::onMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 )
+{
+	if ( m_parent )
+	{
+		m_parent->updateMaterials( componentCount, mats1, mats2 );
+	}
 }

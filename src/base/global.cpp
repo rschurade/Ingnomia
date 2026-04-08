@@ -65,6 +65,8 @@ double Global::xpMod = 250.;
 bool Global::debugMode = false;
 bool Global::debugOpenGL = false;
 bool Global::debugSound = false;
+float Global::debugNeedDecayMultiplier = 1.0f;
+QSet<QString> Global::disabledNeedDecays;
 
 QMap<QString, QDomElement> Global::m_behaviorTrees;
 

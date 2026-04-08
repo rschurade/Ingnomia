@@ -70,6 +70,9 @@ public:
 	static bool debugOpenGL;
 	static bool debugSound;
 
+	static float debugNeedDecayMultiplier;
+	static QSet<QString> disabledNeedDecays;
+
 	static QMap<QString, QSet<QString>> allowedInContainer;
 
 	static QStringList needIDs;

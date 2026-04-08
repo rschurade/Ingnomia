@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -20,8 +20,9 @@
 #include "../game/creature.h"
 #include "../game/eventmanager.h"
 
-
 #include <QObject>
+
+class Game;
 
 class AggregatorDebug : public QObject
 {
@@ -31,13 +32,30 @@ public:
 	AggregatorDebug( QObject* parent = nullptr );
 	~AggregatorDebug();
 
-private:
-	
+	void init( Game* game );
+
 public slots:
 	void onSpawnCreature( QString type );
-    void onSetWindowSize( int width, int height );
+	void onSetWindowSize( int width, int height );
+	void onSetNeed( unsigned int gnomeID, QString need, float value );
+	void onKillGnome( unsigned int gnomeID );
+	void onSpawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z );
+	void onSpawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z );
+	void onRequestGnomeList();
+	void onRequestItemGroups();
+	void onRequestItems( QString group );
+	void onRequestMaterials( QString itemSID );
+	void onSetNeedDecayMultiplier( float value );
+	void onSetDisableNeedDecay( QString need, bool disable );
 
 signals:
 	void signalTriggerEvent( EventType type, QVariantMap args );
-    void signalSetWindowSize( int width, int height );
+	void signalSetWindowSize( int width, int height );
+	void signalGnomeList( const QList<QPair<QString, unsigned int>>& gnomes );
+	void signalItemGroups( const QStringList& groups );
+	void signalItems( const QStringList& items );
+	void signalMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 );
+
+private:
+	QPointer<Game> g;
 };

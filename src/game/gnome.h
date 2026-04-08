@@ -52,7 +52,7 @@ public:
 	//return true if need needs action
 	bool evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
-	void addNeed( QString id, int level );
+	void addNeed( QString id, float level );
 	int need( QString id );
 
 	void selectProfession( QString profession );

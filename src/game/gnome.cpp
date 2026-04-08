@@ -580,7 +580,7 @@ void Gnome::initTaskMap()
 	m_taskFunctions.insert( "EquipItem", std::bind( &Gnome::equipItem, this ) );
 }
 
-void Gnome::addNeed( QString id, int level )
+void Gnome::addNeed( QString id, float level )
 {
 	m_needs.insert( id, level );
 }
@@ -847,7 +847,11 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 		for ( auto need : Global::needIDs )
 		{
 			//update need values
-			float decay  = Global::needDecays.value( need );
+			float decay = Global::needDecays.value( need );
+			if ( Global::disabledNeedDecays.contains( need ) )
+				decay = 0.0f;
+			else
+				decay *= Global::debugNeedDecayMultiplier;
 			float oldVal = m_needs[need].toFloat();
 			float newVal = oldVal + decay;
 

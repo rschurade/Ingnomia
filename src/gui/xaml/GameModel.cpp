@@ -1083,6 +1083,7 @@ void GameModel::CmdRightCommandButton( BaseComponent* param )
 	else if ( cmd == "Debug" )
 	{
 		setShowDebug( true );
+		m_proxy->requestDebugUpdate();
 	}
 }
 
