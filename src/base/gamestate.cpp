@@ -95,8 +95,9 @@ QVariantMap GameState::addedTranslations;
 
 int GameState::moveX = 0;
 int GameState::moveY = 0;
-float GameState::scale = 0.0;
+float GameState::scale = 1.0;
 int GameState::viewLevel = 100;
+Position GameState::initialCameraTarget;
 
 QList<GuiWatchedItem> GameState::watchedItemList;
 

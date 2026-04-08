@@ -117,6 +117,7 @@ public:
 	static int moveY;
 	static float scale;
 	static int viewLevel;
+	static Position initialCameraTarget;
 
 	static QList<GuiWatchedItem> watchedItemList;
 

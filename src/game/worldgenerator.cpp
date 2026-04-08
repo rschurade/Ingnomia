@@ -678,6 +678,11 @@ void WorldGenerator::addGnomesAndStartingItems()
 		w->getFloorLevelBelow( thisPos, false );
 		g->gm()->addGnome( thisPos );
 		GameState::viewLevel = thisPos.z + 5;
+
+		if ( i == 0 )
+		{
+			GameState::initialCameraTarget = thisPos;
+		}
 	}
 
 	int id   = 0;

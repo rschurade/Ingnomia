@@ -271,6 +271,15 @@ void GameManager::postCreationInit()
 	
 	Global::util->initAllowedInContainer();
 	m_eventConnector->onViewLevel( GameState::viewLevel );
+	if ( !GameState::initialCameraTarget.isZero() )
+	{
+		m_eventConnector->aggregatorRenderer()->onCenterCamera( GameState::initialCameraTarget );
+		GameState::initialCameraTarget = Position();
+	}
+	else
+	{
+		m_eventConnector->emitInitView();
+	}
 	m_eventConnector->emitInMenu( false );
 
 	connect( m_eventConnector, &EventConnector::stopGame, m_eventConnector->aggregatorRenderer(), &AggregatorRenderer::onWorldParametersChanged );
