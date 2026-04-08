@@ -621,6 +621,27 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+BT_RESULT Gnome::actionGetHaulTarget( bool halt )
+{
+	Q_UNUSED( halt );
+	if ( !m_job )
+		return BT_RESULT::FAILURE;
+
+	// The job position IS the haul target (where items need to go)
+	setCurrentTarget( m_job->pos() );
+	return BT_RESULT::SUCCESS;
+}
+
+BT_RESULT Gnome::actionNotifyParentJob( bool halt )
+{
+	Q_UNUSED( halt );
+	if ( !m_job )
+		return BT_RESULT::FAILURE;
+
+	g->jm()->onHaulSubJobComplete( m_job->id() );
+	return BT_RESULT::SUCCESS;
+}
+
 BT_RESULT Gnome::actionInitAnimalJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -653,6 +674,24 @@ BT_RESULT Gnome::actionInitJob( bool halt )
 	{
 		return BT_RESULT::FAILURE;
 	}
+
+	// HaulToSite: set target to item position for pickup
+	if ( m_job->type() == "HaulToSite" )
+	{
+		auto items = m_job->itemsToHaul();
+		if ( !items.isEmpty() )
+		{
+			unsigned int itemID = items.first();
+			if ( g->inv()->itemExists( itemID ) )
+			{
+				m_itemToPickUp = itemID;
+				setCurrentTarget( g->inv()->getItemPos( itemID ) );
+				return BT_RESULT::SUCCESS;
+			}
+		}
+		return BT_RESULT::FAILURE;
+	}
+
 	if ( Global::debugMode )
 	{
 		log( "job pos:" + m_job->pos().toString() );
@@ -829,6 +868,17 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 	if ( Global::debugMode )
 		log( "actionClaimItems" );
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
+
+	if ( !m_job )
+	{
+		return BT_RESULT::FAILURE;
+	}
+
+	// If job went through phased hauling, items are already at the site — skip claiming
+	if ( !m_job->haulSubJobs().isEmpty() || m_job->itemsRequired() > 0 )
+	{
+		return BT_RESULT::SUCCESS;
+	}
 
 	if ( !m_job )
 	{

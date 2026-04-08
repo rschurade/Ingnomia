@@ -207,6 +207,24 @@
         </BB_Precondition>
     </BehaviorTree>
     <!--  ===================================  -->
+    <BehaviorTree ID="JobHaulToSite">
+        <BB_Precondition expected="HaulToSite" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <Action ID="GetHaulTarget"/>
+                    <Action ID="Move"/>
+                    <Action ID="DropItem"/>
+                    <Action ID="NotifyParentJob"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
     <BehaviorTree ID="Jobs">
         <SequenceStar>
             <Fallback>
@@ -219,6 +237,7 @@
                 <SubTree ID="JobLeadAnimalToPasture"/>
                 <SubTree ID="JobHarvestAnimal"/>
                 <SubTree ID="JobTameAnimal"/>
+                <SubTree ID="JobHaulToSite"/>
                 <SubTree ID="JobHaulMultiple"/>
                 <SubTree ID="JobStandard"/>
             </FallbackStar>

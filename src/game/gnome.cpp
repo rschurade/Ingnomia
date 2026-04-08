@@ -503,6 +503,9 @@ void Gnome::initTaskMap()
 	m_behaviors.insert( "AbortJob", std::bind( &Gnome::actionAbortJob, this, _1 ) );
 	m_behaviors.insert( "Work", std::bind( &Gnome::actionWork, this, _1 ) );
 
+	m_behaviors.insert( "GetHaulTarget", std::bind( &Gnome::actionGetHaulTarget, this, _1 ) );
+	m_behaviors.insert( "NotifyParentJob", std::bind( &Gnome::actionNotifyParentJob, this, _1 ) );
+
 	m_behaviors.insert( "InitAnimalJob", std::bind( &Gnome::actionInitAnimalJob, this, _1 ) );
 	m_behaviors.insert( "GrabAnimal", std::bind( &Gnome::actionGrabAnimal, this, _1 ) );
 	m_behaviors.insert( "ReleaseAnimal", std::bind( &Gnome::actionReleaseAnimal, this, _1 ) );

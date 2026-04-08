@@ -141,8 +141,21 @@ void JobManager::onTick()
 
 		if( job )
 		{
-			if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
+			auto phase = job->phase();
+
+			if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
 			{
+				// Not ready for workers yet — wait for phase transition
+				skippedJobs.enqueue( jobID );
+			}
+			else if ( phase == JobPhase::READY )
+			{
+				// Items are there, job is ready — add directly
+				m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+			}
+			else if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
+			{
+				// Old path for jobs without phased hauling (crafting, mining, etc.)
 				if ( requiredItemsAvail( jobID ) )
 				{
 					m_jobsPerType[job->type()].insert( job->priority(), job->id() );
@@ -498,6 +511,31 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		{
 			case SK_Hauling:
 			{
+				// Check HaulToSite jobs first (construction hauling)
+				if ( m_jobsPerType.contains( "HaulToSite" ) )
+				{
+					auto& haulJobs = m_jobsPerType["HaulToSite"];
+					unsigned int regionID = g->w()->regionMap().regionID( gnomePos );
+					for ( auto it = haulJobs.begin(); it != haulJobs.end(); ++it )
+					{
+						auto job = m_jobList.value( it.value() );
+						if ( job && !job->isWorked() && !job->isCanceled() && job->phase() == JobPhase::READY )
+						{
+							// For haul jobs, check if we can reach the item to pick up
+							auto items = job->itemsToHaul();
+							if ( !items.isEmpty() && g->inv()->itemExists( items.first() ) )
+							{
+								Position itemPos = g->inv()->getItemPos( items.first() );
+								unsigned int itemRegion = g->w()->regionMap().regionID( itemPos );
+								if ( g->w()->regionMap().checkConnectedRegions( regionID, itemRegion ) )
+								{
+									return job->id();
+								}
+							}
+						}
+					}
+				}
+				// Then check stockpile hauling
 				jobID = g->spm()->getJob();
 				{
 					if ( jobID )
@@ -539,15 +577,19 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							QSharedPointer<Job> job = m_jobList[pq.get()];
 							if ( !job->isWorked() && !job->isCanceled() )
 							{
-								if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+								auto phase = job->phase();
+								if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									continue;
+
+								bool itemsOk = ( phase == JobPhase::READY ) || requiredItemsAvail( job->id() );
+								if ( itemsOk && requiredToolExists( job->id() ) )
 								{
 									if ( isReachable( job->id(), regionID ) && !isEnclosedBySameType( job->id() ) )
 									{
-										//qDebug() << "getJob " <<  j->id();
 										return job->id();
 									}
 								}
-								else
+								else if ( job->claimedItemIDs().isEmpty() )
 								{
 									for ( auto& type : m_jobsPerType )
 									{
@@ -575,11 +617,16 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								QSharedPointer<Job> job = m_jobList[jobs[i]];
 								if ( !job->isWorked() && !job->isCanceled() )
 								{
-									if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+									auto phase = job->phase();
+									if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									{
+										continue;
+									}
+									bool itemsOk = ( job->phase() == JobPhase::READY ) || requiredItemsAvail( job->id() );
+									if ( itemsOk && requiredToolExists( job->id() ) )
 									{
 										if ( isReachable( job->id(), 0 ) )
 										{
-											//qDebug() << "getJob " <<  j.id();
 											return job->id();
 										}
 									}
@@ -602,11 +649,15 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							QSharedPointer<Job> job = m_jobList[pq.get()];
 							if ( !job->isWorked() && !job->isCanceled() )
 							{
-								if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+								auto phase = job->phase();
+								if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									continue;
+
+								bool itemsOk = ( job->phase() == JobPhase::READY ) || requiredItemsAvail( job->id() );
+									if ( itemsOk && requiredToolExists( job->id() ) )
 								{
 									if ( isReachable( job->id(), regionID ) )
 									{
-										//qDebug() << "getJob " <<  j->id();
 										return job->id();
 									}
 								}
@@ -1175,6 +1226,7 @@ void JobManager::processJobPhases()
 				QList<unsigned int> claimedItemIDs;
 				if ( tryAtomicClaimItems( job, claimedItemIDs ) )
 				{
+					job->setClaimedItemIDs( claimedItemIDs );
 					createHaulSubJobs( job, claimedItemIDs );
 					job->setPhase( JobPhase::HAULING );
 				}
@@ -1187,6 +1239,8 @@ void JobManager::processJobPhases()
 				if ( job->itemsDelivered() >= job->itemsRequired() )
 				{
 					job->setPhase( JobPhase::READY );
+					// Re-queue so it enters m_jobsPerType on next onTick cycle
+					m_returnedJobQueue.enqueue( it.key() );
 				}
 			}
 			break;
@@ -1208,7 +1262,6 @@ bool JobManager::tryAtomicClaimItems( QSharedPointer<Job> job, QList<unsigned in
 			unsigned int itemID = g->inv()->getClosestItem( job->pos(), true, req.itemSID, req.materialSID );
 			if ( itemID == 0 )
 			{
-				// Can't find an item — release everything and fail
 				for ( auto id : claimedItemIDs )
 				{
 					g->inv()->setInJob( id, 0 );

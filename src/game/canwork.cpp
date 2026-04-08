@@ -303,11 +303,16 @@ void CanWork::cleanUpJob( bool finished )
 		}
 	}
 
+	bool isHaulToSite = m_job && m_job->type() == "HaulToSite";
+
 	if ( !claimedItems().empty() )
 	{
 		for ( auto itemID : claimedItems() )
 		{
-			g->inv()->setInJob( itemID, 0 );
+			if ( !isHaulToSite )
+			{
+				g->inv()->setInJob( itemID, 0 );
+			}
 			if ( g->inv()->isHeldBy( itemID ) == m_id )
 			{
 				g->inv()->putDownItem( itemID, m_position );
@@ -328,7 +333,10 @@ void CanWork::cleanUpJob( bool finished )
 		{
 			g->inv()->putDownItem( itemID, m_position );
 		}
-		g->inv()->setInJob( itemID, 0 );
+		if ( !isHaulToSite )
+		{
+			g->inv()->setInJob( itemID, 0 );
+		}
 	}
 	m_carriedItems.clear();
 
@@ -941,7 +949,18 @@ bool CanWork::constructDugRamp()
 
 bool CanWork::construct()
 {
-	if ( claimedItems().empty() )
+	// Get items: from job's claimed list (new phased path) or gnome's claimed items (old path)
+	QList<unsigned int> jobItems;
+	if ( !m_job->claimedItemIDs().isEmpty() )
+	{
+		jobItems = m_job->claimedItemIDs();
+	}
+	else
+	{
+		jobItems = claimedItems();
+	}
+
+	if ( jobItems.empty() )
 	{
 		return false;
 	}
@@ -960,20 +979,20 @@ bool CanWork::construct()
 
 	if ( m_job->type() == "BuildWorkshop" )
 	{
-		result = g->w()->constructWorkshop( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->constructWorkshop( m_job->item(), pos, m_job->rotation(), jobItems, m_position );
 	}
 	else if ( m_job->type() == "BuildItem" )
 	{
-		result = g->w()->constructItem( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->constructItem( m_job->item(), pos, m_job->rotation(), jobItems, m_position );
 	}
 	else
 	{
-		result = g->w()->construct( m_job->item(), pos, m_job->rotation(), claimedItems(), m_position );
+		result = g->w()->construct( m_job->item(), pos, m_job->rotation(), jobItems, m_position );
 	}
 
 	if ( result )
 	{
-		for ( auto itemUID : claimedItems() )
+		for ( auto itemUID : jobItems )
 		{
 			g->inv()->setInJob( itemUID, 0 );
 			g->inv()->pickUpItem( itemUID, m_id );

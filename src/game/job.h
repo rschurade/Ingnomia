@@ -98,6 +98,7 @@ private:
 	// Hauling sub-jobs
 	unsigned int m_parentJobID = 0;
 	QList<unsigned int> m_haulSubJobs;
+	QList<unsigned int> m_claimedItemIDs; // items claimed atomically for this job
 	int m_itemsDelivered = 0;
 	int m_itemsRequired = 0;
 
@@ -288,4 +289,6 @@ public:
 	void incrementItemsDelivered() { ++m_itemsDelivered; }
 	int itemsRequired() const { return m_itemsRequired; }
 	void setItemsRequired( int count ) { m_itemsRequired = count; }
+	const QList<unsigned int>& claimedItemIDs() const { return m_claimedItemIDs; }
+	void setClaimedItemIDs( const QList<unsigned int>& ids ) { m_claimedItemIDs = ids; }
 };

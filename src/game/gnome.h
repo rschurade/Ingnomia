@@ -180,6 +180,9 @@ protected:
 	BT_RESULT actionFinishJob( bool halt );
 	BT_RESULT actionWork( bool halt );
 
+	BT_RESULT actionGetHaulTarget( bool halt );
+	BT_RESULT actionNotifyParentJob( bool halt );
+
 	BT_RESULT actionInitAnimalJob( bool halt );
 	BT_RESULT actionGrabAnimal( bool halt );
 	BT_RESULT actionReleaseAnimal( bool halt );
