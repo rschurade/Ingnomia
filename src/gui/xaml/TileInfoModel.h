@@ -180,6 +180,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 enum class TileInfoMode
 {
+	All,
 	Terrain,
 	Items,
 	Creatures,
@@ -321,10 +322,11 @@ private:
 	Noesis::String m_itemCount;
 	Noesis::String m_reserved;
 
-	TileInfoMode _mode = TileInfoMode::Terrain;
+	TileInfoMode _mode = TileInfoMode::All;
 
 	struct
 	{
+		Noesis::Ptr<TITabItem> ta;
 		Noesis::Ptr<TITabItem> tt;
 		Noesis::Ptr<TITabItem> tc;
 		Noesis::Ptr<TITabItem> ti;

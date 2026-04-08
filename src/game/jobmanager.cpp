@@ -700,6 +700,25 @@ QSharedPointer<Job> JobManager::getJobAtPos( Position pos )
 		return m_jobList.value( jobID );
 	}
 
+	// For multi-tile jobs (workshops etc.), the clicked tile may not be the job origin.
+	// Check the world's job sprite data which stores the jobID per tile.
+	if ( g->w()->hasJob( pos ) )
+	{
+		QVariantMap spriteData = g->w()->jobSprite( pos );
+		// Structure is { "Wall": { "JobID": X, ... }, "Floor": { "JobID": X, ... } }
+		for ( const auto& key : { "Wall", "Floor" } )
+		{
+			if ( spriteData.contains( key ) )
+			{
+				unsigned int jobID = spriteData.value( key ).toMap().value( "JobID" ).toUInt();
+				if ( jobID && m_jobList.contains( jobID ) )
+				{
+					return m_jobList.value( jobID );
+				}
+			}
+		}
+	}
+
 	return nullptr;
 }
 
