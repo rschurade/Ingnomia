@@ -30,6 +30,7 @@
 #include "../game/inventory.h"
 #include "../game/militarymanager.h"
 #include "../game/neighbormanager.h"
+#include "../game/roommanager.h"
 #include "../game/plant.h"
 #include "../game/room.h"
 #include "../game/roommanager.h"
@@ -75,12 +76,11 @@ BT_RESULT Gnome::actionSleep( bool halt )
 		log( "actionSleep" );
 	if ( halt )
 	{
-		{
-			setThoughtBubble( "" );
-			m_log.append( "I was rudely awoken." );
-			unclaimAll();
-			return BT_RESULT::IDLE;
-		}
+		setThoughtBubble( "" );
+		m_log.append( "I was rudely awoken." );
+		g->rm()->releaseBed( m_id );
+		unclaimAll();
+		return BT_RESULT::IDLE;
 	}
 
 	if ( thoughtBubble() != "Sleeping" )
@@ -109,6 +109,7 @@ BT_RESULT Gnome::actionSleep( bool halt )
 		setThoughtBubble( "" );
 		m_log.append( "Woke up." );
 
+		g->rm()->releaseBed( m_id );
 		unclaimAll();
 
 		return BT_RESULT::SUCCESS;
@@ -121,60 +122,32 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 	if ( Global::debugMode )
 		log( "actionFindBed" );
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
-	// gnome has room and room has bed?
+
+	Position bedPos;
+
+	// gnome has assigned room? look for bed there first
 	if ( m_equipment.roomID )
 	{
-		Room* room = g->rm()->getRoom( m_equipment.roomID );
-		QList<unsigned int> beds;
-		if ( room )
-		{
-			beds = room->beds();
-		}
-		if ( !beds.empty() )
-		{
-			if ( m_job )
-			{
-				cleanUpJob( false );
-			}
-
-			unsigned int bedID = beds.first();
-
-			addClaimedItem( bedID, m_id );
-			setCurrentTarget( g->inv()->getItemPos( bedID ).toString() );
-
-			return BT_RESULT::SUCCESS;
-		}
+		bedPos = g->rm()->findFreeBed( m_equipment.roomID, m_id );
 	}
-	// dormitory exists and has free bed?
-	QList<unsigned int> dorms = g->rm()->getDorms();
 
-	for ( auto dorm : dorms )
+	// no bed in personal room — try dormitories
+	if ( bedPos.isZero() )
 	{
-		QList<unsigned int> beds;
-		Room* room = g->rm()->getRoom( dorm );
-		if ( room )
-		{
-			beds = room->beds();
-		}
-		if ( !beds.empty() )
-		{
-			for ( auto bedID : beds )
-			{
-				if ( !g->inv()->isInJob( bedID ) && !g->inv()->isUsedBy( bedID ) )
-				{
-					if ( m_job )
-					{
-						cleanUpJob( false );
-					}
-
-					addClaimedItem( bedID, m_id );
-					setCurrentTarget( g->inv()->getItemPos( bedID ).toString() );
-
-					return BT_RESULT::SUCCESS;
-				}
-			}
-		}
+		bedPos = g->rm()->findFreeDormBed( m_id );
 	}
+
+	if ( !bedPos.isZero() )
+	{
+		if ( m_job )
+		{
+			cleanUpJob( false );
+		}
+		g->rm()->claimBed( bedPos, m_id );
+		setCurrentTarget( bedPos.toString() );
+		return BT_RESULT::SUCCESS;
+	}
+
 	return BT_RESULT::FAILURE;
 }
 
@@ -322,41 +295,32 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 	QList<unsigned int> dhl = g->rm()->getDinings();
 	//m_log.append( "Looking for a dining room." );
 	m_currentAction             = "find dining";
-	unsigned int closestChairID = 0;
-	int dist                    = 1000000;
+	Position closestChairPos;
+	int dist = 1000000;
 	for ( auto dh : dhl )
 	{
 		Room* room = g->rm()->getRoom( dh );
 		if ( room )
 		{
-			QList<unsigned int> chairs = room->chairs();
-			if ( !chairs.empty() )
+			Position chairPos = room->findFreeChair( m_position );
+			if ( !chairPos.isZero() )
 			{
-				for ( auto chairID : chairs )
+				int curDist = m_position.distSquare( chairPos, 5 );
+				if ( curDist < dist )
 				{
-					if ( !g->inv()->isInJob( chairID ) && !g->inv()->isUsedBy( chairID ) )
-					{
-						int curDist = m_position.distSquare( g->inv()->getItemPos( chairID ), 5 );
-						if ( curDist < dist )
-						{
-							dist           = curDist;
-							closestChairID = chairID;
-							break;
-						}
-					}
+					dist = curDist;
+					closestChairPos = chairPos;
 				}
 			}
 		}
 	}
-	if ( closestChairID != 0 )
+	if ( !closestChairPos.isZero() )
 	{
-		addClaimedItem( closestChairID, m_id );
-		auto chairPos = g->inv()->getItemPos( closestChairID );
-		setCurrentTarget( chairPos );
+		g->rm()->claimBed( closestChairPos, m_id ); // reuses claim mechanism for chairs too
+		setCurrentTarget( closestChairPos );
 
-		m_facingAfterMove = g->w()->getTile( chairPos ).wallRotation;
+		m_facingAfterMove = g->w()->getTile( closestChairPos ).wallRotation;
 
-		//m_log.append( "Found a dining room." );
 		return BT_RESULT::SUCCESS;
 	}
 

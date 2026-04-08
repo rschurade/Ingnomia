@@ -20,6 +20,7 @@
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
+#include "../game/sourcematerial.h"
 #include "../game/worldobject.h"
 
 #include <QHash>
@@ -40,7 +41,14 @@ enum class RoomType : unsigned char
 struct RoomTile
 {
 	Position pos;
-	unsigned int furnitureID = 0;
+	SourceMaterial furniture;     // empty itemSID = no furniture
+	bool isBed       = false;
+	bool isChair     = false;
+	bool isAlarmBell = false;
+	unsigned short furnitureValue = 0;
+	unsigned int claimedBy = 0;   // creature ID that claimed this bed
+	unsigned int usedBy    = 0;   // creature ID sleeping in this bed
+	bool hasFurniture() const { return !furniture.itemSID.isEmpty(); }
 };
 
 class Job;
@@ -76,7 +84,7 @@ public:
 		return m_type;
 	}
 
-	void addFurniture( unsigned int itemUID, Position pos );
+	void addFurniture( const SourceMaterial& source, unsigned short value, Position pos );
 	void removeFurniture( const Position& pos );
 
 	bool checkRoofed();
@@ -102,8 +110,13 @@ public:
 		return m_owner;
 	}
 
-	QList<unsigned int> beds();
-	QList<unsigned int> chairs();
+	int numBeds();
+	int numChairs();
+	Position findFreeBed( unsigned int creatureID );
+	Position findFreeChair( Position nearPos );
+	bool claimBed( Position pos, unsigned int creatureID );
+	void releaseBed( Position pos );
+	void releaseAllBeds( unsigned int creatureID );
 
 	bool hasAlarmBell() const;
 	void setHasAlarmBell( bool value );

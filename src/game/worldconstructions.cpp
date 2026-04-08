@@ -1022,6 +1022,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	switch ( typeEnum )
 	{
 		case CI_STORAGE:
+		case CI_FURNITURE:
 			destroyAfterInstall = true;
 			break;
 		default:
@@ -1068,7 +1069,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		}
 			break;
 		case CI_FURNITURE:
-			g->rm()->addFurniture( itemID, pos );
+			g->rm()->addFurniture( sm, g->inv()->value( itemID ), pos );
 			break;
 	}
 	switch ( groupEnum )
@@ -1088,7 +1089,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		}
 		break;
 		case CI_ALARMBELL:
-			g->rm()->addFurniture( itemID, pos );
+			g->rm()->addFurniture( sm, g->inv()->value( itemID ), pos );
 			break;
 		case CI_MECHANISM:
 			g->mcm()->installItem( itemID, pos, rotation );

@@ -54,11 +54,16 @@ public:
 	void addNoPass( Position firstClick, QList<QPair<Position, bool>> fields );
 	void load( QVariantMap vals );
 
-	void addFurniture( unsigned int itemUID, Position pos );
+	void addFurniture( const SourceMaterial& source, unsigned short value, Position pos );
 	void removeFurniture( Position pos );
 
 	void removeRoom( unsigned int id );
 	void removeTile( Position pos );
+
+	Position findFreeBed( unsigned int roomID, unsigned int creatureID );
+	Position findFreeDormBed( unsigned int creatureID );
+	bool claimBed( Position pos, unsigned int creatureID );
+	void releaseBed( unsigned int creatureID );
 
 	bool isRoom( Position pos ) const;
 	bool isDining( Position pos );

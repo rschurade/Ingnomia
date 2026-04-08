@@ -189,12 +189,12 @@ const QHash<Position, Door>& RoomManager::allDoors()
 	return m_doors;
 }
 
-void RoomManager::addFurniture( unsigned int itemUID, Position pos )
+void RoomManager::addFurniture( const SourceMaterial& source, unsigned short value, Position pos )
 {
 	Room* room = getRoomAtPos( pos );
 	if ( room )
 	{
-		room->addFurniture( itemUID, pos );
+		room->addFurniture( source, value, pos );
 	}
 }
 
@@ -214,6 +214,51 @@ void RoomManager::addDoor( Position pos, const SourceMaterial& source, unsigned 
 	door.source   = source;
 	door.spriteID = spriteID;
 	m_doors.insert( pos, door );
+}
+
+Position RoomManager::findFreeBed( unsigned int roomID, unsigned int creatureID )
+{
+	Room* room = getRoom( roomID );
+	if ( room )
+	{
+		return room->findFreeBed( creatureID );
+	}
+	return Position();
+}
+
+Position RoomManager::findFreeDormBed( unsigned int creatureID )
+{
+	for ( auto dormID : getDorms() )
+	{
+		Room* room = getRoom( dormID );
+		if ( room )
+		{
+			Position pos = room->findFreeBed( creatureID );
+			if ( !pos.isZero() )
+			{
+				return pos;
+			}
+		}
+	}
+	return Position();
+}
+
+bool RoomManager::claimBed( Position pos, unsigned int creatureID )
+{
+	Room* room = getRoomAtPos( pos );
+	if ( room )
+	{
+		return room->claimBed( pos, creatureID );
+	}
+	return false;
+}
+
+void RoomManager::releaseBed( unsigned int creatureID )
+{
+	for ( auto room : m_rooms )
+	{
+		room->releaseAllBeds( creatureID );
+	}
 }
 
 void RoomManager::removeDoor( Position pos )

@@ -17,6 +17,7 @@
 */
 #include "gnome.h"
 #include "../game/gnomemanager.h"
+#include "../game/roommanager.h"
 #include "../game/game.h"
 
 #include "../base/behaviortree/bt_tree.h"
@@ -789,6 +790,7 @@ void Gnome::die()
 	cleanUpJob( false );
 	// Safety net: drop any items still tracked as carried/claimed by this creature
 	g->inv()->dropAllCarriedBy( id(), m_position );
+	g->rm()->releaseBed( id() );
 	for ( Workshop* w : g->wsm()->workshops() )
 	{
 		if ( w->assignedGnome() == id() )

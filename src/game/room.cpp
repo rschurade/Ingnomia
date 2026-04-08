@@ -17,6 +17,7 @@
 */
 #include "room.h"
 
+#include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
 #include "../base/util.h"
@@ -66,7 +67,38 @@ void Room::addTile( const Position & pos )
 {
 	RoomTile* rt = new RoomTile;
 	rt->pos      = pos;
-	rt->furnitureID = g->w()->getFurnitureOnTile( pos );
+
+	// Check if there's already installed furniture at this position (from construction record)
+	auto& wallConstrs = g->w()->wallConstructions();
+	auto& floorConstrs = g->w()->floorConstructions();
+	QVariantMap constr;
+	if ( wallConstrs.contains( pos.toInt() ) )
+	{
+		constr = wallConstrs.value( pos.toInt() );
+	}
+	else if ( floorConstrs.contains( pos.toInt() ) )
+	{
+		constr = floorConstrs.value( pos.toInt() );
+	}
+
+	if ( constr.contains( "Source" ) && constr.value( "ConstructionID" ).toString() == "Item" )
+	{
+		SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+		QString category = DB::select( "Category", "Items", sm.itemSID ).toString();
+		if ( category == "Furniture" )
+		{
+			rt->furniture = sm;
+			rt->furnitureValue = DB::select( "Value", "Items", sm.itemSID ).toFloat() * DB::select( "Value", "Materials", sm.materialSID ).toFloat();
+			rt->isAlarmBell = ( sm.itemSID == "AlarmBell" );
+			QString itemGroup = DB::select( "ItemGroup", "Items", sm.itemSID ).toString();
+			rt->isBed = ( itemGroup == "Beds" );
+			rt->isChair = ( itemGroup == "Chairs" );
+			if ( rt->isAlarmBell )
+			{
+				m_hasAlarmBell = true;
+			}
+		}
+	}
 
 	m_fields.insert( pos.toInt(), rt );
 
@@ -88,7 +120,20 @@ Room::Room( QVariantMap vals, Game* game ) :
 	{
 		RoomTile* rt    = new RoomTile;
 		rt->pos         = Position( vf.toMap().value( "Pos" ).toString() );
-		rt->furnitureID = vf.toMap().value( "FurID" ).toUInt();
+		// furnitureID no longer stored — furniture items are destroyed on install
+		if ( vf.toMap().contains( "FurSource" ) )
+		{
+			rt->furniture      = SourceMaterial::deserialize( vf.toMap().value( "FurSource" ).toMap() );
+			rt->furnitureValue = vf.toMap().value( "FurValue" ).toUInt();
+			rt->isAlarmBell    = ( rt->furniture.itemSID == "AlarmBell" );
+			QString itemGroup  = DB::select( "ItemGroup", "Items", rt->furniture.itemSID ).toString();
+			rt->isBed          = ( itemGroup == "Beds" );
+			rt->isChair        = ( itemGroup == "Chairs" );
+			if ( rt->isAlarmBell )
+			{
+				m_hasAlarmBell = true;
+			}
+		}
 		m_fields.insert( rt->pos.toInt(), rt );
 	}
 }
@@ -108,7 +153,12 @@ QVariant Room::serialize() const
 	{
 		QVariantMap fima;
 		fima.insert( "Pos", field->pos.toString() );
-		fima.insert( "FurID", field->furnitureID );
+		// furnitureID no longer stored — furniture items are destroyed on install
+		if ( field->hasFurniture() )
+		{
+			fima.insert( "FurSource", field->furniture.serialize() );
+			fima.insert( "FurValue", field->furnitureValue );
+		}
 		fields.append( fima );
 	}
 	out.insert( "Fields", fields );
@@ -138,42 +188,38 @@ bool Room::removeTile( const Position & pos )
 	g->w()->clearTileFlag( pos, TileFlag::TF_ROOM );
 	delete rt;
 
-	unsigned int itemID = rt->furnitureID;
-	if ( itemID )
+	if ( rt->isAlarmBell )
 	{
-		if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
+		bool found = false;
+		for ( auto& f : m_fields )
 		{
-			bool found = false;
-			for ( auto& f : m_fields )
+			if ( f->isAlarmBell )
 			{
-				if ( f->furnitureID )
-				{
-					if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
-					{
-						found = true;
-						break;
-					}
-				}
+				found = true;
+				break;
 			}
-			m_hasAlarmBell = found;
 		}
+		m_hasAlarmBell = found;
 	}
 
 	// if last tile deleted return true
 	return m_fields.empty();
 }
 
-void Room::addFurniture( unsigned int itemUID, Position pos )
+void Room::addFurniture( const SourceMaterial& source, unsigned short value, Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
-		m_fields[pos.toInt()]->furnitureID = itemUID;
-		if ( itemUID )
-		{
-			g->inv()->setConstructed( itemUID, true );
-			g->inv()->setItemPos( itemUID, pos );
-		}
-		if ( g->inv()->itemSID( itemUID ) == "AlarmBell" )
+		auto field = m_fields[pos.toInt()];
+		field->furniture      = source;
+		field->furnitureValue = value;
+		field->isAlarmBell    = ( source.itemSID == "AlarmBell" );
+
+		QString itemGroup = DB::select( "ItemGroup", "Items", source.itemSID ).toString();
+		field->isBed  = ( itemGroup == "Beds" );
+		field->isChair = ( itemGroup == "Chairs" );
+
+		if ( field->isAlarmBell )
 		{
 			m_hasAlarmBell = true;
 		}
@@ -185,24 +231,24 @@ void Room::removeFurniture( const Position& pos )
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		RoomTile* rt = m_fields[pos.toInt()];
+		bool wasAlarmBell = rt->isAlarmBell;
 
-		unsigned int itemID = rt->furnitureID;
-		rt->furnitureID     = 0;
-		if ( itemID )
+		rt->furniture = SourceMaterial();
+		rt->isBed = false;
+		rt->isChair = false;
+		rt->isAlarmBell = false;
+		rt->furnitureValue = 0;
+
+		if ( wasAlarmBell )
 		{
-			if ( g->inv()->itemSID( itemID ) == "AlarmBell" )
+			m_hasAlarmBell = false;
+			for ( auto& f : m_fields )
 			{
-				for ( auto& f : m_fields )
+				if ( f->isAlarmBell )
 				{
-					if ( f->furnitureID )
-					{
-						if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
-						{
-							return;
-						}
-					}
+					m_hasAlarmBell = true;
+					break;
 				}
-				m_hasAlarmBell = false;
 			}
 		}
 	}
@@ -279,30 +325,108 @@ bool Room::checkEnclosed()
 	return enclosed;
 }
 
-QList<unsigned int> Room::beds()
+int Room::numBeds()
 {
-	QList<unsigned int> beds;
+	int count = 0;
 	for ( auto field : m_fields )
 	{
-		if ( g->inv()->isInGroup( "Furniture", "Beds", field->furnitureID ) )
-		{
-			beds.append( field->furnitureID );
-		}
+		if ( field->isBed )
+			++count;
 	}
-	return beds;
+	return count;
 }
 
-QList<unsigned int> Room::chairs()
+int Room::numChairs()
 {
-	QList<unsigned int> chairs;
+	int count = 0;
 	for ( auto field : m_fields )
 	{
-		if ( g->inv()->isInGroup( "Furniture", "Chairs", field->furnitureID ) )
+		if ( field->isChair )
+			++count;
+	}
+	return count;
+}
+
+Position Room::findFreeChair( Position nearPos )
+{
+	int bestDist = INT_MAX;
+	Position bestPos;
+	for ( auto field : m_fields )
+	{
+		if ( field->isChair && field->claimedBy == 0 && field->usedBy == 0 )
 		{
-			chairs.append( field->furnitureID );
+			int d = field->pos.distSquare( nearPos, 5 );
+			if ( d < bestDist )
+			{
+				bestDist = d;
+				bestPos = field->pos;
+			}
 		}
 	}
-	return chairs;
+	return bestPos;
+}
+
+Position Room::findFreeBed( unsigned int creatureID )
+{
+	// Personal rooms: only the owner can use beds here
+	if ( m_owner != 0 && m_owner != creatureID )
+	{
+		return Position();
+	}
+
+	// First check if this creature already claimed a bed here
+	for ( auto field : m_fields )
+	{
+		if ( field->isBed && field->claimedBy == creatureID )
+		{
+			return field->pos;
+		}
+	}
+	// Find an unclaimed bed
+	for ( auto field : m_fields )
+	{
+		if ( field->isBed && field->claimedBy == 0 && field->usedBy == 0 )
+		{
+			return field->pos;
+		}
+	}
+	return Position();
+}
+
+bool Room::claimBed( Position pos, unsigned int creatureID )
+{
+	if ( m_fields.contains( pos.toInt() ) )
+	{
+		auto field = m_fields[pos.toInt()];
+		if ( field->isBed && ( field->claimedBy == 0 || field->claimedBy == creatureID ) )
+		{
+			field->claimedBy = creatureID;
+			return true;
+		}
+	}
+	return false;
+}
+
+void Room::releaseBed( Position pos )
+{
+	if ( m_fields.contains( pos.toInt() ) )
+	{
+		auto field = m_fields[pos.toInt()];
+		field->claimedBy = 0;
+		field->usedBy = 0;
+	}
+}
+
+void Room::releaseAllBeds( unsigned int creatureID )
+{
+	for ( auto field : m_fields )
+	{
+		if ( field->claimedBy == creatureID )
+		{
+			field->claimedBy = 0;
+			field->usedBy = 0;
+		}
+	}
 }
 
 bool Room::hasAlarmBell() const
@@ -319,12 +443,9 @@ Position Room::firstBellPos() const
 {
 	for ( const auto& f : m_fields )
 	{
-		if ( f->furnitureID )
+		if ( f->isAlarmBell )
 		{
-			if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
-			{
-				return f->pos;
-			}
+			return f->pos;
 		}
 	}
 	return Position();
@@ -335,12 +456,9 @@ QList<Position> Room::allBellPos() const
 	QList<Position> out;
 	for ( const auto& f : m_fields )
 	{
-		if ( f->furnitureID )
+		if ( f->isAlarmBell )
 		{
-			if ( g->inv()->itemSID( f->furnitureID ) == "AlarmBell" )
-			{
-				out.append( f->pos );
-			}
+			out.append( f->pos );
 		}
 	}
 	return out;
@@ -368,9 +486,9 @@ unsigned int Room::value()
 	unsigned int out = 0;
 	for ( const auto& f : m_fields )
 	{
-		if ( f->furnitureID )
+		if ( f->hasFurniture() )
 		{
-			out += g->inv()->value( f->furnitureID );
+			out += f->furnitureValue;
 		}
 	}
 	return out;

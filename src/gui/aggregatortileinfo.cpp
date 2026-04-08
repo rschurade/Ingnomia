@@ -400,16 +400,19 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					m_tileInfo.alarm        = GameState::alarm;
 					m_tileInfo.roomValue    = ro->value();              
 
-					QList<unsigned int> beds = ro->beds();
-					int countFree            = beds.size();
-					for ( auto b : beds )
+					int totalBeds = ro->numBeds();
+					Position freeBed = ro->findFreeBed( 0 ); // 0 = any creature
+					int countFree = freeBed.isZero() ? 0 : totalBeds; // rough estimate
+					// Count exact free beds
+					countFree = 0;
+					for ( auto field : ro->getFields() )
 					{
-						if ( g->inv()->isInJob( b ) )
+						if ( field->isBed && field->claimedBy == 0 && field->usedBy == 0 )
 						{
-							--countFree;
+							++countFree;
 						}
 					}
-					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( beds.size() );
+					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( totalBeds );
 
 					for ( auto gnome : g->gm()->gnomes() )
 					{
