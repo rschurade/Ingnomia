@@ -15,12 +15,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file io.h
+ * @brief Save/load system — serializes and deserializes the full game state to/from JSON and binary files.
+ */
+
 #pragma once
 
 #include <QObject>
 
 class Game;
 
+/**
+ * @brief Handles all game save/load operations and static file I/O utilities.
+ *
+ * Serializes game entities (gnomes, items, plants, workshops, etc.) to JSON arrays,
+ * saves/loads the world grid as binary data, and manages the user data folder structure.
+ * Static methods handle config and generic file I/O. Instance methods require a Game pointer.
+ */
 class IO : public QObject
 {
 	Q_OBJECT

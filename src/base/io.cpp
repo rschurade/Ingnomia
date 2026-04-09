@@ -15,6 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file io.cpp
+ *  @brief Implementation of the IO class for save/load operations.
+ *
+ *  Handles all serialization and deserialization of game state, including
+ *  the world grid (binary), entities (JSON), configuration, and chunked
+ *  save/load for large collections (items, plants, animals, monsters).
+ *  Also provides static file utilities and version compatibility checks.
+ */
+
 #include "io.h"
 
 #include "../base/config.h"
@@ -60,16 +70,25 @@
 
 #include <unordered_set>
 
+/** @brief Constructs the IO handler.
+ *  @param game Pointer to the Game instance that owns all managers.
+ *  @param parent Optional QObject parent for Qt memory management.
+ */
 IO::IO( Game* game, QObject* parent ) :
 	g( game ),
 	QObject( parent )
 {
 }
 
+/** @brief Destructor. */
 IO::~IO()
 {
 }
 
+/** @brief Checks whether a save game in the given folder is compatible with the current version.
+ *  @param folder Path to the save game folder.
+ *  @return True if the save version is >= 0.7.4.1 (version int 741), false otherwise.
+ */
 bool IO::saveCompatible( QString folder )
 {
 	int vi = versionInt( folder );
@@ -80,6 +99,9 @@ bool IO::saveCompatible( QString folder )
 	return true;
 }
 
+/** @brief Checks whether any save game exists in the user data save folder.
+ *  @return True if the save directory exists and is not empty.
+ */
 bool IO::saveGameExists()
 {
 	QString folder = getDataFolder() + "/save/";
@@ -91,6 +113,9 @@ bool IO::saveGameExists()
 	return true;
 }
 
+/** @brief Saves the current global configuration to config.json in the settings folder.
+ *  @return True on success.
+ */
 bool IO::saveConfig()
 {
 	QString folder = getDataFolder() + "/settings/";
@@ -103,6 +128,9 @@ bool IO::saveConfig()
 	return true;
 }
 
+/** @brief Returns the platform-specific user data folder for Ingnomia.
+ *  @return On Windows: Documents/My Games/Ingnomia. On Linux: ~/.local/share/Ingnomia.
+ */
 QString IO::getDataFolder()
 {
 #ifdef _WIN32
@@ -113,11 +141,19 @@ QString IO::getDataFolder()
 #endif
 }
 
+/** @brief Returns the path to the temporary folder inside the user data directory.
+ *  @return Path to the tmp subfolder.
+ */
 QString IO::getTempFolder()
 {
 	return getDataFolder() + "/tmp/";
 }
 
+/** @brief Creates all required subdirectories (mods, save, screenshots, settings, tmp) in the
+ *         user data folder, and copies default config files from the application content directory
+ *         if they do not already exist.
+ *  @return True if the save folder exists after creation.
+ */
 bool IO::createFolders()
 {
 	QString folder = getDataFolder() + "/";
@@ -177,6 +213,10 @@ bool IO::createFolders()
 	return QDir( folder ).exists();
 }
 
+/** @brief Loads the original (shipped) config.json from the application content directory.
+ *  @param jd Output parameter receiving the parsed JSON document.
+ *  @return True if the file was loaded and parsed successfully.
+ */
 bool IO::loadOriginalConfig( QJsonDocument& jd )
 {
 	qDebug() << "load standard config";
@@ -184,6 +224,17 @@ bool IO::loadOriginalConfig( QJsonDocument& jd )
 	return IO::loadFile( exePath + "/content/JSON/config.json", jd );
 }
 
+/** @brief Saves the entire game state to disk.
+ *
+ *  Creates a save folder named after the kingdom. For manual saves, increments a
+ *  numbered slot; for autosaves, uses an "autosave" subfolder. Existing folders are
+ *  backed up and removed after a successful save. Serializes world, sprites, game
+ *  state, config, items, constructions, stockpiles, jobs, gnomes, monsters, plants,
+ *  animals, farms, workshops, rooms, doors, item history, events, mechanisms, and pipes.
+ *
+ *  @param autosave If true, saves to the "autosave" slot instead of a new numbered slot.
+ *  @return The path to the folder where the game was saved.
+ */
 QString IO::save( bool autosave )
 {
 	QElapsedTimer timer;
@@ -297,6 +348,16 @@ QString IO::save( bool autosave )
 	return folder;
 }
 
+/** @brief Loads an entire game state from the given save folder.
+ *
+ *  Deserializes all game data in dependency order: game state, sprites, world grid,
+ *  items, constructions, jobs, workshops, farms, stockpiles, mechanisms, pipes,
+ *  gnomes, monsters, plants, animals, rooms, doors, item history, events, and config.
+ *  Runs sanitize() at the end to fix up any inconsistencies.
+ *
+ *  @param folder Path to the save game folder to load from.
+ *  @return True if loading succeeded, false if the world file could not be read.
+ */
 bool IO::load( QString folder )
 {
 	if ( !folder.endsWith( "/" ) )
@@ -373,6 +434,12 @@ bool IO::load( QString folder )
 	return true;
 }
 
+/** @brief Performs post-load fixups to correct data inconsistencies.
+ *
+ *  Handles migration from older save formats (e.g. 0.7.5 gnome ID in item job field),
+ *  fixes orphaned item ownership (items claimed to be held but not in any gnome's
+ *  inventory), and cleans out watch list entries referencing invalid inventory categories.
+ */
 void IO::sanitize()
 {
 	// Migration for 0.7.5 games where gnomes had stored their own ID in job field of items
@@ -464,6 +531,10 @@ void IO::sanitize()
 	}
 }
 
+/** @brief Reads the version string from a save game's game.json file.
+ *  @param folder Path to the save game folder.
+ *  @return Version string in "major.minor.patch.build" format, or "0.0.0.0" if not found.
+ */
 QString IO::versionString( QString folder )
 {
 	QJsonDocument jd;
@@ -490,6 +561,13 @@ QString IO::versionString( QString folder )
 	return ( "0.0.0.0" );
 }
 
+/** @brief Converts the save game version string to a comparable integer.
+ *
+ *  Encodes "a.b.c.d" as a*1000 + b*100 + c*10 + d.
+ *
+ *  @param folder Path to the save game folder.
+ *  @return Integer version number, or 0 if the version string is malformed.
+ */
 int IO::versionInt( QString folder )
 {
 	QString version = versionString( folder );
@@ -507,6 +585,9 @@ int IO::versionInt( QString folder )
 	return 0;
 }
 
+/** @brief Serializes the global configuration into a JSON array.
+ *  @return QJsonArray containing the configuration as a single object entry.
+ */
 QJsonArray IO::jsonArrayConfig()
 {
 	if ( Global::debugMode )
@@ -517,6 +598,10 @@ QJsonArray IO::jsonArrayConfig()
 	return ja;
 }
 
+/** @brief Loads configuration from a parsed JSON document.
+ *  @param jd JSON document containing the configuration array.
+ *  @return True (currently a no-op stub that iterates entries without applying them).
+ */
 bool IO::loadConfig( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -528,6 +613,10 @@ bool IO::loadConfig( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes the full game state (version, inventory filters, neighbors, military)
+ *         into a JSON array.
+ *  @return QJsonArray containing the serialized GameState as a single object entry.
+ */
 QJsonArray IO::jsonArrayGame()
 {
 	if ( Global::debugMode )
@@ -551,6 +640,14 @@ QJsonArray IO::jsonArrayGame()
 	return ja;
 }
 
+/** @brief Loads game state from a parsed JSON document.
+ *
+ *  Deserializes GameState, registers any added materials into the DB,
+ *  inserts added translation strings, and deserializes neighbor data.
+ *
+ *  @param jd JSON document containing the game state array.
+ *  @return True on success.
+ */
 bool IO::loadGame( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -576,6 +673,15 @@ bool IO::loadGame( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Saves the world grid to a binary file (world.dat).
+ *
+ *  Writes every tile's flags, wall/floor type and material, rotations,
+ *  fluid level, pressure, flow, vegetation, embedded material, and sprite UIDs
+ *  as a compact binary stream.
+ *
+ *  @param folder Path to the save folder (must end with '/').
+ *  @return True on success.
+ */
 bool IO::saveWorld( QString folder )
 {
 	if ( Global::debugMode )
@@ -613,6 +719,10 @@ bool IO::saveWorld( QString folder )
 	return true;
 }
 
+/** @brief Loads the world grid from a binary file (world.dat) in the given folder.
+ *  @param folder Path to the save folder.
+ *  @return True if the file was opened and read successfully, false otherwise.
+ */
 bool IO::loadWorld( QString folder )
 {
 	QFile worldFile( folder + "world.dat" );
@@ -628,6 +738,13 @@ bool IO::loadWorld( QString folder )
 	return false;
 }
 
+/** @brief Reads world tile data from a QDataStream and populates the world grid.
+ *
+ *  Allocates the world using Global::dimX/Y/Z, then reads each tile's binary
+ *  fields until the stream is exhausted.
+ *
+ *  @param in Input data stream positioned at the start of tile data.
+ */
 void IO::loadWorld( QDataStream& in )
 {
 	unsigned short dimX = Global::dimX;
@@ -672,6 +789,9 @@ void IO::loadWorld( QDataStream& in )
 	world.shrink_to_fit();
 }
 
+/** @brief Serializes all wall constructions into a JSON array.
+ *  @return QJsonArray of wall construction variant maps.
+ */
 QJsonArray IO::jsonArrayWallConstructions()
 {
 	if ( Global::debugMode )
@@ -686,6 +806,9 @@ QJsonArray IO::jsonArrayWallConstructions()
 	return ja;
 }
 
+/** @brief Serializes all floor constructions into a JSON array.
+ *  @return QJsonArray of floor construction variant maps.
+ */
 QJsonArray IO::jsonArrayFloorConstructions()
 {
 	if ( Global::debugMode )
@@ -700,6 +823,10 @@ QJsonArray IO::jsonArrayFloorConstructions()
 	return ja;
 }
 
+/** @brief Loads floor constructions from a parsed JSON document into the world.
+ *  @param jd JSON document containing the floor constructions array.
+ *  @return True on success.
+ */
 bool IO::loadFloorConstructions( QJsonDocument& jd )
 {
 	g->w()->loadFloorConstructions( jd.array().toVariantList() );
@@ -707,6 +834,10 @@ bool IO::loadFloorConstructions( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads wall constructions from a parsed JSON document into the world.
+ *  @param jd JSON document containing the wall constructions array.
+ *  @return True on success.
+ */
 bool IO::loadWallConstructions( QJsonDocument& jd )
 {
 	g->w()->loadWallConstructions( jd.array().toVariantList() );
@@ -714,6 +845,13 @@ bool IO::loadWallConstructions( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all sprite creation records into a JSON array.
+ *
+ *  Each entry contains the item SID, material SIDs, random map, UID,
+ *  and optionally a creature ID.
+ *
+ *  @return QJsonArray of sprite creation records.
+ */
 QJsonArray IO::jsonArraySprites()
 {
 	if ( Global::debugMode )
@@ -737,6 +875,10 @@ QJsonArray IO::jsonArraySprites()
 	return ja;
 }
 
+/** @brief Loads sprite creation records from a parsed JSON document and recreates sprites.
+ *  @param jd JSON document containing the sprites array.
+ *  @return True on success.
+ */
 bool IO::loadSprites( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -756,6 +898,9 @@ bool IO::loadSprites( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all gnomes (regular, special, and automatons) into a JSON array.
+ *  @return QJsonArray containing serialized gnome data.
+ */
 QJsonArray IO::jsonArrayGnomes()
 {
 	if ( Global::debugMode )
@@ -786,6 +931,11 @@ QJsonArray IO::jsonArrayGnomes()
 	return ja;
 }
 
+/** @brief Serializes a subset of monsters into a JSON array for chunked saving.
+ *  @param startIndex Index of the first monster to serialize.
+ *  @param amount Maximum number of monsters to serialize in this chunk.
+ *  @return QJsonArray of serialized monster data.
+ */
 QJsonArray IO::jsonArrayMonsters( int startIndex, int amount )
 {
 	if ( Global::debugMode )
@@ -811,6 +961,13 @@ QJsonArray IO::jsonArrayMonsters( int startIndex, int amount )
 	return ja;
 }
 
+/** @brief Saves all monsters to numbered chunk files (monsters1.json, monsters2.json, ...).
+ *
+ *  Each chunk contains up to 10,000 monsters.
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::saveMonsters( QString folder )
 {
 	int i          = 1;
@@ -832,6 +989,13 @@ bool IO::saveMonsters( QString folder )
 	return true;
 }
 
+/** @brief Loads gnomes from a parsed JSON document, dispatching by creature type.
+ *
+ *  Handles GNOME, GNOME_TRADER, and AUTOMATON types.
+ *
+ *  @param jd JSON document containing the gnomes array.
+ *  @return True on success.
+ */
 bool IO::loadGnomes( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -855,6 +1019,14 @@ bool IO::loadGnomes( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads monsters from the save folder.
+ *
+ *  Supports both legacy single-file format (monsters.json) and chunked format
+ *  (monsters1.json, monsters2.json, ...).
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::loadMonsters( QString folder )
 {
 	QJsonDocument jd;
@@ -884,6 +1056,11 @@ bool IO::loadMonsters( QString folder )
 	return true;
 }
 
+/** @brief Serializes a subset of plants into a JSON array for chunked saving.
+ *  @param startIndex Index of the first plant to serialize.
+ *  @param amount Maximum number of plants to serialize in this chunk.
+ *  @return QJsonArray of serialized plant data.
+ */
 QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 {
 	if ( Global::debugMode )
@@ -907,6 +1084,13 @@ QJsonArray IO::jsonArrayPlants( int startIndex, int amount )
 	return ja;
 }
 
+/** @brief Saves all plants to numbered chunk files (plants1.json, plants2.json, ...).
+ *
+ *  Each chunk contains up to 10,000 plants.
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::savePlants( QString folder )
 {
 	QByteArray out;
@@ -930,6 +1114,14 @@ bool IO::savePlants( QString folder )
 	return true;
 }
 
+/** @brief Loads plants from the save folder.
+ *
+ *  Supports both legacy single-file format (plants.json) and chunked format
+ *  (plants1.json, plants2.json, ...).
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::loadPlants( QString folder )
 {
 	QJsonDocument jd;
@@ -963,6 +1155,11 @@ bool IO::loadPlants( QString folder )
 	return true;
 }
 
+/** @brief Serializes a subset of items into a JSON array for chunked saving.
+ *  @param startIndex Index of the first item to serialize.
+ *  @param amount Maximum number of items to serialize in this chunk.
+ *  @return QJsonArray of serialized item data.
+ */
 QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 {
 	if ( Global::debugMode )
@@ -987,6 +1184,14 @@ QJsonArray IO::jsonArrayItems( int startIndex, int amount )
 	return ja;
 }
 
+/** @brief Saves all items to numbered chunk files (items1.json, items2.json, ...).
+ *
+ *  Runs a sanity check on the inventory before saving. Each chunk contains
+ *  up to 50,000 items.
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::saveItems( QString folder )
 {
 	g->inv()->sanityCheck();
@@ -1015,6 +1220,14 @@ bool IO::saveItems( QString folder )
 	return true;
 }
 
+/** @brief Loads items from the save folder.
+ *
+ *  Initializes the inventory filter, then loads items from either a single
+ *  items.json (legacy) or chunked files (items1.json, items2.json, ...).
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::loadItems( QString folder )
 {
 	g->inv()->loadFilter();
@@ -1054,12 +1267,19 @@ bool IO::loadItems( QString folder )
 	return true;
 }
 
+/** @brief Loads item history data from a parsed JSON document.
+ *  @param jd JSON document containing the item history map.
+ *  @return True on success.
+ */
 bool IO::loadItemHistory( QJsonDocument& jd )
 {
 	g->inv()->itemHistory()->deserialize( jd.toVariant().toMap() );
 	return true;
 }
 
+/** @brief Serializes all non-empty jobs into a JSON array.
+ *  @return QJsonArray of serialized job data (skips jobs with empty type).
+ */
 QJsonArray IO::jsonArrayJobs()
 {
 	if ( Global::debugMode )
@@ -1077,6 +1297,9 @@ QJsonArray IO::jsonArrayJobs()
 	return ja;
 }
 
+/** @brief Serializes all job sprites (position-keyed sprite overrides) into a JSON array.
+ *  @return QJsonArray of job sprite entries, each including a PosID key.
+ */
 QJsonArray IO::jsonArrayJobSprites()
 {
 	if ( Global::debugMode )
@@ -1095,6 +1318,10 @@ QJsonArray IO::jsonArrayJobSprites()
 	return ja;
 }
 
+/** @brief Loads jobs from a parsed JSON document into the job manager.
+ *  @param jd JSON document containing the jobs array.
+ *  @return True on success.
+ */
 bool IO::loadJobs( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1105,6 +1332,10 @@ bool IO::loadJobs( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads job sprites from a parsed JSON document into the world.
+ *  @param jd JSON document containing the job sprites array.
+ *  @return True on success.
+ */
 bool IO::loadJobSprites( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1118,6 +1349,9 @@ bool IO::loadJobSprites( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all farms, groves, pastures, and beehives into a JSON array.
+ *  @return QJsonArray containing serialized farming entity data.
+ */
 QJsonArray IO::jsonArrayFarms()
 {
 	if ( Global::debugMode )
@@ -1149,6 +1383,9 @@ QJsonArray IO::jsonArrayFarms()
 	return ja;
 }
 
+/** @brief Serializes all rooms into a JSON array.
+ *  @return QJsonArray containing serialized room data.
+ */
 QJsonArray IO::jsonArrayRooms()
 {
 	if ( Global::debugMode )
@@ -1163,6 +1400,13 @@ QJsonArray IO::jsonArrayRooms()
 	return ja;
 }
 
+/** @brief Serializes all doors into a JSON array.
+ *
+ *  Each door entry includes position, name, source, sprite ID, and blocking flags
+ *  for gnomes, animals, and monsters.
+ *
+ *  @return QJsonArray containing serialized door data.
+ */
 QJsonArray IO::jsonArrayDoors()
 {
 	if ( Global::debugMode )
@@ -1187,6 +1431,10 @@ QJsonArray IO::jsonArrayDoors()
 	return ja;
 }
 
+/** @brief Loads farms, groves, pastures, and beehives from a parsed JSON document.
+ *  @param jd JSON document containing the farming entities array.
+ *  @return True on success.
+ */
 bool IO::loadFarms( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1197,6 +1445,10 @@ bool IO::loadFarms( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads rooms from a parsed JSON document into the room manager.
+ *  @param jd JSON document containing the rooms array.
+ *  @return True on success.
+ */
 bool IO::loadRooms( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1207,6 +1459,10 @@ bool IO::loadRooms( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads doors from a parsed JSON document into the room manager.
+ *  @param jd JSON document containing the doors array.
+ *  @return True on success.
+ */
 bool IO::loadDoors( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1217,6 +1473,9 @@ bool IO::loadDoors( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all stockpiles into a JSON array, preserving their order.
+ *  @return QJsonArray containing serialized stockpile data.
+ */
 QJsonArray IO::jsonArrayStockpiles()
 {
 	if ( Global::debugMode )
@@ -1235,6 +1494,10 @@ QJsonArray IO::jsonArrayStockpiles()
 	return ja;
 }
 
+/** @brief Loads stockpiles from a parsed JSON document into the stockpile manager.
+ *  @param jd JSON document containing the stockpiles array.
+ *  @return True on success.
+ */
 bool IO::loadStockpiles( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1245,6 +1508,9 @@ bool IO::loadStockpiles( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all workshops into a JSON array.
+ *  @return QJsonArray containing serialized workshop data.
+ */
 QJsonArray IO::jsonArrayWorkshops()
 {
 	if ( Global::debugMode )
@@ -1258,6 +1524,10 @@ QJsonArray IO::jsonArrayWorkshops()
 	return ja;
 }
 
+/** @brief Loads workshops from a parsed JSON document and registers their sprites.
+ *  @param jd JSON document containing the workshops array.
+ *  @return True on success.
+ */
 bool IO::loadWorkshops( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1272,6 +1542,11 @@ bool IO::loadWorkshops( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes a subset of animals into a JSON array for chunked saving.
+ *  @param startIndex Index of the first animal to serialize.
+ *  @param amount Maximum number of animals to serialize in this chunk.
+ *  @return QJsonArray of serialized animal data.
+ */
 QJsonArray IO::jsonArrayAnimals( int startIndex, int amount )
 {
 	if ( Global::debugMode )
@@ -1296,6 +1571,13 @@ QJsonArray IO::jsonArrayAnimals( int startIndex, int amount )
 	return ja;
 }
 
+/** @brief Saves all animals to numbered chunk files (animals1.json, animals2.json, ...).
+ *
+ *  Each chunk contains up to 10,000 animals.
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::saveAnimals( QString folder )
 {
 	int i          = 1;
@@ -1317,6 +1599,14 @@ bool IO::saveAnimals( QString folder )
 	return true;
 }
 
+/** @brief Loads animals from the save folder.
+ *
+ *  Supports both legacy single-file format (animals.json) and chunked format
+ *  (animals1.json, animals2.json, ...).
+ *
+ *  @param folder Path to the save folder.
+ *  @return True on success.
+ */
 bool IO::loadAnimals( QString folder )
 {
 	QJsonDocument jd;
@@ -1346,6 +1636,9 @@ bool IO::loadAnimals( QString folder )
 	return true;
 }
 
+/** @brief Serializes the item history tracking data into a JSON document.
+ *  @return QJsonDocument containing the serialized item history map.
+ */
 QJsonDocument IO::jsonArrayItemHistory()
 {
 	if ( Global::debugMode )
@@ -1358,6 +1651,9 @@ QJsonDocument IO::jsonArrayItemHistory()
 	return jd;
 }
 
+/** @brief Serializes all game events into a JSON document.
+ *  @return QJsonDocument containing the serialized event data as an array.
+ */
 QJsonDocument IO::jsonArrayEvents()
 {
 	if ( Global::debugMode )
@@ -1370,6 +1666,10 @@ QJsonDocument IO::jsonArrayEvents()
 	return jd;
 }
 
+/** @brief Loads game events from a parsed JSON document into the event manager.
+ *  @param jd JSON document containing the events array.
+ *  @return True on success.
+ */
 bool IO::loadEvents( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1380,6 +1680,9 @@ bool IO::loadEvents( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all mechanisms (levers, pressure plates, etc.) into a JSON document.
+ *  @return QJsonDocument containing the serialized mechanisms as an array.
+ */
 QJsonDocument IO::jsonArrayMechanisms()
 {
 	if ( Global::debugMode )
@@ -1397,6 +1700,10 @@ QJsonDocument IO::jsonArrayMechanisms()
 	return jd;
 }
 
+/** @brief Loads mechanisms from a parsed JSON document into the mechanism manager.
+ *  @param jd JSON document containing the mechanisms array.
+ *  @return True on success.
+ */
 bool IO::loadMechanisms( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1404,6 +1711,9 @@ bool IO::loadMechanisms( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Serializes all fluid pipes into a JSON document.
+ *  @return QJsonDocument containing the serialized pipe data as an array.
+ */
 QJsonDocument IO::jsonArrayPipes()
 {
 	if ( Global::debugMode )
@@ -1435,6 +1745,10 @@ QJsonDocument IO::jsonArrayPipes()
 	return jd;
 }
 
+/** @brief Loads fluid pipes from a parsed JSON document into the fluid manager.
+ *  @param jd JSON document containing the pipes array.
+ *  @return True on success.
+ */
 bool IO::loadPipes( QJsonDocument& jd )
 {
 	QJsonArray ja = jd.array();
@@ -1442,18 +1756,33 @@ bool IO::loadPipes( QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Saves a QJsonObject to a file by wrapping it in a QJsonDocument.
+ *  @param url File path to write to.
+ *  @param jo JSON object to save.
+ *  @return True on success, false if the file could not be opened.
+ */
 bool IO::saveFile( QString url, const QJsonObject& jo )
 {
 	QJsonDocument saveDoc( jo );
 	return saveFile( url, saveDoc );
 }
 
+/** @brief Saves a QJsonArray to a file by wrapping it in a QJsonDocument.
+ *  @param url File path to write to.
+ *  @param ja JSON array to save.
+ *  @return True on success, false if the file could not be opened.
+ */
 bool IO::saveFile( QString url, const QJsonArray& ja )
 {
 	QJsonDocument saveDoc( ja );
 	return saveFile( url, saveDoc );
 }
 
+/** @brief Saves a QJsonDocument to a file as formatted JSON text.
+ *  @param url File path to write to.
+ *  @param jd JSON document to save.
+ *  @return True on success, false if the file could not be opened.
+ */
 bool IO::saveFile( QString url, const QJsonDocument& jd )
 {
 	QFile file( url );
@@ -1469,6 +1798,11 @@ bool IO::saveFile( QString url, const QJsonDocument& jd )
 	return true;
 }
 
+/** @brief Loads and parses a JSON file from disk.
+ *  @param url File path to read from.
+ *  @param ja Output parameter receiving the parsed JSON document.
+ *  @return True if parsing succeeded, false on JSON parse error (logged to debug output).
+ */
 bool IO::loadFile( QString url, QJsonDocument& ja )
 {
 	QFile file( url );

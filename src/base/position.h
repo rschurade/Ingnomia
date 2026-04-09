@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file position.h
+ * @brief 3D tile coordinate struct with conversion, hashing, navigation, and line-of-sight utilities.
+ */
+
 #pragma once
 
 #include "../base/global.h"
@@ -27,6 +31,13 @@
 
 class Sprite;
 
+/**
+ * @brief 3D tile coordinate in the game world (x, y, z).
+ *
+ * Supports construction from string ("x y z"), QVariant, or flat tile ID.
+ * Provides neighbor accessors, distance calculation, flat-index conversion,
+ * and hashing for use in QHash/std::unordered_map.
+ */
 struct Position
 {
 	constexpr Position() = default;
@@ -208,6 +219,12 @@ struct Position
 Q_DECLARE_TYPEINFO( Position, Q_PRIMITIVE_TYPE );
 Q_DECLARE_METATYPE( Position );
 
+/**
+ * @brief Qt hash function for Position, enabling use as QHash/QSet key.
+ * @param key The position to hash.
+ * @param seed Hash seed for randomization.
+ * @return Hash value.
+ */
 inline size_t qHash( const Position& key, size_t seed )
 {
 	return qHash( key.toHashBase(), seed );
@@ -225,6 +242,16 @@ struct hash<Position>
 
 } // namespace std
 
+/**
+ * @brief Traces a 3D line between two positions using Bresenham's algorithm.
+ *
+ * Calls the callback for each tile along the line. Stops early and returns false
+ * if the callback returns false for any tile.
+ * @param a Starting position.
+ * @param b Ending position.
+ * @param callback Called for each tile (current, previous). Return false to abort.
+ * @return True if the full line was traced, false if the callback aborted early.
+ */
 inline bool testLine( const Position& a, const Position& b, const std::function<bool( const Position& current, const Position& previous )>& callback )
 {
 	// Bresenham's Algorithm

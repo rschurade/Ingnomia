@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file region.h
+ * @brief Connectivity region for fast reachability checks between walkable areas.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -22,6 +26,13 @@
 #include <QMap>
 #include <QSet>
 
+/**
+ * @brief A connected walkable region in the world, tracking bidirectional connections to other regions.
+ *
+ * Regions are contiguous areas of walkable tiles. Connections track which positions
+ * link this region to neighboring regions (e.g. stairways, ramps, door tiles).
+ * Used by RegionMap for fast "can creature reach goal?" checks without running A*.
+ */
 class Region
 {
 public:

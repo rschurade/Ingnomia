@@ -15,8 +15,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodebbprecondition.cpp
+ *  @brief Implementation of BT_NodeBBPrecondition -- blackboard-gated decorator.
+ */
 #include "bt_nodebbprecondition.h"
 
+/** @brief Construct a blackboard precondition decorator.
+ *  @param name       Debug name for the node.
+ *  @param key        Blackboard key whose value will be tested.
+ *  @param expected   Required string value, or "*" to accept any value.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeBBPrecondition::BT_NodeBBPrecondition( QString name, QString key, QString expected, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),
 	m_key( key ),
@@ -24,10 +33,14 @@ BT_NodeBBPrecondition::BT_NodeBBPrecondition( QString name, QString key, QString
 {
 }
 
+/** @brief Destructor. */
 BT_NodeBBPrecondition::~BT_NodeBBPrecondition()
 {
 }
 
+/** @brief Check the blackboard value; tick the child if it matches, else return FAILURE.
+ *  @return The child's tick result if the precondition holds, otherwise FAILURE.
+ */
 BT_RESULT BT_NodeBBPrecondition::tick()
 {
 	if ( m_blackboard.value( m_key ).toString() == m_expected || m_expected == "*" )

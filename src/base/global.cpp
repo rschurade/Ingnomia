@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file global.cpp
+ * @brief Implementation of the Global static class — initialization, reset, key mapping.
+ */
+
 #include "global.h"
 
 #include "../base/config.h"
@@ -80,6 +84,14 @@ QMap<CreaturePart, QString> Global::creaturePartToString;
 
 QSet<QString> Global::craftable;
 
+/**
+ * @brief Resets all global state for a new game or load.
+ *
+ * Clears overlays, reloads XP modifier from config, resets the logger,
+ * reloads all behavior trees from content/ai, rebuilds the gnome need
+ * tables from the Needs DB table, populates the creature part lookup maps,
+ * and fills the craftable items set from the Crafts DB table.
+ */
 void Global::reset()
 {
 	qDebug() << "*** Global reset";
@@ -225,6 +237,10 @@ void Global::reset()
 	}
 }
 
+/**
+ * @brief Returns a reference to the application-wide Logger instance.
+ * @return Reference to the static Logger.
+ */
 Logger& Global::logger()
 {
 	return m_logger;
@@ -237,6 +253,13 @@ KeyBindings& Global::keyBindings()
 }
 */
 
+/**
+ * @brief Loads all behavior trees from content/ai directory.
+ *
+ * Queries the AI table for behavior tree XML filenames, parses each one,
+ * and stores the root QDomElement in m_behaviorTrees keyed by AI ID.
+ * @return True if all trees loaded successfully, false on any parse failure.
+ */
 bool Global::loadBehaviorTrees()
 {
 	m_behaviorTrees.clear();
@@ -264,11 +287,22 @@ bool Global::loadBehaviorTrees()
 	return true;
 }
 
+/**
+ * @brief Retrieves a loaded behavior tree XML element by ID.
+ * @param id The behavior tree identifier (from the AI DB table).
+ * @return The QDomElement root of the behavior tree.
+ */
 QDomElement Global::behaviorTree( QString id )
 {
 	return m_behaviorTrees.value( id );
 }
 
+/**
+ * @brief Loads and registers a behavior tree from an XML file path.
+ * @param id The identifier to register the tree under.
+ * @param path File path to the behavior tree XML.
+ * @return True if the tree was loaded successfully.
+ */
 bool Global::addBehaviorTree( QString id, QString path )
 {
 	QDomDocument xml;
@@ -290,6 +324,12 @@ bool Global::addBehaviorTree( QString id, QString path )
 	return true;
 }
 
+/**
+ * @brief Initializes the Qt-to-Noesis key conversion map.
+ *
+ * Populates keyConvertMap with mappings from Qt::Key codes to Noesis::Key
+ * codes for keyboard input forwarding to the Noesis GUI system.
+ */
 void Global::initKeyConvert()
 {
 	keyConvertMap.clear();
@@ -437,6 +477,13 @@ void Global::initKeyConvert()
 	//keyConvertMap.insert( Qt::Key_, Noesis::Key_PageRight );
 }
 
+/**
+ * @brief Converts a Qt key code to a Noesis key code.
+ *
+ * Lazily initializes the key map on first call.
+ * @param key The Qt key code.
+ * @return The corresponding Noesis key, or Noesis::Key_None if unmapped.
+ */
 Noesis::Key Global::keyConvert( Qt::Key key )
 {
 	if ( keyConvertMap.isEmpty() )

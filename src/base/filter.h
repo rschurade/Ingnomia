@@ -15,12 +15,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file filter.h
+ * @brief Hierarchical item filter system for stockpile and inventory filtering (Category > Group > Item > Material).
+ */
+
 #pragma once
 
 #include <QDebug>
 #include <QMap>
 #include <QString>
 
+/** @brief Leaf node of the filter tree — tracks checked materials for a single item type. */
 class FilterItem
 {
 public:
@@ -37,6 +42,7 @@ private:
 	QMap<QString, bool> m_materials;
 };
 
+/** @brief Mid-level filter node — contains FilterItems grouped by item type within a category group. */
 class FilterGroup
 {
 public:
@@ -55,6 +61,7 @@ private:
 	QMap<QString, FilterItem> m_items;
 };
 
+/** @brief Category-level filter node — contains FilterGroups within a top-level category. */
 class FilterCategory
 {
 public:
@@ -76,6 +83,12 @@ private:
 	QMap<QString, FilterGroup> m_groups;
 };
 
+/**
+ * @brief Top-level 4-tier filter (Category > Group > Item > Material) with serialization.
+ *
+ * Used by stockpiles to control which items are accepted. Supports bulk check/uncheck,
+ * serialization to/from QVariantMap for save/load, and lazy-computed active item sets.
+ */
 class Filter
 {
 public:

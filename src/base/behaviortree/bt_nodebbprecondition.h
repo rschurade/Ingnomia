@@ -15,10 +15,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodebbprecondition.h
+ *  @brief Decorator that gates its child on a blackboard value check.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Decorator node that checks a blackboard entry before ticking its child.
+ *
+ *  On tick, compares @c m_blackboard[m_key] against @c m_expected.  If they
+ *  match (or @c m_expected is @c "*", acting as a wildcard), the single child
+ *  is ticked and its result returned.  Otherwise returns FAILURE immediately.
+ */
 class BT_NodeBBPrecondition final : public BT_Node
 {
 public:
@@ -28,6 +37,6 @@ public:
 	BT_RESULT tick();
 
 private:
-	QString m_key;
-	QString m_expected;
+	QString m_key;      ///< Blackboard key to look up.
+	QString m_expected; ///< Expected value, or "*" to match any.
 };

@@ -1,3 +1,10 @@
+/** @file bt_tree.h
+ *  @brief Convenience header that pulls in the entire behavior tree subsystem.
+ *
+ *  Include this single header to get the factory, all node types, and the
+ *  BT_RESULT / BT_Node base definitions.
+ */
+
 #include "bt_factory.h"
 #include "bt_nodeaction.h"
 #include "bt_nodebbprecondition.h"

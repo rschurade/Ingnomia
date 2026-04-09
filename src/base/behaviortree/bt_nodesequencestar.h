@@ -15,10 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodesequencestar.h
+ *  @brief Composite node implementing sequence (AND) logic with memory.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Sequence composite with memory -- resumes from the last RUNNING child.
+ *
+ *  Unlike BT_NodeSequence, this node remembers which child returned RUNNING
+ *  and resumes from that index on the next tick instead of restarting from
+ *  child 0.  Returns SUCCESS when all children succeed, RUNNING while a child
+ *  is running, or FAILURE on the first child failure (which also resets the
+ *  index).
+ */
 class BT_NodeSequenceStar final : public BT_Node
 {
 public:
@@ -31,5 +42,5 @@ public:
 	BT_RESULT tick();
 
 private:
-	bool m_resetOnFailure = true;
+	bool m_resetOnFailure = true; ///< Whether to reset the child index on FAILURE.
 };

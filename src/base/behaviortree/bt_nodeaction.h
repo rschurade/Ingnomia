@@ -15,10 +15,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeaction.h
+ *  @brief Leaf node that invokes a registered action callback on each tick.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Leaf action node -- calls a std::function and returns its result.
+ *
+ *  The callback receives a boolean @c halt flag: @c false on a normal tick,
+ *  @c true when the node is halted while RUNNING so the action can clean up.
+ *  Because this is a leaf, all child-adding overrides return @c nullptr.
+ */
 class BT_NodeAction final : public BT_Node
 {
 public:
@@ -70,5 +79,5 @@ public:
 	};
 
 private:
-	std::function<BT_RESULT( bool )> m_callback;
+	std::function<BT_RESULT( bool )> m_callback; ///< Action function; param is true when halting.
 };

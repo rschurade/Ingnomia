@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file config.h
+ * @brief Thread-safe application configuration store backed by JSON on disk.
+ */
+
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
@@ -25,12 +29,19 @@
 #include <QVariant>
 #include <QVariantMap>
 
+/**
+ * @brief Thread-safe key-value configuration store.
+ *
+ * Loads settings from config.json in the user data folder (Documents/My Games/Ingnomia).
+ * Ensures default values for XpMod, fow, AutoSaveInterval, uiscale, and dataPath.
+ * All get/set operations are mutex-protected. set() persists changes to disk immediately.
+ */
 class Config
 {
 private:
-	QVariantMap m_settings;
-	bool m_valid = false;
-	QMutex m_mutex;
+	QVariantMap m_settings; ///< Key-value map of all configuration settings.
+	bool m_valid = false;   ///< Whether the config was loaded successfully.
+	QMutex m_mutex;         ///< Mutex protecting concurrent access to m_settings.
 
 public:
 	Config();

@@ -15,10 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_noderepeatuntilsuccess.h
+ *  @brief Decorator that retries its child until it succeeds or a limit is reached.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Decorator that repeats its child until SUCCESS or the attempt limit.
+ *
+ *  Ticks the child up to @c m_num times.  If the child returns SUCCESS on any
+ *  attempt, the loop ends immediately with SUCCESS.  If the child returns
+ *  RUNNING, execution is suspended and RUNNING is returned.  If all attempts
+ *  are exhausted without a success, returns FAILURE.
+ */
 class BT_NodeRepeatUntilSuccess final : public BT_Node
 {
 public:
@@ -31,5 +41,5 @@ public:
 	BT_RESULT tick();
 
 private:
-	int m_num = 0;
+	int m_num = 0; ///< Maximum number of retry attempts.
 };

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_factory.h
+ *  @brief Static factory that builds a behavior tree node graph from XML.
+ */
 #pragma once
 
 #include "bt_tree.h"
@@ -26,6 +29,15 @@
 
 #include <functional>
 
+/** @brief Static factory that loads BehaviorTree.CPP-style XML and constructs
+ *         a tree of BT_Node objects ready to be ticked.
+ *
+ *  All public/private methods are static; the class cannot be instantiated.
+ *  The XML format mirrors BehaviorTree.CPP: a root element with a
+ *  @c main_tree_to_execute attribute, one or more @c \<BehaviorTree\> elements
+ *  each identified by @c ID, and standard node tags (Action, Condition,
+ *  Sequence, Fallback, decorators, SubTree, etc.).
+ */
 class BT_Factory
 {
 public:

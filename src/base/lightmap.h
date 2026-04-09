@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file lightmap.h
+ * @brief Dynamic light source management and per-tile light level calculation.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -22,6 +26,7 @@
 
 #include <vector>
 
+/** @brief A point light source in the world with position, intensity, and affected tiles. */
 struct Light
 {
 	unsigned int id;
@@ -30,6 +35,13 @@ struct Light
 	QList<unsigned int> effectTiles;
 };
 
+/**
+ * @brief Manages dynamic light sources and computes per-tile light levels.
+ *
+ * Tracks all active lights (torches, lamps, etc.) and their affected tile radii.
+ * When lights are added, removed, or tiles change, recalculates light levels
+ * on affected tiles and marks them for rendering update.
+ */
 class LightMap
 {
 public:
