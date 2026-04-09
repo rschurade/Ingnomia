@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file canwork.cpp
+ *  @brief Mixin base class for creatures that can claim and execute jobs.
+ */
 #include "canwork.h"
 
 #include "../base/config.h"
@@ -54,11 +57,20 @@ typedef exprtk::expression<double> expression_t;
 typedef exprtk::parser<double> parser_t;
 typedef exprtk::parser_error::type _error_t;
 
+/// @brief Constructs a new CanWork creature with no active job.
+/// @param pos     Initial world position.
+/// @param name    Display name.
+/// @param gender  Biological gender.
+/// @param species Species string ID.
+/// @param game    Owning game instance.
 CanWork::CanWork( Position& pos, QString name, Gender gender, QString species, Game* game ) :
 	Creature( pos, name, gender, species, game )
 {
 }
 
+/// @brief Deserialising constructor — restores creature and in-progress job state from a saved map.
+/// @param in   Serialised variant map.
+/// @param game Owning game instance.
 CanWork::CanWork( QVariantMap in, Game* game ) :
 	Creature( in, game )
 {
@@ -109,6 +121,8 @@ CanWork::CanWork( QVariantMap in, Game* game ) :
 	}
 }
 
+/// @brief Serialises creature and current job state into @p out.
+/// @param out Map to receive the serialised data.
 void CanWork::serialize( QVariantMap& out )
 {
 	Creature::serialize( out );
@@ -166,6 +180,9 @@ void CanWork::serialize( QVariantMap& out )
 	}
 }
 
+/// @brief Returns whether the skill with the given ID is enabled for this creature.
+/// @param id Skill string ID.
+/// @return True if the skill is active; false if disabled or unknown.
 bool CanWork::getSkillActive( QString id )
 {
 	if ( m_skillActive.contains( id ) )
@@ -175,6 +192,11 @@ bool CanWork::getSkillActive( QString id )
 	return false;
 }
 
+/// @brief Enables or disables a skill and updates the skill-priority list accordingly.
+///        Disabling the skill required by the current job aborts that job.
+///        Combat and Defense skills are toggled but never added to the priority list.
+/// @param id     Skill string ID.
+/// @param active True to enable, false to disable.
 void CanWork::setSkillActive( QString id, bool active )
 {
 	m_skillActive[id] = active;
@@ -215,11 +237,14 @@ void CanWork::setSkillActive( QString id, bool active )
 	}
 }
 
+/// @brief Disables all skills (convenience wrapper for setAllSkillsActive(false)).
 void CanWork::clearAllSkills()
 {
 	setAllSkillsActive( false );
 }
 
+/// @brief Enables or disables every skill at once.  Disabling aborts the current job.
+/// @param active True to activate all skills, false to deactivate.
 void CanWork::setAllSkillsActive( bool active )
 {
 	if ( !active )
@@ -236,6 +261,8 @@ void CanWork::setAllSkillsActive( bool active )
 	}
 }
 
+/// @brief Resets all job-related member variables to their default state.
+///        Called as part of cleanUpJob() or suspendJob() after a job finishes or is released.
 void CanWork::resetJobVars()
 {
 	m_jobID         = 0;
@@ -262,6 +289,12 @@ void CanWork::resetJobVars()
 	m_btBlackBoard.remove( "JobType" );
 }
 
+/// @brief Releases the current job and cleans up all associated state.
+///        If @p finished is true the job is completed (skill/tech gain applied, job removed);
+///        otherwise it is returned to the job manager for re-assignment.
+///        Carried and claimed items are put down, equipped tools are dropped, and magic
+///        effect sprites are cleared.
+/// @param finished True if the job was completed successfully, false to give it back.
 void CanWork::cleanUpJob( bool finished )
 {
 	if ( Global::debugMode )
@@ -361,6 +394,9 @@ void CanWork::cleanUpJob( bool finished )
 	}
 }
 
+/// @brief Suspends the current job without aborting or finishing it.
+///        The job's progress is preserved and it transitions to SUSPENDED phase
+///        so another worker can resume it.  Items at the work site remain in place.
 void CanWork::suspendJob()
 {
 	if ( m_job )
@@ -383,6 +419,12 @@ void CanWork::suspendJob()
 	updateSprite();
 }
 
+/// @brief Converts a task duration value to game ticks.
+///        If the value is the special token "$Craft", the production time is looked up
+///        from the Crafts table using the job's craft ID.
+/// @param value Duration value (integer minutes or "$Craft" token).
+/// @param job   The job whose craft ID is used when resolving "$Craft".
+/// @return Duration in game ticks.
 int CanWork::getDurationTicks( QVariant value, QSharedPointer<Job> job )
 {
 	if ( value.toString() == "$Craft" )
@@ -395,6 +437,12 @@ int CanWork::getDurationTicks( QVariant value, QSharedPointer<Job> job )
 	return ticks;
 }
 
+/// @brief Awards skill experience on job completion.
+///        If @p skillGain is empty, increments the job's required skill by 1.
+///        If it is "$Craft", the gain definition is loaded from the Crafts_SkillGain table.
+///        Otherwise the map is evaluated via parseGain().
+/// @param skillGain Gain descriptor (empty, "$Craft", or a QVariantMap).
+/// @param job       Completed job providing context (required skill, craft ID).
 void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 {
 	if ( skillGain.toString().isEmpty() )
@@ -437,6 +485,9 @@ void CanWork::gainSkill( QVariant skillGain, QSharedPointer<Job> job )
 	}
 }
 
+/// @brief Directly adds @p gain to the named skill value.
+/// @param skillID Skill string ID.
+/// @param gain    Amount to add.
 void CanWork::gainSkill( QString skillID, int gain )
 {
 	int current = m_skills.value( skillID ).toInt();
@@ -444,6 +495,11 @@ void CanWork::gainSkill( QString skillID, int gain )
 	//if( Global::debugMode )	qDebug() << name() << " gain skill: " << skillID << gain;
 }
 
+/// @brief Awards technology research points on job completion.
+///        If @p techGain is "$Craft", the gain definition is loaded from Crafts_TechGain.
+///        The evaluated gain is added to the global tech level stored in GameState::techs.
+/// @param techGain Gain descriptor ("$Craft" or a QVariantMap with TechID and gain formula).
+/// @param job      Completed job providing the craft ID when needed.
 void CanWork::gainTech( QVariant techGain, QSharedPointer<Job> job )
 {
 	if ( techGain.toString() == "$Craft" )
@@ -470,6 +526,11 @@ void CanWork::gainTech( QVariant techGain, QSharedPointer<Job> job )
 	}
 }
 
+/// @brief Evaluates a gain descriptor map and returns the resulting numeric value.
+///        If the map has a "Value" key it is parsed directly; otherwise the "Formula"
+///        string is compiled and evaluated via exprtk using the "Args" map as variables.
+/// @param gainMap Map containing either a "Value" entry or a "Formula"+"Args" pair.
+/// @return Computed gain value.
 double CanWork::parseGain( QVariantMap gainMap )
 {
 	if ( gainMap.contains( "Value" ) )
@@ -516,6 +577,11 @@ double CanWork::parseGain( QVariantMap gainMap )
 	return gain;
 }
 
+/// @brief Resolves a single value token to a double.
+///        "$Tech*" tokens look up global tech levels; "$Attrib*" look up creature attributes;
+///        other "$*" strings look up creature skills; plain values are converted numerically.
+/// @param v Value token (QString or numeric).
+/// @return Resolved double value.
 double CanWork::parseValue( QVariant v )
 {
 	QString var = v.toString();
@@ -540,6 +606,9 @@ double CanWork::parseValue( QVariant v )
 	}
 }
 
+/// @brief Drops the item held in the right hand, unless it belongs to the creature's uniform.
+///        Also releases any item that was claimed as a tool but not yet picked up.
+/// @return True if an item was dropped or a uniform item was retained; false if no item was held.
 bool CanWork::dropEquippedItem()
 {
 	// release a claimed tool if this is run before the gnome picked it up
@@ -584,6 +653,10 @@ bool CanWork::dropEquippedItem()
 	return false;
 }
 
+/// @brief Updates combat stats and light for the given hand slot to reflect a newly equipped item.
+///        Passing @p item = 0 reverts the hand to unarmed stats and removes any carried light source.
+/// @param item UID of the item being equipped, or 0 to unequip.
+/// @param side "Left" or "Right" hand slot.
 void CanWork::equipHand( unsigned int item, QString side )
 {
 	if ( item )
@@ -637,6 +710,8 @@ void CanWork::equipHand( unsigned int item, QString side )
 	updateSprite();
 }
 
+/// @brief Task: removes a wall tile at the job position (plus optional offset) and spawns raw material items.
+/// @return Always true.
 bool CanWork::mineWall()
 {
 	// remove the wall
@@ -655,6 +730,8 @@ bool CanWork::mineWall()
 	return true;
 }
 
+/// @brief Task: removes a floor tile and spawns a RawSoil or RawStone item depending on material type.
+/// @return Always true.
 bool CanWork::mineFloor()
 {
 	Position offset;
@@ -681,6 +758,9 @@ bool CanWork::mineFloor()
 	return true;
 }
 
+/// @brief Task: digs a hole downward — removes the floor above and the wall below,
+///        spawns raw material items, and creates ramps around the new opening.
+/// @return Always true.
 bool CanWork::digHole()
 {
 	// remove the wall
@@ -728,6 +808,9 @@ bool CanWork::digHole()
 	return true;
 }
 
+/// @brief Task: mines a wall and automatically generates ExplorativeMine jobs for neighbouring
+///        tiles that contain the same embedded ore material.
+/// @return Always true.
 bool CanWork::explorativeMineWall()
 {
 	// remove the wall
@@ -763,6 +846,8 @@ bool CanWork::explorativeMineWall()
 	return true;
 }
 
+/// @brief Task: removes a ramp tile and spawns a raw material item from its material.
+/// @return Always true.
 bool CanWork::removeRamp()
 {
 	// remove the wall
@@ -780,6 +865,8 @@ bool CanWork::removeRamp()
 	return true;
 }
 
+/// @brief Task: removes a wall tile without spawning any material items.
+/// @return Always true.
 bool CanWork::removeWall()
 {
 	Position offset;
@@ -795,6 +882,8 @@ bool CanWork::removeWall()
 	return true;
 }
 
+/// @brief Task: removes a floor tile without spawning any material items.
+/// @return Always true.
 bool CanWork::removeFloor()
 {
 	Position offset;
@@ -808,6 +897,9 @@ bool CanWork::removeFloor()
 	return true;
 }
 
+/// @brief Task: paints the intermediate construction sprite for the current progress percentage.
+///        Called each tick during a phased build to show the construction animation.
+/// @return Always true.
 bool CanWork::constructAnimate()
 {
 	// item to build wasn't set, so this construction job was created otherwise, for instance dig stairs down
@@ -864,6 +956,9 @@ bool CanWork::constructAnimate()
 	return true;
 }
 
+/// @brief Task: removes wall and floor tiles to make room for stairs, then constructs
+///        SoilStairs or StoneStairs based on the underlying material.
+/// @return False if no material item could be created; true otherwise.
 bool CanWork::constructDugStairs()
 {
 	Position offset( m_currentTask.value( "Offset" ) );
@@ -907,6 +1002,9 @@ bool CanWork::constructDugStairs()
 	return construct();
 }
 
+/// @brief Task: clears a wall/floor pair and constructs a SoilRamp or StoneRamp
+///        based on the material of the removed wall.
+/// @return Result of construct().
 bool CanWork::constructDugRamp()
 {
 	m_currentTask.insert( "Offset", "0 0 0" );
@@ -947,6 +1045,9 @@ bool CanWork::constructDugRamp()
 	return construct();
 }
 
+/// @brief Task: finalises a construction by calling the appropriate World build method
+///        (constructWorkshop, constructItem, or construct) and destroying all claimed items.
+/// @return True if construction succeeded; false if no claimed items are available.
 bool CanWork::construct()
 {
 	// Get items: from job's claimed list (new phased path) or gnome's claimed items (old path)
@@ -1004,6 +1105,9 @@ bool CanWork::construct()
 	return false;
 }
 
+/// @brief Task: spawns item(s) defined in the current task's "Items" list at the job position.
+///        Items with a "Condition" of "MaterialType" are only created when the condition matches.
+/// @return True if an item was created; false if no matching condition was found.
 bool CanWork::createItem()
 {
 	Position offset;
@@ -1039,6 +1143,10 @@ bool CanWork::createItem()
 	return false;
 }
 
+/// @brief Task: harvests a plant or beehive at the job position.
+///        If the plant is fully consumed it is removed; if it is still harvestable,
+///        the task is repeated.  Beehive honey is created separately.
+/// @return Always true.
 bool CanWork::harvest()
 {
 	// get Tree
@@ -1088,6 +1196,8 @@ bool CanWork::harvest()
 	return true;
 }
 
+/// @brief Task: cuts grass at max growth into a Hay item and resets vegetation to 30%.
+/// @return True if the tile had max grass and hay was created; false otherwise.
 bool CanWork::harvestHay()
 {
 	// get Tree
@@ -1109,6 +1219,8 @@ bool CanWork::harvestHay()
 	return false;
 }
 
+/// @brief Task: plants a tree sapling at the job position using the first claimed item.
+/// @return True if a claimed item was available; false otherwise.
 bool CanWork::plantTree()
 {
 	if ( !claimedItems().empty() )
@@ -1121,6 +1233,8 @@ bool CanWork::plantTree()
 	return false;
 }
 
+/// @brief Task: plants a seed/crop item at the job position and consumes the claimed item.
+/// @return True if a claimed item was available; false otherwise.
 bool CanWork::plant()
 {
 	if ( !claimedItems().empty() )
@@ -1133,12 +1247,17 @@ bool CanWork::plant()
 	return false;
 }
 
+/// @brief Task: removes the plant at the job position from the world.
+/// @return Always true.
 bool CanWork::removePlant()
 {
 	g->w()->removePlant( m_job->pos() );
 	return true;
 }
 
+/// @brief Task: tills the soil at the job position — sets the TF_TILLED flag, removes grass,
+///        and replaces the floor sprite with a "TilledSoil" sprite.
+/// @return Always true.
 bool CanWork::till()
 {
 	Position offset;
@@ -1154,6 +1273,11 @@ bool CanWork::till()
 	return true;
 }
 
+/// @brief Task: produces the crafted output item(s) based on the job's material and conversion rules.
+///        Handles direct material crafts, RandomMetal outputs, dye conversion, leather, hair-color
+///        application ($GnomeHair), and Automaton assembly.  Quality is skill-based with random variance.
+///        Destroys all claimed input items on success.
+/// @return False if required claimed items are missing; true otherwise.
 bool CanWork::craft()
 {
 	float skillLevel = getSkillLevel( m_job->requiredSkill() );
@@ -1296,6 +1420,8 @@ bool CanWork::craft()
 	return true;
 }
 
+/// @brief Task: fells the tree at the job position and removes it from the world.
+/// @return True if a tree was found and felled; false otherwise.
 bool CanWork::fellTree()
 {
 	// get Tree
@@ -1319,6 +1445,8 @@ bool CanWork::fellTree()
 	return false;
 }
 
+/// @brief Task: deconstructs the tile at the job position, recovering materials.
+/// @return Always true.
 bool CanWork::deconstruct()
 {
 	Position offset;
@@ -1332,6 +1460,8 @@ bool CanWork::deconstruct()
 	return true;
 }
 
+/// @brief Task: processes all claimed fish items into Meat and FishBone outputs.
+/// @return Always true.
 bool CanWork::butcherFish()
 {
 	for ( auto itemUID : claimedItems() )
@@ -1345,6 +1475,8 @@ bool CanWork::butcherFish()
 	return true;
 }
 
+/// @brief Task: processes all claimed corpse items into Meat and Bone outputs.
+/// @return Always true.
 bool CanWork::butcherCorpse()
 {
 	for ( auto itemUID : claimedItems() )
@@ -1358,6 +1490,8 @@ bool CanWork::butcherCorpse()
 	return true;
 }
 
+/// @brief Task: creates one GreenFish item at the job output position.
+/// @return Always true.
 bool CanWork::fish()
 {
 	unsigned int itemID = g->inv()->createItem( m_job->posItemOutput(), "Fish", "GreenFish" );
@@ -1365,6 +1499,9 @@ bool CanWork::fish()
 	return true;
 }
 
+/// @brief Task: calculates the spell's area of effect and marks affected tiles with sparkle sprites.
+///        Radius is derived from the spell's DB entry, optionally scaled by the caster's skill level.
+/// @return Always true.
 bool CanWork::prepareSpell()
 {
 	QString jobID = m_job->type();
@@ -1410,17 +1547,24 @@ bool CanWork::prepareSpell()
 	return true;
 }
 
+/// @brief Task: placeholder for mid-cast spell logic (currently a no-op).
+/// @return Always true.
 bool CanWork::castSpell()
 {
 	return true;
 }
 
+/// @brief Task: per-tick animation step while a spell is being cast (currently a no-op).
+/// @return Always true.
 bool CanWork::castSpellAnimate()
 {
 	//
 	return true;
 }
 
+/// @brief Task: applies the spell's effects to all previously marked tiles and clears the sparkle sprites.
+///        Supported effects: Reveal (uncovers undiscovered tiles), PlantGrowth (speeds up plant growth).
+/// @return Always true.
 bool CanWork::finishSpell()
 {
 	QString jobID        = m_job->type();
@@ -1473,6 +1617,8 @@ bool CanWork::finishSpell()
 	return true;
 }
 
+/// @brief Task: toggles the active state of the mechanism referenced by the current job.
+/// @return True if the job and mechanism are valid; false otherwise.
 bool CanWork::switchMechanism()
 {
 	if ( m_job )
@@ -1484,6 +1630,8 @@ bool CanWork::switchMechanism()
 	return false;
 }
 
+/// @brief Task: toggles the invert flag of the mechanism referenced by the current job.
+/// @return True if the job and mechanism are valid; false otherwise.
 bool CanWork::invertMechanism()
 {
 	if ( m_job )
@@ -1495,6 +1643,9 @@ bool CanWork::invertMechanism()
 	return false;
 }
 
+/// @brief Task: refuels an automaton or mechanism using the burn value of the claimed fuel item.
+///        Destroys the consumed fuel item on success.
+/// @return True if the job is valid and refueling succeeded; false otherwise.
 bool CanWork::refuel()
 {
 	if ( m_job )
@@ -1522,6 +1673,8 @@ bool CanWork::refuel()
 	return false;
 }
 
+/// @brief Task: installs each claimed item as a core into the target automaton.
+/// @return True if the job is valid; false otherwise.
 bool CanWork::install()
 {
 	if ( m_job )
@@ -1544,6 +1697,8 @@ bool CanWork::install()
 	return false;
 }
 
+/// @brief Task: removes the currently installed core from the target automaton (passes itemID 0).
+/// @return True if the job is valid; false otherwise.
 bool CanWork::uninstall()
 {
 	if ( m_job )
@@ -1561,6 +1716,9 @@ bool CanWork::uninstall()
 	return false;
 }
 
+/// @brief Task: delivers the single claimed food item to the pasture trough at the job position.
+///        If more than one item was claimed, releases them all and returns false.
+/// @return True if exactly one item was delivered; false if pasture not found or item count wrong.
 bool CanWork::fillTrough()
 {
 	if ( m_job )
@@ -1588,6 +1746,9 @@ bool CanWork::fillTrough()
 	return false;
 }
 
+/// @brief Task: activates the alarm for the room at the job position, setting the global alarm room ID.
+///        Only succeeds when the alarm is in state 1 (armed but not yet triggered).
+/// @return True if the alarm was triggered; false otherwise.
 bool CanWork::soundAlarm()
 {
 	if ( m_job )

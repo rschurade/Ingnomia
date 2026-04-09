@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnome.cpp
+ *  @brief Player-controlled gnome: tick logic, sprite building, need evaluation, and skill/schedule management.
+ */
 #include "gnome.h"
 #include "../game/gnomemanager.h"
 #include "../game/roommanager.h"
@@ -43,6 +46,11 @@
 #include <QPainter>
 #include <QThreadPool>
 
+/// @brief Constructs a new gnome with randomised appearance (shirt, hair, facial hair).
+/// @param pos    Initial world position.
+/// @param name   Display name.
+/// @param gender Biological gender (affects facial hair generation).
+/// @param game   Owning game instance.
 Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 	CanWork( pos, name, gender, "Gnome", game )
 {
@@ -76,6 +84,9 @@ Gnome::Gnome( Position& pos, QString name, Gender gender, Game* game ) :
 	log( GameState::currentYearAndSeason );
 }
 
+/// @brief Deserialising constructor — restores gnome state including skills, needs, equipment, and schedule.
+/// @param in   Serialised variant map.
+/// @param game Owning game instance.
 Gnome::Gnome( QVariantMap& in, Game* game ) :
 	CanWork( in, game )
 {
@@ -147,6 +158,8 @@ Gnome::Gnome( QVariantMap& in, Game* game ) :
 	log( GameState::currentYearAndSeason );
 }
 
+/// @brief Serialises gnome state (skills, needs, equipment, schedule, carry flags) into @p out.
+/// @param out Map to receive the serialised data.
 void Gnome::serialize( QVariantMap& out )
 {
 	CanWork::serialize( out );
@@ -189,10 +202,13 @@ void Gnome::serialize( QVariantMap& out )
 	out.insert( "CarryDrinks", m_carryDrinks );
 }
 
+/// @brief Destructor.
 Gnome::~Gnome()
 {
 }
 
+/// @brief Inserts the gnome into the world, builds its sprite, and loads the "Gnome" behavior tree.
+///        Also restores a previously serialised behavior tree state from the blackboard if present.
 void Gnome::init()
 {
 	g->w()->insertCreatureAtPosition( m_position, m_id );
@@ -212,6 +228,9 @@ void Gnome::init()
 	}
 }
 
+/// @brief Hides or reveals a named sprite part in both the front and back sprite definition lists.
+/// @param part      Part name key (e.g. "Hair").
+/// @param concealed True to hide the part, false to reveal it.
 void Gnome::setConcealed( QString part, bool concealed )
 {
 	for ( int k = 0; k < m_spriteDef.size(); ++k )
@@ -237,6 +256,7 @@ void Gnome::setConcealed( QString part, bool concealed )
 	}
 }
 
+/// @brief Rebuilds the gnome sprite from the current equipment and passes it to the SpriteFactory.
 void Gnome::updateSprite()
 {
 	m_spriteDef     = createSpriteDef( "Gnome", false );
@@ -247,6 +267,13 @@ void Gnome::updateSprite()
 	m_renderParamsChanged = true;
 }
 
+/// @brief Builds a sprite definition list for the given creature part type.
+///        Iterates all Creature_Parts rows in DB order, applies equipment overrides
+///        (hair tint, shirt colour, armor sprites, held items), and appends a "Back" suffix
+///        for rear-facing parts.
+/// @param type   DB key for the creature part set (e.g. "Gnome" or "GnomeBack").
+/// @param isBack True when building the back-facing sprite set.
+/// @return Ordered list of part definition maps ready for SpriteFactory.
 QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 {
 	auto parts = DB::selectRows( "Creature_Parts", type );
@@ -440,6 +467,8 @@ QVariantList Gnome::createSpriteDef( QString type, bool isBack )
 	return def;
 }
 
+/// @brief Registers all gnome behavior-tree condition/action callbacks and task function bindings.
+///        Called once during init() to wire up the behavior tree node name -> member function map.
 void Gnome::initTaskMap()
 {
 	using namespace std::placeholders;
@@ -580,11 +609,17 @@ void Gnome::initTaskMap()
 	m_taskFunctions.insert( "EquipItem", std::bind( &Gnome::equipItem, this ) );
 }
 
+/// @brief Inserts or updates a need value.
+/// @param id    Need identifier (e.g. "Hunger", "Sleep").
+/// @param level Initial or new level value.
 void Gnome::addNeed( QString id, float level )
 {
 	m_needs.insert( id, level );
 }
 
+/// @brief Returns the current integer value of a need.
+/// @param id Need identifier.
+/// @return Need level, or 0 if the need is not tracked.
 int Gnome::need( QString id )
 {
 	if ( m_needs.contains( id ) )
@@ -594,6 +629,9 @@ int Gnome::need( QString id )
 	return 0;
 }
 
+/// @brief Assigns a profession to the gnome, replacing all active skills with those
+///        defined for the profession in GnomeManager.
+/// @param profession Profession string ID.
 void Gnome::selectProfession( QString profession )
 {
 	if ( m_profession != profession )
@@ -611,7 +649,14 @@ void Gnome::selectProfession( QString profession )
 	}
 }
 
-// returns job changed, used to signal for activiti indicator
+/// @brief Per-tick update: evaluates needs, runs the behavior tree, drops disallowed carried items,
+///        and moves the gnome.  Also handles death-by-starvation/thirst and fall-through-floor detection.
+/// @param tickNumber    Current absolute game tick.
+/// @param seasonChanged True if the season changed this tick.
+/// @param dayChanged    True if the day changed this tick.
+/// @param hourChanged   True if the hour changed this tick.
+/// @param minuteChanged True if the minute changed this tick.
+/// @return NOFLOOR if standing over void; DEAD if the gnome died; JOBCHANGED if job changed; OK otherwise.
 CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	processCooldowns( tickNumber );
@@ -787,6 +832,8 @@ CreatureTickResult Gnome::onTick( quint64 tickNumber, bool seasonChanged, bool d
 	return CreatureTickResult::OK;
 }
 
+/// @brief Handles gnome death: calls the base die(), aborts the current job, drops all carried
+///        items, releases any assigned bed, and unassigns the gnome from its workshop.
 void Gnome::die()
 {
 	Creature::die();
@@ -803,6 +850,9 @@ void Gnome::die()
 	}
 }
 
+/// @brief Checks whether the gnome is standing on a valid floor tile.
+///        If not, the gnome falls one z-level and the tile below is discovered.
+/// @return True if the gnome fell (no floor); false if standing normally.
 bool Gnome::checkFloor()
 {
 	FloorType ft = g->w()->floorType( m_position );
@@ -821,6 +871,8 @@ bool Gnome::checkFloor()
 	return false;
 }
 
+/// @brief Aborts the current job on external request (e.g. from GnomeManager).
+/// @param caller Debug string identifying who triggered the abort.
 void Gnome::setJobAborted( QString caller )
 {
 	if ( m_job )
@@ -830,6 +882,12 @@ void Gnome::setJobAborted( QString caller )
 	}
 }
 
+/// @brief Decays all need values every minute and kills the gnome if Hunger or Thirst drops below -100.
+/// @param seasonChanged True if the season changed this tick.
+/// @param dayChanged    True if the day changed this tick.
+/// @param hourChanged   True if the hour changed this tick.
+/// @param minuteChanged True if the minute changed this tick — need decay only runs on minute ticks.
+/// @return Always true.
 bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	if ( seasonChanged )
@@ -878,6 +936,9 @@ bool Gnome::evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bo
 	return true;
 }
 
+/// @brief Updates tile lighting when the gnome moves (currently disabled/stub).
+/// @param oldPos Previous gnome position.
+/// @param newPos New gnome position.
 void Gnome::updateLight( Position oldPos, Position newPos )
 {
 #if 0
@@ -901,6 +962,8 @@ void Gnome::updateLight( Position oldPos, Position newPos )
 #endif
 }
 
+/// @brief Returns the gnome's current activity string (the required skill of the active job, or "idle").
+/// @return Activity string ID.
 QString Gnome::getActivity()
 {
 	if ( m_job )
@@ -913,6 +976,8 @@ QString Gnome::getActivity()
 	}
 }
 
+/// @brief Assigns a personal room to the gnome and logs the event.
+/// @param id Room UID, or 0 to remove the assignment.
 void Gnome::setOwnedRoom( unsigned int id )
 {
 	m_equipment.roomID = id;
@@ -926,11 +991,16 @@ void Gnome::setOwnedRoom( unsigned int id )
 	}
 }
 
+/// @brief Returns the UID of the gnome's personal room, or 0 if unassigned.
+/// @return Room UID.
 unsigned int Gnome::ownedRoom()
 {
 	return m_equipment.roomID;
 }
 
+/// @brief Returns the scheduled activity for the given hour of the day.
+/// @param hour Hour index (0–23).
+/// @return ScheduleActivity for that hour, or ScheduleActivity::None if out of range.
 ScheduleActivity Gnome::schedule( unsigned char hour )
 {
 	if ( hour < 24 && m_schedule.size() == 24 )
@@ -940,6 +1010,9 @@ ScheduleActivity Gnome::schedule( unsigned char hour )
 	return ScheduleActivity::None;
 }
 
+/// @brief Sets the scheduled activity for one hour, resizing the schedule to 24 slots if needed.
+/// @param hour     Hour index (0–23).
+/// @param activity Activity to assign.
 void Gnome::setSchedule( unsigned char hour, ScheduleActivity activity )
 {
 	if ( hour < 24 && m_schedule.size() == 24 )
@@ -957,6 +1030,7 @@ void Gnome::setSchedule( unsigned char hour, ScheduleActivity activity )
 	}
 }
 
+/// @brief Recalculates move speed from the gnome's current Hauling skill level via the MoveSpeed DB table.
 void Gnome::updateMoveSpeed()
 {
 	int skill   = getSkillLevel( "Hauling" );
@@ -964,31 +1038,42 @@ void Gnome::updateMoveSpeed()
 	m_moveSpeed = qMax( 30, speed );
 }
 
+/// @brief Assigns a workshop to this gnome for priority job claim.
+/// @param id Workshop UID, or 0 to clear.
 void Gnome::assignWorkshop( unsigned int id )
 {
 	m_assignedWorkshop = id;
 }
 
+/// @brief Returns a copy of the gnome's equipment loadout.
+/// @return Current Equipment struct.
 Equipment Gnome::equipment()
 {
 	return m_equipment;
 }
 
+/// @brief Returns a human-readable string for the item held in the right hand (e.g. "Iron Sword").
+/// @return "material item" string, or empty strings if nothing is held.
 QString Gnome::rightHandItem()
 {
 	return m_equipment.rightHandHeld.material + " " + m_equipment.rightHandHeld.item;
 }
 
+/// @brief Returns the gnome's right-hand attack skill level as a string.
+/// @return Skill level string.
 QString Gnome::rightHandAttackSkill()
 {
 	return QString::number( m_rightHandAttackSkill );
 }
 
+/// @brief Returns the gnome's right-hand attack value as a string.
+/// @return Attack value string.
 QString Gnome::rightHandAttackValue()
 {
 	return QString::number( m_rightHandAttackValue );
 }
 
+/// @brief Resets both hands to unarmed combat values derived from the Strength attribute.
 void Gnome::updateAttackValues()
 {
 	m_leftHandAttackSkill  = getSkillLevel( "Unarmed" );
@@ -997,6 +1082,17 @@ void Gnome::updateAttackValues()
 	m_rightHandAttackValue = attribute( "Str" );
 }
 
+/// @brief Processes an incoming attack against this gnome.
+///        Determines the hit side from relative facing, compares attacker skill against the gnome's
+///        Dodge skill (with a back-attack bonus), and if hit, applies damage to the anatomy.
+///        Also updates the aggro list for the attacker.
+/// @param dt         Damage type (cut, blunt, etc.).
+/// @param da         Attack height (head, torso, legs, etc.).
+/// @param skill      Attacker's effective skill level.
+/// @param strength   Damage amount on a successful hit.
+/// @param sourcePos  World position of the attacker.
+/// @param attackerID UID of the attacking creature.
+/// @return Always true.
 bool Gnome::attack( DamageType dt, AnatomyHeight da, int skill, int strength, Position sourcePos, unsigned int attackerID )
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -1095,6 +1191,11 @@ bool Gnome::attack( DamageType dt, AnatomyHeight da, int skill, int strength, Po
 	return true;
 }
 
+/// @brief Sets which categories of items the gnome is allowed to carry in its inventory.
+///        Items in disallowed categories are dropped during the next tick.
+/// @param bandages True to allow carrying bandages.
+/// @param food     True to allow carrying food.
+/// @param drinks   True to allow carrying drinks.
 void Gnome::setAllowedCarryItems( bool bandages, bool food, bool drinks )
 {
 	m_carryBandages = bandages;

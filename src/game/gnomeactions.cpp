@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnomeactions.cpp
+ *  @brief Gnome behavior-tree action and condition callbacks (movement, jobs, eating, combat, missions, etc.).
+ */
 #include "../base/config.h"
 #include "../base/db.h"
 #include "../base/gamestate.h"
@@ -50,6 +53,9 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+/// @brief BT action: marks the current job as successfully completed.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS.
 BT_RESULT Gnome::actionFinishJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -61,6 +67,9 @@ BT_RESULT Gnome::actionFinishJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: aborts the current job and returns it to the job manager.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS.
 BT_RESULT Gnome::actionAbortJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -70,6 +79,11 @@ BT_RESULT Gnome::actionAbortJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: gnome sleeps in the claimed bed, recovering the Sleep need each tick.
+///        Wakes up when fully rested or when a critical Hunger/Thirst need requires attention.
+///        On halt, releases the bed and unclaims items.
+/// @param halt True if the BT subtree is being interrupted.
+/// @return RUNNING while asleep; SUCCESS on wake; IDLE on halt.
 BT_RESULT Gnome::actionSleep( bool halt )
 {
 	if ( Global::debugMode )
@@ -126,6 +140,10 @@ BT_RESULT Gnome::actionSleep( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/// @brief BT action: locates a free bed for the gnome, preferring the personal room over dormitories.
+///        Sets the navigation target to the bed position on success.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if a bed was found; FAILURE otherwise.
 BT_RESULT Gnome::actionFindBed( bool halt )
 {
 	if ( Global::debugMode )
@@ -160,6 +178,11 @@ BT_RESULT Gnome::actionFindBed( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: moves the gnome one step along the current path toward its target.
+///        Requests a new path if none exists.  Suspends the job on halt.
+///        Stops early if a combat target becomes adjacent.
+/// @param halt True if the BT subtree is being interrupted.
+/// @return RUNNING while moving; SUCCESS on arrival or target-adjacent; FAILURE if no path.
 BT_RESULT Gnome::actionMove( bool halt )
 {
 	if ( Global::debugMode )
@@ -248,6 +271,10 @@ BT_RESULT Gnome::actionMove( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/// @brief BT action: locates the nearest available food item and claims it.
+///        Sets the navigation target to the item's position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if food was found; FAILURE otherwise.
 BT_RESULT Gnome::actionFindFood( bool halt )
 {
 	if ( Global::debugMode )
@@ -274,6 +301,10 @@ BT_RESULT Gnome::actionFindFood( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: locates the nearest available drink item and claims it.
+///        Sets the navigation target to the item's position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if a drink was found; FAILURE otherwise.
 BT_RESULT Gnome::actionFindDrink( bool halt )
 {
 	if ( Global::debugMode )
@@ -299,6 +330,10 @@ BT_RESULT Gnome::actionFindDrink( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: finds and claims the nearest free chair in any dining room.
+///        Sets the navigation target and facing direction.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if a chair was found; FAILURE otherwise.
 BT_RESULT Gnome::actionFindDining( bool halt )
 {
 	if ( Global::debugMode )
@@ -340,6 +375,10 @@ BT_RESULT Gnome::actionFindDining( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: gnome consumes the carried food item over 15 in-game minutes.
+///        Restores Hunger need by the item's nutritional value.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while eating; SUCCESS when done; FAILURE if no item.
 BT_RESULT Gnome::actionEat( bool halt )
 {
 	if ( Global::debugMode )
@@ -400,6 +439,10 @@ BT_RESULT Gnome::actionEat( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: gnome consumes the carried drink item over 15 in-game minutes.
+///        Restores Thirst need by the item's drink value.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while drinking; SUCCESS when done; FAILURE if no item.
 BT_RESULT Gnome::actionDrink( bool halt )
 {
 	if ( Global::debugMode )
@@ -459,6 +502,10 @@ BT_RESULT Gnome::actionDrink( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: picks up the item set in m_itemToPickUp from the gnome's current tile.
+///        Adds it to the inventory list if it was a claimed inventory item, otherwise to carried items.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS on pickup; FAILURE if no item or wrong position.
 BT_RESULT Gnome::actionPickUpItem( bool halt )
 {
 	if ( Global::debugMode )
@@ -523,6 +570,11 @@ BT_RESULT Gnome::actionPickUpItem( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: requests a job from JobManager matching the gnome's skill priority list.
+///        Builds the work-position priority queue and sets the job changed flag.
+///        Sets a 100-tick cooldown if no job is available to avoid spamming the manager.
+/// @param halt Unused.
+/// @return SUCCESS if a job was acquired; FAILURE otherwise.
 BT_RESULT Gnome::actionGetJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -621,6 +673,9 @@ BT_RESULT Gnome::actionGetJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: sets the navigation target to the job's haul destination position.
+/// @param halt Unused.
+/// @return SUCCESS if a job exists; FAILURE otherwise.
 BT_RESULT Gnome::actionGetHaulTarget( bool halt )
 {
 	Q_UNUSED( halt );
@@ -632,6 +687,9 @@ BT_RESULT Gnome::actionGetHaulTarget( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: notifies the JobManager that a haul sub-job has been completed.
+/// @param halt Unused.
+/// @return SUCCESS if a job exists; FAILURE otherwise.
 BT_RESULT Gnome::actionNotifyParentJob( bool halt )
 {
 	Q_UNUSED( halt );
@@ -642,6 +700,9 @@ BT_RESULT Gnome::actionNotifyParentJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: immobilises the target animal and sets the navigation target to its position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the animal exists and is valid; FAILURE otherwise.
 BT_RESULT Gnome::actionInitAnimalJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -664,6 +725,10 @@ BT_RESULT Gnome::actionInitAnimalJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: selects the best reachable work position from the priority queue and
+///        stores it on the job.  For HaulToSite jobs, sets the target to the first item's position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if a reachable work position was found; FAILURE otherwise.
 BT_RESULT Gnome::actionInitJob( bool halt )
 {
 	if ( Global::debugMode )
@@ -728,6 +793,14 @@ BT_RESULT Gnome::actionInitJob( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Tries to claim the required items directly from the workshop's linked stockpile.
+///        Moves matching items to the job's input position and registers them as claimed.
+/// @param itemSID      Item type string ID.
+/// @param materialSID  Required material, or "any".
+/// @param count        Number of items needed.
+/// @param requireSame  If true, all items must share the same material.
+/// @param restriction  If non-empty, only these material SIDs are allowed.
+/// @return True if all @p count items were successfully claimed; false otherwise.
 bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int count, bool requireSame, QStringList restriction )
 {
 	if ( !m_job )
@@ -860,6 +933,11 @@ bool Gnome::claimFromLinkedStockpile( QString itemSID, QString materialSID, int 
 	return false;
 }
 
+/// @brief BT action: claims all input items required by the current job.
+///        Handles workshop crafts (with linked-stockpile preference), haul-item jobs, and generic jobs.
+///        Items are reserved in the inventory so other gnomes won't take them.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if all items were claimed; FAILURE if any item was unavailable.
 BT_RESULT Gnome::actionClaimItems( bool halt )
 {
 	QElapsedTimer et;
@@ -1055,6 +1133,11 @@ BT_RESULT Gnome::actionClaimItems( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: locates and claims the required tool for the current job.
+///        If the gnome already has the right tool equipped, returns SUCCESS immediately.
+///        Otherwise finds the closest tool of the required type and level in the world.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the tool was found or no tool is needed; FAILURE if unavailable.
 BT_RESULT Gnome::actionFindTool( bool halt )
 {
 	if ( Global::debugMode )
@@ -1127,6 +1210,10 @@ BT_RESULT Gnome::actionFindTool( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: picks up and equips the claimed tool from the gnome's current tile.
+///        Marks the job as being worked after successful equip.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if equipped or no tool needed; FAILURE if the tool isn't at the gnome's position.
 BT_RESULT Gnome::actionEquipTool( bool halt )
 {
 	if ( Global::debugMode )
@@ -1179,6 +1266,14 @@ BT_RESULT Gnome::actionEquipTool( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Checks a single equipment slot against the assigned uniform and fixes any mismatch.
+///        If the wrong item is worn it is dropped.  If the correct item isn't yet worn, a claim
+///        and EquipItem job are created for the nearest suitable item.
+///        Does nothing if the gnome is currently working a job.
+/// @param slot    Equipment slot name (e.g. "HeadArmor", "RightHandHeld").
+/// @param uniform The target uniform to match.
+/// @param dropped Set to true if an existing item was dropped.
+/// @return True if a new EquipItem job was started; false if slot is already correct or gnome is busy.
 bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 {
 	if ( m_jobID )
@@ -1333,6 +1428,11 @@ bool Gnome::checkUniformItem( QString slot, Uniform* uniform, bool& dropped )
 	return false;
 }
 
+/// @brief BT action: iterates all uniform equipment slots and fixes any mismatch via checkUniformItem().
+///        Throttled to avoid running every tick (300-tick cooldown after a fully-correct check).
+///        If the gnome has no role, strips all worn uniform items.
+/// @param halt Unused.
+/// @return SUCCESS if a correction was initiated; FAILURE if nothing needed changing or gnome has no role.
 BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 {
 	if ( GameState::tick > m_nextUniformCheckTick )
@@ -1505,6 +1605,9 @@ BT_RESULT Gnome::actionCheckUniform( bool halt = false )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: releases a claimed-but-unequipped uniform item and clears the blackboard entries.
+/// @param halt Unused.
+/// @return FAILURE (always, so the BT can fall through to cleanup).
 BT_RESULT Gnome::actionUniformCleanUp( bool halt )
 {
 	auto item = m_btBlackBoard.value( "ClaimedUniformItem" ).toUInt();
@@ -1515,6 +1618,10 @@ BT_RESULT Gnome::actionUniformCleanUp( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: stocks the gnome's backpack with bandages, food, or drinks if below threshold (3 each).
+///        Only acts when the gnome is wearing a Backpack.  Skips food/drink sources more than 10 tiles away.
+/// @param halt Unused.
+/// @return SUCCESS if an item was found and claimed for pickup; FAILURE otherwise.
 BT_RESULT Gnome::actionCheckBandages( bool halt )
 {
 	if ( m_equipment.back.item == "Backpack" )
@@ -1563,6 +1670,9 @@ BT_RESULT Gnome::actionCheckBandages( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: sets the navigation target to the job's item input position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the input position is valid; FAILURE otherwise.
 BT_RESULT Gnome::actionGetItemDropPosition( bool halt )
 {
 	if ( Global::debugMode )
@@ -1584,6 +1694,10 @@ BT_RESULT Gnome::actionGetItemDropPosition( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: drops the first carried item at the gnome's current position.
+///        If the job has a stockpile, inserts the item into it.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if an item was dropped; FAILURE if nothing carried.
 BT_RESULT Gnome::actionDropItem( bool halt )
 {
 	if ( Global::debugMode )
@@ -1619,6 +1733,10 @@ BT_RESULT Gnome::actionDropItem( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: drops all carried items at the gnome's current position.
+///        If the job has a stockpile, inserts each item into it.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS.
 BT_RESULT Gnome::actionDropAllItems( bool halt )
 {
 	if ( Global::debugMode )
@@ -1647,6 +1765,9 @@ BT_RESULT Gnome::actionDropAllItems( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: sets the navigation target to the job's stored work position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the job exists; FAILURE otherwise.
 BT_RESULT Gnome::actionGetWorkPosition( bool halt )
 {
 	if ( Global::debugMode )
@@ -1662,6 +1783,12 @@ BT_RESULT Gnome::actionGetWorkPosition( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief BT action: executes the current task in the job's task list.
+///        Loads task list on first visit, runs the skill-scaled duration countdown, calls task
+///        functions (+ optional animate variant each tick), and advances to the next task on completion.
+///        Suspends the job on halt.
+/// @param halt True if the BT subtree is being interrupted.
+/// @return RUNNING while working; SUCCESS when all tasks complete; FAILURE on error.
 BT_RESULT Gnome::actionWork( bool halt )
 {
 	if ( Global::debugMode )
@@ -1769,6 +1896,9 @@ BT_RESULT Gnome::actionWork( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: makes the target animal follow the gnome (sets follow ID).
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the animal was grabbed; FAILURE if the job or animal is invalid.
 BT_RESULT Gnome::actionGrabAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -1794,6 +1924,9 @@ BT_RESULT Gnome::actionGrabAnimal( bool halt )
 	}
 }
 
+/// @brief BT action: releases the held animal (clears follow ID, restores mobility, clears job).
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the animal was found and released; FAILURE otherwise.
 BT_RESULT Gnome::actionReleaseAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -1817,6 +1950,9 @@ BT_RESULT Gnome::actionReleaseAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: nudges the followed animal toward the gnome's current position.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the animal exists; FAILURE otherwise.
 BT_RESULT Gnome::actionFinalMoveAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -1831,6 +1967,11 @@ BT_RESULT Gnome::actionFinalMoveAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: butchers the target animal after a 50-tick delay, creating species-specific
+///        byproducts (meat, bone, hide, etc.) from the Animals_OnButcher DB table.
+///        Handles pasture removal and marks the animal for destruction.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while waiting; SUCCESS on completion; FAILURE on missing animal or canceled job.
 BT_RESULT Gnome::actionButcherAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -1919,6 +2060,10 @@ BT_RESULT Gnome::actionButcherAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: applies a dye to the target animal after a 50-tick delay.
+///        Destroys the claimed dye item and sets the animal's dye material.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while waiting; SUCCESS on completion; FAILURE on error.
 BT_RESULT Gnome::actionDyeAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -1979,6 +2124,10 @@ BT_RESULT Gnome::actionDyeAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: harvests produce from the target animal (wool, milk, eggs, etc.) after 100 ticks.
+///        Amount and item type come from the animal's produce definition; dye tint is applied if set.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while waiting; SUCCESS on completion; FAILURE on error.
 BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -2047,6 +2196,9 @@ BT_RESULT Gnome::actionHarvestAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: tames the target animal after a delay, adding it to the colony's roster.
+/// @param halt True if interrupted — returns IDLE.
+/// @return RUNNING while waiting; SUCCESS on completion; FAILURE on error.
 BT_RESULT Gnome::actionTameAnimal( bool halt )
 {
 	if ( Global::debugMode )
@@ -2104,11 +2256,19 @@ BT_RESULT Gnome::actionTameAnimal( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: always returns RUNNING (used as a placeholder/loop node).
+/// @param halt Unused.
+/// @return RUNNING.
 BT_RESULT Gnome::actionAlwaysRunning( bool halt )
 {
 	return BT_RESULT::RUNNING;
 }
 
+/// @brief BT action: attacks the current combat target with the best available hand each tick.
+///        Uses per-hand and global cooldowns to regulate attack frequency.
+///        Chooses Slash for armed attacks and Blunt for unarmed.
+/// @param halt Unused.
+/// @return RUNNING while target is alive; FAILURE if target died or doesn't exist.
 BT_RESULT Gnome::actionAttackTarget( bool halt )
 {
 	if ( Global::debugMode )
@@ -2169,6 +2329,9 @@ BT_RESULT Gnome::actionAttackTarget( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: finds the nearest reachable training ground workshop and sets it as the target.
+/// @param halt Unused.
+/// @return SUCCESS if a training ground was found; FAILURE otherwise.
 BT_RESULT Gnome::actionFindTrainingGround( bool halt )
 {
 	auto tgs = g->wsm()->getTrainingGrounds();
@@ -2194,6 +2357,10 @@ BT_RESULT Gnome::actionFindTrainingGround( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: runs a 15-minute training session at the assigned training ground.
+///        Awards Melee and Dodge skill points (x2 if a higher-skilled trainer is present).
+/// @param halt Unused.
+/// @return RUNNING while training; SUCCESS when the session ends.
 BT_RESULT Gnome::actionTrain( bool halt )
 {
 	if ( m_trainCounter == 0 )
@@ -2246,6 +2413,9 @@ BT_RESULT Gnome::actionTrain( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/// @brief BT action: moves the trainer gnome to the assigned workshop's trainer input position.
+/// @param halt Unused.
+/// @return SUCCESS if the assigned workshop exists; FAILURE otherwise.
 BT_RESULT Gnome::actionFindTrainerPosition( bool halt )
 {
 	if ( m_assignedWorkshop )
@@ -2261,6 +2431,9 @@ BT_RESULT Gnome::actionFindTrainerPosition( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: runs a 15-minute trainer session, awarding 1 Melee and 1 Dodge skill point.
+/// @param halt Unused.
+/// @return RUNNING while supervising; SUCCESS when the session ends.
 BT_RESULT Gnome::actionSuperviseTraining( bool halt )
 {
 	if ( m_trainCounter == 0 )
@@ -2291,6 +2464,12 @@ BT_RESULT Gnome::actionSuperviseTraining( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/// @brief BT action: selects a combat target for this gnome.
+///        First re-validates the current target (path reachability, alive status).
+///        Then searches squad-mates' targets, then the priority list, then nearby enemies.
+///        Falls back to defending civilian gnomes against attackers.
+/// @param halt Unused.
+/// @return SUCCESS if a target was assigned; FAILURE otherwise.
 BT_RESULT Gnome::actionGetTarget( bool halt )
 {
 	if ( Global::debugMode )
@@ -2414,6 +2593,11 @@ BT_RESULT Gnome::actionGetTarget( bool halt )
 	return m_currentAttackTarget ? BT_RESULT::SUCCESS : BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: advances the off-map mission simulation each day.
+///        Handles three phases — TRAVEL (distance check), ACTION (emissary/raid/spy/sabotage),
+///        and RETURN (result processing, kingdom discovery).
+/// @param halt Unused.
+/// @return RUNNING while the mission is in progress; SUCCESS on return; FAILURE if no mission.
 BT_RESULT Gnome::actionDoMission( bool halt )
 {
 	if ( m_mission )
@@ -2544,6 +2728,10 @@ BT_RESULT Gnome::actionDoMission( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief BT action: removes the gnome from the world map to begin an off-map mission.
+///        Records the departure position and transitions the mission to TRAVEL step.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS if the mission was found; FAILURE otherwise.
 BT_RESULT Gnome::actionLeaveForMission( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -2566,6 +2754,10 @@ BT_RESULT Gnome::actionLeaveForMission( bool halt )
 	}
 }
 
+/// @brief BT action: re-inserts the gnome at its departure position after a completed mission.
+///        Records total mission time, clears the mission reference, and marks the gnome as no longer off-map.
+/// @param halt Unused (single-tick action).
+/// @return SUCCESS.
 BT_RESULT Gnome::actionReturnFromMission( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -2596,6 +2788,10 @@ BT_RESULT Gnome::actionReturnFromMission( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief Task function: equips the claimed uniform item into the appropriate equipment slot.
+///        Picks up the item, resolves the slot from the blackboard, updates combat hand stats for held items,
+///        and refreshes the sprite.
+/// @return True if the item was at the gnome's position and was equipped; false otherwise.
 bool Gnome::equipItem()
 {
 	if ( Global::debugMode )

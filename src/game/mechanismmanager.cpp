@@ -65,6 +65,8 @@ QVariantMap MechanismData::serialize() const
 	return out;
 }
 
+/// @brief Restores all mechanism fields from a previously serialised QVariantMap.
+/// @param in Map produced by MechanismData::serialize().
 void MechanismData::deserialize( QVariantMap in )
 {
 	type            = (MechanismType)in.value( "Type" ).toInt();
@@ -90,6 +92,8 @@ void MechanismData::deserialize( QVariantMap in )
 	anim			= in.value( "Anim" ).toBool();
 }
 
+/// @brief Constructs the mechanism manager and populates the SID-to-type lookup table.
+/// @param parent Owning Game instance.
 MechanismManager::MechanismManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -105,10 +109,13 @@ MechanismManager::MechanismManager( Game* parent ) :
 	m_string2Type.insert( "PressurePlate", MT_PRESSUREPLATE );
 }
 
+/// @brief Destructor.
 MechanismManager::~MechanismManager()
 {
 }
 
+/// @brief Deserialises and installs all mechanisms from saved data, then rebuilds power networks.
+/// @param data List of QVariantMaps, each produced by MechanismData::serialize().
 void MechanismManager::loadMechanisms( QVariantList data )
 {
 	for ( auto vdata : data )
@@ -123,6 +130,13 @@ void MechanismManager::loadMechanisms( QVariantList data )
 	updateNetWorks();
 }
 
+/// @brief Per-tick update: burns engine fuel, tallies network power balance, propagates hasPower to consumers,
+///        and creates SwitchMechanism/InvertMechanism/Refuel jobs as needed.
+/// @param tickNumber     Current game tick.
+/// @param seasonChanged  Unused.
+/// @param dayChanged     Unused.
+/// @param hourChanged    Unused.
+/// @param minuteChanged  Unused.
 void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	int tickDiff = 1;
@@ -227,6 +241,8 @@ void MechanismManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayC
 	}
 }
 
+/// @brief Returns true if axle animation state changed since the last call, then resets the flag.
+/// @return true if axles changed, false otherwise.
 bool MechanismManager::axlesChanged()
 {
 	bool out       = m_axlesChanged;
@@ -234,16 +250,24 @@ bool MechanismManager::axlesChanged()
 	return out;
 }
 
+/// @brief Returns a copy of the axle data map (position UID → AxleData) for rendering.
+/// @return Copy of the axle data hash.
 QHash<unsigned int, AxleData> MechanismManager::axleData()
 {
 	return m_axleData;
 }
 
+/// @brief Returns true if a mechanism (floor or wall) is installed at @p pos.
+/// @param pos World position to query.
+/// @return true if a mechanism exists there.
 bool MechanismManager::hasMechanism( Position pos )
 {
 	return m_floorPositions.contains( pos.toInt() ) || m_wallPositions.contains( pos.toInt() );
 }
 
+/// @brief Returns true if the floor mechanism at @p pos is a GearBox.
+/// @param pos World position to query.
+/// @return true if a GearBox is installed on the floor there.
 bool MechanismManager::hasGearBox( Position pos )
 {
 	if ( m_floorPositions.contains( pos.toInt() ) )
@@ -254,6 +278,9 @@ bool MechanismManager::hasGearBox( Position pos )
 	return false;
 }
 
+/// @brief Returns true if the wall mechanism at @p pos is currently powered.
+/// @param pos World position to query.
+/// @return true if the mechanism has power.
 bool MechanismManager::hasPower( Position pos )
 {
 	if ( m_wallPositions.contains( pos.toInt() ) )
@@ -267,6 +294,9 @@ bool MechanismManager::hasPower( Position pos )
 	return false;
 }
 
+/// @brief Returns the localised display name of the mechanism at @p pos.
+/// @param pos World position to query.
+/// @return Localised item name, or "No mechanism" if none exists there.
 QString MechanismManager::mechanismName( Position pos )
 {
 	unsigned itemID = mechanismID( pos );
@@ -277,6 +307,9 @@ QString MechanismManager::mechanismName( Position pos )
 	return "No mechanism";
 }
 
+/// @brief Returns the item UID of the mechanism at @p pos (wall slot checked first, then floor).
+/// @param pos World position to query.
+/// @return Mechanism item UID, or 0 if none.
 unsigned int MechanismManager::mechanismID( Position pos )
 {
 	if ( m_wallPositions.contains( pos.toInt() ) )
@@ -292,6 +325,9 @@ unsigned int MechanismManager::mechanismID( Position pos )
 	return 0;
 }
 
+/// @brief Returns true if the mechanism identified by @p itemID has a GUI defined in the database.
+/// @param itemID Mechanism item UID.
+/// @return true if a GUI string is present in the Mechanism table.
 bool MechanismManager::hasGUI( unsigned int itemID )
 {
 	QString itemSID = m_mechanisms[itemID].itemSID;
@@ -303,6 +339,9 @@ bool MechanismManager::hasGUI( unsigned int itemID )
 	return false;
 }
 
+/// @brief Returns true if the mechanism at @p pos has a GUI defined in the database.
+/// @param pos World position to query.
+/// @return true if a GUI string is present in the Mechanism table.
 bool MechanismManager::hasGUI( Position pos )
 {
 	unsigned itemID = mechanismID( pos );
@@ -318,6 +357,9 @@ bool MechanismManager::hasGUI( Position pos )
 	return false;
 }
 
+/// @brief Returns the GUI identifier string for the mechanism, used to open the correct panel.
+/// @param itemID Mechanism item UID.
+/// @return GUI string from the Mechanism database table, or empty if none.
 QString MechanismManager::gui( unsigned int itemID )
 {
 	QString itemSID = m_mechanisms[itemID].itemSID;
@@ -325,6 +367,9 @@ QString MechanismManager::gui( unsigned int itemID )
 	return row.value( "GUI" ).toString();
 }
 
+/// @brief Registers a previously deserialised MechanismData into the position maps and axle table.
+///        Used during save-game loading; does not re-read DB values.
+/// @param md Fully populated MechanismData to install.
 void MechanismManager::installItem( MechanismData md )
 {
 	if ( md.itemSID == "Axle" )
@@ -384,6 +429,11 @@ void MechanismManager::installItem( MechanismData md )
 	m_mechanisms.insert( md.itemID, md );
 }
 
+/// @brief Installs a freshly placed mechanism item: reads DB values, sets up connectivity and
+///        position maps for the item type, and schedules a network rebuild.
+/// @param itemID Item UID of the mechanism being placed.
+/// @param pos    World position to install at.
+/// @param rot    Rotation (0–3) used by axles to determine east/west vs north/south alignment.
 void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 {
 	MechanismData md;
@@ -520,6 +570,9 @@ void MechanismManager::installItem( unsigned int itemID, Position pos, int rot )
 	m_needNetworkUpdate = true;
 }
 
+/// @brief Removes a mechanism from all position maps and the mechanism store,
+///        restores walkability for wall-type mechanisms, and schedules a network rebuild.
+/// @param itemID Item UID of the mechanism to remove.
 void MechanismManager::uninstallItem( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -547,6 +600,9 @@ void MechanismManager::uninstallItem( unsigned int itemID )
 	}
 }
 
+/// @brief Returns a copy of the MechanismData for @p itemID, or a default-constructed instance if absent.
+/// @param itemID Mechanism item UID.
+/// @return Copy of the MechanismData.
 MechanismData MechanismManager::mechanismData( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -556,6 +612,9 @@ MechanismData MechanismManager::mechanismData( unsigned int itemID )
 	return MechanismData();
 }
 
+/// @brief Toggles the changeActive flag on @p itemID, queuing a SwitchMechanism job next tick.
+/// @param itemID Mechanism item UID.
+/// @return New value of changeActive, or false if the mechanism doesn't exist.
 bool MechanismManager::changeActive( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -567,6 +626,10 @@ bool MechanismManager::changeActive( unsigned int itemID )
 	return false;
 }
 
+/// @brief Sets the active state of @p itemID, updates its connectivity and sprites,
+///        and schedules a power network rebuild.
+/// @param itemID Mechanism item UID.
+/// @param active New active state.
 void MechanismManager::setActive( unsigned int itemID, bool active )
 {
 	qDebug() << "setActive";
@@ -591,6 +654,9 @@ void MechanismManager::setActive( unsigned int itemID, bool active )
 	}
 }
 
+/// @brief Toggles the changeInverted flag on @p itemID, queuing an InvertMechanism job next tick.
+/// @param itemID Mechanism item UID.
+/// @return New value of changeInverted, or false if the mechanism doesn't exist.
 bool MechanismManager::changeInverted( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -602,6 +668,9 @@ bool MechanismManager::changeInverted( unsigned int itemID )
 	return false;
 }
 
+/// @brief Sets the inverted state of @p itemID, updates connectivity, and schedules a network rebuild.
+/// @param itemID Mechanism item UID.
+/// @param inv    New inverted state.
 void MechanismManager::setInverted( unsigned int itemID, bool inv )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -616,6 +685,10 @@ void MechanismManager::setInverted( unsigned int itemID, bool inv )
 	}
 }
 
+/// @brief Recomputes the connectsTo list for levers and pressure plates based on active/inverted state.
+///        Active (non-inverted) or inactive (inverted) states add the four cardinal neighbours;
+///        otherwise the list is cleared.
+/// @param md Mechanism whose connectivity should be updated in-place.
 void MechanismManager::setConnectsTo( MechanismData& md )
 {
 	switch( md.type )
@@ -647,6 +720,8 @@ void MechanismManager::setConnectsTo( MechanismData& md )
 	}
 }
 
+/// @brief Immediately flips the active state of @p itemID and clears the pending changeActive flag.
+/// @param itemID Mechanism item UID.
 void MechanismManager::toggleActive( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -657,6 +732,8 @@ void MechanismManager::toggleActive( unsigned int itemID )
 	}
 }
 
+/// @brief Immediately flips the inverted state of @p itemID and clears the pending changeInverted flag.
+/// @param itemID Mechanism item UID.
 void MechanismManager::toggleInvert( unsigned int itemID )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -667,6 +744,10 @@ void MechanismManager::toggleInvert( unsigned int itemID )
 	}
 }
 
+/// @brief Adds @p burnValue fuel to @p itemID, clamped to maxFuel.
+///        If the engine was previously empty and now has fuel, triggers a network update and restores animation.
+/// @param itemID    Mechanism item UID of the engine to refuel.
+/// @param burnValue Amount of fuel ticks to add.
 void MechanismManager::refuel( unsigned int itemID, int burnValue )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -689,6 +770,9 @@ void MechanismManager::refuel( unsigned int itemID, int burnValue )
 	}
 }
 
+/// @brief Sets the fuel percentage at which a refuel job is automatically created.
+/// @param itemID  Mechanism item UID.
+/// @param percent Threshold percentage (0–100).
 void MechanismManager::setRefuelThreshold( unsigned int itemID, int percent )
 {
 	if ( m_mechanisms.contains( itemID ) )
@@ -697,6 +781,9 @@ void MechanismManager::setRefuelThreshold( unsigned int itemID, int percent )
 	}
 }
 
+/// @brief Rebuilds all power networks using BFS from each active engine.
+///        Assigns networkIDs, tallies producers/consumers per network, updates axle animation states,
+///        and clears m_needNetworkUpdate.
 void MechanismManager::updateNetWorks()
 {
 	QQueue<MechanismData> workQueue;
@@ -784,6 +871,11 @@ void MechanismManager::updateNetWorks()
 	m_needNetworkUpdate = false;
 }
 
+/// @brief Updates wall/floor sprites and world effects (Wall/Floor) for @p md based on @p isOn.
+///        Respects the inverted flag, swaps On/Off sprites from the Mechanism DB table,
+///        and calls addEffect/removeEffect for "Wall" and "Floor" effect strings.
+/// @param md   Mechanism whose visual state should be updated.
+/// @param isOn Desired on/off state (before inversion).
 void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 {
 	QString itemSID = md.itemSID;
@@ -854,6 +946,9 @@ void MechanismManager::updateSpritesAndFlags( MechanismData& md, bool isOn )
 	}
 }
 
+/// @brief Applies a named world effect at @p pos ("Wall" makes tile solid and unwalkable; "Floor" makes it walkable).
+/// @param pos    World position to affect.
+/// @param effect Effect string ID from the Mechanism DB table.
 void MechanismManager::addEffect( Position pos, QString effect )
 {
 	if ( effect == "Wall" )
@@ -870,6 +965,10 @@ void MechanismManager::addEffect( Position pos, QString effect )
 	}
 }
 
+/// @brief Reverses a named world effect at @p pos ("Wall" restores walkability and removes solid wall;
+///        "Floor" makes the tile unwalkable again).
+/// @param pos    World position to affect.
+/// @param effect Effect string ID to reverse.
 void MechanismManager::removeEffect( Position pos, QString effect )
 {
 	if ( effect == "Wall" )
@@ -884,6 +983,10 @@ void MechanismManager::removeEffect( Position pos, QString effect )
 	}
 }
 
+/// @brief Notifies the mechanism at @p pos of the creature count standing on it.
+///        Activates pressure plates when numCreatures > 0 and deactivates them when empty.
+/// @param pos          World position of the mechanism.
+/// @param numCreatures Number of creatures currently at this tile.
 void MechanismManager::updateCreaturesAtPos( Position pos, int numCreatures )
 {
 	unsigned int id = mechanismID( pos );

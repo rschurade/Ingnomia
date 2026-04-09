@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighbormanager.cpp
+ *  @brief Neighboring kingdom management: procedural generation, diplomacy, raids, trading, and off-map missions.
+ */
 #include "neighbormanager.h"
 #include "game.h"
 
@@ -25,6 +28,9 @@
 
 #include <QDebug>
 
+/// @brief Constructs the neighbor manager and populates neighboring kingdoms.
+///        In peaceful mode: 10 gnome kingdoms. Otherwise: 5 gnome + 5 goblin kingdoms.
+/// @param parent Owning Game instance.
 NeighborManager::NeighborManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -52,10 +58,14 @@ NeighborManager::NeighborManager( Game* parent ) :
 	}
 }
 
+/// @brief Destructor.
 NeighborManager::~NeighborManager()
 {
 }
 
+/// @brief Serialises this kingdom's state into a QVariantMap.
+/// @return Map with keys ID, Discovered, DiscoverMission, Distance, Name, Type, Attitude,
+///         Wealth, Economy, Military, NextRaid, NextTrader.
 QVariantMap NeighborKingdom::serialize()
 {
 	QVariantMap out;
@@ -76,6 +86,8 @@ QVariantMap NeighborKingdom::serialize()
 	return out;
 }
 
+/// @brief Restores kingdom state from a previously serialised map.
+/// @param in Map produced by NeighborKingdom::serialize().
 void NeighborKingdom::deserialize( QVariantMap in )
 {
 	id              = in.value( "ID" ).toUInt();
@@ -92,6 +104,8 @@ void NeighborKingdom::deserialize( QVariantMap in )
 	nextTrader      = in.value( "NextTrader" ).value<quint64>();
 }
 
+/// @brief Serialises all kingdoms into a QVariantList.
+/// @return List of QVariantMaps, one per kingdom.
 QVariantList NeighborManager::serialize()
 {
 	QVariantList out;
@@ -104,6 +118,8 @@ QVariantList NeighborManager::serialize()
 	return out;
 }
 
+/// @brief Restores all kingdoms from a saved QVariantList.
+/// @param in List produced by NeighborManager::serialize().
 void NeighborManager::deserialize( QVariantList in )
 {
 	m_kingdoms.clear();
@@ -115,6 +131,10 @@ void NeighborManager::deserialize( QVariantList in )
 	}
 }
 
+/// @brief Generates and appends a randomly configured neighboring kingdom of the given type.
+///        Gnome kingdoms get a random positive attitude; goblin kingdoms get a negative attitude
+///        and a first raid scheduled within ~10 days.
+/// @param type KingdomType::GNOME or KingdomType::GOBLIN.
 void NeighborManager::addRandomKingdom( KingdomType type )
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -145,6 +165,12 @@ void NeighborManager::addRandomKingdom( KingdomType type )
 	m_kingdoms.append( nk );
 }
 
+/// @brief Per-tick update: triggers raid events for goblin kingdoms whose nextRaid tick has passed.
+/// @param tickNumber    Current game tick.
+/// @param seasonChanged Unused.
+/// @param dayChanged    Unused.
+/// @param hourChanged   Unused.
+/// @param minuteChanged Unused.
 void NeighborManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	for ( auto& kingdom : m_kingdoms )
@@ -157,11 +183,15 @@ void NeighborManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 	}
 }
 
+/// @brief Returns a mutable reference to the list of all neighboring kingdoms.
+/// @return Reference to the kingdoms list.
 QList<NeighborKingdom>& NeighborManager::kingdoms()
 {
 	return m_kingdoms;
 }
 
+/// @brief Returns the number of kingdoms that have been discovered by the player.
+/// @return Count of discovered kingdoms.
 int NeighborManager::countDiscovered()
 {
 	int out = 0;
@@ -173,6 +203,8 @@ int NeighborManager::countDiscovered()
 	return out;
 }
 
+/// @brief Marks the kingdom with the given ID as discovered.
+/// @param id UID of the kingdom to reveal.
 void NeighborManager::discoverKingdom( unsigned int id )
 {
 	for ( auto& k : m_kingdoms )
@@ -185,6 +217,9 @@ void NeighborManager::discoverKingdom( unsigned int id )
 	}
 }
 
+/// @brief Returns the travel distance (in days) to the kingdom with the given ID.
+/// @param kingdomID UID of the kingdom to query.
+/// @return Distance value, or 0 if the kingdom is not found.
 int NeighborManager::distance( unsigned int kingdomID )
 {
 	for ( auto& k : m_kingdoms )
@@ -197,6 +232,10 @@ int NeighborManager::distance( unsigned int kingdomID )
 	return 0;
 }
 
+/// @brief Resolves a spy mission against the target kingdom (75% success chance).
+///        On success: stores the target's nextRaid tick in mission results.
+///        On failure: reduces the kingdom's attitude by 10.
+/// @param mission Pointer to the mission; result map is populated in-place.
 void NeighborManager::spy( Mission* mission )
 {
 	auto kingdomID = mission->target;
@@ -223,6 +262,10 @@ void NeighborManager::spy( Mission* mission )
 	}
 }
 
+/// @brief Resolves a sabotage mission (base 50% success, +10% per gnome beyond two).
+///        On success: delays the target's next raid by 2–5 days and reduces attitude by 20.
+///        On failure: records failure in mission results.
+/// @param mission Pointer to the mission; result map is populated in-place.
 void NeighborManager::sabotage( Mission* mission )
 {
 	auto kingdomID = mission->target;
@@ -255,6 +298,9 @@ void NeighborManager::sabotage( Mission* mission )
 	}
 }
 
+/// @brief Resolves a gnome raid mission against the target kingdom (base 50% success, +10% per gnome beyond two).
+///        Both outcomes reduce the target kingdom's attitude (success −20, failure −10).
+/// @param mission Pointer to the mission; result map is populated in-place.
 void NeighborManager::raid( Mission* mission )
 {
 	auto kingdomID = mission->target;
@@ -285,6 +331,10 @@ void NeighborManager::raid( Mission* mission )
 	}
 }
 
+/// @brief Resolves an emissary mission: applies the chosen diplomatic action to the target kingdom.
+///        IMPROVE: +10 attitude; INSULT: −20 attitude;
+///        INVITE_TRADER: schedules a trader event; INVITE_AMBASSADOR: stub (no-op).
+/// @param mission Pointer to the mission; result map is populated in-place.
 void NeighborManager::emissary( Mission* mission )
 {
 	auto kingdomID = mission->target;

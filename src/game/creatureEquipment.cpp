@@ -15,8 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureEquipment.cpp
+ *  @brief Serialisation, equipment-slot access, and damage reduction for EquipmentItem and Equipment.
+ */
 #include "creature.h"
 
+/// @brief Serialises this equipment slot into a QVariantMap.
+/// @return Map with keys Item, Material, ItemID, MaterialID, AllMats.
 QVariantMap EquipmentItem::serialize()
 {
 	QVariantMap out;
@@ -28,6 +33,8 @@ QVariantMap EquipmentItem::serialize()
 	return out;
 }
 
+/// @brief Deserialising constructor — restores an equipment slot from a saved map.
+/// @param in Map produced by EquipmentItem::serialize().
 EquipmentItem::EquipmentItem( const QVariantMap& in )
 {
 	item       = in.value( "Item" ).toString();
@@ -37,6 +44,9 @@ EquipmentItem::EquipmentItem( const QVariantMap& in )
 	allMats	   = in.value( "AllMats" ).toStringList();
 }
 
+/// @brief Returns a list of all item UIDs currently worn across all equipment slots.
+///        Slots with itemID == 0 are skipped.
+/// @return List of worn item UIDs.
 QList<unsigned int> Equipment::wornItems() const
 {
 	QList<unsigned int> items;
@@ -61,6 +71,8 @@ QList<unsigned int> Equipment::wornItems() const
 	return items;
 }
 
+/// @brief Serialises the full equipment loadout (cosmetics, uniform, and all item slots).
+/// @return Variant map suitable for saving.
 QVariantMap Equipment::serialize()
 {
 	QVariantMap vEqui;
@@ -89,6 +101,8 @@ QVariantMap Equipment::serialize()
 	return vEqui;
 }
 
+/// @brief Deserialising constructor — restores the full loadout from a saved map.
+/// @param in Map produced by Equipment::serialize().
 Equipment::Equipment( const QVariantMap& in )
 {
 	hair       = in.value( "Hair" ).toString();
@@ -112,6 +126,7 @@ Equipment::Equipment( const QVariantMap& in )
 	back          = EquipmentItem( vmItems.value( "Back" ).toMap() );
 }
 
+/// @brief Resets all equipment slots to empty (default-constructed EquipmentItem).
 void Equipment::clearAllItems()
 {
 	head          = EquipmentItem();
@@ -125,6 +140,10 @@ void Equipment::clearAllItems()
 	back          = EquipmentItem();
 }
 
+/// @brief Returns the damage reduction value for the armor worn on the given body part.
+///        Values are hardcoded by armor tier: Leather=2, Bone=3, Chain=4, Plate=6, Heavy=8.
+/// @param part The body part that was hit.
+/// @return Damage reduction amount; 0 if the slot is empty or unrecognised.
 float Equipment::getDamageReduction( CreaturePart part )
 {
 	unsigned int itemID = 0;
@@ -190,6 +209,10 @@ float Equipment::getDamageReduction( CreaturePart part )
 	return reduction;
 }
 
+/// @brief Returns a reference to the equipment slot corresponding to the given creature part.
+///        Calls abort() with a warning if @p part is not a valid armor/held slot.
+/// @param part Equipment slot identifier (CP_ARMOR_* or CP_*_HAND_HELD or CP_BACK).
+/// @return Reference to the matching EquipmentItem slot.
 EquipmentItem& Equipment::getSlot( CreaturePart part )
 {
 	switch ( part )
