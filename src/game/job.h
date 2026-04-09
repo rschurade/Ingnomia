@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file job.h
+ *  @brief Job instance definition: type, position, phase state machine
+ *         (PENDING/HAULING/READY/IN_PROGRESS/SUSPENDED/COMPLETE), required items/tools,
+ *         workers, and progress tracking.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -29,6 +34,7 @@
 
 struct Position;
 
+/** @brief Lifecycle phase of a job, from creation to completion. */
 enum class JobPhase : uint8_t
 {
 	PENDING,      // requirements known, items not yet claimed
@@ -39,6 +45,7 @@ enum class JobPhase : uint8_t
 	COMPLETE      // done
 };
 
+/** @brief Describes an item requirement for a job (type, material, count). */
 struct RequiredItem
 {
 	int count = 0;
@@ -52,6 +59,7 @@ struct RequiredItem
 	bool available = false;
 };
 
+/** @brief Describes a tool requirement for a job (type and minimum level). */
 struct RequiredTool
 {
 	QString type;
@@ -61,6 +69,8 @@ struct RequiredTool
 	bool available = false;
 };
 
+/** @brief Represents a single job instance with type, position, phase state machine,
+ *         required items/tools, worker tracking, and progress. */
 class Job
 {
 	Q_DISABLE_COPY_MOVE( Job )

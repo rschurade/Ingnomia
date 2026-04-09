@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventory.cpp
+ *  @brief Implementation of the Inventory class -- global item registry with spatial
+ *         indexing, ownership tracking, and category hierarchy for the stock UI.
+ */
 #include "inventory.h"
 #include "game.h"
 
@@ -36,6 +40,9 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
+/** @brief Construct the Inventory system, initialize category hierarchy and food/drink lookups.
+ *  @param parent Owning Game instance.
+ */
 Inventory::Inventory( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -44,6 +51,7 @@ Inventory::Inventory( Game* parent ) :
 	init();
 }
 
+/** @brief Destructor. Frees all items, octrees, and lookup structures. */
 Inventory::~Inventory()
 {
 	m_items.clear();
@@ -68,6 +76,7 @@ Inventory::~Inventory()
 	}
 }
 
+/** @brief Build the category/group/item hierarchy from the DB and populate food/drink lookups. */
 void Inventory::init()
 {
 	m_dimX = Global::dimX;
@@ -136,6 +145,7 @@ void Inventory::init()
 	}
 }
 
+/** @brief Save the current item/material filter set to GameState for persistence. */
 void Inventory::saveFilter()
 {
 	QVariantList filter;
@@ -149,6 +159,7 @@ void Inventory::saveFilter()
 	GameState::itemFilter = filter;
 }
 
+/** @brief Restore the item/material filter set from GameState and create octrees for each. */
 void Inventory::loadFilter()
 {
 	auto list = GameState::itemFilter;
@@ -168,6 +179,10 @@ void Inventory::loadFilter()
 	}
 }
 
+/** @brief Look up an item by its unique ID.
+ *  @param itemUID Unique item ID.
+ *  @return Pointer to the Item, or nullptr if not found.
+ */
 Item* Inventory::getItem( unsigned int itemUID )
 {
 	auto it = m_items.find( itemUID );
@@ -178,6 +193,10 @@ Item* Inventory::getItem( unsigned int itemUID )
 	return nullptr;
 }
 
+/** @brief Check whether an item with the given ID exists in the registry.
+ *  @param itemID Unique item ID.
+ *  @return True if the item exists.
+ */
 bool Inventory::itemExists( unsigned int itemID )
 {
 	if ( m_items.contains( itemID ) )
@@ -187,6 +206,12 @@ bool Inventory::itemExists( unsigned int itemID )
 	return false;
 }
 
+/** @brief Create a simple item at a position with a given type and material.
+ *  @param pos World position.
+ *  @param itemSID Item type string ID.
+ *  @param materialSID Material string ID.
+ *  @return Unique ID of the newly created item.
+ */
 unsigned int Inventory::createItem( Position pos, QString itemSID, QString materialSID )
 {
 	DBH::itemUID( itemSID );
@@ -202,6 +227,12 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QString mater
 	return obj.id();
 }
 
+/** @brief Create a composite item from component item IDs. Material is derived from components.
+ *  @param pos World position.
+ *  @param itemSID Item type string ID.
+ *  @param components List of existing item IDs to use as components.
+ *  @return Unique ID of the newly created item, or 0 on failure.
+ */
 unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigned int> components )
 {
 	DBH::itemUID( itemSID );
@@ -264,11 +295,21 @@ unsigned int Inventory::createItem( Position pos, QString itemSID, QList<unsigne
 	}
 }
 
+/** @brief Create a composite item from a QVariantList of component IDs.
+ *  @param pos World position.
+ *  @param itemSID Item type string ID.
+ *  @param components Variant list of component item IDs.
+ *  @return Unique ID of the newly created item, or 0 on failure.
+ */
 unsigned int Inventory::createItem( Position pos, QString itemSID, QVariantList components )
 {
 	return createItem( pos, itemSID, Global::util->variantList2UInt( components ) );
 }
 
+/** @brief Recreate an item from a fully serialized QVariantMap (used during save loading).
+ *  @param values Serialized item data.
+ *  @return Unique ID of the recreated item, or 0 on failure.
+ */
 unsigned int Inventory::createItem( const QVariantMap& values )
 {
 	if ( values.value( "ItemSID" ).toString().isEmpty() )
@@ -315,6 +356,11 @@ unsigned int Inventory::createItem( const QVariantMap& values )
 	return obj.id();
 }
 
+/** @brief Get or create the octree for a given item+material combination.
+ *  @param itemSID Item type string ID.
+ *  @param materialSID Material string ID.
+ *  @return Pointer to the spatial octree for this item/material pair.
+ */
 Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
 {
 	if ( !m_octrees.contains( itemSID ) || !m_octrees[itemSID].contains( materialSID ) )
@@ -327,6 +373,11 @@ Octree* Inventory::octree( const QString& itemSID, const QString& materialSID )
 	return m_octrees[itemSID][materialSID];
 }
 
+/** @brief Register a newly created item in all indices (position hash, octree, type hash, history).
+ *  @param object The item to register.
+ *  @param itemID Item type string ID.
+ *  @param materialID Material string ID.
+ */
 void Inventory::addObject( Item& object, const QString& itemID, const QString& materialID )
 {
 	m_items.insert( object.id(), object );

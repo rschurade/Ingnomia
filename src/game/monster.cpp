@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file monster.cpp
+ *  @brief Hostile creature implementation: aggro management, combat AI, target selection, and sprite handling.
+ */
 #include "monster.h"
 
 #include "../base/db.h"
@@ -32,6 +35,12 @@
 
 #include <QDebug>
 
+/** @brief Constructs a new monster of the given species at the specified position.
+ *  @param species DB identifier for the monster type.
+ *  @param level Monster difficulty level.
+ *  @param pos Spawn position on the map.
+ *  @param gender Gender of the monster.
+ *  @param game Pointer to the owning Game instance. */
 Monster::Monster( QString species, int level, Position& pos, Gender gender, Game* game ) :
 	Creature( pos, species, gender, species, game )
 {
@@ -46,6 +55,9 @@ Monster::Monster( QString species, int level, Position& pos, Gender gender, Game
 	m_anatomy.init( "Humanoid", false );
 }
 
+/** @brief Constructs a monster from serialized save data.
+ *  @param in Variant map containing saved monster state.
+ *  @param game Pointer to the owning Game instance. */
 Monster::Monster( QVariantMap in, Game* game ) :
 	Creature( in, game ),
 	m_level( in.value( "Level" ).toInt() )
@@ -55,6 +67,8 @@ Monster::Monster( QVariantMap in, Game* game ) :
 	updateSprite();
 }
 
+/** @brief Serializes monster state (including level) into a variant map.
+ *  @param out Output variant map to populate. */
 void Monster::serialize( QVariantMap& out )
 {
 	// animal
@@ -62,10 +76,13 @@ void Monster::serialize( QVariantMap& out )
 	Creature::serialize( out );
 }
 
+/** @brief Destructor. */
 Monster::~Monster()
 {
 }
 
+/** @brief Initializes the monster: inserts into world, sets up behavior tree,
+ *         generates initial aggro list, and restores BT state if saved. */
 void Monster::init()
 {
 	g->w()->insertCreatureAtPosition( m_position, m_id );
@@ -85,6 +102,8 @@ void Monster::init()
 	}
 }
 
+/** @brief Rebuilds the monster's sprite from its DB-defined body parts,
+ *         handling random sprite variants for front and back views. */
 void Monster::updateSprite()
 {
 	auto parts = DB::selectRows( "Creature_Parts", m_species );
@@ -143,6 +162,7 @@ void Monster::updateSprite()
 	m_spriteID = g->sf()->setCreatureSprite( m_id, def, defBack, isDead() )->uID;
 }
 
+/** @brief Updates the monster's movement speed. Currently uses a fixed value (TODO: DB lookup). */
 void Monster::updateMoveSpeed()
 {
 	//TODO add monster values to movespeed table
@@ -151,6 +171,7 @@ void Monster::updateMoveSpeed()
 	m_moveSpeed = qMax( 30, speed );
 }
 
+/** @brief Registers monster behavior tree action/condition callbacks (movement, targeting, combat). */
 void Monster::initTaskMap()
 {
 	using namespace std::placeholders;
@@ -169,6 +190,7 @@ void Monster::initTaskMap()
 	m_behaviors.insert( "AttackTarget", std::bind( &Monster::actionAttackTarget, this, _1 ) );
 }
 
+/** @brief Generates a randomized aggro list from all non-mission gnomes, sorted by random priority. */
 void Monster::generateAggroList()
 {
 	m_aggroList.clear();
@@ -184,6 +206,14 @@ void Monster::generateAggroList()
 	std::sort( m_aggroList.begin(), m_aggroList.end() );
 }
 
+/** @brief Per-tick update: processes cooldowns, checks death/destroy status, follows leader,
+ *         regenerates aggro list if empty, and ticks the behavior tree.
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged Whether the season changed this tick.
+ *  @param dayChanged Whether the day changed this tick.
+ *  @param hourChanged Whether the hour changed this tick.
+ *  @param minuteChanged Whether the minute changed this tick.
+ *  @return Tick result (OK, DEAD, TODESTROY). */
 CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	processCooldowns( tickNumber );
@@ -241,6 +271,10 @@ CreatureTickResult Monster::onTick( quint64 tickNumber, bool seasonChanged, bool
 	return CreatureTickResult::OK;
 }
 
+/** @brief Behavior tree action: moves the monster along its current path toward the target.
+ *         Clears path on halt. Checks target adjacency and validity during movement.
+ *  @param halt Whether to halt and clear the current path.
+ *  @return RUNNING while moving, SUCCESS on arrival, FAILURE if path is blocked, IDLE if halted. */
 BT_RESULT Monster::actionMove( bool halt )
 {
 	if ( halt )
@@ -295,6 +329,10 @@ BT_RESULT Monster::actionMove( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/** @brief Behavior tree action: attacks the current target creature if alive and in range.
+ *         Uses unarmed combat with strength-based damage and cooldown.
+ *  @param halt Whether to halt (unused).
+ *  @return RUNNING while target is alive, FAILURE if target is dead or missing. */
 BT_RESULT Monster::actionAttackTarget( bool halt )
 {
 	Creature* creature = g->gm()->gnome( m_currentAttackTarget );
@@ -317,6 +355,10 @@ BT_RESULT Monster::actionAttackTarget( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief Behavior tree action: selects the closest reachable gnome from the aggro list as the attack target.
+ *         Removes dead gnomes from the list during iteration.
+ *  @param halt Whether to halt (unused).
+ *  @return SUCCESS if a target was selected, FAILURE if no valid target exists. */
 BT_RESULT Monster::actionGetTarget( bool halt )
 {
 	if ( m_aggroList.size() )
@@ -364,6 +406,15 @@ BT_RESULT Monster::actionGetTarget( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief Handles an incoming attack on this monster. Determines attack side based on facing,
+ *         rolls dodge vs. attacker skill, applies damage on hit, and updates aggro for the attacker.
+ *  @param dt Type of damage (e.g., DT_BLUNT).
+ *  @param da Height of the attack on the body.
+ *  @param skill Attacker's combat skill level.
+ *  @param strength Attacker's damage strength.
+ *  @param sourcePos Position the attack originates from.
+ *  @param attackerID ID of the attacking creature.
+ *  @return Always returns true. */
 bool Monster::attack( DamageType dt, AnatomyHeight da, int skill, int strength, Position sourcePos, unsigned int attackerID )
 {
 	// from which side is the attack coming

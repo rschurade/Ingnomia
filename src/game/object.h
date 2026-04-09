@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file object.h
+ *  @brief Base class for positioned world objects (items, plants) with an ID, position, and sprite.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -22,6 +25,11 @@
 #include <QVariant>
 #include <QtGlobal>
 
+/** @brief Base class for world objects that occupy a tile position and have a sprite.
+ *
+ *  Provides a unique ID (from GameState), a 3D position, and a sprite ID.
+ *  Subclassed by Item, Plant, and other placeable entities.
+ */
 class Object
 {
 public:

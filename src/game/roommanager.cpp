@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file roommanager.cpp
+ *  @brief Room manager implementation: room creation, gnome/bed assignment, door management,
+ *         alarm job creation, and room type queries.
+ */
 #include "roommanager.h"
 #include "game.h"
 

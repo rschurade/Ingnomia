@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file plant.h
+ *  @brief Individual plant/tree instance: growth stages, harvesting, felling, fruit production, and multi-tile layout.
+ */
 #pragma once
 
 #include "object.h"
@@ -23,6 +26,7 @@
 
 class Game;
 
+/** @brief Light conditions required for a plant to grow. */
 enum class GrowLight : unsigned char
 {
 	SUN,
@@ -30,6 +34,7 @@ enum class GrowLight : unsigned char
 	SUN_AND_DARK
 };
 
+/** @brief Return value from Plant::onTick indicating what happened this tick. */
 enum class OnTickReturn : unsigned char
 {
 	NOOP,
@@ -37,6 +42,12 @@ enum class OnTickReturn : unsigned char
 	DESTROY
 };
 
+/** @brief Represents an individual plant or tree in the world.
+ *
+ *  Tracks growth state progression driven by ticks, seasonal changes, and light conditions.
+ *  Supports multi-tile tree layouts, fruit production, harvesting, felling, and serialization.
+ *  Growth advances only when light/season requirements are met.
+ */
 class Plant : public Object
 {
 public:

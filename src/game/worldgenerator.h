@@ -15,6 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file worldgenerator.h
+ *  @brief Procedural world generation: terrain, biomes, ores, plants, rivers, and starting items.
+ *
+ *  WorldGenerator creates a new World from NewGameSettings.  It builds the
+ *  height map, fills stone layers, embeds ore/gem veins, carves rivers and
+ *  oceans, places sunlight and grass, generates ramps, then populates the
+ *  world with plants, trees, mushrooms, animals, gnomes, and starting items.
+ */
+
 #pragma once
 
 #include "../../3rdparty/fastnoise/FastNoise.h"
@@ -34,6 +44,13 @@ class NewGameSettings;
 class World;
 class Game;
 
+/** @brief Procedural world generator that creates terrain, biomes, ore veins, rivers, and life.
+ *
+ *  Two-phase generation: generateTopology() builds the physical world (stone
+ *  layers, height map, water, sunlight, ramps), and addLife() populates it
+ *  with plants, trees, mushrooms, animals, gnomes, and embark items.
+ *  Uses FastNoise for Perlin/simplex noise and perlin worms for vein carving.
+ */
 class WorldGenerator : public QObject
 {
 	Q_OBJECT

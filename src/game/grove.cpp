@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file grove.cpp
+ *  @brief Tree grove implementation: planting, fruit picking, tree felling,
+ *         auto-forester thresholds, and grove field management.
+ */
 #include "grove.h"
 
 #include "../base/db.h"

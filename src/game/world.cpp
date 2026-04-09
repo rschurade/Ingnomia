@@ -15,6 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file world.cpp
+ *  @brief Implementation of the World class: initialization, sprite setters, tile flags,
+ *         grass/water simulation, plant/creature management, mining, ramp creation,
+ *         lighting, sunlight propagation, and tile update tracking.
+ */
+
 #include "world.h"
 
 #include "../base/config.h"
@@ -45,6 +52,13 @@
 #include <random>
 #include <time.h>
 
+/**
+ * @brief Constructs the World with the given dimensions, initializing construction lookup maps.
+ * @param dimX World width in tiles.
+ * @param dimY World depth in tiles.
+ * @param dimZ World height in z-levels.
+ * @param game Pointer to the owning Game instance.
+ */
 World::World( int dimX, int dimY, int dimZ, Game* game ) :
 	g( game ),
 	m_dimX( dimX ),
@@ -74,10 +88,16 @@ World::World( int dimX, int dimY, int dimZ, Game* game ) :
 	m_constrItemSID2ENUM.insert( "Hydraulics", CI_HYDRAULICS );
 }
 
+/**
+ * @brief Destructor.
+ */
 World::~World()
 {
 }
 
+/**
+ * @brief Initializes the world after generation: sets dimensions, initializes light map, water, and grass.
+ */
 void World::init()
 {
 	qDebug() << "World::init";
@@ -91,6 +111,9 @@ void World::init()
 	initGrassUpdateList();
 }
 
+/**
+ * @brief Scans all tiles to find water, aquifiers, and deaquifiers, initializing the water tracking set.
+ */
 void World::initWater()
 {
 	m_water.clear();
@@ -137,6 +160,9 @@ void World::initWater()
 	}
 }
 
+/**
+ * @brief Post-load initialization: re-initializes region map, light map, grass, and water from loaded tile data.
+ */
 void World::afterLoad()
 {
 	qDebug() << "World::afterLoad";
@@ -150,18 +176,38 @@ void World::afterLoad()
 	initWater();
 }
 
+/**
+ * @brief Sets the floor sprite UID for the tile at the given coordinates and marks it for rendering update.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param spriteUID Sprite UID to assign to the floor.
+ */
 void World::setFloorSprite( unsigned short x, unsigned short y, unsigned short z, const unsigned int spriteUID )
 {
 	getTile( x, y, z ).floorSpriteUID = spriteUID;
 	addToUpdateList( x, y, z );
 }
 
+/**
+ * @brief Sets the floor sprite UID for the tile at the given position and marks it for rendering update.
+ * @param pos World position.
+ * @param spriteUID Sprite UID to assign to the floor.
+ */
 void World::setFloorSprite( Position pos, unsigned int spriteUID )
 {
 	getTile( pos ).floorSpriteUID = spriteUID;
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Sets the wall sprite UID and rotation for the tile at the given coordinates.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param spriteUID Sprite UID to assign to the wall.
+ * @param rotation Wall rotation (0-3).
+ */
 void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
 {
 	unsigned int UID           = Position( x, y, z ).toInt();
@@ -170,6 +216,12 @@ void World::setWallSprite( unsigned short x, unsigned short y, unsigned short z,
 	addToUpdateList( UID );
 }
 
+/**
+ * @brief Sets the wall sprite UID and rotation for the tile at the given position.
+ * @param pos World position.
+ * @param spriteUID Sprite UID to assign to the wall.
+ * @param rotation Wall rotation (0-3).
+ */
 void World::setWallSprite( Position pos, unsigned int spriteUID, unsigned char rotation )
 {
 	unsigned int UID           = pos.toInt();
@@ -178,11 +230,24 @@ void World::setWallSprite( Position pos, unsigned int spriteUID, unsigned char r
 	addToUpdateList( UID );
 }
 
+/**
+ * @brief Sets the wall sprite UID by flat tile ID (no update list notification).
+ * @param tileID Flat tile index.
+ * @param spriteUID Sprite UID to assign.
+ */
 void World::setWallSprite( unsigned int tileID, unsigned int spriteUID )
 {
 	m_world[tileID].wallSpriteUID = spriteUID;
 }
 
+/**
+ * @brief Sets the item sprite UID for the tile at the given coordinates.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param spriteUID Sprite UID to assign to the item layer.
+ * @param rotation Item rotation (currently unused).
+ */
 void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z, unsigned int spriteUID, unsigned char rotation )
 {
 	unsigned int UID           = Position( x, y, z ).toInt();
@@ -191,6 +256,12 @@ void World::setItemSprite( unsigned short x, unsigned short y, unsigned short z,
 	addToUpdateList( UID );
 }
 
+/**
+ * @brief Sets the item sprite UID for the tile at the given position.
+ * @param pos World position.
+ * @param spriteUID Sprite UID to assign to the item layer.
+ * @param rotation Item rotation (currently unused).
+ */
 void World::setItemSprite( Position pos, unsigned int spriteUID, unsigned char rotation )
 {
 	unsigned int UID           = pos.toInt();
@@ -199,18 +270,41 @@ void World::setItemSprite( Position pos, unsigned int spriteUID, unsigned char r
 	addToUpdateList( UID );
 }
 
+/**
+ * @brief Sets the wall sprite UID by flat tile ID (note: despite the method name, sets wallSpriteUID).
+ * @param tileID Flat tile index.
+ * @param spriteUID Sprite UID to assign.
+ */
 void World::setFloorSprite( unsigned int tileID, unsigned int spriteUID )
 {
 	m_world[tileID].wallSpriteUID = spriteUID;
 	addToUpdateList( tileID );
 }
 
+/**
+ * @brief Sets a job sprite on a tile by flat tile ID (delegates to Position-based overload).
+ * @param tileID Flat tile index.
+ * @param spriteUID Sprite UID for the job indicator.
+ * @param rotation Sprite rotation.
+ * @param floor True if this is a floor job, false for wall.
+ * @param jobID ID of the associated job.
+ * @param busy True if the job is currently being worked.
+ */
 void World::setJobSprite( unsigned int tileID, unsigned int spriteUID, unsigned char rotation, bool floor, unsigned int jobID, bool busy )
 {
 	Position pos( tileID );
 	setJobSprite( pos, spriteUID, rotation, floor, jobID, busy );
 }
 
+/**
+ * @brief Sets a job sprite on a tile, updating job flags and the job sprites map.
+ * @param pos World position.
+ * @param spriteUID Sprite UID for the job indicator.
+ * @param rotation Sprite rotation.
+ * @param floor True if this is a floor job, false for wall.
+ * @param jobID ID of the associated job.
+ * @param busy True if the job is currently being worked.
+ */
 void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char rotation, bool floor, unsigned int jobID, bool busy )
 {
 	Tile& tile = getTile( pos );
@@ -253,6 +347,11 @@ void World::setJobSprite( Position pos, unsigned int spriteUID, unsigned char ro
 	addToUpdateList( pos.toInt() );
 }
 
+/**
+ * @brief Removes a job sprite from a tile (floor or wall layer) and clears the associated job flags.
+ * @param pos World position.
+ * @param floor True to clear the floor job sprite, false for wall.
+ */
 void World::clearJobSprite( Position pos, bool floor )
 {
 	if ( m_jobSprites.contains( pos.toInt() ) )
@@ -275,12 +374,24 @@ void World::clearJobSprite( Position pos, bool floor )
 	addToUpdateList( pos.toInt() );
 }
 
+/**
+ * @brief Sets tile flags on the tile at the given coordinates.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param flag TileFlag bits to add.
+ */
 void World::setTileFlag( unsigned short x, unsigned short y, unsigned short z, TileFlag flag )
 {
 	Position pos( x, y, z );
 	setTileFlag( pos, flag );
 }
 
+/**
+ * @brief Adds tile flags to the tile at the given position, updating region map if walkability changes.
+ * @param pos World position.
+ * @param flag TileFlag bits to add.
+ */
 void World::setTileFlag( Position pos, TileFlag flag )
 {
 	unsigned int tid = pos.toInt();
@@ -294,6 +405,11 @@ void World::setTileFlag( Position pos, TileFlag flag )
 	addToUpdateList( pos.toInt() );
 }
 
+/**
+ * @brief Clears tile flags from the tile at the given position, removing designations if walkability is lost.
+ * @param pos World position.
+ * @param flag TileFlag bits to remove.
+ */
 void World::clearTileFlag( Position pos, TileFlag flag )
 {
 	unsigned int tid = pos.toInt();
@@ -311,6 +427,10 @@ void World::clearTileFlag( Position pos, TileFlag flag )
 	addToUpdateList( pos.toInt() );
 }
 
+/**
+ * @brief Recalculates the fence sprite at the given position based on adjacent fence connections.
+ * @param pos World position of the fence to update.
+ */
 void World::updateFenceSprite( Position pos )
 {
 	QVariantMap constr;
@@ -376,6 +496,10 @@ void World::updateFenceSprite( Position pos )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Recalculates the pipe sprite at the given position based on adjacent pipe connections.
+ * @param pos World position of the pipe to update.
+ */
 void World::updatePipeSprite( Position pos )
 {
 	QVariantMap constr;
@@ -431,6 +555,10 @@ void World::updatePipeSprite( Position pos )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Restores a sprite UID onto a tile from saved data (either floor or wall layer).
+ * @param vals Map containing "Pos", "IsFloor", and "UID" keys.
+ */
 void World::addLoadedSprites( QVariantMap vals )
 {
 	Tile& tile = getTile( Position( vals.value( "Pos" ) ) );
@@ -446,6 +574,11 @@ void World::addLoadedSprites( QVariantMap vals )
 	//Util::string2Tile( tile, vals.value( "OldTileVals" ).toString() );
 }
 
+/**
+ * @brief Moves all items off a tile if it has become blocked (wall or unwalkable).
+ * @param pos Position to check for items.
+ * @param to Destination position to move items to.
+ */
 void World::expelTileItems( Position pos, Position& to )
 {
 	Tile& tile = getTile( pos );
@@ -464,6 +597,11 @@ void World::expelTileItems( Position pos, Position& to )
 	}
 }
 
+/**
+ * @brief Force-moves all gnomes and animals off a tile if it has become blocked.
+ * @param pos Position to check for creatures.
+ * @param to Destination position to move creatures to.
+ */
 void World::expelTileInhabitants( Position pos, Position& to )
 {
 	//qDebug() << "expel from " << pos.toString();
@@ -480,6 +618,12 @@ void World::expelTileInhabitants( Position pos, Position& to )
 	}
 }
 
+/**
+ * @brief Plants a tree at the given position and sets its wall sprite.
+ * @param pos World position.
+ * @param type Tree type string ID from the Plants database.
+ * @param fullyGrown If true, the tree starts fully grown.
+ */
 void World::plantTree( Position pos, QString type, bool fullyGrown )
 {
 	Plant plant_( pos, type, fullyGrown, g );
@@ -489,6 +633,12 @@ void World::plantTree( Position pos, QString type, bool fullyGrown )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Plants a mushroom at the given position and sets its wall sprite and transparency flag.
+ * @param pos World position.
+ * @param type Mushroom type string ID from the Plants database.
+ * @param fullyGrown If true, the mushroom starts fully grown.
+ */
 void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 {
 	Plant plant_( pos, type, fullyGrown, g );
@@ -503,6 +653,11 @@ void World::plantMushroom( Position pos, QString type, bool fullyGrown )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Plants a crop/plant at the given position, matching the base item's material to a plant type.
+ * @param pos World position.
+ * @param baseItem Inventory UID of the seed/base item whose material determines the plant type.
+ */
 void World::plant( Position pos, unsigned int baseItem )
 {
 	QStringList plants = DB::ids( "Plants", "Type", "Plant" );
@@ -518,6 +673,10 @@ void World::plant( Position pos, unsigned int baseItem )
 	}
 }
 
+/**
+ * @brief Adds an already-constructed Plant to the plants map.
+ * @param plant The Plant object to insert (keyed by its position).
+ */
 void World::addPlant( Plant plant )
 {
 	Position pos = plant.getPos();
@@ -525,6 +684,10 @@ void World::addPlant( Plant plant )
 	//getTile( pos ).wallSpriteUID = m_plants[pos.toInt()].getSprite();
 }
 
+/**
+ * @brief Removes the plant at the given position, clearing its wall sprite.
+ * @param pos World position of the plant to remove.
+ */
 void World::removePlant( Position pos )
 {
 	if ( m_plants.contains( pos.toInt() ) )
@@ -537,11 +700,20 @@ void World::removePlant( Position pos )
 	}
 }
 
+/**
+ * @brief Removes a plant from the plants map by its Plant object.
+ * @param plant The Plant to remove (looked up by position).
+ */
 void World::removePlant( Plant plant )
 {
 	m_plants.remove( plant.getPos().toInt() );
 }
 
+/**
+ * @brief Reduces the growth level of the plant at the given position by one step.
+ * @param pos World position of the plant.
+ * @return True if the plant was fully reduced and removed, false otherwise.
+ */
 bool World::reduceOneGrowLevel( Position pos )
 {
 	if ( m_plants.contains( pos.toInt() ) )
@@ -555,6 +727,11 @@ bool World::reduceOneGrowLevel( Position pos )
 	return false;
 }
 
+/**
+ * @brief Unregisters a creature from its current position in the creature positions map.
+ * @param pos World position the creature is leaving.
+ * @param creatureID Unique ID of the creature to remove.
+ */
 void World::removeCreatureFromPosition( Position pos, unsigned int creatureID )
 {
 	if ( m_creaturePositions.contains( pos.toInt() ) )
@@ -574,6 +751,11 @@ void World::removeCreatureFromPosition( Position pos, unsigned int creatureID )
 	}
 }
 
+/**
+ * @brief Registers a creature at a new position in the creature positions map.
+ * @param pos World position the creature is entering.
+ * @param creatureID Unique ID of the creature to register.
+ */
 void World::insertCreatureAtPosition( Position pos, unsigned int creatureID )
 {
 	if ( m_creaturePositions.contains( pos.toInt() ) )
@@ -590,6 +772,9 @@ void World::insertCreatureAtPosition( Position pos, unsigned int creatureID )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Tick-based grass growth simulation: randomly grows grass on candidate dirt tiles near existing grass.
+ */
 void World::processGrass()
 {
 	QList<Position> toRemove;
@@ -644,6 +829,9 @@ void World::processGrass()
 	}
 }
 
+/**
+ * @brief Scans all tiles to build the initial grass set and candidate positions for grass growth.
+ */
 void World::initGrassUpdateList()
 {
 	m_grass.clear();
@@ -674,6 +862,10 @@ void World::initGrassUpdateList()
 	}
 }
 
+/**
+ * @brief Evaluates whether a tile is a valid candidate for grass growth and adds it to the candidate set.
+ * @param pos World position to evaluate.
+ */
 void World::isGrassCandidate( Position pos )
 {
 	Tile& tile = getTile( pos );
@@ -684,11 +876,19 @@ void World::isGrassCandidate( Position pos )
 	}
 }
 
+/**
+ * @brief Public wrapper to add a position to the grass growth candidate set.
+ * @param pos World position to evaluate as a grass candidate.
+ */
 void World::addGrassCandidate( Position pos )
 {
 	isGrassCandidate( pos );
 }
 
+/**
+ * @brief Removes grass from a tile, resetting its vegetation level and floor sprite to bare dirt.
+ * @param pos World position to remove grass from.
+ */
 void World::removeGrass( Position pos )
 {
 	clearTileFlag( pos, TileFlag::TF_GRASS );
@@ -712,6 +912,10 @@ void World::removeGrass( Position pos )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Creates grass on a tile, setting the grass sprite, flag, and full vegetation level.
+ * @param pos World position to create grass on. Skips tilled tiles.
+ */
 void World::createGrass( Position pos )
 {
 	auto tf = getTileFlag( pos );
@@ -728,6 +932,11 @@ void World::createGrass( Position pos )
 	tile.vegetationLevel = 100;
 }
 
+/**
+ * @brief Adds water at a position with the given fluid level if not already tracked.
+ * @param pos World position.
+ * @param level Initial fluid level (1-10).
+ */
 void World::addWater( Position pos, unsigned char level )
 {
 	if ( !m_water.count( pos.toInt() ) )
@@ -741,6 +950,11 @@ void World::addWater( Position pos, unsigned char level )
 	}
 }
 
+/**
+ * @brief Changes the fluid level at a position by the given delta, handling pressure overflow.
+ * @param pos World position.
+ * @param diff Amount to add (positive) or subtract (negative) from the fluid level.
+ */
 void World::changeFluidLevel( Position pos, int diff )
 {
 	Tile& tile         = getTile( pos );
@@ -752,6 +966,10 @@ void World::changeFluidLevel( Position pos, int diff )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Registers an aquifer source tile that generates water each tick.
+ * @param pos World position of the aquifer.
+ */
 void World::addAquifier( Position pos )
 {
 	m_aquifiers.append( pos );
@@ -762,6 +980,10 @@ void World::addAquifier( Position pos )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Registers a deaquifier drain tile that removes water each tick.
+ * @param pos World position of the deaquifier.
+ */
 void World::addDeaquifier( Position pos )
 {
 	m_deaquifiers.append( pos );
@@ -769,6 +991,9 @@ void World::addDeaquifier( Position pos )
 	tile.flags += TileFlag::TF_DEAQUIFIER;
 }
 
+/**
+ * @brief Per-tick water simulation: processes aquifiers and deaquifiers, then runs flow simulation.
+ */
 void World::processWater()
 {
 	// Batch updates
@@ -849,6 +1074,10 @@ struct Neighbors
 	unsigned int west;
 };
 
+/**
+ * @brief Simulates water flow: computes pressure gradients, drains and floods neighbor tiles,
+ *        handles evaporation, and batch-updates the water tracking set and render list.
+ */
 void World::processWaterFlow()
 {
 	// Batch newly tracked water tiles
@@ -1078,6 +1307,10 @@ void World::processWaterFlow()
 	}
 }
 
+/**
+ * @brief Removes any designation (stockpile, farm, grove, pasture, room, or no-pass zone) from a tile.
+ * @param pos World position to clear designations from.
+ */
 void World::removeDesignation( Position pos )
 {
 	Tile& tile = getTile( pos );
@@ -1104,6 +1337,12 @@ void World::removeDesignation( Position pos )
 	}
 }
 
+/**
+ * @brief Mines out a wall tile, clearing it, making it walkable, updating ramps and lights, and discovering neighbors.
+ * @param pos Position of the wall to mine.
+ * @param workPosition Work position (unused in current implementation).
+ * @return Pair of (wall material UID, embedded material UID) that were in the mined tile.
+ */
 QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& workPosition )
 {
 	Tile& tile                 = getTile( pos );
@@ -1150,6 +1389,12 @@ QPair<unsigned short, unsigned short> World::mineWall( Position pos, Position& w
 	return { materialInt, embeddedInt };
 }
 
+/**
+ * @brief Removes a wall tile (similar to mineWall but without ramp updates or creature displacement).
+ * @param pos Position of the wall to remove.
+ * @param workPosition Work position (unused in current implementation).
+ * @return Pair of (wall material UID, embedded material UID) that were in the removed tile.
+ */
 QPair<unsigned short, unsigned short> World::removeWall( Position pos, Position& workPosition )
 {
 	Tile& tile                 = getTile( pos );
@@ -1185,12 +1430,22 @@ QPair<unsigned short, unsigned short> World::removeWall( Position pos, Position&
 	return { materialInt, embeddedInt };
 }
 
+/**
+ * @brief Discovers (reveals) the tile at the given position and its neighbors.
+ * @param pos World position to discover.
+ */
 void World::discover( Position pos )
 {
 	discover( pos.x, pos.y, pos.z );
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Clears the TF_UNDISCOVERED flag from a 3x3 area around the given coordinates.
+ * @param x X coordinate center.
+ * @param y Y coordinate center.
+ * @param z Z coordinate.
+ */
 void World::discover( int x, int y, int z )
 {
 	clearTileFlag( Position( x - 1, y - 1, z ), TileFlag::TF_UNDISCOVERED );
@@ -1204,6 +1459,12 @@ void World::discover( int x, int y, int z )
 	clearTileFlag( Position( x + 1, y + 1, z ), TileFlag::TF_UNDISCOVERED );
 }
 
+/**
+ * @brief Removes a ramp at the given position, clearing the ramp wall and the ramp-top floor above.
+ * @param pos Position of the ramp to remove.
+ * @param workPosition Work position (unused in current implementation).
+ * @return Wall material UID of the removed ramp.
+ */
 unsigned short World::removeRamp( Position pos, Position workPosition )
 {
 	Tile& tile      = getTile( pos );
@@ -1226,6 +1487,10 @@ unsigned short World::removeRamp( Position pos, Position workPosition )
 	return materialInt;
 }
 
+/**
+ * @brief Recalculates or removes a ramp at the given position based on current neighbor wall state.
+ * @param pos Position of the ramp to update.
+ */
 void World::updateRampAtPos( Position pos )
 {
 	Tile& tile = getTile( pos );
@@ -1275,6 +1540,12 @@ void World::updateRampAtPos( Position pos )
 	updateWalkable( pos.aboveOf() );
 }
 
+/**
+ * @brief Removes the floor at the given position, displacing items and creatures, and updating sunlight.
+ * @param pos Position of the floor to remove.
+ * @param extractTo Position where displaced items and creatures are moved.
+ * @return Floor material UID of the removed floor.
+ */
 unsigned short World::removeFloor( Position pos, Position extractTo )
 {
 	Tile& tile              = getTile( pos );
@@ -1314,6 +1585,13 @@ unsigned short World::removeFloor( Position pos, Position extractTo )
 	return floorMat;
 }
 
+/**
+ * @brief Creates a natural ramp at x,y,z using the given terrain material (used during world generation).
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param mat Terrain material to use for the ramp.
+ */
 void World::createRamp( int x, int y, int z, TerrainMaterial mat )
 {
 	int offset        = z * m_dimX * m_dimY;
@@ -1357,11 +1635,21 @@ void World::createRamp( int x, int y, int z, TerrainMaterial mat )
 	setRampSprites( tile, tileAbove, sum, north, east, south, west, mat.key );
 }
 
+/**
+ * @brief Creates a natural ramp at the given position, inferring material from neighbor tiles.
+ * @param pos World position.
+ */
 void World::createRamp( Position pos )
 {
 	createRamp( pos.x, pos.y, pos.z );
 }
 
+/**
+ * @brief Creates a natural ramp at x,y,z, inferring material from the wall below.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ */
 void World::createRamp( int x, int y, int z )
 {
 	int offset      = z * m_dimX * m_dimY;
@@ -1446,11 +1734,23 @@ void World::createRamp( int x, int y, int z )
 	setRampSprites( tile, tileAbove, sum, north, east, south, west, matSID );
 }
 
+/**
+ * @brief Creates a ramp at the given position using the specified material string ID.
+ * @param pos World position.
+ * @param materialSID Material string ID for the ramp.
+ */
 void World::createRamp( Position pos, QString materialSID )
 {
 	createRamp( pos.x, pos.y, pos.z, materialSID );
 }
 
+/**
+ * @brief Creates a ramp at x,y,z using the specified material string ID, checking against solid walls.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param materialSID Material string ID for the ramp.
+ */
 void World::createRamp( int x, int y, int z, QString materialSID )
 {
 	int offset      = z * m_dimX * m_dimY;
@@ -1497,6 +1797,17 @@ void World::createRamp( int x, int y, int z, QString materialSID )
 	setRampSprites( tile, tileAbove, sum, north, east, south, west, materialSID );
 }
 
+/**
+ * @brief Sets the appropriate ramp sprites and rotations based on which neighbor walls exist.
+ * @param tile Reference to the ramp tile.
+ * @param tileAbove Reference to the tile above (receives the ramp-top floor sprite).
+ * @param sum Number of adjacent rough/solid walls (1 or 2).
+ * @param north True if the north neighbor has a wall.
+ * @param east True if the east neighbor has a wall.
+ * @param south True if the south neighbor has a wall.
+ * @param west True if the west neighbor has a wall.
+ * @param materialSID Material string ID used to select the correct sprite variant.
+ */
 void World::setRampSprites( Tile& tile, Tile& tileAbove, int sum, bool north, bool east, bool south, bool west, QString materialSID )
 {
 	unsigned int ramp      = g->sf()->createSprite( "Ramp", { materialSID } )->uID;
@@ -1610,6 +1921,12 @@ void World::setRampSprites( Tile& tile, Tile& tileAbove, int sum, bool north, bo
 	}
 }
 
+/**
+ * @brief Creates outer corner ramp sprites where two adjacent ramps meet at a corner.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ */
 void World::createRampOuterCorners( int x, int y, int z )
 {
 	int offset = z * m_dimX * m_dimY;
@@ -1668,12 +1985,20 @@ void World::createRampOuterCorners( int x, int y, int z )
 	}
 }
 
+/**
+ * @brief Marks a tile for rendering update by flat tile ID (thread-safe).
+ * @param uID Flat tile index.
+ */
 void World::addToUpdateList( const unsigned int uID )
 {
 	QMutexLocker lock( &m_updateMutex );
 	m_updatedTiles.insert( uID );
 }
 
+/**
+ * @brief Marks a tile for rendering update by position (thread-safe).
+ * @param pos World position.
+ */
 void World::addToUpdateList( Position pos )
 {
 	auto tileID = pos.toInt();
@@ -1682,6 +2007,12 @@ void World::addToUpdateList( Position pos )
 	m_updatedTiles.insert( tileID );
 }
 
+/**
+ * @brief Marks a tile for rendering update by x,y,z coordinates (thread-safe).
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ */
 void World::addToUpdateList( const unsigned short x, const unsigned short y, const unsigned short z )
 {
 	auto tileID = Position( x, y, z ).toInt();
@@ -1690,6 +2021,10 @@ void World::addToUpdateList( const unsigned short x, const unsigned short y, con
 	m_updatedTiles.insert( tileID );
 }
 
+/**
+ * @brief Batch-marks multiple tiles for rendering update from a QVector (thread-safe).
+ * @param ul Vector of flat tile indices to mark.
+ */
 void World::addToUpdateList( const QVector<unsigned int>& ul )
 {
 	QMutexLocker lock( &m_updateMutex );
@@ -1699,12 +2034,23 @@ void World::addToUpdateList( const QVector<unsigned int>& ul )
 	}
 }
 
+/**
+ * @brief Batch-marks multiple tiles for rendering update from a QSet (thread-safe).
+ * @param ul Set of flat tile indices to mark.
+ */
 void World::addToUpdateList( const QSet<unsigned int>& ul )
 {
 	QMutexLocker lock( &m_updateMutex );
 	m_updatedTiles += ul;
 }
 
+/**
+ * @brief Sets the lock state of a door, toggling walkability flags for gnomes, monsters, and animals.
+ * @param tileUID Flat tile index of the door position.
+ * @param lockGnome True to block gnome passage.
+ * @param lockMonster True to block monster passage.
+ * @param lockAnimal True to block animal passage.
+ */
 void World::setDoorLocked( unsigned int tileUID, bool lockGnome, bool lockMonster, bool lockAnimal )
 {
 	Position pos( tileUID );
@@ -1736,6 +2082,11 @@ void World::setDoorLocked( unsigned int tileUID, bool lockGnome, bool lockMonste
 	m_regionMap.updateConnectedRegions( pos );
 }
 
+/**
+ * @brief Adds a light intensity delta to the tile at the given position.
+ * @param pos World position.
+ * @param light Light intensity to add.
+ */
 void World::putLight( Position pos, int light )
 {
 	Tile& tile = getTile( pos );
@@ -1743,6 +2094,13 @@ void World::putLight( Position pos, int light )
 	addToUpdateList( pos );
 }
 
+/**
+ * @brief Adds a light intensity delta to the tile at the given coordinates.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param z Z coordinate.
+ * @param light Light intensity to add.
+ */
 void World::putLight( const unsigned short x, const unsigned short y, const unsigned short z, int light )
 {
 	Tile& tile = getTile( x, y, z );
@@ -1750,6 +2108,12 @@ void World::putLight( const unsigned short x, const unsigned short y, const unsi
 	addToUpdateList( x, y, z );
 }
 
+/**
+ * @brief Registers a new light source in the light map and propagates it through the tile array.
+ * @param id Unique ID for the light source.
+ * @param pos World position of the light.
+ * @param intensity Light intensity value.
+ */
 void World::addLight( unsigned int id, Position pos, int intensity )
 {
 	QSet<unsigned int> ul;
@@ -1757,6 +2121,10 @@ void World::addLight( unsigned int id, Position pos, int intensity )
 	addToUpdateList( ul );
 }
 
+/**
+ * @brief Removes a light source from the light map and clears its contribution from tiles.
+ * @param id Unique ID of the light source to remove.
+ */
 void World::removeLight( unsigned int id )
 {
 	QSet<unsigned int> ul;
@@ -1764,6 +2132,12 @@ void World::removeLight( unsigned int id )
 	addToUpdateList( ul );
 }
 
+/**
+ * @brief Moves a light source to a new position by removing and re-adding it.
+ * @param id Unique ID of the light source.
+ * @param pos New world position.
+ * @param intensity Light intensity at the new position.
+ */
 void World::moveLight( unsigned int id, Position pos, int intensity )
 {
 	QSet<unsigned int> ul;
@@ -1772,6 +2146,10 @@ void World::moveLight( unsigned int id, Position pos, int intensity )
 	addToUpdateList( ul );
 }
 
+/**
+ * @brief Recalculates all lights that may be affected by a change at the given position.
+ * @param pos World position that changed (e.g., a wall was added or removed).
+ */
 void World::updateLightsInRange( Position pos )
 {
 	QSet<unsigned int> ul;
@@ -1779,6 +2157,10 @@ void World::updateLightsInRange( Position pos )
 	addToUpdateList( ul );
 }
 
+/**
+ * @brief Propagates sunlight downward through open floors starting at the given position.
+ * @param pos Starting position to propagate sunlight from.
+ */
 void World::updateSunlight( Position pos )
 {
 	Tile& tile = getTile( pos );
@@ -1790,24 +2172,45 @@ void World::updateSunlight( Position pos )
 	}
 }
 
+/**
+ * @brief Checks whether the tile at the given position has direct sunlight.
+ * @param pos World position.
+ * @return True if the tile has the TF_SUNLIGHT flag.
+ */
 bool World::hasSunlight( Position pos )
 {
 	Tile& tile = getTile( pos );
 	return tile.flags & TileFlag::TF_SUNLIGHT;
 }
 
+/**
+ * @brief Checks whether the tile at the given position has grass.
+ * @param pos World position.
+ * @return True if the tile has the TF_GRASS flag.
+ */
 bool World::hasGrass( Position pos )
 {
 	Tile& tile = getTile( pos );
 	return tile.flags & TileFlag::TF_GRASS;
 }
 
+/**
+ * @brief Checks whether the tile has fully grown grass (level 100), is walkable, and has the grass flag.
+ * @param pos World position.
+ * @return True if the tile has maximum grass growth.
+ */
 bool World::hasMaxGrass( Position pos )
 {
 	Tile& tile = getTile( pos );
 	return tile.flags & TileFlag::TF_GRASS && tile.flags & TileFlag::TF_WALKABLE && tile.vegetationLevel == 100; //TODO bad fix, making tiles not walkable should remove designations
 }
 
+/**
+ * @brief Checks whether removing the floor at pos would trap a gnome on an isolated neighbor tile.
+ * @param pos Position of the floor that would be removed.
+ * @param workPos Worker's position (excluded from the neighbor check).
+ * @return True if removing the floor would trap a gnome.
+ */
 bool World::checkTrapGnomeFloor( Position pos, Position workPos )
 {
 	// TODO just realized this function is garbage, needs to be fixed
@@ -1884,6 +2287,11 @@ bool World::checkTrapGnomeFloor( Position pos, Position workPos )
 	return false;
 }
 
+/**
+ * @brief Sets or clears the animation bit on the wall sprite UID at the given position.
+ * @param pos World position.
+ * @param anim True to enable the animation bit, false to disable it.
+ */
 void World::setWallSpriteAnim( Position pos, bool anim )
 {
 	Tile& tile = getTile( pos );

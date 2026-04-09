@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creaturefactory.cpp
+ *  Implementation of CreatureFactory for creating animals and monsters.
+ */
 #include "creaturefactory.h"
 
 #include "../base/config.h"
@@ -27,14 +30,22 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+/** @brief Constructs the factory with a reference to the owning Game instance.
+ *  @param game Pointer to the active Game object.
+ */
 CreatureFactory::CreatureFactory( Game* game ) :
 	g( game )
 {
 }
+/** @brief Destructor. */
 CreatureFactory::~CreatureFactory()
 {
 }
 
+/** @brief Creates a random adult animal of a randomly chosen type at a random surface position.
+ *  @param allowedAnimals List of animal type IDs eligible for spawning.
+ *  @return Pointer to the newly created Animal.
+ */
 Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 {
 	int dimx = Global::dimX;
@@ -58,6 +69,14 @@ Animal* CreatureFactory::createRandomAnimal( QStringList allowedAnimals )
 	return animal;
 }
 
+/** @brief Creates an animal with explicit parameters.
+ *  @param type The animal species ID from the database.
+ *  @param pos World position to place the animal.
+ *  @param gender Gender of the animal.
+ *  @param adult Whether the animal is an adult.
+ *  @param tame Whether the animal is tame.
+ *  @return Pointer to the newly created Animal.
+ */
 Animal* CreatureFactory::createAnimal( QString type, Position pos, Gender gender, bool adult, bool tame )
 {
 	Animal* animal = new Animal( type, pos, gender, adult, g );
@@ -66,6 +85,10 @@ Animal* CreatureFactory::createAnimal( QString type, Position pos, Gender gender
 	return animal;
 }
 
+/** @brief Restores an animal from serialized save data.
+ *  @param values QVariantMap containing the saved animal state.
+ *  @return Pointer to the restored Animal.
+ */
 Animal* CreatureFactory::createAnimal( QVariantMap values )
 {
 	Animal* animal = new Animal( values, g );
@@ -73,6 +96,10 @@ Animal* CreatureFactory::createAnimal( QVariantMap values )
 	return animal;
 }
 
+/** @brief Creates a random monster from the allowed list. Currently unimplemented (returns nullptr).
+ *  @param allowedMonsters List of monster type IDs eligible for spawning.
+ *  @return nullptr (stub implementation).
+ */
 Monster* CreatureFactory::createRandomMonster( QStringList allowedMonsters )
 {
 	/*
@@ -101,6 +128,13 @@ Monster* CreatureFactory::createRandomMonster( QStringList allowedMonsters )
 	return nullptr;
 }
 
+/** @brief Creates a monster with explicit parameters and randomized combat attributes/skills.
+ *  @param type The monster species ID from the database.
+ *  @param level The monster's difficulty level.
+ *  @param pos World position to place the monster.
+ *  @param gender Gender of the monster.
+ *  @return Pointer to the newly created Monster.
+ */
 Monster* CreatureFactory::createMonster( QString type, int level, Position pos, Gender gender )
 {
 	Monster* monster = new Monster( type, level, pos, gender, g );
@@ -133,6 +167,10 @@ Monster* CreatureFactory::createMonster( QString type, int level, Position pos, 
 	return monster;
 }
 
+/** @brief Restores a monster from serialized save data.
+ *  @param values QVariantMap containing the saved monster state.
+ *  @return Pointer to the restored Monster.
+ */
 Monster* CreatureFactory::createMonster( QVariantMap values )
 {
 	Monster* monster = new Monster( values, g );

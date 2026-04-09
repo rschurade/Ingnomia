@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creaturemanager.h
+ *  Manager for all non-gnome creatures (animals and monsters) in the game world.
+ */
 #pragma once
 
 #include "../game/animal.h"
@@ -22,6 +25,7 @@
 
 class Game;
 
+/** @brief Manages all non-gnome creatures (animals, monsters). Handles tick updates, spawning, lookup, and removal. */
 class CreatureManager : public QObject
 {
 	Q_OBJECT

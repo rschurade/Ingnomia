@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshop.h
+ *  Individual workshop instance: crafting queue, input/output positions, components, and GUI state.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -28,6 +31,7 @@
 class Job;
 
 #pragma region CraftQueue;
+/** @brief Crafting mode controlling how many items a craft job produces. */
 enum class CraftMode : unsigned char
 {
 	CraftNumber,
@@ -35,6 +39,7 @@ enum class CraftMode : unsigned char
 	Repeat
 };
 
+/** @brief A single required input item for a craft recipe, with material and quantity. */
 struct InputItem
 {
 	QString itemSID;
@@ -44,6 +49,7 @@ struct InputItem
 	int avail = 0;
 };
 
+/** @brief Defines a single entry in a workshop's crafting queue, including recipe, mode, and required materials. */
 struct CraftJob
 {
 	unsigned int id    = 0; // unique id for this craft job
@@ -75,6 +81,7 @@ struct CraftJob
 #pragma endregion CraftQueue;
 
 #pragma region Properties;
+/** @brief Persistent properties of a workshop: type, position, owner, linked stockpile, and behavioral flags. */
 struct WorkshopProperties
 {
 	QString type = "";
@@ -113,6 +120,7 @@ struct WorkshopProperties
 };
 #pragma endregion Properties;
 
+/** @brief Represents a single workshop instance with its crafting queue, tile layout, input/output positions, and job management. */
 class Workshop : public WorldObject
 {
 	friend class WorkshopManager;

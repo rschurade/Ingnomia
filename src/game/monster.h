@@ -15,10 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file monster.h
+ *  Hostile creature with aggro-based targeting and combat AI.
+ */
 #pragma once
 
 #include "../game/creature.h"
 
+/** @brief Hostile creature that attacks gnomes based on an aggro list.
+ *
+ *  Monsters generate an aggro list of nearby gnomes, select the closest
+ *  reachable target, pathfind toward it, and attack in melee.
+ */
 class Monster : public Creature
 {
 	friend class MonsterWidget;

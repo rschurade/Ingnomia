@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file room.cpp
+ *  @brief Room designation implementation: enclosure/roof checking, furniture management,
+ *         bed/chair assignment, alarm bell handling, and room value calculation.
+ */
 #include "room.h"
 
 #include "../base/db.h"

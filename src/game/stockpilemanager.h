@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file stockpilemanager.h
+ *  Manages all stockpiles: creation, merging into existing stockpiles, tile tracking, priority ordering, and job delegation.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -27,6 +30,7 @@ class Stockpile;
 class Inventory;
 class Game;
 
+/** @brief Manages all Stockpile instances: creation, removal, priority ordering, item insertion/removal, and hauling job dispatch. */
 class StockpileManager : public QObject
 {
 	Q_OBJECT

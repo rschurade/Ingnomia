@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file mechanismmanager.cpp
+ *  @brief Mechanism system: axles, gears, levers, engines, pumps, pressure plates, and power networks.
+ */
 #include "mechanismmanager.h"
 #include "game.h"
 
@@ -32,6 +35,9 @@
 #include <QDebug>
 #include <QQueue>
 
+/** @brief Serializes this mechanism's data into a QVariantMap for save/load.
+ *  @return QVariantMap containing all mechanism properties.
+ */
 QVariantMap MechanismData::serialize() const
 {
 	QVariantMap out;

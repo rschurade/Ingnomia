@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file techtree.h
+ *  @brief Technology research tree that computes item levels from crafting dependencies.
+ */
 #pragma once
 
 #include <QMap>
 #include <QObject>
 #include <QSet>
 
+/** @brief A node in the tech tree representing an item, its crafting recipe, and parent/child relationships. */
 struct TTNode
 {
 	char level = 0;
@@ -31,6 +35,11 @@ struct TTNode
 	QSet<QString> childs;
 };
 
+/** @brief Builds a technology tree by computing item levels from crafting recipe dependencies.
+ *
+ *  Iterates over all crafting recipes, determines the tech level of each item based
+ *  on the levels of its components, and writes the computed values back to the Items DB table.
+ */
 class TechTree : public QObject
 {
 	Q_OBJECT

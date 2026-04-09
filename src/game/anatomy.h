@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file anatomy.h
+ *  Body part system for creatures. Tracks individual body parts with HP,
+ *  applies damage with armor reduction, handles bleeding and healing,
+ *  and determines death/unconsciousness from blood loss or vital part destruction.
+ */
 #pragma once
 
 #include "../base/enums.h"
@@ -25,6 +30,7 @@
 
 struct Equipment;
 
+/** @brief A single body part with HP, parent/child hierarchy, and location metadata. */
 struct AnatomyPart
 {
 	CreaturePart id;
@@ -42,6 +48,13 @@ struct AnatomyPart
 	int maxHP;
 };
 
+/** @brief Manages a creature's body parts, damage, bleeding, healing, and death state.
+ *
+ *  Initialized from a database anatomy type (e.g. "Humanoid", "Animal").
+ *  Tracks per-part HP, applies incoming damage with armor reduction,
+ *  manages blood level and bleeding rate, and reports status changes
+ *  (wounded, unconscious, dead).
+ */
 class Anatomy
 {
 	friend class GnomeWidget;

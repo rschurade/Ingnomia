@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file automaton.h
+ *  Mechanical gnome variant powered by interchangeable fuel cores.
+ *  Extends Gnome but replaces biological needs with fuel consumption.
+ */
 #pragma once
 
 #include "../game/gnome.h"
@@ -22,6 +26,12 @@
 
 class GnomeManager;
 
+/** @brief Mechanical gnome powered by a fuel core.
+ *
+ *  Automatons consume fuel each tick and stop functioning when empty.
+ *  A core item determines available skills and behavior tree. Cores can
+ *  be installed, uninstalled, and the automaton refueled via maintenance jobs.
+ */
 class Automaton : public Gnome
 {
 public:

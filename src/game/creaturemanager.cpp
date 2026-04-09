@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creaturemanager.cpp
+ *  Implementation of CreatureManager for ticking, spawning, and removing animals and monsters.
+ */
 #include "creaturemanager.h"
 #include "game.h"
 
@@ -31,12 +34,16 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+/** @brief Constructs the creature manager.
+ *  @param parent Pointer to the owning Game instance.
+ */
 CreatureManager::CreatureManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
 }
 
+/** @brief Destructor. Deletes all owned creature instances. */
 CreatureManager::~CreatureManager()
 {
 	for ( const auto& c : m_creatures )
@@ -45,6 +52,13 @@ CreatureManager::~CreatureManager()
 	}
 }
 
+/** @brief Advances all creatures by one game tick. Handles death, corpse creation, and cleanup.
+ *  @param tickNumber Current game tick number.
+ *  @param seasonChanged Whether the season changed this tick.
+ *  @param dayChanged Whether the day changed this tick.
+ *  @param hourChanged Whether the hour changed this tick.
+ *  @param minuteChanged Whether the minute changed this tick.
+ */
 void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	QElapsedTimer timer;
@@ -104,6 +118,10 @@ void CreatureManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCh
 	}
 }
 
+/** @brief Returns all creatures located at the given position.
+ *  @param pos The world position to query.
+ *  @return List of creature pointers at that position.
+ */
 QList<Creature*> CreatureManager::creaturesAtPosition( Position& pos )
 {
 	QList<Creature*> out;
@@ -117,6 +135,10 @@ QList<Creature*> CreatureManager::creaturesAtPosition( Position& pos )
 	return out;
 }
 
+/** @brief Returns all animals located at the given position.
+ *  @param pos The world position to query.
+ *  @return List of animal pointers at that position.
+ */
 QList<Animal*> CreatureManager::animalsAtPosition( Position& pos )
 {
 	QList<Animal*> out;
@@ -132,6 +154,10 @@ QList<Animal*> CreatureManager::animalsAtPosition( Position& pos )
 	return out;
 }
 	
+/** @brief Returns all monsters located at the given position.
+ *  @param pos The world position to query.
+ *  @return List of monster pointers at that position.
+ */
 QList<Monster*> CreatureManager::monstersAtPosition( Position& pos )
 {
 	QList<Monster*> out;
@@ -147,11 +173,24 @@ QList<Monster*> CreatureManager::monstersAtPosition( Position& pos )
 	return out;
 }
 
+/** @brief Returns the total number of managed creatures (animals and monsters).
+ *  @return Total creature count.
+ */
 int CreatureManager::countWildAnimals()
 {
 	return m_creatures.size();
 }
 
+/** @brief Creates and registers a new creature with the given parameters.
+ *  @param ct The creature type (ANIMAL or MONSTER).
+ *  @param type Species/type ID from the database.
+ *  @param pos World position to spawn the creature.
+ *  @param gender Gender of the creature.
+ *  @param adult Whether the creature is an adult (animals only).
+ *  @param tame Whether the creature is tame (animals only).
+ *  @param level Difficulty level (monsters only, defaults to 1).
+ *  @return The unique ID of the created creature, or 0 on failure.
+ */
 unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Position pos, Gender gender, bool adult, bool tame, int level )
 {
 	Creature* creature = nullptr;
@@ -192,6 +231,11 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QString type, Positi
 	return 0;
 }
 
+/** @brief Creates and registers a creature restored from serialized save data.
+ *  @param ct The creature type (ANIMAL or MONSTER).
+ *  @param vals QVariantMap containing the saved creature state.
+ *  @return The unique ID of the restored creature, or 0 on failure.
+ */
 unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 {
 	Creature* creature = nullptr;
@@ -231,6 +275,10 @@ unsigned int CreatureManager::addCreature( CreatureType ct, QVariantMap vals )
 	return 0;
 }
 
+/** @brief Looks up a creature by its unique ID.
+ *  @param id The creature's unique ID.
+ *  @return Pointer to the creature, or nullptr if not found.
+ */
 Creature* CreatureManager::creature( unsigned int id )
 {
 	if ( m_creaturesByID.contains( id ) )
@@ -240,6 +288,10 @@ Creature* CreatureManager::creature( unsigned int id )
 	return nullptr;
 }
 
+/** @brief Looks up an animal by its unique ID.
+ *  @param id The creature's unique ID.
+ *  @return Pointer to the Animal, or nullptr if not found or not an animal.
+ */
 Animal* CreatureManager::animal( unsigned int id )
 {
 	if ( m_creaturesByID.contains( id ) )
@@ -253,6 +305,10 @@ Animal* CreatureManager::animal( unsigned int id )
 	return nullptr;
 }
 	
+/** @brief Looks up a monster by its unique ID.
+ *  @param id The creature's unique ID.
+ *  @return Pointer to the Monster, or nullptr if not found or not a monster.
+ */
 Monster* CreatureManager::monster( unsigned int id )
 {
 	if ( m_creaturesByID.contains( id ) )
@@ -266,16 +322,26 @@ Monster* CreatureManager::monster( unsigned int id )
 	return nullptr;
 }
 
+/** @brief Returns the total number of managed creatures.
+ *  @return Total creature count.
+ */
 int CreatureManager::count()
 {
 	return m_creatures.size();
 }
 
+/** @brief Returns the number of creatures of a specific species type.
+ *  @param type Species/type ID to count.
+ *  @return Count of creatures of that type.
+ */
 int CreatureManager::count( QString type )
 {
 	return m_countPerType.value( type );
 }
 
+/** @brief Removes and deletes a creature by ID. Also cleans up pasture assignments for animals.
+ *  @param id The unique ID of the creature to remove.
+ */
 void CreatureManager::removeCreature( unsigned int id )
 {
 	if( m_creaturesByID.contains( id ) )
@@ -321,6 +387,11 @@ void CreatureManager::removeCreature( unsigned int id )
 	}
 }
 
+/** @brief Finds the closest reachable animal of a given type to a position.
+ *  @param pos Reference position to measure distance from.
+ *  @param type Species/type ID to search for.
+ *  @return Pointer to the closest Animal, or nullptr if none found.
+ */
 Animal* CreatureManager::getClosestAnimal( Position pos, QString type )
 {
 	auto distanceQueue = animalsByDistance( pos, type );
@@ -332,6 +403,11 @@ Animal* CreatureManager::getClosestAnimal( Position pos, QString type )
 	return nullptr;
 }
 
+/** @brief Returns a priority queue of reachable, available animals of a type sorted by distance.
+ *  @param pos Reference position to measure distance from.
+ *  @param type Species/type ID to filter by.
+ *  @return Priority queue of animals ordered by squared distance (closest first).
+ */
 PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QString type )
 {
 	auto distanceQueue = PriorityQueue<Animal*, int>();
@@ -354,11 +430,19 @@ PriorityQueue<Animal*, int> CreatureManager::animalsByDistance( Position pos, QS
 	return distanceQueue;
 }
 
+/** @brief Returns the list of creature IDs for a given species type.
+ *  @param type Species/type ID to query.
+ *  @return List of creature IDs of that type.
+ */
 QList<unsigned int> CreatureManager::animalsByType( QString type )
 {
 	return m_creaturesPerType.value( type );
 }
 
+/** @brief Forces all creatures at a given position to move to a new position.
+ *  @param from The source position.
+ *  @param to The destination position.
+ */
 void CreatureManager::forceMoveAnimals( const Position& from, const Position& to )
 {
 	for ( auto& a : m_creatures )
@@ -374,12 +458,18 @@ void CreatureManager::forceMoveAnimals( const Position& from, const Position& to
 	}
 }
 
+/** @brief Returns a list of all creature species types currently tracked.
+ *  @return List of type ID strings.
+ */
 QList<QString> CreatureManager::types()
 {
 	return m_countPerType.keys();
 }
 
 	
+/** @brief Returns the cached list of all animals. Rebuilds the cache if dirty.
+ *  @return Reference to the list of Animal pointers.
+ */
 QList<Animal*>& CreatureManager::animals()
 {
 	if( m_dirty )
@@ -390,6 +480,9 @@ QList<Animal*>& CreatureManager::animals()
 	return m_animals;
 }
 
+/** @brief Returns the cached list of all monsters. Rebuilds the cache if dirty.
+ *  @return Reference to the list of Monster pointers.
+ */
 QList<Monster*>& CreatureManager::monsters()
 {
 	if( m_dirty )
@@ -400,6 +493,7 @@ QList<Monster*>& CreatureManager::monsters()
 	return m_monsters;
 }
 
+/** @brief Rebuilds the separate animal and monster lists from the unified creature list. */
 void CreatureManager::updateLists()
 {
 	m_animals.clear();
@@ -419,6 +513,11 @@ void CreatureManager::updateLists()
 	m_dirty = false;
 }
 
+/** @brief Checks whether a creature can reach a given position via connected regions.
+ *  @param pos Target position.
+ *  @param creatureID ID of the creature to check from.
+ *  @return True if the creature's region is connected to the target position.
+ */
 bool CreatureManager::hasPathTo( const Position& pos, unsigned int creatureID )
 {
 	if( m_creaturesByID.contains( creatureID ) )
@@ -432,6 +531,11 @@ bool CreatureManager::hasPathTo( const Position& pos, unsigned int creatureID )
 	return false;
 }
 
+/** @brief Checks whether a creature has line of sight to a given position.
+ *  @param pos Target position.
+ *  @param creatureID ID of the creature to check from.
+ *  @return True if line of sight exists between the creature and the target.
+ */
 bool CreatureManager::hasLineOfSightTo( const Position& pos, unsigned int creatureID )
 {
 	if ( m_creaturesByID.contains( creatureID ) )

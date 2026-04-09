@@ -1,3 +1,7 @@
+/** @file sourcematerial.h
+ *  @brief POD struct storing item specifications (itemSID, materialSID, quality) for
+ *         items that are consumed/destroyed during construction.
+ */
 #pragma once
 
 #include <QString>
@@ -5,6 +9,11 @@
 #include <QVariantList>
 #include <QList>
 
+/** @brief Stores the type, material, and quality of a source item used in construction.
+ *
+ *  Used to remember what materials went into a constructed object so that they
+ *  can be recovered on deconstruction.
+ */
 struct SourceMaterial
 {
 	QString itemSID;

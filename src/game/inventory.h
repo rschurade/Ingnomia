@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventory.h
+ *  @brief Global item registry. Creates, destroys, and tracks all items in the world
+ *         by type, material, and position. Provides category/group hierarchy for UI.
+ */
 #pragma once
 
 
@@ -27,7 +31,9 @@
 #include <QMap>
 #include <QString>
 
+/** @brief Set of item IDs at a single tile position. */
 typedef QSet<unsigned int> PositionEntry;
+/** @brief Hash from tile position integer to the set of item IDs at that position. */
 typedef QHash<unsigned int, PositionEntry> PositionHash;
 
 class ItemHistory;
@@ -36,6 +42,12 @@ class StockpileManager;
 class World;
 class Game;
 
+/** @brief Central item registry and spatial index for all items in the game world.
+ *
+ *  Manages item creation, destruction, spatial lookup (via octree and position hash),
+ *  ownership state (stockpile, job, container, carried, equipped), and provides the
+ *  category/group/item/material hierarchy used by the stock overview UI.
+ */
 class Inventory : public QObject
 {
 	Q_OBJECT
@@ -100,6 +112,7 @@ public:
 	unsigned int itemCountInStockpile( QString itemID, QString materialID );
 	unsigned int itemCountNotInStockpile( QString itemID, QString materialID );
 
+	/** @brief Detailed item count breakdown for UI display. */
 	struct ItemCountDetailed
 	{
 		unsigned int total;

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gamemanager.h
+ *  @brief Qt wrapper that manages the game lifecycle: new game creation, loading, saving, pause, and speed control.
+ */
 #pragma once
 
 #include "../base/enums.h"
@@ -28,6 +31,12 @@ class EventConnector;
 class NewGameSettings;
 class SpriteFactory;
 
+/** @brief High-level game lifecycle manager.
+ *
+ *  Handles creating new games (world generation), loading saved games, saving,
+ *  and wiring up all GUI aggregators and signal/slot connections between the
+ *  Game object and the UI layer. Also forwards pause/speed state to the Game.
+ */
 class GameManager : public QObject
 {
 	Q_OBJECT

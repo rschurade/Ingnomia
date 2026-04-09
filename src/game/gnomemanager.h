@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnomemanager.h
+ *  Manager for all gnomes, traders, and automatons. Handles tick updates, professions, and lookup.
+ */
 #pragma once
 
 
@@ -26,6 +29,7 @@
 
 class Game;
 
+/** @brief Manages all gnomes (player-controlled, traders, automatons). Handles tick updates, death, profession management, and queries. */
 class GnomeManager : public QObject
 {
 	friend class Gnome;

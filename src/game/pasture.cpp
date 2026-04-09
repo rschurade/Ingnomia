@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file pasture.cpp
+ *  @brief Animal pasture implementation: animal assignment, capacity management, feeding,
+ *         hay harvesting, trough filling, and animal type configuration.
+ */
 #include "pasture.h"
 
 #include "../base/config.h"

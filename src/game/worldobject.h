@@ -15,6 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file worldobject.h
+ *  @brief Lightweight base class for positioned world entities (workshops, stockpiles, farms, etc.).
+ *
+ *  Provides a unique ID, display name, active/suspended state, and
+ *  serialization helpers shared by all persistent world objects.
+ */
+
 #pragma once
 
 #include <QPoint>
@@ -25,6 +33,13 @@
 
 class Game;
 
+/** @brief Lightweight base class for positioned world entities.
+ *
+ *  Stores a unique ID, human-readable name, active/suspended flag, and the
+ *  last-update tick.  Derived classes (Workshop, Stockpile, Farm, Room, etc.)
+ *  extend this with type-specific data.  Supports serialization to/from
+ *  QVariantMap for save/load.
+ */
 class WorldObject
 {
 	Q_DISABLE_COPY_MOVE( WorldObject )

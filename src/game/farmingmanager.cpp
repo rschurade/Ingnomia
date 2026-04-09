@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file farmingmanager.cpp
+ *  @brief Farm/grove/pasture/beehive manager: creates and removes farming designations,
+ *         dispatches per-tick updates, handles season transitions and utility items.
+ */
 #include "farmingmanager.h"
 #include "game.h"
 
@@ -28,6 +32,8 @@
 #include <QDebug>
 #include <QVariantMap>
 
+/** @brief Serializes beehive state into a variant map.
+ *  @param out Output variant map. */
 void Beehive::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "beehive" );
@@ -37,14 +43,18 @@ void Beehive::serialize( QVariantMap& out ) const
 	out.insert( "Harvest", harvest );
 }
 
+/** @brief Default constructor. */
 Beehive::Beehive()
 {
 }
 
+/** @brief Destructor. */
 Beehive::~Beehive()
 {
 }
 
+/** @brief Constructs a beehive from serialized save data.
+ *  @param in Variant map containing beehive state. */
 Beehive::Beehive( QVariantMap& in )
 {
 	id      = in.value( "ID" ).toUInt();
@@ -53,12 +63,15 @@ Beehive::Beehive( QVariantMap& in )
 	harvest = in.value( "Harvest" ).toBool();
 }
 
+/** @brief Constructs the farming manager.
+ *  @param parent Pointer to the owning Game instance. */
 FarmingManager::FarmingManager( Game* parent ) :
 	g( parent ),
 	QObject(parent)
 {
 }
 
+/** @brief Destructor. Deletes all owned pastures, farms, groves, and beehives. */
 FarmingManager::~FarmingManager()
 {
 	for (const auto& pa : m_pastures)
@@ -83,6 +96,9 @@ FarmingManager::~FarmingManager()
 	m_beehives.clear();
 }
 
+/** @brief Loads a farming designation (farm, grove, pasture, or beehive) from saved data.
+ *  @param vm Variant map containing the serialized designation.
+ *  @return True if the type was recognized and loaded successfully. */
 bool FarmingManager::load( QVariantMap vm )
 {
 	QString type = vm.value( "Type" ).toString();
@@ -132,6 +148,12 @@ bool FarmingManager::load( QVariantMap vm )
 	return false;
 }
 
+/** @brief Per-tick update: dispatches ticks to farms, pastures, groves, and beehives (hourly).
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged Whether the season changed.
+ *  @param dayChanged Whether the day changed.
+ *  @param hourChanged Whether the hour changed.
+ *  @param minuteChanged Whether the minute changed. */
 void FarmingManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	onTickFarm( tickNumber, seasonChanged, dayChanged, hourChanged, minuteChanged );
@@ -143,6 +165,12 @@ void FarmingManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayCha
 	}
 }
 
+/** @brief Hourly beehive update: accumulates honey and creates harvest jobs when full.
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged Whether the season changed.
+ *  @param dayChanged Whether the day changed.
+ *  @param hourChanged Whether the hour changed.
+ *  @param minuteChanged Whether the minute changed. */
 void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	for ( auto& bh : m_beehives )
@@ -156,6 +184,12 @@ void FarmingManager::onTickBeeHive( quint64 tickNumber, bool seasonChanged, bool
 	}
 }
 
+/** @brief Per-tick grove update: ticks all groves.
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged Whether the season changed.
+ *  @param dayChanged Whether the day changed.
+ *  @param hourChanged Whether the hour changed.
+ *  @param minuteChanged Whether the minute changed. */
 void FarmingManager::onTickGrove( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	for ( auto&& gr : m_groves )
@@ -164,6 +198,12 @@ void FarmingManager::onTickGrove( quint64 tickNumber, bool seasonChanged, bool d
 	}
 }
 
+/** @brief Per-tick farm update: removes empty farms hourly, then ticks all farms.
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged Whether the season changed.
+ *  @param dayChanged Whether the day changed.
+ *  @param hourChanged Whether the hour changed.
+ *  @param minuteChanged Whether the minute changed. */
 void FarmingManager::onTickFarm( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	if ( hourChanged )

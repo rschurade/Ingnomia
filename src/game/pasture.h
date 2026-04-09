@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file pasture.h
+ *  Animal pasture designation: animal assignment, capacity limits, feeding via troughs, hay harvesting, and utility buildings.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -31,6 +34,7 @@
 class Job;
 class Game;
 
+/** @brief A single tile within a pasture, holding its position, current job, and optional utility building (Trough/Shed). */
 struct PastureField
 {
 	Position pos;
@@ -38,6 +42,7 @@ struct PastureField
 	QString utilSID; // "Trough", "Shed", or empty
 };
 
+/** @brief Persistent properties of a pasture: animal type, gender limits, food settings, trough capacity, and harvest flags. */
 struct PastureProperties
 {
 	QString animalType = "";
@@ -68,6 +73,7 @@ struct PastureProperties
 	PastureProperties( QVariantMap& in );
 };
 
+/** @brief Represents an animal pasture designation, managing animal assignment, capacity, feeding, harvesting, and utility structures. */
 class Pasture : public WorldObject
 {
 	friend class AggregatorAgri;

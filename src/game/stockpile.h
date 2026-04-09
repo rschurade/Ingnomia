@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file stockpile.h
+ *  Individual stockpile instance: item filter, field capacity, container support, hauling jobs, and item limit thresholds.
+ */
 #pragma once
 
 #include "../base/filter.h"
@@ -34,6 +37,7 @@
 
 class Game;
 
+/** @brief A single tile within a stockpile, tracking position, capacity, stored items, reserved items, and optional container. */
 struct InventoryField
 {
 	Position pos;
@@ -51,6 +55,7 @@ struct InventoryField
 	QStringList allowedItems; // cached list of item types allowed in this container
 };
 
+/** @brief Per-item-type limits for a stockpile, with thresholds to suspend/activate hauling. */
 struct StockpileItemLimit
 {
 	StockpileItemLimit() {};
@@ -69,6 +74,7 @@ struct StockpileItemLimit
 
 class Job;
 
+/** @brief Represents a single stockpile designation with item filtering, hauling job creation, container support, and item count limits. */
 class Stockpile : public WorldObject
 {
 	Q_DISABLE_COPY_MOVE( Stockpile )

@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file animal.cpp
+ *  @brief Animal creature implementation: lifecycle states, taming, pasture management,
+ *         reproduction (eggs, pregnancy, birth), grazing, predator/prey behavior,
+ *         combat, and serialization.
+ */
 #include "animal.h"
 
 #include "../base/db.h"
@@ -35,6 +40,18 @@
 #include <QPainter>
 #include <QPixmap>
 
+/**
+ * @brief Constructs a new Animal from scratch (not from a save).
+ *
+ * Loads species data from the DB, initializes hunger with slight randomness,
+ * and sets the animal to either the adult or initial (egg/young) state.
+ *
+ * @param species The species identifier (e.g., "Chicken", "Cow").
+ * @param pos Spawn position in the world.
+ * @param gender The animal's gender.
+ * @param adult If true, starts at the final (adult) state; otherwise starts at state 0.
+ * @param game Pointer to the Game instance.
+ */
 Animal::Animal( QString species, Position& pos, Gender gender, bool adult, Game* game ) :
 	Creature( pos, species, gender, species, game )
 {
@@ -64,6 +81,16 @@ Animal::Animal( QString species, Position& pos, Gender gender, bool adult, Game*
 	m_type = CreatureType::ANIMAL;
 }
 
+/**
+ * @brief Constructs an Animal from a serialized save-game QVariantMap.
+ *
+ * Restores all persistent fields including tame status, pasture assignment,
+ * produce state, pregnancy, and hunger. Re-initializes DB-driven data and
+ * restores the behavior tree state.
+ *
+ * @param in The QVariantMap containing saved animal data.
+ * @param game Pointer to the Game instance.
+ */
 Animal::Animal( QVariantMap in, Game* game ) :
 	Creature( in, game ),
 	//bool m_tame = false;
@@ -100,6 +127,14 @@ Animal::Animal( QVariantMap in, Game* game ) :
 	checkInJob();
 }
 
+/**
+ * @brief Serializes the animal's state into a QVariantMap for saving.
+ *
+ * Stores all animal-specific fields (tame, pasture, hunger, produce, pregnancy, etc.)
+ * and delegates to Creature::serialize() for base class data.
+ *
+ * @param out The QVariantMap to populate with saved data.
+ */
 void Animal::serialize( QVariantMap& out )
 {
 	checkInJob(); // workaround until i find where the job leak is
@@ -127,16 +162,23 @@ void Animal::serialize( QVariantMap& out )
 	Creature::serialize( out );
 }
 
+/** @brief Default constructor. Creates an uninitialized Animal. */
 Animal::Animal() :
 	Creature( Position(), "", Gender::UNDEFINED, "", g )
 {
 	initTaskMap();
 }
 
+/** @brief Destructor. */
 Animal::~Animal()
 {
 }
 
+/**
+ * @brief Validates that the job this animal is assigned to still exists.
+ *
+ * Clears the job and follow references if the job has been removed from the job manager.
+ */
 void Animal::checkInJob()
 {
 	if ( m_inJob )
@@ -150,6 +192,10 @@ void Animal::checkInJob()
 	}
 }
 
+/**
+ * @brief Initializes the animal after construction: registers in world, sets up anatomy
+ *        and behavior tree, and restores BT state if available.
+ */
 void Animal::init()
 {
 	g->w()->insertCreatureAtPosition( m_position, m_id );
@@ -170,6 +216,12 @@ void Animal::init()
 	}
 }
 
+/**
+ * @brief Rebuilds the animal's sprite based on current state, facing direction, and dye.
+ *
+ * For multi-tile creatures, generates a list of position+sprite pairs.
+ * For single-tile creatures, creates a single sprite, optionally with dye suffix.
+ */
 void Animal::updateSprite()
 {
 	if ( m_isMulti )
@@ -226,17 +278,28 @@ void Animal::updateSprite()
 	}
 }
 
+/**
+ * @brief Sets the dye color on this animal and updates the sprite.
+ * @param dye The dye color identifier string, or empty to remove dye.
+ */
 void Animal::setDye( QString dye )
 {
 	m_dye = dye;
 	updateSprite();
 }
 
+/**
+ * @brief Returns the current dye color identifier.
+ * @return The dye string, or empty if no dye is applied.
+ */
 QString Animal::dye()
 {
 	return m_dye;
 }
 
+/**
+ * @brief Updates the animal's movement speed. Currently uses a fixed default value.
+ */
 void Animal::updateMoveSpeed()
 {
 	//TODO add animal values to movespeed table
@@ -245,6 +308,12 @@ void Animal::updateMoveSpeed()
 	m_moveSpeed = qMax( 30, speed );
 }
 
+/**
+ * @brief Registers all behavior tree condition and action callbacks for this animal.
+ *
+ * Maps string identifiers (used in behavior tree XML) to member function pointers
+ * for conditions (e.g., IsMale, IsHungry) and actions (e.g., LayEgg, RandomMove, AttackTarget).
+ */
 void Animal::initTaskMap()
 {
 	using namespace std::placeholders;
@@ -294,6 +363,14 @@ void Animal::initTaskMap()
 	m_behaviors.insert( "RandomMoveBig", std::bind( &Animal::actionRandomMoveBig, this, _1 ) );
 }
 
+/**
+ * @brief Transitions the animal to a new lifecycle state (e.g., Egg -> Young -> Adult).
+ *
+ * Loads the state's behavior tree, sprite, and behavioral flags (producer, egg-layer,
+ * grazer). Calculates the tick when the next state transition should occur.
+ *
+ * @param state Index into the Animals_States DB rows for this species.
+ */
 void Animal::setState( int state )
 {
 	m_state = state;
@@ -369,6 +446,17 @@ void Animal::setState( int state )
 	m_foodValue = m_stateMap.value( "Grazing" ).toMap().value( "FoodValue" ).toInt();
 }
 
+/**
+ * @brief Per-tick update for the animal: handles death, drowning, hunger decay,
+ *        state transitions, following, and behavior tree execution.
+ *
+ * @param tickNumber The current game tick number.
+ * @param seasonChanged True if the season changed this tick.
+ * @param dayChanged True if the day changed this tick.
+ * @param hourChanged True if the hour changed this tick.
+ * @param minuteChanged True if the minute changed this tick.
+ * @return A CreatureTickResult indicating the animal's status (OK, DEAD, TODESTROY).
+ */
 CreatureTickResult Animal::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	processCooldowns( tickNumber );
@@ -432,6 +520,12 @@ CreatureTickResult Animal::onTick( quint64 tickNumber, bool seasonChanged, bool 
 	return CreatureTickResult::OK;
 }
 
+/**
+ * @brief Moves the animal, updating wall sprites for multi-tile creatures
+ *        or delegating to Creature::move() for single-tile ones.
+ *
+ * @param oldPos The position the animal occupied before this tick's movement.
+ */
 void Animal::move( Position oldPos )
 {
 	if ( m_isMulti )
@@ -457,21 +551,37 @@ void Animal::move( Position oldPos )
 	}
 }
 
+/**
+ * @brief Checks if the animal is currently in the Egg lifecycle state.
+ * @return True if the current state is "Egg".
+ */
 bool Animal::isEgg()
 {
 	return m_stateMap.value( "ID2" ).toString() == "Egg";
 }
 
+/**
+ * @brief Checks if the animal is currently in the Young lifecycle state.
+ * @return True if the current state is "Young".
+ */
 bool Animal::isYoung()
 {
 	return m_stateMap.value( "ID2" ).toString() == "Young";
 }
 
+/**
+ * @brief Checks if the animal is currently in the Adult lifecycle state.
+ * @return True if the current state is "Adult".
+ */
 bool Animal::isAdult()
 {
 	return m_stateMap.value( "ID2" ).toString() == "Adult";
 }
 
+/** @brief BT condition: succeeds if the animal is in the Egg state.
+ *  @param halt Unused.
+ *  @return SUCCESS if egg, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsEgg( bool halt )
 {
 	if ( m_isEgg )
@@ -481,6 +591,10 @@ BT_RESULT Animal::conditionIsEgg( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is in the Young state.
+ *  @param halt Unused.
+ *  @return SUCCESS if young, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsYoung( bool halt )
 {
 	if ( m_isYoung )
@@ -490,6 +604,10 @@ BT_RESULT Animal::conditionIsYoung( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is in the Adult state.
+ *  @param halt Unused.
+ *  @return SUCCESS if adult, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsAdult( bool halt )
 {
 	if ( m_isAdult )
@@ -499,6 +617,10 @@ BT_RESULT Animal::conditionIsAdult( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal's hunger is below 30.
+ *  @param halt Unused.
+ *  @return SUCCESS if hungry, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsHungry( bool halt )
 {
 	if ( m_hunger < 30 )
@@ -508,16 +630,28 @@ BT_RESULT Animal::conditionIsHungry( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is a carnivore. Currently always fails.
+ *  @param halt Unused.
+ *  @return Always FAILURE.
+ */
 BT_RESULT Animal::conditionIsCarnivore( bool halt )
 {
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is a herbivore. Currently always fails.
+ *  @param halt Unused.
+ *  @return Always FAILURE.
+ */
 BT_RESULT Animal::conditionIsHerbivore( bool halt )
 {
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is currently pregnant.
+ *  @param halt Unused.
+ *  @return SUCCESS if pregnant (birth tick set), FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsPregnant( bool halt )
 {
 	if ( m_birthTick )
@@ -527,6 +661,10 @@ BT_RESULT Animal::conditionIsPregnant( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is pregnant and the birth tick has passed.
+ *  @param halt Unused.
+ *  @return SUCCESS if ready to give birth, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsReadyToGiveBirth( bool halt )
 {
 	if ( m_birthTick && GameState::tick > m_birthTick )
@@ -536,11 +674,19 @@ BT_RESULT Animal::conditionIsReadyToGiveBirth( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is wood vermin. Currently always fails.
+ *  @param halt Unused.
+ *  @return Always FAILURE.
+ */
 BT_RESULT Animal::conditionIsWoodVermin( bool halt )
 {
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is an egg-laying female in the current state.
+ *  @param halt Unused.
+ *  @return SUCCESS if egg layer, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsEggLayer( bool halt )
 {
 	if ( m_isEggLayer )
@@ -550,6 +696,16 @@ BT_RESULT Animal::conditionIsEggLayer( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/**
+ * @brief BT action: attempts to lay eggs if the animal is on a pasture and conditions are met.
+ *
+ * On first call, schedules the next laying time. When the scheduled tick arrives and the
+ * animal is fed, either creates egg items (if pasture harvests eggs) or spawns new egg
+ * creatures, respecting the maximum animal population cap.
+ *
+ * @param halt Unused.
+ * @return SUCCESS if eggs were laid, FAILURE otherwise.
+ */
 BT_RESULT Animal::actionLayEgg( bool halt )
 {
 	if ( m_pastureID == 0 )
@@ -609,6 +765,10 @@ BT_RESULT Animal::actionLayEgg( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: succeeds if the animal is a producer in its current state.
+ *  @param halt Unused.
+ *  @return SUCCESS if producer, FAILURE otherwise.
+ */
 BT_RESULT Animal::conditionIsProducer( bool halt )
 {
 	if ( m_isProducer )
@@ -618,6 +778,15 @@ BT_RESULT Animal::conditionIsProducer( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/**
+ * @brief BT action: produces items (e.g., wool, milk) on a timed schedule if the animal is fed.
+ *
+ * On first call, schedules the next production tick. When ready, either auto-creates
+ * items at the animal's position or increments a produce counter for manual harvest.
+ *
+ * @param halt Unused.
+ * @return SUCCESS if items were produced, FAILURE otherwise.
+ */
 BT_RESULT Animal::actionProduce( bool halt )
 {
 	if ( !m_produceTick )
@@ -659,6 +828,14 @@ BT_RESULT Animal::actionProduce( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/**
+ * @brief BT action: male adult animals attempt to impregnate a female on the same pasture.
+ *
+ * Checks population cap, cooldown since last mating, and finds a non-pregnant adult female.
+ *
+ * @param halt Unused.
+ * @return SUCCESS if a female was impregnated, FAILURE otherwise.
+ */
 BT_RESULT Animal::actionTryHaveSex( bool halt )
 {
 	if ( m_gender == Gender::MALE && m_isAdult && m_hunger > 50 )
@@ -695,6 +872,15 @@ BT_RESULT Animal::actionTryHaveSex( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/**
+ * @brief BT action: gives birth to a baby animal when the birth tick has been reached.
+ *
+ * Creates a new animal creature at the mother's position and adds it to the
+ * mother's pasture if applicable. Respects population caps.
+ *
+ * @param halt Unused.
+ * @return SUCCESS if birth occurred, FAILURE otherwise.
+ */
 BT_RESULT Animal::actionGiveBirth( bool halt )
 {
 	// birth tick reached
@@ -718,6 +904,13 @@ BT_RESULT Animal::actionGiveBirth( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/**
+ * @brief Sets or clears the animal's pregnancy state.
+ *
+ * When setting pregnant, calculates the birth tick based on species gestation days.
+ *
+ * @param pregnant True to make pregnant, false to clear.
+ */
 void Animal::setPregnant( bool pregnant )
 {
 	if ( pregnant )
@@ -732,46 +925,71 @@ void Animal::setPregnant( bool pregnant )
 	}
 }
 
+/** @brief Returns whether the animal is currently pregnant.
+ *  @return True if pregnant.
+ */
 bool Animal::isPregnant()
 {
 	return m_birthTick != 0;
 }
 
+/** @brief Sets the animal's tame status.
+ *  @param tame True to mark as tame.
+ */
 void Animal::setTame( bool tame )
 {
 	m_tame = tame;
 }
 
+/** @brief Returns whether the animal is tame.
+ *  @return True if tame.
+ */
 bool Animal::isTame()
 {
 	return m_tame;
 }
 
+/** @brief Returns whether the animal is aggressive in its current state.
+ *  @return True if the state has the IsAggro flag set.
+ */
 bool Animal::isAggro()
 {
 	return m_stateMap.value( "IsAggro" ).toBool();
 }
 
+/** @brief Assigns the animal to a pasture.
+ *  @param id The pasture ID, or 0 to unassign.
+ */
 void Animal::setPastureID( unsigned int id )
 {
 	m_pastureID = id;
 }
 
+/** @brief Returns the pasture ID this animal is assigned to.
+ *  @return The pasture ID, or 0 if unassigned.
+ */
 unsigned int Animal::pastureID()
 {
 	return m_pastureID;
 }
 
+/** @brief Returns the number of produce items ready for harvest.
+ *  @return The produced amount count.
+ */
 int Animal::numProduce()
 {
 	return m_producedAmount;
 }
 
+/** @brief Returns the item SID of the produce this animal has ready for harvest.
+ *  @return The produce item identifier string.
+ */
 QString Animal::producedItem()
 {
 	return m_produce;
 }
 
+/** @brief Resets the produce counter and clears dye after harvesting the animal's produce. */
 void Animal::harvest()
 {
 	m_producedAmount = 0;
