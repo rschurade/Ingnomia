@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopmodel.h
+ *  @brief View model and helper-component types for the Workshop window. Covers three
+ *         workshop flavours in a single model: generic crafters (recipe list + active
+ *         crafting jobs), butcher/fisher (simple flag toggles), and trader (four stock
+ *         lists with offer transfer and final-trade command).
+ */
 #ifndef __WorkshopModel_H__
 #define __WorkshopModel_H__
 
@@ -45,6 +51,7 @@ namespace IngnomiaGUI
 
 #pragma region WsPriority
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One entry in the workshop priority dropdown (e.g. "High", "Normal", "Low").
 class WsPriority final : public Noesis::BaseComponent
 {
 public:
@@ -61,6 +68,8 @@ private:
 
 #pragma region RecipeTab
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One available material option in a recipe component's material dropdown
+///        (e.g. "Oak (24)").
 class WsAvailableMaterial final : public Noesis::BaseComponent
 {
 public:
@@ -79,6 +88,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One required component in a recipe (item name + amount + material dropdown).
 class WsRequiredItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -106,6 +116,9 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the recipe list (a craftable product). Holds the per-component
+///        material dropdowns, the craft-count, the mode (once/repeat/N-times), and the
+///        "queue craft job" command.
 class WsProduct final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -144,6 +157,8 @@ private:
 #pragma region CraftingListTab
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the active crafting-job list (a queued/running craft order). Holds
+///        mode, craft count, suspended and move-back flags, and a generic button command.
 class WsCraftJob final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -189,15 +204,17 @@ private:
 
 #pragma region TradeItems
 
+/// @brief How many units the transfer buttons move per click on the trade page.
 enum class CheckedAmount : unsigned char
 {
-	Amount1,
-	Amount10,
-	Amount100,
-	AmountAll,
+	Amount1,   ///< Move 1 at a time.
+	Amount10,  ///< Move 10 at a time.
+	Amount100, ///< Move 100 at a time.
+	AmountAll, ///< Move the entire stack.
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in a trader/player stock or offer list (item + material + quality + count).
 class WsTradeItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -224,21 +241,32 @@ private:
 #pragma endregion TradeItems
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Workshop window view model. Composes the recipe list, active craft-job list,
+///        trader stock/offer lists, and workshop flags (butcher, fisher, trader) for the
+///        currently selected workshop. Talks to the game side via WorkshopProxy.
 class WorkshopModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	WorkshopModel();
 
+	/// @brief Replaces the top-level info (flags, priority, recipes) for a new workshop.
 	void onUpdateInfo( const GuiWorkshopInfo& WorkshopInfo );
+	/// @brief Refreshes only the active crafting-job list (after add/cancel/reorder).
 	void onUpdateCraftList( const GuiWorkshopInfo& WorkshopInfo );
 
+	/// @brief Replaces the trader's stock list (trader arrives / leaves).
 	void updateTraderStock( const QList<GuiTradeItem>& items );
+	/// @brief Replaces the player's stock list visible to the trader.
 	void updatePlayerStock( const QList<GuiTradeItem>& items );
 
+	/// @brief Updates a single row in the trader stock list (count change after transfer).
 	void updateTraderStockItem( const GuiTradeItem& item );
+	/// @brief Updates a single row in the player stock list (count change after transfer).
 	void updatePlayerStockItem( const GuiTradeItem& item );
 
+	/// @brief Updates the displayed total value of the trader's offer.
 	void updateTraderValue( int value );
+	/// @brief Updates the displayed total value of the player's offer.
 	void updatePlayerValue( int value );
 
 private:
@@ -355,20 +383,20 @@ private:
 
 #pragma endregion TradeItemLists
 
-	WorkshopProxy* m_proxy = nullptr;
+	WorkshopProxy* m_proxy = nullptr; ///< Qt-side proxy for signal/slot bridge to the game.
 
-	unsigned int m_workshopID = 0;
-	Noesis::String m_name     = "-Workshop-";
-	bool m_suspended          = false;
-	bool m_acceptGenerated    = false;
-	bool m_autoCraftMissing   = false;
-	bool m_connectStockpile   = false;
-	bool m_butcherCorpses     = false;
-	bool m_butcherExcess      = false;
-	bool m_catchFish          = false;
-	bool m_processFish        = false;
+	unsigned int m_workshopID = 0;            ///< Backing workshop ID in the game world.
+	Noesis::String m_name     = "-Workshop-"; ///< Display name.
+	bool m_suspended          = false;        ///< Paused crafting flag.
+	bool m_acceptGenerated    = false;        ///< Accept auto-generated craft jobs.
+	bool m_autoCraftMissing   = false;        ///< Auto-queue missing prerequisite items.
+	bool m_connectStockpile   = false;        ///< Link input stockpile to this workshop.
+	bool m_butcherCorpses     = false;        ///< Butcher: slaughter corpses.
+	bool m_butcherExcess      = false;        ///< Butcher: slaughter excess livestock.
+	bool m_catchFish          = false;        ///< Fisher: catch fish.
+	bool m_processFish        = false;        ///< Fisher: process caught fish.
 
-	QString m_gui;
+	QString m_gui; ///< Workshop GUI flavour tag (normal / butcher / fisher / trader).
 
 	NS_DECLARE_REFLECTION( WorkshopModel, NotifyPropertyChangedBase )
 };
