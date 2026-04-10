@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorselection.cpp
+ *  @brief AggregatorSelection implementation: mouse-to-tile ray casting, cursor preview grid
+ *         construction, and click/rotate dispatch to Global::sel (the active selection action).
+ */
 #include "aggregatorselection.h"
 
 #include "../base/db.h"
@@ -29,36 +33,55 @@
 
 #include <QDebug>
 
+/// @brief Constructs the AggregatorSelection and registers SelectionData as a metatype.
+/// @param parent Qt parent object.
 AggregatorSelection::AggregatorSelection( QObject* parent ) :
 	QObject( parent )
 {
 	qRegisterMetaType<SelectionData>();
 }
 
+/// @brief Destructor.
 AggregatorSelection::~AggregatorSelection()
 {
 }
 
+/// @brief Relays an action-string change to the GUI (e.g. "DigFloor").
+/// @param action New action string.
 void AggregatorSelection::onActionChanged( const QString action )
 {
 	emit signalAction( action );
 }
 
+/// @brief Relays the current cursor position string to the GUI.
+/// @param pos Formatted cursor position.
 void AggregatorSelection::onUpdateCursorPos( const QString pos )
 {
 	emit signalCursorPos( pos );
 }
 
+/// @brief Relays the first-click anchor position (start of a drag rect) to the GUI.
+/// @param pos Formatted anchor position.
 void AggregatorSelection::onUpdateFirstClick( const QString pos )
 {
 	emit signalFirstClick( pos );
 }
 
+/// @brief Relays the current drag rect size to the GUI.
+/// @param size Formatted size string.
 void AggregatorSelection::onUpdateSize( const QString size )
 {
 	emit signalSize( size );
 }
 
+/// @brief Caches the renderer's current view parameters so the cursor raycaster can project
+///        screen coordinates into world tiles.
+/// @param width    Viewport width in pixels.
+/// @param height   Viewport height in pixels.
+/// @param moveX    Camera X offset.
+/// @param moveY    Camera Y offset.
+/// @param scale    Camera zoom.
+/// @param rotation Camera rotation index (0–3).
 void AggregatorSelection::onRenderParams( int width, int height, int moveX, int moveY, float scale, int rotation )
 {
 	m_width    = width;
@@ -69,6 +92,12 @@ void AggregatorSelection::onRenderParams( int width, int height, int moveX, int 
 	m_rotation = rotation;
 }
 
+/// @brief Handles mouse move: recomputes the cursor tile, updates the active Selection,
+///        and refreshes the preview grid.
+/// @param mouseX Viewport-relative mouse X.
+/// @param mouseY Viewport-relative mouse Y.
+/// @param shift  True if Shift is held (locks Z to view level).
+/// @param ctrl   True if Ctrl is held (selection modifier).
 void AggregatorSelection::onMouse( int mouseX, int mouseY, bool shift, bool ctrl )
 {
 	if ( Global::sel )
@@ -82,6 +111,10 @@ void AggregatorSelection::onMouse( int mouseX, int mouseY, bool shift, bool ctrl
 	}
 }
 
+/// @brief Handles left-click: either commits the active Selection's action on the current
+///        cursor tile or emits a plain tile-selected signal for info windows.
+/// @param shift True if Shift is held.
+/// @param ctrl  True if Ctrl is held.
 void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 {
 	if ( Global::sel )
@@ -100,6 +133,7 @@ void AggregatorSelection::onLeftClick( bool shift, bool ctrl )
 	}
 }
 
+/// @brief Handles right-click: cancels the active Selection or removes the last anchor.
 void AggregatorSelection::onRightClick()
 {
 	if ( Global::sel )
@@ -109,6 +143,7 @@ void AggregatorSelection::onRightClick()
 	}
 }
 
+/// @brief Rotates the active Selection 90° and refreshes the preview grid.
 void AggregatorSelection::onRotateSelection()
 {
 	if ( Global::sel )
@@ -118,6 +153,10 @@ void AggregatorSelection::onRotateSelection()
 	}
 }
 
+/// @brief Returns whether the tile at @p pos has a wall that the cursor ray caster should
+///        snap to (solid wall or a wall-overlay job).
+/// @param pos World position.
+/// @return true if the tile exposes a selectable wall.
 static bool isSelectableWall( const Position& pos )
 {
 	const auto w     = Global::eventConnector->game()->w();
@@ -133,6 +172,11 @@ static bool isSelectableWall( const Position& pos )
 	return false;
 }
 
+/// @brief Returns whether the tile at @p pos exposes a selectable floor: a real floor, an
+///        overlay floor job, or (if @p snapToWallBelow is set) a wall on the tile below.
+/// @param pos              World position.
+/// @param snapToWallBelow  If true, accept walls on the tile directly below as floors.
+/// @return true if the tile exposes a selectable floor.
 static bool isSelectableFloor( const Position& pos, bool snapToWallBelow )
 {
 	const auto w     = Global::eventConnector->game()->w();
@@ -156,6 +200,15 @@ static bool isSelectableFloor( const Position& pos, bool snapToWallBelow )
 	return false;
 }
 
+/// @brief Projects a screen-space mouse position into a world tile using the current camera
+///        rotation/zoom/offset. Walks down through z-levels until a selectable floor is found
+///        (or @p useViewLevel forces the cursor to stay at the current view level). Adjusts
+///        for tile occlusion by walls when walls-lowered mode is off.
+/// @param mouseX       Viewport X in pixels.
+/// @param mouseY       Viewport Y in pixels.
+/// @param isFloor      True if the current action targets floors (affects snapping).
+/// @param useViewLevel True to force cursor Z to the current view level (Shift held).
+/// @return World-space tile position under the mouse.
 Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, bool useViewLevel ) const
 {
 	if ( !Global::sel || !Global::eventConnector || !Global::eventConnector->game() || !Global::eventConnector->game()->w() )
@@ -324,6 +377,10 @@ Position AggregatorSelection::calcCursor( int mouseX, int mouseY, bool isFloor, 
 	return cursorPos;
 }
 
+/// @brief Rebuilds the preview sprite grid for the active action: picks sprites per action
+///        kind (construction, workshop, furniture, or generic tile action), applies the
+///        current rotation to their offsets, and marks each tile as valid/invalid based on
+///        the Selection's per-tile hit test. Emits signalUpdateSelection to the renderer.
 void AggregatorSelection::updateSelection()
 {
 	if ( Global::sel->changed() )
@@ -509,6 +566,11 @@ void AggregatorSelection::updateSelection()
 	}
 }
 
+/// @brief Encodes a world position into a unique integer key that also reflects the camera
+///        rotation, so the preview grid is addressable even when rotated.
+/// @param pos      World position.
+/// @param rotation Camera rotation index (0–3).
+/// @return Encoded tile key.
 unsigned int AggregatorSelection::posToInt( Position pos, quint8 rotation )
 {
 	//return x + Global::dimX * y + Global::dimX * Global::dimX * z;

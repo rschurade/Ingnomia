@@ -15,6 +15,11 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorsound.h
+ *  @brief OpenAL-based spatial sound aggregator. Loads effect buffers on demand, spawns
+ *         per-effect sources, tracks their position relative to the camera, and applies
+ *         low-pass occlusion filters based on how many z-levels separate listener and source.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -27,14 +32,17 @@ class Job;
 class Game;
 struct SoundEffect;
 
+/// @brief One currently playing sound effect (positioned in world space or absolute).
 struct ActiveEffect
 {
-	bool isAbsolute;
-	Position pos;
-	std::shared_ptr<AL::Source> sound;
+	bool isAbsolute;                   ///< True for HUD sounds (ignore camera position).
+	Position pos;                      ///< World-space source position.
+	std::shared_ptr<AL::Source> sound; ///< OpenAL source handle.
 };
 
 //TODO THe logic in this class doesn't belong in the "Aggregator" (server side!), it belongs with the UI
+/// @brief GUI-thread aggregator that owns the OpenAL context and plays positional sound
+///        effects on demand.
 class AggregatorSound : public QObject
 {
 	Q_OBJECT
@@ -46,16 +54,16 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g;
-	QList<ActiveEffect> m_activeEffects;
-	QMap<QString, std::shared_ptr<AL::Buffer>> m_buffers;
-	std::shared_ptr<AL::Context> m_audioContext;
-	std::shared_ptr<AL::Listener> m_audioListener;
-	static constexpr size_t maxOcclusion = 8;
-	std::vector<std::shared_ptr<AL::Filter>> m_occlusionFilter;
+	QPointer<Game> g;                                      ///< Game instance (weak ownership).
+	QList<ActiveEffect> m_activeEffects;                   ///< Currently playing sources.
+	QMap<QString, std::shared_ptr<AL::Buffer>> m_buffers;  ///< Buffer cache keyed by sound name.
+	std::shared_ptr<AL::Context> m_audioContext;           ///< OpenAL context.
+	std::shared_ptr<AL::Listener> m_audioListener;         ///< OpenAL listener (the camera).
+	static constexpr size_t maxOcclusion = 8;              ///< Highest occlusion filter index.
+	std::vector<std::shared_ptr<AL::Filter>> m_occlusionFilter; ///< Pre-built low-pass filters by occlusion depth.
 
-	int m_viewLevel = 100;
-	Position m_viewDirection;
+	int m_viewLevel = 100;                                 ///< Current camera z-level.
+	Position m_viewDirection;                              ///< Current camera world-space position.
 
 	bool rebalanceSound( ActiveEffect& effect );
 	void garbageCollection();
