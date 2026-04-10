@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file eventconnector.cpp
+ *  @brief EventConnector implementation: owns all Aggregator instances, bridges game-thread
+ *         and GUI-thread signals, and implements the various high-level commands that the
+ *         GUI issues (start/stop/load/save game, build, terrain commands, selection, etc.).
+ */
 #include "eventconnector.h"
 
 #include "aggregatoragri.h"
@@ -47,6 +52,10 @@
 
 #include <QDebug>
 
+/// @brief Constructs the EventConnector and instantiates every Aggregator. Wires the
+///        Selection aggregator's tile-select signal directly into the TileInfo aggregator
+///        so clicking the map opens the Tile Info window without going through the main menu.
+/// @param parent Owning GameManager.
 EventConnector::EventConnector( GameManager* parent ) :
 	gm( parent ),
 	QObject( parent )
@@ -70,60 +79,91 @@ EventConnector::EventConnector( GameManager* parent ) :
 	connect( m_selectionAggregator, &AggregatorSelection::signalSelectTile, m_tiAggregator, &AggregatorTileInfo::onShowTileInfo );
 }
 
+/// @brief Updates the stored Game pointer; called on new game / load game.
+/// @param game New Game instance (or nullptr when the game is unloaded).
 void EventConnector::setGamePtr( Game* game )
 {
 	g = game;
 }
 
+/// @brief Destructor.
 EventConnector::~EventConnector()
 {
 }
 
+/// @brief Emits signalExit to ask the GUI shell to quit the application.
 void EventConnector::onExit()
 {
 	emit signalExit();
 }
 
+/// @brief Forwards a window-size change from the GUI shell to the renderer.
+/// @param w New width in pixels.
+/// @param h New height in pixels.
 void EventConnector::onWindowSize( int w, int h )
 {
 	emit signalWindowSize( w, h );
 }
 
+/// @brief Relays the in-game clock to the GUI status bar.
+/// @param minute    Current minute (0–59).
+/// @param hour      Current hour (0–23).
+/// @param day       Current day of month.
+/// @param season    Localised season name.
+/// @param year      Current year.
+/// @param sunStatus "Day" / "Night" / "Twilight" string.
 void EventConnector::onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )
 {
 	emit signalTimeAndDate( minute, hour, day, season, year, sunStatus );
 }
 
+/// @brief Relays kingdom stats (name plus three info strings) to the GUI top bar.
+/// @param name  Kingdom name.
+/// @param info1 First info line (usually population).
+/// @param info2 Second info line.
+/// @param info3 Third info line.
 void EventConnector::onKingdomInfo( QString name, QString info1, QString info2, QString info3 )
 {
 	emit signalKingdomInfo( name, info1, info2, info3 );
 }
 
+/// @brief Forwards a heartbeat pulse to the GUI (used to detect frozen simulation).
+/// @param value Heartbeat counter value.
 void EventConnector::onHeartbeat( int value)
 {
 	emit signalHeartbeat( value );
 }
 
+/// @brief Records a heartbeat acknowledgment from the GUI back in GameManager.
+/// @param value Acknowledgment value.
 void EventConnector::onHeartbeatResponse( int value)
 {
 	gm->setHeartbeatResponse( value );
 }
 
+/// @brief Relays the current view-level z-coordinate to the GUI.
+/// @param level Z-level index.
 void EventConnector::onViewLevel( int level )
 {
 	emit signalViewLevel( level );
 }
 
+/// @brief Sets the simulation paused state via GameManager.
+/// @param paused True to pause.
 void EventConnector::onSetPause( bool paused )
 {
 	gm->setPaused( paused );
 }
 
+/// @brief Sets the simulation speed via GameManager.
+/// @param speed New speed enum.
 void EventConnector::onSetGameSpeed( GameSpeed speed )
 {
 	gm->setGameSpeed( speed );
 }
 
+/// @brief Handles a GUI key press. Currently only forwards Escape as signalKeyEsc.
+/// @param key Qt key code.
 void EventConnector::onKeyPress( int key )
 {
 	switch ( key )
@@ -134,21 +174,28 @@ void EventConnector::onKeyPress( int key )
 	}
 }
 
+/// @brief Toggles the paused flag and emits the updated state to the GUI.
 void EventConnector::onTogglePause()
 {
 	emit signalUpdatePause( !gm->paused() );
 }
 
+/// @brief Propagates an Escape key press through the GUI stack (close top window).
 void EventConnector::onPropagateEscape()
 {
 	emit signalPropagateKeyEsc();
 }
 
+/// @brief Emits signalBuild so the GUI opens the build menu.
 void EventConnector::onBuild()
 {
 	emit signalBuild();
 }
 
+/// @brief Turns a terrain context-menu command into a job queued on the target tile.
+///        Supports Mine, Remove, Fell, Destroy, and Harvest (trees vs crops).
+/// @param tileID Target tile UID.
+/// @param cmd    Command keyword.
 void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 {
 	if ( cmd == "Mine" )
@@ -176,6 +223,9 @@ void EventConnector::onTerrainCommand( unsigned int tileID, QString cmd )
 	}
 }
 
+/// @brief Opens the appropriate management window for a tile's designation (workshop,
+///        stockpile, farm/pasture/grove, or room) based on its tile flags.
+/// @param tileID Target tile UID.
 void EventConnector::onManageCommand( unsigned int tileID )
 {
 	if ( gm->game() && gm->game()->world() )
@@ -207,117 +257,164 @@ void EventConnector::onManageCommand( unsigned int tileID )
 }
 
 
+/// @brief Applies render-option checkboxes to the Global toggles that control overlays.
+/// @param designations True to show designation overlays.
+/// @param jobs         True to show job overlays.
+/// @param walls        True to lower walls (walls become half-height).
+/// @param axles        True to show mechanism axles.
 void EventConnector::onSetRenderOptions( bool designations, bool jobs, bool walls, bool axles )
 {
-	
+
 	Global::wallsLowered = walls;
 	Global::showDesignations = designations;
 	Global::showJobs = jobs;
 	Global::showAxles = axles;
-	
-	
+
+
 }
 
+/// @brief Emits the current render-option Globals so the GUI can reflect them.
 void EventConnector::onUpdateRenderOptions()
 {
 	emit signalUpdateRenderOptions( Global::showDesignations, Global::showJobs, Global::wallsLowered, Global::showAxles );
 }
 
+/// @brief Relays a sound effect request (QVariantMap form) to the sound aggregator.
+/// @param effect Sound-effect descriptor.
 void EventConnector::onPlayEffect( QVariantMap effect)
 {
 	emit signalPlayEffect( effect);
 }
 
+/// @brief Relays the renderer's current camera position to any listeners (e.g. sound).
+/// @param x     Camera X.
+/// @param y     Camera Y.
+/// @param z     Camera Z.
+/// @param r     Rotation index.
+/// @param scale Zoom factor.
 void EventConnector::onCameraPosition( float x, float y, float z, int r, float scale )
 {
 	emit signalCameraPosition( x, y, z, r, scale );
 }
 
+/// @brief Emits startGame so GameManager can switch the GUI into gameplay state.
 void EventConnector::emitStartGame()
 {
 	emit startGame();
 }
-	
+
+/// @brief Emits stopGame so GameManager can unload the current game and return to the menu.
 void EventConnector::emitStopGame()
 {
 	emit stopGame();
 }
 
+/// @brief Asks the GUI to initialise the gameplay viewport.
 void EventConnector::emitInitView()
 {
 	emit signalInitView();
 }
 
+/// @brief Toggles in-menu mode on the GUI (shows/hides the main menu overlay).
+/// @param value True when the main menu is active.
 void EventConnector::emitInMenu( bool value )
 {
 	emit signalInMenu( value );
 }
-	
+
+/// @brief Starts a new game via GameManager.
 void EventConnector::onStartNewGame()
 {
 	gm->startNewGame();
 }
 
+/// @brief Continues the most recent save via GameManager.
 void EventConnector::onContinueLastGame()
 {
 	gm->continueLastGame();
 }
 
+/// @brief Loads a specific save folder via GameManager.
+/// @param folder Absolute path to the save folder.
 void EventConnector::onLoadGame( QString folder )
 {
 	gm->loadGame( folder );
 }
 
+/// @brief Saves the current game via GameManager.
 void EventConnector::onSaveGame()
 {
 	gm->saveGame();
 }
 
+/// @brief Forwards the show-main-menu flag to GameManager.
+/// @param value True to show the main menu overlay.
 void EventConnector::onSetShowMainMenu( bool value )
 {
 	gm->setShowMainMenu( value );
 }
 
+/// @brief Ends the current game via GameManager (returns to main menu).
 void EventConnector::onEndGame()
 {
 	gm->endCurrentGame();
 }
 
+/// @brief Asks the GUI to resume from a paused state.
 void EventConnector::sendResume()
 {
 	emit signalResume();
 }
-	
+
+/// @brief Notifies the GUI that a load-game operation finished.
+/// @param value True on success.
 void EventConnector::sendLoadGameDone( bool value )
 {
 	emit signalLoadGameDone( value );
 }
 
+/// @brief Emits a paused-state change so the GUI can update the pause indicator.
+/// @param paused New paused flag.
 void EventConnector::emitPause( bool paused )
 {
 	emit signalUpdatePause( paused );
 }
-	
+
+/// @brief Emits a speed change so the GUI can update the speed indicator.
+/// @param speed New speed enum.
 void EventConnector::emitGameSpeed( GameSpeed speed )
 {
 	emit signalUpdateGameSpeed( speed );
 }
 
+/// @brief Sets the active Global::sel action string (e.g. "DigFloor").
+/// @param action Action keyword.
 void EventConnector::onSetSelectionAction( QString action )
 {
 	Global::sel->setAction( action );
 }
-	
+
+/// @brief Sets the active Global::sel item ID (e.g. the sprite to preview).
+/// @param item Item string ID.
 void EventConnector::onSetSelectionItem( QString item )
 {
 	Global::sel->setItemID( item );
 }
 
+/// @brief Sets the active Global::sel material list.
+/// @param mats Materials to use for the current action.
 void EventConnector::onSetSelectionMaterials( QStringList mats )
 {
 	Global::sel->setMaterials( mats );
 }
 
+/// @brief Entry point for build menu clicks. Picks the correct action string based on
+///        BuildItemType and the DB construction type, then initialises Global::sel with
+///        the chosen materials and item and emits signalBuild so the GUI enters placement mode.
+/// @param type  Build kind (workshop/terrain/item).
+/// @param param Optional action prefix (e.g. "FillHole" or "BuildFancy").
+/// @param item  Item/construction/workshop ID.
+/// @param mats  Materials selected per component.
 void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item, QStringList mats )
 {
 	switch ( type )
@@ -368,16 +465,27 @@ void EventConnector::onCmdBuild( BuildItemType type, QString param, QString item
 	emit signalBuild();
 }
 
+/// @brief Relays a game event notification (e.g. trader arrival, invasion warning) to the GUI.
+/// @param id    Event UID.
+/// @param title Event title.
+/// @param msg   Body message.
+/// @param pause True if the event should pause the game when shown.
+/// @param yesno True if the event needs a yes/no answer.
 void EventConnector::onEvent( unsigned int id, QString title, QString msg, bool pause, bool yesno )
 {
 	emit signalEvent( id, title, msg, pause, yesno );
 }
 
+/// @brief Forwards a user's yes/no answer to the event back to EventManager.
+/// @param id     Event UID.
+/// @param answer User's answer (true = yes).
 void EventConnector::onAnswer( unsigned int id, bool answer )
 {
 	g->em()->onAnswer( id, answer );
 }
 
+/// @brief Returns the current Game instance pointer.
+/// @return Game pointer, or nullptr if no game is loaded.
 Game* EventConnector::game()
 {
 	return g;
