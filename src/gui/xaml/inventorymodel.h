@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventorymodel.h
+ *  @brief View model and helper-component types for the Inventory window. The window shows
+ *         a four-level tree (category → group → item → material) with checkboxes that drive
+ *         the global watch list, plus per-row in-stock / total counts.
+ */
 #pragma once
 
 #include "../aggregatorinventory.h"
@@ -44,6 +49,8 @@ namespace IngnomiaGUI
 
 #pragma region FilterItems
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Leaf row in the inventory tree: one (item, material) pair with a watch checkbox
+///        and per-row counts. Toggling the checkbox forwards a watch update to the proxy.
 class InvMaterialItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -74,6 +81,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Item-level row in the inventory tree. Holds a tri-state checkbox (off / partial /
+///        on) reflecting the watch state of its child materials, and aggregate counts.
 class InvItemItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -111,6 +120,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Group-level row in the inventory tree (e.g. "Weapons"). Same tri-state pattern as InvItemItem.
 class InvGroupItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -149,6 +159,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Top-level category row in the inventory tree (e.g. "Tools"). Hosts InvGroupItem children.
 class InvCategoryItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -188,11 +199,14 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Inventory window view model. Hosts the four-level category tree and exposes it
+///        to XAML through the Categories property.
 class InventoryModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	InventoryModel();
 
+	/// @brief Replaces the category tree with fresh data from the inventory aggregator.
 	void updateCategories( const QList<GuiInventoryCategory>& categories );
 
 private:

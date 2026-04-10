@@ -15,12 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file Main.xaml.cpp
+ *  @brief Main user-control implementation: loads Main.xaml on construction. Main acts as
+ *         the root visual that hosts the page navigation between MainPage, NewGamePage,
+ *         LoadGamePage, SettingsPage, and IngamePage.
+ */
 #include "Main.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the root Main user control and registers the Loaded delegate.
 Main::Main()
 {
 	Loaded() += MakeDelegate( this, &Main::OnLoaded );
@@ -28,16 +34,19 @@ Main::Main()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the Main.xaml resource into this user control.
 void Main::InitializeComponent()
 {
 	GUI::LoadComponent( this, "Main.xaml" );
 }
 
+/// @brief Noesis event-connection callback. Main has no code-behind events.
 bool Main::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — currently a no-op.
 void Main::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

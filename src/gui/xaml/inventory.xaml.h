@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventory.xaml.h
+ *  @brief Code-behind for the Inventory window (InventoryGui.xaml). State lives in InventoryModel.
+ */
 #pragma once
 
 #include <NoesisPCH.h>
@@ -23,6 +26,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the InventoryGui Noesis user control.
 class InventoryGui final : public Noesis::UserControl
 {
 public:
