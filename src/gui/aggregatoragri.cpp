@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatoragri.cpp
+ *  @brief AggregatorAgri implementation: builds the global plant/tree/animal lists at init,
+ *         handles open/update/close for farm, pasture, and grove designations, and routes
+ *         user-triggered setting changes back to the game-side managers.
+ */
 #include "aggregatoragri.h"
 #include "../game/game.h"
 
@@ -39,6 +44,9 @@
 
 #include <QDebug>
 
+/// @brief Constructs the AggregatorAgri and registers all Gui*Info structs with Qt's metatype
+///        system so they can cross thread boundaries via queued signal/slot connections.
+/// @param parent Qt parent object.
 AggregatorAgri::AggregatorAgri( QObject* parent ) :
 	QObject(parent)
 {
@@ -49,6 +57,10 @@ AggregatorAgri::AggregatorAgri( QObject* parent ) :
 	qRegisterMetaType<QList<GuiAnimal>>();
 }
 
+/// @brief Binds the aggregator to a specific Game instance and pre-builds the global plant,
+///        tree, and pasture-animal catalogues by querying the Plants and Animals DB tables.
+///        Each entry gets a small preview sprite for the GUI.
+/// @param game Game instance to bind to.
 void AggregatorAgri::init( Game* game )
 {
 	g = game;
@@ -124,10 +136,12 @@ void AggregatorAgri::init( Game* game )
 	}
 }
 
+/// @brief Destructor.
 AggregatorAgri::~AggregatorAgri()
 {
 }
 
+/// @brief Clears the cached farm/pasture/grove IDs when the Agriculture window closes.
 void AggregatorAgri::onCloseWindow()
 {
 	m_farmInfo.ID    = 0;
@@ -136,6 +150,11 @@ void AggregatorAgri::onCloseWindow()
 	m_currentTileID  = 0;
 }
 
+/// @brief Opens the Agriculture GUI for the designation at @p tileID. Detects whether the tile
+///        belongs to a farm, pasture, or grove and triggers the matching update. Emits
+///        signalShowAgri so the GUI shell can raise the window.
+/// @param designation Tile-flag indicating the designation kind.
+/// @param tileID      Integer position key of the clicked tile.
 void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 {
 	if( !g ) return;
@@ -186,21 +205,26 @@ void AggregatorAgri::onOpen( TileFlag designation, unsigned int tileID )
 	emit signalShowAgri( tileID );
 }
 
+/// @brief Emits the cached global plant list for the GUI's farm-product dropdown.
 void AggregatorAgri::onRequestGlobalPlantInfo()
 {
 	emit signalGlobalPlantInfo( m_globalPlantInfo );
 }
 
+/// @brief Emits the cached global tree list for the GUI's grove-product dropdown.
 void AggregatorAgri::onRequestGlobalTreeInfo()
 {
 	emit signalGlobalTreeInfo( m_globalTreeInfo );
 }
 
+/// @brief Emits the cached global pasture-animal list for the GUI's pasture-product dropdown.
 void AggregatorAgri::onRequestGlobalAnimalInfo()
 {
 	emit signalGlobalAnimalInfo( m_globalAnimalInfo );
 }
 
+/// @brief Dispatches a generic update notification to the correct per-type update handler.
+/// @param designationID UID of the designation whose state changed.
 void AggregatorAgri::onUpdate( unsigned int designationID )
 {
 	//qDebug() << "AggregatorAgri::onUpdate";
@@ -218,6 +242,9 @@ void AggregatorAgri::onUpdate( unsigned int designationID )
 	}
 }
 
+/// @brief Refreshes cached farm state for the currently open farm and emits signalUpdateFarm.
+///        Also re-requests product info if the crop type changed since last refresh.
+/// @param id Farm UID. Ignored if it doesn't match m_farmInfo.ID.
 void AggregatorAgri::onUpdateFarm( unsigned int id )
 {
 	if( !g ) return;
@@ -253,6 +280,10 @@ void AggregatorAgri::onUpdateFarm( unsigned int id )
 	}
 }
 
+/// @brief Refreshes cached pasture state for the currently open pasture: counts, capacities,
+///        food/hay levels, and the food allow-list. Always triggers a product-info request at
+///        the end so the GUI receives a fully populated GuiPastureInfo with species details.
+/// @param id Pasture UID. Ignored if it doesn't match m_pastureInfo.ID.
 void AggregatorAgri::onUpdatePasture( unsigned int id )
 {
 	if( !g ) return;
@@ -330,6 +361,9 @@ void AggregatorAgri::onUpdatePasture( unsigned int id )
 	}
 }
 
+/// @brief Refreshes cached grove state (plot count, tree count, pick/plant/fell flags, species)
+///        and emits signalUpdateGrove. Re-requests product info if the tree type changed.
+/// @param id Grove UID. Ignored if it doesn't match m_groveInfo.ID.
 void AggregatorAgri::onUpdateGrove( unsigned int id )
 {
 	if( !g ) return;
@@ -371,6 +405,13 @@ void AggregatorAgri::onUpdateGrove( unsigned int id )
 	}
 }
 
+/// @brief Applies name, priority, and suspended state edits from the GUI to the appropriate
+///        farm/pasture/grove object.
+/// @param type          Kind of designation being edited.
+/// @param designationID UID of the designation.
+/// @param name          New display name.
+/// @param priority      New priority index.
+/// @param suspended     New suspended state.
 void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationID, QString name, int priority, bool suspended )
 {
 	if( !g ) return;
@@ -416,6 +457,11 @@ void AggregatorAgri::onSetBasicOptions( AgriType type, unsigned int designationI
 	}
 }
 
+/// @brief Applies a product change (crop, animal species, or tree species) from the GUI to the
+///        target designation and requests a fresh product-info payload to refresh the view.
+/// @param type          Kind of designation.
+/// @param designationID UID of the designation.
+/// @param productSID    New product string ID (plant / animal / tree).
 void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QString productSID )
 {
 	if( !g ) return;
@@ -461,6 +507,13 @@ void AggregatorAgri::onSelectProduct( AgriType type, unsigned designationID, QSt
 	}
 }
 
+/// @brief Applies harvest/hay/tame checkbox changes from the GUI. Farm supports harvest only;
+///        pasture additionally supports harvestHay and tame wild; grove is handled separately.
+/// @param type          Kind of designation.
+/// @param designationID UID of the designation.
+/// @param harvest       Harvest-enabled flag.
+/// @param harvestHay    Hay-harvest flag (pasture only).
+/// @param tame          Tame-wild flag (pasture only).
 void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designationID, bool harvest, bool harvestHay, bool tame )
 {
 	if( !g ) return;
@@ -493,6 +546,11 @@ void AggregatorAgri::onSetHarvestOptions( AgriType type, unsigned int designatio
 	}
 }
 
+/// @brief Applies grove pick/plant/fell checkbox changes from the GUI to the target grove.
+/// @param groveID Grove UID.
+/// @param pick    True to pick fruit.
+/// @param plant   True to plant new saplings.
+/// @param fell    True to fell mature trees.
 void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool plant, bool fell )
 {
 	if( !g ) return;
@@ -510,6 +568,11 @@ void AggregatorAgri::onSetGroveOptions( unsigned int groveID, bool pick, bool pl
 	}
 }
 
+/// @brief Collects the full GuiPlant / GuiAnimal product details (sprite, seeds, stock counts,
+///        assigned animal roster) for the given designation and emits the matching
+///        signalUpdateFarm / signalUpdatePasture / signalUpdateGrove.
+/// @param type          Kind of designation.
+/// @param designationID UID of the designation.
 void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designationID )
 {
 	if( !g ) return;
@@ -630,6 +693,9 @@ void AggregatorAgri::onRequestProductInfo( AgriType type, unsigned int designati
 	}
 }
 
+/// @brief Applies the max-male-animals cap edit from the GUI to the target pasture.
+/// @param pastureID Pasture UID.
+/// @param max       New maximum male animal count.
 void AggregatorAgri::onSetMaxMale( unsigned int pastureID, int max )
 {
 	if( !g ) return;
@@ -643,6 +709,9 @@ void AggregatorAgri::onSetMaxMale( unsigned int pastureID, int max )
 	}
 }
 	
+/// @brief Applies the max-female-animals cap edit from the GUI to the target pasture.
+/// @param pastureID Pasture UID.
+/// @param max       New maximum female animal count.
 void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 {
 	if( !g ) return;
@@ -656,6 +725,9 @@ void AggregatorAgri::onSetMaxFemale( unsigned int pastureID, int max )
 	}
 }
 
+/// @brief Flags or clears the butcher mark on a specific animal.
+/// @param animalID Creature UID.
+/// @param value    True to mark for butcher, false to clear.
 void AggregatorAgri::onSetButchering( unsigned int animalID, bool value )
 {
 	if( !g ) return;
@@ -667,16 +739,25 @@ void AggregatorAgri::onSetButchering( unsigned int animalID, bool value )
 	}
 }
 
+/// @brief Refreshes the pasture animal roster by delegating to onRequestProductInfo().
+/// @param pastureID Pasture UID.
 void AggregatorAgri::onRequestPastureAnimalInfo( unsigned int pastureID )
 {
 	onRequestProductInfo( AgriType::Pasture, pastureID );
 }
 
+/// @brief Refreshes the pasture food allow-list by delegating to onRequestProductInfo().
+/// @param pastureID Pasture UID.
 void AggregatorAgri::onRequestPastureFoodInfo( unsigned int pastureID )
 {
 	onRequestProductInfo( AgriType::Pasture, pastureID );
 }
 
+/// @brief Adds or removes a (item, material) pair from the pasture's food allow-list.
+/// @param pastureID   Pasture UID.
+/// @param itemSID     Food item string ID.
+/// @param materialSID Food material string ID.
+/// @param checked     True to allow, false to disallow.
 void AggregatorAgri::onSetFoodItemChecked( unsigned int pastureID, QString itemSID, QString materialSID, bool checked )
 {
 	if( !g ) return;

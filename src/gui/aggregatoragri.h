@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatoragri.h
+ *  @brief Data transfer types and aggregator that collates farm/pasture/grove state for the
+ *         Agriculture XAML window. Lives on the GUI side and marshals game-thread data into
+ *         Qt signals the Noesis view models can consume.
+ */
 #pragma once
 
 #include "../base/tile.h"
@@ -24,138 +29,149 @@
 
 class Game;
 
+/// @brief Summary of a single animal species for global animal counts.
 struct GuiAnimal
 {
-	QString name;
-	QString animalID;
-	QString materialID; // = animalID usually
-	QString harvestedItem;
-	int totalcount  = 0;
-	int maleCount   = 0;
-	int femaleCount = 0;
-	QPixmap sprite;
+	QString name;           ///< Localised display name.
+	QString animalID;       ///< Animal species string ID.
+	QString materialID;     ///< Usually equal to animalID.
+	QString harvestedItem;  ///< Item produced when butchered.
+	int totalcount  = 0;    ///< Total live individuals of this species.
+	int maleCount   = 0;    ///< Number of males.
+	int femaleCount = 0;    ///< Number of females.
+	QPixmap sprite;         ///< Preview sprite for the GUI.
 };
 Q_DECLARE_METATYPE( GuiAnimal )
 
+/// @brief One animal currently assigned to a pasture, as shown in the pasture roster.
 struct GuiPastureAnimal
 {
-	QString name;
-	unsigned int id = 0;
-	QString animalID;
-	QString materialID; // = animalID usually
-	Gender gender = Gender::UNDEFINED;
-	bool isYoung = false;
-	bool toButcher = false;
+	QString name;                      ///< Display name.
+	unsigned int id = 0;               ///< Creature UID.
+	QString animalID;                  ///< Species string ID.
+	QString materialID;                ///< Usually equal to animalID.
+	Gender gender = Gender::UNDEFINED; ///< Male / female / undefined.
+	bool isYoung = false;              ///< True for non-adult animals.
+	bool toButcher = false;            ///< True if the animal is flagged for butchering.
 };
 Q_DECLARE_METATYPE( GuiPastureAnimal )
 
 
+/// @brief Plant species summary for farm/grove product lists.
 struct GuiPlant
 {
-	QString name;
-	QString plantID;
-	QString seedID;
-	int seedCount = 0;
-	QString materialID; // = plantID usually
-	QString harvestedItem;
-	int itemCount  = 0;
-	int plantCount = 0;
-	QPixmap sprite;
+	QString name;           ///< Localised display name.
+	QString plantID;        ///< Plant species string ID.
+	QString seedID;         ///< Seed item string ID.
+	int seedCount = 0;      ///< Available seeds in stockpiles.
+	QString materialID;     ///< Usually equal to plantID.
+	QString harvestedItem;  ///< Item harvested from this plant.
+	int itemCount  = 0;     ///< Count of harvested items in storage.
+	int plantCount = 0;     ///< Live plants of this species on the map.
+	QPixmap sprite;         ///< Preview sprite for the GUI.
 };
 Q_DECLARE_METATYPE( GuiPlant )
 
+/// @brief Discriminator for the three kinds of agricultural designation.
 enum class AgriType
 {
-	Farm,
-	Pasture,
-	Grove
+	Farm,    ///< Tilled plots for crops.
+	Pasture, ///< Fenced area for animals.
+	Grove    ///< Planted tree area.
 };
 Q_DECLARE_METATYPE( AgriType )
 
+/// @brief Full state of one farm designation as shown in the Agriculture GUI.
 struct GuiFarmInfo
 {
-	unsigned int ID = 0;
+	unsigned int ID = 0;    ///< Farm designation UID.
 
-	QString name;
-	int priority    = 1;
-	int maxPriority = 1;
-	bool suspended  = false;
-	bool harvest    = true;
-	QString plantType;
+	QString name;           ///< Display name.
+	int priority    = 1;    ///< Current priority index.
+	int maxPriority = 1;    ///< Priority range upper bound.
+	bool suspended  = false;///< True if work on this farm is paused.
+	bool harvest    = true; ///< True if crops should be harvested.
+	QString plantType;      ///< Selected crop plant ID.
 
-	int numPlots  = 0;
-	int tilled    = 0;
-	int planted   = 0;
-	int cropReady = 0;
+	int numPlots  = 0;      ///< Total tiles in this farm.
+	int tilled    = 0;      ///< Tiles currently tilled.
+	int planted   = 0;      ///< Tiles currently planted.
+	int cropReady = 0;      ///< Tiles with ready-to-harvest crops.
 
-	GuiPlant product;
+	GuiPlant product;       ///< Current crop product details.
 };
 Q_DECLARE_METATYPE( GuiFarmInfo )
 
+/// @brief Food type allowed in a pasture, with allow/deny checkbox state.
 struct GuiPastureFoodItem
 {
-	QString itemSID;
-	QString materialSID;
-	QString name;
-	bool checked = false;
-	QPixmap sprite;
+	QString itemSID;        ///< Food item string ID.
+	QString materialSID;    ///< Food material string ID.
+	QString name;           ///< Localised name.
+	bool checked = false;   ///< True if the pasture accepts this food.
+	QPixmap sprite;         ///< Preview sprite.
 };
 
+/// @brief Full state of one pasture designation as shown in the Agriculture GUI.
 struct GuiPastureInfo
 {
-	unsigned int ID = 0;
+	unsigned int ID = 0;     ///< Pasture designation UID.
 
-	QString name;
-	int priority    = 1;
-	int maxPriority = 1;
-	bool suspended  = false;
-	bool harvest    = true;
-	bool harvestHay = false;
-	bool tame		= false;
-	QString animalType;
+	QString name;            ///< Display name.
+	int priority    = 1;     ///< Current priority index.
+	int maxPriority = 1;     ///< Priority range upper bound.
+	bool suspended  = false; ///< True if work on this pasture is paused.
+	bool harvest    = true;  ///< True if animals should be harvested for products.
+	bool harvestHay = false; ///< True if hay should be harvested from grass.
+	bool tame		= false; ///< True if wild animals should be tamed.
+	QString animalType;      ///< Selected species string ID.
 
-	int numPlots   = 0;
-	int numMale    = 0;
-	int numFemale  = 0;
-	int total      = 0;
-	int maxNumber  = 0;
-	int maxMale    = 0;
-	int maxFemale  = 0;
-	int animalSize = 0;
+	int numPlots   = 0;      ///< Total tiles in this pasture.
+	int numMale    = 0;      ///< Current number of male animals.
+	int numFemale  = 0;      ///< Current number of female animals.
+	int total      = 0;      ///< Total animals currently housed.
+	int maxNumber  = 0;      ///< Maximum animals the pasture can hold.
+	int maxMale    = 0;      ///< Upper cap on males (user setting).
+	int maxFemale  = 0;      ///< Upper cap on females (user setting).
+	int animalSize = 0;      ///< Tiles occupied by a single animal.
 
-	int foodMax    = 0;
-	int foodCurrent= 0;
-	int hayMax     = 0;
-	int hayCurrent = 0;
+	int foodMax    = 0;      ///< Food trough capacity.
+	int foodCurrent= 0;      ///< Food currently in trough.
+	int hayMax     = 0;      ///< Hay storage capacity.
+	int hayCurrent = 0;      ///< Hay currently stored.
 
-	QList<GuiPastureFoodItem> food;
+	QList<GuiPastureFoodItem> food; ///< Per-food-type allow list.
 
-	GuiAnimal product;
-	QList<GuiPastureAnimal> animals;
+	GuiAnimal product;              ///< Current species product details.
+	QList<GuiPastureAnimal> animals;///< Roster of individual animals in this pasture.
 };
 Q_DECLARE_METATYPE( GuiPastureInfo )
 
+/// @brief Full state of one grove designation as shown in the Agriculture GUI.
 struct GuiGroveInfo
 {
-	unsigned int ID = 0;
+	unsigned int ID = 0;      ///< Grove designation UID.
 
-	QString name;
-	int priority    = 1;
-	int maxPriority = 1;
-	bool suspended  = false;
-	bool plantTrees = true;
-	bool fellTrees  = false;
-	bool pickFruits = true;
-	QString treeType;
+	QString name;             ///< Display name.
+	int priority    = 1;      ///< Current priority index.
+	int maxPriority = 1;      ///< Priority range upper bound.
+	bool suspended  = false;  ///< True if work on this grove is paused.
+	bool plantTrees = true;   ///< True if saplings should be planted.
+	bool fellTrees  = false;  ///< True if mature trees should be felled.
+	bool pickFruits = true;   ///< True if fruit should be picked.
+	QString treeType;         ///< Selected tree species string ID.
 
-	int numPlots  = 0;
-	int planted   = 0;
-	int cropReady = 0;
+	int numPlots  = 0;        ///< Total tiles in this grove.
+	int planted   = 0;        ///< Tiles currently planted.
+	int cropReady = 0;        ///< Tiles with ready fruit/wood.
 
-	GuiPlant product;
+	GuiPlant product;         ///< Current tree product details.
 };
 Q_DECLARE_METATYPE( GuiGroveInfo )
 
+/// @brief Bridges the Agriculture XAML window with the game-side farm/pasture/grove managers.
+///        Handles user actions (priority, product, harvest toggles, butchering) and emits
+///        refreshed Gui*Info payloads back to the view models.
 class AggregatorAgri : public QObject
 {
 	Q_OBJECT
@@ -167,17 +183,17 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g;
+	QPointer<Game> g;                       ///< Game instance (weak ownership).
 
-	bool m_AgriDirty             = false;
-	unsigned int m_currentTileID = 0;
-	AgriType m_currentType       = AgriType::Farm;
-	GuiFarmInfo m_farmInfo;
-	GuiPastureInfo m_pastureInfo;
-	GuiGroveInfo m_groveInfo;
-	QList<GuiPlant> m_globalPlantInfo;
-	QList<GuiAnimal> m_globalAnimalInfo;
-	QList<GuiPlant> m_globalTreeInfo;
+	bool m_AgriDirty             = false;   ///< Unused dirty flag reserved for batch updates.
+	unsigned int m_currentTileID = 0;       ///< Currently selected designation tile.
+	AgriType m_currentType       = AgriType::Farm; ///< Kind of designation currently shown.
+	GuiFarmInfo m_farmInfo;                 ///< Cached farm state for the open window.
+	GuiPastureInfo m_pastureInfo;           ///< Cached pasture state for the open window.
+	GuiGroveInfo m_groveInfo;               ///< Cached grove state for the open window.
+	QList<GuiPlant> m_globalPlantInfo;      ///< Global plant availability list.
+	QList<GuiAnimal> m_globalAnimalInfo;    ///< Global animal availability list.
+	QList<GuiPlant> m_globalTreeInfo;       ///< Global tree availability list.
 
 public slots:
 	void onOpen( TileFlag designation, unsigned int tileID );

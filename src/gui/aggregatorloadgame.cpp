@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorloadgame.cpp
+ *  @brief AggregatorLoadGame implementation: scans the save-game folder for kingdoms and
+ *         per-kingdom save files, parses their game.json headers, and emits sorted lists.
+ */
 #include "aggregatorloadgame.h"
 
 #include "../base/io.h"
@@ -31,15 +35,21 @@
 #include <QJsonValue>
 #include <QStandardPaths>
 
+/// @brief Constructs the AggregatorLoadGame.
+/// @param parent Qt parent object.
 AggregatorLoadGame::AggregatorLoadGame( QObject* parent ) :
 	QObject(parent)
 {
 }
 
+/// @brief Destructor.
 AggregatorLoadGame::~AggregatorLoadGame()
 {
 }
 
+/// @brief Enumerates kingdom folders under the save root, reads the most recent save's
+///        game.json for each kingdom to extract its display name and version, sorts by
+///        modification date (newest first), and emits signalKingdoms.
 void AggregatorLoadGame::onRequestKingdoms()
 {
 	QString sfolder = IO::getDataFolder() + "/save";
@@ -100,6 +110,11 @@ void AggregatorLoadGame::onRequestKingdoms()
 	emit signalKingdoms( m_kingdomList );
 }
 
+/// @brief Enumerates save directories under @p path, parses each game.json to extract the
+///        kingdom name, version, and compatibility flag, sorts by modification date, and emits
+///        signalSaveGames. Saves produced by an incompatible build are flagged and shown with
+///        a warning suffix.
+/// @param path Absolute path to a kingdom folder.
 void AggregatorLoadGame::onRequestSaveGames( const QString path )
 {
 	m_gameList.clear();
