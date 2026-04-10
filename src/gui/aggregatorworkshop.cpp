@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorworkshop.cpp
+ *  @brief AggregatorWorkshop implementation: produces the workshop window payload (products
+ *         with material availability), manages the craft job queue, and drives the trader
+ *         stock/offer view for the TradingPost workshop.
+ */
 #include "aggregatorworkshop.h"
 
 #include "../base/counter.h"
@@ -33,6 +38,10 @@
 
 #include <QDebug>
 
+/// @brief Refreshes the availability counts for this component's material list. Honours the
+///        AllowedMaterial / AllowedMaterialType filter from the craft row and emits an "any"
+///        or "any (same)" wildcard when RequireSame is set.
+/// @param row Crafts_Components DB row describing this component.
 void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 {
 	if( !g ) return;
@@ -63,6 +72,8 @@ void GuiWorkshopComponent::updateMaterials( QVariantMap row )
 	}
 }
 
+/// @brief Rebuilds this product's component list by iterating Crafts_Components for the
+///        product ID and calling updateMaterials() on each entry.
 void GuiWorkshopProduct::updateComponents()
 {
 	if( !g ) return;
@@ -76,21 +87,28 @@ void GuiWorkshopProduct::updateComponents()
 	}
 }
 
+/// @brief Constructs the AggregatorWorkshop and registers GuiWorkshopInfo as a metatype.
+/// @param parent Qt parent object.
 AggregatorWorkshop::AggregatorWorkshop( QObject* parent ) :
 	QObject(parent)
 {
 	qRegisterMetaType<GuiWorkshopInfo>();
 }
 
+/// @brief Destructor.
 AggregatorWorkshop::~AggregatorWorkshop()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorWorkshop::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Opens the workshop window for whichever workshop owns @p tileID.
+/// @param tileID Tile UID that was clicked.
 void AggregatorWorkshop::onOpenWorkshopInfoOnTile( unsigned int tileID )
 {
 	if( !g ) return;
@@ -104,6 +122,8 @@ void AggregatorWorkshop::onOpenWorkshopInfoOnTile( unsigned int tileID )
 	}
 }
 
+/// @brief Opens the workshop window for the given workshop UID and emits the first payload.
+/// @param workshopID Workshop UID.
 void AggregatorWorkshop::onOpenWorkshopInfo( unsigned int workshopID )
 {
 	if( !g ) return;
@@ -112,6 +132,8 @@ void AggregatorWorkshop::onOpenWorkshopInfo( unsigned int workshopID )
 	onUpdateWorkshopInfo( workshopID );
 }
 
+/// @brief Re-aggregates and emits signalUpdateInfo for a single workshop.
+/// @param workshopID Workshop UID.
 void AggregatorWorkshop::onUpdateWorkshopInfo( unsigned int workshopID )
 {
 	if( !g ) return;
@@ -121,6 +143,10 @@ void AggregatorWorkshop::onUpdateWorkshopInfo( unsigned int workshopID )
 	}
 }
 
+/// @brief Fills m_info with the current workshop state (settings, product list with their
+///        component material counts, current craft job list).
+/// @param workshopID Workshop UID.
+/// @return true if the workshop exists.
 bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 {
 	if( !g ) return false;
@@ -166,6 +192,9 @@ bool AggregatorWorkshop::aggregate( unsigned int workshopID )
 	return false;
 }
 
+/// @brief Refreshes just the craft job list on m_info without rebuilding the product tree.
+/// @param workshopID Workshop UID.
+/// @return true if the workshop exists.
 bool AggregatorWorkshop::updateCraftList( unsigned int workshopID )
 {
 	if( !g ) return false;
@@ -183,12 +212,18 @@ bool AggregatorWorkshop::updateCraftList( unsigned int workshopID )
 	return false;
 }
 
+/// @brief Live-update hook invoked by the workshop when its craft job list changes.
+///        Refreshes the list and emits signalUpdateCraftList.
+/// @param workshopID Workshop UID.
 void AggregatorWorkshop::onCraftListChanged( unsigned int workshopID )
 {
 	if( !g ) return;
 	updateCraftList( workshopID );
 }
 
+/// @brief Live-update hook invoked when the workshop's storage/contents change. Refreshes
+///        the full info payload so material availability counts stay accurate.
+/// @param WorkshopID Workshop UID.
 void AggregatorWorkshop::onUpdateWorkshopContent( unsigned int WorkshopID )
 {
 	if( !g ) return;
@@ -198,6 +233,7 @@ void AggregatorWorkshop::onUpdateWorkshopContent( unsigned int WorkshopID )
 	}
 }
 
+/// @brief Post-tick hook that refreshes trader and player stock views for an open TradingPost.
 void AggregatorWorkshop::onUpdateAfterTick()
 {
 	if( !g ) return;
@@ -211,6 +247,15 @@ void AggregatorWorkshop::onUpdateAfterTick()
 	}
 }
 
+/// @brief Applies basic workshop options (name, priority, suspended, accept-generated,
+///        auto-craft-missing, stockpile link) from the GUI.
+/// @param workshopID       Workshop UID.
+/// @param name             New display name.
+/// @param priority         New priority index.
+/// @param suspended        New suspended flag.
+/// @param acceptGenerated  Accept auto-generated craft jobs.
+/// @param autoCraftMissing Auto-queue craft jobs for missing items.
+/// @param connectStockpile Link to adjacent stockpile for pulling materials.
 void AggregatorWorkshop::onSetBasicOptions( unsigned int workshopID, QString name, int priority, bool suspended, bool acceptGenerated, bool autoCraftMissing, bool connectStockpile )
 {
 	if( !g ) return;
@@ -226,6 +271,10 @@ void AggregatorWorkshop::onSetBasicOptions( unsigned int workshopID, QString nam
 	}
 }
 
+/// @brief Applies butcher workshop checkboxes (corpses vs excess pasture animals).
+/// @param workshopID     Workshop UID.
+/// @param butcherCorpses Butcher creature corpses.
+/// @param butcherExcess  Butcher excess pasture animals beyond the cap.
 void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butcherCorpses, bool butcherExcess )
 {
 	if( !g ) return;
@@ -237,6 +286,10 @@ void AggregatorWorkshop::onSetButcherOptions( unsigned int workshopID, bool butc
 	}
 }
 
+/// @brief Applies fisher workshop checkboxes (catch vs process).
+/// @param workshopID  Workshop UID.
+/// @param catchFish   Generate catch-fish jobs.
+/// @param processFish Generate process-fish jobs.
 void AggregatorWorkshop::onSetFisherOptions( unsigned int workshopID, bool catchFish, bool processFish )
 {
 	if( !g ) return;
@@ -248,6 +301,12 @@ void AggregatorWorkshop::onSetFisherOptions( unsigned int workshopID, bool catch
 	}
 }
 
+/// @brief Queues a new craft job on a workshop with the chosen mode, count, and materials.
+/// @param workshopID Workshop UID.
+/// @param craftID    Craft recipe ID.
+/// @param mode       Craft mode (one-shot, repeat, maintain).
+/// @param number     Number to craft.
+/// @param mats       Materials selected per component slot.
 void AggregatorWorkshop::onCraftItem( unsigned int workshopID, QString craftID, int mode, int number, QStringList mats )
 {
 	if( !g ) return;
@@ -259,11 +318,17 @@ void AggregatorWorkshop::onCraftItem( unsigned int workshopID, QString craftID, 
 	}
 }
 
+/// @brief Clears the open workshop ID when the GUI closes the window.
 void AggregatorWorkshop::onCloseWindow()
 {
 	m_info.workshopID = 0;
 }
 
+/// @brief Dispatches a craft job control command ("up", "down", "pause", "remove", …) from
+///        the GUI to the workshop, then refreshes the craft job list.
+/// @param workshopID Workshop UID.
+/// @param craftJobID Craft job UID.
+/// @param command    Command keyword.
 void AggregatorWorkshop::onCraftJobCommand( unsigned int workshopID, unsigned int craftJobID, QString command )
 {
 	if( !g ) return;
@@ -285,6 +350,13 @@ void AggregatorWorkshop::onCraftJobCommand( unsigned int workshopID, unsigned in
 	}
 }
 
+/// @brief Applies edits to a craft job's mode/count/suspended/move-back flags from the GUI.
+/// @param workshopID Workshop UID.
+/// @param craftJobID Craft job UID.
+/// @param mode       New craft mode.
+/// @param numToCraft New count.
+/// @param suspended  New suspended flag.
+/// @param moveBack   True to requeue the job at the end of the queue.
 void AggregatorWorkshop::onCraftJobParams( unsigned int workshopID, unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack )
 {
 	if( !g ) return;
@@ -295,6 +367,8 @@ void AggregatorWorkshop::onCraftJobParams( unsigned int workshopID, unsigned int
 	}
 }
 
+/// @brief Builds the initial trader and player stock lists when the Trading Post window opens.
+/// @param workshopID Trading Post workshop UID.
 void AggregatorWorkshop::onRequestAllTradeItems( unsigned int workshopID )
 {
 	if( !g ) return;
@@ -303,6 +377,9 @@ void AggregatorWorkshop::onRequestAllTradeItems( unsigned int workshopID )
 	updatePlayerStock( workshopID );
 }
 
+/// @brief Finds the trader associated with @p workshopID and rebuilds m_traderStock from
+///        the trader creature's inventory. Emits signalTraderStock.
+/// @param workshopID Trading Post workshop UID.
 void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 {
 	if( !g ) return;
@@ -333,6 +410,9 @@ void AggregatorWorkshop::updateTraderStock( unsigned int workshopID )
 	}
 }
 
+/// @brief Converts a TraderItem list into GuiTradeItem rows with localised names, and stores
+///        the result in m_traderStock. Animals are represented by gender instead of material.
+/// @param source Trader inventory as provided by GnomeTrader.
 void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 {
 	if( !g ) return;
@@ -370,6 +450,9 @@ void AggregatorWorkshop::updateTraderStock( const QList<TraderItem>& source )
 	}
 }
 	
+/// @brief Rebuilds m_playerStock from the player's inventory of tradable items (and
+///        tame pasture animals), filtered by the trader's buying preferences. Emits signalPlayerStock.
+/// @param workshopID Trading Post workshop UID.
 void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 {
 	if( !g ) return;
@@ -437,6 +520,12 @@ void AggregatorWorkshop::updatePlayerStock( unsigned int workshopID )
 
 }
 
+/// @brief Moves @p count of a specific trader stock entry into the trader's offer column.
+/// @param workshopID Trading Post workshop UID.
+/// @param itemSID    Item string ID.
+/// @param materialSID Material ID or gender string.
+/// @param quality    Quality level.
+/// @param count      Number to move.
 void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	if( !g ) return;
@@ -479,6 +568,12 @@ void AggregatorWorkshop::onTraderStocktoOffer( unsigned int workshopID, QString 
 	}
 }
 	
+/// @brief Moves @p count of a trader offer entry back to the trader's stock column.
+/// @param workshopID Trading Post workshop UID.
+/// @param itemSID    Item string ID.
+/// @param materialSID Material ID or gender string.
+/// @param quality    Quality level.
+/// @param count      Number to move.
 void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	if( !g ) return;
@@ -521,6 +616,12 @@ void AggregatorWorkshop::onTraderOffertoStock( unsigned int workshopID, QString 
 	}
 }
 
+/// @brief Moves @p count of a player stock entry into the player's offer column.
+/// @param workshopID Trading Post workshop UID.
+/// @param itemSID    Item string ID.
+/// @param materialSID Material ID or gender string.
+/// @param quality    Quality level.
+/// @param count      Number to move.
 void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	if( !g ) return;
@@ -544,6 +645,12 @@ void AggregatorWorkshop::onPlayerStocktoOffer( unsigned int workshopID, QString 
 	}
 }
 
+/// @brief Moves @p count of a player offer entry back to the player's stock column.
+/// @param workshopID Trading Post workshop UID.
+/// @param itemSID    Item string ID.
+/// @param materialSID Material ID or gender string.
+/// @param quality    Quality level.
+/// @param count      Number to move.
 void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString itemSID, QString materialSID, unsigned char quality, int count )
 {
 	if( !g ) return;
@@ -567,6 +674,7 @@ void AggregatorWorkshop::onPlayerOffertoStock( unsigned int workshopID, QString 
 	}
 }
 
+/// @brief Recomputes the sum of values in the trader's offer column and emits signalUpdateTraderValue.
 void AggregatorWorkshop::updateTraderValue()
 {
 	if( !g ) return;
@@ -578,6 +686,7 @@ void AggregatorWorkshop::updateTraderValue()
 	emit signalUpdateTraderValue( m_traderOfferValue );
 }
 	
+/// @brief Recomputes the sum of values in the player's offer column and emits signalUpdatePlayerValue.
 void AggregatorWorkshop::updatePlayerValue()
 {
 	if( !g ) return;
@@ -589,6 +698,9 @@ void AggregatorWorkshop::updatePlayerValue()
 	emit signalUpdatePlayerValue( m_playerOfferValue );
 }
 
+/// @brief Executes the current trade: swaps the offered items between player and trader,
+///        refreshes both stock panels, and clears the offer values.
+/// @param workshopID Trading Post workshop UID.
 void AggregatorWorkshop::onTrade( unsigned int workshopID )
 {
 	if( !g ) return;
