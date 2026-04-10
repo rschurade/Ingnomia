@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyTileInfo.cpp
+ *  @brief ProxyTileInfo implementation: connects signal/slot pairs between TileInfoModel
+ *         and AggregatorTileInfo; the rest of the file is thin pass-throughs.
+ */
 #include "ProxyTileInfo.h"
 
 #include "../../base/db.h"
@@ -28,6 +32,7 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the ProxyTileInfo and wires up all aggregator signal/slot connections.
 ProxyTileInfo::ProxyTileInfo( QObject* parent ) :
 	QObject( parent )
 {

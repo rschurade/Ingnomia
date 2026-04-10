@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selectionproxy.cpp
+ *  @brief SelectionProxy implementation: connects AggregatorSelection signals to
+ *         SelectionModel update* calls. All slots are thin pass-throughs.
+ */
 #include "selectionproxy.h"
 
 #include "../../base/global.h"
@@ -23,6 +27,8 @@
 
 #include <QDebug>
 
+/// @brief Constructs the SelectionProxy and wires the AggregatorSelection signals into
+///        the SelectionModel.
 SelectionProxy::SelectionProxy( QObject* parent ) :
 	QObject( parent )
 {

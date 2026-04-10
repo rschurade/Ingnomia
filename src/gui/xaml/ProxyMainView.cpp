@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyMainView.cpp
+ *  @brief ProxyMainView implementation. Constructor wires every signal/slot connection
+ *         between ViewModel and EventConnector / aggregator singletons; the rest of the
+ *         file is thin pass-throughs that forward menu actions to the game side.
+ */
 #include "ProxyMainView.h"
 
 #include "../../base/global.h"
@@ -24,6 +29,7 @@
 #include "../eventconnector.h"
 #include "ViewModel.h"
 
+/// @brief Constructs the ProxyMainView and wires up all signal/slot connections.
 ProxyMainView::ProxyMainView( QObject* parent ) :
 	QObject( parent )
 {

@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file Population.xaml.h
+ *  @brief Code-behind for the Population window (PopulationWindow.xaml). Unlike most other
+ *         XAML user controls, this one needs code-behind to keep the skill/schedule
+ *         scrollviewers synchronised across the name and content columns.
+ */
 #ifndef __PopulationWindow_H__
 #define __PopulastionPage_H__
 
@@ -24,6 +29,9 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the PopulationWindow Noesis user control. Forwards scroll events
+///        between the three skill scrollviewers and the two schedule scrollviewers so the
+///        header row and the per-gnome rows stay aligned.
 class PopulationWindow final : public Noesis::UserControl
 {
 public:
@@ -36,12 +44,12 @@ private:
 
 	void OnScroll( Noesis::BaseComponent* sender, const Noesis::ScrollChangedEventArgs& );
 
-	Noesis::ScrollViewer* m_skillNameScroll = nullptr;
-	Noesis::ScrollViewer* m_skillContentScroll = nullptr;
-	Noesis::ScrollViewer* m_skillHeaderScroll = nullptr;
-	Noesis::ScrollViewer* m_scheduleNameScroll  = nullptr;
-	Noesis::ScrollViewer* m_scheduleContentScroll = nullptr;
-	
+	Noesis::ScrollViewer* m_skillNameScroll = nullptr;    ///< Skill tab — left (gnome names) scrollviewer.
+	Noesis::ScrollViewer* m_skillContentScroll = nullptr; ///< Skill tab — right (skill grid) scrollviewer.
+	Noesis::ScrollViewer* m_skillHeaderScroll = nullptr;  ///< Skill tab — top header row scrollviewer.
+	Noesis::ScrollViewer* m_scheduleNameScroll  = nullptr;///< Schedule tab — left (gnome names) scrollviewer.
+	Noesis::ScrollViewer* m_scheduleContentScroll = nullptr;///< Schedule tab — right (hours grid) scrollviewer.
+
 
 	NS_DECLARE_REFLECTION( PopulationWindow, UserControl )
 

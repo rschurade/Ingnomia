@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selection.xaml.h
+ *  @brief Code-behind for the placement cursor info panel (SelectionGui.xaml). The panel
+ *         shows the current cursor position, first-click anchor, drag size, and current
+ *         action; it's purely informational and all state lives in SelectionModel.
+ */
 #ifndef __SelectionGui_H__
 #define __SelectionGui_H__
 
@@ -25,6 +30,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the SelectionGui Noesis user control.
 class SelectionGui final : public Noesis::UserControl
 {
 public:

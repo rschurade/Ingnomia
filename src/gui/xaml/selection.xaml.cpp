@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selection.xaml.cpp
+ *  @brief SelectionGui user-control implementation: loads SelectionGui.xaml on construction.
+ */
 #pragma once
 
 #include "selection.xaml.h"
@@ -23,6 +26,7 @@ using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the SelectionGui user control and registers the Loaded delegate.
 SelectionGui::SelectionGui()
 {
 	Loaded() += MakeDelegate( this, &SelectionGui::OnLoaded );
@@ -30,16 +34,19 @@ SelectionGui::SelectionGui()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the SelectionGui.xaml resource.
 void SelectionGui::InitializeComponent()
 {
 	GUI::LoadComponent( this, "SelectionGui.xaml" );
 }
 
+/// @brief Noesis event-connection callback. SelectionGui has no code-behind events.
 bool SelectionGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; SelectionModel handles state.
 void SelectionGui::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }
