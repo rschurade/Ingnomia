@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file spritefactory.cpp
+ *  @brief Sprite asset pipeline: loads tilesheet PNGs, parses JSON sprite definitions from the DB,
+ *         builds composite Sprite trees (seasons/rotations/frames), composes creature sprites from
+ *         equipment layers, and uploads pixel data to the GPU texture array.
+ */
 #include "spritefactory.h"
 
 #include "../base/config.h"
@@ -31,11 +36,13 @@
 #include <QPainter>
 #include <QPixmap>
 
+/// @brief Constructs the factory and calls init() to load sources and sprite definitions.
 SpriteFactory::SpriteFactory()
 {
 	init();
 }
 
+/// @brief Destructor. Deletes every created Sprite and every cached sprite definition node.
 SpriteFactory::~SpriteFactory()
 {
 	for( auto& sprite : m_sprites )
@@ -50,6 +57,11 @@ SpriteFactory::~SpriteFactory()
 	m_spriteDefinitions.clear();
 }
 
+/// @brief Initialises the factory: loads tilesheet PNGs, extracts base sprites by source rect,
+///        normalises Sprites DB rows into a nested QVariantMap schema, parses each into a
+///        DefNode tree, and creates the set of standard sprites. Also builds colour/material
+///        lookup tables used during composition.
+/// @return true if all tilesheets loaded successfully.
 bool SpriteFactory::init()
 {
 	//m_pixmapSources.clear();
@@ -374,6 +386,9 @@ bool SpriteFactory::init()
 	return loaded;
 }
 
+/// @brief Loads a tilesheet image from disk and registers it under @p name if not already present.
+/// @param name Logical name used as the lookup key in m_pixmapSources.
+/// @param path Filesystem path to the PNG file.
 void SpriteFactory::addPixmapSource( QString name, QString path )
 {
 	if ( !m_pixmapSources.contains( name ) )
@@ -387,6 +402,9 @@ void SpriteFactory::addPixmapSource( QString name, QString path )
 	}
 }
 
+/// @brief Pre-creates a fixed set of sprites used everywhere: thought bubbles (Tired, Sleeping,
+///        Thirsty, Hungry, Combat), the purple selection wall, water, rough floor, and an
+///        "undiscovered" grey fog tile. Reserves the first 31 sprite slots for engine use.
 void SpriteFactory::createStandardSprites()
 {
 	m_thoughtBubbleIDs.insert( "Tired", createSprite( "StatusTired", { "None" } )->uID );
@@ -416,6 +434,11 @@ void SpriteFactory::createStandardSprites()
 	}
 }
 
+/// @brief Extracts a sub-pixmap from a tilesheet using the definition's SourceRectangle
+///        ("x y w h"). Applies a magenta colour-key mask so #FF00FF becomes transparent.
+/// @param sourcePNG Name of the source tilesheet (key into m_pixmapSources).
+/// @param def       BaseSprite DB row containing SourceRectangle and ID fields.
+/// @return Extracted and masked QPixmap; empty on malformed definition.
 QPixmap SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 {
 	QString rect = def.value( "SourceRectangle" ).toString();
@@ -437,6 +460,10 @@ QPixmap SpriteFactory::extractPixmap( QString sourcePNG, QVariantMap def )
 	return QPixmap();
 }
 
+/// @brief Converts a rotation suffix string ("FL", "BL", "BR", otherwise FR) to its numeric
+///        SpriteRotation enum value.
+/// @param suffix Two-letter rotation abbreviation.
+/// @return Numeric rotation index.
 unsigned char SpriteFactory::rotationToChar( const QString suffix )
 {
 	SpriteRotation rot = SpriteRotation::FR;
@@ -449,6 +476,14 @@ unsigned char SpriteFactory::rotationToChar( const QString suffix )
 	return rot;
 }
 
+/// @brief Thread-safe public entry point to create or retrieve a sprite for an item with
+///        the given materials. Builds a cache key that incorporates materials and optional
+///        random-roll seeds. Creates short-wall variants automatically for wall sprites,
+///        uploads pixel data to the GPU, and records the creation for save/load replay.
+/// @param itemSID      Sprite/item string ID from the DB.
+/// @param materialSIDs Ordered list of material string IDs for each sprite slot.
+/// @param random       Optional pre-chosen random picks for Random sprite nodes.
+/// @return Pointer to the (possibly cached) Sprite; purple placeholder on failure.
 Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
@@ -530,8 +565,13 @@ Sprite* SpriteFactory::createSprite( const QString itemSID, QStringList material
 	return sprite;
 }
 
-// used for loading definitions, doesn't check if sprite exists as it will not exist and 
-// doesn't create short walls because they are in the definition anyway
+/// @brief Unconditional sprite creation used during save-game restore. Skips the cache lookup
+///        (the sprite is known not to exist) and skips the short-wall helper (both variants are
+///        already present in the saved definition list).
+/// @param itemSID      Sprite/item string ID.
+/// @param materialSIDs Ordered list of material string IDs.
+/// @param random       Pre-recorded random picks from the save file.
+/// @return Pointer to the newly created Sprite, or the purple placeholder on failure.
 Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materialSIDs, const QMap<int, int>& random )
 {
 	QString key = itemSID;
@@ -599,6 +639,11 @@ Sprite* SpriteFactory::createSprite2( const QString itemSID, QStringList materia
 	return sprite;
 }
 
+/// @brief Thread-safe creation of an animal sprite (always materialised with "None" material).
+///        Caches results by key so repeated calls for the same animal/frame reuse the pixmap.
+/// @param spriteSID Animal sprite string ID.
+/// @param random    Optional pre-chosen random picks.
+/// @return Pointer to the cached or newly created Sprite.
 Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<int, int>& random )
 {
 	QMutexLocker ml( &m_mutex );
@@ -648,6 +693,10 @@ Sprite* SpriteFactory::createAnimalSprite( const QString spriteSID, const QMap<i
 	return sprite;
 }
 
+/// @brief Returns whether the sprite definition for @p itemSID contains any Random nodes.
+/// @param itemSID      Item string ID.
+/// @param materialSIDs Unused (kept for call-site symmetry with other helpers).
+/// @return true if the sprite has at least one random selection point.
 bool SpriteFactory::containsRandom( const QString itemSID, const QStringList materialSIDs )
 {
 	QString spriteSID = DBH::spriteID( itemSID );
@@ -658,6 +707,13 @@ bool SpriteFactory::containsRandom( const QString itemSID, const QStringList mat
 	return DBH::spriteIsRandom( spriteSID );
 }
 
+/// @brief Walks the sprite definition for all seasons/rotations/frames without allocating pixmaps,
+///        as a side effect populating m_randomNumbers with deterministic random picks. Returns
+///        the cache key that includes those random picks so the real createSpriteMaterial() call
+///        can either reuse a cached sprite or build one matching the dry-run choices.
+/// @param itemSID      Item string ID.
+/// @param materialSIDs Ordered material list.
+/// @return Cache key encoding item, materials, and random picks.
 QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const QStringList materialSIDs )
 {
 	QString spriteSID = DBH::spriteID( itemSID );
@@ -701,6 +757,12 @@ QString SpriteFactory::createSpriteMaterialDryRun( const QString itemSID, const 
 	return key;
 }
 
+/// @brief Builds the actual Sprite tree by walking the DefNode for the given item and
+///        substituting materials. Applies offset, opacity, random-seed, and animation flags.
+/// @param itemSID      Item string ID.
+/// @param materialSIDs Ordered list of materials to plug into the sprite slots.
+/// @param key          Cache key for this request (unused inside but kept for logging/callers).
+/// @return Newly allocated Sprite, or nullptr if the definition is missing.
 Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStringList materialSIDs, const QString key )
 {
 	QString spriteSID = DBH::spriteID( itemSID );
@@ -746,6 +808,12 @@ Sprite* SpriteFactory::createSpriteMaterial( const QString itemSID, const QStrin
 	return sprite;
 }
 
+/// @brief Recursively converts a JSON/QVariantMap sprite definition into a DefNode tree.
+///        Handles Sprite references (which inline another definition), and the following
+///        child-node families: ByMaterials, ByMaterialTypes, Seasons, Rotations, Frames, Random.
+///        Carries down tint/effect/offset from referenced definitions.
+/// @param parent Node to populate; children are allocated and attached recursively.
+/// @param def    QVariantMap for the current definition level.
 void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 {
 	if ( def.contains( "Sprite" ) )
@@ -895,6 +963,16 @@ void SpriteFactory::parseDef( DefNode* parent, QVariantMap def )
 	}
 }
 
+/// @brief Recursively materialises a DefNode subtree into a Sprite instance, picking the
+///        concrete leaf pixmap from the BaseSprites table and applying any effect, tint, and
+///        offset annotations. Handles Rotations → SpriteRotations, Seasons → SpriteSeasons,
+///        Frames → SpriteFrames, Combine → in-place overlay, Random → pre-picked child,
+///        and material fallback via the ByMaterialType lookup or defaultMaterial.
+/// @param node         Current definition node to materialise.
+/// @param itemSID      Item string ID (used for nested ByItem lookups).
+/// @param materialSIDs Material list; index @p materialID picks the active one.
+/// @param materialID   Index into @p materialSIDs (clamped to valid range).
+/// @return Newly allocated Sprite; a magenta placeholder on lookup failure.
 Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID, const QStringList materialSIDs, int materialID )
 {
 	if ( !node->offset.isEmpty() )
@@ -1048,6 +1126,15 @@ Sprite* SpriteFactory::getBaseSprite( const DefNode* node, const QString itemSID
 	return sprite;
 }
 
+/// @brief Dry-run walk of the same definition tree as getBaseSprite(): traverses every
+///        season/rotation/frame path without allocating pixmaps, populating m_randomNumbers
+///        with deterministic random picks at each RandomNode so later real builds match.
+/// @param node         Current definition node.
+/// @param itemSID      Item string ID.
+/// @param materialSIDs Material list.
+/// @param season       Season key to follow for Season nodes.
+/// @param rotation     Rotation suffix to follow for Rotation nodes.
+/// @param animFrame    Animation frame index to follow for Frame nodes.
 void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation, const int animFrame )
 {
 	QString materialSID = *materialSIDs.begin();
@@ -1149,16 +1236,30 @@ void SpriteFactory::getBaseSpriteDryRun( const DefNode* node, const QString item
 	return;
 }
 
+/// @brief Returns the number of animation frames for a given sprite/season/rotation.
+///        Currently a stub that always returns 1.
+/// @param node         Definition node (unused).
+/// @param itemSID      Item string ID (unused).
+/// @param materialSIDs Materials (unused).
+/// @param season       Season key (unused).
+/// @param rotation     Rotation key (unused).
+/// @return Always 1.
 int SpriteFactory::numFrames( const DefNode* node, const QString itemSID, const QStringList materialSIDs, const QString season, const QString rotation )
 {
 	return 1;
 }
 
+/// @brief Returns the cached material type ("Metal", "Wood", etc.) for a material string ID.
+/// @param materialSID Material string ID.
+/// @return Type string from the Materials DB table.
 QString SpriteFactory::getMaterialType( const QString materialSID )
 {
 	return m_materialTypes.value( materialSID );
 }
 
+/// @brief Thread-safe lookup of a sprite by its uID.
+/// @param id Sprite UID as stored on Sprite::uID.
+/// @return Pointer to the Sprite, or nullptr if the ID is out of range.
 Sprite* SpriteFactory::getSprite( const int id )
 {
 	QMutexLocker ml( &m_mutex );
@@ -1169,6 +1270,7 @@ Sprite* SpriteFactory::getSprite( const int id )
 	return nullptr;
 }
 
+/// @brief Debug-only dump of every registered sprite key and its numeric ID to qDebug().
 void SpriteFactory::printDebug()
 {
 	for ( auto si : m_spriteIDs.toStdMap() )
@@ -1177,6 +1279,11 @@ void SpriteFactory::printDebug()
 	}
 }
 
+/// @brief Replays a saved list of SpriteCreation records to rebuild the sprite cache after
+///        loading a save game. Preserves UID ordering by padding nullptr gaps when a previously
+///        created sprite no longer has a definition. Routes creature sprites through
+///        createAnimalSprite() and tile sprites through createSprite2().
+/// @param scl List of SpriteCreation records in original creation order.
 void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 {
 	//m_sprites.clear();
@@ -1228,6 +1335,10 @@ void SpriteFactory::createSprites( QList<SpriteCreation> scl )
 	m_spriteCreations = scl;
 }
 
+/// @brief Rasterises a Sprite (all seasons/rotations/frames) into the contiguous 32×64 RGBA8
+///        pixel-data vector used as the backing store for the GPU texture array. Grows
+///        m_pixelData lazily in batches of 32 textures. Animated sprites consume 4 slots.
+/// @param sprite Sprite whose pixmaps should be uploaded.
 void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 {
 	QString season = GameState::seasonString;
@@ -1324,6 +1435,9 @@ void SpriteFactory::addPixmapToPixelData( Sprite* sprite )
 	}
 }
 
+/// @brief Variant of addPixmapToPixelData() for 32×32 source images: centres the source in
+///        the middle 32 rows of the 64-row slot and zero-fills the top and bottom 16 rows.
+/// @param sprite Sprite whose 32×32 pixmaps should be uploaded.
 void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 {
 	int tex        = sprite->uID / 512;
@@ -1366,6 +1480,10 @@ void SpriteFactory::addPixmapToPixelData32( Sprite* sprite )
 	}
 }
 
+/// @brief Zero-fills @p rows rows of 32 RGBA8 pixels in the pixel-data buffer.
+/// @param startIndex Byte offset into @p pixelData where writing begins.
+/// @param rows       Number of rows to clear.
+/// @param pixelData  Destination pixel buffer to write into.
 void SpriteFactory::addEmptyRows( int startIndex, int rows, QVector<uint8_t>& pixelData )
 {
 	for ( int y = 0; y < rows; ++y )
@@ -1380,6 +1498,9 @@ void SpriteFactory::addEmptyRows( int startIndex, int rows, QVector<uint8_t>& pi
 	}
 }
 
+/// @brief Returns and clears the tile-texture dirty flag. The renderer polls this to decide
+///        whether to re-upload the sprite texture array.
+/// @return true if at least one tile sprite was added since the last call.
 bool SpriteFactory::textureAdded()
 {
 #if 1
@@ -1397,6 +1518,9 @@ bool SpriteFactory::textureAdded()
 #endif
 }
 
+/// @brief Returns and clears the creature-texture dirty flag (separate from tile textures
+///        so creature updates don't reupload the whole tilesheet).
+/// @return true if at least one creature sprite was added since the last call.
 bool SpriteFactory::creatureTextureAdded()
 {
 #if 1
@@ -1414,6 +1538,8 @@ bool SpriteFactory::creatureTextureAdded()
 #endif
 }
 
+/// @brief Re-rasterises every sprite to the pixel-data buffer and marks the texture dirty.
+///        Used after a season change so per-season variants (e.g. grass, trees) refresh.
 void SpriteFactory::forceUpdate()
 {
 	for ( auto sprite : m_sprites )
@@ -1426,6 +1552,11 @@ void SpriteFactory::forceUpdate()
 	m_textureAdded = true;
 }
 
+/// @brief Returns a copy of the named base sprite tinted by the given material's DB colour.
+///        Falls back to the EmptyWall base sprite if @p baseSprite is empty.
+/// @param baseSprite Base-sprite key.
+/// @param material   Material string ID used to look up the tint colour.
+/// @return Tinted QPixmap.
 QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material )
 {
 	if ( baseSprite.isEmpty() )
@@ -1438,6 +1569,16 @@ QPixmap SpriteFactory::getTintedBaseSprite( QString baseSprite, QString material
 	return pm;
 }
 
+/// @brief Composes a creature sprite from its equipment/body layer lists and installs it in
+///        the sprite table. Each entry in @p components is painted front-to-back, honouring
+///        HasBase, Hidden, and Tint fields (Material → DB colour; integer → dye/hair colour).
+///        The left-facing variants are derived by horizontal mirroring. Dead creatures are
+///        rotated 90°. If the creature already had a sprite, it is replaced in place.
+/// @param creatureUID    UID of the creature (used as key in m_creatureSpriteIDs).
+/// @param components     Front-facing layer list (bottom to top).
+/// @param componentsBack Back-facing layer list (bottom to top).
+/// @param isDead         True if the creature should be rendered lying down (rotated 90°).
+/// @return Pointer to the new SpriteRotations wrapping all four directional variants.
 Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVariantList components, QVariantList componentsBack, bool isDead )
 {
 	QMutexLocker ml( &m_mutex );
@@ -1616,6 +1757,10 @@ Sprite* SpriteFactory::setCreatureSprite( const unsigned int creatureUID, QVaria
 	return sr;
 }
 
+/// @brief Thread-safe lookup of a creature sprite by creature UID.
+/// @param id        Creature UID.
+/// @param spriteID  Out parameter filled with the sprite's numeric UID on hit.
+/// @return Pointer to the creature Sprite, or nullptr if not found.
 Sprite* SpriteFactory::getCreatureSprite( const unsigned int id, unsigned int& spriteID )
 {
 	QMutexLocker ml( &m_mutex );
@@ -1627,6 +1772,9 @@ Sprite* SpriteFactory::getCreatureSprite( const unsigned int id, unsigned int& s
 	return nullptr;
 }
 
+/// @brief Multiplies every pixel of @p pm in place by @p color (per-channel, including alpha).
+/// @param pm    Pixmap to tint (modified in place).
+/// @param color Tint colour.
 void SpriteFactory::tintPixmap( QPixmap& pm, QColor color )
 {
 	QImage img = pm.toImage();
@@ -1646,11 +1794,16 @@ void SpriteFactory::tintPixmap( QPixmap& pm, QColor color )
 	pm = QPixmap::fromImage( img );
 }
 
+/// @brief Returns the list of registered tilesheet names.
+/// @return Keys of m_pixmapSources.
 QStringList SpriteFactory::pixmaps()
 {
 	return m_pixmapSources.keys();
 }
 
+/// @brief Returns the tilesheet pixmap for the given name, or a 32×32 empty pixmap if missing.
+/// @param name Tilesheet name.
+/// @return Loaded tilesheet QPixmap.
 QPixmap SpriteFactory::pixmap( QString name )
 {
 	if ( m_pixmapSources.contains( name ) )
@@ -1661,6 +1814,9 @@ QPixmap SpriteFactory::pixmap( QString name )
 	return QPixmap( 32, 32 );
 }
 
+/// @brief Returns the extracted base-sprite pixmap with the given ID.
+/// @param id Base sprite key.
+/// @return Stored QPixmap, or a 32×32 empty pixmap if not found.
 QPixmap SpriteFactory::baseSprite( QString id )
 {
 	if ( m_baseSprites.contains( id ) )
@@ -1671,24 +1827,34 @@ QPixmap SpriteFactory::baseSprite( QString id )
 	return QPixmap( 32, 32 );
 }
 
+/// @brief Thread-safe lookup of the sprite UID for a thought-bubble icon.
+/// @param sid Thought bubble key (e.g. "Tired", "Hungry").
+/// @return Sprite UID of the thought bubble.
 unsigned int SpriteFactory::thoughtBubbleID( QString sid )
 {
 	QMutexLocker ml( &m_mutex );
 	return m_thoughtBubbleIDs.value( sid );
 }
 
+/// @brief Thread-safe accessor for the number of GPU array-texture slices in use.
+/// @return Number of 512-slot textures allocated.
 int SpriteFactory::texesUsed()
 {
 	QMutexLocker ml( &m_mutex );
 	return m_texesUsed;
 }
 
+/// @brief Thread-safe accessor for the total number of registered sprite keys.
+/// @return Size of m_spriteIDs.
 unsigned int SpriteFactory::size()
 {
 	QMutexLocker ml( &m_mutex );
 	return m_spriteIDs.size();
 }
 
+/// @brief Thread-safe accessor returning the raw RGBA8 pixel data for the given texture slice.
+/// @param index Slice index in m_pixelData.
+/// @return Copy of the pixel buffer for that slice.
 QVector<uint8_t> SpriteFactory::pixelData( int index )
 {
 	QMutexLocker ml( &m_mutex );
