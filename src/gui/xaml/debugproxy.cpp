@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debugproxy.cpp
+ *  @brief DebugProxy implementation: wires every signal/slot pair between DebugModel and
+ *         AggregatorDebug, then provides thin pass-throughs.
+ */
 #include "debugproxy.h"
 
 #include "../../base/global.h"
@@ -25,6 +29,7 @@
 
 #include <QDebug>
 
+/// @brief Constructs the proxy and connects every signal pair between DebugModel and AggregatorDebug.
 DebugProxy::DebugProxy( QObject* parent ) :
 	QObject( parent )
 {
@@ -48,71 +53,86 @@ DebugProxy::DebugProxy( QObject* parent ) :
 	connect( agg, &AggregatorDebug::signalMaterials, this, &DebugProxy::onMaterials, Qt::QueuedConnection );
 }
 
+/// @brief Binds the proxy to its owning view model.
 void DebugProxy::setParent( IngnomiaGUI::DebugModel* parent )
 {
 	m_parent = parent;
 }
 
+/// @brief Forwards a creature-spawn request to the aggregator.
 void DebugProxy::spawnCreature( QString type )
 {
 	emit signalSpawnCreature( type );
 }
 
+/// @brief Forwards a window-size change to the aggregator.
 void DebugProxy::setWindowSize( int width, int height )
 {
     emit signalSetWindowSize( width, height );
 }
 
+/// @brief Forwards a "set need value" command to the aggregator.
 void DebugProxy::setNeed( unsigned int gnomeID, QString need, float value )
 {
 	emit signalSetNeed( gnomeID, need, value );
 }
 
+/// @brief Forwards a kill-gnome command to the aggregator.
 void DebugProxy::killGnome( unsigned int gnomeID )
 {
 	emit signalKillGnome( gnomeID );
 }
 
+/// @brief Forwards a simple item-spawn request to the aggregator.
 void DebugProxy::spawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z )
 {
 	emit signalSpawnItem( itemSID, materialSID, count, x, y, z );
 }
 
+/// @brief Forwards a composite item-spawn request (multiple component materials) to the aggregator.
 void DebugProxy::spawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z )
 {
 	emit signalSpawnCompositeItem( itemSID, materialSIDs, count, x, y, z );
 }
 
+/// @brief Asks the aggregator to refresh the gnome dropdown list.
 void DebugProxy::requestGnomeList()
 {
 	emit signalRequestGnomeList();
 }
 
+/// @brief Asks the aggregator for the list of item groups.
 void DebugProxy::requestItemGroups()
 {
 	emit signalRequestItemGroups();
 }
 
+/// @brief Asks the aggregator for items belonging to the named group.
 void DebugProxy::requestItems( QString group )
 {
 	emit signalRequestItems( group );
 }
 
+/// @brief Asks the aggregator for the materials valid for an item.
 void DebugProxy::requestMaterials( QString itemSID )
 {
 	emit signalRequestMaterials( itemSID );
 }
 
+/// @brief Forwards the global need-decay multiplier change to the aggregator.
 void DebugProxy::setNeedDecayMultiplier( float value )
 {
 	emit signalSetNeedDecayMultiplier( value );
 }
 
+/// @brief Forwards a per-need disable-decay flag toggle to the aggregator.
 void DebugProxy::setDisableNeedDecay( QString need, bool disable )
 {
 	emit signalSetDisableNeedDecay( need, disable );
 }
 
+/// @brief Slot: receives a fresh gnome list and pushes it into the model's dropdown,
+///        keeping the synthetic "All Gnomes" entry at index 0.
 void DebugProxy::onGnomeList( const QList<QPair<QString, unsigned int>>& gnomes )
 {
 	if ( m_parent )
@@ -130,6 +150,7 @@ void DebugProxy::onGnomeList( const QList<QPair<QString, unsigned int>>& gnomes 
 	}
 }
 
+/// @brief Slot: relays an item-groups list update to the model.
 void DebugProxy::onItemGroups( const QStringList& groups )
 {
 	if ( m_parent )
@@ -138,6 +159,7 @@ void DebugProxy::onItemGroups( const QStringList& groups )
 	}
 }
 
+/// @brief Slot: relays an items list update to the model.
 void DebugProxy::onItems( const QStringList& items )
 {
 	if ( m_parent )
@@ -146,6 +168,7 @@ void DebugProxy::onItems( const QStringList& items )
 	}
 }
 
+/// @brief Slot: relays material list updates (one or two component lists) to the model.
 void DebugProxy::onMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 )
 {
 	if ( m_parent )

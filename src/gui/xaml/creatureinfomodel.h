@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureinfomodel.h
+ *  @brief Noesis view model for the Creature Info window. Exposes attribute/need text,
+ *         the profession dropdown, and twelve equipment-slot bitmap properties (with empty
+ *         placeholders) that XAML binds to.
+ */
 #ifndef __CreatureInfoModel_H__
 #define __CreatureInfoModel_H__
 
@@ -49,14 +54,19 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Creature Info window view model. Receives GuiCreatureInfo updates from
+///        CreatureInfoProxy and exposes them via Get* properties for XAML data binding.
 class CreatureInfoModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	CreatureInfoModel();
 
+	/// @brief Refreshes attributes, needs, profession, equipment slot bitmaps from a fresh payload.
 	void updateInfo( const GuiCreatureInfo& info );
+	/// @brief Updates the profession dropdown list.
 	void updateProfessionList( const QStringList& professions );
 
+	/// @brief Decodes and caches the empty-slot placeholder bitmaps used as fallbacks.
 	void updateEmptySlotImages( const QMap< QString, std::vector<unsigned char> >& pics );
 
 private:

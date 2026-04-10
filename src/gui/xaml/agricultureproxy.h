@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file agricultureproxy.h
+ *  @brief Qt-side proxy that bridges the AgricultureModel (Noesis view model) with
+ *         AggregatorAgri (Qt-thread aggregator). All signal/slot wiring lives here so the
+ *         view model itself doesn't have to depend on Qt's signal infrastructure.
+ */
 #pragma once
 
 #include "../aggregatoragri.h"
@@ -22,6 +27,9 @@
 
 #include <QObject>
 
+/// @brief Bridge between IngnomiaGUI::AgricultureModel and AggregatorAgri. Forwards user
+///        actions from the view model into Qt signals that AggregatorAgri listens to, and
+///        translates aggregator update signals back into AgricultureModel::update* calls.
 class AgricultureProxy : public QObject
 {
 	Q_OBJECT
@@ -53,10 +61,10 @@ public:
 	void setFoodItemChecked( QString itemSID, QString materialSID, bool checked );
 
 private:
-	IngnomiaGUI::AgricultureModel* m_parent = nullptr;
+	IngnomiaGUI::AgricultureModel* m_parent = nullptr; ///< View model the proxy pushes updates into.
 
-	unsigned int m_AgricultureID = 0;
-	AgriType m_type              = AgriType::Farm;
+	unsigned int m_AgricultureID = 0;                  ///< UID of the currently bound designation.
+	AgriType m_type              = AgriType::Farm;     ///< Kind of designation currently bound.
 
 private slots:
 	void onUpdateFarm( const GuiFarmInfo& info );

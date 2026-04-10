@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debug.xaml.h
+ *  @brief Code-behind for the 3-page Debug GUI XAML window (DebugGui.xaml). Real behaviour
+ *         lives in DebugModel; this file just hosts the user control.
+ */
 #ifndef __DebugGui_H__
 #define __DebugGui_H__
 
@@ -24,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the DebugGui XAML user control.
 class DebugGui final : public Noesis::UserControl
 {
 public:

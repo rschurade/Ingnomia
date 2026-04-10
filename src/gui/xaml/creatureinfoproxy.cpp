@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureinfoproxy.cpp
+ *  @brief CreatureInfoProxy implementation: connects every signal pair between
+ *         CreatureInfoModel and AggregatorCreatureInfo and provides thin pass-through slots.
+ */
 #include "creatureinfoproxy.h"
 
 #include "../../base/db.h"
@@ -29,6 +33,8 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the proxy and wires up all aggregator-side signal/slot connections.
+/// @param parent Qt parent object.
 CreatureInfoProxy::CreatureInfoProxy( QObject* parent ) :
 	QObject( parent )
 {
@@ -43,15 +49,18 @@ CreatureInfoProxy::CreatureInfoProxy( QObject* parent ) :
 	connect( Global::eventConnector->aggregatorCreatureInfo(), &AggregatorCreatureInfo::signalEmptyPics, this, &CreatureInfoProxy::onEmptyPics, Qt::QueuedConnection );
 }
 
+/// @brief Destructor.
 CreatureInfoProxy::~CreatureInfoProxy()
 {
 }
 
+/// @brief Binds the proxy to its owning view model.
 void CreatureInfoProxy::setParent( IngnomiaGUI::CreatureInfoModel* parent )
 {
 	m_parent = parent;
 }
 
+/// @brief Slot: relays a fresh creature payload from the aggregator to the model.
 void CreatureInfoProxy::onUpdateInfo( const GuiCreatureInfo& info )
 {
 	if ( m_parent )
@@ -60,11 +69,13 @@ void CreatureInfoProxy::onUpdateInfo( const GuiCreatureInfo& info )
 	}
 }
 
+/// @brief Asks the aggregator for the current profession list.
 void CreatureInfoProxy::requestProfessionList()
 {
 	emit signalRequestProfessionList();
 }
 
+/// @brief Slot: relays a fresh profession list to the model so the dropdown updates.
 void CreatureInfoProxy::onProfessionList( const QStringList& profs )
 {
 	if ( m_parent )
@@ -73,16 +84,19 @@ void CreatureInfoProxy::onProfessionList( const QStringList& profs )
 	}
 }
 
+/// @brief Forwards a profession change for the given gnome to the aggregator.
 void CreatureInfoProxy::setProfession( unsigned int gnomeID, QString profession )
 {
 	emit signalSetProfession( gnomeID, profession );
 }
 
+/// @brief Asks the aggregator for the empty-slot placeholder PNG buffers (one-shot at init).
 void CreatureInfoProxy::requestEmptySlotImages()
 {
 	emit signalRequestEmptySlotImages();
 }
 
+/// @brief Slot: relays the empty-slot placeholder bitmaps to the model for caching.
 void CreatureInfoProxy::onEmptyPics( const QMap< QString, std::vector<unsigned char> >& emptyPics )
 {
 	if( m_parent )

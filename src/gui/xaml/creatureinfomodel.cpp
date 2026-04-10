@@ -29,6 +29,13 @@
 
 #include <QDebug>
 
+/** @file creatureinfomodel.cpp
+ *  @brief CreatureInfoModel implementation. Builds Noesis bitmap sources from the per-slot
+ *         PNG buffers in GuiCreatureInfo and exposes XAML-bindable text properties for the
+ *         attributes, needs, and profession dropdown. Trivial Get* property accessors are
+ *         self-explanatory binding plumbing.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
@@ -37,6 +44,7 @@ using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the CreatureInfoModel: instantiates the proxy and an empty profession list.
 CreatureInfoModel::CreatureInfoModel()
 {
 	m_proxy = new CreatureInfoProxy;
@@ -46,6 +54,10 @@ CreatureInfoModel::CreatureInfoModel()
 	m_proxy->requestProfessionList();
 }
 
+/// @brief Decodes the per-slot empty-slot PNG buffers into Noesis BitmapSource pointers and
+///        marks them initialised so subsequent updateInfo() calls can fall back to them when
+///        a real equipment slot is empty.
+/// @param pics Map of slot key → encoded PNG buffer.
 void CreatureInfoModel::updateEmptySlotImages( const QMap< QString, std::vector<unsigned char> >& pics )
 {
 	m_bitmapHeadEmpty =  BitmapImage::Create( 32, 32, 96, 96, pics.value( "UIEmptySlotHead" ).data(), 128, BitmapSource::Format::Format_RGBA8 );
@@ -63,6 +75,7 @@ void CreatureInfoModel::updateEmptySlotImages( const QMap< QString, std::vector<
 	m_emptyPicsInitialized = true;
 }
 
+/// @brief Replaces the profession dropdown's contents with @p professions and notifies XAML.
 void CreatureInfoModel::updateProfessionList( const QStringList& professions )
 {
 	m_professions->Clear();
@@ -73,6 +86,9 @@ void CreatureInfoModel::updateProfessionList( const QStringList& professions )
 	OnPropertyChanged( "Professions" );
 }
 
+/// @brief Pulls every value out of @p info into the bound view-model fields: name, attributes,
+///        needs, profession selection, and per-slot bitmap sources (falling back to the
+///        cached empty-slot bitmaps when an item PNG is missing).
 void CreatureInfoModel::updateInfo( const GuiCreatureInfo& info )
 {
 	if( !m_emptyPicsInitialized )
@@ -250,6 +266,8 @@ Noesis::ObservableCollection<ProfItem>* CreatureInfoModel::GetProfessions() cons
 	return m_professions;
 }
 	
+/// @brief XAML setter for the profession dropdown. Forwards the chosen profession to the
+///        proxy so the gnome's job assignment is updated game-side.
 void CreatureInfoModel::SetProfession( ProfItem* item )
 {
 	if ( item && m_selectedProfession != item )
