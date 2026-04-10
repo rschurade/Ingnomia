@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorneighbors.h
+ *  @brief Data types and aggregator bridging the Neighbors (diplomacy) XAML window with
+ *         NeighborManager. Exposes kingdom info, available-gnome lists for missions, and
+ *         mission lifecycle signals.
+ */
 #pragma once
 
 #include "../game/creature.h"
@@ -22,34 +27,39 @@
 
 #include <QObject>
 
+/// @brief Summary of one neighbouring kingdom shown in the diplomacy list. Undiscovered
+///        kingdoms carry placeholder strings for all fields.
 struct GuiNeighborInfo
 {
-	unsigned int id          = 0;
-	bool discovered          = false;
-	QString distance = "undiscovered";
-	QString name = "undiscovered";
-	QString type = "undiscovered";
-	QString attitude = "undiscovered";
-	QString wealth = "undiscovered";
-	QString economy = "undiscovered";
-	QString military = "undiscovered";
+	unsigned int id          = 0;            ///< Kingdom UID.
+	bool discovered          = false;        ///< True once the kingdom has been discovered.
+	QString distance = "undiscovered";       ///< Travel distance label.
+	QString name = "undiscovered";           ///< Kingdom name.
+	QString type = "undiscovered";           ///< Kingdom race / culture type.
+	QString attitude = "undiscovered";       ///< Current diplomatic attitude.
+	QString wealth = "undiscovered";         ///< Wealth rating label.
+	QString economy = "undiscovered";        ///< Economy rating label.
+	QString military = "undiscovered";       ///< Military strength label.
 
-	bool spyMission = false;
-	bool sabotageMission = false;
-	bool raidMission = false;
-	bool diploMission = false;
+	bool spyMission = false;                 ///< True if a spy mission is currently active against this kingdom.
+	bool sabotageMission = false;            ///< True if a sabotage mission is active.
+	bool raidMission = false;                ///< True if a raid mission is active.
+	bool diploMission = false;               ///< True if an emissary mission is active.
 };
 Q_DECLARE_METATYPE( GuiNeighborInfo )
 
+/// @brief Gnome eligible to be sent on a mission (not assigned elsewhere, not in a squad).
 struct GuiAvailableGnome
 {
-	unsigned int id = 0;
-	QString name;
+	unsigned int id = 0;    ///< Creature UID.
+	QString name;           ///< Display name.
 };
 Q_DECLARE_METATYPE( GuiAvailableGnome )
 
 
 
+/// @brief Routes neighbour kingdom info and diplomacy mission state between NeighborManager
+///        and the Neighbors XAML window.
 class AggregatorNeighbors : public QObject
 {
 	Q_OBJECT
@@ -61,10 +71,10 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g;
+	QPointer<Game> g;                           ///< Game instance (weak ownership).
 
-	QList<GuiNeighborInfo> m_neighborsInfo;
-	QList<GuiAvailableGnome> m_availableGnomes;
+	QList<GuiNeighborInfo> m_neighborsInfo;     ///< Cached kingdom list for the GUI.
+	QList<GuiAvailableGnome> m_availableGnomes; ///< Cached eligible-gnome list for mission dispatch.
 
 public slots:
 	void onRequestNeighborsUpdate();

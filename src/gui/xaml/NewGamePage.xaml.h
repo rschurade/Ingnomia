@@ -16,6 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file NewGamePage.xaml.h
+ *  @brief Code-behind for the New Game page (NewGamePage.xaml). State lives in NewGameModel.
+ */
 #ifndef __NewGamePage_H__
 #define __NewGamePage_H__
 
@@ -25,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the NewGamePage Noesis page.
 class NewGamePage final : public Noesis::UserControl
 {
 public:

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file military.xaml.h
+ *  @brief Code-behind for the Military window (MilitaryGui.xaml). State lives in MilitaryModel.
+ */
 #pragma once
 
 #include <NoesisPCH.h>
@@ -23,6 +26,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the MilitaryGui Noesis user control.
 class MilitaryGui final : public Noesis::UserControl
 {
 public:

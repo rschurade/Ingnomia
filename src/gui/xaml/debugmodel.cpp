@@ -27,11 +27,18 @@
 
 #include <QDebug>
 
+/** @file debugmodel.cpp
+ *  @brief DebugModel implementation. Routes Debug GUI commands through DebugProxy and
+ *         exposes properties for the three pages. Trivial Get/Set property accessors are
+ *         standard XAML binding plumbing.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a (name, id) dropdown row.
 NameEntry::NameEntry( const QString& name, unsigned int id ) :
 	m_id( id )
 {
@@ -44,6 +51,7 @@ const char* NameEntry::getName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a window-size dropdown row showing "WxH" as its label.
 WSEntry::WSEntry( int width, int height ) :
 	m_width( width ),
 	m_height( height )
@@ -57,6 +65,8 @@ const char* WSEntry::getName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the DebugModel: instantiates the proxy, registers all DelegateCommands,
+///        seeds the window-size preset list, and asks the proxy to populate the dropdowns.
 DebugModel::DebugModel()
 {
 	m_proxy = new DebugProxy;
@@ -88,6 +98,7 @@ DebugModel::DebugModel()
 	m_spawnZ = "100";
 }
 
+/// @brief Asks DebugProxy for the current gnome list (handler will populate m_gnomeList).
 void DebugModel::updateGnomeList()
 {
 	m_gnomeList->Clear();
@@ -111,6 +122,8 @@ const char* DebugModel::GetShowGame() const
 	return m_page == DebugPage::Game ? "Visible" : "Hidden";
 }
 
+/// @brief Tab switcher: parses @p param as "Gnomes" / "Items" / "Game" and toggles the
+///        ShowGnomes / ShowItems / ShowGame visibility properties accordingly.
 void DebugModel::onPageCmd( BaseComponent* param )
 {
 	if ( param->ToString() == "Gnomes" )
@@ -136,6 +149,8 @@ void DebugModel::onPageCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowGame" );
 }
 
+/// @brief Spawn-creature command: parses @p param as a creature type keyword and forwards
+///        it through the proxy ("Gnome" → migration, "Trader" → trader, "Goblin" → invasion).
 void DebugModel::onSpawnCmd( BaseComponent* param )
 {
 	m_proxy->spawnCreature( param->ToString().Str() );
@@ -147,6 +162,8 @@ Noesis::ObservableCollection<NameEntry>* DebugModel::getGnomeList() const
 	return m_gnomeList;
 }
 
+/// @brief Setter for the gnome dropdown selection. Stores the picked NameEntry so subsequent
+///        commands (set need, kill) can target it.
 void DebugModel::setSelectedGnome( NameEntry* item )
 {
 	m_selectedGnome = item;
@@ -181,24 +198,28 @@ const char* DebugModel::GetSleepText() const
 }
 
 // Need commands
+/// @brief Apply the slider value to the selected gnome's Hunger need.
 void DebugModel::onSetHungerCmd( BaseComponent* )
 {
 	unsigned int gnomeID = m_selectedGnome ? m_selectedGnome->m_id : 0;
 	m_proxy->setNeed( gnomeID, "Hunger", m_hungerValue );
 }
 
+/// @brief Apply the slider value to the selected gnome's Thirst need.
 void DebugModel::onSetThirstCmd( BaseComponent* )
 {
 	unsigned int gnomeID = m_selectedGnome ? m_selectedGnome->m_id : 0;
 	m_proxy->setNeed( gnomeID, "Thirst", m_thirstValue );
 }
 
+/// @brief Apply the slider value to the selected gnome's Sleep need.
 void DebugModel::onSetSleepCmd( BaseComponent* )
 {
 	unsigned int gnomeID = m_selectedGnome ? m_selectedGnome->m_id : 0;
 	m_proxy->setNeed( gnomeID, "Sleep", m_sleepValue );
 }
 
+/// @brief Kill the selected gnome immediately via the proxy.
 void DebugModel::onKillGnomeCmd( BaseComponent* )
 {
 	if ( m_selectedGnome && m_selectedGnome->m_id != 0 )
@@ -208,6 +229,9 @@ void DebugModel::onKillGnomeCmd( BaseComponent* )
 }
 
 // Spawn item
+/// @brief Spawn-item command: pulls the count, coordinates, and selected item/material(s)
+///        from the bound text fields/dropdowns and forwards to DebugProxy as either a simple
+///        item spawn or a composite item spawn (depending on m_componentCount).
 void DebugModel::onSpawnItemCmd( BaseComponent* )
 {
 	if ( !m_selectedItem || !m_selectedMaterial1 ) return;
@@ -239,6 +263,8 @@ Noesis::ObservableCollection<NameEntry>* DebugModel::getItemGroupList() const
 	return m_itemGroupList;
 }
 
+/// @brief Setter for the item-group dropdown. Asks the proxy to refresh the item dropdown
+///        for the chosen group.
 void DebugModel::setSelectedItemGroup( NameEntry* item )
 {
 	if ( item && m_selectedItemGroup != item )
@@ -258,6 +284,8 @@ Noesis::ObservableCollection<NameEntry>* DebugModel::getItemList() const
 	return m_itemList;
 }
 
+/// @brief Setter for the item dropdown. Asks the proxy to refresh the material dropdown(s)
+///        for the chosen item.
 void DebugModel::setSelectedItem( NameEntry* item )
 {
 	if ( item && m_selectedItem != item )
@@ -307,6 +335,7 @@ const char* DebugModel::GetShowMaterial2() const
 	return m_componentCount >= 2 ? "Visible" : "Collapsed";
 }
 
+/// @brief Replaces the item-group dropdown contents with @p groups.
 void DebugModel::updateItemGroups( const QStringList& groups )
 {
 	m_itemGroupList->Clear();
@@ -316,6 +345,7 @@ void DebugModel::updateItemGroups( const QStringList& groups )
 	}
 }
 
+/// @brief Replaces the item dropdown contents with @p items.
 void DebugModel::updateItems( const QStringList& items )
 {
 	m_itemList->Clear();
@@ -333,6 +363,8 @@ void DebugModel::updateItems( const QStringList& items )
 	}
 }
 
+/// @brief Replaces the material dropdown(s). When @p componentCount is >=2 the second
+///        dropdown is shown alongside the first; for simple items only the first is used.
 void DebugModel::updateMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 )
 {
 	m_componentCount = componentCount;
@@ -360,6 +392,7 @@ Noesis::ObservableCollection<WSEntry>* DebugModel::getWindowSizes() const
     return m_windowSizes;
 }
 
+/// @brief Setter for the window-size dropdown. Forwards the chosen preset to the proxy.
 void DebugModel::setWindowSize( WSEntry* item )
 {
     if( item && m_selectedWindowSize != item )
@@ -375,6 +408,7 @@ WSEntry* DebugModel::getWindowSize() const
 }
 
 // Game controls
+/// @brief Updates the global need-decay multiplier and pushes it through the proxy.
 void DebugModel::SetNeedDecayMultiplier( float v )
 {
 	m_needDecayMultiplier = v;
@@ -388,18 +422,21 @@ const char* DebugModel::GetNeedDecayText() const
 	return m_needDecayText.Str();
 }
 
+/// @brief Toggles whether sleep need decay is frozen game-wide.
 void DebugModel::SetDisableSleepDecay( bool v )
 {
 	m_disableSleepDecay = v;
 	m_proxy->setDisableNeedDecay( "Sleep", v );
 }
 
+/// @brief Toggles whether hunger need decay is frozen game-wide.
 void DebugModel::SetDisableHungerDecay( bool v )
 {
 	m_disableHungerDecay = v;
 	m_proxy->setDisableNeedDecay( "Hunger", v );
 }
 
+/// @brief Toggles whether thirst need decay is frozen game-wide.
 void DebugModel::SetDisableThirstDecay( bool v )
 {
 	m_disableThirstDecay = v;

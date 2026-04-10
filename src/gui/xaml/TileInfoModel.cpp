@@ -15,6 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file TileInfoModel.cpp
+ *  @brief TileInfoModel implementation. Constructor creates the proxy, commands, and
+ *         empty collections; onUpdateTileInfo rebuilds every tab (terrain/items/creatures/
+ *         automatons) plus the designation/job/mechanism panels from a fresh snapshot;
+ *         updateMiniStockpile refreshes the mini-stockpile panel. OnCmdTab switches the
+ *         currently displayed facet. Trivial Get/Set property accessors are XAML binding
+ *         plumbing and forward writes through ProxyTileInfo.
+ */
 
 #include "TileInfoModel.h"
 
@@ -149,6 +157,8 @@ void AutomatonTabItem::setRefuel( bool value )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the TileInfoModel, creates the proxy and all delegate commands,
+///        initialises the tab-item pointers and empty collections.
 TileInfoModel::TileInfoModel()
 {
 	m_proxy = new ProxyTileInfo;
@@ -189,6 +199,9 @@ TileInfoModel::TileInfoModel()
 	_cmdMechToggleInvert.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdMechToggleInvert ) );
 }
 
+/// @brief Applies a fresh GuiTileInfo snapshot. Rebuilds the left-bar tab-item list,
+///        populates each per-tab collection, updates the designation/job/room/mechanism
+///        panels, and raises PropertyChanged for every bound property.
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 {
 	m_tileIDString  = Noesis::String( std::to_string( tileInfo.tileID ).c_str() );
@@ -491,6 +504,8 @@ const NoesisApp::DelegateCommand* TileInfoModel::GetCmdTab() const
 	return &_cmdTab;
 }
 
+/// @brief Command handler for clicking a left-bar tab: switches which facet the window
+///        is currently showing (terrain / items / creatures / job / designation / …).
 void TileInfoModel::OnCmdTab( BaseComponent* param )
 {
 	QString tab = param->ToString().Str();
@@ -648,6 +663,8 @@ const char* TileInfoModel::GetShowMiniSP() const
 	return "Collapsed";
 }
 
+/// @brief Refreshes the mini-stockpile panel content (name + stocked-items list) when the
+///        currently viewed tile is part of a stockpile.
 void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 {
 	m_miniStockpileName = info.name.toStdString().c_str();

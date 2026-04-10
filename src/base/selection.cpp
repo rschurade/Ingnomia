@@ -15,6 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file selection.cpp
+ *  @brief Implementation of Selection, which manages user tile selection,
+ *  drag-to-select rectangles, tile validation, and job creation from
+ *  selected areas in the game world.
+ */
+
 #include "selection.h"
 
 #include "../base/config.h"
@@ -37,6 +44,14 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
+/** @brief Constructs a Selection instance and initializes the requirement map.
+ *
+ *  Populates m_reqMap with string-to-enum mappings for all tile requirement
+ *  types (Floor, Wall, Soil, Tree, etc.) used to validate tile selections
+ *  against action prerequisites.
+ *
+ *  @param game Pointer to the owning Game instance.
+ */
 Selection::Selection( Game* game ) :
 	g( game ),
 	m_rotation( 0 ),
@@ -80,10 +95,18 @@ Selection::Selection( Game* game ) :
 	m_reqMap.insert( "AnyWall", SEL_ANYWALL );
 }
 
+/** @brief Destructor. */
 Selection::~Selection()
 {
 }
 
+/** @brief Serializes the current selection state into a QVariantMap.
+ *
+ *  Stores the rotation, first click position, action, item, materials,
+ *  and all selected tile positions for persistence.
+ *
+ *  @return A QVariantMap containing the serialized selection data.
+ */
 QVariantMap Selection::serialize()
 {
 	QVariantMap out;
@@ -104,6 +127,12 @@ QVariantMap Selection::serialize()
 	return out;
 }
 
+/** @brief Resets the selection to its default empty state.
+ *
+ *  Clears the action, selected tiles, first-click state, item, materials,
+ *  tile check list, and all flags. Emits signalActionChanged with an
+ *  empty string.
+ */
 void Selection::clear()
 {
 	m_action = "";
@@ -122,6 +151,11 @@ void Selection::clear()
 	emit signalActionChanged( "" );
 }
 
+/** @brief Rotates the current selection by 90 degrees clockwise.
+ *
+ *  Increments the rotation index (0-3), wrapping around after 3.
+ *  Marks the selection as changed so the renderer will update.
+ */
 void Selection::rotate()
 {
 	++m_rotation;
@@ -130,6 +164,18 @@ void Selection::rotate()
 	m_changed = true;
 }
 
+/** @brief Handles a left click on a world tile position.
+ *
+ *  On the first click, records the position, looks up the action properties
+ *  (floor, multi-tile, rotation), and begins a selection. For single-tile
+ *  non-shift actions, immediately triggers onSecondClick to create the job.
+ *  On the second click, finalizes the selection rectangle and creates jobs.
+ *
+ *  @param pos   The world position that was clicked.
+ *  @param shift Whether the Shift key is held (forces multi-tile mode).
+ *  @param ctrl  Whether the Ctrl key is held (hollow rectangle mode).
+ *  @return True if the action was completed (second click or single-tile), false if waiting for second click.
+ */
 bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 {
 	if ( !m_firstClicked )
@@ -175,6 +221,14 @@ bool Selection::leftClick( Position& pos, bool shift, bool ctrl )
 	}
 }
 
+/** @brief Sets the current action and configures selection properties from the DB.
+ *
+ *  Clears the previous selection, stores the new action string, and looks
+ *  up action properties (IsFloor, Multi, MultiZ, Rotate) from the Actions
+ *  database table. Emits signalActionChanged.
+ *
+ *  @param action The action identifier string (e.g. "BuildWall", "Mine").
+ */
 void Selection::setAction( QString action )
 {
 	if ( Global::debugMode )
@@ -193,6 +247,19 @@ void Selection::setAction( QString action )
 	emit signalActionChanged( m_action );
 }
 
+/** @brief Updates the selection rectangle as the cursor moves.
+ *
+ *  Before the first click, shows a single-tile preview at the cursor.
+ *  After the first click, spans a rectangular selection between the first
+ *  click and the current cursor position. Supports multi-Z selections
+ *  and hollow rectangles (when Ctrl is held). Each tile in the rectangle
+ *  is validated via testTileForJobSelection. Emits signalSize with the
+ *  selection dimensions.
+ *
+ *  @param pos   The current cursor world position.
+ *  @param shift Whether Shift is held.
+ *  @param ctrl  Whether Ctrl is held (hollow rectangle selection).
+ */
 void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
 {
 	if ( m_action.isEmpty() )
@@ -278,6 +345,14 @@ void Selection::updateSelection( Position& pos, bool shift, bool ctrl )
 	m_changed = true;
 }
 
+/** @brief Handles a right click, canceling the current multi-tile selection.
+ *
+ *  If a first click was placed, resets to a single-tile selection at the
+ *  right-clicked position without creating any jobs. If no first click
+ *  was placed, fully clears the selection and action.
+ *
+ *  @param pos The world position that was right-clicked.
+ */
 void Selection::rightClick( Position& pos )
 {
 	if ( m_firstClicked )
@@ -300,6 +375,17 @@ void Selection::rightClick( Position& pos )
 	m_changed = true;
 }
 
+/** @brief Tests whether a tile is valid for the current action's selection requirements.
+ *
+ *  Looks up required and forbidden tile properties from the DB (Actions_Tiles,
+ *  Workshops_Components, or Items_Tiles depending on action type). Applies
+ *  rotation to tile offsets for multi-tile structures. Checks each required
+ *  condition (floor, wall, soil, tree, plant, walkable, designation, etc.)
+ *  and each forbidden condition against the actual tile state.
+ *
+ *  @param pos The world position to validate.
+ *  @return True if the tile passes all required checks and no forbidden checks, false otherwise.
+ */
 bool Selection::testTileForJobSelection( const Position& pos )
 {
 	// TODO cache plants and posID and make it faster :)
@@ -669,6 +755,18 @@ bool Selection::testTileForJobSelection( const Position& pos )
 	return true;
 }
 
+/** @brief Creates jobs or designations from the finalized tile selection.
+ *
+ *  Dispatches based on the current action: removes designations, cancels
+ *  or re-prioritizes jobs, creates stockpiles/groves/farms/pastures/rooms,
+ *  or adds build/deconstruct jobs via the JobManager. For multi-tile
+ *  actions, iterates all selected tiles that passed validation. For
+ *  deconstruction, groups workshop tiles so each workshop only gets one
+ *  deconstruct job. In debug mode, directly constructs items without jobs.
+ *
+ *  @param shift Whether Shift is held (forces multi-tile job creation).
+ *  @param ctrl  Whether Ctrl is held.
+ */
 void Selection::onSecondClick( bool shift, bool ctrl )
 {
 	m_changed = true;
@@ -878,6 +976,10 @@ void Selection::onSecondClick( bool shift, bool ctrl )
 	}
 }
 
+/** @brief Returns the current rotation index if rotation is allowed.
+ *
+ *  @return The rotation index (0-3) if the current action supports rotation, otherwise 0.
+ */
 int Selection::rotation()
 {
 	if ( m_canRotate )
@@ -890,6 +992,14 @@ int Selection::rotation()
 	}
 }
 
+/** @brief Checks and clears the changed flag.
+ *
+ *  Returns whether the selection has changed since the last call and
+ *  resets the flag to false. Used by the renderer to know when to
+ *  rebuild the selection overlay.
+ *
+ *  @return True if the selection changed since last check, false otherwise.
+ */
 bool Selection::changed()
 {
 	bool out  = m_changed;
@@ -897,6 +1007,11 @@ bool Selection::changed()
 	return out;
 }
 
+/** @brief Resets GUI signals to clear selection-related UI elements.
+ *
+ *  Emits signalActionChanged and signalSize with empty strings to
+ *  clear the action label and size display in the GUI.
+ */
 void Selection::updateGui()
 {
 	emit signalActionChanged( "" );

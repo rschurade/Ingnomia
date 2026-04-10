@@ -16,6 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file worldconstructions.cpp
+ *  @brief Wall, floor, stair, ramp, fence, pipe, item, and workshop construction
+ *         and deconstruction functions (methods on World).
+ *
+ *  Implements the construct() dispatch that routes by construction type to
+ *  type-specific builders (constructWall, constructFloor, constructStairs, etc.),
+ *  as well as deconstruct() which tears down constructions and returns materials.
+ *  Also handles workshop placement, item installation (doors, lights, mechanisms),
+ *  fence/pipe sprite updates, and navigation region updates after changes.
+ */
+
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
@@ -42,6 +53,15 @@ const int ROT_BIT  = 65536;
 const int ANIM_BIT = 262144;
 const int WALL_BIT = 524288;
 
+/**
+ * @brief Dispatches a construction request to the appropriate type-specific builder.
+ * @param constructionSID String ID of the construction from the database.
+ * @param pos World position to build at.
+ * @param rotation Rotation (0-3) for the construction.
+ * @param itemIDs List of inventory item UIDs to consume as building materials.
+ * @param extractTo Position where mined/replaced materials should be placed.
+ * @return True if construction succeeded, false otherwise.
+ */
 bool World::construct( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemIDs, Position extractTo )
 {
 	if ( itemIDs.empty() )
@@ -109,6 +129,17 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 	return result;
 }
 
+/**
+ * @brief Builds a solid wall construction, replacing any existing wall and updating navigation.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Wall rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs for the wall.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -186,6 +217,17 @@ bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVarian
 	return true;
 }
 
+/**
+ * @brief Builds a floor construction, handling existing floor removal and sunlight propagation.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Floor rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs for the floor.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -281,6 +323,17 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 	return true;
 }
 
+/**
+ * @brief Builds a fence construction (solid or see-through wall segments) and updates neighbor fence sprites.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Fence rotation.
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -349,6 +402,13 @@ bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVaria
 	return true;
 }
 
+/**
+ * @brief Installs a hydraulic pipe, pump, or pipe exit and updates neighbor pipe sprites.
+ * @param itemSID String ID of the pipe item ("Pipe", "PipeExit", or "Pump").
+ * @param pos World position to install at.
+ * @param itemUID Inventory UID of the pipe item being installed.
+ * @return True on success.
+ */
 bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 {
 	SourceMaterial sm( g->inv()->itemSID( itemUID ), g->inv()->materialSID( itemUID ), g->inv()->quality( itemUID ) );
@@ -390,6 +450,13 @@ bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 	return true;
 }
 
+/**
+ * @brief Removes a pipe construction, restoring the tile and creating a new item from stored material specs.
+ * @param constr Construction data map for the pipe.
+ * @param decPos Position of the pipe to deconstruct.
+ * @param workPos Position where the resulting item should be placed.
+ * @return True on success.
+ */
 bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workPos )
 {
 	Tile& tile         = getTile( decPos );
@@ -425,6 +492,17 @@ bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workP
 	return true;
 }
 
+/**
+ * @brief Builds a combined wall-and-floor construction from a multi-part sprite definition.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Construction rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -539,6 +617,17 @@ bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QV
 	return true;
 }
 
+/**
+ * @brief Builds a staircase construction (bottom stair wall + top stair floor on the level above).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the stair bottom.
+ * @param rotation Stair rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -618,6 +707,17 @@ bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVari
 	return true;
 }
 
+/**
+ * @brief Builds a ramp construction (ramp bottom wall + ramp top floor on the level above).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the ramp bottom.
+ * @param rotation Ramp rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -721,6 +821,15 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 	return true;
 }
 
+/**
+ * @brief Places a workshop on the world, setting tile types and creating the Workshop object.
+ * @param constructionSID Database ID of the workshop definition.
+ * @param pos World position (origin tile) of the workshop.
+ * @param rotation Workshop rotation (0-3).
+ * @param itemUIDs List of inventory item UIDs consumed as building materials.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True if the workshop was placed successfully, false if the DB entry was not found.
+ */
 bool World::constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo )
 {
 	auto dbws = DB::workshop( constructionSID );
@@ -840,6 +949,17 @@ bool World::constructWorkshop( QString constructionSID, Position pos, int rotati
 	return false;
 }
 
+/**
+ * @brief Builds a ramp corner construction (inner corner ramp piece).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the ramp corner.
+ * @param rotation Corner rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -951,6 +1071,18 @@ bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, Q
 	return true;
 }
 
+/**
+ * @brief Installs an item (door, light, furniture, mechanism, container, etc.) at a position.
+ *
+ * Handles sprite placement, item destruction/preservation, and delegation to
+ * the appropriate manager (RoomManager, StockpileManager, MechanismManager, etc.).
+ * @param itemSID String ID of the item type to install.
+ * @param pos World position to install at.
+ * @param rotation Item rotation (0-3).
+ * @param items List of inventory item UIDs to use (first is the primary item).
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success, false if the item list is empty.
+ */
 bool World::constructItem( QString itemSID, Position pos, int rotation, QList<unsigned int> items, Position extractTo )
 {
 	if ( items.empty() )
@@ -1127,6 +1259,11 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	return true;
 }
 
+/**
+ * @brief Expels inhabitants and items from modified tiles, then updates region map connectivity.
+ * @param coords List of positions that were modified by a construction or deconstruction.
+ * @param extractTo Position where expelled items and creatures are moved to.
+ */
 void World::updateNavigation( QList<Position>& coords, Position extractTo )
 {
 	for ( auto p : coords )
@@ -1145,6 +1282,13 @@ void World::updateNavigation( QList<Position>& coords, Position extractTo )
 	}
 }
 
+/**
+ * @brief Deconstructs whatever is built at the given position (wall, workshop, or floor construction).
+ * @param decPos Position to deconstruct.
+ * @param workPos Position where returned materials/items are placed.
+ * @param ignoreGravity If true, skips gravity processing on freed items.
+ * @return True if deconstruction succeeded, false if nothing was found to deconstruct.
+ */
 bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 {
 	QVariantMap constr;
@@ -1200,6 +1344,19 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 	}
 }
 
+/**
+ * @brief Core deconstruction logic for a single construction record (item, scaffold, fence, or multi-tile).
+ *
+ * Handles item recovery (from stored SourceMaterial or live inventory), manager
+ * cleanup (rooms, stockpiles, mechanisms, lights, etc.), tile restoration, and
+ * sunlight recalculation.
+ * @param constr Construction data map describing what was built.
+ * @param decPos Position being deconstructed.
+ * @param isFloor True if this is a floor construction, false for wall.
+ * @param workPos Position where returned materials are placed.
+ * @param ignoreGravity If true, skips gravity processing.
+ * @return True on success.
+ */
 bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Position workPos, bool ignoreGravity )
 {
 	qDebug() << "deconstruct" << decPos.toString() << isFloor;

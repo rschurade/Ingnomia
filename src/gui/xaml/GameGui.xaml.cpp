@@ -16,12 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file GameGui.xaml.cpp
+ *  @brief GameGui user-control implementation: loads GameGui.xaml on construction. State is
+ *         held by GameModel, bound via the view model in XAML.
+ */
 #include "GameGui.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the GameGui user control and registers the Loaded delegate.
 GameGui::GameGui()
 {
 	Loaded() += MakeDelegate( this, &GameGui::OnLoaded );
@@ -29,16 +34,19 @@ GameGui::GameGui()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the GameGui.xaml resource into this user control.
 void GameGui::InitializeComponent()
 {
 	GUI::LoadComponent( this, "GameGui.xaml" );
 }
 
+/// @brief Noesis event-connection callback. GameGui has no code-behind events.
 bool GameGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; GameModel handles state.
 void GameGui::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

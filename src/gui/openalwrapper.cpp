@@ -1,3 +1,7 @@
+/** @file openalwrapper.cpp
+ *  @brief RAII OpenAL wrapper implementation: alCall/alcCall helpers for error checking,
+ *         a minimal WAV loader, and constructors/destructors for every wrapper class.
+ */
 #include "openalwrapper.h"
 
 #include <al.h>
@@ -346,6 +350,8 @@ auto alcCall( alcFunction function, ALCdevice* device, Params... params )
 	return returnValue;
 }
 
+/// @brief Opens the system default OpenAL device and loads the EFX function table.
+///        Throws std::logic_error if no device is available.
 Device::Device() :
 	m_openALDevice( alcOpenDevice( nullptr ) )
 {
@@ -354,11 +360,15 @@ Device::Device() :
 	m_functions = std::make_unique<Functions>( *this );
 }
 
+/// @brief Closes the OpenAL device.
 Device::~Device()
 {
 	ALCboolean closed = alcCall( alcCloseDevice, m_openALDevice, m_openALDevice );
 }
 
+/// @brief Creates an ALCcontext on the given device and probes ALC_EXT_EFX /
+///        ALC_EXT_thread_local_context availability.
+/// @param device Owning Device (must be non-null).
 Context::Context( const std::shared_ptr<Device>& device ) :
 	m_device( device ),
 	m_openACLContext( alcCall( alcCreateContext, m_device->device(), m_device->device(), nullptr ) )
@@ -371,11 +381,16 @@ Context::Context( const std::shared_ptr<Device>& device ) :
 	m_hasThreadLocal = alcCall( alcIsExtensionPresent, m_device->device(), m_device->device(), "ALC_EXT_thread_local_context" );
 }
 
+/// @brief Destroys the ALCcontext.
 Context::~Context()
 {
 	alcCall( alcDestroyContext, m_device->device(), m_openACLContext );
 }
 
+/// @brief Makes @p context current on the calling thread using either the thread-local
+///        extension or the standard alcMakeContextCurrent call. Throws if another context
+///        is already active (debug builds only) or if activation fails.
+/// @param context Context to make current.
 Context::Lock::Lock( const std::shared_ptr<Context>& context ) :
 	m_context( context )
 {
@@ -404,6 +419,7 @@ Context::Lock::Lock( const std::shared_ptr<Context>& context ) :
 	}
 }
 
+/// @brief Clears the current context on the calling thread, releasing the lock.
 Context::Lock::~Lock()
 {
 	if ( m_context->hasThreadLocal() )
@@ -416,6 +432,10 @@ Context::Lock::~Lock()
 	}
 }
 
+/// @brief Loads a WAV file from disk, allocates an AL buffer, and uploads the decoded
+///        samples. Throws if the channel/bit-depth combination is unsupported.
+/// @param context  Owning Context (must be current during the call).
+/// @param fileName Path to the .wav file.
 Buffer::Buffer( const std::shared_ptr<Context>& context, const std::string& fileName ) :
 	Object( context )
 {
@@ -443,12 +463,17 @@ Buffer::Buffer( const std::shared_ptr<Context>& context, const std::string& file
 	alCall( alBufferData, m_buffer, format, soundData.data(), static_cast<ALsizei>( soundData.size() ), sampleRate );
 }
 
+/// @brief Releases the AL buffer handle.
 Buffer::~Buffer()
 {
 	validate();
 	alCall( alDeleteBuffers, 1, &m_buffer );
 }
 
+/// @brief Creates an AL source, attaches @p buffer, and sets reasonable defaults (rolloff,
+///        reference/max distance, gain 1.0).
+/// @param context Owning Context.
+/// @param buffer  Buffer to attach to the source.
 Source::Source( const std::shared_ptr<Context>& context, std::shared_ptr<Buffer> buffer ) :
 	Object( context ),
 	m_buffer( buffer )
@@ -464,54 +489,71 @@ Source::Source( const std::shared_ptr<Context>& context, std::shared_ptr<Buffer>
 	alCall( alSourcei, m_source, AL_BUFFER, m_buffer->buffer() );
 }
 
+/// @brief Stops playback and releases the AL source handle.
 Source::~Source()
 {
 	validate();
 	alCall( alDeleteSources, 1, &m_source );
 }
 
+/// @brief Toggles whether the source position is specified relative to the listener (HUD
+///        sounds) or in absolute world coordinates.
+/// @param relative True for listener-relative, false for absolute.
 void Source::setRelativeToListener( bool relative )
 {
 	validate();
 	alCall( alSourcei, m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE );
 }
 
+/// @brief Sets the source gain (volume).
+/// @param volume Linear gain (0.0 = silent, 1.0 = unity).
 void Source::setVolume( float volume )
 {
 	validate();
 	alCall( alSourcef, m_source, AL_GAIN, volume );
 }
 
+/// @brief Sets the 3D position of the source.
+/// @param x X coordinate.
+/// @param y Y coordinate.
+/// @param z Z coordinate.
 void Source::setPosition( float x, float y, float z )
 {
 	validate();
 	alCall( alSource3f, m_source, AL_POSITION, x, y, z );
 }
 
+/// @brief Sets the source pitch (playback rate multiplier).
+/// @param pitch 1.0 = original pitch; values above/below shift the pitch.
 void Source::setPitch( float pitch )
 {
 	validate();
 	alCall( alSourcef, m_source, AL_PITCH, pitch );
 }
 
+/// @brief Rewinds the source to the start of its buffer.
 void AL::Source::rewind()
 {
 	validate();
 	alCall( alSourceRewind, m_source );
 }
 
+/// @brief Starts playing the source from its current position.
 void Source::play()
 {
 	validate();
 	alCall( alSourcePlay, m_source );
 }
 
+/// @brief Stops playback immediately.
 void Source::stop()
 {
 	validate();
 	alCall( alSourceStop, m_source );
 }
 
+/// @brief Attaches (or clears, if null) a Filter on the source's dry signal path.
+/// @param filter Filter to apply, or nullptr to remove.
 void Source::setDryPathFilter( const std::shared_ptr<Filter>& filter )
 {
 	validate();
@@ -519,6 +561,11 @@ void Source::setDryPathFilter( const std::shared_ptr<Filter>& filter )
 	m_dryPath = filter;
 }
 
+/// @brief Routes the source's wet signal on auxiliary send index @p slot through
+///        @p auxSlot and an optional @p filter. Passing null clears the send.
+/// @param slot    Auxiliary send index.
+/// @param auxSlot Target EffectSlot (or nullptr to disconnect).
+/// @param filter  Optional filter on the send.
 void Source::setWetPathEffect( ALuint slot, const std::shared_ptr<EffectSlot>& auxSlot, const std::shared_ptr<Filter>& filter )
 {
 	validate();
@@ -533,6 +580,8 @@ void Source::setWetPathEffect( ALuint slot, const std::shared_ptr<EffectSlot>& a
 	}
 }
 
+/// @brief Queries the current playback state of the source.
+/// @return PlayState enum (INITIAL/PLAYING/PAUSED/STOPPED).
 Source::PlayState Source::getPlayState() const
 {
 	validate();
@@ -553,6 +602,9 @@ Source::PlayState Source::getPlayState() const
 	}
 }
 
+/// @brief Allocates an AL effect object. Throws std::invalid_argument if the context lacks
+///        EFX support.
+/// @param context Owning Context.
 Effect::Effect( const std::shared_ptr<Context>& context ) :
 	Object( context )
 {
@@ -564,12 +616,15 @@ Effect::Effect( const std::shared_ptr<Context>& context ) :
 	alCall( fn()->alGenEffects, 1, &m_effect );
 }
 
+/// @brief Releases the AL effect handle.
 Effect::~Effect()
 {
 	validate();
 	alCall( fn()->alDeleteEffects, 1, &m_effect );
 }
 
+/// @brief Allocates an AL filter object, initialised as AL_FILTER_NULL (no-op).
+/// @param context Owning Context.
 Filter::Filter( const std::shared_ptr<Context>& context ) :
 	Object( context )
 {
@@ -578,12 +633,19 @@ Filter::Filter( const std::shared_ptr<Context>& context ) :
 	alCall( fn()->alFilteri, m_filter, AL_FILTER_TYPE, AL_FILTER_NULL );
 }
 
+/// @brief Releases the AL filter handle.
 Filter::~Filter()
 {
 	validate();
 	alCall( fn()->alDeleteFilters, 1, &m_filter );
 }
 
+/// @brief Configures the filter as the cheapest AL filter type that captures the requested
+///        gain curve: null (all 1.0), band-pass (three distinct gains), low-pass (mid=hf),
+///        or high-pass (hf=mid).
+/// @param lfGain  Low-frequency gain.
+/// @param midGain Mid-frequency gain.
+/// @param hfGain  High-frequency gain.
 void Filter::setGain( float lfGain, float midGain, float hfGain )
 {
 	validate();
@@ -612,6 +674,9 @@ void Filter::setGain( float lfGain, float midGain, float hfGain )
 	}
 }
 
+/// @brief Allocates an auxiliary effect slot and wires the given Effect into it.
+/// @param context Owning Context.
+/// @param effect  Effect to host (kept alive via shared_ptr).
 EffectSlot::EffectSlot( const std::shared_ptr<Context>& context, const std::shared_ptr<Effect>& effect ) :
 	Object( context ),
 	m_effect( effect )
@@ -622,12 +687,16 @@ EffectSlot::EffectSlot( const std::shared_ptr<Context>& context, const std::shar
 	alCall( fn()->alAuxiliaryEffectSloti, m_slot, AL_EFFECTSLOT_EFFECT, effect->effect() );
 }
 
+/// @brief Releases the auxiliary effect slot handle.
 EffectSlot::~EffectSlot()
 {
 	validate();
 	alCall( fn()->alDeleteAuxiliaryEffectSlots, 1, &m_slot );
 }
 
+/// @brief Constructs a reverb effect. Prefers AL_EFFECT_EAXREVERB if available, otherwise
+///        falls back to AL_EFFECT_REVERB.
+/// @param context Owning Context.
 ReverbEffect::ReverbEffect( const std::shared_ptr<Context>& context ) :
 	Effect( context ),
 	m_hasEAX( alCall( alGetEnumValue, "AL_EFFECT_EAXREVERB" ) != 0 )
@@ -645,6 +714,10 @@ ReverbEffect::ReverbEffect( const std::shared_ptr<Context>& context ) :
 
 ReverbEffect::~ReverbEffect() = default;
 
+/// @brief Applies an EFX reverb properties preset to this effect. Uses the full EAX
+///        parameter set if AL_EFFECT_EAXREVERB is available, otherwise falls back to the
+///        standard AL_EFFECT_REVERB subset.
+/// @param preset EFXEAXREVERBPROPERTIES structure (e.g. EFX_REVERB_PRESET_HALLWAY).
 void ReverbEffect::setPreset( const EFXEAXREVERBPROPERTIES& preset )
 {
 	validate();
@@ -692,6 +765,9 @@ void ReverbEffect::setPreset( const EFXEAXREVERBPROPERTIES& preset )
 	}
 }
 
+/// @brief Constructs an Object with an associated Context. Throws std::invalid_argument
+///        if the context pointer is null.
+/// @param context Owning Context.
 Object::Object( const std::shared_ptr<Context>& context ) :
 	m_context( context )
 {
@@ -701,6 +777,8 @@ Object::Object( const std::shared_ptr<Context>& context ) :
 
 Object::~Object() = default;
 
+/// @brief Debug-only sanity check that the owning Context is the current one on the calling
+///        thread. Throws std::logic_error if not, to catch accidental cross-context use.
 void Object::checkContextActive() const
 {
 	auto activeContext = m_context->hasThreadLocal() ? fn()->alcGetThreadContext() : alcGetCurrentContext();
@@ -710,6 +788,9 @@ void Object::checkContextActive() const
 	}
 }
 
+/// @brief Constructs a Listener wrapper. OpenAL has only one listener per context, so this
+///        just stores the context reference.
+/// @param context Owning Context.
 Listener::Listener( const std::shared_ptr<Context>& context ) :
 	Object( context )
 {
@@ -717,6 +798,10 @@ Listener::Listener( const std::shared_ptr<Context>& context ) :
 
 Listener::~Listener() = default;
 
+/// @brief Sets the listener's orientation (forward and up vectors combined into the
+///        AL_ORIENTATION 6-float tuple).
+/// @param forward Forward-facing direction.
+/// @param up      Up direction.
 void Listener::setOrientation( const float forward[3], const float up[3] )
 {
 	ALfloat orientation[6] = {
@@ -730,11 +815,15 @@ void Listener::setOrientation( const float forward[3], const float up[3] )
 	alCall( alListenerfv, AL_ORIENTATION, orientation );
 }
 
+/// @brief Sets the listener's 3D position.
+/// @param position Three-float XYZ array.
 void Listener::setPosition( const float position[3] )
 {
 	alCall( alListenerfv, AL_POSITION, position );
 }
 
+/// @brief Sets the listener's master gain (volume).
+/// @param volume Linear gain (0.0 = silent, 1.0 = unity).
 void AL::Listener::setVolume( float volume )
 {
 	alCall( alListenerf, AL_GAIN, volume );

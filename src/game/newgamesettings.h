@@ -15,11 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file newgamesettings.h
+ *  @brief New game configuration: world generation parameters, starting items/animals, allowed species, and presets.
+ */
 #pragma once
 
 #include <QObject>
 #include <QVariantMap>
 
+/** @brief An item to be placed in the starting zone, with optional two-material components. */
 struct StartingItem
 {
 	QString itemSID;
@@ -28,6 +32,7 @@ struct StartingItem
 	int amount = 1;
 };
 
+/** @brief An animal to be spawned in the starting zone, with type, gender, and count. */
 struct StartingAnimal
 {
 	QString type;
@@ -35,6 +40,7 @@ struct StartingAnimal
 	int amount = 1;
 };
 
+/** @brief A tree, plant, or animal species that can be toggled on/off for world generation. */
 struct CheckableItem
 {
 	QString sid;
@@ -44,6 +50,12 @@ struct CheckableItem
 	int max;
 };
 
+/** @brief Holds all configuration for creating a new game: world size, terrain params, starting loadout, and species filters.
+ *
+ *  Loaded from and saved to newgame.json. Supports embark presets (standard and user-defined)
+ *  for starting item/animal loadouts. Provides getters/setters for each world generation
+ *  parameter and manages the list of allowed trees, plants, and animals.
+ */
 class NewGameSettings : public QObject
 {
 	Q_OBJECT

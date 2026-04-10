@@ -15,12 +15,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyMainView.h
+ *  @brief Qt-side proxy bridging the root ViewModel with the event connector. Handles the
+ *         high-level "start new game", "load game", "save game", and page navigation glue.
+ */
 #pragma once
 
 #include "ViewModel.h"
 
 #include <QObject>
 
+/// @brief Proxy for the root ViewModel. Converts XAML menu actions into signals the game
+///        side listens for and receives UI-scale, version, load-done, and resume signals in
+///        return.
 class ProxyMainView : public QObject
 {
 	Q_OBJECT
@@ -44,7 +51,7 @@ public:
 	void endGame();
 
 private:
-	IngnomiaGUI::ViewModel* m_parent = nullptr;
+	IngnomiaGUI::ViewModel* m_parent = nullptr;  ///< Root view model the proxy pushes updates into.
 
 private slots:
 	void onWindowSize( int w, int h );

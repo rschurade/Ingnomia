@@ -29,11 +29,18 @@
 
 #include <QDebug>
 
+/** @file neighborsmodel.cpp
+ *  @brief NeighborsModel and helper-component implementations: builds the kingdom and
+ *         mission lists from aggregator payloads, drives the mission-creation overlay, and
+ *         routes Diplo/Spy/Raid/Sabotage commands through NeighborsProxy.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a kingdom row from a GuiNeighborInfo payload.
 NeighborKingdomInfo::NeighborKingdomInfo( const GuiNeighborInfo& info ) :
 	m_id( info.id ),
 	m_idString( QString::number( info.id ).toStdString().c_str() ),
@@ -90,6 +97,7 @@ const char* NeighborKingdomInfo::getShowSabotageBtn() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds an active-mission row from a Mission record (formats title, action, time).
 MissionInfo::MissionInfo( const Mission& mission ) :
 	m_id( mission.id ),
 	m_idString( QString::number( mission.id ).toStdString().c_str() )
@@ -264,6 +272,7 @@ MissionInfo::MissionInfo( const Mission& mission ) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds an (id, name) row used by both the gnome dropdown and the action picker.
 AvailableGnome::AvailableGnome( unsigned int id, QString name ) :
 	m_id( id ),
 	m_idString( QString::number( id ).toStdString().c_str() ),
@@ -273,6 +282,8 @@ AvailableGnome::AvailableGnome( unsigned int id, QString name ) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the NeighborsModel, instantiates the proxy, registers DelegateCommands,
+///        and asks the proxy for the initial kingdom and mission lists.
 NeighborsModel::NeighborsModel()
 {
 	m_proxy = new NeighborsProxy;
@@ -320,6 +331,7 @@ const char* NeighborsModel::GetShowThird() const
 	return "Hidden";
 }
 
+/// @brief Tab switcher: parses @p param to switch between First/Second/Third pages.
 void NeighborsModel::onPageCmd( BaseComponent* param )
 {
 	if( param->ToString() == "First" )
@@ -340,6 +352,8 @@ void NeighborsModel::onPageCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowThird" );
 }
 
+/// @brief Diplomatic mission button handler. Opens the mission-creation overlay configured
+///        for an emissary mission against the kingdom whose UID is encoded in @p param.
 void NeighborsModel::onDiploMissionCmd( BaseComponent* param )
 {
 	m_missionTitle = "New diplomatic mission to";
@@ -381,21 +395,25 @@ void NeighborsModel::onDiploMissionCmd( BaseComponent* param )
 	qDebug() << "Diplo" << param->ToString().Str();
 }
 
+/// @brief Spy mission button handler. Currently a stub for the spy mission overlay.
 void NeighborsModel::onSpyMissionCmd( BaseComponent* param )
 {
 	qDebug() << "Spy" << param->ToString().Str();
 }
 
+/// @brief Raid mission button handler. Currently a stub for the raid mission overlay.
 void NeighborsModel::onRaidMissionCmd( BaseComponent* param )
 {
 	qDebug() << "Raid" << param->ToString().Str();
 }
 
+/// @brief Sabotage mission button handler. Currently a stub for the sabotage mission overlay.
 void NeighborsModel::onSabotageMissionCmd( BaseComponent* param )
 {
 	qDebug() << "Sabotage" << param->ToString().Str();
 }
 
+/// @brief Replaces the kingdom list with fresh NeighborKingdomInfo rows.
 void NeighborsModel::neighborsUpdate( const QList<GuiNeighborInfo>& infos )
 {
 	m_neighborList->Clear();
@@ -408,6 +426,7 @@ void NeighborsModel::neighborsUpdate( const QList<GuiNeighborInfo>& infos )
 	OnPropertyChanged( "NeighborList" );
 }
 
+/// @brief Replaces the active mission list with fresh MissionInfo rows.
 void NeighborsModel::missionsUpdate( const QList<Mission>& missions )
 {
 	m_missionList->Clear();
@@ -464,6 +483,7 @@ const char* NeighborsModel::getMissionTitle() const
 }
 
 
+/// @brief Replaces the available-gnomes dropdown contents for the mission-creation overlay.
 void NeighborsModel::updateAvailableGnomes( const QList<GuiAvailableGnome>& gnomes )
 {
 	m_availGnomeList->Clear();
@@ -479,6 +499,7 @@ void NeighborsModel::updateAvailableGnomes( const QList<GuiAvailableGnome>& gnom
 	}
 }
 
+/// @brief Closes the mission-creation overlay without dispatching a mission.
 void NeighborsModel::onNewMissionBackCmd( BaseComponent* param )
 {
 	m_showSelector = false;
@@ -488,6 +509,8 @@ void NeighborsModel::onNewMissionBackCmd( BaseComponent* param )
 	m_missionTargetID = 0;
 }
 
+/// @brief Dispatches a new mission via the proxy using the currently selected gnome,
+///        action, and target kingdom from the overlay.
 void NeighborsModel::onNewMissionStartCmd( BaseComponent* param )
 {
 	if( m_selectedGnome && m_selectedAction && m_missionTargetID )
@@ -499,6 +522,7 @@ void NeighborsModel::onNewMissionStartCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Updates a single mission row in the active list (matched by mission UID).
 void NeighborsModel::updateMission( const Mission& mission )
 {
 	for( int i = 0; i < m_missionList->Count(); ++i )

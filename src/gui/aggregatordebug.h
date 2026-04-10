@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatordebug.h
+ *  @brief Aggregator exposing debug/cheat commands to the XAML debug window: spawn creatures
+ *         and items, set needs, kill gnomes, and tune need-decay multipliers.
+ */
 #pragma once
 
 #include "../game/creature.h"
@@ -24,6 +28,8 @@
 
 class Game;
 
+/// @brief Debug-only bridge between the debug GUI and the game. Most slots mutate game state
+///        directly and are intended for development only.
 class AggregatorDebug : public QObject
 {
 	Q_OBJECT
@@ -57,5 +63,5 @@ signals:
 	void signalMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 );
 
 private:
-	QPointer<Game> g;
+	QPointer<Game> g;  ///< Game instance (weak ownership).
 };

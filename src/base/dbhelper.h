@@ -15,17 +15,26 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file dbhelper.h
+ * @brief Cached database lookup helpers for frequently accessed game data.
+ */
+
 #pragma once
 
 #include <QMap>
 #include <QString>
 #include <QStringList>
 
+/**
+ * @brief Static-only helper providing cached lookups for sprites, materials, items, and qualities.
+ *
+ * Aliased as DBH for convenience. Each method checks a static QMap cache first;
+ * on a miss it queries the DB and caches the result. Material/item UID methods
+ * use GameState's bidirectional maps instead of the DB. Cannot be instantiated.
+ */
 class DBHelper
 {
 public:
-	//static QStringList getWorkPositions( QString jobID );
-
 	static QString spriteID( QString itemID );
 	static bool spriteIsRandom( QString spriteID );
 	static bool spriteHasAnim( QString spriteID );
@@ -48,25 +57,22 @@ public:
 
 	static QString itemGroup( QString itemID );
 
-	// itemSID => [ materialType => craftID ]
 	static QMap<QString, QMultiMap<QString, QString>> workshopPossibleCraftResults( QString workshopId );
 
 private:
 	DBHelper()  = delete;
 	~DBHelper() = delete;
 
-	static QMap<QString, QString> m_spriteIDCache;
-	static QMap<QString, bool> m_spriteIsRandomCache;
-	static QMap<QString, bool> m_spriteHasAnimCache;
-	static QMap<QString, QString> m_materialColorCache;
+	static QMap<QString, QString> m_spriteIDCache;  ///< Cache: itemID -> spriteID.
+	static QMap<QString, bool> m_spriteIsRandomCache; ///< Cache: spriteID -> hasRandom.
+	static QMap<QString, bool> m_spriteHasAnimCache;  ///< Cache: spriteID -> hasAnim.
+	static QMap<QString, QString> m_materialColorCache; ///< Cache: materialID -> color string.
+	static QMap<QString, int> m_materialToolLevelCache; ///< Cache: materialID -> tool level.
+	static QMap<int, bool> m_itemIsContainerCache;      ///< Cache: itemUID -> isContainer.
+	static QMap<int, QString> m_qualitySIDCache;        ///< Cache: rank -> quality name.
+	static QMap<int, float> m_qualityModCache;          ///< Cache: rank -> quality modifier.
+	static QMap<QString, QString> m_itemGroupCache;     ///< Cache: itemID -> group name.
+	static QMap<QString, QMap<QString, QMultiMap<QString, QString>>> m_workshopCraftResults; ///< Cache: workshopID -> craft results.
 
-	static QMap<QString, int> m_materialToolLevelCache;
-	static QMap<int, bool> m_itemIsContainerCache;
-	static QMap<int, QString> m_qualitySIDCache;
-	static QMap<int, float> m_qualityModCache;
-	static QMap<QString, QString> m_itemGroupCache;
-
-	static QMap<QString, QMap<QString, QMultiMap<QString, QString>>> m_workshopCraftResults;
-
-	static QMutex m_mutex;
+	static QMutex m_mutex; ///< Mutex protecting cache access.
 };

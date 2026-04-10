@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatormilitary.cpp
+ *  @brief AggregatorMilitary implementation: builds squad, role, and priority payloads for
+ *         the Military XAML window, and forwards edits (add/remove/reorder, armor setup,
+ *         attitude changes) to MilitaryManager.
+ */
 #include "aggregatormilitary.h"
 
 #include "../base/db.h"
@@ -24,20 +29,29 @@
 
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorMilitary.
+/// @param parent Qt parent object.
 AggregatorMilitary::AggregatorMilitary( QObject* parent ) :
 	QObject(parent)
 {
 }
 
+/// @brief Destructor.
 AggregatorMilitary::~AggregatorMilitary()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorMilitary::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Rebuilds the cached squad list: prepends a synthetic "no squad" bucket containing
+///        every unassigned gnome, appends every real squad with its priorities and roster,
+///        flags the first/last real squad so the GUI hides unusable reorder arrows, then
+///        emits signalSquads.
 void AggregatorMilitary::sendSquadUpdate()
 {
 	if( !g ) return;
@@ -95,11 +109,13 @@ void AggregatorMilitary::sendSquadUpdate()
 	emit signalSquads( m_squads );
 }
 
+/// @brief Forwards a role-list refresh request to sendRoleUpdate().
 void AggregatorMilitary::onRequestRoles()
 {
 	sendRoleUpdate();
 }
 
+/// @brief Rebuilds the cached role list with full per-slot uniform info and emits signalRoles.
 void AggregatorMilitary::sendRoleUpdate()
 {
 	if( !g ) return;
@@ -128,6 +144,11 @@ void AggregatorMilitary::sendRoleUpdate()
 	emit signalRoles( m_roles );
 }
 
+/// @brief Builds a GuiUniformItem for one slot, merging the current role's uniform value
+///        with the DB-defined list of allowed armor types for that slot (prepended with "none").
+/// @param slot   Slot name (HeadArmor, ChestArmor, …).
+/// @param uniVM  Serialised role uniform entry for this slot.
+/// @return Fully populated GuiUniformItem.
 GuiUniformItem AggregatorMilitary::createUniformItem( QString slot, QVariantMap uniVM )
 {
 	GuiUniformItem gui;
@@ -147,6 +168,8 @@ GuiUniformItem AggregatorMilitary::createUniformItem( QString slot, QVariantMap 
 	return gui;
 }
 
+/// @brief Emits the current engagement priority list for one squad via signalPriorities.
+/// @param squadID Squad UID whose priorities to send.
 void AggregatorMilitary::sendPriorityUpdate( unsigned int squadID )
 {
 	if( !g ) return;
@@ -168,11 +191,13 @@ void AggregatorMilitary::sendPriorityUpdate( unsigned int squadID )
 	}
 }
 
+/// @brief Triggers a full squad list refresh when the GUI opens the Military window.
 void AggregatorMilitary::onRequestMilitary()
 {
 	sendSquadUpdate();
 }
 
+/// @brief Creates a new empty squad and refreshes the GUI.
 void AggregatorMilitary::onAddSquad()
 {
 	if( !g ) return;
@@ -180,26 +205,35 @@ void AggregatorMilitary::onAddSquad()
 	sendSquadUpdate();
 }
 
+/// @brief Removes a squad and refreshes the GUI.
+/// @param id Squad UID to remove.
 void AggregatorMilitary::onRemoveSquad( unsigned int id )
 {
 	if( !g ) return;
 	g->mil()->removeSquad( id );
 	sendSquadUpdate();
 }
-	
+
+/// @brief Renames a squad (no full refresh; GUI updates its own label).
+/// @param id      Squad UID.
+/// @param newName New display name.
 void AggregatorMilitary::onRenameSquad( unsigned int id, QString newName )
 {
 	if( !g ) return;
 	g->mil()->renameSquad( id, newName );
 }
 
+/// @brief Moves a squad one position earlier in the order and refreshes the GUI.
+/// @param id Squad UID.
 void AggregatorMilitary::onMoveSquadLeft( unsigned int id )
 {
 	if( !g ) return;
 	g->mil()->moveSquadUp( id );
 	sendSquadUpdate();
 }
-	
+
+/// @brief Moves a squad one position later in the order and refreshes the GUI.
+/// @param id Squad UID.
 void AggregatorMilitary::onMoveSquadRight( unsigned int id )
 {
 	if( !g ) return;
@@ -207,6 +241,8 @@ void AggregatorMilitary::onMoveSquadRight( unsigned int id )
 	sendSquadUpdate();
 }
 
+/// @brief Removes a gnome from whichever squad it's in and refreshes the GUI.
+/// @param gnomeID Creature UID.
 void AggregatorMilitary::onRemoveGnomeFromSquad( unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -215,7 +251,9 @@ void AggregatorMilitary::onRemoveGnomeFromSquad( unsigned int gnomeID )
 		sendSquadUpdate();
 	}
 }
-	
+
+/// @brief Moves a gnome one slot up in its squad order and refreshes the GUI.
+/// @param gnomeID Creature UID.
 void AggregatorMilitary::onMoveGnomeLeft( unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -225,6 +263,8 @@ void AggregatorMilitary::onMoveGnomeLeft( unsigned int gnomeID )
 	}
 }
 
+/// @brief Moves a gnome one slot down in its squad order and refreshes the GUI.
+/// @param gnomeID Creature UID.
 void AggregatorMilitary::onMoveGnomeRight( unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -234,7 +274,10 @@ void AggregatorMilitary::onMoveGnomeRight( unsigned int gnomeID )
 	}
 }
 
-	
+
+/// @brief Moves an engagement priority row one slot up and refreshes the GUI.
+/// @param squadID Squad UID.
+/// @param type    Creature type key identifying the priority row.
 void AggregatorMilitary::onMovePrioUp( unsigned int squadID, QString type )
 {
 	if( !g ) return;
@@ -244,6 +287,9 @@ void AggregatorMilitary::onMovePrioUp( unsigned int squadID, QString type )
 	}
 }
 
+/// @brief Moves an engagement priority row one slot down and refreshes the GUI.
+/// @param squadID Squad UID.
+/// @param type    Creature type key identifying the priority row.
 void AggregatorMilitary::onMovePrioDown( unsigned int squadID, QString type )
 {
 	if( !g ) return;
@@ -253,13 +299,16 @@ void AggregatorMilitary::onMovePrioDown( unsigned int squadID, QString type )
 	}
 }
 
+/// @brief Creates a new military role and refreshes the role list GUI.
 void AggregatorMilitary::onAddRole()
 {
 	if( !g ) return;
 	g->mil()->addRole();
 	sendRoleUpdate();
 }
-	
+
+/// @brief Removes a military role and refreshes the GUI.
+/// @param id Role UID.
 void AggregatorMilitary::onRemoveRole( unsigned int id )
 {
 	if( !g ) return;
@@ -267,12 +316,21 @@ void AggregatorMilitary::onRemoveRole( unsigned int id )
 	sendRoleUpdate();
 }
 
+/// @brief Renames a military role without full refresh (GUI updates label locally).
+/// @param id      Role UID.
+/// @param newName New display name.
 void AggregatorMilitary::onRenameRole( unsigned int id, QString newName )
 {
 	if( !g ) return;
 	g->mil()->renameRole( id, newName );
 }
 
+/// @brief Applies an armor type/material change to one slot of a role, then emits the
+///        refreshed list of allowed materials for that slot so the GUI dropdown updates.
+/// @param roleID   Role UID.
+/// @param slot     Uniform slot name.
+/// @param type     New armor type.
+/// @param material New material.
 void AggregatorMilitary::onSetArmorType( unsigned int roleID, QString slot, QString type, QString material )
 {
 	if( !g ) return;
@@ -294,18 +352,28 @@ void AggregatorMilitary::onSetArmorType( unsigned int roleID, QString slot, QStr
 	emit signalPossibleMaterials( roleID, slot, mats );
 }
 
+/// @brief Assigns a military role to a gnome.
+/// @param gnomeID Creature UID.
+/// @param roleID  Role UID.
 void AggregatorMilitary::onSetRole( unsigned int gnomeID, unsigned int roleID )
 {
 	if( !g ) return;
 	g->gm()->setRoleID( gnomeID, roleID );
 }
 
+/// @brief Flips a role's civilian flag (civilians are exempt from combat orders).
+/// @param roleID Role UID.
+/// @param value  True to mark as civilian.
 void AggregatorMilitary::onSetRoleCivilian( unsigned int roleID, bool value )
 {
 	if( !g ) return;
 	g->mil()->setRoleCivilian( roleID, value );
 }
 
+/// @brief Sets the engagement attitude for a specific creature type in a specific squad.
+/// @param squadID  Squad UID.
+/// @param type     Creature type key.
+/// @param attitude New attitude (attack/defend/flee/ignore).
 void AggregatorMilitary::onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude )
 {
 	if( !g ) return;

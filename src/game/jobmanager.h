@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file jobmanager.h
+ *  @brief Job manager: creates, assigns, and manages all jobs. Handles phase transitions
+ *         (PENDING -> HAULING -> READY), item claiming, haul sub-job creation, priority
+ *         queuing, and job sprite visualization.
+ */
 #pragma once
 
 
@@ -30,6 +35,8 @@
 
 class Game;
 
+/** @brief Manages all jobs in the game: creation, assignment, phase transitions,
+ *         item claiming, haul sub-jobs, priority queuing, and sprite visualization. */
 class JobManager : public QObject
 {
 	Q_OBJECT

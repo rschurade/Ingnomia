@@ -15,20 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_noderepeat.cpp
+ *  @brief Implementation of BT_NodeRepeat -- decorator that repeats its child N times.
+ */
 #include "bt_noderepeat.h"
 
 #include <QDebug>
 
+/** @brief Construct a repeat decorator.
+ *  @param name       Debug name for the node.
+ *  @param num        Number of repetitions.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeRepeat::BT_NodeRepeat( QString name, int num, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),
 	m_num( num )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeRepeat::~BT_NodeRepeat()
 {
 }
 
+/** @brief Serialize node state including the current repeat counter.
+ *  @return QVariantMap with Name, ID, Status, Num, and Childs.
+ */
 QVariantMap BT_NodeRepeat::serialize()
 {
 	QVariantMap out;
@@ -47,6 +59,9 @@ QVariantMap BT_NodeRepeat::serialize()
 	return out;
 }
 
+/** @brief Restore node state including the repeat counter from a serialized map.
+ *  @param in Map produced by serialize().
+ */
 void BT_NodeRepeat::deserialize( QVariantMap in )
 {
 	if ( m_name != in.value( "Name" ).toString() )
@@ -88,6 +103,9 @@ void BT_NodeRepeat::deserialize( QVariantMap in )
 	}
 }
 
+/** @brief Tick the child up to m_num times; abort on FAILURE, suspend on RUNNING.
+ *  @return SUCCESS after all iterations, FAILURE on child failure, or RUNNING.
+ */
 BT_RESULT BT_NodeRepeat::tick()
 {
 	while ( m_index < m_num )

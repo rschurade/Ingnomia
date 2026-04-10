@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debugmodel.h
+ *  @brief Noesis view model for the 3-page Debug GUI: Gnomes (spawn, kill, set needs),
+ *         Items (spawn at coordinates), Game (need-decay tuning, window size).
+ */
 #ifndef __DebugModel_H__
 #define __DebugModel_H__
 
@@ -43,13 +47,15 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+/// @brief Which tab of the Debug GUI is currently visible.
 enum class DebugPage
 {
-	Gnomes,
-	Items,
-	Game
+	Gnomes,  ///< Gnome controls (spawn, kill, set needs).
+	Items,   ///< Item spawning by group/item/material.
+	Game     ///< Game-tuning controls (need decay, window size).
 };
 
+/// @brief Generic (name, id) row used in dropdown lists across the Debug GUI.
 struct NameEntry : public Noesis::BaseComponent
 {
 public:
@@ -63,6 +69,7 @@ public:
 	NS_DECLARE_REFLECTION( NameEntry, BaseComponent )
 };
 
+/// @brief Window-size dropdown entry holding a width × height preset.
 struct WSEntry : public Noesis::BaseComponent
 {
 public:
@@ -78,16 +85,23 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Debug GUI view model. Talks to the game side via DebugProxy and exposes the
+///        per-page properties (gnome list, item dropdowns, need sliders, decay settings).
 class DebugModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	DebugModel();
 
+	/// @brief Asks the proxy to refresh the gnome dropdown list.
 	void updateGnomeList();
 	Noesis::ObservableCollection<NameEntry>* getGnomeList() const;
 
+	/// @brief Replaces the item-group dropdown with @p groups.
 	void updateItemGroups( const QStringList& groups );
+	/// @brief Replaces the item dropdown with @p items (filtered to the current group).
 	void updateItems( const QStringList& items );
+	/// @brief Replaces the material dropdowns. @p componentCount selects whether one or two
+	///        material dropdowns are visible.
 	void updateMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 );
 
 private:

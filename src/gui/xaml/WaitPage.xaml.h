@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file WaitPage.xaml.h
+ *  @brief XAML code-behind for the WaitPage (loading spinner) UserControl. Thin wrapper
+ *         with no view model.
+ */
 #ifndef __WaitPage_H__
 #define __WaitPage_H__
 
@@ -24,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the WaitPage XAML UserControl.
 class WaitPage final : public Noesis::UserControl
 {
 public:

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file eventmanager.cpp
+ *  @brief Timed game events: invasions, trader arrivals, migrations, and missions.
+ */
 #include "eventmanager.h"
 #include "game.h"
 
@@ -35,6 +38,9 @@
 
 #include <QDebug>
 
+/** @brief Serializes this Event into a QVariantMap for save/load.
+ *  @return QVariantMap containing the event ID, tick, type, and data.
+ */
 QVariantMap Event::serialize()
 {
 	QVariantMap out;
@@ -47,6 +53,9 @@ QVariantMap Event::serialize()
 	return out;
 }
 
+/** @brief Deserializes an Event from a QVariantMap.
+ *  @param in The map containing serialized event data.
+ */
 void Event::deserialize( QVariantMap in )
 {
 	id   = in.value( "ID" ).toUInt();
@@ -55,6 +64,9 @@ void Event::deserialize( QVariantMap in )
 	data = in.value( "Data" );
 }
 
+/** @brief Serializes this Mission into a QVariantMap for save/load.
+ *  @return QVariantMap containing mission ID, type, action, step, targets, gnomes, and timing.
+ */
 QVariantMap Mission::serialize()
 {
 	QVariantMap out;
@@ -75,6 +87,9 @@ QVariantMap Mission::serialize()
 	return out;
 }
 
+/** @brief Constructs a Mission by deserializing from a QVariantMap.
+ *  @param in The map containing serialized mission data.
+ */
 Mission::Mission( QVariantMap in )
 {
 	id            = in.value( "ID" ).toUInt();
@@ -90,6 +105,9 @@ Mission::Mission( QVariantMap in )
 	result        = in.value( "Result" ).toMap();
 }
 
+/** @brief Constructs the EventManager and initializes event type and requirement lookup maps.
+ *  @param parent The parent Game instance.
+ */
 EventManager::EventManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
@@ -103,10 +121,14 @@ EventManager::EventManager( Game* parent ) :
 	m_reqMap.insert( "FreeMarketStall", (int)EventRequire::FREEMARKETSTALL );
 }
 
+/** @brief Destructor. */
 EventManager::~EventManager()
 {
 }
 
+/** @brief Serializes all pending events and active missions.
+ *  @return QVariantMap containing the event list and missions list.
+ */
 QVariantMap EventManager::serialize()
 {
 	QVariantMap out;
@@ -127,6 +149,9 @@ QVariantMap EventManager::serialize()
 	return out;
 }
 
+/** @brief Deserializes events and missions from a saved QVariantMap.
+ *  @param in The map containing serialized event and mission data.
+ */
 void EventManager::deserialize( QVariantMap in )
 {
 	m_eventList.clear();
@@ -147,6 +172,13 @@ void EventManager::deserialize( QVariantMap in )
 	}
 }
 
+/** @brief Per-tick update: schedules migration events on season change, checks and fires pending events.
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged True if the season just changed.
+ *  @param dayChanged True if the day just changed.
+ *  @param hourChanged True if the hour just changed.
+ *  @param minuteChanged True if the minute just changed.
+ */
 void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	if ( hourChanged )
@@ -189,6 +221,10 @@ void EventManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	}
 }
 
+/** @brief Creates a new Event from the database definition.
+ *  @param eventID The string identifier of the event type in the DB (e.g. "EventMigration").
+ *  @return The newly created Event with randomized amount.
+ */
 Event EventManager::createEvent( QString eventID )
 {
 	Event ev;
@@ -221,6 +257,10 @@ Event EventManager::createEvent( QString eventID )
 	return ev;
 }
 
+/** @brief Checks whether an event's prerequisites are met (e.g. free market stall, user query).
+ *  @param event The event to check.
+ *  @return True if requirements are satisfied and the event can execute.
+ */
 bool EventManager::checkRequirements( Event& event )
 {
 	auto data = event.data.toMap();
@@ -284,6 +324,9 @@ bool EventManager::checkRequirements( Event& event )
 	return false;
 }
 
+/** @brief Executes an event by spawning gnomes, traders, or invaders at the event location.
+ *  @param event The event to execute.
+ */
 void EventManager::executeEvent( Event& event )
 {
 	//qDebug() << "execute event";
@@ -327,6 +370,10 @@ void EventManager::executeEvent( Event& event )
 	emit signalCenterCamera( location );
 }
 
+/** @brief Spawns a number of new gnomes at the given location (migration event).
+ *  @param location The world position to spawn gnomes at.
+ *  @param amount Number of gnomes to spawn.
+ */
 void EventManager::spawnGnome( Position location, int amount )
 {
 	for ( int i = 0; i < amount; ++i )
@@ -335,6 +382,11 @@ void EventManager::spawnGnome( Position location, int amount )
 	}
 }
 
+/** @brief Spawns hostile creatures at the given location (invasion event).
+ *  @param location The world position to spawn monsters at.
+ *  @param amount Number of monsters to spawn.
+ *  @param data Event data containing the species type.
+ */
 void EventManager::spawnInvasion( Position location, int amount, QVariantMap data )
 {
 	QString type = data.value( "Species" ).toString();
@@ -344,6 +396,11 @@ void EventManager::spawnInvasion( Position location, int amount, QVariantMap dat
 	}
 }
 
+/** @brief Spawns a trader gnome at the given location and assigns it to a market stall.
+ *  @param location The world position to spawn the trader at.
+ *  @param marketStall The ID of the market stall workshop to assign.
+ *  @param data Event data containing the kingdom economy type for trader selection.
+ */
 void EventManager::spawnTrader( Position location, unsigned int marketStall, QVariantMap data )
 {
 	auto ws = g->m_workshopManager->workshop( marketStall );
@@ -380,6 +437,10 @@ void EventManager::spawnTrader( Position location, unsigned int marketStall, QVa
 	ws->assignGnome( id );
 }
 
+/** @brief Handles the player's response to a query event (accept/decline).
+ *  @param id The event ID being answered.
+ *  @param answer True if accepted, false if declined.
+ */
 void EventManager::onAnswer( unsigned int id, bool answer )
 {
 	for ( int i = 0; i < m_eventList.size(); ++i )
@@ -416,6 +477,10 @@ void EventManager::onAnswer( unsigned int id, bool answer )
 	}
 }
 
+/** @brief Determines the spawn location for an event, typically a random walkable border tile.
+ *  @param eventMap The event data map containing location configuration.
+ *  @return The world position where the event should occur.
+ */
 Position EventManager::getEventLocation( QVariantMap& eventMap )
 {
 	auto im = eventMap.value( "Init" ).toMap();
@@ -451,6 +516,10 @@ Position EventManager::getEventLocation( QVariantMap& eventMap )
 	return location;
 }
 
+/** @brief Creates and queues a debug event (migration, trader, or invasion) for testing.
+ *  @param type The type of event to trigger.
+ *  @param args Additional arguments such as amount and species type.
+ */
 void EventManager::onDebugEvent( EventType type, QVariantMap args )
 {
 	QString eventID;
@@ -498,6 +567,9 @@ void EventManager::onDebugEvent( EventType type, QVariantMap args )
 	m_eventList.append( e );
 }
 
+/** @brief Returns a reference to the list of active missions, updating elapsed time for each.
+ *  @return Reference to the missions list.
+ */
 QList<Mission>& EventManager::missions()
 {
 	for( auto& mission : m_missions )
@@ -508,11 +580,18 @@ QList<Mission>& EventManager::missions()
 	return m_missions;
 }
 
+/** @brief Adds a mission to the active missions list.
+ *  @param mission The mission to add.
+ */
 void EventManager::addMission( Mission mission )
 {
 	m_missions.append( mission );
 }
 
+/** @brief Retrieves a pointer to a mission by its ID.
+ *  @param id The mission ID to look up.
+ *  @return Pointer to the mission, or nullptr if not found.
+ */
 Mission* EventManager::getMission( unsigned int id )
 {
 	for ( auto& mission : m_missions )
@@ -526,6 +605,9 @@ Mission* EventManager::getMission( unsigned int id )
 	return nullptr;
 }
 
+/** @brief Removes a completed mission from the active missions list.
+ *  @param id The mission ID to finish and remove.
+ */
 void EventManager::finishMission( unsigned int id )
 {
 	for ( int i = 0; i < m_missions.size(); ++i )
@@ -538,6 +620,9 @@ void EventManager::finishMission( unsigned int id )
 	}
 }
 
+/** @brief Schedules a trader arrival event based on a neighbor kingdom's distance and economy.
+ *  @param kingdom The neighbor kingdom sending the trader.
+ */
 void EventManager::addTraderEvent( NeighborKingdom kingdom )
 {
 	quint64 leaveTick = kingdom.nextTrader;
@@ -556,6 +641,9 @@ void EventManager::addTraderEvent( NeighborKingdom kingdom )
 	m_eventList.append( e );
 }
 
+/** @brief Schedules a raid/invasion event from a neighbor kingdom. Skipped if peaceful mode.
+ *  @param kingdom The neighbor kingdom launching the raid.
+ */
 void EventManager::addRaidEvent( NeighborKingdom kingdom )
 {
 	if ( GameState::peaceful )
@@ -580,6 +668,12 @@ void EventManager::addRaidEvent( NeighborKingdom kingdom )
 	m_eventList.append( e );
 }
 
+/** @brief Starts a new mission (spy, raid, emissary, etc.) targeting a neighbor kingdom.
+ *  @param type The type of mission.
+ *  @param action The specific action (e.g. improve relations, sabotage).
+ *  @param targetKingdom The ID of the target neighbor kingdom.
+ *  @param gnomeID The ID of the gnome assigned to the mission.
+ */
 void EventManager::startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID )
 {
 	Mission mission;

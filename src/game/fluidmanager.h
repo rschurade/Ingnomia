@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file fluidmanager.h
+ *  @brief Fluid pipe network simulation: inputs, outputs, pipes, and fluid flow between them.
+ */
 #pragma once
 
 
@@ -25,6 +28,7 @@
 
 class Game;
 
+/** @brief Type of a pipe element in the fluid network. */
 enum PipeType : unsigned char
 {
 	PT_NONE,
@@ -33,6 +37,7 @@ enum PipeType : unsigned char
 	PT_PIPE
 };
 
+/** @brief A single pipe element in the fluid network, tracking position, type, capacity, fluid level, and connections. */
 struct NetworkPipe
 {
 	Position pos;
@@ -51,6 +56,12 @@ struct NetworkPipe
 	void deserialize( QVariantMap in );
 };
 
+/** @brief Manages the fluid pipe network: adding/removing pipes, updating flow, and pumping fluid via powered inputs.
+ *
+ *  Fluid flows from input pumps through pipes to output spouts. Inputs require
+ *  mechanism power and pull fluid from the tile below. Outputs deposit fluid into
+ *  the world. The network topology is rebuilt whenever pipes are added or removed.
+ */
 class FluidManager : public QObject
 {
 	Q_OBJECT

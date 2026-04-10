@@ -15,7 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+/** @file stockpilegui.xaml.h
+ *  @brief XAML code-behind for the Stockpile window UserControl. Thin wrapper — all
+ *         logic lives in StockpileModel.
+ */
 #ifndef __StockpileGui_H__
 #define __StockpileGui_H__
 
@@ -25,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the StockpileGui XAML UserControl.
 class StockpileGui final : public Noesis::UserControl
 {
 public:

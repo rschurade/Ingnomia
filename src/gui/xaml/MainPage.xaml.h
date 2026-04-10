@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file MainPage.xaml.h
+ *  @brief Code-behind for the main menu page (MainPage.xaml) shown at startup. Hosts the
+ *         Continue / New Game / Load Game / Settings / Exit buttons.
+ */
 #ifndef __MainPage_H__
 #define __MainPage_H__
 
@@ -25,6 +29,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the start-screen MainPage.
 class MainPage final : public Noesis::UserControl
 {
 public:

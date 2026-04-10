@@ -89,10 +89,20 @@
 
 #include <string>
 
+/** @file mainwindow.cpp
+ *  @brief MainWindow implementation: GL context bring-up, Noesis view init, Qt event loop
+ *         routing (keyboard/mouse/wheel/focus/resize/expose/update), fullscreen toggling,
+ *         and the frame-timer used during menus. Also owns the global MainWindow singleton.
+ */
+
 static MainWindow* instance;
 
 static QSet<QString> m_noesisMessages;
 
+/// @brief Constructs the MainWindow: sets up a OpenGL 4.3 Core surface format, double
+///        buffer, vsync off, and wires all signals into EventConnector and the selection
+///        aggregator. The GL context is created lazily on the first exposeEvent.
+/// @param parent Unused (legacy QWidget parent pointer).
 MainWindow::MainWindow( QWidget* parent ) :
 	QWindow()
 {
@@ -133,6 +143,8 @@ MainWindow::MainWindow( QWidget* parent ) :
 	instance = this;
 }
 
+/// @brief Destructor: persists the last windowed-mode size/position to config, saves the
+///        config file, and releases the GL context.
 MainWindow::~MainWindow()
 {
 	qDebug() << "MainWindow destructor";
@@ -156,11 +168,15 @@ MainWindow::~MainWindow()
 	instance = nullptr;
 }
 
+/// @brief Returns the global MainWindow singleton.
+/// @return Reference to the single MainWindow instance.
 MainWindow& MainWindow::getInstance()
 {
 	return *instance;
 }
 
+/// @brief Makes this window's GL context current on the calling thread. Safe to call with
+///        a null context.
 void MainWindow::makeCurrent()
 {
 	if ( m_context )
@@ -169,6 +185,7 @@ void MainWindow::makeCurrent()
 	}
 }
 
+/// @brief Releases the GL context from the calling thread.
 void MainWindow::doneCurrent()
 {
 	if ( m_context )
@@ -177,11 +194,14 @@ void MainWindow::doneCurrent()
 	}
 }
 
+/// @brief Closes the window, which triggers application shutdown.
 void MainWindow::onExit()
 {
 	this->close();
 }
 
+/// @brief Toggles the window between fullscreen and windowed modes and stores the new
+///        state in Global::cfg.
 void MainWindow::toggleFullScreen()
 {
 	QWindow* w = this;
@@ -201,6 +221,8 @@ void MainWindow::toggleFullScreen()
 	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
+/// @brief Applies an explicit fullscreen state (called when the settings window changes it).
+/// @param value True to go fullscreen, false to restore a windowed size from config.
 void MainWindow::onFullScreen( bool value )
 {
 	QWindow* w = this;
@@ -219,6 +241,10 @@ void MainWindow::onFullScreen( bool value )
 	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
+/// @brief Qt key-press override: gives Noesis first refusal on the event, then translates
+///        unhandled keys via KeyBindings into camera/zoom/menu/quick-save/build actions
+///        and triggers the matching game command.
+/// @param event Incoming Qt key event.
 void MainWindow::keyPressEvent( QKeyEvent* event )
 {
 	int qtKey = event->key();
@@ -320,6 +346,9 @@ void MainWindow::keyPressEvent( QKeyEvent* event )
 	}
 }
 
+/// @brief Qt key-release override: clears held-camera bits on the KeyboardMove bitfield and
+///        forwards the event to Noesis.
+/// @param event Incoming Qt key event.
 void MainWindow::keyReleaseEvent( QKeyEvent* event )
 {
 	auto noesisKey = Global::keyConvert( (Qt::Key)event->key() );
@@ -356,6 +385,11 @@ void MainWindow::keyReleaseEvent( QKeyEvent* event )
 	emit signalMouse( m_mouseX, m_mouseY, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::ControlModifier );
 }
 
+/// @brief Hit-tests a pixel against the active Noesis view to determine whether a click
+///        lands on the GUI (e.g. a window) versus the world.
+/// @param x Window-local X.
+/// @param y Window-local Y.
+/// @return true if the pixel is over a hit-testable Noesis element.
 bool MainWindow::isOverGui( int x, int y )
 {
 	auto root     = Noesis::VisualTreeHelper::GetRoot( m_view->GetContent() );
@@ -365,6 +399,9 @@ bool MainWindow::isOverGui( int x, int y )
 	return hit.visualHit;
 }
 
+/// @brief Timer slot fired while any camera key is held. Pans the camera by
+///        cfg["keyboardMoveSpeed"] pixels × elapsed milliseconds / 1000 in the direction
+///        encoded in m_keyboardMove.
 void MainWindow::keyboardMove()
 {
 	int x = 0;
@@ -396,6 +433,10 @@ void MainWindow::keyboardMove()
 	}
 }
 
+/// @brief Qt mouse-move override: classifies drags as camera pans when the drag distance
+///        exceeds a small threshold, otherwise forwards to Noesis and the selection
+///        aggregator for cursor hover.
+/// @param event Incoming Qt mouse event.
 void MainWindow::mouseMoveEvent( QMouseEvent* event )
 {
 	auto gp = this->mapFromGlobal( event->globalPosition().toPoint() );
@@ -440,6 +481,8 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 	redraw();
 }
 
+/// @brief Triggers renderer initialisation once a game has finished loading so the
+///        world view is ready for the first paint.
 void MainWindow::onInitViewAfterLoad()
 {
 	m_renderer->setScale( 1.0 );
@@ -451,6 +494,10 @@ void MainWindow::onInitViewAfterLoad()
 	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
+/// @brief Qt mouse-press override: records click position, tracks button state, and
+///        forwards to Noesis. If the click isn't over a GUI element, eventually dispatches
+///        to the selection aggregator on release.
+/// @param event Incoming Qt mouse event.
 void MainWindow::mousePressEvent( QMouseEvent* event )
 {
 	//qDebug() << "mousePressEvent";
@@ -494,6 +541,9 @@ void MainWindow::mousePressEvent( QMouseEvent* event )
 	}
 }
 
+/// @brief Qt mouse-release override: commits a click to the selection aggregator if the
+///        button was pressed and not classified as a drag. Forwards to Noesis otherwise.
+/// @param event Incoming Qt mouse event.
 void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 {
 	//qDebug() << "mouseReleaseEvent";
@@ -545,6 +595,9 @@ void MainWindow::mouseReleaseEvent( QMouseEvent* event )
 	}
 }
 
+/// @brief Qt mouse-wheel override: either cycles z-level or zooms the camera based on the
+///        toggleMouseWheel config flag, or scrolls a GUI element if Noesis claims the event.
+/// @param event Incoming Qt wheel event.
 void MainWindow::wheelEvent( QWheelEvent* event )
 {
 	if ( m_view )
@@ -581,6 +634,9 @@ void MainWindow::wheelEvent( QWheelEvent* event )
 	}
 }
 
+/// @brief Qt focus-in override: clears any held camera keys so leaving and re-entering the
+///        window doesn't leave the camera panning indefinitely.
+/// @param e Focus event.
 void MainWindow::focusInEvent( QFocusEvent* e )
 {
 	if ( m_view )
@@ -590,6 +646,8 @@ void MainWindow::focusInEvent( QFocusEvent* e )
 	}
 }
 
+/// @brief Qt focus-out override: same job as focusInEvent, clears any stuck camera keys.
+/// @param e Focus event.
 void MainWindow::focusOutEvent( QFocusEvent* e )
 {
 	if ( m_view )
@@ -599,6 +657,9 @@ void MainWindow::focusOutEvent( QFocusEvent* e )
 	}
 }
 
+/// @brief Increments the view level (camera goes up a floor). Ctrl or Shift jumps multiple.
+/// @param shift True if Shift is held.
+/// @param ctrl  True if Ctrl is held.
 void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
@@ -613,6 +674,9 @@ void MainWindow::keyboardZPlus( bool shift, bool ctrl )
 	redraw();
 }
 
+/// @brief Decrements the view level (camera goes down a floor). Ctrl or Shift jumps multiple.
+/// @param shift True if Shift is held.
+/// @param ctrl  True if Ctrl is held.
 void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 {
 	int dimZ      = Global::dimZ - 1;
@@ -626,6 +690,9 @@ void MainWindow::keyboardZMinus( bool shift, bool ctrl )
 	redraw();
 }
 
+/// @brief One-time Noesis GUI bring-up: installs the log handler and resource providers,
+///        initialises Noesis with the license keys, registers custom components, loads the
+///        Main.xaml view, and attaches it to the window.
 void MainWindow::noesisInit()
 {
 	qDebug() << "noesisInit()";
@@ -678,6 +745,9 @@ void MainWindow::noesisInit()
 	emit signalWindowSize( this->width(), this->height() );
 }
 
+/// @brief Advances the Noesis view one frame (animation, input routing). Called once per
+///        paint from paintGL().
+/// @return true if the view needs another frame (animating), false if idle.
 bool MainWindow::noesisUpdate()
 {
 	// Update view (layout, animations, ...)
@@ -693,6 +763,8 @@ bool MainWindow::noesisUpdate()
 	return false;
 }
 
+/// @brief Menu-mode frame tick (16 ms via m_timer). Requests an UpdateRequest so the
+///        window repaints while the simulation is idle.
 void MainWindow::idleRenderTick()
 {
 	// Check for ongoing keyboard movement
@@ -708,6 +780,10 @@ void MainWindow::idleRenderTick()
 	}
 }
 
+/// @brief Qt event loop dispatch: handles QEvent::UpdateRequest by calling paintGL(), else
+///        delegates to the base QWindow.
+/// @param event Incoming Qt event.
+/// @return true if the event was handled.
 bool MainWindow::event( QEvent* event )
 {
 	if ( event->type() == QEvent::UpdateRequest )
@@ -721,6 +797,8 @@ bool MainWindow::event( QEvent* event )
 	return QWindow::event( event );
 }
 
+/// @brief Qt expose override: first expose triggers lazy GL context creation and initializeGL().
+/// @param event Incoming expose event.
 void MainWindow::exposeEvent( QExposeEvent* event )
 {
 	Q_UNUSED( event );
@@ -737,6 +815,8 @@ void MainWindow::exposeEvent( QExposeEvent* event )
 	}
 }
 
+/// @brief Qt resize override: forwards the new size to resizeGL() once GL is initialised.
+/// @param event Incoming resize event.
 void MainWindow::resizeEvent( QResizeEvent* event )
 {
 	QWindow::resizeEvent( event );
@@ -747,6 +827,9 @@ void MainWindow::resizeEvent( QResizeEvent* event )
 	}
 }
 
+/// @brief Main paint function. Makes the GL context current, ticks the Noesis view, asks
+///        the MainWindowRenderer to draw the world, composites the Noesis view on top, and
+///        swaps buffers.
 void MainWindow::paintGL()
 {
 	if ( !m_context )
@@ -786,6 +869,10 @@ void MainWindow::paintGL()
 	m_pendingUpdate = false;
 }
 
+/// @brief GL-side resize: updates the viewport, forwards the new size to Noesis, and
+///        calls MainWindowRenderer::onResize to rebuild framebuffers as needed.
+/// @param w New width in pixels.
+/// @param h New height in pixels.
 void MainWindow::resizeGL( int w, int h )
 {
 	if( !m_isFullScreen )
@@ -808,11 +895,16 @@ void MainWindow::resizeGL( int w, int h )
 	requestUpdate();
 }
 
+/// @brief Slot: explicit size set from the debug window.
+/// @param width  New width in pixels.
+/// @param height New height in pixels.
 void MainWindow::onSetWindowSize( int width, int height )
 {
 	this->resize( width, height );
 }
 
+/// @brief Requests a redraw by queuing a QEvent::UpdateRequest on the window. Coalesces
+///        multiple requests within one frame using m_pendingUpdate.
 void MainWindow::redraw()
 {
 	if ( !m_pendingUpdate )
@@ -823,6 +915,9 @@ void MainWindow::redraw()
 	}
 }
 
+/// @brief One-time GL bring-up: creates the QOpenGLContext, loads GLAD function pointers,
+///        constructs the MainWindowRenderer, initialises Noesis via noesisInit(), and
+///        starts the idle frame timer.
 void MainWindow::initializeGL()
 {
 	// Create and initialize OpenGL context
@@ -860,11 +955,15 @@ void MainWindow::initializeGL()
 	requestUpdate();
 }
 
+/// @brief Returns the owned MainWindowRenderer pointer.
+/// @return The renderer, or nullptr if initializeGL has not run yet.
 MainWindowRenderer* MainWindow::renderer()
 {
 	return m_renderer;
 }
 
+/// @brief Registers Noesis XAML/texture/font providers that look up content files relative
+///        to the game's dataPath.
 void MainWindow::installResourceProviders()
 {
 	const std::string contentPath = Global::cfg->get( "dataPath" ).toString().toStdString() + "/xaml/";
@@ -873,6 +972,8 @@ void MainWindow::installResourceProviders()
 	Noesis::GUI::SetFontProvider( Noesis::MakePtr<NoesisApp::LocalFontProvider>( contentPath.c_str() ) );
 }
 
+/// @brief Registers all custom Noesis C++ component types (view models, converters, etc.)
+///        so XAML files can instantiate them by name.
 void MainWindow::registerComponents()
 {
 	NoesisApp::Launcher::RegisterAppComponents();

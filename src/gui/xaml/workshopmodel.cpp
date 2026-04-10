@@ -15,6 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopmodel.cpp
+ *  @brief WorkshopModel implementation. Constructor creates the proxy, the priority
+ *         dropdown, and empty collections for recipes / craft jobs / trader stock lists.
+ *         onUpdateInfo rebuilds the top-level workshop state (recipes + flags),
+ *         onUpdateCraftList refreshes only the active craft-job list. updateTraderStock
+ *         / updatePlayerStock replace the trader's and player's stock lists on a fresh
+ *         trader encounter, while the *StockItem variants update a single row after a
+ *         transfer. Trivial Get/Set property accessors are XAML binding plumbing and
+ *         forward writes through WorkshopProxy.
+ */
 
 #include "workshopmodel.h"
 
@@ -344,6 +354,8 @@ void WsTradeItem::SetCount( int count )
 #pragma endregion TradeItems
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the WorkshopModel, creates the proxy, priority dropdown, transfer/
+///        trade delegate commands, and empty recipe/craft-job/trader-stock collections.
 WorkshopModel::WorkshopModel()
 {
 	m_proxy = new WorkshopProxy;
@@ -368,6 +380,10 @@ WorkshopModel::WorkshopModel()
 	m_tradeCmd.SetExecuteFunc( MakeDelegate( this, &WorkshopModel::onTradeCmd ) );
 }
 
+/// @brief Replaces the view model's top-level info with a fresh workshop snapshot.
+///        Rebuilds recipes and craft-job lists, resets flags and priority, picks the
+///        correct workshop flavour (normal / butcher / fisher / trader), and raises
+///        PropertyChanged for every bound property.
 void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 {
 	bool isSameWorkshop = ( m_workshopID == info.workshopID );
@@ -445,6 +461,7 @@ void WorkshopModel::onUpdateInfo( const GuiWorkshopInfo& info )
 	m_proxy->unblockWriteBack();
 }
 
+/// @brief Refreshes only the active crafting-job list (preserves recipe and flag state).
 void WorkshopModel::onUpdateCraftList( const GuiWorkshopInfo& info )
 {
 	bool isSameWorkshop = ( m_workshopID == info.workshopID );
@@ -648,6 +665,7 @@ void WorkshopModel::SetProcessFish( bool value )
 }
 
 #pragma region TraderSpecific
+/// @brief Replaces the entire trader-stock list (used when a trader arrives or leaves).
 void WorkshopModel::updateTraderStock( const QList<GuiTradeItem>& items )
 {
 	m_traderStock->Clear();
@@ -673,6 +691,7 @@ void WorkshopModel::updateTraderStock( const QList<GuiTradeItem>& items )
 	OnPropertyChanged( "TraderOffer" );
 }
 
+/// @brief Replaces the entire player-stock list visible to the trader.
 void WorkshopModel::updatePlayerStock( const QList<GuiTradeItem>& items )
 {
 	m_playerStock->Clear();
@@ -695,6 +714,8 @@ void WorkshopModel::updatePlayerStock( const QList<GuiTradeItem>& items )
 	OnPropertyChanged( "PlayerOffer" );
 }
 
+/// @brief Updates the count for one row in the trader stock or offer list after a
+///        transfer, moving the row between the two lists if count crosses zero.
 void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 {
 	for ( int i = 0; i < m_traderStock->Count(); ++i )
@@ -734,6 +755,8 @@ void WorkshopModel::updateTraderStockItem( const GuiTradeItem& gti )
 	}
 }
 
+/// @brief Updates the count for one row in the player stock or offer list after a
+///        transfer, moving the row between the two lists if count crosses zero.
 void WorkshopModel::updatePlayerStockItem( const GuiTradeItem& gti )
 {
 	for ( int i = 0; i < m_playerStock->Count(); ++i )
@@ -901,6 +924,8 @@ void IngnomiaGUI::WorkshopModel::SetAmountAllChecked( bool checked )
 	OnPropertyChanged( "AmountAll" );
 }
 
+/// @brief Command handler for the trade-page transfer buttons (< << > >>). Moves the
+///        configured amount (1/10/100/all) of the selected row between stock and offer.
 void WorkshopModel::onTransferCmd( BaseComponent* param )
 {
 	QString qParam = param->ToString().Str();
@@ -973,6 +998,8 @@ void WorkshopModel::updatePlayerValue( int value )
 	OnPropertyChanged( "PlayerValue" );
 }
 
+/// @brief Command handler for the "Trade" button: finalises the current offer exchange
+///        with the trader and notifies the game side via the proxy.
 void WorkshopModel::onTradeCmd( BaseComponent* param )
 {
 	m_proxy->trade( m_workshopID );

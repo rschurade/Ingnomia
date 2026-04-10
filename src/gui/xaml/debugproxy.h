@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debugproxy.h
+ *  @brief Qt-side proxy bridging DebugModel with AggregatorDebug.
+ */
 #pragma once
 
 #include "../aggregatordebug.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards Debug GUI commands from DebugModel into AggregatorDebug and pushes
+///        gnome/item/material list refreshes back into the model.
 class DebugProxy : public QObject
 {
 	Q_OBJECT
@@ -44,7 +49,7 @@ public:
 	void setDisableNeedDecay( QString need, bool disable );
 
 private:
-	IngnomiaGUI::DebugModel* m_parent = nullptr;
+	IngnomiaGUI::DebugModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 public slots:
 	void onGnomeList( const QList<QPair<QString, unsigned int>>& gnomes );

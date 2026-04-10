@@ -15,6 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file lightmap.cpp
+ *  @brief Dynamic light map management.
+ *
+ *  Manages point light sources in the game world. Each light propagates via BFS
+ *  with line-of-sight checks and distance-based decay. Multiple lights contribute
+ *  additively to per-tile intensity, clamped to 255.
+ */
 #include "lightmap.h"
 
 #include "../base/config.h"
@@ -26,14 +33,20 @@
 #include <QQueue>
 #include <QVector3D>
 
+/** @brief Default constructor. */
 LightMap::LightMap()
 {
 }
 
+/** @brief Destructor. */
 LightMap::~LightMap()
 {
 }
 
+/** @brief Initializes the light map, clearing all lights and cached data.
+ *
+ *  Reads the world dimensions from Global and prepares for light operations.
+ */
 void LightMap::init()
 {
 	m_lightMap.clear();
@@ -44,6 +57,20 @@ void LightMap::init()
 	m_dimZ = Global::dimZ;
 }
 
+/** @brief Adds a point light source and propagates its illumination.
+ *
+ *  Performs a BFS from @p pos, computing light intensity at each visited tile
+ *  based on distance and a configurable decay rate. For each tile, a line-of-sight
+ *  check ensures view-blocking walls cast shadows. Light propagates through
+ *  non-solid floors vertically and non-blocking walls horizontally. Each affected
+ *  tile's light level is recalculated from all contributing sources.
+ *
+ *  @param[in,out] updateList Set of tile IDs that need rendering updates; affected tiles are added.
+ *  @param[in,out] world      The world tile array; tile lightLevel fields are updated.
+ *  @param id                 Unique identifier for this light source.
+ *  @param pos                World position of the light source.
+ *  @param intensity          Base intensity of the light (higher = brighter and farther reach).
+ */
 void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id, Position pos, int intensity )
 {
 	Light light;
@@ -134,6 +161,14 @@ void LightMap::addLight( QSet<unsigned int>& updateList, std::vector<Tile>& worl
 	m_lights.insert( id, light );
 }
 
+/** @brief Computes the total light intensity at a tile from all contributing sources.
+ *
+ *  Sums the intensity contributions of every light affecting the tile and clamps
+ *  the result to a maximum of 255.
+ *
+ *  @param posID The linear tile index to compute intensity for.
+ *  @return The combined light intensity (0-255).
+ */
 unsigned char LightMap::calcIntensity( unsigned int posID )
 {
 	if ( m_lightMap.contains( posID ) )
@@ -152,6 +187,16 @@ unsigned char LightMap::calcIntensity( unsigned int posID )
 	}
 }
 
+/** @brief Removes a light source and recalculates affected tiles.
+ *
+ *  Removes the light's contribution from every tile it previously affected,
+ *  recalculates each tile's total light level from remaining sources, and
+ *  adds affected tiles to the update list.
+ *
+ *  @param[in,out] updateList Set of tile IDs that need rendering updates.
+ *  @param[in,out] world      The world tile array; tile lightLevel fields are updated.
+ *  @param id                 The identifier of the light source to remove.
+ */
 void LightMap::removeLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, unsigned int id )
 {
 	if ( m_lights.contains( id ) )
@@ -170,6 +215,16 @@ void LightMap::removeLight( QSet<unsigned int>& updateList, std::vector<Tile>& w
 	}
 }
 
+/** @brief Recalculates all lights affecting a given position.
+ *
+ *  Used when a tile changes (e.g., a wall is built or removed) and lights passing
+ *  through it need to be recomputed. Removes and re-adds each light that contributes
+ *  to the tile at @p pos.
+ *
+ *  @param[in,out] updateList Set of tile IDs that need rendering updates.
+ *  @param[in,out] world      The world tile array.
+ *  @param pos                The position where the world geometry changed.
+ */
 void LightMap::updateLight( QSet<unsigned int>& updateList, std::vector<Tile>& world, Position pos )
 {
 	unsigned int posID = pos.toInt();

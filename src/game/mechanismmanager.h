@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file mechanismmanager.h
+ *  @brief Mechanism system: axles, gears, levers, engines, pressure plates, pumps, and power network management.
+ */
 #pragma once
 
 
@@ -24,6 +27,7 @@
 
 class Game;
 
+/** @brief Type of mechanism component. */
 enum MechanismType
 {
 	MT_NONE = 0,
@@ -37,6 +41,7 @@ enum MechanismType
 	MT_PRESSUREPLATE
 };
 
+/** @brief Data for a single installed mechanism, including type, position, power, fuel, and connectivity. */
 struct MechanismData
 {
 	MechanismType type = MT_NONE;
@@ -79,6 +84,7 @@ struct MechanismData
 	QWeakPointer<Job> job;
 };
 
+/** @brief A connected power network of mechanisms, tracking total power production and consumption. */
 struct MechanismNetwork
 {
 	unsigned int id      = 0;
@@ -89,6 +95,13 @@ struct MechanismNetwork
 	QSet<unsigned int> consumers;
 };
 
+/** @brief Manages all mechanism components and their power networks.
+ *
+ *  Handles installation/uninstallation of mechanism items (axles, gears, levers,
+ *  engines, pumps, pressure plates, mechanical walls), builds connected power
+ *  networks, processes fuel consumption, toggles active/inverted states, creates
+ *  refuel jobs, and updates world sprites and tile effects.
+ */
 class MechanismManager : public QObject
 {
 	Q_OBJECT

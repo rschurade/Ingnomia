@@ -15,10 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_noderepeat.h
+ *  @brief Decorator that repeats its child a fixed number of times.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Decorator that ticks its child up to N times.
+ *
+ *  Repeats the child node @c m_num times.  If the child returns RUNNING,
+ *  execution is suspended and RUNNING is returned.  If the child fails on
+ *  any iteration the loop aborts with FAILURE.  Returns SUCCESS after all
+ *  iterations complete successfully.
+ */
 class BT_NodeRepeat final : public BT_Node
 {
 public:
@@ -31,5 +41,5 @@ public:
 	BT_RESULT tick();
 
 private:
-	int m_num = 0;
+	int m_num = 0; ///< Total number of repetitions requested.
 };

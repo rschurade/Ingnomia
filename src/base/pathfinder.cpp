@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file pathfinder.cpp
+ *  @brief Asynchronous A* pathfinding request manager.
+ *
+ *  Dispatches pathfinding requests to worker threads, caches results,
+ *  and provides fast synchronous fallbacks for trivial cases.
+ */
 #include "pathfinder.h"
 
 #include "../base/PathFinderThread.h"
@@ -25,22 +31,44 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+/** @brief Constructs the PathFinder.
+ *  @param world Pointer to the game World used for tile and region queries.
+ *  @param parent Optional QObject parent for Qt ownership.
+ */
 PathFinder::PathFinder( World* world, QObject* parent) :
 	m_world( world ),
 	QObject(parent)
 {
 }
 
+/** @brief Destructor. Clears all pending pathfinding jobs. */
 PathFinder::~PathFinder()
 {
 	m_jobs.clear();
 }
 
+/** @brief Cancels a pending pathfinding request (not yet implemented).
+ *  @param id The unique identifier of the request to cancel.
+ */
 void PathFinder::cancelRequest( unsigned int id )
 {
 	//TODO implement
 }
 
+/** @brief Requests a path between two positions.
+ *
+ *  If a result for the given @p id already exists, returns it immediately.
+ *  If a job is still running, returns PathFinderResult::Running.
+ *  Otherwise performs fast synchronous checks (walkability, region connectivity,
+ *  adjacency, naive same-level path) before queuing an async A* job.
+ *
+ *  @param id           Unique identifier for this pathfinding request.
+ *  @param start        The starting position.
+ *  @param goal         The target position.
+ *  @param ignoreNoPass If true, tiles marked TF_NOPASS are treated as passable.
+ *  @param[out] path    Populated with the computed path on success, cleared otherwise.
+ *  @return The current state of the request (FoundPath, NoConnection, Running, or Pending).
+ */
 PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position goal, bool ignoreNoPass, std::vector<Position>& path )
 {
 	QMutexLocker lock( &m_mutex );
@@ -101,6 +129,12 @@ PathFinderResult PathFinder::getPath( unsigned int id, Position start, Position 
 	}
 }
 
+/** @brief Launches async A* worker threads for all pending pathfinding jobs.
+ *
+ *  Collects pending jobs, marks them as running, then batches requests that share
+ *  the same start or goal position into a single worker (with inverted direction,
+ *  since many creatures often target the same goal). Blocks until all workers complete.
+ */
 void PathFinder::findPaths()
 {
 	using namespace std::placeholders;
@@ -165,6 +199,16 @@ void PathFinder::findPaths()
 }
 
 
+/** @brief Callback invoked by worker threads when a path search completes.
+ *
+ *  Matches the result back to the original job(s). If the path was computed in
+ *  reverse direction (goal-to-start optimization), reverses the path before storing.
+ *
+ *  @param start        The search origin used by the worker (may be the original goal).
+ *  @param goal         The search target used by the worker (may be the original start).
+ *  @param ignoreNoPass Whether TF_NOPASS tiles were ignored during the search.
+ *  @param path         The computed path from start to goal, empty if no path found.
+ */
 void PathFinder::onResult( Position start, Position goal, bool ignoreNoPass, std::vector<Position> path )
 {
 	QMutexLocker lock( &m_mutex );
@@ -201,6 +245,15 @@ void PathFinder::onResult( Position start, Position goal, bool ignoreNoPass, std
 }
 
 
+/** @brief Attempts a simple greedy walk from goal to start on the same Z-level.
+ *
+ *  At each step, picks the connected neighbor closest to start. Only considers
+ *  same-level neighbors. Returns an empty vector if the greedy walk gets stuck.
+ *
+ *  @param start The starting position (walk destination).
+ *  @param goal  The goal position (walk origin — path is built goal-to-start).
+ *  @return The path from goal to start, or empty if the greedy approach fails.
+ */
 std::vector<Position> PathFinder::getNaivePath( Position& start, Position& goal )
 {
 	std::vector<Position> out;
@@ -229,6 +282,15 @@ std::vector<Position> PathFinder::getNaivePath( Position& start, Position& goal 
 	return out;
 }
 
+/** @brief Checks whether two positions are in connected regions.
+ *
+ *  Delegates to RegionMap::checkConnectedRegions to perform a BFS over the
+ *  region connectivity graph.
+ *
+ *  @param start The first position.
+ *  @param goal  The second position.
+ *  @return True if the regions containing start and goal are connected.
+ */
 bool PathFinder::checkConnectedRegions( const Position start, const Position goal )
 {
 	return m_world->regionMap().checkConnectedRegions( start, goal );

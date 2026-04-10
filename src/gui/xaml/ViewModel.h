@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ViewModel.h
+ *  @brief Root view model for the outer menu shell (Main / Start / Settings / NewGame /
+ *         LoadGame / Wait / Ingame). Owns the NewGameModel and drives navigation between
+ *         the XAML pages via the State enum.
+ */
 #ifndef __MENU3D_VIEWMODEL_H__
 #define __MENU3D_VIEWMODEL_H__
 
@@ -42,32 +47,41 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+/// @brief Which outer-shell page is currently visible.
 enum class State
 {
-	Main,
-	Start,
-	Settings,
-	NewGame,
-	LoadGame,
-	Wait,
-	GameRunning,
-	Ingame
+	Main,        ///< Splash / logo page.
+	Start,       ///< Main menu (Start / Load / Settings / Exit).
+	Settings,    ///< Settings page.
+	NewGame,     ///< New-game world-gen and embark page.
+	LoadGame,    ///< Load-game page.
+	Wait,        ///< Loading / waiting page.
+	GameRunning, ///< Transient state while the game thread spins up.
+	Ingame       ///< In-game HUD (GameGui).
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Root outer-shell view model. Drives page navigation, owns the NewGameModel,
+///        tracks window size and UI scale, and talks to the game side via ProxyMainView.
 class ViewModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	ViewModel();
 
+	/// @brief Updates the stored window size and the scaled width/height strings.
 	void setWindowSize( int w, int h );
 
+	/// @brief Back-button handler: pops the navigation stack.
 	void OnBack( BaseComponent* param );
 
+	/// @brief Applies a new UI scale factor from the game side.
 	void setUIScale( float value );
+	/// @brief Updates the version string shown on the main menu.
 	void updateVersion( QString version );
 
+	/// @brief Resumes the running game (switches to the Ingame state).
 	void OnResume( BaseComponent* param = nullptr );
+	/// @brief Called when the continue-last-game load completes; switches to Ingame if successful.
 	void OnContinueGameFinished( bool gameLoaded );
 
 private:
@@ -137,7 +151,7 @@ private:
 	Noesis::String _windowHeightString;
 	Noesis::String m_version;
 
-	ProxyMainView* m_proxy = nullptr;
+	ProxyMainView* m_proxy = nullptr; ///< Qt-side proxy bridging to the game thread.
 
 	NS_DECLARE_REFLECTION( ViewModel, NotifyPropertyChangedBase )
 };

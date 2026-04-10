@@ -15,12 +15,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file Population.xaml.cpp
+ *  @brief PopulationWindow implementation: loads the XAML and synchronises the skill /
+ *         schedule scrollviewers so the name/content/header columns stay aligned.
+ */
 #include "Population.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the PopulationWindow and registers the Loaded delegate.
 PopulationWindow::PopulationWindow()
 {
 	Loaded() += MakeDelegate( this, &PopulationWindow::OnLoaded );
@@ -28,11 +33,16 @@ PopulationWindow::PopulationWindow()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the PopulationWindow.xaml resource.
 void PopulationWindow::InitializeComponent()
 {
 	GUI::LoadComponent( this, "PopulationWindow.xaml" );
 }
 
+/// @brief Helper: returns the ScrollViewer associated with a virtualised list, either the
+///        given element itself or its PART_Scroll template child.
+/// @param root Framework element expected to host or be a ScrollViewer.
+/// @return Pointer to the inner ScrollViewer, or nullptr (with an NS_CHECK failure) on type mismatch.
 static Noesis::ScrollViewer* getVirtualListScroller( Noesis::FrameworkElement* root )
 {
 	NS_CHECK( root != 0, "Missing input" );
@@ -55,6 +65,8 @@ static Noesis::ScrollViewer* getVirtualListScroller( Noesis::FrameworkElement* r
 	return nullptr;
 }
 
+/// @brief Loaded handler: looks up the five named ScrollViewer elements by XAML x:Name and
+///        wires their ScrollChanged events to OnScroll so the columns scroll in sync.
 void PopulationWindow::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 
@@ -72,6 +84,10 @@ void PopulationWindow::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEve
 	m_scheduleContentScroll->ScrollChanged() += scrollHandler;
 }
 
+/// @brief ScrollChanged handler: propagates the sender's vertical/horizontal offset to the
+///        sibling scrollviewers so the name, header, and content columns stay aligned.
+/// @param sender The ScrollViewer whose offset changed.
+/// @param args   Scroll-changed event args (unused — offsets are read directly from the senders).
 void PopulationWindow::OnScroll( Noesis::BaseComponent* sender, const Noesis::ScrollChangedEventArgs& args )
 {
 	if ( sender == m_skillNameScroll )

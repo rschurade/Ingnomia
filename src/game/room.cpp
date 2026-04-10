@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file room.cpp
+ *  @brief Room designation implementation: enclosure/roof checking, furniture management,
+ *         bed/chair assignment, alarm bell handling, and room value calculation.
+ */
 #include "room.h"
 
 #include "../base/db.h"
@@ -30,11 +34,15 @@
 #include <QElapsedTimer>
 #include <QString>
 
+/// @brief Default constructor — creates an unowned, game-less Room (for placeholder use).
 Room::Room() :
 	WorldObject( nullptr )
 {
 }
 
+/// @brief Constructs a new room from a list of tile positions, then checks roofed/enclosed state.
+/// @param tiles List of (position, included) pairs; only tiles with second==true are added.
+/// @param game  Owning game instance.
 Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )
 {
@@ -55,6 +63,7 @@ Room::Room( QList<QPair<Position, bool>> tiles, Game* game ) :
 	checkEnclosed();
 }
 
+/// @brief Destructor — frees all RoomTile allocations.
 Room::~Room()
 {
 	for ( const auto& field : m_fields )
@@ -63,6 +72,9 @@ Room::~Room()
 	}
 }
 
+/// @brief Adds a tile to the room, detects any installed furniture at that position,
+///        sets bed/chair/alarm-bell flags, and marks the world tile with TF_ROOM.
+/// @param pos World position of the tile to add.
 void Room::addTile( const Position & pos )
 {
 	RoomTile* rt = new RoomTile;
@@ -105,6 +117,9 @@ void Room::addTile( const Position & pos )
 	g->w()->setTileFlag( rt->pos, TileFlag::TF_ROOM );
 }
 
+/// @brief Deserialising constructor — restores a room from a saved variant map.
+/// @param vals Map produced by Room::serialize().
+/// @param game Owning game instance.
 Room::Room( QVariantMap vals, Game* game ) :
 	WorldObject( game )
 {
@@ -138,6 +153,8 @@ Room::Room( QVariantMap vals, Game* game ) :
 	}
 }
 
+/// @brief Serialises the room (ID, owner, type, activity, field tiles with furniture sources and values).
+/// @return QVariant wrapping a QVariantMap suitable for saving.
 QVariant Room::serialize() const
 {
 	QVariantMap out;
@@ -167,6 +184,8 @@ QVariant Room::serialize() const
 	return out;
 }
 
+/// @brief Per-tick update: re-evaluates enclosed and roofed state every 200 ticks when active.
+/// @param tick Current game tick.
 void Room::onTick( quint64 tick )
 {
 	if ( !m_active )
@@ -180,6 +199,9 @@ void Room::onTick( quint64 tick )
 	}
 }
 
+/// @brief Removes a tile from the room, clears its TF_ROOM flag, and updates alarm-bell tracking.
+/// @param pos Position of the tile to remove.
+/// @return true if this was the last tile (room should be deleted), false otherwise.
 bool Room::removeTile( const Position & pos )
 {
 	RoomTile* rt   = m_fields.value( pos.toInt() );
@@ -206,6 +228,10 @@ bool Room::removeTile( const Position & pos )
 	return m_fields.empty();
 }
 
+/// @brief Records installed furniture for the tile at @p pos, setting bed/chair/alarm-bell flags.
+/// @param source SourceMaterial describing the furniture item and material.
+/// @param value  Pre-computed furniture value (item value × material value).
+/// @param pos    Position of the tile receiving the furniture.
 void Room::addFurniture( const SourceMaterial& source, unsigned short value, Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -226,6 +252,8 @@ void Room::addFurniture( const SourceMaterial& source, unsigned short value, Pos
 	}
 }
 
+/// @brief Clears furniture data from the tile at @p pos and updates alarm-bell tracking.
+/// @param pos Position of the tile whose furniture is being removed.
 void Room::removeFurniture( const Position& pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -254,6 +282,9 @@ void Room::removeFurniture( const Position& pos )
 	}
 }
 
+/// @brief Checks whether every room tile has a solid floor directly above it (i.e. the room is roofed).
+///        Updates and returns m_roofed.
+/// @return true if every tile has a solid floor above it.
 bool Room::checkRoofed()
 {
 	bool roofed = true;
@@ -272,6 +303,10 @@ bool Room::checkRoofed()
 	return roofed;
 }
 
+/// @brief Checks whether every room tile is surrounded on all four cardinal sides
+///        by either other room tiles, solid walls, or door tiles (i.e. the room is enclosed).
+///        Updates and returns m_enclosed.
+/// @return true if the room is fully enclosed.
 bool Room::checkEnclosed()
 {
 	bool enclosed = true;
@@ -325,6 +360,8 @@ bool Room::checkEnclosed()
 	return enclosed;
 }
 
+/// @brief Returns the number of bed-type furniture tiles in this room.
+/// @return Bed count.
 int Room::numBeds()
 {
 	int count = 0;
@@ -336,6 +373,8 @@ int Room::numBeds()
 	return count;
 }
 
+/// @brief Returns the number of chair-type furniture tiles in this room.
+/// @return Chair count.
 int Room::numChairs()
 {
 	int count = 0;
@@ -347,6 +386,9 @@ int Room::numChairs()
 	return count;
 }
 
+/// @brief Finds the nearest unclaimed, unused chair tile to @p nearPos.
+/// @param nearPos Reference position to minimise distance from.
+/// @return Position of the best free chair, or an invalid Position if none is available.
 Position Room::findFreeChair( Position nearPos )
 {
 	int bestDist = INT_MAX;
@@ -366,6 +408,10 @@ Position Room::findFreeChair( Position nearPos )
 	return bestPos;
 }
 
+/// @brief Finds an available bed for @p creatureID, respecting personal-room ownership.
+///        Prefers a bed already claimed by the creature; falls back to any unclaimed bed.
+/// @param creatureID UID of the creature looking for a bed.
+/// @return Position of a suitable bed, or an invalid Position if none is available.
 Position Room::findFreeBed( unsigned int creatureID )
 {
 	// Personal rooms: only the owner can use beds here
@@ -393,6 +439,10 @@ Position Room::findFreeBed( unsigned int creatureID )
 	return Position();
 }
 
+/// @brief Claims the bed at @p pos for @p creatureID if it is unclaimed or already theirs.
+/// @param pos        Position of the bed tile.
+/// @param creatureID UID of the creature claiming the bed.
+/// @return true if the claim succeeded, false if the tile is absent, not a bed, or taken by another creature.
 bool Room::claimBed( Position pos, unsigned int creatureID )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -407,6 +457,8 @@ bool Room::claimBed( Position pos, unsigned int creatureID )
 	return false;
 }
 
+/// @brief Releases the claim and usage lock on the bed at @p pos.
+/// @param pos Position of the bed tile to release.
 void Room::releaseBed( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -417,6 +469,8 @@ void Room::releaseBed( Position pos )
 	}
 }
 
+/// @brief Releases all bed claims held by @p creatureID in this room.
+/// @param creatureID UID of the creature whose claims should be released.
 void Room::releaseAllBeds( unsigned int creatureID )
 {
 	for ( auto field : m_fields )
@@ -429,16 +483,22 @@ void Room::releaseAllBeds( unsigned int creatureID )
 	}
 }
 
+/// @brief Returns whether the room contains at least one alarm bell.
+/// @return true if an alarm bell is installed.
 bool Room::hasAlarmBell() const
 {
 	return m_hasAlarmBell;
 }
 
+/// @brief Directly sets the cached alarm-bell flag (used when loading state).
+/// @param value true if the room has an alarm bell.
 void Room::setHasAlarmBell( bool value )
 {
 	m_hasAlarmBell = value;
 }
 
+/// @brief Returns the position of the first alarm bell found in the room.
+/// @return Position of the first alarm bell, or an invalid Position if none exists.
 Position Room::firstBellPos() const
 {
 	for ( const auto& f : m_fields )
@@ -451,6 +511,8 @@ Position Room::firstBellPos() const
 	return Position();
 }
 
+/// @brief Returns the positions of all alarm bells installed in the room.
+/// @return List of alarm bell positions (empty if none).
 QList<Position> Room::allBellPos() const
 {
 	QList<Position> out;
@@ -464,6 +526,8 @@ QList<Position> Room::allBellPos() const
 	return out;
 }
 
+/// @brief Returns the position of a randomly selected tile in the room.
+/// @return Random tile position, or an invalid Position if the room has no tiles.
 Position Room::randomTilePos() const
 {
 	if ( m_fields.size() )
@@ -481,6 +545,8 @@ Position Room::randomTilePos() const
 	return Position();
 }
 
+/// @brief Calculates the total room value as the sum of all installed furniture values.
+/// @return Total furniture value.
 unsigned int Room::value()
 {
 	unsigned int out = 0;

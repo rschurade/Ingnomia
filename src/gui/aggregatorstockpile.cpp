@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorstockpile.cpp
+ *  @brief AggregatorStockpile implementation: fills GuiStockpileInfo (basic settings plus the
+ *         per-entry content summary) and routes GUI edits back to the stockpile manager.
+ */
 #include "aggregatorstockpile.h"
 
 #include "../base/counter.h"
@@ -27,21 +31,28 @@
 #include "../game/world.h"
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorStockpile and registers GuiStockpileInfo as a metatype.
+/// @param parent Qt parent object.
 AggregatorStockpile::AggregatorStockpile( QObject* parent ) :
 	QObject(parent)
 {
 	qRegisterMetaType<GuiStockpileInfo>();
 }
 
+/// @brief Destructor.
 AggregatorStockpile::~AggregatorStockpile()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorStockpile::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Opens the stockpile window for whichever stockpile owns @p tileID.
+/// @param tileID Integer tile key (Position::toInt()).
 void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 {
 	if( !g ) return;
@@ -54,6 +65,8 @@ void AggregatorStockpile::onOpenStockpileInfoOnTile( unsigned int tileID )
 	}
 }
 
+/// @brief Opens the stockpile window for a given stockpile UID and pushes a fresh info payload.
+/// @param stockpileID Stockpile UID.
 void AggregatorStockpile::onOpenStockpileInfo( unsigned int stockpileID )
 {
 	if( !g ) return;
@@ -61,6 +74,8 @@ void AggregatorStockpile::onOpenStockpileInfo( unsigned int stockpileID )
 	onUpdateStockpileInfo( stockpileID );
 }
 
+/// @brief Re-aggregates and emits signalUpdateInfo for the given stockpile, if it exists.
+/// @param stockpileID Stockpile UID.
 void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 {
 	if( !g ) return;
@@ -70,6 +85,9 @@ void AggregatorStockpile::onUpdateStockpileInfo( unsigned int stockpileID )
 	}
 }
 
+/// @brief Fills m_info with the current stockpile state (basic fields + per-entry summary).
+/// @param stockpileID Stockpile UID.
+/// @return true if the stockpile exists, false otherwise.
 bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 {
 	if( !g ) return false;
@@ -109,6 +127,9 @@ bool AggregatorStockpile::aggregate( unsigned int stockpileID )
 	return false;
 }
 
+/// @brief Marks the content summary dirty if the open stockpile matches; the next tick hook
+///        will actually re-emit it.
+/// @param stockpileID Stockpile UID whose content changed.
 void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 {
 	if( !g ) return;
@@ -118,6 +139,8 @@ void AggregatorStockpile::onUpdateStockpileContent( unsigned int stockpileID )
 	}
 }
 
+/// @brief Post-tick hook: if the open stockpile's content is dirty, rebuilds the summary
+///        rows and emits signalUpdateContent. Throttled to once per tick to avoid spam.
 void AggregatorStockpile::onUpdateAfterTick()
 {
 	if( !g ) return;
@@ -146,6 +169,13 @@ void AggregatorStockpile::onUpdateAfterTick()
 	}
 }
 
+/// @brief Applies basic stockpile edits (name, priority, suspended, pull, allow-pull) from the GUI.
+/// @param stockpileID Stockpile UID.
+/// @param name        New display name.
+/// @param priority    New priority index.
+/// @param suspended   New suspended flag.
+/// @param pull        Pull-from-others flag.
+/// @param allowPull   Allow-others-to-pull flag.
 void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString name, int priority, bool suspended, bool pull, bool allowPull )
 {
 	if( !g ) return;
@@ -161,6 +191,14 @@ void AggregatorStockpile::onSetBasicOptions( unsigned int stockpileID, QString n
 	}
 }
 
+/// @brief Toggles a filter entry in the stockpile's item filter tree at the specified level
+///        (category / group / item / material) and pushes a fresh info payload.
+/// @param stockpileID Stockpile UID.
+/// @param active      True to enable, false to disable.
+/// @param category    Category key.
+/// @param group       Group key (empty to apply to whole category).
+/// @param item        Item key (empty to apply to whole group).
+/// @param material    Material key (empty to apply to whole item).
 void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QString category, QString group, QString item, QString material )
 {
 	if( !g ) return;
@@ -192,6 +230,7 @@ void AggregatorStockpile::onSetActive( unsigned int stockpileID, bool active, QS
 	}
 }
 
+/// @brief Clears the currently open stockpile when the GUI closes the window.
 void AggregatorStockpile::onCloseWindow()
 {
 	m_info.stockpileID = 0;

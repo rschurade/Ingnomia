@@ -15,21 +15,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file worldobject.cpp
+ *  @brief Implementation of WorldObject: construction, deserialization, and serialization.
+ */
+
 #include "worldobject.h"
 
 #include "../base/gamestate.h"
 #include "../game/game.h"
 
+/**
+ * @brief Constructs a new WorldObject with a freshly generated unique ID.
+ * @param game Pointer to the owning Game instance.
+ */
 WorldObject::WorldObject( Game* game ) :
 	g( game )
 {
 	m_id = GameState::createID();
 }
 
+/**
+ * @brief Virtual destructor.
+ */
 WorldObject::~WorldObject()
 {
 }
 
+/**
+ * @brief Deserializes a WorldObject from a saved QVariantMap.
+ * @param vals Map containing keys "ID", "LastUpdate", "Name", "Active", and optionally "Suspended".
+ * @param game Pointer to the owning Game instance.
+ */
 WorldObject::WorldObject( QVariantMap vals, Game* game ) :
 	g( game )
 {
@@ -44,6 +61,10 @@ WorldObject::WorldObject( QVariantMap vals, Game* game ) :
 	}
 }
 
+/**
+ * @brief Serializes this object's base fields into the given map for saving.
+ * @param out Output map to insert "ID", "Name", "LastUpdate", and "Active" into.
+ */
 void WorldObject::serialize( QVariantMap& out ) const
 {
 	out.insert( "ID", m_id );

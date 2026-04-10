@@ -15,17 +15,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeforcesuccess.cpp
+ *  @brief Implementation of BT_NodeForceSuccess -- decorator forcing SUCCESS.
+ */
 #include "bt_nodeforcesuccess.h"
 
+/** @brief Construct a ForceSuccess decorator.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeForceSuccess::BT_NodeForceSuccess( QVariantMap& blackboard ) :
 	BT_Node( "ForceSuccess", blackboard )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeForceSuccess::~BT_NodeForceSuccess()
 {
 }
 
+/** @brief Tick the child; propagate RUNNING, otherwise return SUCCESS.
+ *  @return RUNNING if the child is running, SUCCESS otherwise.
+ */
 BT_RESULT BT_NodeForceSuccess::tick()
 {
 	if ( m_children.size() > 0 )

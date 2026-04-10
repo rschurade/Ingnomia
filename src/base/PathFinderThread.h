@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file PathFinderThread.h
+ * @brief A* pathfinding worker — runs as a callable on the thread pool.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -26,6 +30,13 @@
 
 class World;
 
+/**
+ * @brief A* pathfinding worker that runs on a thread pool.
+ *
+ * Constructed with start position, set of goal positions, and a completion callback.
+ * Uses a min-priority queue for frontier expansion with heuristic cost estimation.
+ * Evaluates walkable neighbors including stair/ramp transitions.
+ */
 class PathFinderThread
 {
 public:

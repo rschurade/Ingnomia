@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file farm.h
+ *  Individual farm plot: crop type selection, tilling, planting, harvesting state per tile, and auto-harvest thresholds.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -29,6 +32,7 @@
 
 class Game;
 
+/** @brief A single tile within a farm, holding its position and current job reference. */
 struct FarmField
 {
 	FarmField() = default;
@@ -38,6 +42,7 @@ struct FarmField
 	QWeakPointer<Job> job;
 };
 
+/** @brief Job types that can be performed on farm tiles. */
 enum FarmJobs : quint8
 {
 	Till,
@@ -45,6 +50,7 @@ enum FarmJobs : quint8
 	Harvest
 };
 
+/** @brief Persistent properties of a farm: plant type, seed item, harvest flags, and auto-harvest thresholds. */
 struct FarmProperties
 {
 	QString plantType = "";
@@ -73,6 +79,7 @@ struct FarmProperties
 	FarmProperties( QVariantMap& in );
 };
 
+/** @brief Represents a single farm plot designation, managing tilling, planting, and harvesting across its tiles. */
 class Farm : public WorldObject
 {
 	friend class AggregatorAgri;

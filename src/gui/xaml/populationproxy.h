@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file populationproxy.h
+ *  @brief Qt-side proxy bridging PopulationModel with AggregatorPopulation.
+ */
 #pragma once
 
 #include "../aggregatorpopulation.h"
@@ -22,6 +25,9 @@
 
 #include <QObject>
 
+/// @brief Forwards Population window actions (skill toggles, profession changes, schedule
+///        edits, profession editing) to AggregatorPopulation and pushes incoming updates
+///        back into the model.
 class PopulationProxy : public QObject
 {
 	Q_OBJECT
@@ -55,8 +61,8 @@ public:
 	void newProfession();
 
 private:
-	IngnomiaGUI::PopulationModel* m_parent = nullptr;
-	ScheduleActivity m_currentActivitiy = ScheduleActivity::None;
+	IngnomiaGUI::PopulationModel* m_parent = nullptr;       ///< View model the proxy pushes updates into.
+	ScheduleActivity m_currentActivitiy = ScheduleActivity::None; ///< Activity currently selected in the schedule editor (used by the hour-click handler).
 
 private slots:
 	void onUpdateInfo( const GuiPopulationInfo& info );

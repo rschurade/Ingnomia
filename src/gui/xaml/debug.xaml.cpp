@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debug.xaml.cpp
+ *  @brief DebugGui user-control implementation: loads DebugGui.xaml on construction.
+ */
 #include "debug.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the DebugGui user control and registers the Loaded delegate.
 DebugGui::DebugGui()
 {
 	Loaded() += MakeDelegate( this, &DebugGui::OnLoaded );
@@ -28,16 +32,19 @@ DebugGui::DebugGui()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the DebugGui.xaml resource into this user control.
 void DebugGui::InitializeComponent()
 {
 	GUI::LoadComponent( this, "DebugGui.xaml" );
 }
 
+/// @brief Noesis event-connection callback. DebugGui has no code-behind events.
 bool DebugGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; DebugModel handles state.
 void DebugGui::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

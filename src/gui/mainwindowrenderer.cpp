@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file mainwindowrenderer.cpp
+ *  @brief MainWindowRenderer implementation: shader/texture/VBO setup, per-frame draw
+ *         ordering (compute tile update → tile draw → selection → thought bubbles → axles),
+ *         and camera/view-level controls.
+ */
 #include "mainwindowrenderer.h"
 
 #include "../game/game.h" //TODO only temporary
@@ -49,6 +54,8 @@
 
 namespace
 {
+/// @brief RAII helper that opens a GL debug-output group on construction and pops it on
+///        destruction, so debug tools like RenderDoc show hierarchical scopes.
 class DebugScope
 {
 public:
@@ -65,6 +72,10 @@ public:
 };
 } // namespace
 
+/// @brief Constructs the renderer and wires up the signal chain with AggregatorRenderer,
+///        EventConnector, and AggregatorSelection. initializeGL() must be called after the
+///        parent's GL context is current.
+/// @param parent Owning MainWindow.
 MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	QObject( parent ),
 	m_parent( parent )
@@ -91,10 +102,14 @@ MainWindowRenderer::MainWindowRenderer( MainWindow* parent ) :
 	connect( this, &MainWindowRenderer::redrawRequired, m_parent, &MainWindow::redraw );
 }
 
+/// @brief Destructor.
 MainWindowRenderer ::~MainWindowRenderer()
 {
 }
 
+/// @brief One-time GL resource setup: installs a debug log handler, builds the shared
+///        vertex/index buffers for the tile quad, compiles shaders, and creates the sprite
+///        atlas array textures.
 void MainWindowRenderer::initializeGL()
 {
 	qDebug() << "[OpenGL]" << reinterpret_cast<char const*>( glGetString( GL_VENDOR ) );
@@ -198,11 +213,14 @@ void MainWindowRenderer::initializeGL()
 	qDebug() << "initialize GL - done";
 }
 
+/// @brief Queues a shader reload for the next paintWorld() call (debug hotkey entry point).
 void MainWindowRenderer::reloadShaders()
 {
 	m_reloadShaders = true;
 }
 
+/// @brief Releases all GL resources (buffers, shaders, textures). Invoked when the parent
+///        context is about to be destroyed.
 void MainWindowRenderer::cleanup()
 {
 	m_parent->makeCurrent();
@@ -222,6 +240,8 @@ void MainWindowRenderer::cleanup()
 	m_reloadShaders = true;
 }
 
+/// @brief Releases per-world GL resources (tile buffer objects) so a new world can be
+///        loaded without leaking GPU memory. Triggered by signalWorldParametersChanged.
 void MainWindowRenderer::cleanupWorld()
 {
 	m_parent->makeCurrent();
@@ -241,24 +261,33 @@ void MainWindowRenderer::cleanupWorld()
 	m_axleData      = AxleDataInfo();
 }
 
+/// @brief Slot: enqueues an incoming tile-update batch to be uploaded and applied next frame.
+/// @param updates Batch of per-tile TileDataUpdate packets.
 void MainWindowRenderer::onTileUpdates( const TileDataUpdateInfo& updates )
 {
 	m_pendingUpdates.push_back( updates.updates );
 	emit redrawRequired();
 }
 
+/// @brief Slot: stores the current set of thought bubbles for the next paint.
+/// @param bubbles New thought bubble batch.
 void MainWindowRenderer::onThoughtBubbles( const ThoughtBubbleInfo& bubbles )
 {
 	m_thoughBubbles = bubbles;
 	emit redrawRequired();
 }
 
+/// @brief Slot: stores the current axle power data for the next paint.
+/// @param data New axle data batch.
 void MainWindowRenderer::onAxelData( const AxleDataInfo& data )
 {
 	m_axleData = data;
 	emit redrawRequired();
 }
 
+/// @brief Reads a shader source file from content/shaders/@p name and returns its contents.
+/// @param name Filename without directory.
+/// @return Shader source as a QString, or empty on failure.
 QString MainWindowRenderer::copyShaderToString( QString name )
 {
 	QFile file( Global::cfg->get( "dataPath" ).toString() + "/shaders/" + name + ".glsl" );
@@ -274,6 +303,10 @@ QString MainWindowRenderer::copyShaderToString( QString name )
 	return code;
 }
 
+/// @brief Compiles and links a vertex/fragment shader pair with the given base @p name
+///        (<name>.vert / <name>.frag under content/shaders).
+/// @param name Shader base filename (without extension).
+/// @return GL program handle, or 0 on compile/link failure.
 GLuint MainWindowRenderer::initShader( QString name )
 {
 	QString vs = copyShaderToString( name + "_v" );
@@ -340,6 +373,9 @@ GLuint MainWindowRenderer::initShader( QString name )
 	return program;
 }
 
+/// @brief Compiles and links a compute shader with the given base @p name (<name>.comp).
+/// @param name Shader base filename (without extension).
+/// @return GL program handle, or 0 on compile/link failure.
 GLuint MainWindowRenderer::initComputeShader( QString name )
 {
 	QString cs = copyShaderToString( name + "_c" );
@@ -384,6 +420,9 @@ GLuint MainWindowRenderer::initComputeShader( QString name )
 	return program;
 }
 
+/// @brief Loads and compiles every shader used by the renderer. Called at init and on a
+///        debug-hotkey shader reload.
+/// @return true if every shader compiled successfully.
 bool MainWindowRenderer::initShaders()
 {
 	m_worldShader = initShader( "world" );
@@ -404,6 +443,9 @@ bool MainWindowRenderer::initShaders()
 	return true;
 }
 
+/// @brief Allocates a new 32×64 RGBA8 array texture with @p depth slices on texture unit @p unit.
+/// @param unit  GL texture unit index.
+/// @param depth Number of array slices.
 void MainWindowRenderer::createArrayTexture( int unit, int depth )
 {
 	glActiveTexture( GL_TEXTURE0 + unit );
@@ -423,6 +465,10 @@ void MainWindowRenderer::createArrayTexture( int unit, int depth )
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
 
+/// @brief Uploads @p depth RGBA8 slices from @p data into an existing array texture.
+/// @param unit  GL texture unit index.
+/// @param depth Number of slices to upload.
+/// @param data  Source pixel data (depth × 32 × 64 × 4 bytes).
 void MainWindowRenderer::uploadArrayTexture( int unit, int depth, const uint8_t* data )
 {
 	glActiveTexture( GL_TEXTURE0 + unit );
@@ -437,6 +483,7 @@ void MainWindowRenderer::uploadArrayTexture( int unit, int depth, const uint8_t*
 	);
 }
 
+/// @brief Creates all sprite atlas array textures used by the renderer.
 void MainWindowRenderer::initTextures()
 {
 	GLint max_layers;
@@ -455,6 +502,8 @@ void MainWindowRenderer::initTextures()
 	m_texesInitialized = true;
 }
 
+/// @brief Allocates the per-world tile data SSBO (m_tileBo) sized for the current world
+///        dimensions. Called after a new world is generated or loaded.
 void MainWindowRenderer::initWorld()
 {
 	QElapsedTimer timer;
@@ -481,6 +530,8 @@ void MainWindowRenderer::initWorld()
 	emit fullDataRequired();
 }
 
+/// @brief Rebuilds the orthographic projection matrix and the RenderVolume bounds from
+///        the current camera parameters.
 void MainWindowRenderer::updateRenderParams()
 {
 	m_renderSize = qMin( Global::dimX, (int)( ( sqrt( m_width * m_width + m_height * m_height ) / 12 ) / m_scale ) );
@@ -505,30 +556,49 @@ void MainWindowRenderer::updateRenderParams()
 }
 
 // Helper functions for setting uniforms
+/// @brief Sets an int uniform by name on a GL program.
+/// @param shader Program handle.
+/// @param name   Uniform name.
+/// @param value  Integer value.
 void MainWindowRenderer::setUniformi( GLuint shader, const char* name, GLint value )
 {
 	GLint loc = glGetUniformLocation( shader, name );
 	if ( loc >= 0 ) glUniform1i( loc, value );
 }
 
+/// @brief Sets a float uniform by name on a GL program.
+/// @param shader Program handle.
+/// @param name   Uniform name.
+/// @param value  Float value.
 void MainWindowRenderer::setUniformf( GLuint shader, const char* name, GLfloat value )
 {
 	GLint loc = glGetUniformLocation( shader, name );
 	if ( loc >= 0 ) glUniform1f( loc, value );
 }
 
+/// @brief Sets an unsigned int uniform by name on a GL program.
+/// @param shader Program handle.
+/// @param name   Uniform name.
+/// @param value  Unsigned integer value.
 void MainWindowRenderer::setUniformui( GLuint shader, const char* name, GLuint value )
 {
 	GLint loc = glGetUniformLocation( shader, name );
 	if ( loc >= 0 ) glUniform1ui( loc, value );
 }
 
+/// @brief Sets a mat4 uniform by name on a GL program, converting from QMatrix4x4.
+/// @param shader Program handle.
+/// @param name   Uniform name.
+/// @param matrix Matrix value (Qt column-major).
 void MainWindowRenderer::setUniformMatrix4fv( GLuint shader, const char* name, const QMatrix4x4& matrix )
 {
 	GLint loc = glGetUniformLocation( shader, name );
 	if ( loc >= 0 ) glUniformMatrix4fv( loc, 1, GL_FALSE, matrix.constData() );
 }
 
+/// @brief Main draw function for the world view. Clears the framebuffer, optionally reloads
+///        shaders, applies pending tile updates via the compute shader, then draws tiles,
+///        selection preview, thought bubbles, and axles in order.
 void MainWindowRenderer::paintWorld()
 {
 	DebugScope s( "paint world" );
@@ -636,6 +706,8 @@ void MainWindowRenderer::paintWorld()
 	}
 }
 
+/// @brief Slot invoked when camera parameters change: recomputes render params and emits
+///        signalCameraPosition so listeners (e.g. AggregatorSound) can react.
 void MainWindowRenderer::onRenderParamsChanged()
 {
 	updateRenderParams();
@@ -644,6 +716,9 @@ void MainWindowRenderer::onRenderParamsChanged()
 
 }
 
+/// @brief Uploads the common uniforms shared by every draw shader (projection, camera,
+///        view level, daylight, light floor, rotation, …) onto the given program.
+/// @param shader Target shader program.
 void MainWindowRenderer::setCommonUniforms( GLuint shader )
 {
 	GLint indexTotal = glGetUniformLocation( shader, "uWorldSize" );
@@ -666,6 +741,9 @@ void MainWindowRenderer::setCommonUniforms( GLuint shader )
 	setUniformi( shader, "uTickNumber", (GLint)GameState::tick );
 }
 
+/// @brief Draws the main world tile layer: binds m_worldShader, the tile SSBO, and the
+///        sprite array textures, then issues an instanced draw of the tile quad per tile
+///        in the render volume.
 void MainWindowRenderer::paintTiles()
 {
 	DebugScope s( "paint tiles" );
@@ -722,6 +800,8 @@ void MainWindowRenderer::paintTiles()
 	glUseProgram( 0 );
 }
 
+/// @brief Draws the placement cursor preview grid using m_selectionShader. Optionally
+///        disables depth test for stair placement previews.
 void MainWindowRenderer::paintSelection()
 {
 	// TODO this is a workaround until some transparency solution is implemented
@@ -757,6 +837,7 @@ void MainWindowRenderer::paintSelection()
 	}
 }
 
+/// @brief Draws all active thought bubbles above their gnomes using m_thoughtBubbleShader.
 void MainWindowRenderer::paintThoughtBubbles()
 {
 	DebugScope s( "paint thoughts" );
@@ -780,6 +861,7 @@ void MainWindowRenderer::paintThoughtBubbles()
 	glUseProgram( 0 );
 }
 
+/// @brief Draws the spinning axle overlays using m_axleShader, if Global::showAxles is on.
 void MainWindowRenderer::paintAxles()
 {
 	DebugScope s( "paint axles" );
@@ -811,6 +893,9 @@ void MainWindowRenderer::paintAxles()
 	glUseProgram( 0 );
 }
 
+/// @brief Slot: viewport resize handler. Updates m_width/m_height and the projection matrix.
+/// @param w New width in pixels.
+/// @param h New height in pixels.
 void MainWindowRenderer::resize( int w, int h )
 {
 	m_width  = w;
@@ -818,6 +903,9 @@ void MainWindowRenderer::resize( int w, int h )
 	onRenderParamsChanged();
 }
 
+/// @brief Rotates the camera by @p direction steps (positive = CW, negative = CCW).
+///        Updates camera offsets so the centre stays fixed, then requests a redraw.
+/// @param direction Rotation delta.
 void MainWindowRenderer::rotate( int direction )
 {
 	direction  = qBound( -1, direction, 1 );
@@ -836,6 +924,9 @@ void MainWindowRenderer::rotate( int direction )
 	onRenderParamsChanged();
 }
 
+/// @brief Pans the camera by (x, y) screen pixels.
+/// @param x X delta in pixels.
+/// @param y Y delta in pixels.
 void MainWindowRenderer::move( float x, float y )
 {
 	if ( !Global::dimX )
@@ -864,6 +955,8 @@ void MainWindowRenderer::move( float x, float y )
 	onRenderParamsChanged();
 }
 
+/// @brief Multiplies the current zoom factor by @p factor (mouse wheel zoom).
+/// @param factor Zoom multiplier.
 void MainWindowRenderer::scale( float factor )
 {
 	m_scale *= factor;
@@ -872,18 +965,24 @@ void MainWindowRenderer::scale( float factor )
 	onRenderParamsChanged();
 }
 
+/// @brief Sets the zoom factor to an absolute value.
+/// @param scale New zoom factor.
 void MainWindowRenderer::setScale( float scale )
 {
 	m_scale = qBound( 0.25f, scale, 15.f );
 	onRenderParamsChanged();
 }
 
+/// @brief Sets the top z-level being displayed.
+/// @param level New view level (z coordinate).
 void MainWindowRenderer::setViewLevel( int level )
 {
 	m_viewLevel = level;
 	onRenderParamsChanged();
 }
 
+/// @brief Uploads any queued tile updates to m_tileUpdateBo and runs the compute shader
+///        to apply them into m_tileBo.
 void MainWindowRenderer::updateWorld()
 {
 	if ( !m_pendingUpdates.empty() )
@@ -897,6 +996,9 @@ void MainWindowRenderer::updateWorld()
 	}
 }
 
+/// @brief Uploads one batch of TileDataUpdate packets to m_tileUpdateBo ready for the
+///        compute shader to consume.
+/// @param tileData Batch of tile-update records.
 void MainWindowRenderer::uploadTileData( const QVector<TileDataUpdate>& tileData )
 {
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, m_tileUpdateBo );
@@ -909,6 +1011,8 @@ void MainWindowRenderer::uploadTileData( const QVector<TileDataUpdate>& tileData
 	glUseProgram( 0 );
 }
 
+/// @brief Re-uploads sprite atlas slices from SpriteFactory when new sprites have been
+///        created (signalled via SpriteFactory::textureAdded/creatureTextureAdded).
 void MainWindowRenderer::updateTextures()
 {
 	if ( Global::eventConnector->game()->sf()->textureAdded() || Global::eventConnector->game()->sf()->creatureTextureAdded() )
@@ -926,6 +1030,9 @@ void MainWindowRenderer::updateTextures()
 	}
 }
 
+/// @brief Slot: caches the latest placement cursor data from AggregatorSelection.
+/// @param data        New per-tile SelectionData map.
+/// @param noDepthTest True to draw the cursor with depth test disabled.
 void MainWindowRenderer::onUpdateSelection( const QMap<unsigned int, SelectionData>& data, bool noDepthTest )
 {
 	m_selectionData.clear();
@@ -936,6 +1043,9 @@ void MainWindowRenderer::onUpdateSelection( const QMap<unsigned int, SelectionDa
 	m_selectionNoDepthTest = noDepthTest;
 }
 
+/// @brief Slot: centres the camera on the given world position (used by "jump to gnome"
+///        and event-triggered camera moves).
+/// @param target World position to centre on.
 void MainWindowRenderer::onCenterCameraPosition( const Position& target )
 {
 	m_moveX     = 16 * (-target.x + target.y);
@@ -944,6 +1054,10 @@ void MainWindowRenderer::onCenterCameraPosition( const Position& target )
 	onRenderParamsChanged();
 }
 
+/// @brief Helper used by rotate() to adjust camera offsets after a 90° clockwise rotation
+///        so the centre point stays in place.
+/// @param x In/out X offset.
+/// @param y In/out Y offset.
 void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 {
 	constexpr int tileHeight = 8; //tiles are assumed to be 8 pixels high (and twice as wide)
@@ -952,6 +1066,9 @@ void MainWindowRenderer::updatePositionAfterCWRotation( float& x, float& y )
 	y = -( Global::dimY - 2 ) * tileHeight + tmp/2;
 }
 
+/// @brief Slot: sets the in-menu flag. When true, the renderer runs at menu tick rate (16 ms)
+///        instead of the uncapped gameplay loop.
+/// @param value True while the main menu is active.
 void MainWindowRenderer::onSetInMenu( bool value )
 {
 	m_inMenu = value;

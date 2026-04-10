@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighbormanager.h
+ *  @brief NPC kingdom/faction relations, trade, diplomacy, and mission execution (spy, raid, sabotage, emissary).
+ */
 #pragma once
 
 
@@ -26,6 +29,7 @@
 class Game;
 struct Mission;
 
+/** @brief Race/faction type of a neighboring kingdom. */
 enum class KingdomType
 {
 	NONE,
@@ -34,6 +38,7 @@ enum class KingdomType
 	OTHER
 };
 
+/** @brief Wealth level of a neighboring kingdom. */
 enum class KingdomWealth
 {
 	VERYPOOR,
@@ -43,6 +48,7 @@ enum class KingdomWealth
 	VERYRICH
 };
 
+/** @brief Primary economic activity of a neighboring kingdom. */
 enum class KingdomEconomy
 {
 	TRADING,
@@ -52,6 +58,7 @@ enum class KingdomEconomy
 	ANIMALBREEDING
 };
 
+/** @brief Military strength of a neighboring kingdom. */
 enum class KingdomMilitary
 {
 	VERYWEAK,
@@ -61,6 +68,7 @@ enum class KingdomMilitary
 	VERYSTRONG
 };
 
+/** @brief Data for a single neighboring kingdom: discovery state, distance, attitude, and scheduled events. */
 struct NeighborKingdom
 {
 	unsigned int id          = 0;
@@ -80,6 +88,12 @@ struct NeighborKingdom
 	void deserialize( QVariantMap in );
 };
 
+/** @brief Manages neighboring NPC kingdoms, their attitudes, and diplomacy/mission interactions.
+ *
+ *  Generates random kingdoms at game start (gnome and goblin factions), schedules
+ *  goblin raids, and processes spy/sabotage/raid/emissary missions that affect
+ *  kingdom attitude and scheduled events.
+ */
 class NeighborManager : public QObject
 {
 	Q_OBJECT

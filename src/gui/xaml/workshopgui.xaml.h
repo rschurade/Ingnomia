@@ -15,7 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+/** @file workshopgui.xaml.h
+ *  @brief XAML code-behind for the Workshop window UserControl. Thin wrapper — all logic
+ *         lives in WorkshopModel.
+ */
 #ifndef __WorkshopGui_H__
 #define __WorkshopGui_H__
 
@@ -25,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the WorkshopGui XAML UserControl.
 class WorkshopGui final : public Noesis::UserControl
 {
 public:

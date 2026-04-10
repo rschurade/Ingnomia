@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file Main.xaml.h
+ *  @brief Code-behind for the root XAML user control (Main.xaml). The MainWindow loads this
+ *         once at startup; it hosts the page navigation surface and the global theme.
+ */
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
@@ -24,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the root Main Noesis user control.
 class Main final : public Noesis::UserControl
 {
 public:

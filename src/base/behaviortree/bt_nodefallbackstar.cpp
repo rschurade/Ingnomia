@@ -15,17 +15,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodefallbackstar.cpp
+ *  @brief Implementation of BT_NodeFallbackStar -- fallback composite with memory.
+ */
 #include "bt_nodefallbackstar.h"
 
+/** @brief Construct a fallback-with-memory node.
+ *  @param name       Debug name for the node.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeFallbackStar::BT_NodeFallbackStar( QString name, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeFallbackStar::~BT_NodeFallbackStar()
 {
 }
 
+/** @brief Resume from the remembered index; return SUCCESS on first success, FAILURE if all fail.
+ *  @return SUCCESS, FAILURE, or RUNNING.
+ */
 BT_RESULT BT_NodeFallbackStar::tick()
 {
 	m_status = BT_RESULT::RUNNING;

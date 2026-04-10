@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorinventory.cpp
+ *  @brief AggregatorInventory implementation: builds the inventory category tree, the build
+ *         menu catalogue with preview icons, and the top-bar watch list. Also listens for
+ *         item add/remove events so watched rows update live.
+ */
 #include "aggregatorinventory.h"
 
 #include "../base/db.h"
@@ -25,6 +30,9 @@
 #include "../game/inventory.h"
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorInventory and seeds the BuildSelection → string/BuildItemType
+///        lookup maps used to route build-menu requests.
+/// @param parent Qt parent object.
 AggregatorInventory::AggregatorInventory( QObject* parent ) :
 	QObject( parent )
 {
@@ -52,10 +60,15 @@ AggregatorInventory::AggregatorInventory( QObject* parent ) :
 	m_buildSelection2buildItem.insert( BuildSelection::Utility, BuildItemType::Item );
 }
 
+/// @brief Destructor.
 AggregatorInventory::~AggregatorInventory()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance, pre-caches the item → group and
+///        item → category lookups, and restores the watch list from GameState by dispatching
+///        each saved watched entry to the correct updateWatchedItem() overload.
+/// @param game Game to bind to.
 void AggregatorInventory::init( Game* game )
 {
 	g = game;
@@ -99,6 +112,8 @@ void AggregatorInventory::init( Game* game )
 	}
 }
 
+/// @brief Walks the inventory category/group/item/material tree and emits a populated
+///        GuiInventoryCategory list with per-level totals and watch flags.
 void AggregatorInventory::onRequestCategories()
 {
 	if( !g ) return;
@@ -171,6 +186,11 @@ void AggregatorInventory::onRequestCategories()
 	emit signalInventoryCategories( m_categories );
 }
 
+/// @brief Collects the buildable entries for the given BuildSelection / category combination
+///        (Constructions / Workshops / Containers / Items DB rows), produces preview icons
+///        and required-item lists, and emits signalBuildItems.
+/// @param buildSelection High-level build category (Wall, Workshop, Furniture, …).
+/// @param category       Sub-category (e.g. workshop tab name or construction category).
 void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QString category )
 {
 	if( !g ) return;
@@ -222,6 +242,10 @@ void AggregatorInventory::onRequestBuildItems( BuildSelection buildSelection, QS
 	emit signalBuildItems( m_buildItems );
 }
 
+/// @brief Populates a GuiBuildItem with required components and a PNG-encoded preview icon,
+///        using the correct component table and icon builder for the given selection type.
+/// @param gbi       Build item to populate (modified in place).
+/// @param selection High-level build category used to pick the right component/icon path.
 void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection selection )
 {
 	if( !g ) return;
@@ -313,6 +337,9 @@ void AggregatorInventory::setBuildItemValues( GuiBuildItem& gbi, BuildSelection 
 	}
 }
 
+/// @brief Fills the availableMats list on @p gbri with (material, count) pairs for the
+///        component item, always placing the "any" wildcard first.
+/// @param gbri Required component to populate.
 void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 {
 	if( !g ) return;
@@ -328,6 +355,11 @@ void AggregatorInventory::setAvailableMats( GuiBuildRequiredItem& gbri )
 	}
 }
 
+/// @brief Adds or removes @p gwi from the persistent watch list (GameState::watchedItemList)
+///        and refreshes the corresponding count by dispatching to the appropriate
+///        updateWatchedItem() overload.
+/// @param active True to add to the watch list, false to remove.
+/// @param gwi    Watch list entry (category/group/item/material path).
 void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 {
 	QString key = gwi.category + gwi.group + gwi.item + gwi.material;
@@ -372,6 +404,10 @@ void AggregatorInventory::onSetActive( bool active, const GuiWatchedItem& gwi )
 }
 
     
+/// @brief Live-update hook invoked when an item is added to the world. Refreshes any watched
+///        rows whose path contains this (item, material) pair.
+/// @param itemSID     Item string ID.
+/// @param materialSID Material string ID.
 void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
 {
 	QString cat = m_itemToCategoryCache.value( itemSID );
@@ -395,6 +431,10 @@ void AggregatorInventory::onAddItem( QString itemSID, QString materialSID )
 	}
 }
 
+/// @brief Live-update hook invoked when an item is removed from the world. Refreshes any
+///        watched rows whose path contains this (item, material) pair.
+/// @param itemSID     Item string ID.
+/// @param materialSID Material string ID.
 void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
 {
 	QString cat = m_itemToCategoryCache.value( itemSID );
@@ -418,6 +458,8 @@ void AggregatorInventory::onRemoveItem( QString itemSID, QString materialSID )
 	}
 }
 
+/// @brief Recomputes the count for a category-level watch entry and emits signalWatchList.
+/// @param cat Category ID whose watch entry to refresh.
 void AggregatorInventory::updateWatchedItem( QString cat )
 {
 	for( auto& gwi : GameState::watchedItemList )
@@ -442,6 +484,9 @@ void AggregatorInventory::updateWatchedItem( QString cat )
 	emit signalWatchList( GameState::watchedItemList );
 }
     
+/// @brief Recomputes the count for a group-level watch entry and emits signalWatchList.
+/// @param cat   Category ID.
+/// @param group Group ID within @p cat.
 void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 {
 	for( auto& gwi : GameState::watchedItemList )
@@ -465,6 +510,10 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group )
 	emit signalWatchList( GameState::watchedItemList );
 }
 
+/// @brief Recomputes the count for an item-level watch entry and emits signalWatchList.
+/// @param cat   Category ID.
+/// @param group Group ID.
+/// @param item  Item ID.
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item )
 {
 	for( auto& gwi : GameState::watchedItemList )
@@ -483,6 +532,12 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 	emit signalWatchList( GameState::watchedItemList );
 }
 
+/// @brief Recomputes the count for a fully qualified (item, material) watch entry and emits
+///        signalWatchList.
+/// @param cat   Category ID.
+/// @param group Group ID.
+/// @param item  Item ID.
+/// @param mat   Material ID.
 void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString item, QString mat )
 {
 	for( auto& gwi : GameState::watchedItemList )
@@ -497,6 +552,7 @@ void AggregatorInventory::updateWatchedItem( QString cat, QString group, QString
 	emit signalWatchList( GameState::watchedItemList );
 }
 
+/// @brief Full refresh: rebuilds the category tree and re-emits the watch list.
 void AggregatorInventory::update()
 {
 	onRequestCategories();

@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selectionmodel.h
+ *  @brief View model for the placement cursor info panel. Exposes action/cursor/first-click/
+ *         size strings as Noesis bindings.
+ */
 #ifndef __SelectionModel_H__
 #define __SelectionModel_H__
 
@@ -44,14 +48,20 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Selection info panel view model. Pushes the four info strings (action, cursor,
+///        first-click, size) from SelectionProxy into XAML bindings.
 class SelectionModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	SelectionModel();
 
+	/// @brief Updates the displayed action name.
     void updateAction( QString action );
+	/// @brief Updates the displayed cursor position string.
     void updateCursor( QString pos );
+	/// @brief Updates the displayed first-click anchor position string.
     void updateFirstClick( QString pos );
+	/// @brief Updates the displayed drag rectangle size string.
     void updateSize( QString size );
 
 private:

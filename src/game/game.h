@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file game.h
+ *  @brief Top-level Game class that owns all manager subsystems, the world, and the main tick loop.
+ */
 #ifndef GAME_H_
 #define GAME_H_
 
@@ -47,6 +50,12 @@ class PathFinder;
 class SpriteFactory;
 class World;
 
+/** @brief Central game class owning all manager subsystems, the world, sprite factory, and pathfinder.
+ *
+ *  Runs the main game loop via a QTimer, advancing simulation ticks and delegating
+ *  updates to each manager. Handles save/load orchestration, clock/calendar progression,
+ *  daylight calculation, and auto-save scheduling.
+ */
 class Game : public QObject
 {
 	friend class Inventory;

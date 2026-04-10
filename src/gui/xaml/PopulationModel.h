@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file PopulationModel.h
+ *  @brief View model and helper-component types for the Population window. Hosts the skill
+ *         grid, the schedule grid, and the profession editor, all exposed as nested
+ *         observable collections (gnome rows → skill/schedule/profession children).
+ */
 #ifndef __PopulationModel_H__
 #define __PopulationModel_H__
 
@@ -43,14 +48,16 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+/// @brief Which tab of the Population window is currently visible.
 enum class PopState
 {
-	Skills,
-	Schedule,
-	ProfEdit
+	Skills,   ///< Skill grid tab.
+	Schedule, ///< Daily schedule tab.
+	ProfEdit  ///< Profession editor tab.
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Row in the profession dropdown shared across gnome rows.
 class ProfItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -66,6 +73,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Cell in the skill grid for one (gnome, skill) pair: name, level, activation checkbox,
+///        and group colour. Toggling the checkbox forwards an activation update to the proxy.
 class GnomeSkill : public Noesis::BaseComponent
 {
 public:
@@ -92,6 +101,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the skill grid: gnome name, profession dropdown, and a list of per-skill cells.
 class GnomeRow : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -130,6 +140,8 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One hour cell in the schedule grid. Holds its activity enum and a command that
+///        cycles to the next activity when clicked.
 class GnomeScheduleEntry : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -156,6 +168,7 @@ NS_DECLARE_REFLECTION( GnomeScheduleEntry, NoesisApp::NotifyPropertyChangedBase 
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the schedule grid: gnome name plus 24 hour cells.
 class GnomeScheduleRow : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -183,19 +196,28 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Population window view model. Hosts the skill grid, schedule grid, and profession
+///        editor, and dispatches user edits through PopulationProxy.
 class PopulationModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	PopulationModel();
 
+	/// @brief Replaces the population grid with fresh GnomeRow rows from a full info payload.
 	void updateInfo( const GuiPopulationInfo& info );
+	/// @brief Replaces the shared profession dropdown contents.
 	void updateProfessionList( const QStringList& professions );
+	/// @brief Updates the skill checkbox state for one profession in the profession editor.
 	void updateProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills );
+	/// @brief Refreshes a single GnomeRow after a targeted change.
 	void updateSingleGnome( const GuiGnomeInfo& gnome );
 
+	/// @brief Replaces the schedule grid with fresh GnomeScheduleRow rows.
 	void updateSchedules( const GuiScheduleInfo& info );
+	/// @brief Refreshes a single schedule row after a targeted change.
 	void updateScheduleSingleGnome( const GuiGnomeScheduleInfo& info );
 
+	/// @brief Opens the profession editor with @p name preselected.
 	void selectEditProfession( const QString name );
 
 private:

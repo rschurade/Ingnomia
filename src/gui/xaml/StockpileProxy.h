@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file StockpileProxy.h
+ *  @brief Qt-side proxy that bridges the StockpileModel view model to
+ *         AggregatorStockpile via queued signal/slot connections.
+ */
 #pragma once
 
 #include "../aggregatorstockpile.h"
@@ -22,6 +26,8 @@
 
 #include <QObject>
 
+/// @brief Bridges StockpileModel to AggregatorStockpile. Forwards filter-tree toggles and
+///        basic-option changes as queued signals and relays stockpile snapshots back.
 class StockpileProxy : public QObject
 {
 	Q_OBJECT
@@ -37,7 +43,7 @@ public:
 	void setActive( unsigned int stockpileID, bool active, QString category, QString group = "", QString item = "", QString material = "" );
 
 private:
-	IngnomiaGUI::StockpileModel* m_parent = nullptr;
+	IngnomiaGUI::StockpileModel* m_parent = nullptr; ///< Owning view model for relaying updates.
 
 private slots:
 	void onUpdateInfo( const GuiStockpileInfo& info );

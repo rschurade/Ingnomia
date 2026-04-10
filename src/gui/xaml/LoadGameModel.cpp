@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file LoadGameModel.cpp
+ *  @brief LoadGameModel implementation: builds the kingdom and save lists from
+ *         AggregatorLoadGame payloads and exposes them via two ObservableCollections.
+ */
 #include "LoadGameModel.h"
 
 #include "loadgameproxy.h"
@@ -33,6 +37,7 @@ using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a SaveItem row, copying the QStrings into Noesis::String fields.
 SaveItem::SaveItem( QString name, QString path, QString dir, QString version, QString date, bool compatible )
 {
 	_name       = name.toStdString().c_str();
@@ -44,6 +49,8 @@ SaveItem::SaveItem( QString name, QString path, QString dir, QString version, QS
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the LoadGameModel, instantiates LoadGameProxy, registers the
+///        LoadGame command, and asks the proxy to populate the kingdom list.
 LoadGameModel::LoadGameModel() :
 	_selectedKingdom( nullptr ),
 	_selectedGame( nullptr )
@@ -69,6 +76,7 @@ Noesis::ObservableCollection<SaveItem>* LoadGameModel::GetSavedGames() const
 	return _savedGames;
 }
 
+/// @brief Replaces the kingdom list with fresh SaveItem rows and selects the first entry.
 void LoadGameModel::updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms )
 {
 	_savedKingdoms->Clear();
@@ -86,6 +94,7 @@ void LoadGameModel::updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms )
 	}
 }
 
+/// @brief Replaces the save-file list with fresh SaveItem rows and selects the first entry.
 void LoadGameModel::updateSaveGames( const QList<GuiSaveInfo>& saveGames )
 {
 	_savedGames->Clear();
@@ -103,6 +112,8 @@ void LoadGameModel::updateSaveGames( const QList<GuiSaveInfo>& saveGames )
 	}
 }
 
+/// @brief Setter for the selected kingdom in the left pane. When changed, asks the proxy
+///        to refresh the save list for the new kingdom.
 void LoadGameModel::SetSelectedKingdom( SaveItem* item )
 {
 	if ( _selectedKingdom != item )
@@ -141,11 +152,13 @@ const NoesisApp::DelegateCommand* LoadGameModel::GetLoadGame() const
 	return &_loadGame;
 }
 
+/// @brief Load command handler. Currently a stub — the actual load is dispatched from
+///        higher up the GUI stack via EventConnector::onLoadGame.
 void LoadGameModel::OnLoadGame( BaseComponent* param )
 {
 	if ( _selectedGame )
 	{
-		
+
 	}
 }
 

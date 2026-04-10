@@ -15,23 +15,30 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file IngamePage.xaml.cpp
+ *  @brief IngamePage user-control implementation. Loads IngamePage.xaml on construction.
+ */
 #include "IngamePage.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the IngamePage user control.
 IngamePage::IngamePage()
 {
 	InitializeComponent();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the IngamePage.xaml resource.
 void IngamePage::InitializeComponent()
 {
 	GUI::LoadComponent( this, "IngamePage.xaml" );
 }
 
+/// @brief Noesis event-connection callback. IngamePage has no code-behind events; the
+///        commented-out NS_CONNECT_EVENT lines are kept as placeholders for future menu actions.
 bool IngamePage::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	//NS_CONNECT_EVENT( Button, Click, onMMExit_Click );

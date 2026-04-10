@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ViewModel.cpp
+ *  @brief ViewModel implementation. Constructor creates the proxy, wires every navigation
+ *         command, and requests the initial UI scale/version. The On* handlers drive the
+ *         outer-shell state machine (Main → Start → NewGame/LoadGame/Settings → Wait →
+ *         Ingame). Trivial Get/Set property accessors are XAML binding plumbing.
+ */
 #include "ViewModel.h"
 #include "ProxyMainView.h"
 
@@ -37,6 +43,8 @@ using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the root ViewModel, creates the proxy, wires every navigation command,
+///        and requests the initial UI scale and version from the game side.
 ViewModel::ViewModel()
 {
 	m_proxy = new ProxyMainView;

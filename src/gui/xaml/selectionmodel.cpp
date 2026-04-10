@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selectionmodel.cpp
+ *  @brief SelectionModel implementation: thin view model with four strings refreshed by
+ *         SelectionProxy. Trivial get*/update* accessors are standard XAML plumbing.
+ */
 #include "selectionmodel.h"
 #include "selectionproxy.h"
 
@@ -33,6 +37,7 @@ using namespace NoesisApp;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the SelectionModel and instantiates the SelectionProxy.
 SelectionModel::SelectionModel()
 {
 	m_proxy = new SelectionProxy;

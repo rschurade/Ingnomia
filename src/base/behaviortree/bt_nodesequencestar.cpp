@@ -15,20 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodesequencestar.cpp
+ *  @brief Implementation of BT_NodeSequenceStar -- sequence composite with memory.
+ */
 #include "bt_nodesequencestar.h"
 
 #include <QDebug>
 
+/** @brief Construct a sequence-with-memory node.
+ *  @param name           Debug name for the node.
+ *  @param blackboard     Shared blackboard reference.
+ *  @param resetOnFailure If true, reset the child index on FAILURE.
+ */
 BT_NodeSequenceStar::BT_NodeSequenceStar( QString name, QVariantMap& blackboard, bool resetOnFailure ) :
 	BT_Node( name, blackboard ),
 	m_resetOnFailure( resetOnFailure )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeSequenceStar::~BT_NodeSequenceStar()
 {
 }
 
+/** @brief Serialize node state including the resetOnFailure flag.
+ *  @return QVariantMap with Name, ID, Status, RoF, and Childs.
+ */
 QVariantMap BT_NodeSequenceStar::serialize()
 {
 	QVariantMap out;
@@ -47,6 +59,9 @@ QVariantMap BT_NodeSequenceStar::serialize()
 	return out;
 }
 
+/** @brief Restore node state including resetOnFailure from a serialized map.
+ *  @param in Map produced by serialize().
+ */
 void BT_NodeSequenceStar::deserialize( QVariantMap in )
 {
 	if ( m_name != in.value( "Name" ).toString() )
@@ -88,6 +103,9 @@ void BT_NodeSequenceStar::deserialize( QVariantMap in )
 	}
 }
 
+/** @brief Resume from the remembered index; return SUCCESS when all pass, FAILURE on first fail.
+ *  @return SUCCESS, FAILURE, or RUNNING.
+ */
 BT_RESULT BT_NodeSequenceStar::tick()
 {
 	m_status = BT_RESULT::RUNNING;

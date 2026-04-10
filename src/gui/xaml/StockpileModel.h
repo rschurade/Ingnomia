@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file StockpileModel.h
+ *  @brief View model and helper-component types for the Stockpile window. Exposes the
+ *         four-level category/group/item/material filter tree, pull/pull-others flags,
+ *         priority, limit list, and stocked-items summary.
+ */
 #ifndef __StockpileModel_H__
 #define __StockpileModel_H__
 
@@ -44,6 +49,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the stockpile's per-item limit list (soft cap on how many to keep).
 class GuiLimitItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -58,6 +64,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the "currently stocked" summary list (item name + count).
 class StockedItemSummary final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -73,6 +80,8 @@ private:
 
 #pragma region FilterItems
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Leaf node of the filter tree: one material of one item of one group of one
+///        category. Toggling its checkbox updates the stockpile's filter via the proxy.
 class MaterialItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -100,6 +109,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Third level of the filter tree: one item (e.g. "Sword") holding a list of
+///        MaterialItem children. Tri-state checkbox reflects its children.
 class ItemItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -134,6 +145,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Second level of the filter tree: one group (e.g. "Weapons") holding a list of
+///        ItemItem children. Tri-state checkbox reflects its children.
 class GroupItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -168,6 +181,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Top level of the filter tree: one category (e.g. "Tools") holding a list of
+///        GroupItem children. Tri-state checkbox reflects its children.
 class CategoryItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -203,6 +218,7 @@ private:
 #pragma endregion FilterItems
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One entry in the stockpile priority dropdown (e.g. "High", "Normal", "Low").
 class SpPriority final : public Noesis::BaseComponent
 {
 public:
@@ -217,12 +233,17 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Stockpile window view model. Exposes the filter tree, priority, limit list,
+///        stocked-items summary, and basic flags (name, suspended, pull from, pull others).
+///        Talks to the game side via StockpileProxy.
 class StockpileModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	StockpileModel();
 
+	/// @brief Replaces the top-level info (name, flags, priority, filter tree) for a new stockpile.
 	void onUpdateInfo( const GuiStockpileInfo& stockpileInfo );
+	/// @brief Refreshes the content lists (summary + limits) without rebuilding the filter tree.
 	void onUpdateContent( const GuiStockpileInfo& stockpileInfo );
 
 private:
@@ -252,14 +273,14 @@ private:
 	Noesis::ObservableCollection<GuiLimitItem>* GetLimitItems() const;
 	Noesis::Ptr<Noesis::ObservableCollection<GuiLimitItem>> m_limitItems;
 
-	StockpileProxy* m_proxy = nullptr;
-	bool m_blockSignals = false;
+	StockpileProxy* m_proxy = nullptr; ///< Qt-side proxy for signal/slot bridge to the game.
+	bool m_blockSignals = false;       ///< Suppresses setters while rebuilding the tree.
 
-	unsigned int m_stockpileID = 0;
-	Noesis::String m_name      = "-Stockpile-";
-	bool m_suspended           = false;
-	bool m_pullFrom            = true;
-	bool m_pullOthers          = false;
+	unsigned int m_stockpileID = 0;             ///< Backing stockpile ID in the game world.
+	Noesis::String m_name      = "-Stockpile-"; ///< Display name.
+	bool m_suspended           = false;         ///< Paused intake / output flag.
+	bool m_pullFrom            = true;          ///< Allow haulers to pull from other stockpiles.
+	bool m_pullOthers          = false;         ///< Allow other stockpiles to pull from this one.
 
 	NS_DECLARE_REFLECTION( StockpileModel, NotifyPropertyChangedBase )
 };

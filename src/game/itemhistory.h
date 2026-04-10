@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file itemhistory.h
+ *  @brief Tracks item creation and destruction counts over time for statistics display.
+ */
 #pragma once
 
 #include <QMap>
 #include <QObject>
 #include <QSet>
 
+/** @brief Running totals and per-day deltas for a single item+material combination. */
 struct IH_values
 {
 	int total = 0;
@@ -28,11 +32,13 @@ struct IH_values
 	int minus = 0;
 };
 
+/** @brief All item/material statistics recorded during a single game day. */
 struct IH_dayData
 {
 	QMap<QString, QMap<QString, IH_values>> data;
 };
 
+/** @brief A single day's record, including calendar info and item statistics. */
 struct IH_day
 {
 	int day    = 1;
@@ -42,6 +48,11 @@ struct IH_day
 	IH_dayData dayData;
 };
 
+/** @brief Tracks item creation and destruction counts per day for the statistics UI.
+ *
+ *  Records running totals and daily created/destroyed counts for every
+ *  item-type + material combination. Used by the stock history graph.
+ */
 class ItemHistory : public QObject
 {
 	Q_OBJECT

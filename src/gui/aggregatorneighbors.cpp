@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorneighbors.cpp
+ *  @brief AggregatorNeighbors implementation: produces human-readable descriptions of each
+ *         neighbouring kingdom (distance, wealth, economy, military, attitude), lists
+ *         available gnomes for diplomacy missions, and forwards mission start/update events.
+ */
 #include "aggregatorneighbors.h"
 
 #include "../game/game.h"
@@ -23,21 +28,29 @@
 
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorNeighbors.
+/// @param parent Qt parent object.
 AggregatorNeighbors::AggregatorNeighbors( QObject* parent ) :
 	QObject(parent)
 {
-	
+
 }
 
+/// @brief Destructor.
 AggregatorNeighbors::~AggregatorNeighbors()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorNeighbors::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Rebuilds the cached neighbour list from NeighborManager::kingdoms(), composing
+///        flavour-text descriptions for type, distance, wealth, economy, military, and
+///        diplomatic attitude. Emits signalNeighborsUpdate when done.
 void AggregatorNeighbors::onRequestNeighborsUpdate()
 {
 	if( !g ) return;
@@ -178,12 +191,14 @@ void AggregatorNeighbors::onRequestNeighborsUpdate()
 	emit signalNeighborsUpdate( m_neighborsInfo );
 }
 
+/// @brief Emits the current list of active missions from EventManager.
 void AggregatorNeighbors::onRequestMissions()
 {
 	if( !g ) return;
 	emit signalMissions( g->em()->missions() );
 }
 
+/// @brief Rebuilds the list of gnomes not currently on any mission and emits signalAvailableGnomes.
 void AggregatorNeighbors::onRequestAvailableGnomes()
 {
 	if( !g ) return;
@@ -200,6 +215,12 @@ void AggregatorNeighbors::onRequestAvailableGnomes()
 	emit signalAvailableGnomes( m_availableGnomes );
 }
 
+/// @brief Starts a new mission of @p type against @p targetKingdom with the given gnome and
+///        emits a fresh mission list to the GUI.
+/// @param type          Mission type (spy/sabotage/raid/emissary).
+/// @param action        Specific action within that mission type.
+/// @param targetKingdom Target kingdom UID.
+/// @param gnomeID       Creature UID of the dispatched gnome.
 void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -208,6 +229,8 @@ void AggregatorNeighbors::onStartMission( MissionType type, MissionAction action
 	emit signalMissions( g->em()->missions() );
 }
 
+/// @brief Relays a mission state-change notification from the game to the GUI.
+/// @param mission Updated mission record.
 void AggregatorNeighbors::onUpdateMission( const Mission& mission )
 {
 	if( !g ) return;

@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopgui.xaml.cpp
+ *  @brief WorkshopGui code-behind implementation. Thin stub: constructor loads the XAML
+ *         and hooks Loaded; OnLoaded and ConnectEvent are empty because the window binds
+ *         entirely through WorkshopModel.
+ */
 #include "workshopgui.xaml.h"
 
 using namespace IngnomiaGUI;

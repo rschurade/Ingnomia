@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file agriculturemodel.h
+ *  @brief Noesis view model and helper component types for the Agriculture XAML window.
+ *         Owns observable collections for the plant/animal/tree pickers, the pasture food
+ *         allow-list, and the per-pasture animal roster, and exposes Get*/Set* properties
+ *         that XAML bindings hook into.
+ */
 #ifndef __AgricultureModel_H__
 #define __AgricultureModel_H__
 
@@ -48,6 +54,7 @@ namespace IngnomiaGUI
 
 #pragma region AcPriority
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Single priority entry in the priority dropdown for an agricultural designation.
 class AcPriority final : public Noesis::BaseComponent
 {
 public:
@@ -62,6 +69,7 @@ private:
 };
 #pragma endregion AcPriority
 
+/// @brief One tree species entry in the grove product picker grid.
 class TreeSelectEntry : public Noesis::BaseComponent
 {
 public:
@@ -83,6 +91,7 @@ private:
 	NS_DECLARE_REFLECTION( TreeSelectEntry, Noesis::BaseComponent )
 };
 
+/// @brief A row of TreeSelectEntry items, used so the picker can be displayed as a grid of rows.
 class TreeSelectRow : public Noesis::BaseComponent
 {
 public:
@@ -96,6 +105,7 @@ private:
 	NS_DECLARE_REFLECTION( TreeSelectRow, Noesis::BaseComponent )
 };
 
+/// @brief One animal species entry in the pasture product picker grid.
 class AnimalSelectEntry : public Noesis::BaseComponent
 {
 public:
@@ -117,6 +127,7 @@ private:
 	NS_DECLARE_REFLECTION( AnimalSelectEntry, Noesis::BaseComponent )
 };
 
+/// @brief A row of AnimalSelectEntry items in the pasture product grid.
 class AnimalSelectRow : public Noesis::BaseComponent
 {
 public:
@@ -130,6 +141,7 @@ private:
 	NS_DECLARE_REFLECTION( AnimalSelectRow, Noesis::BaseComponent )
 };
 
+/// @brief One animal currently in a pasture, with a butcher checkbox bound to the proxy.
 class PastureAnimalEntry : public Noesis::BaseComponent
 {
 public:
@@ -153,6 +165,7 @@ private:
 };
 
 
+/// @brief One crop entry in the farm product picker grid.
 class PlantSelectEntry : public Noesis::BaseComponent
 {
 public:
@@ -174,6 +187,7 @@ private:
 	NS_DECLARE_REFLECTION( PlantSelectEntry, Noesis::BaseComponent )
 };
 
+/// @brief A row of PlantSelectEntry items in the farm product grid.
 class PlantSelectRow : public Noesis::BaseComponent
 {
 public:
@@ -189,6 +203,7 @@ private:
 
 
 
+/// @brief One (item, material) row in the pasture food allow-list with a checkbox bound to the proxy.
 class FoodSelectEntry : public Noesis::BaseComponent
 {
 public:
@@ -216,6 +231,7 @@ private:
 	NS_DECLARE_REFLECTION( FoodSelectEntry, Noesis::BaseComponent )
 };
 
+/// @brief A row of FoodSelectEntry items in the pasture food allow-list grid.
 class FoodSelectRow : public Noesis::BaseComponent
 {
 public:
@@ -230,17 +246,28 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Top-level Agriculture window view model. Talks to the game side via AgricultureProxy
+///        (which in turn forwards to AggregatorAgri) and exposes properties and DelegateCommands
+///        consumed by Agriculture.xaml. Hosts the same data for all three designation kinds
+///        (farm, pasture, grove) and switches the visible UI segment based on the active type.
 class AgricultureModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	AgricultureModel();
 
+	/// @brief Updates the common header fields (name, current product, priority, suspended) shared by all three designation kinds.
 	void updateStandardInfo( unsigned int ID, AgriType type, QString name, QString product, int priority, int maxPriority, bool suspended );
+	/// @brief Refreshes the farm-specific fields from a fresh GuiFarmInfo payload.
 	void updateFarmInfo( const GuiFarmInfo& info );
+	/// @brief Refreshes the pasture-specific fields (counts, hay/food levels, animal roster, food allow-list).
 	void updatePastureInfo( const GuiPastureInfo& info );
+	/// @brief Refreshes the grove-specific fields (planted trees, fell/pick/plant flags).
 	void updateGroveInfo( const GuiGroveInfo& info );
+	/// @brief Replaces the cached global plant catalogue used to populate the farm product grid.
 	void updateGlobalPlantInfo( const QList<GuiPlant>& info );
+	/// @brief Replaces the cached global animal catalogue used to populate the pasture product grid.
 	void updateGlobalAnimalInfo( const QList<GuiAnimal>& info );
+	/// @brief Replaces the cached global tree catalogue used to populate the grove product grid.
 	void updateGlobalTreeInfo( const QList<GuiPlant>& info );
 
 private:

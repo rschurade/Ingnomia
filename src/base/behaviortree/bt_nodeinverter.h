@@ -15,10 +15,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeinverter.h
+ *  @brief Decorator that inverts SUCCESS and FAILURE of its child.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Decorator that inverts the child's result.
+ *
+ *  Ticks its single child.  SUCCESS becomes FAILURE, FAILURE becomes SUCCESS,
+ *  and RUNNING is passed through unchanged.  If there is no child, returns
+ *  FAILURE.
+ */
 class BT_NodeInverter final : public BT_Node
 {
 public:

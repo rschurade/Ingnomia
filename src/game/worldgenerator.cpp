@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file worldgenerator.cpp
+ *  @brief Procedural world generation: topology (height map, stone layers, rivers, ocean, ore veins,
+ *         sunlight, ramps), then life placement (plants, animals, gnomes, starting items, lairs).
+ */
 #include "worldgenerator.h"
 
 #include "../base/config.h"
@@ -39,6 +43,9 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+/// @brief Constructs the WorldGenerator.
+/// @param newGameSettings New-game settings (world size, seed, starting items, etc.).
+/// @param parent          Owning Game instance.
 WorldGenerator::WorldGenerator( NewGameSettings* newGameSettings, Game* parent ) :
 	g( parent ),
 	ngs( newGameSettings ),
@@ -46,10 +53,15 @@ WorldGenerator::WorldGenerator( NewGameSettings* newGameSettings, Game* parent )
 {
 }
 
+/// @brief Destructor.
 WorldGenerator::~WorldGenerator()
 {
 }
 
+/// @brief Generates world topology: allocates the World, builds height map, stone layers, rivers,
+///        ocean, ore veins, water, sunlight, ramps, and lair placement stubs.
+///        Emits signalStatus messages to drive a progress indicator.
+/// @return Newly allocated World (ownership transferred to caller).
 World* WorldGenerator::generateTopology()
 {
 	m_dimX       = ngs->worldSize();
@@ -133,6 +145,8 @@ World* WorldGenerator::generateTopology()
 	return w;
 }
 
+/// @brief Places all living entities into the already-generated world: plants, trees, animals,
+///        starting gnomes, and embark items. Also initialises the region map.
 void WorldGenerator::addLife()
 {
 	// add plants and trees
@@ -154,6 +168,8 @@ void WorldGenerator::addLife()
 	w->regionMap().initRegions();
 }
 
+/// @brief Reads all TerrainMaterials from DB and builds m_mats and m_matsInLevel lookup
+///        mapping each Z-level to its dominant material based on depth ranges.
 void WorldGenerator::initMateralVectors()
 {
 	m_mats.clear();
@@ -192,6 +208,8 @@ void WorldGenerator::initMateralVectors()
 	}
 }
 
+/// @brief Fills every Z-level with stone/floor tiles according to the height map and material layers.
+///        Also fills the lowest 7 levels with mushroom-biome tiles. Emits progress signals.
 void WorldGenerator::setStoneLayers()
 {
 	QElapsedTimer timer;
@@ -220,6 +238,8 @@ void WorldGenerator::setStoneLayers()
 }
 
 // set metal ores and gems
+/// @brief Distributes metal ore veins and gem deposits throughout the world using
+///        Perlin-worm tunnels at appropriate depth ranges as defined in the DB.
 void WorldGenerator::setMetalsAndGems()
 {
 	QMap<QString, EmbeddedMaterial> embeddeds;
@@ -267,10 +287,13 @@ void WorldGenerator::setMetalsAndGems()
 	}
 }
 // set water and sand floor at water
+/// @brief Sets initial water tiles and sand floors in low-lying areas.
 void WorldGenerator::setWater()
 {
 }
 // set sunlight and grass
+/// @brief Propagates sunlight downward from the top of the map, marks surface tiles with
+///        TF_SUNLIGHT, sets grass/sand floor sprites on exposed ground-level tiles.
 void WorldGenerator::initSunLight()
 {
 	auto& world       = w->world();
@@ -314,6 +337,8 @@ void WorldGenerator::initSunLight()
 	w->initGrassUpdateList();
 }
 // add plants and trees
+/// @brief Scatters plants, trees, mushrooms, and underground vegetation across the world
+///        according to the new-game settings' flora allow-lists, biome rules, and density values.
 void WorldGenerator::addPlantsAndTrees()
 {
 	QStringList allTrees     = DB::ids( "Plants", "Type", "Tree" );
@@ -485,6 +510,8 @@ void WorldGenerator::addPlantsAndTrees()
 	}
 }
 // add animals
+/// @brief Spawns animals across the world surface and underground according to the
+///        new-game settings' fauna allow-lists and per-type quantity limits.
 void WorldGenerator::addAnimals()
 {
 	int numAnimals = ngs->numWildAnimals();
@@ -613,6 +640,8 @@ void WorldGenerator::addAnimals()
 	*/
 }
 // add gnomes and starting items
+/// @brief Creates the starting gnomes and places all embark items from the new-game settings
+///        on the surface near the map centre.
 void WorldGenerator::addGnomesAndStartingItems()
 {
 	int num = ngs->numGnomes();
@@ -774,6 +803,10 @@ void WorldGenerator::addGnomesAndStartingItems()
 	g->inv()->itemHistory()->finishStart();
 }
 
+/// @brief Returns a random material that is valid for the given item type.
+///        Queries the DB for allowed materials and selects one uniformly at random.
+/// @param itemSID Item type string ID.
+/// @return A randomly chosen materialSID string.
 QString WorldGenerator::getRandomMaterial( QString itemSID )
 {
 	QVariantMap row = DB::selectRow( "Items", itemSID );
@@ -808,6 +841,10 @@ QString WorldGenerator::getRandomMaterial( QString itemSID )
 }
 
 // heightmap values = -1 to 1
+/// @brief Generates m_heightMap using the configured FastNoise generator, then normalises the
+///        values to the range [0, m_groundLevel - 1].
+/// @param dimX Width of the world in tiles.
+/// @param dimY Height of the world in tiles.
 void WorldGenerator::createHeightMap( int dimX, int dimY )
 {
 	m_heightMap.resize( dimX * dimY * 4 );
@@ -829,6 +866,10 @@ void WorldGenerator::createHeightMap( int dimX, int dimY )
 	//qDebug() << "heightMap min: " << m_min << "heightMap max: " << m_max;
 }
 
+/// @brief Fills a single Z-level with the mushroom-biome tile layout (deep underground).
+/// @param zz          Z-level to fill.
+/// @param mats        All terrain materials.
+/// @param matsinLevel Per-Z dominant material index.
 void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel )
 {
 	int baseLevel = m_mushroomLevel;
@@ -915,6 +956,12 @@ void WorldGenerator::fillFloorMushroomBiome( int zz, QVector<TerrainMaterial>& m
 	}
 }
 
+/// @brief Fills a single Z-level with wall/floor tiles based on the height map and material layers.
+///        Tiles above the height-map surface are left open (no wall); tiles at or below get
+///        a wall tile with the appropriate material sprite.
+/// @param z           Z-level to fill.
+/// @param mats        All terrain materials.
+/// @param matsinLevel Per-Z dominant material index.
 void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<int>& matsinLevel )
 {
 	auto& world = w->world();
@@ -995,6 +1042,8 @@ void WorldGenerator::fillFloor( int z, QVector<TerrainMaterial>& mats, QVector<i
 	}
 }
 
+/// @brief Marks every tile in the world as discovered (removes fog of war).
+///        Used during world generation so the initial view is fully visible.
 void WorldGenerator::discoverAll()
 {
 	for ( int z = m_dimZ - 2; z > 0; --z )
@@ -1012,6 +1061,7 @@ void WorldGenerator::discoverAll()
 	}
 }
 
+/// @brief Creates ramps at every Z-level by calling createRamp() per level.
 void WorldGenerator::createRamps()
 {
 	for ( int z = m_dimZ - 2; z > 0; --z )
@@ -1020,6 +1070,9 @@ void WorldGenerator::createRamps()
 	}
 }
 
+/// @brief Creates ramps on a single Z-level: finds tiles with a wall above open air
+///        and converts them to ramp tiles with appropriate sprites.
+/// @param z Z-level to process.
 void WorldGenerator::createRamp( int z )
 {
 	for ( int y = 1; y < m_dimY - 1; ++y )
@@ -1031,6 +1084,12 @@ void WorldGenerator::createRamp( int z )
 	}
 }
 
+/// @brief Evaluates a fractal Brownian motion noise value at (x, y, z) and returns
+///        true if the result exceeds the ore/gem placement threshold.
+/// @param x X coordinate.
+/// @param y Y coordinate.
+/// @param z Z coordinate.
+/// @return true if a vein should be placed at this position.
 bool WorldGenerator::fBm( int x, int y, int z )
 {
 	int fixedZ = qMin( m_dimZ - 1, qMax( 0, (int)z - m_heightMap[x + y * m_dimX] ) );
@@ -1054,6 +1113,12 @@ bool WorldGenerator::fBm( int x, int y, int z )
 	return false;
 }
 
+/// @brief Traces a worm-shaped path through the Z-level using Perlin noise to steer direction,
+///        producing a list of positions for ore/gem vein placement.
+/// @param z         Z-level to trace.
+/// @param num       Number of worm segments to generate.
+/// @param maxLength Maximum length of each worm segment.
+/// @return List of world positions along the worm path.
 std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength )
 {
 	std::vector<Position> out;
@@ -1131,6 +1196,12 @@ std::vector<Position> WorldGenerator::perlinWorm( int z, int num, int maxLength 
 	return out;
 }
 
+/// @brief Returns a pseudo-random white noise value at (x, y, z) used for per-tile
+///        random variation during world generation.
+/// @param x X coordinate.
+/// @param y Y coordinate.
+/// @param z Z coordinate.
+/// @return Float in approximately [0, 1].
 float WorldGenerator::perlinRandWhiteNoise( int x, int y, int z )
 {
 	FastNoise fn;
@@ -1145,6 +1216,10 @@ float WorldGenerator::perlinRandWhiteNoise( int x, int y, int z )
 	return ( fn.GetNoise( x, y, z ) + 1.0 ) / 2.;
 }
 
+/// @brief Clears all tiles in a 3×3 column centred on @p pos across all Z-levels
+///        (used to carve open areas in the world vector).
+/// @param world Flat world tile vector.
+/// @param pos   Centre position (Z is the base level).
 void WorldGenerator::clear3x3( std::vector<Tile>& world, Position& pos )
 {
 	for ( int x = pos.x - 1; x < pos.x + 2; ++x )
@@ -1160,6 +1235,11 @@ void WorldGenerator::clear3x3( std::vector<Tile>& world, Position& pos )
 	}
 }
 
+/// @brief Sets the embedded material and sprite on all tiles in a 3×3 column centred on @p pos.
+/// @param world            Flat world tile vector.
+/// @param pos              Centre position.
+/// @param embeddedMaterial Material UID to embed.
+/// @param spriteID         Sprite UID to assign.
 void WorldGenerator::setEmbedded3x3( std::vector<Tile>& world, Position& pos, unsigned short embeddedMaterial, unsigned short spriteID )
 {
 	// TODO changed it to 2x2
@@ -1178,6 +1258,13 @@ void WorldGenerator::setEmbedded3x3( std::vector<Tile>& world, Position& pos, un
 	}
 }
 
+/// @brief Picks a random embedded material (ore/gem) for position (x, y, z) by rolling
+///        against each candidate's frequency and depth-range constraints.
+/// @param x  X coordinate.
+/// @param y  Y coordinate.
+/// @param z  Z coordinate.
+/// @param em Map of candidate EmbeddedMaterial entries keyed by material ID.
+/// @return Material ID of the selected embedded material, or empty string if none qualifies.
 QString WorldGenerator::getRandomEmbedded( int x, int y, int z, QMap<QString, EmbeddedMaterial>& em )
 {
 	QStringList possibles;
@@ -1199,6 +1286,8 @@ QString WorldGenerator::getRandomEmbedded( int x, int y, int z, QMap<QString, Em
 	return possibles[index];
 }
 
+/// @brief Carves an ocean along one or more map edges, lowering terrain and filling with water
+///        according to the ocean size setting. Also creates a sandy beach transition zone.
 void WorldGenerator::createOceanFront()
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -1331,6 +1420,11 @@ void WorldGenerator::createOceanFront()
 	}
 }
 
+/// @brief Lowers the height-map value at (x, y) by @p diff, updating the tile column
+///        to remove walls above the new height and open the surface.
+/// @param x    X coordinate.
+/// @param y    Y coordinate.
+/// @param diff Amount by which to reduce the height.
 void WorldGenerator::decreaseHeight( int x, int y, int diff )
 {
 	Position pos( x, y, m_dimZ - 1 );
@@ -1359,6 +1453,11 @@ void WorldGenerator::decreaseHeight( int x, int y, int diff )
 	}
 }
 
+/// @brief Replaces the surface floor sprite at (x, y) with a sand-floor sprite
+///        at the current height-map level.
+/// @param x         X coordinate.
+/// @param y         Y coordinate.
+/// @param sandRowID DB row ID for the sand floor sprite.
 void WorldGenerator::setSandFloor( int x, int y, int sandRowID )
 {
 	Position pos( x, y, m_dimZ - 1 );
@@ -1384,6 +1483,9 @@ void WorldGenerator::setSandFloor( int x, int y, int sandRowID )
 	tile2.floorSpriteUID = g->sf()->createSprite( "RoughFloor", { "Sand" } )->uID;
 }
 
+/// @brief Returns the minimum height-map value along the entire X column at @p x.
+/// @param x X coordinate.
+/// @return Lowest Z value in column x.
 int WorldGenerator::getLowestZonXLine( int x )
 {
 	short maxZ = m_dimZ - 1;
@@ -1396,6 +1498,9 @@ int WorldGenerator::getLowestZonXLine( int x )
 	return maxZ;
 }
 
+/// @brief Returns the minimum height-map value along the entire Y row at @p y.
+/// @param y Y coordinate.
+/// @return Lowest Z value in row y.
 int WorldGenerator::getLowestZonYLine( int y )
 {
 	short maxZ = m_dimZ - 1;
@@ -1408,6 +1513,11 @@ int WorldGenerator::getLowestZonYLine( int y )
 	return maxZ;
 }
 
+/// @brief Fills the tile at (x, y, z) with water (full fluid level) and marks it walkable
+///        from above if the tile above is open.
+/// @param x X coordinate.
+/// @param y Y coordinate.
+/// @param z Z coordinate.
 void WorldGenerator::fillWater( int x, int y, int z )
 {
 	while ( z > 1 )
@@ -1426,6 +1536,8 @@ void WorldGenerator::fillWater( int x, int y, int z )
 	}
 }
 
+/// @brief Carves river channels through the world terrain by tracing river-worm paths
+///        from the map edges toward the interior, according to the rivers setting.
 void WorldGenerator::createRivers()
 {
 	QList<std::vector<Position>> worms;
@@ -1499,6 +1611,12 @@ void WorldGenerator::createRivers()
 	}
 }
 
+/// @brief Traces a meandering river path from @p pos in direction @p dir using noise steering.
+/// @param pos       Starting position.
+/// @param dir       Initial direction (0–3: N/S/E/W).
+/// @param num       Number of worm segments.
+/// @param maxLength Maximum length of each segment.
+/// @return Ordered list of positions along the river path.
 std::vector<Position> WorldGenerator::riverWorm( Position pos, int dir, int num, int maxLength )
 {
 	std::vector<Position> out;
@@ -1607,6 +1725,10 @@ std::vector<Position> WorldGenerator::riverWorm( Position pos, int dir, int num,
 	return out;
 }
 
+/// @brief Carves a river cross-section at @p pos: lowers terrain, fills water, and sets
+///        sand/gravel floor tiles along the river bed.
+/// @param world Flat world tile vector.
+/// @param pos   Centre position of the river cross-section.
 void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 {
 	int size = ngs->riverSize();
@@ -1665,6 +1787,8 @@ void WorldGenerator::carveRiver( std::vector<Tile>& world, Position& pos )
 	}
 }
 
+/// @brief Attempts to place monster lair structures in valid underground locations.
+///        Reads lair definitions from DB and tests layout placement before committing.
 void WorldGenerator::placeLairs()
 {
 	// find suitable location
@@ -1791,6 +1915,15 @@ void WorldGenerator::placeLairs()
 	}
 }
 
+/// @brief Checks whether an axis-aligned box of the given dimensions fits at (xLoc, yLoc, zLoc)
+///        without overlapping existing walls or out-of-bounds tiles.
+/// @param xLoc  X origin of the bounding box.
+/// @param yLoc  Y origin of the bounding box.
+/// @param zLoc  Z origin of the bounding box.
+/// @param xSize Width in tiles.
+/// @param ySize Depth in tiles.
+/// @param zSize Height in Z-levels.
+/// @return true if the entire box is clear and within bounds.
 bool WorldGenerator::checkPlacement( int xLoc, int yLoc, int zLoc, int xSize, int ySize, int zSize )
 {
 	auto& world = w->world();

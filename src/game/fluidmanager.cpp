@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file fluidmanager.cpp
+ *  @brief Water/lava pipe simulation: flow through pipe networks, input pumps, output drains.
+ */
 #include "fluidmanager.h"
 #include "game.h"
 
@@ -28,6 +31,9 @@
 #include <QDebug>
 #include <QQueue>
 
+/** @brief Serializes this pipe's state into a QVariantMap.
+ *  @return QVariantMap containing the item UID, position, and pipe type.
+ */
 QVariantMap NetworkPipe::serialize() const
 {
 	QVariantMap out;
@@ -39,6 +45,9 @@ QVariantMap NetworkPipe::serialize() const
 	return out;
 }
 
+/** @brief Deserializes pipe state from a QVariantMap.
+ *  @param in The map containing serialized pipe data.
+ */
 void NetworkPipe::deserialize( QVariantMap in )
 {
 	itemUID = in.value( "ItemID" ).toUInt();
@@ -46,16 +55,23 @@ void NetworkPipe::deserialize( QVariantMap in )
 	type    = (PipeType)in.value( "Type" ).value<unsigned char>();
 }
 
+/** @brief Constructs the FluidManager.
+ *  @param parent The parent Game instance.
+ */
 FluidManager::FluidManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
 }
 
+/** @brief Destructor. */
 FluidManager::~FluidManager()
 {
 }
 
+/** @brief Loads pipe network data from a saved variant list and rebuilds the network.
+ *  @param data List of serialized NetworkPipe entries.
+ */
 void FluidManager::loadPipes( QVariantList data )
 {
 	for ( auto vdata : data )
@@ -88,6 +104,13 @@ void FluidManager::loadPipes( QVariantList data )
 	updateNetwork();
 }
 
+/** @brief Per-tick update: moves fluid through the pipe network from inputs to outputs (throttled to every 20 ticks).
+ *  @param tickNumber Current game tick.
+ *  @param seasonChanged True if the season just changed.
+ *  @param dayChanged True if the day just changed.
+ *  @param hourChanged True if the hour just changed.
+ *  @param minuteChanged True if the minute just changed.
+ */
 void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	int tickDiff = tickNumber - m_lastTick;
@@ -192,6 +215,10 @@ void FluidManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChang
 	}
 }
 
+/** @brief Adds an input pump pipe at the given position and rebuilds the network.
+ *  @param pos The world position for the input pipe.
+ *  @param itemUID The item ID of the pump.
+ */
 void FluidManager::addInput( Position pos, unsigned int itemUID )
 {
 	NetworkPipe pipe;
@@ -203,6 +230,10 @@ void FluidManager::addInput( Position pos, unsigned int itemUID )
 	updateNetwork();
 }
 
+/** @brief Adds a passthrough pipe segment at the given position and rebuilds the network.
+ *  @param pos The world position for the pipe.
+ *  @param itemUID The item ID of the pipe.
+ */
 void FluidManager::addPipe( Position pos, unsigned int itemUID )
 {
 	NetworkPipe pipe;
@@ -213,6 +244,10 @@ void FluidManager::addPipe( Position pos, unsigned int itemUID )
 	updateNetwork();
 }
 
+/** @brief Adds an output drain pipe at the given position and rebuilds the network.
+ *  @param pos The world position for the output pipe.
+ *  @param itemUID The item ID of the output.
+ */
 void FluidManager::addOutput( Position pos, unsigned int itemUID )
 {
 	NetworkPipe pipe;
@@ -224,6 +259,9 @@ void FluidManager::addOutput( Position pos, unsigned int itemUID )
 	updateNetwork();
 }
 
+/** @brief Removes a pipe at the given position and rebuilds the network.
+ *  @param pos The world position of the pipe to remove.
+ */
 void FluidManager::removeAt( Position pos )
 {
 	m_allPipes.remove( pos.toInt() );
@@ -232,6 +270,7 @@ void FluidManager::removeAt( Position pos )
 	updateNetwork();
 }
 
+/** @brief Rebuilds pipe connectivity by tracing connections from outputs back through the network via BFS. */
 void FluidManager::updateNetwork()
 {
 	for ( auto& nw : m_allPipes )
@@ -321,27 +360,48 @@ void FluidManager::updateNetwork()
 	}
 }
 
+/** @brief Stub: gets a job for a gnome from the fluid system. Currently unimplemented.
+ *  @param gnomeID The gnome requesting work.
+ *  @param skillID The skill type.
+ *  @return Always returns 0 (no job available).
+ */
 unsigned int FluidManager::getJob( unsigned int gnomeID, QString skillID )
 {
 
 	return 0;
 }
 
+/** @brief Stub: marks a fluid job as finished. Currently unimplemented.
+ *  @param jobID The job ID to finish.
+ *  @return Always returns false.
+ */
 bool FluidManager::finishJob( unsigned int jobID )
 {
 	return false;
 }
 
+/** @brief Stub: returns a fluid job to the available pool. Delegates to finishJob.
+ *  @param jobID The job ID to return.
+ *  @return Always returns false.
+ */
 bool FluidManager::giveBackJob( unsigned int jobID )
 {
 	return finishJob( jobID );
 }
 
+/** @brief Stub: retrieves a job by ID. Currently unimplemented.
+ *  @param jobID The job ID to look up.
+ *  @return Always returns nullptr.
+ */
 QSharedPointer<Job> FluidManager::getJob( unsigned int jobID )
 {
 	return nullptr;
 }
 
+/** @brief Stub: checks whether a job ID belongs to the fluid system. Currently unimplemented.
+ *  @param jobID The job ID to check.
+ *  @return Always returns false.
+ */
 bool FluidManager::hasJobID( unsigned int jobID ) const
 {
 	return false;

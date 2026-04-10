@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file LoadGameModel.h
+ *  @brief View model for the Load Game page. Hosts two observable collections — kingdoms
+ *         and per-kingdom save files — and a load command bound to the page button.
+ */
 #ifndef __MENU3D_LOADGAMEMODEL_H__
 #define __MENU3D_LOADGAMEMODEL_H__
 
@@ -43,28 +47,34 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the kingdom or save-file list. Pure data row exposing the path,
+///        version, modification date, and compatibility flag for binding.
 struct SaveItem : public Noesis::BaseComponent
 {
 public:
 	SaveItem( QString name, QString path, QString dir, QString version, QString date, bool compatible = true );
 
-	Noesis::String _name;
-	Noesis::String _path;
-	Noesis::String _dir;
-	Noesis::String _version;
-	Noesis::String _date;
-	bool _compatible;
+	Noesis::String _name;     ///< Display name (kingdom name or save filename).
+	Noesis::String _path;     ///< Absolute folder path on disk.
+	Noesis::String _dir;      ///< Folder basename for the save.
+	Noesis::String _version;  ///< Version string read from the save file.
+	Noesis::String _date;     ///< Last-modified date as a localised string.
+	bool _compatible;         ///< False when the save was produced by an incompatible build.
 
 	NS_DECLARE_REFLECTION( SaveItem, BaseComponent )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Load Game window view model. Lists kingdoms in the left pane and saves in the
+///        right pane, with a Load button that loads the selected save.
 class LoadGameModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	LoadGameModel();
 
+	/// @brief Replaces the kingdom list with @p kingdoms.
 	void updateSavedKingdoms( const QList<GuiSaveInfo>& kingdoms );
+	/// @brief Replaces the save-file list with @p kingdoms (saves for the selected kingdom).
 	void updateSaveGames( const QList<GuiSaveInfo>& kingdoms );
 
 private:

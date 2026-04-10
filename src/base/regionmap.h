@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file regionmap.h
+ * @brief World-wide region connectivity map for fast reachability queries.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -27,6 +31,14 @@ struct Tile;
 class Region;
 class World;
 
+/**
+ * @brief Maps every walkable tile to a region ID and tracks inter-region connectivity.
+ *
+ * Initialized via flood-fill over all walkable tiles. Dynamically updated when tiles
+ * change walkability (construction, mining, etc.). Regions merge when adjacent walkable
+ * areas connect and split when connections are broken. Provides O(1) region lookup per
+ * tile and cached BFS for cross-region reachability checks.
+ */
 class RegionMap
 {
 public:

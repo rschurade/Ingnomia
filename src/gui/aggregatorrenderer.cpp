@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorrenderer.cpp
+ *  @brief AggregatorRenderer implementation: batches tile sprite data, collects creature
+ *         sprites and thought bubbles, and packs axle power info for the renderer.
+ */
 #include "aggregatorrenderer.h"
 
 #include "../base/global.h"
@@ -27,6 +31,9 @@
 #include "../gfx/sprite.h"
 #include "../gfx/spritefactory.h"
 
+/// @brief Constructs the AggregatorRenderer and registers payload metatypes so the signals
+///        can be delivered via queued connections across threads.
+/// @param parent Qt parent object.
 AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 	QObject( parent )
 {
@@ -35,11 +42,18 @@ AggregatorRenderer::AggregatorRenderer( QObject* parent ) :
 	qRegisterMetaType<AxleDataInfo>();
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorRenderer::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Builds a TileDataUpdate packet for a single world tile, packing floor/wall/item
+///        sprite UIDs (with rotation and wall-flag bits), job-overlay sprites, and light/
+///        fluid/vegetation levels.
+/// @param tileID Integer tile key (Position::toInt()).
+/// @return TileDataUpdate ready to be pushed into a batch.
 TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 {
 	if( !g ) return TileDataUpdate();
@@ -96,6 +110,10 @@ TileDataUpdate AggregatorRenderer::aggregateTile( unsigned int tileID ) const
 	return TileDataUpdate { tileID, td };
 }
 
+/// @brief Walks every live gnome (including dead-on-map gnomes and specials), automaton,
+///        animal, and monster to compute a tileID → creature sprite UID map. Rotation is
+///        encoded in the high bits of the sprite UID (facing * ROT_BIT).
+/// @return Hash mapping tile UIDs to fully decorated creature sprite UIDs.
 QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 {
 	if( !g ) return QHash<unsigned int, unsigned int>();
@@ -221,6 +239,8 @@ QHash<unsigned int, unsigned int> AggregatorRenderer::collectCreatures()
 	return creatures;
 }
 
+/// @brief Emits a full-world tile sprite refresh: iterates every tile in the world, fills in
+///        creature sprites, and pushes batches of up to 65536 tiles through signalTileUpdates.
 void AggregatorRenderer::onAllTileInfo()
 {
 	if( !g ) return;
@@ -261,6 +281,10 @@ void AggregatorRenderer::onAllTileInfo()
 	}
 }
 
+/// @brief Emits a partial tile sprite refresh for just the tiles in @p changeSet, and also
+///        triggers axle-data and thought-bubble updates as a side effect. Used for every
+///        per-frame update after the initial world load.
+/// @param changeSet Set of tile UIDs whose state changed this frame.
 void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
 {
 	if( !g ) return;
@@ -306,6 +330,8 @@ void AggregatorRenderer::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 	onThoughtBubbleUpdate();
 }
 
+/// @brief Collects all active thought bubbles from gnomes and animals and emits them to the
+///        renderer via signalThoughtBubbles.
 void AggregatorRenderer::onThoughtBubbleUpdate()
 {
 	if( !g ) return;
@@ -330,6 +356,7 @@ void AggregatorRenderer::onThoughtBubbleUpdate()
 	emit signalThoughtBubbles( info );
 }
 
+/// @brief Emits the current axle power/rotation state for all axles to the renderer.
 void AggregatorRenderer::onAxleDataUpdate()
 {
 	if( !g ) return;
@@ -338,12 +365,16 @@ void AggregatorRenderer::onAxleDataUpdate()
 	emit signalAxleData( data );
 }
 
+/// @brief Relays a camera-center request (e.g. "jump to gnome") to the renderer.
+/// @param location Target world position.
 void AggregatorRenderer::onCenterCamera( const Position& location )
 {
 	if ( !g ) return;
 	emit signalCenterCamera( location );
 }
 
+/// @brief Notifies the renderer that world dimensions or other global parameters changed
+///        (e.g. after loading a new save) so it can reallocate GPU buffers.
 void AggregatorRenderer::onWorldParametersChanged()
 {
 	if( !g ) return;

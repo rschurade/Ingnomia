@@ -15,8 +15,26 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file octree.cpp
+ *  @brief Octree spatial index for 3D item lookups.
+ *
+ *  Recursively subdivides 3D space into octants until leaf nodes (with any
+ *  dimension <= 4) are reached. Supports insert, remove, query by proximity,
+ *  and visitor-pattern traversal.
+ */
 #include "octree.h"
 
+/** @brief Constructs an Octree node centered at (x, y, z) with half-extents (dx, dy, dz).
+ *
+ *  Becomes a leaf node if any half-extent is 4 or less.
+ *
+ *  @param x  Center X coordinate.
+ *  @param y  Center Y coordinate.
+ *  @param z  Center Z coordinate.
+ *  @param dx Half-extent along X.
+ *  @param dy Half-extent along Y.
+ *  @param dz Half-extent along Z.
+ */
 Octree::Octree( int x, int y, int z, int dx, int dy, int dz ) :
 	m_x( x ),
 	m_y( y ),
@@ -28,6 +46,7 @@ Octree::Octree( int x, int y, int z, int dx, int dy, int dz ) :
 {
 }
 
+/** @brief Destructor. Recursively deletes all child nodes and clears items. */
 Octree::~Octree()
 {
 	for ( auto ot : m_children )
@@ -37,6 +56,17 @@ Octree::~Octree()
 	m_items.clear();
 }
 
+/** @brief Inserts an item at the given 3D position.
+ *
+ *  If this node is a leaf, the item is stored directly. Otherwise, determines
+ *  the appropriate octant child based on the position relative to the center,
+ *  creating the child node if it does not yet exist, and recurses.
+ *
+ *  @param x    X coordinate of the item.
+ *  @param y    Y coordinate of the item.
+ *  @param z    Z coordinate of the item.
+ *  @param item The item identifier to insert.
+ */
 void Octree::insertItem( int x, int y, int z, unsigned int item )
 {
 	if ( m_isLeaf )
@@ -67,6 +97,17 @@ void Octree::insertItem( int x, int y, int z, unsigned int item )
 	}
 }
 
+/** @brief Removes an item from the given 3D position.
+ *
+ *  Navigates to the appropriate leaf and removes the item. On the way back up,
+ *  deletes child nodes that have become empty, pruning the tree.
+ *
+ *  @param x    X coordinate of the item.
+ *  @param y    Y coordinate of the item.
+ *  @param z    Z coordinate of the item.
+ *  @param item The item identifier to remove.
+ *  @return True if this node is now empty and can be deleted by the parent.
+ */
 bool Octree::removeItem( int x, int y, int z, unsigned int item )
 {
 	if ( m_isLeaf )
@@ -101,6 +142,18 @@ bool Octree::removeItem( int x, int y, int z, unsigned int item )
 	}
 }
 
+/** @brief Queries items near the given 3D position.
+ *
+ *  At leaf nodes, returns all stored items. At internal nodes, visits children
+ *  starting from the octant closest to the query position and spiraling outward.
+ *  Stops collecting once the result count exceeds @p limit.
+ *
+ *  @param x     X coordinate of the query point.
+ *  @param y     Y coordinate of the query point.
+ *  @param z     Z coordinate of the query point.
+ *  @param limit Maximum number of items to collect before stopping.
+ *  @return List of item identifiers found near the query position.
+ */
 QList<unsigned int> Octree::query( int x, int y, int z, int limit ) const
 {
 	if ( m_isLeaf )
@@ -135,6 +188,18 @@ QList<unsigned int> Octree::query( int x, int y, int z, int limit ) const
 	}
 }
 
+/** @brief Visits items near the given position using a visitor callback.
+ *
+ *  Similar to query(), but invokes @p visitor for each item. The visitor returns
+ *  true to continue, false to stop early. Children are visited starting from
+ *  the octant closest to the query position.
+ *
+ *  @param x       X coordinate of the query point.
+ *  @param y       Y coordinate of the query point.
+ *  @param z       Z coordinate of the query point.
+ *  @param visitor Callback invoked for each item; return false to stop traversal.
+ *  @return True if all items were visited, false if the visitor stopped early.
+ */
 bool Octree::visit( int x, int y, int z, const std::function<bool( unsigned int )>& visitor ) const
 {
 	if ( m_isLeaf )

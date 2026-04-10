@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file loadgameproxy.cpp
+ *  @brief LoadGameProxy implementation: connects LoadGameModel and AggregatorLoadGame.
+ */
 #include "loadgameproxy.h"
 
 #include "../../base/global.h"
@@ -22,6 +25,7 @@
 
 #include <QDebug>
 
+/// @brief Constructs the proxy and wires up the aggregator signal/slot connections.
 LoadGameProxy::LoadGameProxy( QObject* parent ) :
 	QObject( parent )
 {
@@ -32,16 +36,19 @@ LoadGameProxy::LoadGameProxy( QObject* parent ) :
 	connect( Global::eventConnector->aggregatorLoadGame(), &AggregatorLoadGame::signalSaveGames, this, &LoadGameProxy::onSaveGames, Qt::QueuedConnection );
 }
 
+/// @brief Binds the proxy to its owning view model.
 void LoadGameProxy::setParent( IngnomiaGUI::LoadGameModel* parent )
 {
 	m_parent = parent;
 }
 
+/// @brief Asks the aggregator for the list of kingdoms on disk.
 void LoadGameProxy::requestKingdoms()
 {
 	emit signalRequestKingdoms();
 }
 
+/// @brief Slot: relays a fresh kingdom list to the model.
 void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
 {
 	if ( m_parent )
@@ -50,11 +57,13 @@ void LoadGameProxy::onKingdoms( const QList<GuiSaveInfo>& kingdoms )
 	}
 }
 
+/// @brief Asks the aggregator for the saves under a specific kingdom folder.
 void LoadGameProxy::requestSaveGames( const QString path )
 {
 	emit signalRequestSaveGames( path );
 }
 
+/// @brief Slot: relays a fresh save list to the model.
 void LoadGameProxy::onSaveGames( const QList<GuiSaveInfo>& saveGames )
 {
 	if ( m_parent )

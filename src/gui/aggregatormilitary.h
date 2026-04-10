@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatormilitary.h
+ *  @brief Data types and aggregator feeding the Military XAML window with squads, roles,
+ *         target priorities, and uniform configuration.
+ */
 #pragma once
 
 #include "../game/militarymanager.h"
@@ -24,58 +28,63 @@
 
 class Game;
 
+/// @brief Gnome shown in the squad roster.
 struct GuiSquadGnome
 {
-	unsigned int id = 0;
-	QString name;
+	unsigned int id = 0;    ///< Creature UID.
+	QString name;           ///< Display name.
 
-	unsigned int roleID = 0;
+	unsigned int roleID = 0;///< Assigned military role UID.
 };
 Q_DECLARE_METATYPE( GuiSquadGnome )
 
+/// @brief Target-priority row in the squad engagement rules.
 struct GuiTargetPriority
 {
-	QString id;
-	QString name;
-	MilAttitude attitude;
+	QString id;             ///< Creature type string ID targeted by this row.
+	QString name;           ///< Localised display name.
+	MilAttitude attitude;   ///< Attack / defend / flee attitude.
 };
 Q_DECLARE_METATYPE( GuiTargetPriority )
 
 
 
+/// @brief One squad shown in the Military window, with its priority list and gnome roster.
 struct GuiSquad
 {
-	unsigned int id = 0;
-	QString name;
-	bool showLeftArrow = true;
-	bool showRightArrow = true;
+	unsigned int id = 0;       ///< Squad UID.
+	QString name;              ///< Display name.
+	bool showLeftArrow = true; ///< Enable left (move-earlier) button in GUI.
+	bool showRightArrow = true;///< Enable right (move-later) button in GUI.
 
-	QList<GuiTargetPriority> priorities;
+	QList<GuiTargetPriority> priorities; ///< Engagement priority list for this squad.
 
-	QList<GuiSquadGnome> gnomes;
+	QList<GuiSquadGnome> gnomes;         ///< Gnomes currently assigned to this squad.
 };
 Q_DECLARE_METATYPE( GuiSquad )
 
+/// @brief One uniform slot entry (per body part) inside a military role.
 struct GuiUniformItem
 {
-	QString slotName;
-	QString armorType = "none"; // plate, heavy plate, chain and so on
-	QString material = "any";
+	QString slotName;                    ///< Slot key (HeadArmor, ChestArmor, …).
+	QString armorType = "none";          ///< plate, heavy plate, chain, etc.
+	QString material = "any";            ///< Required material, or "any".
 
-	QStringList possibleTypesForSlot; // some slots have no bone armor item, held slots or rings are completely different
+	QStringList possibleTypesForSlot;    ///< Legal armor types for this slot (e.g. no bone for hands).
 };
 Q_DECLARE_METATYPE( GuiUniformItem )
 
+/// @brief A military role definition (e.g. "Swordsman") with its uniform configuration.
 struct GuiMilRole
 {
-	unsigned int id = 0;
-	QString name;
-	bool showLeftArrow = false;
-	bool showRightArrow = false;
+	unsigned int id = 0;                 ///< Role UID.
+	QString name;                        ///< Display name.
+	bool showLeftArrow = false;          ///< Enable reorder-left button in GUI.
+	bool showRightArrow = false;         ///< Enable reorder-right button in GUI.
 
-	bool isCivilian;
+	bool isCivilian;                     ///< True if this role is a civilian (non-combat) role.
 
-	QList<GuiUniformItem> uniform;
+	QList<GuiUniformItem> uniform;       ///< Per-slot uniform entries.
 };
 Q_DECLARE_METATYPE( GuiMilRole )
 
@@ -84,6 +93,8 @@ Q_DECLARE_METATYPE( GuiMilRole )
 
 
 
+/// @brief Bridges the Military XAML window with the game-side MilitaryManager. Produces
+///        GuiSquad/GuiMilRole lists for display and routes squad/role edits back to the game.
 class AggregatorMilitary : public QObject
 {
 	Q_OBJECT
@@ -95,11 +106,11 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g;
+	QPointer<Game> g;                         ///< Game instance (weak ownership).
 
-	QList<GuiSquad> m_squads;
-	QList<GuiTargetPriority> m_tmpPriorities;
-	QList<GuiMilRole> m_roles;
+	QList<GuiSquad> m_squads;                 ///< Cached squad list for the GUI.
+	QList<GuiTargetPriority> m_tmpPriorities; ///< Scratch buffer reused when emitting priority updates.
+	QList<GuiMilRole> m_roles;                ///< Cached military role list for the GUI.
 	
 	void sendSquadUpdate();
 	void sendPriorityUpdate( unsigned int squadID );

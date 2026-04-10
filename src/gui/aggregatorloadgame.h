@@ -15,23 +15,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorloadgame.h
+ *  @brief Aggregator that enumerates kingdoms and save games on disk for the Load Game GUI.
+ */
 #pragma once
 
 #include <QObject>
 #include <QDateTime>
 
+/// @brief Metadata for one kingdom or save-game slot shown in the Load Game list.
 struct GuiSaveInfo
 {
-	QString name;
-	QString folder;
-	QString dir;
-	QString version;
-	QDateTime date;
-	bool compatible = true;
+	QString name;          ///< Display name (kingdom name or save file name).
+	QString folder;        ///< Folder basename under the save root.
+	QString dir;           ///< Absolute directory path.
+	QString version;       ///< Version string read from the save file.
+	QDateTime date;        ///< Last-modified timestamp.
+	bool compatible = true;///< False if the save was produced by an incompatible game version.
 };
 
 Q_DECLARE_METATYPE( GuiSaveInfo )
 
+/// @brief Scans the save-game folder layout and emits kingdom/save lists to the Load Game GUI.
 class AggregatorLoadGame : public QObject
 {
 	Q_OBJECT
@@ -41,8 +46,8 @@ public:
 	~AggregatorLoadGame();
 
 private:
-	QList<GuiSaveInfo> m_kingdomList;
-	QList<GuiSaveInfo> m_gameList;
+	QList<GuiSaveInfo> m_kingdomList;  ///< Cached list of kingdoms in the save root.
+	QList<GuiSaveInfo> m_gameList;     ///< Cached list of saves for the currently selected kingdom.
 
 public slots:
 	void onRequestKingdoms();

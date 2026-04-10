@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file militarymodel.h
+ *  @brief View model and helper-component types for the Military window. Hosts squads with
+ *         per-creature engagement priorities, gnome rosters, and role definitions with
+ *         per-slot uniform configuration. Three-page layout (squads / roles / priorities).
+ */
 #pragma once
 
 #include "../aggregatormilitary.h"
@@ -42,16 +47,19 @@ class ObservableCollection;
 namespace IngnomiaGUI
 {
 
+/// @brief Which tab of the Military window is currently visible.
 enum class MilitaryPage
 {
-	First,
-	Second,
-	Third
+	First,   ///< Squad list tab.
+	Second,  ///< Roles tab.
+	Third    ///< Priorities tab.
 };
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in a squad's engagement priority list (e.g. "Goblin: Attack").
+///        Holds the creature type, current attitude, and reorder commands.
 class SquadPriority final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -98,6 +106,8 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class RoleItem;
+/// @brief One gnome row in a squad's roster. Holds reorder/remove arrow visibility flags
+///        and a pointer to the currently assigned RoleItem.
 class SquadGnome final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -134,6 +144,8 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One squad in the Military window. Holds the squad's gnome roster and engagement
+///        priority list, plus rename and reorder commands.
 class SquadItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -189,6 +201,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One armor type entry (e.g. plate, chain) in the uniform slot dropdown.
 class UniformModelType final : public Noesis::BaseComponent
 {
 public:
@@ -205,6 +218,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One material entry in the uniform slot's material dropdown.
 class UniformModelMaterial final : public Noesis::BaseComponent
 {
 public:
@@ -222,6 +236,8 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One uniform slot row inside a role (HeadArmor / ChestArmor / …) with paired
+///        type and material dropdowns.
 class UniformModelItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -259,6 +275,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One military role definition (e.g. "Swordsman"). Owns the per-slot uniform list,
+///        a civilian flag, and the rename / show-config / remove commands.
 class RoleItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -320,14 +338,21 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Military window view model. Hosts squad, role, and engagement-priority lists,
+///        page navigation, and add/remove/reorder commands. Talks to the game side via
+///        MilitaryProxy.
 class MilitaryModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	MilitaryModel();
 
+	/// @brief Replaces the squad list with fresh SquadItem rows from the aggregator.
 	void updateSquads( const QList<GuiSquad>& squads );
+	/// @brief Updates a single squad's priority list (used after a priority reorder).
 	void updatePriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities );
+	/// @brief Replaces the role list with fresh RoleItem rows.
 	void updateRoles( const QList<GuiMilRole>& roles );
+	/// @brief Updates the available materials for one slot in one role (after armor type change).
 	void updatePossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats );
 
 private:

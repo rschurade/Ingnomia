@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file roommanager.h
+ *  Manages all rooms and doors: creation, removal, furniture placement, bed assignment, alarm bells, and access control.
+ */
 #pragma once
 
 
@@ -28,6 +31,7 @@ class Job;
 class Room;
 class Game;
 
+/** @brief A door placed in the world, with per-creature-type blocking settings. */
 struct Door
 {
 	Position pos;
@@ -39,6 +43,7 @@ struct Door
 	bool blockMonsters   = true;
 };
 
+/** @brief Manages all Room instances and doors: creation, removal, furniture forwarding, bed assignment, alarm jobs, and door access control. */
 class RoomManager : public QObject
 {
 	Q_OBJECT

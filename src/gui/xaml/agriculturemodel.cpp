@@ -30,12 +30,21 @@
 
 #include <QDebug>
 
+/** @file agriculturemodel.cpp
+ *  @brief AgricultureModel and helper-component implementations: builds observable
+ *         collections from Gui*Info payloads, populates them with Noesis bitmap previews,
+ *         and routes user actions through AgricultureProxy. Trivial Get*/Set* property
+ *         accessors are XAML binding plumbing — see the class @brief in the header for
+ *         their semantics.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 #pragma region AcPriority
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a priority entry with the given display label.
 AcPriority::AcPriority( const char* name ) :
 	m_name( name )
 {
@@ -49,6 +58,8 @@ const char* AcPriority::GetName() const
 
 #pragma region Trees
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a tree picker entry: copies the species name and ID and converts the
+///        Qt preview pixmap into a Noesis BitmapSource for binding.
 TreeSelectEntry::TreeSelectEntry( const GuiPlant& tree )
 {
 	m_name = tree.name.toStdString().c_str();
@@ -70,6 +81,7 @@ const char* TreeSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds one row of the tree picker grid by wrapping each input GuiPlant in a TreeSelectEntry.
 TreeSelectRow::TreeSelectRow( QList<GuiPlant> Trees )
 {
 	m_entries = *new ObservableCollection<TreeSelectEntry>();
@@ -88,6 +100,7 @@ Noesis::ObservableCollection<TreeSelectEntry>* TreeSelectRow::GetTrees() const
 
 #pragma region Animals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds an animal picker entry from a GuiAnimal payload, including a Noesis bitmap preview.
 AnimalSelectEntry::AnimalSelectEntry( const GuiAnimal& animal )
 {
 	m_name = animal.name.toStdString().c_str();
@@ -110,6 +123,7 @@ const char* AnimalSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds one row of the animal picker grid by wrapping each input GuiAnimal in an AnimalSelectEntry.
 AnimalSelectRow::AnimalSelectRow( QList<GuiAnimal> animals )
 {
 	m_entries = *new ObservableCollection<AnimalSelectEntry>();
@@ -128,6 +142,7 @@ Noesis::ObservableCollection<AnimalSelectEntry>* AnimalSelectRow::GetAnimals() c
 
 #pragma region Plants
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a crop picker entry from a GuiPlant payload, including a Noesis bitmap preview.
 PlantSelectEntry::PlantSelectEntry( const GuiPlant& plant )
 {
 	m_name = plant.name.toStdString().c_str();
@@ -149,6 +164,7 @@ const char* PlantSelectEntry::GetSID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds one row of the crop picker grid by wrapping each input GuiPlant in a PlantSelectEntry.
 PlantSelectRow::PlantSelectRow( QList<GuiPlant> plants )
 {
 	m_entries = *new ObservableCollection<PlantSelectEntry>();
@@ -168,6 +184,8 @@ Noesis::ObservableCollection<PlantSelectEntry>* PlantSelectRow::GetPlants() cons
 
 #pragma region Pasture
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a pasture roster row for one assigned animal. Stores the proxy pointer
+///        so the butcher checkbox can call back into the game when toggled.
 PastureAnimalEntry::PastureAnimalEntry( const GuiPastureAnimal& animal, AgricultureProxy* proxy ) :
 	m_proxy( proxy )
 {
@@ -205,6 +223,8 @@ bool PastureAnimalEntry::GetButchering() const
 	return m_toButcher;
 }
 
+/// @brief Setter for the butcher checkbox: forwards the new value to AgricultureProxy so
+///        the game-side animal flag is updated.
 void PastureAnimalEntry::SetButchering( bool value )
 {
 	if ( m_toButcher != value )
@@ -220,6 +240,8 @@ void PastureAnimalEntry::SetButchering( bool value )
 
 #pragma region PastureFood
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a food allow-list row from a GuiPastureFoodItem. Stores the proxy so
+///        the checkbox can update the pasture's allow-list when toggled.
 FoodSelectEntry::FoodSelectEntry( const GuiPastureFoodItem& food, AgricultureProxy* proxy ) :
 	m_proxy( proxy )
 {
@@ -244,6 +266,7 @@ bool FoodSelectEntry::getChecked() const
 	return m_checked;
 }
 	
+/// @brief Toggles this food entry in the pasture's allow-list via AgricultureProxy.
 void FoodSelectEntry::setChecked( bool value )
 {
 	if( m_checked != value )
@@ -254,6 +277,8 @@ void FoodSelectEntry::setChecked( bool value )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds one row of the pasture food allow-list grid by wrapping each food item
+///        in a FoodSelectEntry.
 FoodSelectRow::FoodSelectRow( QList<GuiPastureFoodItem> foods, AgricultureProxy* proxy )
 {
 	m_entries = *new ObservableCollection<FoodSelectEntry>();
@@ -273,6 +298,8 @@ Noesis::ObservableCollection<FoodSelectEntry>* FoodSelectRow::GetFoods() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the AgricultureModel: instantiates AgricultureProxy, registers the
+///        DelegateCommands consumed by the XAML, and initialises empty observable collections.
 AgricultureModel::AgricultureModel()
 {
 	m_proxy = new AgricultureProxy;
@@ -298,6 +325,7 @@ AgricultureModel::AgricultureModel()
 	m_showPastureFoodCmd.SetExecuteFunc( MakeDelegate( this, &AgricultureModel::onShowPastureFood ) );
 }
 
+/// @brief Rebuilds the crop picker grid (m_plantRows) from a fresh global plant catalogue.
 void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
 {
 	m_plantRows->Clear();
@@ -316,6 +344,7 @@ void AgricultureModel::updateGlobalPlantInfo( const QList<GuiPlant>& info )
 	OnPropertyChanged( "PlantRows" );
 }
 
+/// @brief Rebuilds the animal picker grid (m_animalRows) from a fresh global animal catalogue.
 void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
 {
 	m_animalRows->Clear();
@@ -334,6 +363,7 @@ void AgricultureModel::updateGlobalAnimalInfo( const QList<GuiAnimal>& info )
 	OnPropertyChanged( "AnimalRows" );
 }
 
+/// @brief Rebuilds the tree picker grid (m_treeRows) from a fresh global tree catalogue.
 void AgricultureModel::updateGlobalTreeInfo( const QList<GuiPlant>& info )
 {
 	m_treeRows->Clear();
@@ -352,6 +382,10 @@ void AgricultureModel::updateGlobalTreeInfo( const QList<GuiPlant>& info )
 	OnPropertyChanged( "TreeRows" );
 }
 
+/// @brief Refreshes the header fields shared by all designation kinds: ID, type, name,
+///        product, priority dropdown contents, and suspended flag. Sets m_blockSignals
+///        around the binding updates so the property-changed notifications don't echo
+///        back into the proxy.
 void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QString name, QString product, int priority, int maxPriority, bool suspended )
 {
 	m_blockSignals = true;
@@ -422,6 +456,8 @@ void AgricultureModel::updateStandardInfo( unsigned int ID, AgriType type, QStri
 	m_blockSignals = false;
 }
 
+/// @brief Updates the farm-only fields (tilled / planted / harvest-ready counts, harvest
+///        toggle, current crop) from a fresh GuiFarmInfo payload.
 void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 {
 	updateStandardInfo( info.ID, AgriType::Farm, info.name, info.plantType, info.priority, info.maxPriority, info.suspended );
@@ -465,6 +501,8 @@ void AgricultureModel::updateFarmInfo( const GuiFarmInfo& info )
 	OnPropertyChanged( "NumPlants" );
 }
 
+/// @brief Updates the pasture-only fields: animal counts and caps, hay/food levels,
+///        animal roster, and the food allow-list grid.
 void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 {
 	updateStandardInfo( info.ID, AgriType::Pasture, info.name, info.animalType, info.priority, info.maxPriority, info.suspended );
@@ -544,6 +582,8 @@ void AgricultureModel::updatePastureInfo( const GuiPastureInfo& info )
 	OnPropertyChanged( "FoodRows" );
 }
 
+/// @brief Updates the grove-only fields: tree count, plot count, and the pick/plant/fell
+///        toggles.
 void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 {
 	updateStandardInfo( info.ID, AgriType::Grove, info.name, info.treeType, info.priority, info.maxPriority, info.suspended );
@@ -578,6 +618,8 @@ void AgricultureModel::updateGroveInfo( const GuiGroveInfo& info )
 	OnPropertyChanged( "Title" );
 }
 
+/// @brief Pushes the current name/priority/suspended values back to the proxy whenever the
+///        user edits any of them in the XAML form.
 void AgricultureModel::setBasicOptions()
 {
 	if( !m_blockSignals )
@@ -791,6 +833,8 @@ const char* AgricultureModel::GetShowPastureFoodSelect() const
 	return "Hidden";
 }
 
+/// @brief Command handler: opens the product picker overlay (plant/animal/tree depending on
+///        the active designation type).
 void AgricultureModel::onCmdSelectProduct( BaseComponent* param )
 {
 	QString qParam( param->ToString().Str() );
@@ -828,6 +872,8 @@ void AgricultureModel::onCmdSelectProduct( BaseComponent* param )
 	}
 }
 
+/// @brief Command handler invoked when the user clicks a tile in the product picker:
+///        forwards the chosen product SID to the proxy and closes the overlay.
 void AgricultureModel::onSelectProduct( BaseComponent* param )
 {
 	m_productSelect = false;
@@ -962,6 +1008,8 @@ const char* AgricultureModel::GetManageAnimalsVisible() const
 	}
 }
 
+/// @brief Command handler: opens the pasture animal management overlay and requests an
+///        up-to-date roster from the proxy.
 void AgricultureModel::onManageAnimals( BaseComponent* param )
 {
 	m_proxy->requestPastureAnimalInfo();
@@ -973,6 +1021,7 @@ void AgricultureModel::onManageAnimals( BaseComponent* param )
 	OnPropertyChanged( "ShowPasture" );
 }
 
+/// @brief Command handler: closes the pasture animal management overlay.
 void AgricultureModel::onManageAnimalsBack( BaseComponent* param )
 {
 	m_manageWindow  = false;
@@ -991,6 +1040,9 @@ const char* AgricultureModel::GetManageWindowVis() const
 	return "Hidden";
 }
 
+/// @brief Command handler for the pasture food allow-list overlay. Accepts "Show" to open
+///        and request a fresh food list, or "Back" to close.
+/// @param param BaseComponent whose ToString() carries "Show" or "Back".
 void AgricultureModel::onShowPastureFood( BaseComponent* param )
 {
 	if( param )

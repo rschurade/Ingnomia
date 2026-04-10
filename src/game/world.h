@@ -16,6 +16,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file world.h
+ *  @brief The game world: tile array, plants, pathfinder, region map, light map, and tile manipulation.
+ *
+ *  Owns the flat tile array that represents the 3D voxel world, the region map
+ *  used for pathfinding, the light map, plant/creature registries, and all
+ *  functions that read or mutate individual tiles (wall/floor sprites, flags,
+ *  walkability, grass, water, ramps, lighting, construction dispatch, etc.).
+ */
+
 #ifndef WORLD_H_
 #define WORLD_H_
 
@@ -39,6 +48,7 @@ class Game;
 struct Position;
 class Sprite;
 
+/** @brief Identifies the high-level type of a construction (wall, floor, stairs, etc.). */
 enum CONSTRUCTION_ID
 {
 	CID_WALL = 1,
@@ -54,6 +64,7 @@ enum CONSTRUCTION_ID
 	CID_WORKSHOP
 };
 
+/** @brief Identifies the category of an installed item construction (door, light, mechanism, etc.). */
 enum CONSTR_ITEM_ID
 {
 	CI_STORAGE = 1,
@@ -68,6 +79,15 @@ enum CONSTR_ITEM_ID
 	CI_HYDRAULICS
 };
 
+/** @brief The game world: owns the tile array, region/light maps, plants, and tile manipulation logic.
+ *
+ *  Central class that stores the flat vector of Tile structs representing
+ *  the 3D voxel grid.  Provides all primitives for reading and modifying
+ *  tiles (walls, floors, ramps, sprites, flags), managing grass/water
+ *  simulation, creature and plant registries, lighting, sunlight propagation,
+ *  and dispatching construction/deconstruction requests to the appropriate
+ *  type-specific handlers.
+ */
 class World
 {
 	Q_DISABLE_COPY_MOVE( World )

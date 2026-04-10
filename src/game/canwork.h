@@ -15,12 +15,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file canwork.h
+ *  Mixin base class for creatures that can perform jobs. Provides job claiming,
+ *  work task execution, skill/tech gain, tool handling, and all individual
+ *  task implementations (mining, building, crafting, farming, magic, etc.).
+ */
 #pragma once
 
 #include "../game/creature.h"
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 
+/** @brief Abstract mixin for creatures that can claim and perform jobs.
+ *
+ *  Extends Creature with job management (claim, work, finish, abort, suspend),
+ *  skill and tech gain from completed work, tool equipping, and concrete
+ *  task functions for every job type (mine, construct, craft, farm, spell, etc.).
+ */
 class CanWork : public Creature
 {
 public:

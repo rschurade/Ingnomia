@@ -15,25 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorsettings.h
+ *  @brief Data type and aggregator for the in-game Settings XAML window. Mirrors
+ *         Global::cfg values and pushes changes back into the config when edited.
+ */
 #pragma once
 
 #include <QObject>
 
 
+/// @brief Settings payload sent to the GUI.
 struct GuiSettings
 {
-    bool fullscreen = false;
-    float scale = 1.0;
-    QList<QString> languages;
-    QString language;
-    int keyboardSpeed = 20;
-    int lightMin = 30;
-    bool toggleMouseWheel = false;
-    float audioMasterVolume = 50.0;
+    bool fullscreen = false;          ///< Fullscreen toggle.
+    float scale = 1.0;                ///< UI scaling factor.
+    QList<QString> languages;         ///< Available language IDs.
+    QString language;                 ///< Currently active language ID.
+    int keyboardSpeed = 20;           ///< Camera pan speed in pixels/tick when holding a key.
+    int lightMin = 30;                ///< Minimum tile light level (ambient floor).
+    bool toggleMouseWheel = false;    ///< True if the mouse wheel cycles z-levels (else zooms).
+    float audioMasterVolume = 50.0;   ///< Master audio volume 0–100.
 };
 
 Q_DECLARE_METATYPE( GuiSettings )
 
+/// @brief Reads settings from Global::cfg, exposes them to the Settings window, and writes
+///        edits back to the config.
 class AggregatorSettings : public QObject
 {
 	Q_OBJECT
@@ -43,7 +50,7 @@ public:
 	~AggregatorSettings();
 
 private:
-	GuiSettings m_settings;
+	GuiSettings m_settings;  ///< Cached settings payload.
 
 public slots:
 	void onRequestSettings();

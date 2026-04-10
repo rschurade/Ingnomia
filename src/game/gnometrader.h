@@ -15,11 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnometrader.h
+ *  Trader gnome variant that visits the colony for trade events at market stalls.
+ */
 #pragma once
 
 #include "../game/gnome.h"
 #include <QVariantMap>
 
+/** @brief Represents a single item type offered by a trader, with quantity and value information. */
 struct TraderItem {
 	QString type;
 	QString itemSID;
@@ -31,6 +35,7 @@ struct TraderItem {
 	int reserved = 0;
 };
 
+/** @brief Defines a trader's complete inventory catalog, including all items available for trade. */
 struct TraderDefinition {
 	QString id;
 	QList<TraderItem> items;

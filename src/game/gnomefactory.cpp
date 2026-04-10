@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnomefactory.cpp
+ *  Implementation of GnomeFactory for creating gnomes and traders with randomized properties.
+ */
 #include "gnomefactory.h"
 
 #include "../base/config.h"
@@ -32,19 +35,30 @@
 #include <QElapsedTimer>
 #include <QPainter>
 
+/** @brief Constructs the factory with a reference to the owning Game instance.
+ *  @param game Pointer to the active Game object.
+ */
 GnomeFactory::GnomeFactory( Game* game ) :
 	g( game )
 {
 }
+/** @brief Destructor. */
 GnomeFactory::~GnomeFactory()
 {
 }
 
+/** @brief Initializes the factory. Currently a no-op that always succeeds.
+ *  @return Always returns true.
+ */
 bool GnomeFactory::init()
 {
 	return true;
 }
 
+/** @brief Creates a new gnome at the given position with a unique randomized name, gender, attributes, needs, and skills.
+ *  @param pos World position to place the gnome.
+ *  @return Pointer to the newly created Gnome.
+ */
 Gnome* GnomeFactory::createGnome( Position& pos )
 {
 	QString name  = "NotSet";
@@ -116,6 +130,10 @@ Gnome* GnomeFactory::createGnome( Position& pos )
 	return gnome;
 }
 
+/** @brief Creates a new trader gnome at the given position with a unique randomized name, gender, attributes, needs, and skills.
+ *  @param pos World position to place the trader gnome.
+ *  @return Pointer to the newly created GnomeTrader.
+ */
 GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 {
 	QString name  = "NotSet";
@@ -181,6 +199,10 @@ GnomeTrader* GnomeFactory::createGnomeTrader( Position& pos )
 	return gnome;
 }
 
+/** @brief Restores a gnome from serialized save data.
+ *  @param values QVariantMap containing the saved gnome state.
+ *  @return Pointer to the restored Gnome.
+ */
 Gnome* GnomeFactory::createGnome( QVariantMap values )
 {
 	Gnome* gnome = new Gnome( values, g );
@@ -188,6 +210,10 @@ Gnome* GnomeFactory::createGnome( QVariantMap values )
 	return gnome;
 }
 
+/** @brief Restores a trader gnome from serialized save data.
+ *  @param values QVariantMap containing the saved trader gnome state.
+ *  @return Pointer to the restored GnomeTrader.
+ */
 GnomeTrader* GnomeFactory::createGnomeTrader( QVariantMap values )
 {
 	GnomeTrader* gnome = new GnomeTrader( values, g );

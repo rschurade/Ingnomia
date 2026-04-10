@@ -15,16 +15,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file item.h
+ *  @brief Individual item instance with material, quality, sprite, position, and
+ *         location/claim state machine for ownership tracking.
+ */
 #pragma once
 
 #include "object.h"
 
+/** @brief Where the item physically exists in the world. */
 enum class ItemLocation : uint8_t
 {
 	Ground,    // on a tile, in position index + octree
 	Carried,   // held by a creature, not in position index
 };
 
+/** @brief Reservation/claim state for an item. */
 enum class ItemClaim : uint8_t
 {
 	None,      // free to be claimed
@@ -32,12 +38,17 @@ enum class ItemClaim : uint8_t
 	Equipped,  // equipped by a creature
 };
 
+/** @brief Pair of item-type UID and material UID, used for component tracking. */
 struct ItemMaterial
 {
 	unsigned int itemUID;
 	unsigned int materialUID;
 };
 
+/** @brief Optional extra data for items that have components, food/drink values, or color.
+ *
+ *  Allocated on demand to save memory for simple items.
+ */
 struct ItemExtraData
 {
 	QList<ItemMaterial> components;
@@ -48,6 +59,12 @@ struct ItemExtraData
 	unsigned int color = 0;
 };
 
+/** @brief A single item instance in the game world.
+ *
+ *  Tracks item type and material (as DB UIDs), ownership via a location/claim
+ *  state machine, value, quality, optional components, and food/drink values.
+ *  Inherits position and sprite from Object.
+ */
 class Item : public Object
 {
 public:

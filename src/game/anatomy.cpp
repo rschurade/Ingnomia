@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file anatomy.cpp
+ *  @brief Body part system for creatures: anatomy initialization, wound tracking,
+ *         damage application, healing, and armor coverage via Equipment.
+ */
 #include "anatomy.h"
 
 #include "../base/db.h"
@@ -23,14 +27,26 @@
 
 #include <QDebug>
 
+/** @brief Default constructor. Creates an uninitialized Anatomy. Call init() to set up body parts. */
 Anatomy::Anatomy()
 {
 }
 
+/** @brief Destructor. */
 Anatomy::~Anatomy()
 {
 }
 
+/**
+ * @brief Initializes the anatomy from the database for a given creature type.
+ *
+ * Loads all body parts from the "Anatomy_Parts" DB table, setting their height,
+ * side, vitality, and HP. Also establishes parent-child relationships between parts.
+ * Falls back to "Dummy" anatomy if the given type has no root part defined.
+ *
+ * @param type The anatomy type identifier (e.g., "Humanoid", "Animal", "Fish").
+ * @param isAquatic Whether the creature is aquatic (cannot drown).
+ */
 void Anatomy::init( QString type, bool isAquatic )
 {
 	m_type = type;
@@ -88,6 +104,14 @@ void Anatomy::init( QString type, bool isAquatic )
 	}
 }
 
+/**
+ * @brief Serializes the anatomy state to a QVariantMap for save games.
+ *
+ * Stores the anatomy type, blood level, bleeding rate, status flags,
+ * aquatic flag, and the HP of each body part.
+ *
+ * @return A QVariantMap containing all anatomy state data.
+ */
 QVariantMap Anatomy::serialize() const
 {
 	QVariantMap out;
@@ -113,6 +137,14 @@ QVariantMap Anatomy::serialize() const
 	return out;
 }
 
+/**
+ * @brief Restores anatomy state from a previously serialized QVariantMap.
+ *
+ * Re-initializes the anatomy from the database, then overwrites HP values
+ * and status/blood/bleeding from the saved data.
+ *
+ * @param in The QVariantMap produced by serialize().
+ */
 void Anatomy::deserialize( QVariantMap in )
 {
 	m_type = in.value( "Type" ).toString();
@@ -135,6 +167,21 @@ void Anatomy::deserialize( QVariantMap in )
 	}
 }
 
+/**
+ * @brief Applies damage to the anatomy from an incoming attack.
+ *
+ * Determines which body part is hit based on attack height and side, then
+ * applies damage reduced by the creature's equipment armor. If the hit part
+ * is already destroyed, traverses up to parent parts. Slash/piercing attacks
+ * that deal significant damage cause bleeding. Destroying a vital part kills
+ * the creature.
+ *
+ * @param eq Pointer to the creature's Equipment for damage reduction lookup.
+ * @param dt The type of damage (slash, piercing, blunt).
+ * @param da The height of the attack (low, middle, high).
+ * @param ds The side of the attack (left, right, center/front/back).
+ * @param strength The raw damage value of the attack.
+ */
 void Anatomy::damage( Equipment* eq, DamageType dt, AnatomyHeight da, AnatomySide ds, int strength )
 {
 	// get part that is hit
@@ -316,6 +363,15 @@ void Anatomy::damage( Equipment* eq, DamageType dt, AnatomyHeight da, AnatomySid
 	}
 }
 
+/**
+ * @brief Processes per-tick bleeding and blood regeneration, and checks for status changes.
+ *
+ * If bleeding, reduces blood level; death occurs below 1000, unconsciousness below 3000.
+ * If not bleeding, slowly regenerates blood and recovers from unconsciousness above 4000.
+ * Returns true once when any status flag has changed since the last call.
+ *
+ * @return True if the anatomy status changed since the previous call.
+ */
 bool Anatomy::statusChanged()
 {
 	//m_hp = qMin( 100., m_hp + 0.025 );
@@ -354,11 +410,22 @@ bool Anatomy::statusChanged()
 	return out;
 }
 
+/**
+ * @brief Returns the current anatomy status flags (alive, wounded, unconscious, dead).
+ * @return The combined AnatomyStatus bitmask.
+ */
 AnatomyStatus Anatomy::status()
 {
 	return m_status;
 }
 
+/**
+ * @brief Checks if the creature drowns based on the fluid level on its tile.
+ *
+ * Non-aquatic creatures die when the fluid level exceeds 5.
+ *
+ * @param fluidLevel The fluid level (0-8) on the creature's current tile.
+ */
 void Anatomy::setFluidLevelonTile( unsigned char fluidLevel )
 {
 	if ( fluidLevel > 5 && !m_isAquatic )
@@ -369,6 +436,13 @@ void Anatomy::setFluidLevelonTile( unsigned char fluidLevel )
 	}
 }
 
+/**
+ * @brief Returns a random attack height for use in combat.
+ *
+ * 50% chance of middle, 25% low, 25% high.
+ *
+ * @return A randomly chosen AnatomyHeight value.
+ */
 AnatomyHeight Anatomy::randomAttackHeight() const
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -381,6 +455,12 @@ AnatomyHeight Anatomy::randomAttackHeight() const
 	return AH_HIGH;
 }
 
+/**
+ * @brief Slowly heals all wounded body parts that still have positive HP.
+ *
+ * Each damaged part regenerates 0.025 HP per call. Once all parts are fully
+ * healed, clears the AS_WOUNDED status flag.
+ */
 void Anatomy::heal()
 {
 	if ( m_status | AS_WOUNDED )

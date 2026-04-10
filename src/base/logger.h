@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file logger.h
+ * @brief In-game event logger for debug, job, craft, and combat messages.
+ */
+
 #pragma once
 
 #include <QMutex>
@@ -22,6 +26,7 @@
 
 #include <vector>
 
+/** @brief Categories of log messages. */
 enum class LogType
 {
 	DEBUG,
@@ -30,6 +35,7 @@ enum class LogType
 	COMBAT
 };
 
+/** @brief A single log entry with timestamp, type, message text, and source entity. */
 struct LogMessage
 {
 	quint64 tick;
@@ -39,6 +45,12 @@ struct LogMessage
 	unsigned int source;
 };
 
+/**
+ * @brief Thread-safe in-game event logger.
+ *
+ * Stores log messages with game tick, date/time string, type, and source entity ID.
+ * Used for debug output and the in-game log panel.
+ */
 class Logger
 {
 public:

@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file farmingmanager.h
+ *  Manages all farms, groves, pastures, and beehives. Handles creation, removal, tick dispatch, and season/time transitions.
+ */
 #pragma once
 
 
@@ -30,6 +33,7 @@ class Job;
 class JobManager;
 class World;
 
+/** @brief A beehive placed in the world, accumulating honey over time for harvesting. */
 struct Beehive
 {
 	unsigned int id = 0;
@@ -46,6 +50,7 @@ private:
 	Q_DISABLE_COPY_MOVE( Beehive )
 };
 
+/** @brief Central manager for all agricultural designations: farms, groves, pastures, and beehives. Dispatches per-tick updates and handles creation/removal. */
 class FarmingManager : public QObject
 {
 	Q_OBJECT

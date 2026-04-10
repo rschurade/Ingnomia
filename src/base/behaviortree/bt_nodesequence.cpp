@@ -15,17 +15,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodesequence.cpp
+ *  @brief Implementation of BT_NodeSequence -- stateless sequence composite.
+ */
 #include "bt_nodesequence.h"
 
+/** @brief Construct a stateless sequence node.
+ *  @param name       Debug name for the node.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeSequence::BT_NodeSequence( QString name, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeSequence::~BT_NodeSequence()
 {
 }
 
+/** @brief Tick children from index 0; return FAILURE on first failure, SUCCESS if all succeed.
+ *  @return SUCCESS, FAILURE, or RUNNING.
+ */
 BT_RESULT BT_NodeSequence::tick()
 {
 	m_status = BT_RESULT::RUNNING;

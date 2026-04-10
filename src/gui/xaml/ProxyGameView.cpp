@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyGameView.cpp
+ *  @brief ProxyGameView implementation. Constructor wires every EventConnector and
+ *         aggregator signal to matching handlers; the rest of the file is thin
+ *         pass-throughs that emit signals or relay payloads to GameModel.
+ */
 #include "ProxyGameView.h"
 
 #include "../aggregatoragri.h"
@@ -32,6 +37,8 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the ProxyGameView and wires up the (large) set of signal/slot
+///        connections to EventConnector, the various aggregators, and the game side.
 ProxyGameView::ProxyGameView( QObject* parent ) :
 	QObject( parent )
 {

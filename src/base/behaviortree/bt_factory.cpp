@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_factory.cpp
+ *  @brief Implementation of BT_Factory -- loads XML behavior trees and builds node graphs.
+ */
 #include "bt_factory.h"
 
 #include "../config.h"
@@ -24,9 +27,19 @@
 
 namespace
 {
+/** @brief Temporary node used during tree construction to hold the root child.
+ *
+ *  The factory creates a BT_NodeDummy as a throwaway parent, adds the real
+ *  root node as its child via the normal addXxx() helpers, then extracts it
+ *  with takeChild() so the dummy can be destroyed on the stack.
+ */
 class BT_NodeDummy final : public BT_Node
 {
 public:
+	/** @brief Construct the dummy with a name and blackboard reference.
+	 *  @param name       Ignored debug name.
+	 *  @param blackboard Shared blackboard (forwarded to BT_Node).
+	 */
 	BT_NodeDummy( QString name, QVariantMap& blackboard ) :
 		BT_Node( name, blackboard )
 	{
@@ -35,6 +48,9 @@ public:
 	{
 	}
 
+	/** @brief Remove and return the last child, transferring ownership to the caller.
+	 *  @return The last child node, or nullptr if no children exist.
+	 */
 	BT_Node* takeChild()
 	{
 		if ( m_children.size() )
@@ -51,6 +67,12 @@ public:
 };
 }
 
+/** @brief Load and construct a complete behavior tree from XML.
+ *  @param id         Identifier used to look up the XML document via Global::behaviorTree().
+ *  @param actions    Map of action/condition ID strings to their callback functions.
+ *  @param blackboard Shared blackboard that all nodes in the tree will reference.
+ *  @return Root node of the constructed tree, or nullptr on failure.
+ */
 BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement root = Global::behaviorTree( id );
@@ -66,6 +88,13 @@ BT_Node* BT_Factory::load( const QString id, QHash<QString, std::function<BT_RES
 	return behaviorTree;
 }
 
+/** @brief Find a \<BehaviorTree\> element by ID and build its node subtree.
+ *  @param treeID       The ID attribute to search for among \<BehaviorTree\> elements.
+ *  @param documentRoot The root DOM element containing all \<BehaviorTree\> definitions.
+ *  @param actions      Map of action/condition ID strings to callbacks.
+ *  @param blackboard   Shared blackboard reference.
+ *  @return Root node of the matching subtree, or nullptr if treeID was not found.
+ */
 BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = documentRoot.firstChildElement();
@@ -105,6 +134,13 @@ BT_Node* BT_Factory::getTree( QString treeID, QDomElement documentRoot, QHash<QS
 	return nullptr;
 }
 
+/** @brief Recursively walk DOM children and create corresponding BT_Node children.
+ *  @param parent       Parent node to attach new children to.
+ *  @param root         Current DOM element whose child elements will be processed.
+ *  @param documentRoot Top-level DOM element (needed for SubTree lookups).
+ *  @param actions      Map of action/condition ID strings to callbacks.
+ *  @param blackboard   Shared blackboard reference.
+ */
 void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QDomElement treeElement = root.firstChildElement();
@@ -121,6 +157,19 @@ void BT_Factory::getNodes( BT_Node* parent, QDomElement root, QDomElement& docum
 	}
 }
 
+/** @brief Instantiate a single BT_Node from a DOM element and add it to a parent.
+ *
+ *  Maps XML tag names (Action, Condition, Sequence, Fallback, decorators,
+ *  SubTree, etc.) to the corresponding BT_Node subclass via parent->addXxx().
+ *  For SubTree elements, recursively calls getTree() to inline the referenced tree.
+ *
+ *  @param domElement   The DOM element describing the node to create.
+ *  @param parent       Parent node that will own the new child.
+ *  @param documentRoot Top-level DOM element (needed for SubTree lookups).
+ *  @param actions      Map of action/condition ID strings to callbacks.
+ *  @param blackboard   Shared blackboard reference.
+ *  @return Pointer to the newly created node, or nullptr if creation failed.
+ */
 BT_Node* BT_Factory::createBTNode( QDomElement domElement, BT_Node* parent, QDomElement& documentRoot, QHash<QString, std::function<BT_RESULT( bool )>>& actions, QVariantMap& blackboard )
 {
 	QString nodeName = domElement.nodeName();

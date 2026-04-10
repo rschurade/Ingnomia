@@ -15,6 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file gamestate.cpp
+ *  @brief Implementation of GameState, which holds all static/global game state
+ *  variables including time, world parameters, ID generation, and
+ *  serialization/deserialization of save data.
+ */
+
 #include "gamestate.h"
 #include "../base/db.h"
 
@@ -107,6 +114,14 @@ QHash<QString, int> GameState::itemSID2ID;
 QHash<int, QString> GameState::itemID2SID;
 
 
+/** @brief Initializes the game state to default values.
+ *
+ *  Clears material and item lookup maps, clears the watched item list,
+ *  and resets the next ID counter to 1000000 (reserving lower IDs for
+ *  static/DB-defined entities).
+ *
+ *  @return Always returns true.
+ */
 bool GameState::init()
 {
 	GameState::materialSID2ID.clear();
@@ -118,6 +133,14 @@ bool GameState::init()
 	return true;
 }
 
+/** @brief Serializes all game state variables into a QVariantMap for saving.
+ *
+ *  Writes every static game state field (time, world config, military,
+ *  neighbors, techs, watched items, material/item ID mappings, camera
+ *  state, etc.) into the output map for persistence to disk.
+ *
+ *  @param out The QVariantMap to populate with serialized game state data.
+ */
 void GameState::serialize( QVariantMap& out )
 {
 	out.insert( "alarm", alarm );
@@ -225,6 +248,15 @@ void GameState::serialize( QVariantMap& out )
 
 }
 
+/** @brief Loads game state from a saved QVariantMap.
+ *
+ *  Restores all static game state fields from the provided map. Handles
+ *  backward compatibility with older save formats (e.g. "game_day" prefix,
+ *  individual tech entries vs. combined techs map, missing item/material
+ *  ID mappings). Normalizes map keys by lower-casing the first character.
+ *
+ *  @param vals The QVariantMap containing saved game state data.
+ */
 void GameState::load( QVariantMap& vals )
 {
 	// compatibility with older saves
@@ -402,6 +434,13 @@ void GameState::load( QVariantMap& vals )
 	}
 }
 
+/** @brief Generates a unique entity ID.
+ *
+ *  Returns the current value of the internal ID counter and increments it.
+ *  IDs are monotonically increasing and persist across save/load.
+ *
+ *  @return A new unique unsigned integer ID.
+ */
 unsigned int GameState::createID()
 {
 	return nextID++;

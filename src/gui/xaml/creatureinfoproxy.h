@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureinfoproxy.h
+ *  @brief Qt-side proxy bridging CreatureInfoModel with AggregatorCreatureInfo.
+ */
 #pragma once
 
 #include "../aggregatorcreatureinfo.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards user actions from CreatureInfoModel into AggregatorCreatureInfo and pushes
+///        incoming GuiCreatureInfo updates back into the model.
 class CreatureInfoProxy : public QObject
 {
 	Q_OBJECT
@@ -38,7 +43,7 @@ public:
 
 
 private:
-	IngnomiaGUI::CreatureInfoModel* m_parent = nullptr;
+	IngnomiaGUI::CreatureInfoModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 private slots:
 	void onUpdateInfo( const GuiCreatureInfo& info );

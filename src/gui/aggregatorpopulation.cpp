@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorpopulation.cpp
+ *  @brief AggregatorPopulation implementation: builds the population/schedule grids for the
+ *         GUI, handles skill activation edits, profession management, and sort modes.
+ */
 #include "aggregatorpopulation.h"
 
 #include "../base/counter.h"
@@ -28,6 +32,9 @@
 
 #include <QDebug>
 
+/// @brief Constructs the AggregatorPopulation and pre-builds the skill template list from
+///        the SkillGroups DB table (name, group, color resolved once per skill).
+/// @param parent Qt parent object.
 AggregatorPopulation::AggregatorPopulation( QObject* parent ) :
 	QObject(parent)
 {
@@ -49,11 +56,17 @@ AggregatorPopulation::AggregatorPopulation( QObject* parent ) :
 	}
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorPopulation::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Rebuilds the population grid: for every gnome snapshots its name, profession, and
+///        per-skill level/active/xp, applies the current sort mode (by name, profession, or
+///        a specific skill column), and emits signalPopulationUpdate along with the current
+///        profession list.
 void AggregatorPopulation::onRequestPopulationUpdate()
 {
 	if( !g ) return;
@@ -120,6 +133,8 @@ void AggregatorPopulation::onRequestPopulationUpdate()
 	emit signalPopulationUpdate( m_populationInfo );
 }
 
+/// @brief Emits a refreshed GuiGnomeInfo for a single gnome without rebuilding the whole grid.
+/// @param gnomeID Creature UID.
 void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -147,6 +162,10 @@ void AggregatorPopulation::onUpdateSingleGnome( unsigned int gnomeID )
 	}
 }
 
+/// @brief Toggles a single skill active flag for one gnome.
+/// @param gnomeID Creature UID.
+/// @param skillID Skill string ID.
+/// @param value   New active flag.
 void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, QString skillID, bool value )
 {
 	if( !g ) return;
@@ -157,6 +176,9 @@ void AggregatorPopulation::onSetSkillActive( unsigned int gnomeID, QString skill
 	}
 }
 
+/// @brief Sets the active flag for every skill on one gnome and refreshes that row.
+/// @param gnomeID Creature UID.
+/// @param value   New active flag.
 void AggregatorPopulation::onSetAllSkills( unsigned int gnomeID, bool value )
 {
 	if( !g ) return;
@@ -171,6 +193,9 @@ void AggregatorPopulation::onSetAllSkills( unsigned int gnomeID, bool value )
 	}
 }
 	
+/// @brief Toggles one skill active flag on every gnome at once and refreshes the whole grid.
+/// @param skillID Skill string ID.
+/// @param value   New active flag.
 void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
 {
 	if( !g ) return;
@@ -181,6 +206,9 @@ void AggregatorPopulation::onSetAllGnomes( QString skillID, bool value )
 	onRequestPopulationUpdate();
 }
 
+/// @brief Assigns a profession to a gnome (no-op if unchanged) and refreshes that row.
+/// @param gnomeID    Creature UID.
+/// @param profession Profession name.
 void AggregatorPopulation::onSetProfession( unsigned int gnomeID, QString profession )
 {
 	if( !g ) return;
@@ -196,6 +224,9 @@ void AggregatorPopulation::onSetProfession( unsigned int gnomeID, QString profes
 	}
 }
 
+/// @brief Changes the current sort column. If the same column is picked again, flips the
+///        direction (ascending ⇄ descending). Rebuilds the population grid afterwards.
+/// @param mode Sort mode ("Name", "Prof", or a skill string ID).
 void AggregatorPopulation::onSortGnomes( QString mode )
 {
 	if( !g ) return;
@@ -211,6 +242,8 @@ void AggregatorPopulation::onSortGnomes( QString mode )
 	onRequestPopulationUpdate();
 }
 
+/// @brief Builds the full schedule grid (one row per gnome with 24 hours each) and emits
+///        signalScheduleUpdate.
 void AggregatorPopulation::onRequestSchedules()
 {
 	if( !g ) return;
@@ -228,6 +261,10 @@ void AggregatorPopulation::onRequestSchedules()
 	emit signalScheduleUpdate( m_scheduleInfo );
 }
 	
+/// @brief Sets a single hour cell on one gnome's schedule and emits a single-gnome refresh.
+/// @param gnomeID  Creature UID.
+/// @param hour     Hour index (0–23).
+/// @param activity New activity enum value.
 void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, ScheduleActivity activity )
 {
 	if( !g ) return;
@@ -245,6 +282,9 @@ void AggregatorPopulation::onSetSchedule( unsigned int gnomeID, int hour, Schedu
 	}
 }
 
+/// @brief Sets every hour of one gnome's schedule to the same activity and refreshes that row.
+/// @param gnomeID  Creature UID.
+/// @param activity Activity to apply to all 24 hours.
 void AggregatorPopulation::onSetAllHours( unsigned int gnomeID, ScheduleActivity activity )
 {
 	if( !g ) return;
@@ -265,6 +305,10 @@ void AggregatorPopulation::onSetAllHours( unsigned int gnomeID, ScheduleActivity
 	}
 }
 	
+/// @brief Applies one activity to the same hour column on every gnome and rebuilds the
+///        schedule grid.
+/// @param hour     Hour index (0–23).
+/// @param activity Activity to apply.
 void AggregatorPopulation::onSetHourForAll( int hour, ScheduleActivity activity )
 {
 	if( !g ) return;
@@ -275,12 +319,15 @@ void AggregatorPopulation::onSetHourForAll( int hour, ScheduleActivity activity 
 	onRequestSchedules();
 }
 
+/// @brief Emits the list of profession names to the GUI.
 void AggregatorPopulation::onRequestProfessions()
 {
 	if( !g ) return;
 	emit signalProfessionList( g->gm()->professions() );
 }
-	
+
+/// @brief Emits the list of skills used by the given profession (for the profession editor).
+/// @param profession Profession name.
 void AggregatorPopulation::onRequestSkills( QString profession )
 {
 	if( !g ) return;
@@ -299,19 +346,26 @@ void AggregatorPopulation::onRequestSkills( QString profession )
 	emit signalProfessionSkills( profession, m_profSkills );
 }
 
+/// @brief Updates a profession's name and skill set from the profession editor.
+/// @param name    Current profession name.
+/// @param newName New profession name (may equal @p name).
+/// @param skills  New list of skill IDs for this profession.
 void AggregatorPopulation::onUpdateProfession( QString name, QString newName, QStringList skills )
 {
 	if( !g ) return;
 	g->gm()->modifyProfession( name, newName, skills );
 }
 
+/// @brief Removes a profession and refreshes the profession list in the GUI.
+/// @param name Profession name to delete.
 void AggregatorPopulation::onDeleteProfession( QString name )
 {
 	if( !g ) return;
 	g->gm()->removeProfession( name );
 	emit signalProfessionList( g->gm()->professions() );
 }
-	
+
+/// @brief Creates a new default-named profession and asks the GUI to open it in the editor.
 void AggregatorPopulation::onNewProfession()
 {
 	if( !g ) return;

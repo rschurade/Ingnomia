@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file farm.cpp
+ *  @brief Farm plot implementation: crop management, tilling, planting, harvesting,
+ *         and auto-harvest threshold logic.
+ */
 #include "farm.h"
 
 #include "../base/config.h"
@@ -31,6 +35,8 @@
 
 #include <QDebug>
 
+/** @brief Constructs farm properties by deserializing from a variant map.
+ *  @param in Variant map containing plant type, seed item, harvest settings, and auto-harvest thresholds. */
 FarmProperties::FarmProperties( QVariantMap& in )
 {
 	plantType = in.value( "PlantType" ).toString();
@@ -55,6 +61,8 @@ FarmProperties::FarmProperties( QVariantMap& in )
 	autoHarvestItem2Max = in.value( "AutoHarvestItem2Max" ).toUInt();
 }
 
+/** @brief Serializes farm properties into a variant map.
+ *  @param out Output variant map. */
 void FarmProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "farm" );
@@ -81,6 +89,9 @@ void FarmProperties::serialize( QVariantMap& out ) const
 	out.insert( "AutoHarvestItem2Max", autoHarvestItem2Max );
 }
 
+/** @brief Constructs a new farm from a set of designated tiles.
+ *  @param tiles List of position/validity pairs for the farm fields.
+ *  @param game Pointer to the owning Game instance. */
 Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )
 {
@@ -105,6 +116,9 @@ Farm::Farm( QList<QPair<Position, bool>> tiles, Game* game ) :
 	}
 }
 
+/** @brief Constructs a farm from serialized save data.
+ *  @param vals Variant map containing saved farm state.
+ *  @param game Pointer to the owning Game instance. */
 Farm::Farm( QVariantMap vals, Game* game ) :
 	WorldObject( vals, game ),
 	m_properties( vals )
@@ -134,6 +148,8 @@ Farm::Farm( QVariantMap vals, Game* game ) :
 	}
 }
 
+/** @brief Serializes the farm state including fields and active jobs.
+ *  @return QVariant containing the serialized farm data. */
 QVariant Farm::serialize() const
 {
 	QVariantMap out;
@@ -156,17 +172,23 @@ QVariant Farm::serialize() const
 	return out;
 }
 
+/** @brief Destructor. */
 Farm::~Farm()
 {
 
 }
 
+/** @brief Adds a tile to the farm and sets the TF_FARM flag on the world tile.
+ *  @param pos Position of the tile to add. */
 void Farm::addTile( const Position & pos )
 {
 	m_fields.insert( pos.toInt(), FarmField(pos, nullptr) );
 	g->w()->setTileFlag( pos, TileFlag::TF_FARM );
 }
 
+/** @brief Per-tick farm update: for each field without an active job, checks for harvestable
+ *         plants, untilled soil, or tilled soil needing planting, and creates appropriate jobs.
+ *  @param tick Current game tick. */
 void Farm::onTick( quint64 tick )
 {
 	if ( !m_active )
@@ -233,6 +255,8 @@ void Farm::onTick( quint64 tick )
 	//updateAutoFarmer();
 }
 
+/** @brief Checks auto-harvest thresholds for seeds and harvest items, and enables or
+ *         disables harvesting based on min/max inventory counts. */
 void Farm::updateAutoFarmer()
 {
 	QString seedMaterialID = DB::select( "Material", "Plants", m_properties.plantType ).toString();
@@ -333,11 +357,16 @@ void Farm::updateAutoFarmer()
 	}
 }
 
+/** @brief Returns whether this farm can be safely deleted.
+ *  @return Always true. */
 bool Farm::canDelete()
 {
 	return true; //m_jobsOut.isEmpty();
 }
 
+/** @brief Removes a tile from the farm, cancels any active job on it, and clears the TF_FARM flag.
+ *  @param pos Position of the tile to remove.
+ *  @return True if the farm is now empty (last tile removed). */
 bool Farm::removeTile( const Position & pos )
 {
 	auto id = pos.toInt();
@@ -366,6 +395,11 @@ bool Farm::removeTile( const Position & pos )
 	return m_fields.empty();
 }
 
+/** @brief Retrieves farm statistics: total plots, tilled count, planted count, and crops ready to harvest.
+ *  @param numPlots Output: total number of farm fields.
+ *  @param tilled Output: number of tilled fields.
+ *  @param planted Output: number of fields with growing plants.
+ *  @param cropReady Output: number of fields with harvestable crops. */
 void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 {
 	numPlots  = m_fields.size();
@@ -396,11 +430,15 @@ void Farm::getInfo( int& numPlots, int& tilled, int& planted, int& cropReady )
 	}
 }
 
+/** @brief Returns the total number of tiles in this farm.
+ *  @return Tile count. */
 int Farm::countTiles()
 {
 	return m_fields.size();
 }
 
+/** @brief Sets the crop type for this farm and looks up the corresponding seed item ID.
+ *  @param plantID Plant type SID from the Plants DB table. */
 void Farm::setPlantType( QString plantID )
 {
 	m_properties.plantType = plantID;
@@ -409,6 +447,8 @@ void Farm::setPlantType( QString plantID )
 	m_properties.seedItem = seedItemID;
 }
 
+/** @brief Enables or disables harvesting on this farm.
+ *  @param harvest True to enable harvest jobs. */
 void Farm::setHarvest( bool harvest )
 {
 	m_properties.harvest = harvest;

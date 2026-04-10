@@ -15,20 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_noderepeatuntilsuccess.cpp
+ *  @brief Implementation of BT_NodeRepeatUntilSuccess -- retry decorator.
+ */
 #include "bt_noderepeatuntilsuccess.h"
 
 #include <QDebug>
 
+/** @brief Construct a repeat-until-success decorator.
+ *  @param name       Debug name for the node.
+ *  @param num        Maximum number of attempts before giving up.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeRepeatUntilSuccess::BT_NodeRepeatUntilSuccess( QString name, int num, QVariantMap& blackboard ) :
 	BT_Node( name, blackboard ),
 	m_num( num )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeRepeatUntilSuccess::~BT_NodeRepeatUntilSuccess()
 {
 }
 
+/** @brief Serialize node state including the remaining attempt counter.
+ *  @return QVariantMap with Name, ID, Status, Num, and Childs.
+ */
 QVariantMap BT_NodeRepeatUntilSuccess::serialize()
 {
 	QVariantMap out;
@@ -47,6 +59,9 @@ QVariantMap BT_NodeRepeatUntilSuccess::serialize()
 	return out;
 }
 
+/** @brief Restore node state including the attempt counter from a serialized map.
+ *  @param in Map produced by serialize().
+ */
 void BT_NodeRepeatUntilSuccess::deserialize( QVariantMap in )
 {
 	if ( m_name != in.value( "Name" ).toString() )
@@ -88,6 +103,9 @@ void BT_NodeRepeatUntilSuccess::deserialize( QVariantMap in )
 	}
 }
 
+/** @brief Tick the child up to m_num times; return SUCCESS early if child succeeds.
+ *  @return SUCCESS on child success, FAILURE after all attempts exhausted, or RUNNING.
+ */
 BT_RESULT BT_NodeRepeatUntilSuccess::tick()
 {
 	while ( m_index < m_num )

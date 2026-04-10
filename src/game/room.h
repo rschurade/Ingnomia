@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file room.h
+ *  Room designation: enclosure/roof detection, furniture placement, bed/chair assignment, value calculation, and alarm bells.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -29,6 +32,7 @@
 #include <QPair>
 #include <QtGlobal>
 
+/** @brief Classification of room purpose. */
 enum class RoomType : unsigned char
 {
 	NotSet,
@@ -38,6 +42,7 @@ enum class RoomType : unsigned char
 	Hospital
 };
 
+/** @brief A single tile within a room, tracking position, furniture, bed/chair state, and creature occupancy. */
 struct RoomTile
 {
 	Position pos;
@@ -53,6 +58,7 @@ struct RoomTile
 
 class Job;
 
+/** @brief Represents a room designation with enclosure detection, furniture tracking, bed/chair management, and value calculation. */
 class Room : public WorldObject
 {
 	Q_DISABLE_COPY_MOVE( Room )

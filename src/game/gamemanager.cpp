@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gamemanager.cpp
+ *  @brief Game lifecycle management: new game creation, save/load, pause, speed control.
+ */
 #include "gamemanager.h"
 
 #include "../base/config.h"
@@ -72,6 +75,9 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
+/** @brief Constructs the GameManager, initializes event connector, utility, and new game settings.
+ *  @param parent The parent QObject.
+ */
 GameManager::GameManager( QObject* parent ) :
 	QObject( parent )
 {
@@ -87,6 +93,7 @@ GameManager::GameManager( QObject* parent ) :
 
 }
 
+/** @brief Destructor. Deletes the active game instance if one exists. */
 GameManager::~GameManager()
 {
 	if ( m_game )
@@ -95,11 +102,17 @@ GameManager::~GameManager()
 	}
 }
 
+/** @brief Returns the event connector used for GUI signal routing.
+ *  @return Pointer to the EventConnector instance.
+ */
 EventConnector* GameManager::eventConnector()
 {
 	return m_eventConnector;
 }
 
+/** @brief Shows or hides the main menu, pausing the game when shown.
+ *  @param value True to show menu, false to hide it.
+ */
 void GameManager::setShowMainMenu( bool value )
 {
 	m_eventConnector->emitPause( true );
@@ -111,6 +124,7 @@ void GameManager::setShowMainMenu( bool value )
 	}
 }
 
+/** @brief Ends the current game session, cleaning up the game instance and resetting globals. */
 void GameManager::endCurrentGame()
 {
 	m_eventConnector->emitStopGame();
@@ -123,6 +137,7 @@ void GameManager::endCurrentGame()
 	}
 }
 
+/** @brief Starts a new game: saves settings, creates the world, and resumes. */
 void GameManager::startNewGame()
 {
 	qDebug() << "GameManger: New game";
@@ -138,11 +153,13 @@ void GameManager::startNewGame()
 	m_eventConnector->sendResume();
 }
 
+/** @brief Placeholder for new game setup logic (checking save folder existence). */
 void GameManager::setUpNewGame()
 {
 	// check if folder exists, set new save folder name if yes
 }
 
+/** @brief Loads the most recently saved game, sorted by modification time. */
 void GameManager::continueLastGame()
 {
 	//get last save
@@ -173,6 +190,7 @@ void GameManager::continueLastGame()
 	m_eventConnector->sendLoadGameDone( false );
 }
 
+/** @brief Resets global state and reinitializes GameState and translation strings. */
 void GameManager::init()
 {
 	m_eventConnector->emitStopGame();
@@ -193,6 +211,9 @@ void GameManager::init()
 	}
 }
 
+/** @brief Loads a saved game from the specified folder.
+ *  @param folder Path to the save directory.
+ */
 void GameManager::loadGame( QString folder )
 {
 	init();
@@ -217,6 +238,7 @@ void GameManager::loadGame( QString folder )
 	}
 }
 
+/** @brief Creates a new game: initializes state, generates the world, and sets up globals. */
 void GameManager::createNewGame()
 {
 	init();
@@ -233,6 +255,7 @@ void GameManager::createNewGame()
 }
 
 
+/** @brief Post-creation initialization: connects signals between game subsystems and GUI aggregators. */
 void GameManager::postCreationInit()
 {
 	m_game->mil()->init();
@@ -307,11 +330,15 @@ void GameManager::postCreationInit()
 	m_eventConnector->emitStartGame();
 }
 
+/** @brief Handles status messages from the world generator (logs them).
+ *  @param message The status message to log.
+ */
 void GameManager::onGeneratorMessage( QString message )
 {
 	qDebug() << message;
 }
 
+/** @brief Saves the current game to disk, pausing while saving and resuming afterward. */
 void GameManager::saveGame()
 {
 	if( m_game )
@@ -326,6 +353,9 @@ void GameManager::saveGame()
 	}
 }
 
+/** @brief Returns the current game speed.
+ *  @return The current GameSpeed, or Normal if no game is active.
+ */
 GameSpeed GameManager::gameSpeed()
 {
 	if( m_game )
@@ -334,6 +364,9 @@ GameSpeed GameManager::gameSpeed()
 	}
 	return GameSpeed::Normal;
 }
+/** @brief Sets the game speed and notifies the GUI.
+ *  @param speed The desired GameSpeed.
+ */
 void GameManager::setGameSpeed( GameSpeed speed )
 {
 	if( m_game )
@@ -346,6 +379,9 @@ void GameManager::setGameSpeed( GameSpeed speed )
 	}
 }
 
+/** @brief Returns whether the game is currently paused.
+ *  @return True if paused or no game is active.
+ */
 bool GameManager::paused()
 {
 	if( m_game )
@@ -355,6 +391,9 @@ bool GameManager::paused()
 	return true;
 }
 
+/** @brief Pauses or unpauses the game and notifies the GUI.
+ *  @param value True to pause, false to unpause.
+ */
 void GameManager::setPaused( bool value )
 {
 	if( m_game )
@@ -366,6 +405,9 @@ void GameManager::setPaused( bool value )
 		}
 	}
 }
+/** @brief Forwards a heartbeat response value to the game (used for tick synchronization).
+ *  @param value The heartbeat response value.
+ */
 void GameManager::setHeartbeatResponse( int value )
 {
 	if( m_game )
@@ -374,6 +416,9 @@ void GameManager::setHeartbeatResponse( int value )
 	}
 }
 
+/** @brief Returns a pointer to the active Game instance.
+ *  @return Pointer to the Game, or nullptr if no game is active.
+ */
 Game* GameManager::game()
 { 
 	return m_game; 

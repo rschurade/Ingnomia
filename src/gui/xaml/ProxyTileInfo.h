@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyTileInfo.h
+ *  @brief Qt-side proxy bridging TileInfoModel with AggregatorTileInfo.
+ */
 #pragma once
 
 #include "../aggregatortileinfo.h"
@@ -22,6 +25,9 @@
 
 #include <QObject>
 
+/// @brief Forwards Tile Info window actions (terrain commands, mechanism toggles, tennant
+///        assignment, automaton config) to the tile info aggregator and pushes incoming
+///        tile / stockpile payloads back into the model.
 class ProxyTileInfo : public QObject
 {
 	Q_OBJECT
@@ -47,7 +53,7 @@ public:
 	void setAutomatonCore( unsigned int id, QString core );
 
 private:
-	IngnomiaGUI::TileInfoModel* m_parent = nullptr;
+	IngnomiaGUI::TileInfoModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 private slots:
 	void onUpdateTileInfo( const GuiTileInfo& info );

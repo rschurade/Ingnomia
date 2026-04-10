@@ -15,10 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeconditional.h
+ *  @brief Leaf node that evaluates a condition callback.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Leaf condition node -- calls a std::function and returns its result.
+ *
+ *  Behaves like BT_NodeAction but is semantically a condition check (typically
+ *  returning SUCCESS or FAILURE, not RUNNING).  The callback receives a boolean
+ *  @c halt flag, though conditions normally ignore it.  Because this is a leaf,
+ *  all child-adding overrides return @c nullptr.
+ */
 class BT_NodeConditional final : public BT_Node
 {
 public:
@@ -70,5 +80,5 @@ public:
 	};
 
 private:
-	std::function<BT_RESULT( bool )> m_callback;
+	std::function<BT_RESULT( bool )> m_callback; ///< Condition function; param is true when halting.
 };

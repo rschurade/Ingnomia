@@ -16,11 +16,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file converters.cpp
+ *  @brief Converter implementations: parse a "R G B" string from the bound view-model
+ *         component and produce a SolidColorBrush. Both converters fall back to a magenta
+ *         placeholder when the input is malformed so missing data is visible in the GUI.
+ */
 #include "converters.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
+/// @brief Parses @p value's ToString() as space-separated "R G B" channel ints and produces
+///        a bright SolidColorBrush. Falls back to magenta on parse failure.
+/// @param value      Source binding (a BaseComponent whose ToString() yields the colour string).
+/// @param targetType Requested target Noesis type; only Brush is handled.
+/// @param result     Output Noesis pointer set to the constructed brush on success.
+/// @return true if a brush was produced, false if @p targetType is not Brush.
 bool ColorToBrushConverter::TryConvert( BaseComponent* value, const Type* targetType, BaseComponent*, Noesis::Ptr<BaseComponent>& result )
 {
     if ( targetType == Noesis::TypeOf<Brush>() )
@@ -43,6 +54,12 @@ bool ColorToBrushConverter::TryConvert( BaseComponent* value, const Type* target
     return false;
 }
 
+/// @brief Same as ColorToBrushConverter but halves each channel so the resulting brush is
+///        the darker companion shade. Falls back to a darker magenta on parse failure.
+/// @param value      Source binding.
+/// @param targetType Requested target type; only Brush is handled.
+/// @param result     Output Noesis pointer set to the constructed brush on success.
+/// @return true if a brush was produced, false otherwise.
 bool ColorToBrushConverterDark::TryConvert( BaseComponent* value, const Type* targetType, BaseComponent*, Noesis::Ptr<BaseComponent>& result )
 {
     if ( targetType == Noesis::TypeOf<Brush>() )

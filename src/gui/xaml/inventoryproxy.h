@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventoryproxy.h
+ *  @brief Qt-side proxy bridging InventoryModel with AggregatorInventory.
+ */
 #pragma once
 
 #include "../aggregatorinventory.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards inventory window actions (refresh request, watch toggle) to AggregatorInventory
+///        and pushes incoming category-tree updates back into the model.
 class InventoryProxy : public QObject
 {
 	Q_OBJECT
@@ -35,7 +40,7 @@ public:
     void setActive( bool active, const GuiWatchedItem& gwi );
 
 private:
-	IngnomiaGUI::InventoryModel* m_parent = nullptr;
+	IngnomiaGUI::InventoryModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 
 

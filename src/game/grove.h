@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file grove.h
+ *  Tree grove designation: tree planting, fruit picking, felling management, and auto-forester thresholds.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -30,12 +33,14 @@
 class Job;
 class Game;
 
+/** @brief A single tile within a grove, holding its position and current job reference. */
 struct GroveField
 {
 	Position pos;
 	QWeakPointer<Job> job;
 };
 
+/** @brief Job types that can be performed on grove tiles. */
 enum GroveJobs : int
 {
 	PlantTree,
@@ -43,6 +48,7 @@ enum GroveJobs : int
 	FellTree
 };
 
+/** @brief Persistent properties of a grove: tree type, planting/picking/felling flags, and auto-forester thresholds. */
 struct GroveProperties
 {
 	QString treeType = "";
@@ -65,6 +71,7 @@ struct GroveProperties
 	GroveProperties( QVariantMap& in );
 };
 
+/** @brief Represents a tree grove designation, managing tree planting, fruit harvesting, and felling across its tiles. */
 class Grove : public WorldObject
 {
 	friend class AggregatorAgri;

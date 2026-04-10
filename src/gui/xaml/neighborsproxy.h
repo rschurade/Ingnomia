@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighborsproxy.h
+ *  @brief Qt-side proxy bridging NeighborsModel with AggregatorNeighbors.
+ */
 #pragma once
 
 #include "../aggregatorneighbors.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards Neighbors window actions (request lists, start mission) to AggregatorNeighbors
+///        and pushes incoming kingdom/mission/available-gnome lists back into the model.
 class NeighborsProxy : public QObject
 {
 	Q_OBJECT
@@ -35,7 +40,7 @@ public:
 	void startMission( MissionType type, MissionAction action, unsigned int targetKingdom, unsigned int gnomeID );
 
 private:
-	IngnomiaGUI::NeighborsModel* m_parent = nullptr;
+	IngnomiaGUI::NeighborsModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 
 

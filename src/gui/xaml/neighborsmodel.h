@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighborsmodel.h
+ *  @brief View model and helper-component types for the Neighbors / diplomacy window.
+ *         Hosts the kingdom list, mission list, and a mission-creation overlay with
+ *         per-action gnome dropdown.
+ */
 #pragma once
 
 #include "../aggregatorneighbors.h"
@@ -43,6 +48,8 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the kingdom list. Mirrors GuiNeighborInfo (distance, attitude, wealth,
+///        economy, military) and exposes per-row visibility flags for the mission buttons.
 class NeighborKingdomInfo final : public Noesis::BaseComponent
 {
 public:
@@ -85,6 +92,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the active missions list (title, current action, time remaining).
 class MissionInfo final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -107,6 +115,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the gnome dropdown shown in the mission-creation overlay (also reused
+///        for the action picker).
 class AvailableGnome final : public Noesis::BaseComponent
 {
 public:
@@ -126,11 +136,12 @@ private:
 };
 
 
+/// @brief Which tab of the Neighbors window is currently visible.
 enum class NeighborsPage
 {
-	First,
-	Second,
-	Third
+	First,   ///< Kingdom list tab.
+	Second,  ///< Active missions tab.
+	Third    ///< (reserved for a third page; currently unused)
 };
 
 
@@ -140,14 +151,21 @@ enum class NeighborsPage
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Neighbors / diplomacy window view model. Talks to NeighborsProxy to fetch kingdom
+///        and mission lists, exposes them to XAML, and routes mission-creation actions back
+///        through the proxy.
 class NeighborsModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	NeighborsModel();
 
+	/// @brief Replaces the kingdom list with fresh NeighborKingdomInfo rows.
 	void neighborsUpdate( const QList<GuiNeighborInfo>& infos );
+	/// @brief Replaces the active missions list with fresh MissionInfo rows.
 	void missionsUpdate( const QList<Mission>& missions );
+	/// @brief Updates the available-gnomes dropdown for the mission-creation overlay.
 	void updateAvailableGnomes( const QList<GuiAvailableGnome>& gnomes );
+	/// @brief Updates a single mission's row in the active list (e.g. after action change).
 	void updateMission( const Mission& mission );
 
 
