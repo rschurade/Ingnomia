@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file TileInfo.xaml.cpp
+ *  @brief TileInfo code-behind implementation. Thin stub: constructor loads the XAML and
+ *         hooks Loaded; OnLoaded and ConnectEvent are empty because the window binds
+ *         entirely through TileInfoModel.
+ */
 #include "TileInfo.xaml.h"
 
 using namespace IngnomiaGUI;

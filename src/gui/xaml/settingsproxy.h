@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file settingsproxy.h
+ *  @brief Qt-side proxy that bridges the SettingsModel view model to
+ *         AggregatorSettings via queued signal/slot connections.
+ */
 #pragma once
 
 //#include "../aggregatorsettings.h"
@@ -23,6 +27,8 @@
 
 #include <QObject>
 
+/// @brief Bridges SettingsModel to AggregatorSettings. Forwards setter calls as signals
+///        onto the game thread and relays settings snapshots back to the view model.
 class SettingsProxy : public QObject
 {
 	Q_OBJECT
@@ -42,7 +48,7 @@ public:
 	void setAudioMasterVolume( float value );
 
 private:
-	IngnomiaGUI::SettingsModel* m_parent = nullptr;
+	IngnomiaGUI::SettingsModel* m_parent = nullptr; ///< Owning view model for relaying updates.
 
 
 

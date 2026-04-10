@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file WaitPage.xaml.cpp
+ *  @brief WaitPage code-behind implementation. Thin stub: the constructor loads the XAML
+ *         and hooks Loaded; OnLoaded and ConnectEvent are empty (no view model).
+ */
 #include "WaitPage.xaml.h"
 
 using namespace IngnomiaGUI;

@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file StockpileProxy.cpp
+ *  @brief StockpileProxy implementation. Constructor wires the snapshot slots and the
+ *         setter signals between StockpileModel and AggregatorStockpile; the rest of
+ *         the file is thin pass-through forwarders.
+ */
 #include "StockpileProxy.h"
 
 #include "../../base/db.h"
@@ -28,6 +33,8 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the StockpileProxy and wires the update-info / update-content slots
+///        and the basic-options / active setter signals via queued connections.
 StockpileProxy::StockpileProxy( QObject* parent ) :
 	QObject( parent )
 {

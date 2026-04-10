@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file settingsproxy.cpp
+ *  @brief SettingsProxy implementation. Constructor wires every setter signal to the
+ *         matching AggregatorSettings slot and relays the settings snapshot back; the
+ *         rest of the file is thin pass-through forwarders.
+ */
 #include "settingsproxy.h"
 
 #include "../../base/global.h"
@@ -22,6 +27,8 @@
 
 #include <QDebug>
 
+/// @brief Constructs the SettingsProxy and wires every setter signal to AggregatorSettings
+///        and the snapshot slot back to this proxy via queued connections.
 SettingsProxy::SettingsProxy( QObject* parent ) :
 	QObject( parent )
 {
