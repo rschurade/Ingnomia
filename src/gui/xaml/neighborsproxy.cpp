@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighborsproxy.cpp
+ *  @brief NeighborsProxy implementation: connects every signal/slot pair between
+ *         NeighborsModel and AggregatorNeighbors. The remaining functions are thin
+ *         pass-throughs that emit signals or relay incoming list updates to the model.
+ */
 #include "neighborsproxy.h"
 
 #include "../../base/global.h"
@@ -22,6 +27,7 @@
 
 #include <QDebug>
 
+/// @brief Constructs the NeighborsProxy and wires up all aggregator signal/slot connections.
 NeighborsProxy::NeighborsProxy( QObject* parent ) :
 	QObject( parent )
 {

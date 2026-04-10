@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file militaryproxy.h
+ *  @brief Qt-side proxy bridging MilitaryModel with AggregatorMilitary.
+ */
 #pragma once
 
 #include "../aggregatormilitary.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards Military window edits (squad/role/priority CRUD, attitude, armor) into
+///        AggregatorMilitary and pushes incoming squad/role/priority lists back into the model.
 class MilitaryProxy : public QObject
 {
 	Q_OBJECT
@@ -54,7 +59,7 @@ public:
 	void setRoleCivilian( unsigned int roleID, bool value );
 
 private:
-	IngnomiaGUI::MilitaryModel* m_parent = nullptr;
+	IngnomiaGUI::MilitaryModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 
 

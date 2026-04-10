@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighbors.xaml.cpp
+ *  @brief NeighborsGui user-control implementation: loads Neighbors.xaml on construction.
+ */
 #include "neighbors.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the NeighborsGui user control and registers the Loaded delegate.
 NeighborsGui::NeighborsGui()
 {
 	Loaded() += MakeDelegate( this, &NeighborsGui::OnLoaded );
@@ -28,16 +32,19 @@ NeighborsGui::NeighborsGui()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the Neighbors.xaml resource.
 void NeighborsGui::InitializeComponent()
 {
 	GUI::LoadComponent( this, "Neighbors.xaml" );
 }
 
+/// @brief Noesis event-connection callback. NeighborsGui has no code-behind events.
 bool NeighborsGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; NeighborsModel handles state.
 void NeighborsGui::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

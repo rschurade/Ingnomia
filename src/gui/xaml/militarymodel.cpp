@@ -27,11 +27,18 @@
 
 #include <QDebug>
 
+/** @file militarymodel.cpp
+ *  @brief MilitaryModel and helper-component implementations. Constructors wrap Gui*Info
+ *         payloads, set/get accessors and command handlers route edits through MilitaryProxy.
+ *         Trivial Get/Set property accessors are XAML binding plumbing.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a priority row from a GuiTargetPriority and registers the move-up/down commands.
 SquadPriority::SquadPriority( const GuiTargetPriority& prio, unsigned int squadID, MilitaryProxy* proxy ) :
 	m_name( prio.name.toStdString().c_str() ),
 	m_idString( prio.id.toStdString().c_str() ),
@@ -113,6 +120,7 @@ void SquadPriority::onMoveDownCmd( BaseComponent* param )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a roster gnome row, including arrow visibility flags for first/last positions.
 SquadGnome::SquadGnome( const GuiSquadGnome& gnome, bool showLeft, bool showRight, bool showX, MilitaryProxy* proxy ) :
 	m_id( gnome.id ),
 	m_idString( QString::number( gnome.id ).toStdString().c_str() ),
@@ -130,6 +138,8 @@ RoleItem* SquadGnome::getRole() const
 	return m_role;
 }
 	
+/// @brief Setter for the role dropdown on this squad row. Forwards the chosen role's UID
+///        to the proxy so the gnome's military role is updated game-side.
 void SquadGnome::setRole( RoleItem* role )
 {
 	if( m_role != role )
@@ -143,6 +153,7 @@ void SquadGnome::setRole( RoleItem* role )
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a SquadItem from a GuiSquad payload, populating its priority list and gnome roster.
 SquadItem::SquadItem( const GuiSquad& squad, MilitaryProxy* proxy ) :
 	m_id( squad.id ),
 	m_idString( QString::number( squad.id ).toStdString().c_str() ),
@@ -166,6 +177,7 @@ SquadItem::SquadItem( const GuiSquad& squad, MilitaryProxy* proxy ) :
 	m_showConfigCmd.SetExecuteFunc( MakeDelegate( this, &SquadItem::onShowConfigCmd ) );
 }
 
+/// @brief Forwards a squad rename to the proxy.
 void SquadItem::setName( const char* value )
 {
 	m_name = value;
@@ -179,6 +191,7 @@ void SquadItem::onShowConfigCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowConfig" );
 }
 
+/// @brief Replaces this squad's priority list with fresh SquadPriority rows.
 void SquadItem::updatePriorities( const QList<GuiTargetPriority>& prios )
 {
 	m_priorities->Clear();
@@ -205,6 +218,8 @@ UniformModelType::UniformModelType( QString sid, QString name ) :
 
 }
 
+/// @brief Builds a uniform slot row from a GuiUniformItem, populating both the available
+///        armor types dropdown and the (initially empty) materials dropdown.
 UniformModelItem::UniformModelItem( const GuiUniformItem& gui, unsigned int roleID, MilitaryProxy* proxy ) :
 	m_name( gui.slotName.toStdString().c_str() ),
 	m_sid( gui.slotName.toStdString().c_str() ),
@@ -233,6 +248,7 @@ UniformModelItem::UniformModelItem( const GuiUniformItem& gui, unsigned int role
 	}
 }
 
+/// @brief Setter for the armor-type dropdown. Forwards the new (slot, type) pair to the proxy.
 void UniformModelItem::setSelectedType( UniformModelType* type )
 {
 	if ( m_selectedType != type && type != nullptr )
@@ -245,6 +261,7 @@ void UniformModelItem::setSelectedType( UniformModelType* type )
 	}
 }
 
+/// @brief Setter for the material dropdown. Forwards the new material to the proxy.
 void UniformModelItem::setSelectedMaterial( UniformModelMaterial* mat )
 {
 	if ( m_selectedMat != mat && mat != nullptr )
@@ -259,6 +276,8 @@ void UniformModelItem::setSelectedMaterial( UniformModelMaterial* mat )
 	}
 }
 
+/// @brief Replaces the materials dropdown contents (called after the proxy emits an
+///        updated materials list following an armor type change).
 void UniformModelItem::setPossibleMats( QStringList mats )
 {
 	m_availableMats->Clear();
@@ -283,6 +302,7 @@ void UniformModelItem::setPossibleMats( QStringList mats )
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a RoleItem from a GuiMilRole payload, populating the per-slot uniform list.
 RoleItem::RoleItem( const GuiMilRole& role, MilitaryProxy* proxy ) :
 	m_id( role.id ),
 	m_idString( QString::number( role.id ).toStdString().c_str() ),
@@ -302,6 +322,7 @@ RoleItem::RoleItem( const GuiMilRole& role, MilitaryProxy* proxy ) :
 
 }
 
+/// @brief Forwards a role rename to the proxy.
 void RoleItem::setName( const char* value )
 {
 	m_name = value;
@@ -315,6 +336,7 @@ void RoleItem::onShowConfigCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowConfig" );
 }
 
+/// @brief Forwards an updated material list to the matching uniform slot row in this role.
 void RoleItem::updatePossibleMaterials( QString slot, QStringList mats )
 {
 	for( int i = 0; i < m_uniformItems->Count(); ++i )
@@ -333,6 +355,7 @@ bool RoleItem::GetCivilian() const
 	return m_civilian;
 }
 	
+/// @brief Toggles the civilian flag on this role and forwards it to the proxy.
 void RoleItem::SetCivilian( bool value )
 {
 	if( m_civilian != value )
@@ -346,6 +369,8 @@ void RoleItem::SetCivilian( bool value )
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the MilitaryModel: instantiates the proxy, registers DelegateCommands,
+///        seeds empty observable collections, and asks the proxy for the initial squad and role lists.
 MilitaryModel::MilitaryModel()
 {
 	m_proxy = new MilitaryProxy;
@@ -396,6 +421,7 @@ const char* MilitaryModel::getShowThird() const
 	return "Hidden";
 }
 
+/// @brief Tab switcher: parses @p param to switch between First/Second/Third pages.
 void MilitaryModel::onPageCmd( BaseComponent* param )
 {
 	if( param->ToString() == "First" )
@@ -417,6 +443,7 @@ void MilitaryModel::onPageCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowThird" );
 }
 
+/// @brief Replaces the squad list with fresh SquadItem rows.
 void MilitaryModel::updateSquads( const QList<GuiSquad>& squads )
 {
 	m_squads->Clear();
@@ -430,6 +457,8 @@ void MilitaryModel::updateSquads( const QList<GuiSquad>& squads )
 	OnPropertyChanged( "SquadList" );
 }
 
+/// @brief Replaces the role list with fresh RoleItem rows. Also rebinds every existing
+///        squad gnome's role pointer to the new RoleItem with the matching UID.
 void MilitaryModel::updateRoles( const QList<GuiMilRole>& roles )
 {
 	for( int r = 0; r < m_roles->Count(); ++r )
@@ -476,11 +505,13 @@ void MilitaryModel::updateRoles( const QList<GuiMilRole>& roles )
 	OnPropertyChanged( "RoleList" );
 }
 
+/// @brief Add-squad command handler. Forwards to the proxy.
 void MilitaryModel::onAddSquadCmd( BaseComponent* param )
 {
 	m_proxy->addSquad();
 }
 
+/// @brief Remove-squad handler. Reads the squad UID from @p param and forwards to the proxy.
 void MilitaryModel::onRemoveSquadCmd( BaseComponent* param )
 {
 	if( param )
@@ -491,6 +522,7 @@ void MilitaryModel::onRemoveSquadCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Move-squad-left handler. Reads the squad UID from @p param and forwards to the proxy.
 void MilitaryModel::onMoveSquadLeftCmd( BaseComponent* param )
 {
 	if( param )
@@ -501,6 +533,7 @@ void MilitaryModel::onMoveSquadLeftCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Move-squad-right handler. Reads the squad UID from @p param and forwards to the proxy.
 void MilitaryModel::onMoveSquadRightCmd( BaseComponent* param )
 {
 	if( param )
@@ -511,6 +544,7 @@ void MilitaryModel::onMoveSquadRightCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Remove-gnome-from-squad handler. Reads the gnome UID from @p param.
 void MilitaryModel::onRemoveGnomeFromSquadCmd( BaseComponent* param )
 {
 	if( param )
@@ -521,6 +555,7 @@ void MilitaryModel::onRemoveGnomeFromSquadCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Move-gnome-left handler. Reads the gnome UID from @p param.
 void MilitaryModel::onMoveGnomeLeftCmd( BaseComponent* param )
 {
 	if( param )
@@ -531,6 +566,7 @@ void MilitaryModel::onMoveGnomeLeftCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Move-gnome-right handler. Reads the gnome UID from @p param.
 void MilitaryModel::onMoveGnomeRightCmd( BaseComponent* param )
 {
 	if( param )
@@ -541,6 +577,7 @@ void MilitaryModel::onMoveGnomeRightCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Routes a per-squad priority list update to the matching SquadItem.
 void MilitaryModel::updatePriorities( unsigned int squadID, const QList<GuiTargetPriority>& priorities )
 {
 	for( int i = 0; i < m_squads->Count(); ++i )
@@ -555,11 +592,13 @@ void MilitaryModel::updatePriorities( unsigned int squadID, const QList<GuiTarge
 }
 
 
+/// @brief Add-role handler. Forwards to the proxy.
 void MilitaryModel::onAddRoleCmd( BaseComponent* param )
 {
 	m_proxy->addRole();
 }
 
+/// @brief Remove-role handler. Reads the role UID from @p param.
 void MilitaryModel::onRemoveRoleCmd( BaseComponent* param )
 {
 	if( param )
@@ -570,6 +609,7 @@ void MilitaryModel::onRemoveRoleCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Routes an updated material list to the matching role and slot.
 void MilitaryModel::updatePossibleMaterials( unsigned int roleID, const QString slot, const QStringList mats )
 {
 	for( int i = 0; i < m_roles->Count(); ++i )

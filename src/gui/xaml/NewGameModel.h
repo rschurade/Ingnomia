@@ -16,6 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file NewGameModel.h
+ *  @brief View model and helper-component types for the New Game window: world generation
+ *         sliders (size, oceans, rivers, density), starting items/animals, allow-lists for
+ *         flora/fauna, and embark presets.
+ */
 #ifndef __MENU3D_NEWGAMEMODEL_H__
 #define __MENU3D_NEWGAMEMODEL_H__
 
@@ -35,6 +40,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Embark preset entry — a saved bundle of starting items, animals, and allow-lists.
 class Preset final : public Noesis::BaseComponent
 {
 public:
@@ -49,6 +55,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Generic (name, SID, optional amount) component reused across the New Game window
+///        for item dropdowns, animal dropdowns, gender dropdowns, and the various allow-lists.
 class GameItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -75,6 +83,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the starting-items list (item name + up to two materials + amount).
 struct StartItem : public Noesis::BaseComponent
 {
 public:
@@ -90,6 +99,7 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the starting-animals list (species + gender + amount).
 struct StartAnimal : public Noesis::BaseComponent
 {
 public:
@@ -104,6 +114,9 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief New Game window view model. Talks directly to NewGameSettings (no proxy needed
+///        because the settings live in-process) and exposes every world-gen knob, the
+///        starting-items / animals lists, and the embark-preset commands.
 class NewGameModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
