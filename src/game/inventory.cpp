@@ -446,10 +446,13 @@ void Inventory::destroyObject( unsigned int id )
 		if ( item )
 		{
 			// clear all pointers in convinience containers
-			unsigned int tileID = item->getPos().toInt();
+			Position pos        = item->getPos();
+			unsigned int tileID = pos.toInt();
+			bool wasOnTile      = false;
 			if ( m_positionHash.contains( tileID ) )
 			{
 				m_positionHash[tileID].remove( id );
+				wasOnTile = true;
 				if ( m_positionHash[tileID].empty() )
 				{
 					m_positionHash.remove( tileID );
@@ -461,10 +464,9 @@ void Inventory::destroyObject( unsigned int id )
 			QString materialSID = DBH::materialSID( item->materialUID() );
 			QString itemSID     = DBH::itemSID( item->itemUID() );
 
-			Position pos = item->getPos();
 			Octree* ot = octree( itemSID, materialSID );
 			ot->removeItem( pos.x, pos.y, pos.z, id );
-			
+
 			m_hash[itemSID][materialSID].remove( id );
 
 			m_foodItems.remove( id );
@@ -473,6 +475,24 @@ void Inventory::destroyObject( unsigned int id )
 			m_items.remove( id );
 
 			m_itemHistory->minusItem( itemSID, materialSID );
+
+			// Refresh the tile's item sprite. Only for items that were on a world tile —
+			// items in containers don't contribute a tile sprite. Without this the old
+			// sprite stays painted on the tile until some other event repaints it
+			// (e.g. the build path that consumes source items via destroyObject).
+			if ( wasOnTile )
+			{
+				unsigned int nextItemID = getFirstObjectAtPosition( pos );
+				auto nextItem           = getItem( nextItemID );
+				if ( nextItem )
+				{
+					g->m_world->setItemSprite( pos, nextItem->spriteID() );
+				}
+				else
+				{
+					g->m_world->setItemSprite( pos, 0 );
+				}
+			}
 
 			emit signalRemoveItem( itemSID, materialSID );
 		}
