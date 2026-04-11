@@ -204,6 +204,15 @@ TileInfoModel::TileInfoModel()
 ///        panels, and raises PropertyChanged for every bound property.
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 {
+	// Switching to a new tile resets the facet to the overview ("All"); without this the
+	// previous tile's selected tab (e.g. Designation after clicking Manage on a pasture)
+	// stays sticky and keeps showing stale content on the next click. Refreshes of the
+	// same tile preserve whatever tab the user had open.
+	if ( m_tileID != tileInfo.tileID )
+	{
+		_mode = TileInfoMode::All;
+	}
+
 	m_tileIDString  = Noesis::String( std::to_string( tileInfo.tileID ).c_str() );
 	m_tileID        = tileInfo.tileID;
 	m_designationID = tileInfo.designationID;
