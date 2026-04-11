@@ -1050,8 +1050,11 @@ bool CanWork::constructDugRamp()
 /// @return True if construction succeeded; false if no claimed items are available.
 bool CanWork::construct()
 {
-	// Get items: from job's claimed list (new phased path) or gnome's claimed items (old path)
+	// Get items: from job's claimed list (new phased path) or gnome's claimed items (old path).
+	// In the new path the haul phase already delivered the items to the build site and the
+	// job owns them — the gnome never holds them, so the destroy loop below skips pickUpItem.
 	QList<unsigned int> jobItems;
+	bool itemsHeldByGnome = false;
 	if ( !m_job->claimedItemIDs().isEmpty() )
 	{
 		jobItems = m_job->claimedItemIDs();
@@ -1059,14 +1062,13 @@ bool CanWork::construct()
 	else
 	{
 		jobItems = claimedItems();
+		itemsHeldByGnome = true;
 	}
 
 	if ( jobItems.empty() )
 	{
 		return false;
 	}
-
-	//qDebug() << "#" << m_job->type() << m_job->item();
 
 	if ( m_job->item() == "" )
 	{
@@ -1095,8 +1097,14 @@ bool CanWork::construct()
 	{
 		for ( auto itemUID : jobItems )
 		{
-			g->inv()->setInJob( itemUID, 0 );
-			g->inv()->pickUpItem( itemUID, m_id );
+			if ( itemsHeldByGnome )
+			{
+				// Legacy path: the gnome was carrying the items as inventory. pickUpItem
+				// transfers ownership to the gnome, drops them out of any stockpile, and
+				// refreshes the tile sprite — all needed before destruction.
+				g->inv()->setInJob( itemUID, 0 );
+				g->inv()->pickUpItem( itemUID, m_id );
+			}
 			g->inv()->destroyObject( itemUID );
 		}
 		m_claimedItems.clear();
