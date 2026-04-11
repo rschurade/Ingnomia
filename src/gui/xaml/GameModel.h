@@ -341,7 +341,7 @@ private:
 	Noesis::String m_time;
 	Noesis::String m_level;
 	Noesis::String m_sun;
-	Noesis::String m_timeImagePath;
+	Noesis::String m_timeImagePath = "Images/clock/s00.png";
 
 	Noesis::String m_kingdomName;
 	Noesis::String m_kingdomInfo1;

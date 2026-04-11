@@ -7,7 +7,9 @@
 
 
 	<ResourceDictionary.MergedDictionaries>
-		<!--NoesisTheme is only for providing remotely similar experience to ingame when using Blend or alike-->
+		<!--NoesisTheme provides the default control templates (Button, ScrollBar, …) that
+		    every app style inherits via BasedOn. The comment used to say "only for Blend" but
+		    removing it breaks the runtime base styles. -->
 		<ResourceDictionary Source="../../Theme/NoesisTheme.DarkBlue.xaml" />
 		<ResourceDictionary Source="../colors.xaml" />
 	</ResourceDictionary.MergedDictionaries>
@@ -200,7 +202,7 @@
 		<Setter Property="MaxWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
 	</Style>
-	
+
 	<Style TargetType="Button" x:Key="CommandButton" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Margin" Value="3"/>
 		<Setter Property="Padding" Value="3"/>
@@ -783,10 +785,10 @@
 		
 		<Style.Triggers>
 			<Trigger Property="IsChecked" Value="False">
-				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverterDark}}" />
+				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverterDark}, FallbackValue=Transparent}" />
 			</Trigger>
 			<Trigger Property="IsChecked" Value="True">
-				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverter}}" />
+				<Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorToBrushConverter}, FallbackValue=Transparent}" />
 			</Trigger>
 		</Style.Triggers>
 
@@ -865,8 +867,8 @@
 			</TextBlock>
 
 			<ComboBox x:Name="ProfessionSelector" Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0" MaxHeight="28" HorizontalAlignment="Stretch"  MinWidth="180" MaxWidth="180"
-								ItemsSource="{Binding Professions}"
-								SelectedItem="{Binding Profession, Mode=TwoWay}"
+								ItemsSource="{Binding Professions, FallbackValue={x:Null}}"
+								SelectedItem="{Binding Profession, Mode=TwoWay, FallbackValue={x:Null}}"
 								ItemTemplate="{StaticResource PopProfessionTemplate}" />
 			<Button Style="{StaticResource GnomeSkillAllButtonStyle}" Content="A"
 				Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopulationWindow}}, Path=DataContext.CmdAllSkills }"
@@ -898,7 +900,7 @@
 		</ItemsControl>
 	</DataTemplate>
 
-	<Style x:Key="GnomeScheduleButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+	<Style x:Key="GnomeScheduleHeaderButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="OverridesDefaultStyle" Value="False"/>
 		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="MinWidth" Value="32"/>
@@ -906,6 +908,9 @@
 		<Setter Property="MaxWidth" Value="32"/>
 		<Setter Property="MaxHeight" Value="28"/>
 		<Setter Property="Margin" Value="2"/>
+	</Style>
+
+	<Style x:Key="GnomeScheduleButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource GnomeScheduleHeaderButtonStyle}">
 		<Style.Triggers>
 			<DataTrigger Binding="{Binding Activity}" Value="N">
 				<Setter Property="Background" Value="{StaticResource ActivityNoneBrush}"/>

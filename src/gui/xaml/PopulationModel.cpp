@@ -94,7 +94,12 @@ bool GnomeSkill::GetChecked() const
 /// @brief Toggles the skill-active flag on this gnome via the proxy.
 void GnomeSkill::SetChecked( bool value )
 {
+	if( m_checked == value )
+	{
+		return;
+	}
 	m_checked = value;
+	OnPropertyChanged( "Checked" );
 	if( m_proxy )
 	{
 		m_proxy->setSkillActive( m_gnomeID, m_skillID.Str(), value );
@@ -104,6 +109,21 @@ void GnomeSkill::SetChecked( bool value )
 const char* GnomeSkill::GetColor() const
 {
 	return m_color.Str();
+}
+
+void GnomeSkill::applyUpdate( const GuiSkillInfo& skill )
+{
+	Noesis::String newLevel = QString::number( skill.level ).toStdString().c_str();
+	if( m_level != newLevel )
+	{
+		m_level = newLevel;
+		OnPropertyChanged( "Level" );
+	}
+	if( m_checked != skill.active )
+	{
+		m_checked = skill.active;
+		OnPropertyChanged( "Checked" );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +153,36 @@ GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCol
 			SetProfession( m_professions->Get( i ) );
 			break;
 		}
+	}
+}
+
+void GnomeRow::applyUpdate( const GuiGnomeInfo& gnome )
+{
+	Noesis::String newName = gnome.name.toStdString().c_str();
+	if( m_name != newName )
+	{
+		m_name = newName;
+		OnPropertyChanged( "Name" );
+	}
+
+	if( m_professionName != gnome.profession )
+	{
+		m_professionName = gnome.profession;
+		for( int i = 0; i < m_professions->Count(); ++i )
+		{
+			if( m_professions->Get( i )->GetName() == m_professionName )
+			{
+				SetProfession( m_professions->Get( i ) );
+				break;
+			}
+		}
+	}
+
+	const int skillCount = m_skills->Count();
+	const int incoming = gnome.skills.size();
+	for( int i = 0; i < skillCount && i < incoming; ++i )
+	{
+		m_skills->Get( i )->applyUpdate( gnome.skills[i] );
 	}
 }
 
@@ -321,13 +371,42 @@ void PopulationModel::updateProfessionList( const QStringList& professions )
 }
 
 /// @brief Replaces the skill-grid rows with fresh GnomeRow rows from a full info payload.
+///        If the incoming gnome IDs match the existing rows 1:1 (the common case — e.g.
+///        toggling one skill on every gnome), updates each row in place so virtualized
+///        containers keep their DataContext and no transient binding errors fire.
+///        Otherwise falls back to Clear+rebuild.
 void PopulationModel::updateInfo( const GuiPopulationInfo& info )
 {
-	m_gnomes->Clear();
-
-	for( const auto& gnome : info.gnomes )
+	const int existing = m_gnomes->Count();
+	const int incoming = info.gnomes.size();
+	bool sameRoster = ( existing == incoming );
+	if( sameRoster )
 	{
-		m_gnomes->Add( MakePtr<GnomeRow>( gnome, m_professions, m_proxy ) );
+		for( int i = 0; i < existing; ++i )
+		{
+			if( m_gnomes->Get( i )->gnomeID() != info.gnomes[i].id )
+			{
+				sameRoster = false;
+				break;
+			}
+		}
+	}
+
+	if( sameRoster )
+	{
+		for( int i = 0; i < existing; ++i )
+		{
+			m_gnomes->Get( i )->applyUpdate( info.gnomes[i] );
+		}
+	}
+	else
+	{
+		m_gnomes->Clear();
+		for( const auto& gnome : info.gnomes )
+		{
+			m_gnomes->Add( MakePtr<GnomeRow>( gnome, m_professions, m_proxy ) );
+		}
+		OnPropertyChanged( "Gnomes" );
 	}
 
 	if( m_skills->Count() == 0 )
@@ -339,11 +418,9 @@ void PopulationModel::updateInfo( const GuiPopulationInfo& info )
 			{
 				m_skills->Add( MakePtr<GnomeSkill>( skill, 0, m_proxy ) );
 			}
+			OnPropertyChanged( "SkillHeaders" );
 		}
 	}
-
-	OnPropertyChanged( "Gnomes" );
-	OnPropertyChanged( "SkillHeaders" );
 }
 
 /// @brief Refreshes a single gnome row in the skill grid (matched by UID).

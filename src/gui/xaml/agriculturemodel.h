@@ -18,8 +18,8 @@
 /** @file agriculturemodel.h
  *  @brief Noesis view model and helper component types for the Agriculture XAML window.
  *         Owns observable collections for the plant/animal/tree pickers, the pasture food
- *         allow-list, and the per-pasture animal roster, and exposes Get*/Set* properties
- *         that XAML bindings hook into.
+ *         allow-list, and the per-pasture animal roster, and exposes Get / Set
+ *         properties that XAML bindings hook into.
  */
 #ifndef __AgricultureModel_H__
 #define __AgricultureModel_H__

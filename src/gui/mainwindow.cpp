@@ -699,7 +699,6 @@ void MainWindow::noesisInit()
 	Noesis::LogHandler logHandler = []( const char*, uint32_t, uint32_t level, const char*, const char* message ) {
 		// [TRACE] [DEBUG] [INFO] [WARNING] [ERROR]
 		const char* prefixes[] = { "T", "D", "I", "W", "E" };
-		//printf("[NOESIS/%s] %s\n", prefixes[level], message);
 		if ( m_noesisMessages.contains( message ) )
 		{
 			return;
