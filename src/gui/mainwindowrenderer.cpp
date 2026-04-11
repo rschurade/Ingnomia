@@ -1052,6 +1052,13 @@ void MainWindowRenderer::onCenterCameraPosition( const Position& target )
 	m_moveY     = 8 * ( -target.x - target.y );
 	m_viewLevel = target.z;
 	onRenderParamsChanged();
+	// Notify aggregators (selection, sound, …) that the camera moved — otherwise
+	// the cursor-tile mapping in AggregatorSelection stays at its zero defaults
+	// until the player nudges the wheel or resizes the window.
+	if ( m_parent )
+	{
+		m_parent->pushRenderParams();
+	}
 }
 
 /// @brief Helper used by rotate() to adjust camera offsets after a 90° clockwise rotation

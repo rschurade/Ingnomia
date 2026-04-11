@@ -159,6 +159,12 @@ public slots:
 
 	void onInitViewAfterLoad();
 
+	/// @brief Broadcasts the renderer's current camera params to interested aggregators
+	///        (selection, sound, …) by emitting signalRenderParams. Used by paths that
+	///        change camera state without going through wheelEvent / onInitViewAfterLoad
+	///        (e.g. onCenterCameraPosition on a fresh new-game embark).
+	void pushRenderParams();
+
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );

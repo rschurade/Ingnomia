@@ -491,6 +491,11 @@ void MainWindow::onInitViewAfterLoad()
 	m_renderer->move( m_moveX, m_moveY );
 
 	m_renderer->setScale( GameState::scale );
+	pushRenderParams();
+}
+
+void MainWindow::pushRenderParams()
+{
 	emit signalRenderParams( width(), height(), m_renderer->moveX(), m_renderer->moveY(), m_renderer->scale(), m_renderer->rotation() );
 }
 
