@@ -482,14 +482,14 @@ void MainWindow::mouseMoveEvent( QMouseEvent* event )
 }
 
 /// @brief Triggers renderer initialisation once a game has finished loading so the
-///        world view is ready for the first paint.
+///        world view is ready for the first paint. The renderer persists across games,
+///        so we use setMove (absolute) rather than move (delta) to avoid compounding
+///        the saved offset with whatever was left over from the previous game.
 void MainWindow::onInitViewAfterLoad()
 {
-	m_renderer->setScale( 1.0 );
 	m_moveX = GameState::moveX;
 	m_moveY = GameState::moveY;
-	m_renderer->move( m_moveX, m_moveY );
-
+	m_renderer->setMove( m_moveX, m_moveY );
 	m_renderer->setScale( GameState::scale );
 	pushRenderParams();
 }

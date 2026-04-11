@@ -162,6 +162,7 @@ public slots:
 	void resize( int w, int h );
 	void rotate( int direction );
 	void move( float x, float y );
+	void setMove( float x, float y );
 	void scale( float factor );
 	void setScale( float scale );
 	void setViewLevel( int level );

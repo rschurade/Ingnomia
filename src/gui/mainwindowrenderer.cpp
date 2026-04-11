@@ -924,6 +924,20 @@ void MainWindowRenderer::rotate( int direction )
 	onRenderParamsChanged();
 }
 
+/// @brief Sets the camera position to the given absolute world-space offsets. Used when
+///        restoring a saved view on load so the renderer's leftover m_moveX/m_moveY from
+///        the previous game doesn't compound the result.
+void MainWindowRenderer::setMove( float x, float y )
+{
+	if ( !Global::dimX )
+		return;
+	m_moveX = x;
+	m_moveY = y;
+	GameState::moveX = m_moveX;
+	GameState::moveY = m_moveY;
+	onRenderParamsChanged();
+}
+
 /// @brief Pans the camera by (x, y) screen pixels.
 /// @param x X delta in pixels.
 /// @param y Y delta in pixels.
