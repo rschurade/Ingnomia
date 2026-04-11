@@ -95,6 +95,10 @@ private:
 	void SetSelectedGame( SaveItem* item );
 	SaveItem* GetSelectedGame() const;
 
+	/// @brief Returns the selected save's path, or an empty string when no save is selected.
+	///        Used by the Load button's CommandParameter to avoid null-traversal warnings.
+	const char* GetSelectedGamePath() const;
+
 	NoesisApp::DelegateCommand _loadGame;
 
 	Noesis::Ptr<Noesis::ObservableCollection<SaveItem>> _savedKingdoms;

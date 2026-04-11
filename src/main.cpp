@@ -150,6 +150,22 @@ int main( int argc, char* argv[] )
 	// Enable fractional DPI support (e.g. 150%)
 	QGuiApplication::setHighDpiScaleFactorRoundingPolicy( Qt::HighDpiScaleFactorRoundingPolicy::PassThrough );
 
+	// Set the default surface format before QApplication constructs the global shared
+	// GL context — otherwise Qt warns that a later setDefaultFormat may cause sharing issues.
+	{
+		QSurfaceFormat defaultFormat = QSurfaceFormat::defaultFormat();
+		defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
+		defaultFormat.setSwapBehavior( QSurfaceFormat::TripleBuffer );
+		defaultFormat.setColorSpace( QColorSpace::SRgb );
+		defaultFormat.setDepthBufferSize( 16 );
+		// 0 = unthrottled, 1 = vysnc full FPS, 2 = vsync half FPS
+		defaultFormat.setSwapInterval( 0 );
+		defaultFormat.setVersion( 4, 3 );
+		defaultFormat.setProfile( QSurfaceFormat::CoreProfile );
+		defaultFormat.setOption( QSurfaceFormat::DebugContext );
+		QSurfaceFormat::setDefaultFormat( defaultFormat );
+	}
+
 	QApplication a( argc, argv );
 	QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() );
 	QCoreApplication::setOrganizationDomain( PROJECT_HOMEPAGE_URL );
@@ -199,19 +215,6 @@ int main( int argc, char* argv[] )
 
 	int width  = qMax( 1200, Global::cfg->get( "WindowWidth" ).toInt() );
 	int height = qMax( 675, Global::cfg->get( "WindowHeight" ).toInt() );
-
-	auto defaultFormat = QSurfaceFormat::defaultFormat();
-	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
-	defaultFormat.setSwapBehavior( QSurfaceFormat::TripleBuffer );
-	defaultFormat.setColorSpace( QColorSpace::SRgb );
-	defaultFormat.setDepthBufferSize( 16 );
-	// 0 = unthrottled, 1 = vysnc full FPS, 2 = vsync half FPS
-	defaultFormat.setSwapInterval( 0 );
-	defaultFormat.setVersion( 4, 3 );
-	defaultFormat.setRenderableType( QSurfaceFormat::OpenGL );
-	defaultFormat.setProfile( QSurfaceFormat::CoreProfile );
-	defaultFormat.setOption( QSurfaceFormat::DebugContext );
-	QSurfaceFormat::setDefaultFormat( defaultFormat );
 
 	GameManager* gm = new GameManager;
 	QThread gameThread;

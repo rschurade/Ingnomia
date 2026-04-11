@@ -70,7 +70,7 @@
 					<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
 						<TextBlock FontSize="20" Text="{StaticResource LoadGamePage_HereSelectedGameInfo}" TextWrapping="Wrap" Margin="5" />
 					</ScrollViewer>
-					<Button x:Name="BuLoadGame" FontSize="20" Content="{StaticResource LoadGamePage_Load}" Margin="5" Grid.Row="1" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.ContinueGame }" CommandParameter="{Binding SelectedGame.Path}" />
+					<Button x:Name="BuLoadGame" FontSize="20" Content="{StaticResource LoadGamePage_Load}" Margin="5" Grid.Row="1" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainMenu}}, Path=DataContext.ContinueGame }" CommandParameter="{Binding SelectedGamePath}" />
 				</Grid>
 
 				<ListBox x:Name="LBLoadGames" Grid.Row="1"

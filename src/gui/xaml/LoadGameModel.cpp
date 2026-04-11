@@ -139,12 +139,18 @@ void LoadGameModel::SetSelectedGame( SaveItem* item )
 	{
 		_selectedGame = item;
 		OnPropertyChanged( "SelectedGame" );
+		OnPropertyChanged( "SelectedGamePath" );
 	}
 }
 
 SaveItem* LoadGameModel::GetSelectedGame() const
 {
 	return _selectedGame;
+}
+
+const char* LoadGameModel::GetSelectedGamePath() const
+{
+	return _selectedGame ? _selectedGame->_path.Str() : "";
 }
 
 const NoesisApp::DelegateCommand* LoadGameModel::GetLoadGame() const
@@ -174,6 +180,7 @@ NS_IMPLEMENT_REFLECTION( LoadGameModel, "IngnomiaGUI.LoadGameModel" )
 
 	NsProp( "SelectedKingdom", &LoadGameModel::GetSelectedKingdom, &LoadGameModel::SetSelectedKingdom );
 	NsProp( "SelectedGame", &LoadGameModel::GetSelectedGame, &LoadGameModel::SetSelectedGame );
+	NsProp( "SelectedGamePath", &LoadGameModel::GetSelectedGamePath );
 }
 
 NS_IMPLEMENT_REFLECTION( SaveItem )

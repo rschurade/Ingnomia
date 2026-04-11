@@ -75,7 +75,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Cell in the skill grid for one (gnome, skill) pair: name, level, activation checkbox,
 ///        and group colour. Toggling the checkbox forwards an activation update to the proxy.
-class GnomeSkill : public Noesis::BaseComponent
+class GnomeSkill : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	GnomeSkill( const GuiSkillInfo& skill, unsigned int gnomeID, PopulationProxy* proxy );
@@ -87,6 +87,10 @@ public:
 	const char* GetLevel() const;
 	const char* GetColor() const;
 
+	/// @brief Applies a fresh GuiSkillInfo to this cell in place, raising PropertyChanged
+	///        for Level / Checked so bound ToggleButtons refresh without container recycling.
+	void applyUpdate( const GuiSkillInfo& skill );
+
 private:
 	Noesis::String m_name;
 	Noesis::String m_level = "-1";
@@ -97,7 +101,7 @@ private:
 
 	PopulationProxy* m_proxy = nullptr;
 
-	NS_DECLARE_REFLECTION( GnomeSkill, Noesis::BaseComponent )
+	NS_DECLARE_REFLECTION( GnomeSkill, NoesisApp::NotifyPropertyChangedBase )
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +117,12 @@ public:
 	unsigned int gnomeID() { return m_id; }
 
 	void updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions );
+
+	/// @brief Applies a fresh GuiGnomeInfo to this row in place. Updates the row name,
+	///        re-selects the profession, and delegates per-skill updates to the existing
+	///        GnomeSkill instances — no ObservableCollection mutation, so virtualized
+	///        containers keep their DataContext and bindings stay valid.
+	void applyUpdate( const GuiGnomeInfo& gnome );
 
 private:
 	Noesis::String m_name;

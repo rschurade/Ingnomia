@@ -79,10 +79,10 @@ private:
 	Noesis::String m_int;
 	Noesis::String m_wis;
 	Noesis::String m_cha;
-	Noesis::String m_hunger;
-	Noesis::String m_thirst;
-	Noesis::String m_sleep;
-	Noesis::String m_happiness;
+	Noesis::String m_hunger    = "0";
+	Noesis::String m_thirst    = "0";
+	Noesis::String m_sleep     = "0";
+	Noesis::String m_happiness = "0";
 	Noesis::String m_activity;
 
 	const char* GetName() const;

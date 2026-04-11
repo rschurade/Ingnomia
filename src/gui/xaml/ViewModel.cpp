@@ -67,7 +67,14 @@ ViewModel::ViewModel()
 	_showMainMenu = true;
 	_showGameGUI  = false;
 	_ingame       = false;
-	m_scale       = 1.0f; 
+	m_scale       = 1.0f;
+
+	_realWidth          = 1200;
+	_realHeight         = 675;
+	_windowWidth        = _realWidth;
+	_windowHeight       = _realHeight;
+	_windowWidthString  = "1200";
+	_windowHeightString = "675";
 
 	m_version = "0.0.0.0";
 
