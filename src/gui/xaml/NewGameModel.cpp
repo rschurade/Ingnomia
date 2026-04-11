@@ -35,8 +35,8 @@
 
 /** @file NewGameModel.cpp
  *  @brief NewGameModel and helper-component implementations. Constructors wrap simple
- *         (name, sid, amount) data; the substantive logic lives in the OnAdd*/OnRemove*/
- *         OnRandom* command handlers and updateStartingItems()/updateStartingAnimals().
+ *         (name, sid, amount) data; the substantive logic lives in the OnAdd / OnRemove /
+ *         OnRandom command handlers and updateStartingItems()/updateStartingAnimals().
  *         Trivial Get/Set property accessors are XAML binding plumbing covered by the
  *         file-level note in the header.
  */

@@ -17,7 +17,7 @@
 */
 /** @file selectionmodel.cpp
  *  @brief SelectionModel implementation: thin view model with four strings refreshed by
- *         SelectionProxy. Trivial get*/update* accessors are standard XAML plumbing.
+ *         SelectionProxy. Trivial get / update accessors are standard XAML plumbing.
  */
 #include "selectionmodel.h"
 #include "selectionproxy.h"

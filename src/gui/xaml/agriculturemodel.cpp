@@ -33,7 +33,7 @@
 /** @file agriculturemodel.cpp
  *  @brief AgricultureModel and helper-component implementations: builds observable
  *         collections from Gui*Info payloads, populates them with Noesis bitmap previews,
- *         and routes user actions through AgricultureProxy. Trivial Get*/Set* property
+ *         and routes user actions through AgricultureProxy. Trivial Get / Set property
  *         accessors are XAML binding plumbing — see the class @brief in the header for
  *         their semantics.
  */
