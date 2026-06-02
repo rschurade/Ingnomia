@@ -49,6 +49,8 @@ jobs:
         Get-Dep "$env:DEPS_URL/BugSplatNative.zip"                   bugsplat.zip bugsplat_sdk
         Get-Dep "$env:DEPS_URL/tilesheet.zip"                        tiles.zip    content
         Get-Dep "$env:DEPS_URL/audio.zip"                            audio.zip    content
+        Write-Host "--- steam layout ---"
+        Get-ChildItem steamworks_sdk/sdk/public/steam/steam_api.h, steamworks_sdk/sdk/redistributable_bin/win64 -ErrorAction Continue | Select-Object FullName
 
     - name: Create build directory
       run: cmake -E make_directory build
@@ -61,14 +63,15 @@ jobs:
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
         BUGSPLAT_DB: ${{ secrets.BUGSPLAT_DB }}
       run: |
+        $ws = "${{ github.workspace }}".Replace('\','/')
         cmake -S .. -B . `
           -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE `
           -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR" `
           -DCMAKE_INSTALL_BINDIR="." `
-          -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk `
-          -DNOESIS_ROOT=../noesis_sdk `
-          -DOPENAL_ROOT=../openal_sdk `
-          -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat `
+          -DSTEAM_SDK_ROOT="$ws/steamworks_sdk/sdk" `
+          -DNOESIS_ROOT="$ws/noesis_sdk" `
+          -DOPENAL_ROOT="$ws/openal_sdk" `
+          -DBUGSPLAT_SDK_ROOT="$ws/bugsplat_sdk/bugsplat" `
           -DNOESIS_LICENSE_NAME="$env:NOESIS_LICENSE_NAME" `
           -DNOESIS_LICENSE_KEY="$env:NOESIS_LICENSE_KEY" `
           -DBUGSPLAT_DB="$env:BUGSPLAT_DB" `
