@@ -3,181 +3,92 @@ name: CMake
 on: [push, workflow_dispatch]
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  # CMake build type (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
+  # Base URL for prebuilt dependency packages
+  DEPS_URL: https://github.com/rschurade/IngnomiaBuildDeps/raw/master
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-            os: 'windows-2019',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-windows-vc15-64-bit.zip',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-win-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
-          }
-          - {
-            os: 'ubuntu-18.04',
-            sfml: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/SFML-2.5.1-linux-gcc-64-bit.tar',
-            noesis: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/NoesisGUI-NativeSDK-linux-3.0.12.zip',
-            steam: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/steamworks_sdk_150.zip',
-          }
-    runs-on: ${{ matrix.config.os }}
+    # Windows-only for 0.9.0. The Qt6 + GLAD + Noesis 3.0.12 + C++23 stack has not
+    # been validated on Linux yet; a Linux job belongs with the future SDL2/GLFW
+    # windowing work, not the release build.
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive   # src/base/beehive
 
     - name: Get latest CMake
-      # Using 'latest' branch, the latest CMake is installed.
       uses: lukka/get-cmake@latest
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: '${{ github.workspace }}/Qt/'
-        key: ${{ runner.os }}-QtCache
-
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '5.14.2'
-        dir: '${{ github.workspace }}/Qt/'
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        version: '6.9.0'
+        host: windows
+        target: desktop
+        arch: win64_msvc2022_64
+        modules: 'qtimageformats'
+        cache: true
 
-    - name: Download Steam
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-steam
-      with:
-        file-url: ${{ matrix.config.steam }}
+    - name: Fetch dependencies
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        function Get-Dep($url, $out, $dest) {
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile $out
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Expand-Archive -Path $out -DestinationPath $dest -Force
+        }
+        Get-Dep "$env:DEPS_URL/steamworks_sdk_164.zip"               steam.zip    steamworks_sdk
+        Get-Dep "$env:DEPS_URL/NoesisGUI-NativeSDK-win-3.0.12.zip"   noesis.zip   noesis_sdk
+        Get-Dep "$env:DEPS_URL/openal-1.25.1.zip"                    openal.zip   openal_sdk
+        Get-Dep "$env:DEPS_URL/BugSplatNative.zip"                   bugsplat.zip bugsplat_sdk
+        Get-Dep "$env:DEPS_URL/tilesheet.zip"                        tiles.zip    content
+        Get-Dep "$env:DEPS_URL/audio.zip"                            audio.zip    content
 
-    - name: Unpack Steam
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-steam.outputs.file-path }}
-        pathTarget: steamworks_sdk
-
-    - name: Download Noesis
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-noesis
-      with:
-        file-url: ${{ matrix.config.noesis }}
-
-    - name: Unpack Noesis
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-noesis.outputs.file-path }}
-        pathTarget: noesis_sdk
-
-    - name: Download BugSplat
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-bugsplat
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/BugSplatNative.zip'
-
-    - name: Unpack BugSplat
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-bugsplat.outputs.file-path }}
-        pathTarget: bugsplat_sdk
-
-    - name: Install OpenAL Linux
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: sudo apt-get -yq install libopenal-dev
-
-    - name: Download OpenAL Windows
-      if: (startsWith(matrix.config.os, 'windows'))
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-openal
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/openal.zip'
-
-    - name: Unpack OpenAL Windows
-      if: (startsWith(matrix.config.os, 'windows'))
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-openal.outputs.file-path }}
-        pathTarget: openal_sdk
-
-    - name: Download Tilesheets
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-tilesheet
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip'
-
-    - name: Unpack Tilesheets
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
-        pathTarget: content
-
-    - name: Download Audio Files
-      uses: carlosperate/download-file-action@v1.0.3
-      id: download-audio
-      with:
-        file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/audio.zip'
-
-    - name: Unpack Audio Files
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: ${{ steps.download-audio.outputs.file-path }}
-        pathTarget: content
-
-    - name: Fix permissions
-      if: (!startsWith(matrix.config.os, 'windows'))
-      shell: bash
-      run: chmod +x ${{github.workspace}}/noesis_sdk/Src/Tools/Bin2h/bin2h.py
-
-    - name: Create Build Environment
+    - name: Create build directory
       run: cmake -E make_directory build
 
     - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      shell: bash
+      working-directory: ${{ github.workspace }}/build
+      shell: pwsh
       env:
         NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
-        BUGSPLAT_DB:  ${{ secrets.BUGSPLAT_DB }}
+        BUGSPLAT_DB: ${{ secrets.BUGSPLAT_DB }}
       run: |
-        cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_BINDIR="." -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk -DNOESIS_ROOT=../noesis_sdk -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat -DOPENAL_ROOT=../openal_sdk -DNOESIS_LICENSE_NAME="$NOESIS_LICENSE_NAME" -DNOESIS_LICENSE_KEY="$NOESIS_LICENSE_KEY" -DBUGSPLAT_DB="$BUGSPLAT_DB" -DGIT_REPO="${{github.repository}}" -DGIT_REF="${{github.ref}}" -DGIT_SHA="${{github.sha}}" -DBUILD_ID="${{github.run_id}}"
+        cmake -S .. -B . `
+          -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE `
+          -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR" `
+          -DCMAKE_INSTALL_BINDIR="." `
+          -DSTEAM_SDK_ROOT=../steamworks_sdk/sdk `
+          -DNOESIS_ROOT=../noesis_sdk `
+          -DOPENAL_ROOT=../openal_sdk `
+          -DBUGSPLAT_SDK_ROOT=../bugsplat_sdk/bugsplat `
+          -DNOESIS_LICENSE_NAME="$env:NOESIS_LICENSE_NAME" `
+          -DNOESIS_LICENSE_KEY="$env:NOESIS_LICENSE_KEY" `
+          -DBUGSPLAT_DB="$env:BUGSPLAT_DB" `
+          -DGIT_REPO="${{ github.repository }}" `
+          -DGIT_REF="${{ github.ref }}" `
+          -DGIT_SHA="${{ github.sha }}" `
+          -DBUILD_ID="${{ github.run_id }}"
 
     - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: |
-        cmake --build . --config ${{env.BUILD_TYPE}} --target Ingnomia
-        
+      working-directory: ${{ github.workspace }}/build
+      run: cmake --build . --config ${{ env.BUILD_TYPE }} --target Ingnomia
+
     - name: Install
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: |
-        cmake --install . --prefix ../install --config ${{env.BUILD_TYPE}}
+      working-directory: ${{ github.workspace }}/build
+      run: cmake --install . --prefix ../install --config ${{ env.BUILD_TYPE }}
 
-    - name: Find msbuild
-      if: (startsWith(matrix.config.os, 'windows'))
-      uses: microsoft/setup-msbuild@v1.0.2
-      id: msbuild
-
-    - name: Build Blend project
-      if: (startsWith(matrix.config.os, 'windows'))
-      working-directory: ${{github.workspace}}/gui
-      shell: pwsh
-      # Ignore errors for now
-      run: |
-        MSBuild.exe -t:restore gui.csproj
-        MSBuild.exe gui.csproj
-
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
-        name: "${{matrix.config.os}}-${{github.run_id}}"
+        name: "windows-${{ github.run_id }}"
         path: |
           install/
-          !**./*.iobj
-          !**./*.ipdb
+          !**/*.iobj
+          !**/*.ipdb

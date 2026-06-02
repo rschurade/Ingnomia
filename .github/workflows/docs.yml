@@ -11,36 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-      - uses: dschep/install-pipenv-action@v1
-      - uses: actions/checkout@v2
+          python-version: '3.11'
+
+      - name: Install pipenv
+        run: pip install pipenv
 
       - name: Download Tilesheets
-        uses: carlosperate/download-file-action@v1.0.3
-        id: download-tilesheet
-        with:
-          file-url: 'https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip'
-
-      - name: Unpack Tilesheets
-        uses: DuckSoft/extract-7z-action@v1.0
-        with:
-          pathSource: ${{ steps.download-tilesheet.outputs.file-path }}
-          pathTarget: content
+        shell: bash
+        run: |
+          curl -L -o tilesheet.zip https://github.com/rschurade/IngnomiaBuildDeps/raw/master/tilesheet.zip
+          mkdir -p content
+          unzip -o tilesheet.zip -d content
 
       - name: Setup venv
         working-directory: docs
-        run: |
-          pipenv install
+        run: pipenv install --skip-lock
 
       - name: Generate docs
         working-directory: docs
-        run: |
-          pipenv run ./generate.py --build ${GITHUB_REF#refs/*/}
+        run: pipenv run ./generate.py --build ${GITHUB_REF#refs/*/}
 
       - name: Deploy docs to gh-pages
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v4
         with:
           keep_history: true
           build_dir: docs/html
