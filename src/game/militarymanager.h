@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file militarymanager.h
+ *  @brief Squad management, military roles/uniforms, target priorities, and combat attitude configuration.
+ */
 #pragma once
 
 
@@ -27,6 +30,7 @@
 
 class Game;
 
+/** @brief Quality filter for uniform item selection. */
 enum class UniformItemQuality : unsigned char
 {
 	ANY,
@@ -34,6 +38,7 @@ enum class UniformItemQuality : unsigned char
 	BEST
 };
 
+/** @brief A single equipment slot in a uniform, specifying item type, material, and quality preference. */
 struct UniformItem
 {
 	QString type               = "none";
@@ -47,6 +52,7 @@ struct UniformItem
 	UniformItem() {};
 };
 
+/** @brief A complete equipment loadout containing armor and weapon slots for a military role. */
 struct Uniform
 {
 	QString name = "new uniform";
@@ -59,6 +65,7 @@ struct Uniform
 	Uniform();
 };
 
+/** @brief A military role defining a uniform and combat behavior flags (maintain distance, retreat when bleeding). */
 struct MilitaryRole
 {
 	QString name = "new role";
@@ -77,6 +84,7 @@ struct MilitaryRole
 	MilitaryRole() {};
 };
 
+/** @brief Combat attitude toward a creature type. */
 enum class MilAttitude {
 	FLEE,
 	DEFEND,
@@ -85,11 +93,13 @@ enum class MilAttitude {
 };
 Q_DECLARE_METATYPE( MilAttitude )
 
+/** @brief A target creature type paired with the squad's attitude toward it. */
 struct TargetPriority {
 	QString type;
 	MilAttitude attitude;
 };
 
+/** @brief A military squad containing gnome members and an ordered list of target priorities. */
 struct Squad
 {
 	QString name = "new squad";
@@ -114,6 +124,12 @@ Q_DECLARE_METATYPE( Squad )
 
 
 
+/** @brief Manages military roles, uniforms, squads, gnome assignments, and target priority ordering.
+ *
+ *  Provides CRUD operations for roles and squads, handles gnome-to-squad assignment,
+ *  serialization/deserialization of military state, and responds to death events
+ *  and attitude changes from the GUI.
+ */
 class MilitaryManager : public QObject
 {
 	Q_OBJECT

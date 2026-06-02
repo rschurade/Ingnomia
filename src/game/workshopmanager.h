@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopmanager.h
+ *  Manages all workshops: creation, destruction, priority ordering, craft job assignment, and auto-generation of craft orders.
+ */
 #pragma once
 
 
@@ -27,6 +30,7 @@
 class Job;
 class Game;
 
+/** @brief Manages the lifetime and priority ordering of all Workshop instances, and dispatches auto-generated craft jobs. */
 class WorkshopManager : public QObject
 {
 	Q_OBJECT

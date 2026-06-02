@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file LoadGamePage.xaml.h
+ *  @brief Code-behind for the Load Game page (LoadGamePage.xaml). Hosts a Back button click
+ *         handler in addition to the usual XAML loader.
+ */
 #ifndef __LoadGamePage_H__
 #define __LoadGamePage_H__
 
@@ -26,6 +30,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the LoadGamePage Noesis page.
 class LoadGamePage final : public Noesis::UserControl
 {
 public:

@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file gamestate.h
+ * @brief Static game state container — time, world gen params, camera, ID maps, and serialization.
+ */
+
 #ifndef GAMESTATE_H_
 #define GAMESTATE_H_
 
@@ -29,6 +33,13 @@
 
 #include <initializer_list>
 
+/**
+ * @brief Static-only container for all persistent game state.
+ *
+ * Holds time progression, world generation parameters, camera state, military/neighbor
+ * data, material/item SID-to-UID bidirectional maps, and serialization methods.
+ * Cannot be instantiated — all members are static.
+ */
 class GameState
 {
 private:
@@ -117,6 +128,7 @@ public:
 	static int moveY;
 	static float scale;
 	static int viewLevel;
+	static Position initialCameraTarget;
 
 	static QList<GuiWatchedItem> watchedItemList;
 

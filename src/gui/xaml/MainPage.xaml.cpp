@@ -16,23 +16,29 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file MainPage.xaml.cpp
+ *  @brief MainPage user-control implementation: loads MainPage.xaml on construction.
+ */
 #include "MainPage.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the MainPage user control.
 MainPage::MainPage()
 {
 	InitializeComponent();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the MainPage.xaml resource.
 void MainPage::InitializeComponent()
 {
 	GUI::LoadComponent( this, "MainPage.xaml" );
 }
 
+/// @brief Noesis event-connection callback. Buttons are bound via XAML commands.
 bool MainPage::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	//NS_CONNECT_EVENT( Button, Click, onMMExit_Click );

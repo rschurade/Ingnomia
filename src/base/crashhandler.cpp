@@ -1,3 +1,11 @@
+/** @file crashhandler.cpp
+ *  @brief Crash handler setup using BugSplat for minidump generation.
+ *
+ *  When built with BugSplat support (HAVE_BUGSPLAT, BUGSPLAT_DB, and
+ *  BUILD_VERSION all defined), installs a MiniDmpSender that captures
+ *  crash dumps including the game log file. Otherwise provides a no-op stub.
+ */
+
 #include "crashhandler.h"
 
 #include "../version.h"
@@ -17,6 +25,14 @@
 #define WIDEN2( x ) L##x
 #define WIDEN( x )  WIDEN2( x )
 
+/** @brief Installs the BugSplat crash handler for minidump generation.
+ *
+ *  Creates a MiniDmpSender configured with the project's BugSplat database,
+ *  name, and version. Enables guard memory, log file collection, hang
+ *  detection, thread suspension, and hijack prevention. Sets a 20 MB guard
+ *  buffer for out-of-memory crash capture and attaches the game log file
+ *  as an additional crash report artifact.
+ */
 void setupCrashHandler()
 {
 	static MiniDmpSender* mpSender = new MiniDmpSender( WIDEN( BUGSPLAT_DB ), WIDEN( PROJECT_NAME ), WIDEN( BUILD_VERSION ), NULL, MDSF_USEGUARDMEMORY | MDSF_LOGFILE | MDSF_DETECTHANGS | MDSF_SUSPENDALLTHREADS | MDSF_PREVENTHIJACKING );
@@ -34,6 +50,7 @@ void setupCrashHandler()
 	mpSender->sendAdditionalFile( logFile.replace( '/', '\\' ).toStdWString().c_str() );
 }
 #else
+/** @brief No-op crash handler stub when BugSplat is not available. */
 void setupCrashHandler()
 {
 }

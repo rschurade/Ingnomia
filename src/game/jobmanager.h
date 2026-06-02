@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file jobmanager.h
+ *  @brief Job manager: creates, assigns, and manages all jobs. Handles phase transitions
+ *         (PENDING -> HAULING -> READY), item claiming, haul sub-job creation, priority
+ *         queuing, and job sprite visualization.
+ */
 #pragma once
 
 
@@ -30,6 +35,8 @@
 
 class Game;
 
+/** @brief Manages all jobs in the game: creation, assignment, phase transitions,
+ *         item claiming, haul sub-jobs, priority queuing, and sprite visualization. */
 class JobManager : public QObject
 {
 	Q_OBJECT
@@ -62,6 +69,10 @@ private:
 
 	bool insertIntoPositionHash( unsigned int jobID );
 	void removeFromPositionHash( unsigned int jobID );
+
+	void processJobPhases();
+	bool tryAtomicClaimItems( QSharedPointer<Job> job, QList<unsigned int>& claimedItemIDs );
+	void createHaulSubJobs( QSharedPointer<Job> parentJob, const QList<unsigned int>& itemIDs );
 
 public:
 	JobManager() = delete;
@@ -102,4 +113,6 @@ public:
 	void deleteJobAt( const Position& pos );
 	void raisePrio( Position& pos );
 	void lowerPrio( Position& pos );
+
+	void onHaulSubJobComplete( unsigned int haulJobID );
 };

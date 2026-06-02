@@ -15,19 +15,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file vptr.h
+ * @brief Type-safe void pointer wrapper for storing C++ pointers in QVariant.
+ */
+
 #pragma once
 
 #include <QVariant>
 
+/**
+ * @brief Template helper for round-tripping typed pointers through QVariant.
+ * @tparam T The pointed-to type.
+ */
 template <class T>
 class VPtr
 {
 public:
+	/**
+	 * @brief Extracts a typed pointer from a QVariant containing a void*.
+	 * @param v The QVariant holding the pointer.
+	 * @return The typed pointer.
+	 */
 	static T* asPtr( QVariant v )
 	{
 		return (T*)v.value<void*>();
 	}
 
+	/**
+	 * @brief Wraps a typed pointer into a QVariant as void*.
+	 * @param ptr The pointer to wrap.
+	 * @return A QVariant containing the pointer.
+	 */
 	static QVariant asQVariant( T* ptr )
 	{
 		return qVariantFromValue( (void*)ptr );

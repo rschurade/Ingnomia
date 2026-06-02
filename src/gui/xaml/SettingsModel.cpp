@@ -15,6 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file SettingsModel.cpp
+ *  @brief SettingsModel implementation. Constructor creates the proxy and the bindable
+ *         language/scale collections and requests the initial settings snapshot. The
+ *         updateSettings slot replaces the collections and scalar fields with a fresh
+ *         snapshot from the game side and raises change notifications. Trivial Get/Set
+ *         property accessors below are XAML binding plumbing and forward writes to the
+ *         proxy (which hops to the game thread via queued signals).
+ */
 
 #include "SettingsModel.h"
 #include "settingsproxy.h"
@@ -58,6 +66,8 @@ const char* ScaleEntry::getName() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the SettingsModel, creates the proxy, initialises empty language and
+///        scale collections, and requests the current settings snapshot from the game side.
 SettingsModel::SettingsModel()
 {
     m_proxy = new SettingsProxy;
@@ -69,6 +79,9 @@ SettingsModel::SettingsModel()
     m_scales = *new ObservableCollection<ScaleEntry>();
 }
 
+/// @brief Applies a fresh GuiSettings snapshot from the game side. Rebuilds the language and
+///        scale collections, picks the currently selected entries, updates all scalar fields,
+///        and raises PropertyChanged for every bound property.
 void SettingsModel::updateSettings( const GuiSettings& settings )
 {
     m_languages->Clear();  

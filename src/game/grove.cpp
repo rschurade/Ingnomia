@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file grove.cpp
+ *  @brief Tree grove implementation: planting, fruit picking, tree felling,
+ *         auto-forester thresholds, and grove field management.
+ */
 #include "grove.h"
 
 #include "../base/db.h"
@@ -30,6 +34,7 @@
 
 #include <QDebug>
 
+/// @brief Destructor — frees all GroveField allocations.
 Grove::~Grove()
 {
 	for ( const auto& field : m_fields )
@@ -38,6 +43,8 @@ Grove::~Grove()
 	}
 }
 
+/// @brief Deserialising constructor — restores grove configuration from a saved variant map.
+/// @param in Map produced by GroveProperties::serialize().
 GroveProperties::GroveProperties( QVariantMap& in )
 {
 	auto vjpl = in.value( "JobPriorities" ).toList();
@@ -60,6 +67,8 @@ GroveProperties::GroveProperties( QVariantMap& in )
 	autoFellMax = in.value( "AutoFellMax" ).toInt();
 }
 
+/// @brief Serialises grove configuration into an existing variant map.
+/// @param out Map to write keys into (Type, TreeType, plant/pickFruit/fell flags, auto-forester settings, JobPriorities).
 void GroveProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "grove" );
@@ -85,6 +94,9 @@ void GroveProperties::serialize( QVariantMap& out ) const
 	out.insert( "JobPriorities", jpl );
 }
 
+/// @brief Constructs a new grove from a list of tile positions.
+/// @param tiles List of (position, included) pairs; only tiles with second==true are registered.
+/// @param game  Owning game instance.
 Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )
 {
@@ -106,6 +118,9 @@ Grove::Grove( QList<QPair<Position, bool>> tiles, Game* game ) :
 	}
 }
 
+/// @brief Deserialising constructor — restores a grove from a saved variant map.
+/// @param vals Map produced by Grove::serialize().
+/// @param game Owning game instance.
 Grove::Grove( QVariantMap vals, Game* game ) :
 	WorldObject( vals, game ),
 	m_properties( vals )
@@ -124,6 +139,8 @@ Grove::Grove( QVariantMap vals, Game* game ) :
 	}
 }
 
+/// @brief Serialises the grove (base WorldObject data, properties, and all field positions/jobs).
+/// @return QVariant wrapping a QVariantMap suitable for saving.
 QVariant Grove::serialize() const
 {
 	QVariantMap out;
@@ -146,6 +163,9 @@ QVariant Grove::serialize() const
 	return out;
 }
 
+/// @brief Per-tick update: creates PlantTree, HarvestTree, or FellTree jobs for fields that need work,
+///        then runs the auto-forester threshold logic.
+/// @param tick Current game tick (unused directly; job creation uses game state internally).
 void Grove::onTick( quint64 tick )
 {
 	if ( !m_active )
@@ -214,6 +234,9 @@ void Grove::onTick( quint64 tick )
 	updateAutoForester();
 }
 
+/// @brief Adjusts pickFruit and fell flags based on auto-forester min/max inventory thresholds.
+///        Auto-pick enables harvesting when fruit stock drops below autoPickMin and disables it above autoPickMax.
+///        Auto-fell enables felling when raw-wood stock drops below autoFellMin and disables it above autoFellMax.
 void Grove::updateAutoForester()
 {
 	if ( m_properties.autoPick )
@@ -248,11 +271,16 @@ void Grove::updateAutoForester()
 
 
 
+/// @brief Returns true; groves can always be deleted by the player.
+/// @return Always true.
 bool Grove::canDelete() const
 {
 	return true;
 }
 
+/// @brief Removes a single tile from the grove, clears its TF_GROVE flag, and deletes the GroveField.
+/// @param pos Position of the tile to remove.
+/// @return true if this was the last tile and the grove should be deleted, false otherwise.
 bool Grove::removeTile( const Position & pos )
 {
 	GroveField* gf = m_fields.value( pos.toInt() );
@@ -265,6 +293,8 @@ bool Grove::removeTile( const Position & pos )
 	return m_fields.empty();
 }
 
+/// @brief Adds a new tile to the grove and sets its TF_GROVE world flag.
+/// @param pos Position of the tile to add.
 void Grove::addTile( const Position & pos )
 {
 	GroveField* grofi = new GroveField;
@@ -274,6 +304,8 @@ void Grove::addTile( const Position & pos )
 	g->w()->setTileFlag( pos, TileFlag::TF_GROVE );
 }
 
+/// @brief Counts the number of grove fields that currently contain a tree plant.
+/// @return Number of fields whose world tile holds a tree.
 int Grove::numTrees()
 {
 	int numTrees = 0;

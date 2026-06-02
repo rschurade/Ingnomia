@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creature.h
+ *  Base class for all creatures in the game (gnomes, animals, monsters, automatons).
+ *  Provides position, movement, anatomy, equipment, behavior tree, combat stats,
+ *  and aggro tracking shared by all creature types.
+ */
 #pragma once
 
 #include "../base/behaviortree/bt_node.h"
@@ -28,6 +33,7 @@
 class QPainter;
 class Game;
 
+/** @brief Entry in a creature's aggro list, tracking threat level per target. */
 struct AggroEntry
 {
 	int aggro       = 0;
@@ -51,6 +57,7 @@ struct AggroEntry
 	}
 };
 
+/** @brief Gender of a creature. */
 enum class Gender : unsigned char
 {
 	UNDEFINED = 0,
@@ -58,6 +65,7 @@ enum class Gender : unsigned char
 	FEMALE    = 2
 };
 
+/** @brief Discriminator for creature subtypes. */
 enum class CreatureType : unsigned char
 {
 	UNDEFINED = 0,
@@ -68,6 +76,7 @@ enum class CreatureType : unsigned char
 	AUTOMATON
 };
 
+/** @brief Result codes returned by a creature's onTick method. */
 enum class CreatureTickResult : unsigned char
 {
 	DEAD,
@@ -80,6 +89,7 @@ enum class CreatureTickResult : unsigned char
 	NOCORE
 };
 
+/** @brief A single equipment slot entry with item/material IDs and accepted materials list. */
 struct EquipmentItem
 {
 	QString item            = "";
@@ -94,6 +104,7 @@ struct EquipmentItem
 	EquipmentItem() {};
 };
 
+/** @brief Full equipment loadout for a creature (armor, weapons, cosmetics). */
 struct Equipment
 {
 	QString hair       = "GnomeHair1";
@@ -125,6 +136,11 @@ struct Equipment
 	Equipment() {};
 };
 
+/** @brief Abstract base class for all creatures (gnomes, animals, monsters, automatons).
+ *
+ *  Manages position, movement with pathfinding, anatomy/health, equipment,
+ *  behavior tree execution, combat cooldowns, aggro tracking, and serialization.
+ */
 class Creature : public Object
 {
 public:
@@ -433,6 +449,7 @@ protected:
 	Creature* resolveTarget( unsigned int creatureId );
 };
 
+/** @brief Comparator for sorting Creature pointers alphabetically by name. */
 struct CreatureCompare
 {
 	bool operator()( const Creature* a, const Creature* b )

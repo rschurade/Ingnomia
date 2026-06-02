@@ -15,10 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file soundmanager.h
+ *  @brief Sound effect playback for game events, emitting signals consumed by the OpenAL audio layer.
+ */
 #pragma once
 
 #include "../base/position.h"
 
+/** @brief Describes a sound effect with its type, material, and world position. */
 struct SoundEffect
 {
 	QString type;
@@ -30,6 +34,11 @@ Q_DECLARE_METATYPE( SoundEffect )
 class Job;
 class Game;
 
+/** @brief Emits sound effect signals for the audio subsystem to play via OpenAL.
+ *
+ *  Called by game logic (e.g., jobs, crafting) to trigger positional sound effects.
+ *  The actual audio playback is handled by AggregatorSound which listens to signalPlayEffect.
+ */
 class SoundManager : public QObject
 {
 	Q_OBJECT

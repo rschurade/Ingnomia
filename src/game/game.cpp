@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file game.cpp
+ *  @brief Implementation of the Game class: tick loop, clock/calendar, plant processing, save/load, and manager accessors.
+ */
 #include "game.h"
 
 #include "../base/config.h"
@@ -61,6 +64,10 @@
 
 #include <time.h>
 
+/**
+ * @brief Constructs the Game, initializing all manager subsystems, game clock, and sprite factory.
+ * @param parent Parent QObject (typically GameManager).
+ */
 Game::Game( QObject* parent ) :
 	QObject( parent )
 {
@@ -125,6 +132,10 @@ Game::~Game()
 {
 }
 
+/**
+ * @brief Generates the world from new-game settings, including terrain topology and life.
+ * @param ngs New game settings containing world size, seed, species filters, etc.
+ */
 void Game::generateWorld( NewGameSettings* ngs )
 {
 	m_inv->loadFilter();
@@ -137,12 +148,21 @@ void Game::generateWorld( NewGameSettings* ngs )
 	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
+/**
+ * @brief Creates a blank world with the given dimensions (used when loading saves).
+ * @param dimX World X dimension.
+ * @param dimY World Y dimension.
+ * @param dimZ World Z dimension (number of vertical levels).
+ */
 void Game::setWorld( int dimX, int dimY, int dimZ )
 {
 	m_world.reset( new World( dimX, dimY, dimZ, this ) );
 	m_pf.reset( new PathFinder( m_world.get(), this ) );
 }
 
+/**
+ * @brief Starts the game loop timer. Performs initial auto-save on first start if needed.
+ */
 void Game::start()
 {
 	qDebug() << "Starting game";
@@ -164,6 +184,9 @@ void Game::start()
 	m_timer->start( m_millisecondsSlow );
 }
 
+/**
+ * @brief Stops the game loop timer and cleans it up.
+ */
 void Game::stop()
 {
 	qDebug() << "Stop game";
@@ -174,6 +197,10 @@ void Game::stop()
 	}
 }
 
+/**
+ * @brief Main game loop called by the timer. Advances one simulation tick (if not paused),
+ *        updates all managers, processes world changes, and emits GUI update signals.
+ */
 void Game::loop()
 {
 	QElapsedTimer timer;
@@ -279,6 +306,10 @@ void Game::loop()
 	
 }
 
+/**
+ * @brief Advances the in-game clock by one tick, updating minute/hour/day/season/year
+ *        and emitting time-related signals.
+ */
 void Game::sendClock()
 {
 	GameState::minuteChanged = false;
@@ -362,11 +393,18 @@ void Game::sendClock()
 	emit signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, sunStatus );
 }
 
+/**
+ * @brief Emits the current time and date signal without advancing the clock (used on game load).
+ */
 void Game::sendTime()
 {
 	emit signalTimeAndDate( GameState::minute, GameState::hour, GameState::day, S::s( "$SeasonName_" + GameState::seasonString ), GameState::year, "" );
 }
 
+/**
+ * @brief Calculates sunrise and sunset times for the current day by interpolating between
+ *        the current and next season's sun schedule from the DB.
+ */
 void Game::calcDaylight()
 {
 	QString currentSeason = GameState::seasonString;
@@ -391,12 +429,22 @@ void Game::calcDaylight()
 	//qDebug() << "sunrise: " << intToTime( m_sunrise ) << " sunset:" << intToTime( m_sunset );
 }
 
+/**
+ * @brief Converts a "HH:MM" time string to total minutes.
+ * @param time Time string in "HH:MM" format.
+ * @return Total minutes since midnight.
+ */
 int Game::timeToInt( QString time )
 {
 	QStringList tl = time.split( ":" );
 	return tl[0].toInt() * Global::util->minutesPerHour + tl[1].toInt();
 }
 
+/**
+ * @brief Converts total minutes since midnight to a "HH:MM" string.
+ * @param time Total minutes since midnight.
+ * @return Formatted time string.
+ */
 QString Game::intToTime( int time )
 {
 	int hour    = time / Global::util->minutesPerHour;
@@ -412,6 +460,9 @@ QString Game::intToTime( int time )
 	return out;
 }
 
+/**
+ * @brief Ticks all plants in the world, removing any that return DESTROY (e.g., dead/harvested plants).
+ */
 void Game::processPlants()
 {
 	QList<Position> toRemove;
@@ -432,6 +483,10 @@ void Game::processPlants()
 	}
 }
 
+/**
+ * @brief Performs auto-save if the day counter has reached zero, then resets the counter.
+ *        Pauses the game during save and optionally resumes afterward based on config.
+ */
 void Game::autoSave()
 {
 	int daysToNext = Global::cfg->get( "DaysToNextAutoSave" ).toInt();
@@ -460,6 +515,9 @@ void Game::autoSave()
 	}
 }
 
+/**
+ * @brief Performs a manual save, pausing the game during the operation.
+ */
 void Game::save()
 {
 	Global::cfg->set( "Pause", true );
@@ -477,11 +535,19 @@ void Game::save()
 }
 
 	
+/**
+ * @brief Returns the current game speed setting.
+ * @return Current GameSpeed value.
+ */
 GameSpeed Game::gameSpeed()
 {
 	return m_gameSpeed;
 }
 
+/**
+ * @brief Sets the game speed and adjusts the timer interval accordingly.
+ * @param speed The desired game speed (Normal or Fast).
+ */
 void Game::setGameSpeed( GameSpeed speed )
 {
 	m_gameSpeed = speed;
@@ -496,6 +562,10 @@ void Game::setGameSpeed( GameSpeed speed )
 	}
 }
 
+/**
+ * @brief Returns whether the game is currently paused.
+ * @return True if paused.
+ */
 bool Game::paused()
 {
 	return m_paused;

@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file stockpile.cpp
+ *  @brief Stockpile storage management: item filtering, hauling job creation, container support,
+ *         stack merging, item limits with suspend/activate thresholds, and tile lifecycle.
+ */
 #include "stockpile.h"
 
 #include "../base/db.h"
@@ -30,12 +34,18 @@
 #include <QElapsedTimer>
 #include <QString>
 
+/// @brief Constructs an empty stockpile with no tiles.
+/// @param game Owning Game instance.
 Stockpile::Stockpile( Game* game ) :
 	WorldObject( game )
 {
 	m_name = "Stockpile";
 }
 
+/// @brief Constructs a stockpile from a list of (position, included) tile pairs.
+///        Only tiles with the bool flag set are added.
+/// @param tiles List of (Position, bool) pairs; true means include the tile.
+/// @param game  Owning Game instance.
 Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )
 {
@@ -51,6 +61,7 @@ Stockpile::Stockpile( QList<QPair<Position, bool>> tiles, Game* game ) :
 	}
 }
 
+/// @brief Destructor. Frees all InventoryField allocations.
 Stockpile::~Stockpile()
 {
 	for ( const auto& field : m_fields )
@@ -59,19 +70,22 @@ Stockpile::~Stockpile()
 	}
 }
 
+/// @brief Adds a single tile to this stockpile, creating an InventoryField and setting the TF_STOCKPILE flag.
+/// @param pos World position of the tile to add.
 void Stockpile::addTile( Position& pos )
 {
 	InventoryField* infi = new InventoryField;
 	infi->pos            = pos;
 	infi->capacity       = 1;
 	infi->stackSize      = 1;
-	infi->containerID    = 0;
-
 	m_fields.insert( pos.toInt(), infi );
 
 	g->w()->setTileFlag( infi->pos, TileFlag::TF_STOCKPILE );
 }
 
+/// @brief Deserialising constructor. Restores a stockpile from a previously serialised QVariantMap.
+/// @param vals QVariantMap produced by Stockpile::serialize().
+/// @param game  Owning Game instance.
 Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 	WorldObject( vals, game )
 {
@@ -84,9 +98,14 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 	{
 		InventoryField* infi = new InventoryField;
 		infi->pos            = Position( vf.toMap().value( "Pos" ).toString() );
-		infi->containerID    = vf.toMap().value( "ContainerID" ).toUInt();
 		infi->capacity       = vf.toMap().value( "Capacity" ).toUInt();
 		infi->stackSize      = vf.toMap().value( "StackSize" ).toUInt();
+		if ( vf.toMap().contains( "Container" ) )
+		{
+			infi->container   = SourceMaterial::deserialize( vf.toMap().value( "Container" ).toMap() );
+			infi->requireSame = vf.toMap().value( "RequireSame" ).toBool();
+			infi->allowedItems = vf.toMap().value( "AllowedItems" ).toStringList();
+		}
 
 		if ( vf.toMap().contains( "Items" ) )
 		{
@@ -112,14 +131,6 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 			}
 		}
 
-		if ( infi->containerID )
-		{
-			infi->requireSame = g->inv()->requireSame( infi->containerID );
-			//repair capacity
-			infi->capacity = DB::select( "Capacity", "Containers", g->inv()->itemSID( infi->containerID ) ).value<unsigned char>(); 
-
-		}
-
 		m_fields.insert( infi->pos.toInt(), infi );
 
 		QVariantList vjl = vals.value( "Jobs" ).toList();
@@ -142,6 +153,8 @@ Stockpile::Stockpile( QVariantMap vals, Game* game ) :
 	}
 }
 
+/// @brief Serialises this stockpile's full state (fields, filter, limits, pending jobs) to a QVariant.
+/// @return QVariant map with all persistent stockpile data.
 QVariant Stockpile::serialize()
 {
 	QVariantMap out;
@@ -159,7 +172,14 @@ QVariant Stockpile::serialize()
 		fima.insert( "Pos", field->pos.toString() );
 		fima.insert( "Capacity", field->capacity );
 		fima.insert( "StackSize", field->stackSize );
-		fima.insert( "ContainerID", field->containerID );
+		if ( field->hasContainer() )
+		{
+			fima.insert( "Container", field->container.serialize() );
+			fima.insert( "RequireSame", field->requireSame );
+			QVariantList allowedItems;
+			for ( const auto& ai : field->allowedItems ) allowedItems.append( ai );
+			fima.insert( "AllowedItems", allowedItems );
+		}
 
 		if ( field->items.size() > 0 )
 		{
@@ -210,6 +230,9 @@ QVariant Stockpile::serialize()
 	return out;
 }
 
+/// @brief Applies filter, pull-flags, and limits from @p vals (e.g. copied from another stockpile).
+///        Does not modify tile layout or items.
+/// @param vals QVariantMap with Active, PullOthers, AllowPull, Filter, Limits keys.
 void Stockpile::pasteSettings( QVariantMap vals )
 {
 	m_active     = vals.value( "Active" ).toBool();
@@ -229,12 +252,16 @@ void Stockpile::pasteSettings( QVariantMap vals )
 	}
 }
 
+/// @brief Per-tick update. Refreshes the candidate item list when the filter has changed
+///        or when the possible-item list is empty and hasn't been updated recently.
+/// @param tick Current game tick.
+/// @return true if a filter update was performed.
 bool Stockpile::onTick( quint64 tick )
 {
 	if ( !m_active )
 		return false;
 	bool lastUpdateLongAgo = ( tick - m_lastUpdateTick ) > 100;
-	if ( ( m_filterChanged || m_possibleItems.empty() ) && lastUpdateLongAgo )
+	if ( m_filterChanged || ( m_possibleItems.empty() && lastUpdateLongAgo ) )
 	{
 		m_filterChanged = false;
 		if ( !m_fields.empty() )
@@ -270,6 +297,9 @@ bool Stockpile::onTick( quint64 tick )
 	return false;
 }
 
+/// @brief Returns the set of (itemSID, materialSID) pairs that could still be accepted
+///        by at least one non-full field. "Any" wildcards are used for empty plain fields.
+/// @return Set of (itemSID, materialSID) pairs with available capacity.
 QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 {
 	QSet<QPair<QString, QString>> freeSlots;
@@ -277,11 +307,11 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 	{
 		if ( !infi->isFull )
 		{
-			if ( infi->containerID )
+			if ( infi->hasContainer() )
 			{
 				if ( infi->items.size() == 0 || !infi->requireSame )
 				{
-					for ( const auto& itemSID : Global::util->itemsAllowedInContainer( infi->containerID ) )
+					for ( const auto& itemSID : infi->allowedItems )
 					{
 						freeSlots.insert( { itemSID, "Any" } );
 					}
@@ -311,6 +341,10 @@ QSet<QPair<QString, QString>> Stockpile::freeSlots() const
 	return freeSlots;
 }
 
+/// @brief Tries to create a hauling job for the next candidate item from m_possibleItems.
+///        Checks item limits, region connectivity, container rules, and stack eligibility.
+///        Creates a multi-item haul job (HauleMultipleItems) when a carry container is available.
+/// @return The job ID of the created job, or 0 if no suitable item/field pair was found.
 unsigned int Stockpile::getJob()
 {
 	if ( m_isFull || !m_active || m_filter.getActive().isEmpty() || m_fields.empty() )
@@ -359,55 +393,47 @@ unsigned int Stockpile::getJob()
 					}
 
 					// start with tiles that have a container
-					if ( infi->containerID )
+					if ( infi->hasContainer() )
 					{
 						if ( infi->items.size() + infi->reservedItems.size() == 0 )
 						{
 							//container is empty
-							if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
+							if ( infi->allowedItems.contains( g->inv()->itemSID( item ) ) )
 							{
 								return createJob( item, infi );
 							}
 						}
 						else // container not empty
 						{
-							if ( infi->requireSame )
+							if ( infi->capacity > infi->items.size() + infi->reservedItems.size() )
 							{
-								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) && infi->capacity > infi->items.size() + infi->reservedItems.size() )
+								if ( infi->requireSame )
 								{
 									unsigned int firstItem = 0;
-									if ( g->inv()->itemsInContainer( infi->containerID ).size() )
+									if ( !infi->items.empty() )
 									{
-										firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
+										firstItem = *infi->items.begin();
 									}
-									else if ( infi->reservedItems.size() )
+									else if ( !infi->reservedItems.empty() )
 									{
 										firstItem = *infi->reservedItems.begin();
 									}
-									if ( ( firstItem != 0 && g->inv()->isSameTypeAndMaterial( item, firstItem ) ) )
+									if ( firstItem != 0 && g->inv()->isSameTypeAndMaterial( item, firstItem ) )
 									{
 										return createJob( item, infi );
 									}
 								}
 								else
 								{
-									infi->isFull = true;
+									if ( infi->allowedItems.contains( g->inv()->itemSID( item ) ) )
+									{
+										return createJob( item, infi );
+									}
 								}
 							}
 							else
 							{
-								if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) &&
-									 infi->capacity > infi->items.size() + infi->reservedItems.size() )
-								{
-									if ( Global::util->itemAllowedInContainer( item, infi->containerID ) )
-									{
-										return createJob( item, infi );
-									}
-								}
-								else
-								{
-									infi->isFull = true;
-								}
+								infi->isFull = true;
 							}
 						}
 					}
@@ -419,7 +445,7 @@ unsigned int Stockpile::getJob()
 				if ( !infi->isFull )
 				{
 					// now tiles without container
-					if ( !infi->containerID ) // no container
+					if ( !infi->hasContainer() ) // no container
 					{
 						if ( infi->items.size() + infi->reservedItems.size() == 0 )
 						{
@@ -470,6 +496,11 @@ unsigned int Stockpile::getJob()
 	return 0;
 }
 
+/// @brief Creates a HauleItem (or HauleMultipleItems) job targeting @p infi for item @p itemID.
+///        Updates item limits, reserves the item slot, and registers the job.
+/// @param itemID UID of the item to haul.
+/// @param infi   Target inventory field in this stockpile.
+/// @return The job ID of the created job.
 unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 {
 	QString itemSID        = g->inv()->itemSID( itemID );
@@ -477,7 +508,7 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 	int freeSpace          = 1;
 	int countItems         = infi->items.size();
 	int countReservedItems = infi->reservedItems.size();
-	if ( infi->containerID )
+	if ( infi->hasContainer() )
 	{
 		freeSpace = infi->capacity - ( countItems + countReservedItems );
 	}
@@ -591,6 +622,9 @@ unsigned int Stockpile::createJob( unsigned int itemID, InventoryField* infi )
 	return job->id();
 }
 
+/// @brief Tries to create a consolidation job: moves items from plain fields into containers,
+///        or merges partially-filled stacks within the stockpile.
+/// @return The job ID of the created consolidation job, or 0 if nothing to consolidate.
 unsigned int Stockpile::getCleanUpJob()
 {
 	if ( !m_active || m_filter.getActive().isEmpty() )
@@ -602,18 +636,18 @@ unsigned int Stockpile::getCleanUpJob()
 	{
 		InventoryField* infi = i.value();
 		//first tiles with container
-		if ( infi->containerID )
+		if ( infi->hasContainer() )
 		{
-			if ( infi->requireSame )
+			if ( infi->capacity > infi->items.size() + infi->reservedItems.size() )
 			{
-				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
+				if ( infi->requireSame )
 				{
 					unsigned int firstItem = 0;
-					if ( g->inv()->itemsInContainer( infi->containerID ).size() )
+					if ( !infi->items.empty() )
 					{
-						firstItem = *g->inv()->itemsInContainer( infi->containerID ).begin();
+						firstItem = *infi->items.begin();
 					}
-					else if ( infi->reservedItems.size() )
+					else if ( !infi->reservedItems.empty() )
 					{
 						firstItem = *infi->reservedItems.begin();
 					}
@@ -627,7 +661,7 @@ unsigned int Stockpile::getCleanUpJob()
 						for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
 						{
 							InventoryField* infi2 = j.value();
-							if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
+							if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->hasContainer() )
 							{
 								for ( auto oi : infi2->items )
 								{
@@ -642,19 +676,16 @@ unsigned int Stockpile::getCleanUpJob()
 						}
 					}
 				}
-			}
-			else
-			{
-				if ( infi->capacity > ( g->inv()->itemsInContainer( infi->containerID ).size() + infi->reservedItems.size() ) )
+				else
 				{
 					for ( auto j = m_fields.begin(); j != m_fields.end(); ++j )
 					{
 						InventoryField* infi2 = j.value();
-						if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
+						if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->hasContainer() )
 						{
 							for ( auto oi : infi2->items )
 							{
-								if ( Global::util->itemAllowedInContainer( oi, infi->containerID ) && !g->inv()->isInJob( oi ) )
+								if ( infi->allowedItems.contains( g->inv()->itemSID( oi ) ) && !g->inv()->isInJob( oi ) )
 								{
 									return createJob( oi, infi );
 								}
@@ -669,7 +700,7 @@ unsigned int Stockpile::getCleanUpJob()
 	for ( auto i = m_fields.begin(); i != m_fields.end(); ++i )
 	{
 		InventoryField* infi = i.value();
-		if ( !infi->containerID )
+		if ( !infi->hasContainer() )
 		{
 			if ( infi->stackSize > 1 && ( infi->items.size() + infi->reservedItems.size() < infi->stackSize ) )
 			{
@@ -683,7 +714,7 @@ unsigned int Stockpile::getCleanUpJob()
 				while ( iter != i )
 				{
 					InventoryField* infi2 = iter.value();
-					if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->containerID )
+					if ( !infi2->items.empty() && infi2->reservedItems.empty() && !infi2->hasContainer() )
 					{
 						for ( auto oi : infi2->items )
 						{
@@ -704,11 +735,18 @@ unsigned int Stockpile::getCleanUpJob()
 	return 0;
 }
 
+/// @brief Called when a hauling job completes successfully. Delegates to giveBackJob().
+/// @param jobID ID of the completed job.
+/// @return true if the job was found and removed.
 bool Stockpile::finishJob( unsigned int jobID )
 {
 	return giveBackJob( jobID );
 }
 
+/// @brief Cancels or returns a hauling job: releases item reservations, resets field isFull flags,
+///        and reactivates item limits if count drops below the activate threshold.
+/// @param jobID ID of the job to return.
+/// @return true if the job was found and removed.
 bool Stockpile::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobsOut.contains( jobID ) )
@@ -749,6 +787,8 @@ bool Stockpile::giveBackJob( unsigned int jobID )
 	return false;
 }
 
+/// @brief Clears the isFull flag on the field at @p pos and on the stockpile as a whole.
+/// @param pos World position of the field to mark as not full.
 void Stockpile::setInfiNotFull( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -759,6 +799,11 @@ void Stockpile::setInfiNotFull( Position pos )
 	}
 }
 
+/// @brief Records a delivered item into the field at @p pos. Updates reservation tracking,
+///        container sprite visibility, stack size, item-limit suspend thresholds, and inventory flags.
+/// @param pos  World position of the destination field.
+/// @param item UID of the item being placed.
+/// @return true on success; false if @p pos is not a field of this stockpile.
 bool Stockpile::insertItem( Position pos, unsigned int item )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -771,17 +816,28 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 		g->inv()->setInStockpile( item, m_id );
 		g->inv()->setInJob( item, 0 );
 
-		if ( field->containerID )
+		if ( field->hasContainer() )
 		{
-			if ( Global::util->itemAllowedInContainer( item, field->containerID ) )
+			// Hide item sprite for items inside the container
+			// Show sprite only for items at this position NOT in the container's item set
+			unsigned int visibleItem = 0;
+			PositionEntry pe;
+			if ( g->inv()->getObjectsAtPosition( pos, pe ) )
 			{
-				g->inv()->putItemInContainer( item, field->containerID );
+				for ( auto id : pe )
+				{
+					if ( !field->items.contains( id ) && !field->reservedItems.contains( id ) )
+					{
+						visibleItem = id;
+						break;
+					}
+				}
 			}
+			g->w()->setItemSprite( pos, visibleItem ? g->inv()->spriteID( visibleItem ) : 0 );
 		}
 		else
 		{
 			field->stackSize = g->inv()->stackSize( *field->items.begin() );
-			g->inv()->setInContainer( item, 0 );
 		}
 		// if count of that item type reached suspend threshold, suspend that item
 		QString itemSID     = g->inv()->itemSID( item );
@@ -815,6 +871,11 @@ bool Stockpile::insertItem( Position pos, unsigned int item )
 	return false;
 }
 
+/// @brief Removes an item from the field at @p pos, resets isFull, clears the inventory
+///        stockpile flag, and reactivates item limits if count drops below the activate threshold.
+/// @param pos  World position of the field.
+/// @param item UID of the item to remove.
+/// @return true if the item was found and removed.
 bool Stockpile::removeItem( Position pos, unsigned int item )
 {
 	if ( m_fields.contains( pos.toInt() ) )
@@ -825,7 +886,7 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 			field->isFull = false;
 			m_isFull      = false;
 			g->inv()->setInStockpile( item, 0 );
-			if ( field->items.empty() && !field->containerID )
+			if ( field->items.empty() && !field->hasContainer() )
 			{
 				field->stackSize = 1;
 			}
@@ -859,6 +920,14 @@ bool Stockpile::removeItem( Position pos, unsigned int item )
 	return false;
 }
 
+/// @brief Updates the item filter for this stockpile at the given specificity level
+///        (category / group / item / material). If items are unchecked, expels any already-stored
+///        items that no longer match the new filter.
+/// @param state    New checked state.
+/// @param category Filter category key.
+/// @param group    Filter group key (empty to apply to whole category).
+/// @param item     Filter item key (empty to apply to whole group).
+/// @param material Filter material key (empty to apply to all materials of the item).
 void Stockpile::setCheckState( bool state, QString category, QString group, QString item, QString material )
 {
 	m_filterChanged = true;
@@ -903,109 +972,132 @@ void Stockpile::setCheckState( bool state, QString category, QString group, QStr
 	}
 }
 
-void Stockpile::addContainer( unsigned int containerID, Position& pos )
-{
-	if ( m_fields.contains( pos.toInt() ) )
-	{
-		if ( containerID )
-		{
-			InventoryField* field = m_fields.value( pos.toInt() );
-
-			field->containerID = containerID;
-			field->requireSame = g->inv()->requireSame( containerID );
-
-			field->capacity = g->inv()->capacity( containerID );
-
-			g->inv()->setConstructed( containerID, true );
-
-			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
-			{
-				g->inv()->setItemPos( itemID, pos );
-				if ( allowedInStockpile( itemID ) )
-				{
-					//insertItem( pos, itemID );
-					g->inv()->setInStockpile( itemID, m_id );
-				}
-			}
-
-			auto items = m_fields[pos.toInt()]->items;
-			for ( auto item : items )
-			{
-				if ( Global::util->itemAllowedInContainer( item, containerID ) && g->inv()->itemsInContainer( containerID ).size() < g->inv()->capacity( containerID ) )
-				{
-					// if an item is already in the container and the container requires same
-					if ( field->requireSame && g->inv()->itemsInContainer( containerID ).size() )
-					{
-						unsigned int firstItem = *g->inv()->itemsInContainer( containerID ).begin();
-						if ( g->inv()->isSameTypeAndMaterial( item, firstItem ) )
-						{
-							g->inv()->putItemInContainer( item, containerID );
-						}
-					}
-					else
-					{
-						g->inv()->putItemInContainer( item, containerID );
-					}
-				}
-				else
-				{
-					removeItem( pos, item );
-				}
-			}
-			field->items.clear();
-			for ( auto itemID : g->inv()->itemsInContainer( containerID ) )
-			{
-				if ( allowedInStockpile( itemID ) )
-				{
-					field->items.insert( itemID );
-				}
-			}
-		}
-	}
-}
-
-void Stockpile::removeContainer( unsigned int containerID, Position& pos )
+/// @brief Places a container on the field at @p pos, setting its source, capacity, requireSame flag,
+///        and allowed-item list. Items already on the field that aren't allowed are removed.
+/// @param source       Container item/material source descriptor.
+/// @param capacity     Maximum number of items the container can hold.
+/// @param requireSame  If true, all items in the container must be the same type and material.
+/// @param allowedItems List of itemSIDs permitted in this container.
+/// @param pos          World position of the field.
+void Stockpile::addContainer( const SourceMaterial& source, unsigned char capacity, bool requireSame, const QStringList& allowedItems, Position& pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		InventoryField* field = m_fields.value( pos.toInt() );
-		if ( field->containerID == containerID )
+
+		field->container    = source;
+		field->requireSame  = requireSame;
+		field->capacity     = capacity;
+		field->allowedItems = allowedItems;
+
+		// Check existing items on this tile — remove any that aren't allowed
+		auto items = field->items;
+		for ( auto item : items )
 		{
-			auto items     = g->inv()->itemsInContainer( containerID );
-			for ( auto item : items )
+			QString iSID = g->inv()->itemSID( item );
+			if ( !allowedItems.contains( iSID ) )
 			{
 				removeItem( pos, item );
 			}
-			field->capacity    = 1;
-			field->stackSize   = 1;
-			field->containerID = 0;
 		}
 	}
 }
 
+/// @brief Removes the container from the field at @p pos. Retains up to stackSize items of the
+///        first allowed type; removes any overflow or disallowed items from the stockpile.
+///        Forces a filter refresh so overflow items can be redistributed.
+/// @param pos World position of the field.
+void Stockpile::removeContainer( Position& pos )
+{
+	if ( m_fields.contains( pos.toInt() ) )
+	{
+		InventoryField* field = m_fields.value( pos.toInt() );
+
+		// Clear container properties
+		field->container = SourceMaterial();
+		field->allowedItems.clear();
+		field->requireSame = false;
+
+		// Without a container, capacity is 1 (stackSize for the item type on the field)
+		// Keep up to stackSize items, remove the rest
+		auto items = field->items;
+		field->items.clear();
+
+		bool first = true;
+		for ( auto item : items )
+		{
+			if ( first && allowedInStockpile( item ) )
+			{
+				// Keep one item (or stackSize items) on the now-containerless field
+				field->items.insert( item );
+				field->stackSize = g->inv()->stackSize( item );
+				first = false;
+			}
+			else if ( !first && field->items.size() < field->stackSize && allowedInStockpile( item ) )
+			{
+				// Stack more if same type and stackable
+				unsigned int firstItem = *field->items.begin();
+				if ( g->inv()->isSameTypeAndMaterial( item, firstItem ) )
+				{
+					field->items.insert( item );
+				}
+				else
+				{
+					// Different type — remove from stockpile
+					g->inv()->setInStockpile( item, 0 );
+				}
+			}
+			else
+			{
+				// Overflow — remove from stockpile
+				g->inv()->setInStockpile( item, 0 );
+			}
+		}
+
+		field->capacity = field->stackSize;
+		field->isFull = ( field->items.size() >= field->stackSize );
+
+		// Force possibleItems refresh so overflow items are redistributed
+		m_possibleItems.clear();
+		m_filterChanged = true;
+	}
+}
+
+/// @brief Returns whether the given item matches the stockpile's active filter.
+/// @param itemID UID of the item to check.
+/// @return true if the item's combinedID is in the active simple filter set.
 bool Stockpile::allowedInStockpile( unsigned int itemID )
 {
 	return m_filter.getActiveSimple().contains( g->inv()->combinedID( itemID ) );
 }
 
+/// @brief Returns the pending job with the given ID.
+/// @param jobID ID of the job to look up.
+/// @return Shared pointer to the job, or null if not found.
 QSharedPointer<Job> Stockpile::getJob( unsigned int jobID )
 {
 	return m_jobsOut[jobID];
 }
 
+/// @brief Returns whether this stockpile owns the job with the given ID.
+/// @param jobID ID to check.
+/// @return true if the job is in m_jobsOut.
 bool Stockpile::hasJobID( unsigned int jobID ) const
 {
 	return m_jobsOut.contains( jobID );
 }
 
+/// @brief Removes a tile from this stockpile. Deconstructs any container, frees all items,
+///        cancels pending jobs for that position, and clears the TF_STOCKPILE flag.
+/// @param pos World position of the tile to remove.
+/// @return true if this was the last tile (stockpile is now empty).
 bool Stockpile::removeTile( Position& pos )
 {
 	InventoryField* infi = m_fields.value( pos.toInt() );
-	// unconstruct container on tile
-	if ( infi->containerID != 0 )
+	// deconstruct container on tile if present
+	if ( infi->hasContainer() )
 	{
 		g->w()->deconstruct( infi->pos, infi->pos, false );
-		//g->inv()->setConstructed( infi->containerID, false );
 	}
 
 	// unstockpile all items on tile
@@ -1034,6 +1126,8 @@ bool Stockpile::removeTile( Position& pos )
 	return m_fields.empty();
 }
 
+/// @brief Links a workshop to this stockpile so it can pull items directly.
+/// @param workshopID UID of the workshop to link.
 void Stockpile::linkWorkshop( unsigned int workshopID )
 {
 	if ( !m_linkedWorkshops.contains( workshopID ) )
@@ -1042,6 +1136,8 @@ void Stockpile::linkWorkshop( unsigned int workshopID )
 	}
 }
 
+/// @brief Removes the link between this stockpile and the given workshop.
+/// @param workshopID UID of the workshop to unlink.
 void Stockpile::unlinkWorkshop( unsigned int workshopID )
 {
 	if ( m_linkedWorkshops.contains( workshopID ) )
@@ -1050,6 +1146,10 @@ void Stockpile::unlinkWorkshop( unsigned int workshopID )
 	}
 }
 
+/// @brief Counts stored items matching both itemSID and materialSID (committed items only).
+/// @param itemSID     Item type string ID.
+/// @param materialSID Material string ID.
+/// @return Number of matching items across all fields.
 int Stockpile::count( QString itemSID, QString materialSID )
 {
 	int count      = 0;
@@ -1067,6 +1167,9 @@ int Stockpile::count( QString itemSID, QString materialSID )
 	return count;
 }
 
+/// @brief Counts stored items matching itemSID (any material, committed items only).
+/// @param itemSID Item type string ID.
+/// @return Number of matching items across all fields.
 int Stockpile::count( QString itemSID )
 {
 	int count      = 0;
@@ -1084,6 +1187,10 @@ int Stockpile::count( QString itemSID )
 	return count;
 }
 
+/// @brief Counts committed + reserved items matching itemSID (any material).
+///        Used for limit suspend/activate threshold checks.
+/// @param itemSID Item type string ID.
+/// @return Total number of matching items (stored + reserved) across all fields.
 int Stockpile::countPlusReserved( QString itemSID )
 {
 	int count      = 0;
@@ -1108,6 +1215,10 @@ int Stockpile::countPlusReserved( QString itemSID )
 	return count;
 }
 
+/// @brief Counts committed + reserved items matching both itemSID and materialSID.
+/// @param itemSID     Item type string ID.
+/// @param materialSID Material string ID.
+/// @return Total number of matching items (stored + reserved) across all fields.
 int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
 {
 	int count      = 0;
@@ -1132,51 +1243,73 @@ int Stockpile::countPlusReserved( QString itemSID, QString materialSID )
 	return count;
 }
 
+/// @brief Sets whether this stockpile actively pulls items from other stockpiles.
+/// @param value New value for m_pullOthers.
 void Stockpile::setPullOthers( bool value )
 {
 	m_pullOthers = value;
 }
 
+/// @brief Returns whether this stockpile pulls items from other stockpiles.
+/// @return m_pullOthers.
 bool Stockpile::pullsOthers()
 {
 	return m_pullOthers;
 }
 
+/// @brief Sets whether other stockpiles are allowed to pull items from this one.
+/// @param value New value for m_allowPull.
 void Stockpile::setAllowPull( bool value )
 {
 	m_allowPull = value;
 }
 
+/// @brief Returns whether other stockpiles may pull items from this one.
+/// @return m_allowPull.
 bool Stockpile::allowsPull()
 {
 	return m_allowPull;
 }
 
+/// @brief Sets the hauling priority for this stockpile.
+/// @param p New priority value (higher = preferred).
 void Stockpile::setPriority( int p )
 {
 	m_priority = p;
 }
 
+/// @brief Returns the hauling priority of this stockpile.
+/// @return m_priority.
 int Stockpile::priority()
 {
 	return m_priority;
 }
 
+/// @brief Clears all item limits for this stockpile.
 void Stockpile::resetLimits()
 {
 	m_limits.clear();
 }
 
+/// @brief Returns the item limit record for the given key (itemSID or itemSID+materialSID).
+/// @param key Limit key string.
+/// @return Copy of the StockpileItemLimit for that key.
 StockpileItemLimit Stockpile::limit( QString key )
 {
 	return m_limits[key];
 }
 
+/// @brief Inserts or replaces the item limit record for the given key.
+/// @param key   Limit key string (itemSID or itemSID+materialSID).
+/// @param limit New limit configuration.
 void Stockpile::setLimit( QString key, StockpileItemLimit limit )
 {
 	m_limits.insert( key, limit );
 }
 
+/// @brief Returns and clears the suspend-status-changed flag.
+///        Used by the stockpile manager to detect when limit suspensions have changed.
+/// @return true if any limit suspension changed since the last call.
 bool Stockpile::suspendChanged()
 {
 	bool out               = m_suspendStatusChanged;
@@ -1184,26 +1317,37 @@ bool Stockpile::suspendChanged()
 	return out;
 }
 
+/// @brief Returns whether this stockpile has any pending hauling jobs not yet completed.
+/// @return true if m_jobsOut is non-empty.
 bool Stockpile::stillHasJobs()
 {
 	return !m_jobsOut.isEmpty();
 }
 
+/// @brief Returns the total number of tile fields in this stockpile.
+/// @return m_fields.size().
 int Stockpile::countFields()
 {
 	return m_fields.size();
 }
 
+/// @brief Sets whether item limits are keyed by itemSID+materialSID (true) or itemSID only (false).
+/// @param value New value for m_limitWithmaterial.
 void Stockpile::setLimitWithMaterial( bool value )
 {
 	m_limitWithmaterial = value;
 }
 
+/// @brief Returns whether item limits include material in the key.
+/// @return m_limitWithmaterial.
 bool Stockpile::limitWithMaterial()
 {
 	return m_limitWithmaterial;
 }
 
+/// @brief Returns the item capacity of the field identified by tileID.
+/// @param tileID Integer key (Position::toInt()) of the field.
+/// @return Capacity of the field, or 0 if the tileID is not part of this stockpile.
 int Stockpile::capacity( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )
@@ -1216,6 +1360,9 @@ int Stockpile::capacity( unsigned int tileID )
 	return 0;
 }
 
+/// @brief Returns the number of committed items currently on the field identified by tileID.
+/// @param tileID Integer key (Position::toInt()) of the field.
+/// @return Item count on the field, or 0 if the tileID is not part of this stockpile.
 int Stockpile::itemCount( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )
@@ -1228,6 +1375,9 @@ int Stockpile::itemCount( unsigned int tileID )
 	return 0;
 }
 
+/// @brief Returns the number of reserved (in-transit) items for the field identified by tileID.
+/// @param tileID Integer key (Position::toInt()) of the field.
+/// @return Reserved item count, or 0 if the tileID is not part of this stockpile.
 int Stockpile::reserved( unsigned int tileID )
 {
 	if ( m_fields.contains( tileID ) )

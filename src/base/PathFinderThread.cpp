@@ -15,6 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file PathFinderThread.cpp
+ *  @brief A* pathfinding worker thread implementation.
+ *
+ *  Runs the A* search algorithm on a separate thread, supporting 8-directional
+ *  movement, stairs, scaffolds, and ramps. Multiple goals can be searched in a
+ *  single invocation by reusing the explored path field.
+ */
 #include "PathFinderThread.h"
 
 #include "../base/global.h"
@@ -26,6 +33,13 @@
 
 #define DEADLYFLUIDLEVEL 4
 
+/** @brief Constructs a PathFinderThread worker.
+ *  @param world        Pointer to the game World for tile lookups.
+ *  @param start        The search origin (typically the shared goal of multiple creatures).
+ *  @param goals        Set of target positions to find paths to.
+ *  @param ignoreNoPass If true, tiles marked TF_NOPASS are treated as passable.
+ *  @param callback     Callback invoked for each goal once its path is found (or not).
+ */
 PathFinderThread::PathFinderThread( World* world, Position start, const std::unordered_set<Position>& goals, bool ignoreNoPass, PathFinderThread::CompletionCallback callback ) :
 	m_world( world ),
 	m_start( start ),
@@ -35,11 +49,25 @@ PathFinderThread::PathFinderThread( World* world, Position start, const std::uno
 {
 }
 
+/** @brief Entry point for the worker thread. Invokes findPath(). */
 void PathFinderThread::operator()()
 {
 	findPath();
 }
 
+/** @brief Evaluates a neighboring tile for A* expansion.
+ *
+ *  Checks whether @p next is walkable and passable (respecting ignoreNoPass),
+ *  and that fluid level is below the lethal threshold. If so, computes the
+ *  new cost and updates the path field and priority queue if this is a cheaper route.
+ *
+ *  @param current  The position currently being expanded.
+ *  @param next     The neighbor position to evaluate.
+ *  @param path     The path field mapping positions to costs and predecessors.
+ *  @param frontier The A* priority queue.
+ *  @param goal     The current target position (used for heuristic calculation).
+ *  @return True if the neighbor is walkable and was considered, false otherwise.
+ */
 bool PathFinderThread::evalPos( const Position& current, const Position& next, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
 	const Tile& tile = m_world->getTile( next );
@@ -67,6 +95,19 @@ bool PathFinderThread::evalPos( const Position& current, const Position& next, s
 	return false;
 }
 
+/** @brief Evaluates a ramp-top neighbor for A* expansion.
+ *
+ *  Checks whether @p rampPos has a ramp-top floor type, then evaluates the tile
+ *  directly below the ramp top for walkability. This handles downward movement
+ *  via ramps from the current level to the level below a neighboring ramp top.
+ *
+ *  @param current  The position currently being expanded.
+ *  @param rampPos  The adjacent position to check for a ramp top.
+ *  @param path     The path field mapping positions to costs and predecessors.
+ *  @param frontier The A* priority queue.
+ *  @param goal     The current target position (used for heuristic calculation).
+ *  @return True if the ramp-bottom tile is walkable and was considered, false otherwise.
+ */
 bool PathFinderThread::evalRampPos( const Position& current, const Position& rampPos, std::unordered_map<Position, PathElement>& path, PriorityQueue<Position, double>& frontier, const Position& goal ) const
 {
 	const Tile& rampTopTile = m_world->getTile( rampPos );
@@ -102,6 +143,16 @@ bool PathFinderThread::evalRampPos( const Position& current, const Position& ram
 	return false;
 }
 
+/** @brief Runs the A* pathfinding algorithm for all goals.
+ *
+ *  Initializes the path field and priority queue from m_start, then iterates
+ *  over each goal. For each goal, re-weights the frontier heuristic and continues
+ *  expanding nodes. Explores 4 cardinal directions (plus ramp variants), 4 diagonal
+ *  directions (only if both adjacent cardinal neighbors are walkable), and vertical
+ *  movement via stairs, scaffolds, and ramps. The explored path field is reused
+ *  across goals for efficiency. Invokes the completion callback for each goal
+ *  with the reconstructed path (or empty if unreachable).
+ */
 void PathFinderThread::findPath()
 {
 	//qDebug() << "find path " << m_start.toString() << " " << m_goal.toString();

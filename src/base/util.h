@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file util.h
+ * @brief Miscellaneous utility functions — item/material queries, time, colors, sprites, serialization.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -34,6 +38,13 @@ class Game;
 class ObjectItem;
 struct Tile;
 
+/**
+ * @brief Swiss-army utility class providing item/material lookups, time calculations,
+ *        color conversions, tile serialization, sprite image generation, and more.
+ *
+ * Instantiated once per game session with a Game pointer for world access.
+ * Accessed globally via Global::util.
+ */
 class Util
 {
 public:

@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file GameGui.xaml.h
+ *  @brief Code-behind for the top-level in-game HUD user control (GameGui.xaml). The HUD
+ *         hosts the top bar, action bar, and side buttons; actual state lives in GameModel.
+ */
 #ifndef __GAMEGUI_H__
 #define __GAMEGUI_H__
 
@@ -25,6 +29,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the in-game HUD Noesis user control.
 class GameGui final : public Noesis::UserControl
 {
 public:

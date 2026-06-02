@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file ProxyGameView.h
+ *  @brief Qt-side proxy bridging GameModel with the game/event connector. Handles the
+ *         large fan-out of HUD actions (pause, speed, render options, window opens,
+ *         build commands, event replies, heartbeat) to various aggregators.
+ */
 #pragma once
 
 #include "GameModel.h"
@@ -23,6 +28,9 @@
 
 #include <QObject>
 
+/// @brief Proxy for the in-game HUD (GameModel). Routes user actions out to the game side
+///        and pushes clock, kingdom info, render options, build items, and event payloads
+///        back into the view model.
 class ProxyGameView : public QObject
 {
 	Q_OBJECT
@@ -42,6 +50,7 @@ public:
 	void requestCreatureUpdate( unsigned int id );
 	void requestMilitaryUpdate();
 	void requestInventoryUpdate();
+	void requestDebugUpdate();
 
 	void sendEventAnswer( unsigned int eventID, bool answer );
 
@@ -58,7 +67,7 @@ public:
 	void requestCmdBuild( BuildItemType type, QString param, QString item, QStringList mats );
 
 private:
-	IngnomiaGUI::GameModel* m_parent = nullptr;
+	IngnomiaGUI::GameModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 private slots:
 	void onTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
@@ -98,6 +107,7 @@ signals:
 	void signalEventAnswer( unsigned int eventID, bool answer );
 	void signalRequestMilitaryUpdate();
 	void signalRequestInventoryUpdate();
+	void signalRequestDebugUpdate();
 	void signalPropagateEscape();
 	void signalSetGameSpeed( GameSpeed speed );
 	void signalSetPaused( bool paused );

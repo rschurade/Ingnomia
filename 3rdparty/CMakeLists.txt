@@ -1,6 +1,8 @@
 add_subdirectory(exprtk)
 add_subdirectory(fastnoise)
 add_subdirectory(NoesisApp)
+add_subdirectory(glad)
 set_target_properties(exprtk PROPERTIES FOLDER 3rdParty)
 set_target_properties(fastnoise PROPERTIES FOLDER 3rdParty)
 set_target_properties(NoesisApp PROPERTIES FOLDER 3rdParty)
+set_target_properties(glad PROPERTIES FOLDER 3rdParty)

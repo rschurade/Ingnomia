@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creature.cpp
+ *  Implementation of the Creature base class: construction, serialization,
+ *  movement, pathfinding, behavior tree, combat conditions/actions, and
+ *  inventory/equipment management.
+ */
 #include "creature.h"
 #include "../game/game.h"
 
@@ -33,6 +38,13 @@
 
 #include <QDebug>
 
+/** @brief Construct a new creature at the given position.
+ *  @param pos Starting world position.
+ *  @param name Display name of the creature.
+ *  @param gender Gender of the creature.
+ *  @param species Species identifier string.
+ *  @param game Pointer to the owning Game instance.
+ */
 Creature::Creature( const Position& pos, QString name, Gender gender, QString species, Game* game ) :
 	g( game ),
 	Object( pos ),
@@ -46,6 +58,10 @@ Creature::Creature( const Position& pos, QString name, Gender gender, QString sp
 {
 }
 
+/** @brief Deserialize a creature from a saved QVariantMap.
+ *  @param in Serialized creature data.
+ *  @param game Pointer to the owning Game instance.
+ */
 Creature::Creature( QVariantMap in, Game* game ) :
 	g( game ),
 	Object( in ),
@@ -161,6 +177,9 @@ Creature::Creature( QVariantMap in, Game* game ) :
 	}
 }
 
+/** @brief Serialize creature state into a QVariantMap for saving.
+ *  @param out Output map to populate with creature data.
+ */
 void Creature::serialize( QVariantMap& out ) const
 {
 	out.insert( "Species", m_species );
@@ -281,11 +300,17 @@ Creature::~Creature()
 {
 }
 
+/** @brief Assign a military role to this creature.
+ *  @param roleID ID of the military role (0 for civilian).
+ */
 void Creature::setRole( unsigned int roleID )
 {
 	m_roleID = roleID;
 }
 
+/** @brief Decrement all combat and movement cooldowns based on elapsed ticks.
+ *  @param tickNumber Current game tick.
+ */
 void Creature::processCooldowns( quint64 tickNumber )
 {
 	int diff = tickNumber - m_lastOnTick;
@@ -301,6 +326,9 @@ void Creature::processCooldowns( quint64 tickNumber )
 	m_jobCooldown -= diff;
 }
 
+/** @brief Load and initialize a behavior tree by ID from the BT_Factory.
+ *  @param id Identifier of the behavior tree definition to load.
+ */
 void Creature::loadBehaviorTree( QString id )
 {
 	m_behaviorTree.reset( BT_Factory::load( id, m_behaviors, m_btBlackBoard ) );
@@ -311,11 +339,19 @@ void Creature::loadBehaviorTree( QString id )
 	}
 }
 
+/** @brief Add or set an attribute (e.g. Str, Dex) on this creature.
+ *  @param id Attribute identifier.
+ *  @param level Attribute value.
+ */
 void Creature::addAttribute( QString id, int level )
 {
 	m_attributes.insert( id, level );
 }
 
+/** @brief Get the value of an attribute.
+ *  @param id Attribute identifier.
+ *  @return Attribute value, or 0 if not set.
+ */
 int Creature::attribute( QString id ) const
 {
 	if ( m_attributes.contains( id ) )
@@ -325,12 +361,20 @@ int Creature::attribute( QString id ) const
 	return 0;
 }
 
+/** @brief Add a skill with initial XP value and mark it inactive.
+ *  @param id Skill identifier.
+ *  @param level Initial XP value for the skill.
+ */
 void Creature::addSkill( QString id, int level )
 {
 	m_skills.insert( id, level );
 	m_skillActive.insert( id, false );
 }
 
+/** @brief Get the effective skill level (reverse Fibonacci of XP).
+ *  @param id Skill identifier.
+ *  @return Skill level, or -1 if skill not present.
+ */
 int Creature::getSkillLevel( QString id ) const
 {
 	if ( m_skills.contains( id ) )
@@ -340,6 +384,10 @@ int Creature::getSkillLevel( QString id ) const
 	return -1;
 }
 
+/** @brief Get the raw XP value for a skill.
+ *  @param id Skill identifier.
+ *  @return Raw XP value, or -1 if skill not present.
+ */
 int Creature::getSkillXP( QString id ) const
 {
 	if ( m_skills.contains( id ) )
@@ -349,11 +397,18 @@ int Creature::getSkillXP( QString id ) const
 	return -1;
 }
 
+/** @brief Directly set the raw XP value for a skill.
+ *  @param id Skill identifier.
+ *  @param level Raw XP value to set.
+ */
 void Creature::setSkillLevel( QString id, int level )
 {
 	m_skills[id] = level;
 }
 
+/** @brief Teleport the creature to a new position, updating the world grid.
+ *  @param to Target position.
+ */
 void Creature::forceMove( const Position& to )
 {
 	//qDebug() << name() << " force move from " << m_position.toString() << " to " << to.toString();
@@ -362,6 +417,7 @@ void Creature::forceMove( const Position& to )
 	g->w()->insertCreatureAtPosition( m_position, m_id );
 }
 
+/** @brief Attempt a random one-tile move, respecting cooldowns, walkability, and creature type restrictions. */
 void Creature::randomMove()
 {
 	if ( m_immobile )
@@ -528,11 +584,17 @@ void Creature::randomMove()
 	}
 }
 
+/** @brief Get the current movement speed value.
+ *  @return Movement speed (subtracted from cooldown each tick).
+ */
 int Creature::moveSpeed() const
 {
 	return m_moveSpeed;
 }
 
+/** @brief Advance one step along the current path if the movement cooldown allows.
+ *  @return True if movement succeeded or waiting on cooldown; false if path is blocked.
+ */
 bool Creature::moveOnPath()
 {
 	if ( m_moveCooldown <= 0 )
@@ -633,6 +695,11 @@ bool Creature::moveOnPath()
 	return true;
 }
 
+/** @brief Calculate the facing direction (0-3) between two positions.
+ *  @param posFrom Source position.
+ *  @param posTo Target position.
+ *  @return Facing direction: 0=east, 1=south, 2=west, 3=north.
+ */
 int Creature::getFacing( Position posFrom, Position posTo )
 {
 	int dx = posTo.x - posFrom.x;
@@ -657,16 +724,25 @@ int Creature::getFacing( Position posFrom, Position posTo )
 	return 0;
 }
 
+/** @brief Set the creature ID that this creature should follow.
+ *  @param id ID of the creature to follow (0 to stop following).
+ */
 void Creature::setFollowID( unsigned int id )
 {
 	m_followID = id;
 }
 
+/** @brief Get the ID of the creature being followed.
+ *  @return Follow target ID, or 0 if not following.
+ */
 unsigned int Creature::followID() const
 {
 	return m_followID;
 }
 
+/** @brief Set the follow target position and update facing toward it.
+ *  @param pos Position to follow to.
+ */
 void Creature::setFollowPosition( Position pos )
 {
 	m_followPosition = pos;
@@ -691,11 +767,19 @@ void Creature::setFollowPosition( Position pos )
 	}
 }
 
+/** @brief Store a named sprite UID for this creature.
+ *  @param name Sprite name key.
+ *  @param spriteUID Sprite unique ID.
+ */
 void Creature::setSpriteUID( QString name, unsigned int spriteUID )
 {
 	m_spriteUIDs.insert( name, spriteUID );
 }
 
+/** @brief Get a named sprite UID, falling back to the base sprite ID.
+ *  @param name Sprite name key.
+ *  @return Sprite UID for the given name.
+ */
 unsigned int Creature::spriteUID( QString name ) const
 {
 	if ( !m_spriteUIDs.empty() )
@@ -708,16 +792,25 @@ unsigned int Creature::spriteUID( QString name ) const
 	}
 }
 
+/** @brief Get the base sprite UID.
+ *  @return Base sprite UID.
+ */
 unsigned int Creature::spriteUID() const
 {
 	return m_spriteID;
 }
 
+/** @brief Set the creature's gender.
+ *  @param gender New gender value.
+ */
 void Creature::setGender( Gender gender )
 {
 	m_gender = gender;
 }
 
+/** @brief Update the world grid after the creature has moved, handling transparency flags.
+ *  @param oldPos The position before the move.
+ */
 void Creature::move( Position oldPos )
 {
 	if ( m_position != oldPos )
@@ -748,6 +841,9 @@ void Creature::move( Position oldPos )
 	}
 }
 
+/** @brief Check and clear the render-params-changed flag.
+ *  @return True if render parameters changed since the last call.
+ */
 bool Creature::renderParamsChanged()
 {
 	bool out              = m_renderParamsChanged;
@@ -755,31 +851,50 @@ bool Creature::renderParamsChanged()
 	return out;
 }
 
+/** @brief Set whether this creature is immobile (cannot move).
+ *  @param immobile True to prevent movement.
+ */
 void Creature::setImmobile( bool immobile )
 {
 	m_immobile = immobile;
 }
 
+/** @brief Set whether this creature ignores no-pass tile flags during pathfinding.
+ *  @param state True to ignore no-pass flags.
+ */
 void Creature::setIgnoreNoPass( bool state )
 {
 	m_ignoreNoPass = state;
 }
 
+/** @brief Check if this creature ignores no-pass flags.
+ *  @return True if ignoring no-pass.
+ */
 bool Creature::ignoreNoPass() const
 {
 	return m_ignoreNoPass;
 }
 
+/** @brief Set the creature type discriminator.
+ *  @param type New creature type.
+ */
 void Creature::setType( CreatureType type )
 {
 	m_type = type;
 }
 
+/** @brief Get the creature type.
+ *  @return Creature type enum value.
+ */
 CreatureType Creature::type() const
 {
 	return m_type;
 }
 
+/** @brief BT action: perform a random one-tile move and update lighting.
+ *  @param halt Unused (action completes in one tick).
+ *  @return Always SUCCESS.
+ */
 BT_RESULT Creature::actionRandomMove( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -796,6 +911,10 @@ BT_RESULT Creature::actionRandomMove( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/** @brief BT condition: check if this creature is male.
+ *  @param halt Unused.
+ *  @return SUCCESS if male, FAILURE otherwise.
+ */
 BT_RESULT Creature::conditionIsMale( bool halt )
 {
 	if ( m_gender == Gender::MALE )
@@ -805,6 +924,10 @@ BT_RESULT Creature::conditionIsMale( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if this creature is female.
+ *  @param halt Unused.
+ *  @return SUCCESS if female, FAILURE otherwise.
+ */
 BT_RESULT Creature::conditionIsFemale( bool halt )
 {
 	if ( m_gender == Gender::FEMALE )
@@ -814,6 +937,10 @@ BT_RESULT Creature::conditionIsFemale( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if it is daytime.
+ *  @param halt Unused.
+ *  @return SUCCESS during daylight, FAILURE at night.
+ */
 BT_RESULT Creature::conditionIsDay( bool halt )
 {
 	if ( GameState::daylight )
@@ -823,6 +950,10 @@ BT_RESULT Creature::conditionIsDay( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if it is nighttime.
+ *  @param halt Unused.
+ *  @return SUCCESS at night, FAILURE during daylight.
+ */
 BT_RESULT Creature::conditionIsNight( bool halt )
 {
 	if ( !GameState::daylight )
@@ -832,18 +963,28 @@ BT_RESULT Creature::conditionIsNight( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief Set the current movement/action target position.
+ *  @param pos Target position.
+ */
 void Creature::setCurrentTarget( Position pos )
 {
 	m_currentTargetPosition = pos;
 	//m_variables.insert( "CurrentTargetPos", pos.toString() );
 }
 
+/** @brief Get the current movement/action target position.
+ *  @return Current target position.
+ */
 Position Creature::currentTarget() const
 {
 	return m_currentTargetPosition;
 	//return Position( m_variables.value( "CurrentTargetPos" ) );
 }
 
+/** @brief Kill this creature. Optionally skip corpse creation by marking for destruction.
+ *  @param nocorpse If true, mark the creature for immediate destruction (no corpse).
+ *  @return True if the kill succeeded; false if already dead/destroyed.
+ */
 bool Creature::kill( bool nocorpse )
 {
 	if ( !toDestroy() && !isDead() )
@@ -860,21 +1001,34 @@ bool Creature::kill( bool nocorpse )
 	return false;
 }
 
+/** @brief Set the thought bubble text displayed above this creature.
+ *  @param thought Thought bubble string (empty to clear).
+ */
 void Creature::setThoughtBubble( QString thought )
 {
 	m_thoughtBubble = thought;
 }
 
+/** @brief Get the current thought bubble text.
+ *  @return Thought bubble string.
+ */
 QString Creature::thoughtBubble() const
 {
 	return m_thoughtBubble;
 }
 
+/** @brief Get the tick at which this dead creature's corpse should be removed.
+ *  @return Expiration tick, or 0 if not set.
+ */
 quint64 Creature::expires() const
 {
 	return m_expires;
 }
 
+/** @brief BT condition: check if the current attack target is on an adjacent tile.
+ *  @param halt Unused.
+ *  @return SUCCESS if target is within 1 tile on the same Z-level, FAILURE otherwise.
+ */
 BT_RESULT Creature::conditionTargetAdjacent( bool halt )
 {
 	Creature* creature = nullptr;
@@ -901,6 +1055,10 @@ BT_RESULT Creature::conditionTargetAdjacent( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if the attack target is still at the expected position.
+ *  @param halt Unused.
+ *  @return SUCCESS if target position matches, FAILURE otherwise.
+ */
 BT_RESULT Creature::conditionTargetPositionValid( bool halt )
 {
 	Creature* creature = nullptr;
@@ -918,6 +1076,10 @@ BT_RESULT Creature::conditionTargetPositionValid( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if this creature is currently in combat.
+ *  @param halt Unused.
+ *  @return SUCCESS if aggro list is non-empty or has a valid attack target.
+ */
 BT_RESULT Creature::conditionIsInCombat( bool halt )
 {
 	if ( m_currentAttackTarget )
@@ -940,6 +1102,10 @@ BT_RESULT Creature::conditionIsInCombat( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT condition: check if this creature is currently on a mission off-map.
+ *  @param halt Unused.
+ *  @return SUCCESS if on a mission, FAILURE otherwise.
+ */
 BT_RESULT Creature::conditionIsOnMission( bool halt )
 {
 	if ( m_isOnMission )
@@ -950,6 +1116,10 @@ BT_RESULT Creature::conditionIsOnMission( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief BT action: find a reachable border position to leave the map.
+ *  @param halt If true, return IDLE.
+ *  @return SUCCESS when exit position found, RUNNING while searching.
+ */
 BT_RESULT Creature::actionGetExitPosition( bool halt )
 {
 	if ( halt )
@@ -996,6 +1166,10 @@ BT_RESULT Creature::actionGetExitPosition( bool halt )
 	return BT_RESULT::RUNNING;
 }
 
+/** @brief BT action: remove this creature from the world grid (gone off-map).
+ *  @param halt Unused.
+ *  @return Always SUCCESS.
+ */
 BT_RESULT Creature::actionLeaveMap( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -1005,6 +1179,10 @@ BT_RESULT Creature::actionLeaveMap( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/** @brief BT action: re-insert this creature onto the world grid (returned from off-map).
+ *  @param halt Unused.
+ *  @return Always SUCCESS.
+ */
 BT_RESULT Creature::actionEnterMap( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -1018,11 +1196,18 @@ BT_RESULT Creature::actionEnterMap( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/** @brief Get the mutable aggro list for this creature.
+ *  @return Reference to the aggro entry list.
+ */
 QList<AggroEntry>& Creature::aggroList()
 {
 	return m_aggroList;
 }
 
+/** @brief Add or increase aggro toward a target creature.
+ *  @param target ID of the target creature.
+ *  @param value Amount of aggro to add.
+ */
 void Creature::addAggro( unsigned int target, int value )
 {
 	bool exists = false;
@@ -1043,6 +1228,7 @@ void Creature::addAggro( unsigned int target, int value )
 	std::sort( m_aggroList.begin(), m_aggroList.end() );
 }
 
+/** @brief Recalculate base unarmed attack skill and damage values for both hands. */
 void Creature::updateAttackValues()
 {
 	m_leftHandAttackSkill  = getSkillLevel( "Unarmed" );

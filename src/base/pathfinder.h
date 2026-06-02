@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file pathfinder.h
+ * @brief Asynchronous pathfinding manager dispatching A* searches to worker threads.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -29,6 +33,7 @@
 class PathFinderThread;
 class World;
 
+/** @brief A pending pathfinding request with start/goal positions. */
 struct PathFindingRequest
 {
 	unsigned int ID;
@@ -37,6 +42,7 @@ struct PathFindingRequest
 	bool ignoreNoPass;
 };
 
+/** @brief Result state of a pathfinding request. */
 enum class PathFinderResult
 {
 	NoConnection,
@@ -45,6 +51,13 @@ enum class PathFinderResult
 	Pending
 };
 
+/**
+ * @brief Manages asynchronous A* pathfinding requests dispatched to a thread pool.
+ *
+ * Creatures request paths via getPath(). If the path isn't cached, a PathFinderThread
+ * worker is dispatched. Results are collected via onResult() callback. Uses the RegionMap
+ * for fast connected-region checks before launching expensive A* searches.
+ */
 class PathFinder : public QObject
 {
 	Q_OBJECT

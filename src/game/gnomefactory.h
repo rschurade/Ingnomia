@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnomefactory.h
+ *  Factory for creating Gnome and GnomeTrader instances with randomized names, skills, and attributes.
+ */
 #pragma once
 
 #include "gnome.h"
@@ -24,6 +27,7 @@
 
 class Game;
 
+/** @brief Factory that constructs Gnome and GnomeTrader instances with randomized attributes or from saved data. */
 class GnomeFactory
 {
 	Q_DISABLE_COPY_MOVE( GnomeFactory )

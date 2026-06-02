@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file populationproxy.cpp
+ *  @brief PopulationProxy implementation: connects every signal/slot pair between
+ *         PopulationModel and AggregatorPopulation; the rest are thin pass-throughs.
+ */
 #include "populationproxy.h"
 
 #include "../../base/db.h"
@@ -28,6 +32,7 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the PopulationProxy and wires up all aggregator signal/slot connections.
 PopulationProxy::PopulationProxy( QObject* parent ) :
 	QObject( parent )
 {

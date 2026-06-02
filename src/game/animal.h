@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file animal.h
+ *  Wild and tamed animals. Supports lifecycle states (egg/young/adult), pasture
+ *  assignment, reproduction, production (eggs, wool, etc.), grazing, hunting,
+ *  and butchering.
+ */
 #pragma once
 
 #include "creature.h"
@@ -22,6 +27,12 @@
 #include <QString>
 #include <QtGlobal>
 
+/** @brief Wild or tamed animal with lifecycle, reproduction, production, and grazing.
+ *
+ *  Animals progress through states (egg, young, adult) defined in the database.
+ *  Tamed animals can be assigned to pastures, produce items, lay eggs, breed,
+ *  and be butchered or harvested. Wild animals may hunt prey or flee threats.
+ */
 class Animal : public Creature
 {
 	friend class AnimalWidget;

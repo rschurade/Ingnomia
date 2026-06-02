@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopmanager.cpp
+ *  @brief Workshop lifecycle management: creation, deletion, per-tick updates,
+ *         craft job dispatch, priority ordering, and auto-generated craft jobs.
+ */
 #include "workshopmanager.h"
 #include "game.h"
 
@@ -23,12 +27,15 @@
 #include <QDebug>
 #include <QJsonDocument>
 
+/// @brief Constructs the workshop manager.
+/// @param parent Owning Game instance.
 WorkshopManager::WorkshopManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
 }
 
+/// @brief Destructor. Deletes all Workshop objects.
 WorkshopManager::~WorkshopManager()
 {
 	for ( const auto& ws : m_workshops )
@@ -37,6 +44,9 @@ WorkshopManager::~WorkshopManager()
 	}
 }
 
+/// @brief Per-tick update. Processes deferred workshop deletions (retrying until canDelete()
+///        returns true), then ticks every active workshop.
+/// @param tick Current game tick.
 void WorkshopManager::onTick( quint64 tick )
 {
 	if ( !m_toDelete.isEmpty() )
@@ -70,6 +80,11 @@ void WorkshopManager::onTick( quint64 tick )
 	}
 }
 
+/// @brief Creates and registers a new workshop of the given type.
+/// @param type     Workshop type string (DB key).
+/// @param pos      World position of the workshop's anchor tile.
+/// @param rotation Orientation (0–3).
+/// @return Pointer to the newly created Workshop.
 Workshop* WorkshopManager::addWorkshop( QString type, Position& pos, int rotation )
 {
 	Workshop* w = new Workshop( type, pos, rotation, g );
@@ -78,12 +93,17 @@ Workshop* WorkshopManager::addWorkshop( QString type, Position& pos, int rotatio
 	return m_workshops.last();
 }
 
+/// @brief Deserialises and registers a workshop from a saved QVariantMap.
+/// @param vals QVariantMap produced by Workshop::serialize().
 void WorkshopManager::addWorkshop( QVariantMap vals )
 {
 	Workshop* w = new Workshop( vals, g );
 	m_workshops.push_back( w );
 }
 
+/// @brief Returns whether any workshop occupies the tile at @p pos.
+/// @param pos World position to check.
+/// @return true if a workshop tile is at @p pos.
 bool WorkshopManager::isWorkshop( Position& pos )
 {
 	for ( const auto& w : m_workshops )
@@ -96,6 +116,9 @@ bool WorkshopManager::isWorkshop( Position& pos )
 	return false;
 }
 
+/// @brief Returns the workshop occupying @p pos, or nullptr if none.
+/// @param pos World position to look up.
+/// @return Pointer to the Workshop at @p pos, or nullptr.
 Workshop* WorkshopManager::workshopAt( const Position& pos )
 {
 	for ( auto& w : m_workshops )
@@ -108,6 +131,9 @@ Workshop* WorkshopManager::workshopAt( const Position& pos )
 	return 0;
 }
 
+/// @brief Returns the workshop with the given UID, or nullptr if not found.
+/// @param ID UID of the workshop.
+/// @return Pointer to the Workshop, or nullptr.
 Workshop* WorkshopManager::workshop( unsigned int ID )
 {
 	for ( auto& w : m_workshops )
@@ -120,11 +146,21 @@ Workshop* WorkshopManager::workshop( unsigned int ID )
 	return 0;
 }
 
+/// @brief Queues a workshop for deferred deletion. The deletion is retried each tick
+///        until Workshop::canDelete() returns true.
+/// @param workshopID UID of the workshop to delete.
 void WorkshopManager::deleteWorkshop( unsigned int workshopID )
 {
 	m_toDelete.push_back( workshopID );
 }
 
+/// @brief Automatically generates a craft job for @p itemSID/@p materialSID in the workshop
+///        with the fewest jobs that can produce it. Only creates the job if none already exists.
+///        Prefers workshops that accept generated jobs (isAcceptingGenerated()).
+/// @param itemSID     Item type string ID to craft.
+/// @param materialSID Material string ID for the craft.
+/// @param amount      Number of items to request.
+/// @return true if a craft job was successfully created.
 bool WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int amount )
 {
 	if( !craftJobExists( itemSID, materialSID ) )
@@ -155,6 +191,10 @@ bool WorkshopManager::autoGenCraftJob( QString itemSID, QString materialSID, int
 	return false;
 }
 
+/// @brief Returns whether any auto-accepting workshop already has a craft job for the given item/material.
+/// @param itemSID     Item type string ID.
+/// @param materialSID Material string ID.
+/// @return true if a matching craft job is already queued.
 bool WorkshopManager::craftJobExists( const QString& itemSID, const QString& materialSID )
 {
 	for ( const auto& w : m_workshops )
@@ -170,6 +210,9 @@ bool WorkshopManager::craftJobExists( const QString& itemSID, const QString& mat
 	return false;
 }
 
+/// @brief Moves the workshop to position @p prio in the ordered workshop list.
+/// @param workshopID UID of the workshop to reorder.
+/// @param prio       Target zero-based index (clamped to valid range).
 void WorkshopManager::setPriority( unsigned int workshopID, int prio )
 {
 	if( prio > 0 && prio < m_workshops.size() )
@@ -187,6 +230,9 @@ void WorkshopManager::setPriority( unsigned int workshopID, int prio )
 	}
 }
 
+/// @brief Returns the current priority index (position in the ordered list) of the workshop.
+/// @param workshopID UID of the workshop.
+/// @return Zero-based index in m_workshops; returns m_workshops.size() if not found.
 int WorkshopManager::priority( unsigned int workshopID )
 {
 	int current = 0;
@@ -201,6 +247,8 @@ int WorkshopManager::priority( unsigned int workshopID )
 	return current;
 }
 
+/// @brief Returns all workshops of type "MeleeTraining" (used by the military manager to assign squads).
+/// @return List of pointers to all melee-training workshops.
 QList<Workshop*> WorkshopManager::getTrainingGrounds()
 {
 	QList<Workshop*> out;
@@ -214,6 +262,8 @@ QList<Workshop*> WorkshopManager::getTrainingGrounds()
 	return out;
 }
 
+/// @brief Emits signalJobListChanged for the given workshop (used by Workshop to notify the GUI).
+/// @param workshopID UID of the workshop whose job list changed.
 void WorkshopManager::emitJobListChanged( unsigned int workshopID )
 {
 	emit signalJobListChanged( workshopID );

@@ -1,9 +1,15 @@
+/** @file keybindings.h
+ *  @brief Enumeration of every user-triggerable keyboard action and the KeyBindings class
+ *         that maps configured keys onto those actions.
+ */
 #pragma once
 
 #include <QKeyEvent>
 #include <QObject>
 #include <QHash>
 
+/// @brief Every hotkey action the user can bind. Grouped loosely by category
+///        (camera, windows, build actions, debug, magic).
 enum UserKeyboardAction : unsigned int {
 	NoAction,
 	WorldScrollLeft,
@@ -98,6 +104,8 @@ enum UserKeyboardAction : unsigned int {
 };
 
 
+/// @brief Loads the user's key bindings from config and resolves Qt key events to
+///        UserKeyboardAction values. Also provides reverse lookup for the settings GUI.
 class KeyBindings : public QObject
 {
 	Q_OBJECT
@@ -112,6 +120,6 @@ public:
 	QString getStringForCommand( UserKeyboardAction cmd );
 
 private:
-	QHash<QString, UserKeyboardAction>m_stringToCommand;
-	QHash<QString, UserKeyboardAction>m_keyCodeToCmd;
+	QHash<QString, UserKeyboardAction>m_stringToCommand; ///< Config string → action enum.
+	QHash<QString, UserKeyboardAction>m_keyCodeToCmd;    ///< Encoded key combo → action enum.
 };

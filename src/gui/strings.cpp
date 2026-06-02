@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file strings.cpp
+ *  @brief Strings implementation: loads the Translation DB table into the in-memory lookup
+ *         table, provides lookup with an obvious "Error: <key>" fallback, and generates
+ *         random kingdom names by composing word-table entries per the Namerules_Rule schema.
+ */
 #include "strings.h"
 
 #include "../base/config.h"
@@ -28,14 +33,19 @@
 QMap<QString, QString> Strings::m_table = QMap<QString, QString>();
 QString Strings::m_language             = "";
 
+/// @brief Private constructor (singleton pattern).
 Strings::Strings()
 {
 }
 
+/// @brief Destructor.
 Strings::~Strings()
 {
 }
 
+/// @brief Loads the Translation DB table into the in-memory key → string map. The current
+///        language is read from Global::cfg["language"].
+/// @return Always true (kept as bool for future error reporting).
 bool Strings::init()
 {
 	m_language = Global::cfg->get( "language" ).toString();
@@ -49,6 +59,10 @@ bool Strings::init()
 	return true;
 }
 
+/// @brief Looks up a localised string by key. Returns "Error: <key>" when the key is
+///        missing so untranslated strings are visible in the GUI during development.
+/// @param key Translation key (e.g. "$ItemName_IronSword").
+/// @return Localised string, or an error placeholder.
 QString Strings::s( QString key )
 {
 	if ( m_table.contains( key ) )
@@ -62,11 +76,18 @@ QString Strings::s( QString key )
 	}
 }
 
+/// @brief Inserts or overwrites a single translation at runtime (used for dynamic strings
+///        like gnome names that aren't present in the DB).
+/// @param key    Translation key.
+/// @param string Localised value.
 void Strings::insertString( QString key, QString string )
 {
 	m_table.insert( key, string );
 }
 
+/// @brief Generates a random kingdom name by picking one of the Namerules_Rule "Faction"
+///        entries and composing its parts via replaceNamePart().
+/// @return Freshly generated kingdom name.
 QString Strings::randomKingdomName()
 {
 	auto ruleList = DB::selectRows( "Namerules_Rule", "Faction" );
@@ -83,6 +104,11 @@ QString Strings::randomKingdomName()
 	return name;
 }
 
+/// @brief Resolves one name-rule part into an actual word. Reserved words ("The", "of",
+///        "Land", "Kingdom") are returned verbatim; otherwise the part is split on '_' and
+///        dispatched to replaceNamePart2() based on arity.
+/// @param part Name-rule token.
+/// @return Resolved word with the first letter upper-cased.
 QString Strings::replaceNamePart( QString part )
 {
 	QSet<QString> noReplaceables = { "The", "of", "Land", "Kingdom" };
@@ -115,6 +141,9 @@ QString Strings::replaceNamePart( QString part )
 	return out;
 }
 
+/// @brief Picks a random row from the Words_<part> table and returns its "Word" column.
+/// @param part Word category (e.g. "Adjective").
+/// @return Randomly chosen word.
 QString Strings::replaceNamePart2( QString part )
 {
 	QString tableName = "Words_" + part;
@@ -122,6 +151,11 @@ QString Strings::replaceNamePart2( QString part )
 	return DB::select( "Word", tableName, ra ).toString();
 }
 
+/// @brief Picks a random row from the Words_<part> table and returns a specified column.
+///        "Singular" is normalised to "Word" to match the column naming in most tables.
+/// @param part  Word category.
+/// @param part2 Column name to read (or "Singular").
+/// @return Randomly chosen word in the requested form.
 QString Strings::replaceNamePart2( QString part, QString part2 )
 {
 	if ( part2 == "Singular" )
@@ -133,6 +167,11 @@ QString Strings::replaceNamePart2( QString part, QString part2 )
 	return DB::select( part2, tableName, ra ).toString();
 }
 
+/// @brief Returns the English word for a non-negative integer up to 19 (from the
+///        Words_Numbers DB table). For values outside that range, returns the numeric
+///        string directly. Negative values return "no number".
+/// @param number Integer to spell out.
+/// @return Word form, numeric string, or "no number".
 QString Strings::numberWord( int number )
 {
 	if ( number >= 0 )

@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file aggregatortileinfo.cpp
+ *  @brief AggregatorTileInfo implementation: inspects a clicked tile and builds the large
+ *         GuiTileInfo payload covering terrain, jobs, creatures, items, rooms, and mechanisms.
+ */
 #include "aggregatortileinfo.h"
 
 #include "../base/counter.h"
@@ -31,27 +35,37 @@
 #include "../game/job.h"
 #include "../game/jobmanager.h"
 #include "../game/mechanismmanager.h"
+#include "../game/roommanager.h"
+#include "../game/sourcematerial.h"
 #include "../game/plant.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../game/world.h"
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorTileInfo and registers GuiTileInfo as a metatype.
+/// @param parent Qt parent object.
 AggregatorTileInfo::AggregatorTileInfo( QObject* parent ) :
 	QObject(parent)
 {
 	qRegisterMetaType<GuiTileInfo>();
 }
 
+/// @brief Destructor.
 AggregatorTileInfo::~AggregatorTileInfo()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorTileInfo::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Opens the Tile Info window for the given tile, emitting signalShowTileInfo to the
+///        GUI shell and pushing the first payload.
+/// @param tileID Integer tile key (Position::toInt()).
 void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 {
 	if( !g ) return;
@@ -64,6 +78,8 @@ void AggregatorTileInfo::onShowTileInfo( unsigned int tileID )
 	onUpdateTileInfo( tileID );
 }
 
+/// @brief Live-update hook: if the currently displayed tile is in @p changeSet, refresh it.
+/// @param changeSet Set of tile UIDs that changed this frame.
 void AggregatorTileInfo::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSet )
 {
 	if( !g ) return;
@@ -73,6 +89,10 @@ void AggregatorTileInfo::onUpdateAnyTileInfo( const QSet<unsigned int>& changeSe
 	}
 }
 
+/// @brief Populates m_tileInfo for the given tile by querying the world, inventory, job,
+///        room, and mechanism managers, then emits signalUpdateTileInfo. This is the
+///        heavy-lifting function for the Tile Info window.
+/// @param tileID Tile UID to inspect.
 void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 {
 	if( !g ) return;
@@ -147,24 +167,6 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				QString itext = "";
 				QString info = S::s( "$MaterialName_" + g->inv()->materialSID( item ) ) + " " + S::s( "$ItemName_" + g->inv()->itemSID( item ) );
 				
-				if( g->inv()->isConstructed( item ) )
-				{
-					if( g->mcm()->hasMechanism( pos ) )
-					{
-						unsigned int id = g->mcm()->mechanismID( pos );
-						m_tileInfo.mechInfo = g->mcm()->mechanismData( id );
-						m_tileInfo.mechInfo.name = info;
-						if( item == id )
-						{
-							continue;
-						}
-					}
-					else
-					{
-						m_tileInfo.mechInfo.itemID = 0;
-					}
-					itext += "b";
-				}
 				if( g->inv()->isInStockpile( item ) )
 				{
 					itext += "s";
@@ -189,6 +191,56 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 				m_tileInfo.items.append( git );
 			}
 		}
+		// Show installed objects that are no longer live items (doors, lights, farm utils)
+		if ( tile.flags & TileFlag::TF_DOOR )
+		{
+			Door* door = g->rm()->getDoor( pos.toInt() );
+			if ( door )
+			{
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + door->source.materialSID ) + " " + S::s( "$ItemName_" + door->source.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+
+		// Check for mechanisms at this position
+		if ( g->mcm()->hasMechanism( pos ) )
+		{
+			unsigned int id = g->mcm()->mechanismID( pos );
+			m_tileInfo.mechInfo = g->mcm()->mechanismData( id );
+			m_tileInfo.mechInfo.name = S::s( "$MaterialName_" + m_tileInfo.mechInfo.materialSID ) + " " + S::s( "$ItemName_" + m_tileInfo.mechInfo.itemSID );
+		}
+		else
+		{
+			m_tileInfo.mechInfo.itemID = 0;
+		}
+
+		// Check wall/floor construction records for installed items with SourceMaterial
+		auto& wallConstrs = g->w()->wallConstructions();
+		if ( wallConstrs.contains( pos.toInt() ) )
+		{
+			auto constr = wallConstrs.value( pos.toInt() );
+			if ( constr.contains( "Source" ) && !( tile.flags & TileFlag::TF_DOOR ) && !g->mcm()->hasMechanism( pos ) )
+			{
+				SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + sm.materialSID ) + " " + S::s( "$ItemName_" + sm.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+		auto& floorConstrs = g->w()->floorConstructions();
+		if ( floorConstrs.contains( pos.toInt() ) )
+		{
+			auto constr = floorConstrs.value( pos.toInt() );
+			if ( constr.contains( "Source" ) )
+			{
+				SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+				GuiItemInfo git;
+				git.text = S::s( "$MaterialName_" + sm.materialSID ) + " " + S::s( "$ItemName_" + sm.itemSID ) + "(b)";
+				m_tileInfo.items.append( git );
+			}
+		}
+
 		if ( ( m_tileInfo.numAnimals + m_tileInfo.numGnomes + m_tileInfo.numMonsters ) > 0 )
 		{
 			if ( m_tileInfo.numGnomes )
@@ -348,16 +400,19 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 					m_tileInfo.alarm        = GameState::alarm;
 					m_tileInfo.roomValue    = ro->value();              
 
-					QList<unsigned int> beds = ro->beds();
-					int countFree            = beds.size();
-					for ( auto b : beds )
+					int totalBeds = ro->numBeds();
+					Position freeBed = ro->findFreeBed( 0 ); // 0 = any creature
+					int countFree = freeBed.isZero() ? 0 : totalBeds; // rough estimate
+					// Count exact free beds
+					countFree = 0;
+					for ( auto field : ro->getFields() )
 					{
-						if ( g->inv()->isInJob( b ) )
+						if ( field->isBed && field->claimedBy == 0 && field->usedBy == 0 )
 						{
-							--countFree;
+							++countFree;
 						}
 					}
-					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( beds.size() );
+					m_tileInfo.beds = QString::number( countFree ) + " / " + QString::number( totalBeds );
 
 					for ( auto gnome : g->gm()->gnomes() )
 					{
@@ -381,6 +436,9 @@ void AggregatorTileInfo::onUpdateTileInfo( unsigned int tileID )
 	}
 }
 
+/// @brief When the Tile Info window asks for stockpile contents, builds a minimal
+///        GuiStockpileInfo summary of the stockpile that owns @p tileID and emits it.
+/// @param tileID Tile UID.
 void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 {
 	if( !g ) return;
@@ -422,6 +480,10 @@ void AggregatorTileInfo::onRequestStockpileItems( unsigned int tileID )
 	}
 }
 
+/// @brief Assigns a gnome as the tennant of a bed/chair designation. Reassigns if the gnome
+///        already had a different tennant slot.
+/// @param designationID UID of the bed/chair designation.
+/// @param gnomeID       Creature UID of the new tennant.
 void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int gnomeID )
 {
 	if( !g ) return;
@@ -445,6 +507,9 @@ void AggregatorTileInfo::onSetTennant( unsigned int designationID, unsigned int 
 	}
 }
 
+/// @brief Sets or clears the alarm flag on a room designation (used to summon soldiers).
+/// @param designationID Room designation UID.
+/// @param value         True to raise the alarm.
 void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 {
 	if( !g ) return;
@@ -467,16 +532,23 @@ void AggregatorTileInfo::onSetAlarm( unsigned int designationID, bool value )
 	}
 }
 
+/// @brief Flips the active/inactive state of a mechanism (lever, gearbox, axle).
+/// @param id Mechanism UID.
 void AggregatorTileInfo::onToggleMechActive( unsigned int id )
 {
 	g->mcm()->changeActive( id );
 }
 	
+/// @brief Flips the "inverted" flag of a mechanism (swaps on/off interpretation).
+/// @param id Mechanism UID.
 void AggregatorTileInfo::onToggleMechInvert( unsigned int id )
 {
 	g->mcm()->changeInverted( id );
 }
 
+/// @brief Sets the "should refuel" flag on an automaton from the Tile Info window.
+/// @param id     Automaton UID.
+/// @param refuel True to make the automaton refuel automatically.
 void AggregatorTileInfo::onSetAutomatonRefuel( unsigned int id, bool refuel )
 {
 	auto automat = g->gm()->automaton( id );
@@ -486,6 +558,9 @@ void AggregatorTileInfo::onSetAutomatonRefuel( unsigned int id, bool refuel )
 	}
 }
 	
+/// @brief Swaps the core item in an automaton (determines its behaviour).
+/// @param id   Automaton UID.
+/// @param core New core item string ID.
 void AggregatorTileInfo::onSetAutomatonCore( unsigned int id, QString core )
 {
 	auto automat = g->gm()->automaton( id );

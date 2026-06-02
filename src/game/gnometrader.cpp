@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnometrader.cpp
+ *  @brief Trader gnome variant: manages trade inventory, market stall visits, and departure logic.
+ */
 #include "gnometrader.h"
 #include "gnomemanager.h"
 #include "game.h"
@@ -30,6 +33,8 @@
 
 #include <QDebug>
 
+/** @brief Constructs a TraderDefinition by deserializing from a variant map.
+ *  @param in Variant map containing trader ID and item list. */
 TraderDefinition::TraderDefinition( QVariantMap& in )
 {
 	id = in.value( "ID" ).toString();
@@ -57,6 +62,8 @@ TraderDefinition::TraderDefinition( QVariantMap& in )
 	}
 }
 	
+/** @brief Serializes this trader definition into a variant map.
+ *  @param out Output variant map to populate with trader data. */
 void TraderDefinition::serialize( QVariantMap& out )
 {
 	QVariantMap tdOut;
@@ -85,6 +92,11 @@ void TraderDefinition::serialize( QVariantMap& out )
 
 
 
+/** @brief Constructs a new trader gnome at the given position.
+ *  @param pos Spawn position on the map.
+ *  @param name Display name of the trader.
+ *  @param gender Gender of the trader gnome.
+ *  @param game Pointer to the owning Game instance. */
 GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, Game* game ) :
 	Gnome( pos, name, gender, game )
 {
@@ -93,6 +105,9 @@ GnomeTrader::GnomeTrader( Position& pos, QString name, Gender gender, Game* game
 	m_leavesOnTick = GameState::tick + Global::util->ticksPerDayRandomized( 5 );
 }
 
+/** @brief Constructs a trader gnome from serialized save data.
+ *  @param in Variant map containing saved trader state.
+ *  @param game Pointer to the owning Game instance. */
 GnomeTrader::GnomeTrader( QVariantMap& in, Game* game ) :
 	Gnome( in, game ),
 	m_leavesOnTick( in.value( "LeavesOnTick" ).value<quint64>() ),
@@ -104,6 +119,8 @@ GnomeTrader::GnomeTrader( QVariantMap& in, Game* game ) :
 	m_type = CreatureType::GNOME_TRADER;
 }
 
+/** @brief Serializes trader gnome state into a variant map.
+ *  @param out Output variant map to populate. */
 void GnomeTrader::serialize( QVariantMap& out )
 {
 	Gnome::serialize( out );
@@ -113,6 +130,8 @@ void GnomeTrader::serialize( QVariantMap& out )
 	m_traderDefinition.serialize( out );
 }
 
+/** @brief Initializes the trader gnome: inserts into world, sets up sprite,
+ *         loads behavior tree, and restores behavior tree state if saved. */
 void GnomeTrader::init()
 {
 	g->w()->insertCreatureAtPosition( m_position, m_id );
@@ -135,10 +154,19 @@ void GnomeTrader::init()
 	}
 }
 
+/** @brief Destructor. */
 GnomeTrader::~GnomeTrader()
 {
 }
 
+/** @brief Per-tick update for the trader gnome: processes cooldowns, checks floor/death,
+ *         ticks the behavior tree, and handles movement and lighting.
+ *  @param tickNumber Current game tick number.
+ *  @param seasonChanged Whether the season changed this tick.
+ *  @param dayChanged Whether the day changed this tick.
+ *  @param hourChanged Whether the hour changed this tick.
+ *  @param minuteChanged Whether the minute changed this tick.
+ *  @return Tick result indicating status (OK, DEAD, NOFLOOR, LEFTMAP). */
 CreatureTickResult GnomeTrader::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	processCooldowns( tickNumber );
@@ -176,6 +204,7 @@ CreatureTickResult GnomeTrader::onTick( quint64 tickNumber, bool seasonChanged, 
 	return CreatureTickResult::OK;
 }
 
+/** @brief Registers trader-specific behavior tree action/condition callbacks. */
 void GnomeTrader::initTaskMapTrader()
 {
 	using namespace std::placeholders;
@@ -188,6 +217,9 @@ void GnomeTrader::initTaskMapTrader()
 	m_behaviors.insert( "Trade", std::bind( &GnomeTrader::actionTrade, this, _1 ) );
 }
 
+/** @brief Behavior tree condition: checks whether the trader's departure tick has passed.
+ *  @param halt Whether to halt the action (unused, single-tick action).
+ *  @return SUCCESS if it is time to leave, FAILURE otherwise. */
 BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -204,6 +236,9 @@ BT_RESULT GnomeTrader::conditionIsTimeToLeave( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/** @brief Behavior tree action: sets the movement target to the assigned market stall input position.
+ *  @param halt Whether to halt the action (unused, single-tick action).
+ *  @return SUCCESS always. */
 BT_RESULT GnomeTrader::actionGetMarketStallPosition( bool halt )
 {
 	Q_UNUSED( halt ); // action takes only one tick, halt has no effect
@@ -213,6 +248,9 @@ BT_RESULT GnomeTrader::actionGetMarketStallPosition( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/** @brief Behavior tree action: performs trading at the market stall.
+ *  @param halt Whether to halt the action; returns IDLE if true.
+ *  @return IDLE if halted, SUCCESS otherwise. */
 BT_RESULT GnomeTrader::actionTrade( bool halt )
 {
 	if ( halt )
@@ -225,6 +263,8 @@ BT_RESULT GnomeTrader::actionTrade( bool halt )
 
 
 
+/** @brief Populates the trader's inventory from a list of item definitions with randomized amounts.
+ *  @param items List of variant maps describing available trade items with Min_/Max_ ranges. */
 void GnomeTrader::setInventory( QVariantList items )
 {
 	srand( std::chrono::system_clock::now().time_since_epoch().count() );
@@ -258,16 +298,22 @@ void GnomeTrader::setInventory( QVariantList items )
 	}
 }
 
+/** @brief Returns a reference to the trader's current inventory item list.
+ *  @return Reference to the list of TraderItem entries. */
 QList<TraderItem>& GnomeTrader::inventory()
 {
 	return m_traderDefinition.items;
 }
 
+/** @brief Assigns the trader to a specific market stall workshop.
+ *  @param id Workshop ID of the market stall. */
 void GnomeTrader::setMarketStall( unsigned int id )
 {
 	m_marketStall = id;
 }
 
+/** @brief Sets the trader definition (ID and inventory) from a variant map.
+ *  @param map Variant map containing trader ID and item definitions. */
 void GnomeTrader::setTraderDefinition( QVariantMap map )
 {
 	m_traderDefinition.id = map.value( "ID" ).toString();

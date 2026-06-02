@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventory.h
+ *  @brief Global item registry. Creates, destroys, and tracks all items in the world
+ *         by type, material, and position. Provides category/group hierarchy for UI.
+ */
 #pragma once
 
 
@@ -27,7 +31,9 @@
 #include <QMap>
 #include <QString>
 
+/** @brief Set of item IDs at a single tile position. */
 typedef QSet<unsigned int> PositionEntry;
+/** @brief Hash from tile position integer to the set of item IDs at that position. */
 typedef QHash<unsigned int, PositionEntry> PositionHash;
 
 class ItemHistory;
@@ -36,6 +42,12 @@ class StockpileManager;
 class World;
 class Game;
 
+/** @brief Central item registry and spatial index for all items in the game world.
+ *
+ *  Manages item creation, destruction, spatial lookup (via octree and position hash),
+ *  ownership state (stockpile, job, container, carried, equipped), and provides the
+ *  category/group/item/material hierarchy used by the stock overview UI.
+ */
 class Inventory : public QObject
 {
 	Q_OBJECT
@@ -100,6 +112,7 @@ public:
 	unsigned int itemCountInStockpile( QString itemID, QString materialID );
 	unsigned int itemCountNotInStockpile( QString itemID, QString materialID );
 
+	/** @brief Detailed item count breakdown for UI display. */
 	struct ItemCountDetailed
 	{
 		unsigned int total;
@@ -113,7 +126,6 @@ public:
 	ItemCountDetailed itemCountDetailed( QString itemID, QString materialID );
 
 
-	bool isContainer( unsigned int item );
 
 	unsigned int isInStockpile( unsigned int id );
 	void setInStockpile( unsigned int id, unsigned int stockpile );
@@ -126,11 +138,7 @@ public:
 
 	
 
-	bool isConstructed( unsigned int id );
-	void setConstructed( unsigned int id, bool status );
 
-	void putItemInContainer( unsigned int id, unsigned int container );
-	void removeItemFromContainer( unsigned int id );
 
 	QString pixmapID( unsigned int item );
 	QString designation( unsigned int item );
@@ -152,8 +160,6 @@ public:
 	void setQuality( unsigned int item, unsigned char quality );
 
 	unsigned char stackSize( unsigned int item );
-	unsigned char capacity( unsigned int item );
-	bool requireSame( unsigned int item );
 
 	unsigned char nutritionalValue( unsigned int item );
 	unsigned char drinkValue( unsigned int item );
@@ -166,7 +172,6 @@ public:
 	void setColor( unsigned int item, QString color );
 	unsigned int color( unsigned int item );
 
-	const QSet<unsigned int>& itemsInContainer( unsigned int container );
 
 	int countItemsAtPos( Position& pos );
 
@@ -192,6 +197,10 @@ public:
 	int numDrinkItems();
 
 	void sanityCheck();
+
+	// Bulk cleanup for ownership indices
+	void freeAllClaimedBy( unsigned int ownerID );
+	void dropAllCarriedBy( unsigned int creatureID, Position pos );
 
 	QVariantList components( unsigned int itemID );
 
@@ -224,8 +233,12 @@ private:
 	QHash<unsigned int, Item> m_items;
 
 	PositionHash m_positionHash;
-	QHash<QString, QHash<QString, QHash<unsigned int, Item*>>> m_hash;
+	QHash<QString, QHash<QString, QSet<unsigned int>>> m_hash;
 	QHash<QString, QHash<QString, Octree*>> m_octrees;
+
+	// Ownership indices for bulk cleanup
+	QHash<unsigned int, QSet<unsigned int>> m_byClaimOwner;    // jobID/creatureID → itemIDs
+	QHash<unsigned int, QSet<unsigned int>> m_byLocationOwner; // creatureID → itemIDs (Carried only)
 
 	QList<QString> m_categoriesSorted;
 	QMap<QString, QList<QString>> m_groupsSorted;

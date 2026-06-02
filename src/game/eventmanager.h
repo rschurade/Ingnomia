@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file eventmanager.h
+ *  @brief Timed game event system for migrations, trader arrivals, invasions, and off-map missions.
+ */
 #pragma once
 
 
@@ -28,6 +31,7 @@
 
 class Game;
 
+/** @brief Prerequisite type that must be met before an event can fire. */
 enum class EventRequire
 {
 	NOREQUIRE,
@@ -35,6 +39,7 @@ enum class EventRequire
 	FREEMARKETSTALL
 };
 
+/** @brief Category of a scheduled game event. */
 enum class EventType
 {
 	TRADER,
@@ -42,6 +47,7 @@ enum class EventType
 	INVASION,
 };
 
+/** @brief A scheduled game event with a target tick, type, and associated data. */
 struct Event
 {
 	unsigned int id = 0;
@@ -68,6 +74,7 @@ struct Event
 	void deserialize( QVariantMap in );
 };
 
+/** @brief Type of off-map mission that gnomes can undertake. */
 enum class MissionType
 {
 	NOMISSION,
@@ -79,6 +86,7 @@ enum class MissionType
 };
 Q_DECLARE_METATYPE( MissionType )
 
+/** @brief Current phase of an in-progress mission. */
 enum class MissionStep
 {
 	NONE,
@@ -90,6 +98,7 @@ enum class MissionStep
 };
 Q_DECLARE_METATYPE( MissionStep )
 
+/** @brief Specific diplomatic action performed during a mission. */
 enum class MissionAction
 {
 	NONE,
@@ -100,6 +109,7 @@ enum class MissionAction
 };
 Q_DECLARE_METATYPE( MissionAction )
 
+/** @brief An off-map mission sent to a neighboring kingdom, tracking gnomes, timing, and results. */
 struct Mission
 {
 	unsigned int id = 0;
@@ -124,6 +134,12 @@ struct Mission
 Q_DECLARE_METATYPE( Mission )
 
 
+/** @brief Manages timed game events (migrations, traders, invasions) and off-map missions.
+ *
+ *  Maintains a list of pending events that fire when their tick arrives and requirements
+ *  are met. Schedules migration events each season, handles trader and raid events from
+ *  the neighbor system, spawns gnomes/creatures/traders, and tracks active missions.
+ */
 class EventManager : public QObject
 {
 	Q_OBJECT

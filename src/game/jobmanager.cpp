@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file jobmanager.cpp
+ *  @brief Job manager implementation: job creation, assignment by skill/priority/distance,
+ *         phase transitions, atomic item claiming, haul sub-jobs, and sprite management.
+ */
 #include "jobmanager.h"
 
 #include "../base/db.h"
@@ -37,6 +41,9 @@
 #include <QElapsedTimer>
 #include <QVariantMap>
 
+/** @brief Constructs the job manager: initializes job type hashes, skill-to-int mappings,
+ *         and builds the skill-to-job-ID lookup tables from the DB.
+ *  @param parent Pointer to the owning Game instance. */
 JobManager::JobManager( Game* parent ) :
 	m_startIndex( 0 ),
 	g( parent ),
@@ -115,13 +122,19 @@ JobManager::JobManager( Game* parent ) :
 	}
 }
 
+/** @brief Destructor. Clears all job data. */
 JobManager::~JobManager()
 {
 	m_jobList.clear();
 }
 
+/** @brief Per-tick update: processes job phase transitions, then re-evaluates returned jobs
+ *         (checking walkability, tool availability, item availability) and promotes ready
+ *         jobs back into the per-type assignment queues. Time-limited to 3ms per tick. */
 void JobManager::onTick()
 {
+	processJobPhases();
+
 	QElapsedTimer timer;
 	timer.start();
 
@@ -139,8 +152,21 @@ void JobManager::onTick()
 
 		if( job )
 		{
-			if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
+			auto phase = job->phase();
+
+			if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
 			{
+				// Not ready for workers yet — wait for phase transition
+				skippedJobs.enqueue( jobID );
+			}
+			else if ( phase == JobPhase::READY )
+			{
+				// Items are there, job is ready — add directly
+				m_jobsPerType[job->type()].insert( job->priority(), job->id() );
+			}
+			else if ( workPositionWalkable( job->id() ) && requiredToolExists( job->id() ) )
+			{
+				// Old path for jobs without phased hauling (crafting, mining, etc.)
 				if ( requiredItemsAvail( jobID ) )
 				{
 					m_jobsPerType[job->type()].insert( job->priority(), job->id() );
@@ -168,6 +194,10 @@ void JobManager::onTick()
 // which prevents us from breaking the loop ASAP.
 // Not sure if another approach would work better and still allow GUI to access
 // information without querying the game state
+/** @brief Checks whether all required items for a job are reachable from its work positions.
+ *         Also triggers auto-craft for missing craftable items. Caches availability for GUI display.
+ *  @param jobID ID of the job to check.
+ *  @return True if all required items are available. */
 bool JobManager::requiredItemsAvail( unsigned int jobID )
 {
 	QSharedPointer<Job> job       = m_jobList.value( jobID );
@@ -200,6 +230,10 @@ bool JobManager::requiredItemsAvail( unsigned int jobID )
 	return found_all;
 }
 
+/** @brief Checks whether at least one work position for the job is walkable by a gnome.
+ *         Rebuilds the possible work positions list from offsets.
+ *  @param jobID ID of the job to check.
+ *  @return True if at least one work position is walkable. */
 bool JobManager::workPositionWalkable( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -224,6 +258,9 @@ bool JobManager::workPositionWalkable( unsigned int jobID )
 	return false;
 }
 
+/** @brief Checks whether a tool of the required type and level exists in the inventory.
+ *  @param jobID ID of the job to check.
+ *  @return True if the required tool exists or no tool is needed. */
 bool JobManager::requiredToolExists( unsigned int jobID )
 {
 	QSharedPointer<Job> job = m_jobList.value( jobID );
@@ -260,6 +297,9 @@ bool JobManager::requiredToolExists( unsigned int jobID )
 	return false;
 }
 
+/** @brief Inserts a job into the position lookup hash. Fails if another job already occupies the position.
+ *  @param jobID ID of the job to insert.
+ *  @return True if inserted, false if position already occupied. */
 bool JobManager::insertIntoPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -277,6 +317,8 @@ bool JobManager::insertIntoPositionHash( unsigned int jobID )
 	return true;
 }
 
+/** @brief Removes a job from the position lookup hash.
+ *  @param jobID ID of the job to remove. */
 void JobManager::removeFromPositionHash( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -289,6 +331,8 @@ void JobManager::removeFromPositionHash( unsigned int jobID )
 	}
 }
 
+/** @brief Loads a job from saved game data, inserts it into the job list, and queues it for assignment.
+ *  @param vals Serialized job data as a QVariant. */
 void JobManager::addLoadedJob( QVariant vals )
 {
 	QSharedPointer<Job> job( new Job( vals.toMap() ) );
@@ -312,6 +356,12 @@ void JobManager::addLoadedJob( QVariant vals )
 	setJobSprites( job->id(), job->isWorked(), false );
 }
 
+/** @brief Creates a simple job (no required items) at the given position.
+ *  @param type Job type identifier (e.g., "Mine", "Harvest").
+ *  @param pos Target tile position.
+ *  @param rotation Placement rotation (0-3).
+ *  @param noJobSprite If true, suppress the job sprite overlay.
+ *  @return New job ID, or 0 if the position already has a job. */
 unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool noJobSprite )
 {
 	if ( g->w()->hasJob( pos ) || m_jobPositions.contains( pos ) )
@@ -334,6 +384,8 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 		job->setOrigWorkPosOffsets( dbjb->WorkPositions );
 	}
 
+	job->setPhase( JobPhase::READY ); // simple jobs have no required items
+
 	m_jobList.insert( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
@@ -345,6 +397,15 @@ unsigned int JobManager::addJob( QString type, Position pos, int rotation, bool 
 	return job->id();
 }
 
+/** @brief Creates a job with required items/materials (construction, planting, etc.).
+ *         Looks up components from DB, adds required items, and auto-generates craft jobs for missing items.
+ *  @param type Job type identifier.
+ *  @param pos Target tile position.
+ *  @param item Item or construction SID to build.
+ *  @param materials List of material SIDs for each component.
+ *  @param rotation Placement rotation (0-3).
+ *  @param noJobSprite If true, suppress the job sprite overlay.
+ *  @return New job ID, or 0 if the position already has a job. */
 unsigned int JobManager::addJob( QString type, Position pos, QString item, QList<QString> materials, int rotation, bool noJobSprite )
 {
 	//qDebug() << "JobManager::addJob " << type << item << materials << pos.toString();
@@ -435,6 +496,16 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 		job->setComponentMissing( true );
 	}
 
+	// Set initial phase based on whether job needs items
+	if ( job->requiredItems().isEmpty() )
+	{
+		job->setPhase( JobPhase::READY );
+	}
+	else
+	{
+		job->setPhase( JobPhase::PENDING );
+	}
+
 	m_jobList.insert( job->id(), job );
 
 	insertIntoPositionHash( job->id() );
@@ -445,6 +516,8 @@ unsigned int JobManager::addJob( QString type, Position pos, QString item, QList
 	return job->id();
 }
 
+/** @brief Marks a job as available (not being worked) and resets its sprite.
+ *  @param jobID ID of the job. */
 void JobManager::setJobAvailable( unsigned int jobID )
 {
 	setJobSprites( jobID, false, false );
@@ -455,6 +528,9 @@ void JobManager::setJobAvailable( unsigned int jobID )
 	}
 }
 
+/** @brief Marks a job as actively being worked and updates its sprite if applicable.
+ *  @param jobID ID of the job.
+ *  @param hasNeededTool Whether the worker has the required tool equipped. */
 void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -472,6 +548,13 @@ void JobManager::setJobBeingWorked( unsigned int jobID, bool hasNeededTool )
 	}
 }
 
+/** @brief Finds the best available job for a gnome based on their skills, proximity, and priority.
+ *         Iterates skills in priority order, checks hauling first for Hauling skill, then
+ *         searches by job type with distance-based prioritization.
+ *  @param skills List of skill IDs the gnome can perform, in priority order.
+ *  @param gnomeID ID of the requesting gnome.
+ *  @param gnomePos Current position of the gnome.
+ *  @return Job ID of the assigned job, or 0 if no suitable job found. */
 unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Position& gnomePos )
 {
 	for ( auto skillID : skills )
@@ -484,6 +567,31 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 		{
 			case SK_Hauling:
 			{
+				// Check HaulToSite jobs first (construction hauling)
+				if ( m_jobsPerType.contains( "HaulToSite" ) )
+				{
+					auto& haulJobs = m_jobsPerType["HaulToSite"];
+					unsigned int regionID = g->w()->regionMap().regionID( gnomePos );
+					for ( auto it = haulJobs.begin(); it != haulJobs.end(); ++it )
+					{
+						auto job = m_jobList.value( it.value() );
+						if ( job && !job->isWorked() && !job->isCanceled() && job->phase() == JobPhase::READY )
+						{
+							// For haul jobs, check if we can reach the item to pick up
+							auto items = job->itemsToHaul();
+							if ( !items.isEmpty() && g->inv()->itemExists( items.first() ) )
+							{
+								Position itemPos = g->inv()->getItemPos( items.first() );
+								unsigned int itemRegion = g->w()->regionMap().regionID( itemPos );
+								if ( g->w()->regionMap().checkConnectedRegions( regionID, itemRegion ) )
+								{
+									return job->id();
+								}
+							}
+						}
+					}
+				}
+				// Then check stockpile hauling
 				jobID = g->spm()->getJob();
 				{
 					if ( jobID )
@@ -525,15 +633,19 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							QSharedPointer<Job> job = m_jobList[pq.get()];
 							if ( !job->isWorked() && !job->isCanceled() )
 							{
-								if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+								auto phase = job->phase();
+								if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									continue;
+
+								bool itemsOk = ( phase == JobPhase::READY ) || requiredItemsAvail( job->id() );
+								if ( itemsOk && requiredToolExists( job->id() ) )
 								{
 									if ( isReachable( job->id(), regionID ) && !isEnclosedBySameType( job->id() ) )
 									{
-										//qDebug() << "getJob " <<  j->id();
 										return job->id();
 									}
 								}
-								else
+								else if ( job->claimedItemIDs().isEmpty() )
 								{
 									for ( auto& type : m_jobsPerType )
 									{
@@ -561,11 +673,16 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 								QSharedPointer<Job> job = m_jobList[jobs[i]];
 								if ( !job->isWorked() && !job->isCanceled() )
 								{
-									if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+									auto phase = job->phase();
+									if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									{
+										continue;
+									}
+									bool itemsOk = ( job->phase() == JobPhase::READY ) || requiredItemsAvail( job->id() );
+									if ( itemsOk && requiredToolExists( job->id() ) )
 									{
 										if ( isReachable( job->id(), 0 ) )
 										{
-											//qDebug() << "getJob " <<  j.id();
 											return job->id();
 										}
 									}
@@ -588,11 +705,15 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 							QSharedPointer<Job> job = m_jobList[pq.get()];
 							if ( !job->isWorked() && !job->isCanceled() )
 							{
-								if ( requiredItemsAvail( job->id() ) && requiredToolExists( job->id() ) )
+								auto phase = job->phase();
+								if ( phase == JobPhase::PENDING || phase == JobPhase::HAULING )
+									continue;
+
+								bool itemsOk = ( job->phase() == JobPhase::READY ) || requiredItemsAvail( job->id() );
+									if ( itemsOk && requiredToolExists( job->id() ) )
 								{
 									if ( isReachable( job->id(), regionID ) )
 									{
-										//qDebug() << "getJob " <<  j->id();
 										return job->id();
 									}
 								}
@@ -614,6 +735,9 @@ unsigned int JobManager::getJob( QStringList skills, unsigned int gnomeID, Posit
 	return 0;
 }
 
+/** @brief Retrieves a job by its ID. Falls back to stockpile manager if not found locally.
+ *  @param jobID ID of the job to retrieve.
+ *  @return Shared pointer to the job, or nullptr if not found. */
 QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -627,6 +751,10 @@ QSharedPointer<Job> JobManager::getJob( unsigned int jobID )
 	return nullptr;
 }
 
+/** @brief Retrieves the job at a given position. Checks the position hash first,
+ *         then falls back to world job sprite data for multi-tile jobs.
+ *  @param pos Position to look up.
+ *  @return Shared pointer to the job, or nullptr if none found. */
 QSharedPointer<Job> JobManager::getJobAtPos( Position pos )
 {
 	if ( m_jobPositions.contains( pos ) )
@@ -635,9 +763,32 @@ QSharedPointer<Job> JobManager::getJobAtPos( Position pos )
 		return m_jobList.value( jobID );
 	}
 
+	// For multi-tile jobs (workshops etc.), the clicked tile may not be the job origin.
+	// Check the world's job sprite data which stores the jobID per tile.
+	if ( g->w()->hasJob( pos ) )
+	{
+		QVariantMap spriteData = g->w()->jobSprite( pos );
+		// Structure is { "Wall": { "JobID": X, ... }, "Floor": { "JobID": X, ... } }
+		for ( const auto& key : { "Wall", "Floor" } )
+		{
+			if ( spriteData.contains( key ) )
+			{
+				unsigned int jobID = spriteData.value( key ).toMap().value( "JobID" ).toUInt();
+				if ( jobID && m_jobList.contains( jobID ) )
+				{
+					return m_jobList.value( jobID );
+				}
+			}
+		}
+	}
+
 	return nullptr;
 }
 
+/** @brief Checks if a job is enclosed on all four cardinal sides by jobs of the same type.
+ *         Used to deprioritize interior tiles (e.g., mining/building large areas).
+ *  @param jobID ID of the job to check.
+ *  @return True if all four neighbors have jobs of the same type. */
 bool JobManager::isEnclosedBySameType( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -674,6 +825,11 @@ bool JobManager::isEnclosedBySameType( unsigned int jobID )
 	return false;
 }
 
+/** @brief Checks if a job is reachable from the given region by testing walkability of work positions.
+ *         Rebuilds the possible work positions list.
+ *  @param jobID ID of the job to check.
+ *  @param regionID Region to check connectivity from (0 = any region).
+ *  @return True if at least one work position is walkable and connected. */
 bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -709,6 +865,9 @@ bool JobManager::isReachable( unsigned int jobID, unsigned int regionID )
 	return false;
 }
 
+/** @brief Completes a job: removes sprites, re-evaluates neighboring jobs for reachability,
+ *         cleans up position hash and type queues, and falls back to stockpile manager.
+ *  @param jobID ID of the job to finish. */
 void JobManager::finishJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -757,6 +916,11 @@ void JobManager::finishJob( unsigned int jobID )
 
 }
 
+/** @brief Creates, updates, or removes the visual overlay sprites for a job on the world map.
+ *         Handles construction sprites (walls, floors, workshops, items) and generic job sprites.
+ *  @param jobID ID of the job.
+ *  @param busy Whether to show the busy (being-worked) sprite variant.
+ *  @param remove Whether to remove the sprites (job finished/canceled). */
 void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -937,6 +1101,10 @@ void JobManager::setJobSprites( unsigned int jobID, bool busy, bool remove )
 	}
 }
 
+/** @brief Returns a job to the available pool after a gnome stops working it.
+ *         Cancels the job if it was marked canceled or destroy-on-abort. Clears worker state
+ *         and re-queues for future assignment.
+ *  @param jobID ID of the job to give back. */
 void JobManager::giveBackJob( unsigned int jobID )
 {
 	if ( m_jobList.contains( jobID ) )
@@ -982,6 +1150,9 @@ void JobManager::giveBackJob( unsigned int jobID )
 	}
 }
 
+/** @brief Cancels the job at a given position. If being worked, marks it for cancellation;
+ *         otherwise removes it immediately, freeing claimed items and clearing sprites.
+ *  @param pos Position of the job to cancel. */
 void JobManager::cancelJob( const Position& pos )
 {
 	unsigned int jobID = 0;
@@ -1010,6 +1181,9 @@ void JobManager::cancelJob( const Position& pos )
 				GameState::alarmRoomID = 0;
 			}
 
+			// Free any items claimed by this job
+			g->inv()->freeAllClaimedBy( jobID );
+
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
@@ -1022,6 +1196,8 @@ void JobManager::cancelJob( const Position& pos )
 	}
 }
 
+/** @brief Deletes a job by ID. If being worked, marks for cancellation; otherwise removes immediately.
+ *  @param jobID ID of the job to delete. */
 void JobManager::deleteJob( unsigned int jobID )
 {
 	if ( jobID != 0 && m_jobList.contains( jobID ) )
@@ -1040,6 +1216,9 @@ void JobManager::deleteJob( unsigned int jobID )
 				GameState::alarmRoomID = 0;
 			}
 
+			// Free any items claimed by this job
+			g->inv()->freeAllClaimedBy( jobID );
+
 			setJobSprites( jobID, false, true );
 
 			removeFromPositionHash( jobID );
@@ -1052,6 +1231,8 @@ void JobManager::deleteJob( unsigned int jobID )
 	}
 }
 
+/** @brief Deletes the job at a given position by looking up its ID.
+ *  @param pos Position of the job to delete. */
 void JobManager::deleteJobAt( const Position& pos )
 {
 	unsigned int jobID = 0;
@@ -1070,6 +1251,8 @@ void JobManager::deleteJobAt( const Position& pos )
 	}
 }
 
+/** @brief Returns a debug info string with the total number of jobs.
+ *  @return String containing the job count. */
 QString JobManager::jobManagerInfo()
 {
 	QString out;
@@ -1078,6 +1261,8 @@ QString JobManager::jobManagerInfo()
 	return out;
 }
 
+/** @brief Raises the priority of the job at the given position by 1 (max 9).
+ *  @param pos Position of the job. */
 void JobManager::raisePrio( Position& pos )
 {
 	unsigned int jobID = 0;
@@ -1106,6 +1291,8 @@ void JobManager::raisePrio( Position& pos )
 	}
 }
 
+/** @brief Lowers the priority of the job at the given position by 1 (min 0).
+ *  @param pos Position of the job. */
 void JobManager::lowerPrio( Position& pos )
 {
 	unsigned int jobID = 0;
@@ -1132,4 +1319,147 @@ void JobManager::lowerPrio( Position& pos )
 			job->lowerPrio();
 		}
 	}
+}
+
+/** @brief Processes phase transitions for all jobs. PENDING jobs attempt atomic item claiming
+ *         and transition to HAULING. HAULING jobs check if all items have been delivered
+ *         and transition to READY. */
+void JobManager::processJobPhases()
+{
+	for ( auto it = m_jobList.begin(); it != m_jobList.end(); ++it )
+	{
+		auto& job = it.value();
+
+		switch ( job->phase() )
+		{
+			case JobPhase::PENDING:
+			{
+				// Jobs with no required items go straight to READY
+				if ( job->requiredItems().isEmpty() )
+				{
+					job->setPhase( JobPhase::READY );
+					break;
+				}
+
+				// Try to atomically claim all required items
+				QList<unsigned int> claimedItemIDs;
+				if ( tryAtomicClaimItems( job, claimedItemIDs ) )
+				{
+					job->setClaimedItemIDs( claimedItemIDs );
+					createHaulSubJobs( job, claimedItemIDs );
+					job->setPhase( JobPhase::HAULING );
+				}
+				// else: stay PENDING, try again next tick
+			}
+			break;
+
+			case JobPhase::HAULING:
+			{
+				if ( job->itemsDelivered() >= job->itemsRequired() )
+				{
+					job->setPhase( JobPhase::READY );
+					// Re-queue so it enters m_jobsPerType on next onTick cycle
+					m_returnedJobQueue.enqueue( it.key() );
+				}
+			}
+			break;
+
+			default:
+				break;
+		}
+	}
+}
+
+/** @brief Attempts to atomically claim all required items for a job. If any item cannot be
+ *         found or is already claimed, all previously claimed items are released.
+ *  @param job The job needing items.
+ *  @param claimedItemIDs Output list of claimed item IDs on success.
+ *  @return True if all items were successfully claimed. */
+bool JobManager::tryAtomicClaimItems( QSharedPointer<Job> job, QList<unsigned int>& claimedItemIDs )
+{
+	claimedItemIDs.clear();
+
+	for ( const auto& req : job->requiredItems() )
+	{
+		for ( int i = 0; i < req.count; ++i )
+		{
+			unsigned int itemID = g->inv()->getClosestItem( job->pos(), true, req.itemSID, req.materialSID );
+			if ( itemID == 0 )
+			{
+				for ( auto id : claimedItemIDs )
+				{
+					g->inv()->setInJob( id, 0 );
+				}
+				claimedItemIDs.clear();
+				return false;
+			}
+
+			// Check if it's actually free (not claimed by another job)
+			if ( g->inv()->isInJob( itemID ) != 0 )
+			{
+				// Already claimed — release and fail
+				for ( auto id : claimedItemIDs )
+				{
+					g->inv()->setInJob( id, 0 );
+				}
+				claimedItemIDs.clear();
+				return false;
+			}
+
+			g->inv()->setInJob( itemID, job->id() );
+			claimedItemIDs.append( itemID );
+		}
+	}
+
+	return true;
+}
+
+/** @brief Creates haul sub-jobs (HaulToSite) for each claimed item, targeting the parent
+ *         job's input position or main position. Links sub-jobs to the parent.
+ *  @param parentJob The parent job that needs items hauled.
+ *  @param itemIDs List of item IDs to haul. */
+void JobManager::createHaulSubJobs( QSharedPointer<Job> parentJob, const QList<unsigned int>& itemIDs )
+{
+	parentJob->setItemsRequired( itemIDs.size() );
+
+	Position targetPos = parentJob->posItemInput().isZero() ? parentJob->pos() : parentJob->posItemInput();
+
+	for ( auto itemID : itemIDs )
+	{
+		QSharedPointer<Job> haulJob( new Job );
+		haulJob->setType( "HaulToSite" );
+		haulJob->setRequiredSkill( "Hauling" );
+		haulJob->setPos( targetPos );
+		haulJob->setParentJobID( parentJob->id() );
+		haulJob->addItemToHaul( itemID );
+		haulJob->setPhase( JobPhase::READY ); // haul jobs are immediately ready
+		haulJob->setNoJobSprite( true );
+
+		m_jobList.insert( haulJob->id(), haulJob );
+		m_jobsPerType["HaulToSite"].insert( haulJob->priority(), haulJob->id() );
+
+		parentJob->addHaulSubJob( haulJob->id() );
+	}
+}
+
+/** @brief Called when a haul sub-job finishes. Increments the parent job's delivered item count
+ *         and removes the haul job from the system.
+ *  @param haulJobID ID of the completed haul sub-job. */
+void JobManager::onHaulSubJobComplete( unsigned int haulJobID )
+{
+	if ( !m_jobList.contains( haulJobID ) )
+		return;
+
+	auto haulJob = m_jobList.value( haulJobID );
+	unsigned int parentID = haulJob->parentJobID();
+
+	if ( parentID != 0 && m_jobList.contains( parentID ) )
+	{
+		auto parentJob = m_jobList.value( parentID );
+		parentJob->incrementItemsDelivered();
+	}
+
+	// Clean up haul job
+	m_jobsPerType["HaulToSite"].remove( haulJob->priority(), haulJobID );
+	m_jobList.remove( haulJobID );
 }

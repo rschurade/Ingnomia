@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file plant.cpp
+ *  @brief Plant growth simulation: trees, fruit trees, crops, mushrooms — state machine,
+ *         seasonal behaviour, harvesting, felling, and multi-tile sprite layouts.
+ */
 #include "plant.h"
 
 #include "../base/db.h"
@@ -36,12 +40,20 @@
 
 #include <random>
 
+/// @brief Default constructor. Creates an uninitialised plant with ID "None".
 Plant::Plant() :
 	Object( Position() ),
 	m_plantID( "None" )
 {
 }
 
+/// @brief Constructs a new plant placed at @p pos with the given database ID.
+///        Reads growth, light, and harvest data from DB; optionally spawns fully grown
+///        (with mature wood and/or harvestable fruit if applicable).
+/// @param pos        World position of the plant's root tile.
+/// @param ID         Database key into the Plants table.
+/// @param fullyGrown If true, plant starts at its final growth state.
+/// @param game       Owning Game instance.
 Plant::Plant( Position& pos, QString ID, bool fullyGrown, Game* game ) :
 	g( game ),
 	Object( pos ),
@@ -97,6 +109,9 @@ Plant::Plant( Position& pos, QString ID, bool fullyGrown, Game* game ) :
 	setGrowTime();
 }
 
+/// @brief Deserialising constructor. Restores a plant from a previously serialised QVariant map.
+/// @param values QVariant produced by Plant::serialize().
+/// @param game   Owning Game instance.
 Plant::Plant( QVariant values, Game* game ) :
 	g( game ),
 	Object( Position() )
@@ -143,10 +158,13 @@ Plant::Plant( QVariant values, Game* game ) :
 	updateState();
 }
 
+/// @brief Destructor.
 Plant::~Plant()
 {
 }
 
+/// @brief Serialises the plant's full state into a QVariant map.
+/// @return QVariant map with all persistent fields (ID, Pos, PlantID, State, growth flags, etc.).
 QVariant Plant::serialize() const
 {
 	QVariantMap out;
@@ -184,6 +202,8 @@ QVariant Plant::serialize() const
 	return out;
 }
 
+/// @brief Updates m_growsThisSeason by checking whether the current season
+///        appears in the plant's GrowsInSeason pipe-delimited DB field.
 void Plant::setGrowsThisSeason()
 {
 	QVariantMap row     = DB::selectRow( "Plants", m_plantID );
@@ -200,16 +220,28 @@ void Plant::setGrowsThisSeason()
 	m_growsThisSeason = false;
 }
 
+/// @brief Returns whether this plant grows in the current season.
+/// @return true if the current season is in the plant's grow-season list.
 bool Plant::growsThisSeason()
 {
 	return m_growsThisSeason;
 }
 
+/// @brief Per-tick update entry point. Delegates to liveOneTick().
+/// @param tickNumber    Current game tick (unused directly).
+/// @param dayChanged    True if the day boundary was crossed this tick.
+/// @param seasonChanged True if the season boundary was crossed this tick.
+/// @return OnTickReturn::UPDATE if the world tile needs a sprite refresh, NOOP otherwise.
 OnTickReturn Plant::onTick( quint64 tickNumber, bool dayChanged, bool seasonChanged )
 {
 	return liveOneTick( dayChanged, seasonChanged );
 }
 
+/// @brief Core growth tick. Handles seasonal events (kill/fruit-loss) and advances
+///        the growth state when the countdown reaches zero, respecting light requirements.
+/// @param dayChanged    True if the day boundary was crossed this tick.
+/// @param seasonChanged True if the season boundary was crossed this tick.
+/// @return OnTickReturn::UPDATE if the plant changed state, NOOP otherwise.
 OnTickReturn Plant::liveOneTick( bool dayChanged, bool seasonChanged )
 {
 	if ( m_fullyGrown && !seasonChanged )
@@ -281,6 +313,7 @@ OnTickReturn Plant::liveOneTick( bool dayChanged, bool seasonChanged )
 	return OnTickReturn::NOOP;
 }
 
+/// @brief Sets m_ticksToNextState from the current state's DB GrowTime, randomised ±5%.
 void Plant::setGrowTime()
 {
 	auto sl = DB::selectRows( "Plants_States", m_plantID );
@@ -298,6 +331,9 @@ void Plant::setGrowTime()
 	}
 }
 
+/// @brief Advances the visual and logical state: updates sprite, multi-tile layout,
+///        light intensity, harvestable flag, fruit count, and m_fullyGrown.
+///        Falls back one state if a multi-tile expansion is blocked.
 void Plant::updateState()
 {
 	auto sl = DB::selectRows( "Plants_States", m_plantID );
@@ -365,11 +401,15 @@ void Plant::updateState()
 	}
 }
 
+/// @brief Returns whether this plant is a fruit tree (has a non-empty FruitItemID in DB).
+/// @return true if the plant bears fruit.
 bool Plant::isFruitTree()
 {
 	return m_isFruitTree;
 }
 
+/// @brief Returns the localised display name for this plant (e.g. "Oak Tree", "Wheat Plant").
+/// @return Localised designation string, or an error string if the type is unrecognised.
 QString Plant::getDesignation()
 {
 	if ( m_isTree )
@@ -384,6 +424,9 @@ QString Plant::getDesignation()
 	return "error: unset plant designation";
 }
 
+/// @brief Steps a tree back one growth level (e.g. after partial harvesting or damage).
+///        Resets grow timer and refreshes sprites. No-op for non-trees.
+/// @return true if the tree has regressed to state 0 (sapling / destroyed).
 bool Plant::reduceOneGrowLevel()
 {
 	if ( m_isTree )
@@ -402,6 +445,10 @@ bool Plant::reduceOneGrowLevel()
 	return false;
 }
 
+/// @brief Fells this tree: produces wood items (from Plants_OnFell DB table), clears all
+///        multi-tile sprites and tile flags, and drops items at each layout offset position.
+///        No-op and returns false for non-trees.
+/// @return true if the tree was felled, false otherwise.
 bool Plant::fell()
 {
 	if ( m_isTree )
@@ -473,6 +520,11 @@ bool Plant::fell()
 	return false;
 }
 
+/// @brief Harvests this plant. Produces items per the Plants_OnHarvest DB table (with optional
+///        per-item chance rolls), then applies the harvest action: Destroy, ReduceFruitCount,
+///        or StateOneBack.
+/// @param pos World position where harvested items are created.
+/// @return true if the plant should be destroyed after harvest, false otherwise.
 bool Plant::harvest( Position& pos )
 {
 	auto rows = DB::selectRows( "Plants_OnHarvest", m_plantID );
@@ -545,11 +597,18 @@ bool Plant::harvest( Position& pos )
 	return false;
 }
 
+/// @brief Returns whether this plant currently has items ready to harvest.
+/// @return true if m_harvestable is set.
 bool Plant::harvestable()
 {
 	return m_harvestable;
 }
 
+/// @brief Places the multi-tile sprite layout for a large tree. Iterates over each offset in
+///        TreeLayouts_Layout, sets wall sprites, blocks movement, expels any gnomes/animals/items,
+///        and optionally adds fruit sprites on designated fruit positions.
+/// @param layoutSID Database key into TreeLayouts_Layout.
+/// @param withFruit If true, randomly applies fruit sprite variants at fruit positions.
 void Plant::layoutMulti( QString layoutSID, bool withFruit )
 {
 	Position extractPos = m_position.eastOf();
@@ -614,6 +673,12 @@ void Plant::layoutMulti( QString layoutSID, bool withFruit )
 	}
 }
 
+/// @brief Checks whether the multi-tile layout can be placed at @p rootPos without colliding
+///        with existing walls, occupied tiles, or floating floors above ground level.
+/// @param layoutSID Database key into TreeLayouts_Layout.
+/// @param rootPos   Root tile position for the layout.
+/// @param game      Game instance used to query tile flags and types.
+/// @return true if all layout tiles are clear and placeable.
 bool Plant::testLayoutMulti( QString layoutSID, Position rootPos, Game* game )
 {
 	auto ll = DB::selectRows( "TreeLayouts_Layout", layoutSID );
@@ -645,6 +710,9 @@ bool Plant::testLayoutMulti( QString layoutSID, Position rootPos, Game* game )
 	return true;
 }
 
+/// @brief Artificially advances the grow countdown by up to @p ticks, capped so that
+///        m_ticksToNextState never drops below 1.
+/// @param ticks Number of ticks to subtract from the current countdown.
 void Plant::speedUpGrowth( unsigned int ticks )
 {
 	if ( m_ticksToNextState > 1 )

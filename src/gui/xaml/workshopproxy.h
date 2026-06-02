@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopproxy.h
+ *  @brief Qt-side proxy that bridges the WorkshopModel view model to
+ *         AggregatorWorkshop via queued signal/slot connections.
+ */
 #pragma once
 
 #include "../aggregatorworkshop.h"
@@ -22,6 +26,9 @@
 
 #include <QObject>
 
+/// @brief Bridges WorkshopModel to AggregatorWorkshop. Forwards flag/recipe/craft-job
+///        and trade changes as queued signals and relays workshop + trader snapshots
+///        back to the view model.
 class WorkshopProxy : public QObject
 {
 	Q_OBJECT
@@ -54,11 +61,11 @@ public:
 	void unblockWriteBack();
 
 private:
-	IngnomiaGUI::WorkshopModel* m_parent = nullptr;
+	IngnomiaGUI::WorkshopModel* m_parent = nullptr; ///< Owning view model for relaying updates.
 
-	unsigned int m_workshopID = 0;
+	unsigned int m_workshopID = 0; ///< Backing workshop ID used for trade messages.
 
-	bool m_blockWriteBack = false;
+	bool m_blockWriteBack = false; ///< Suppresses write-back during snapshot rebuilds.
 
 private slots:
 	void onUpdateInfo( const GuiWorkshopInfo& info );

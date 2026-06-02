@@ -15,11 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file room.h
+ *  Room designation: enclosure/roof detection, furniture placement, bed/chair assignment, value calculation, and alarm bells.
+ */
 #pragma once
 
 #include "../base/position.h"
 #include "../base/priorityqueue.h"
 
+#include "../game/sourcematerial.h"
 #include "../game/worldobject.h"
 
 #include <QHash>
@@ -28,6 +32,7 @@
 #include <QPair>
 #include <QtGlobal>
 
+/** @brief Classification of room purpose. */
 enum class RoomType : unsigned char
 {
 	NotSet,
@@ -37,14 +42,23 @@ enum class RoomType : unsigned char
 	Hospital
 };
 
+/** @brief A single tile within a room, tracking position, furniture, bed/chair state, and creature occupancy. */
 struct RoomTile
 {
 	Position pos;
-	unsigned int furnitureID = 0;
+	SourceMaterial furniture;     // empty itemSID = no furniture
+	bool isBed       = false;
+	bool isChair     = false;
+	bool isAlarmBell = false;
+	unsigned short furnitureValue = 0;
+	unsigned int claimedBy = 0;   // creature ID that claimed this bed
+	unsigned int usedBy    = 0;   // creature ID sleeping in this bed
+	bool hasFurniture() const { return !furniture.itemSID.isEmpty(); }
 };
 
 class Job;
 
+/** @brief Represents a room designation with enclosure detection, furniture tracking, bed/chair management, and value calculation. */
 class Room : public WorldObject
 {
 	Q_DISABLE_COPY_MOVE( Room )
@@ -76,7 +90,7 @@ public:
 		return m_type;
 	}
 
-	void addFurniture( unsigned int itemUID, Position pos );
+	void addFurniture( const SourceMaterial& source, unsigned short value, Position pos );
 	void removeFurniture( const Position& pos );
 
 	bool checkRoofed();
@@ -102,8 +116,13 @@ public:
 		return m_owner;
 	}
 
-	QList<unsigned int> beds();
-	QList<unsigned int> chairs();
+	int numBeds();
+	int numChairs();
+	Position findFreeBed( unsigned int creatureID );
+	Position findFreeChair( Position nearPos );
+	bool claimBed( Position pos, unsigned int creatureID );
+	void releaseBed( Position pos );
+	void releaseAllBeds( unsigned int creatureID );
 
 	bool hasAlarmBell() const;
 	void setHasAlarmBell( bool value );

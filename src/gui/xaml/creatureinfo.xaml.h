@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureinfo.xaml.h
+ *  @brief Noesis UserControl code-behind for the Creature Info window (CreatureInfo.xaml).
+ *         All real behaviour lives in CreatureInfoModel; this file just loads the XAML.
+ */
 #ifndef __CreatureInfo_H__
 #define __CreatureInfo_H__
 
@@ -24,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the CreatureInfo XAML user control.
 class CreatureInfo final : public Noesis::UserControl
 {
 public:

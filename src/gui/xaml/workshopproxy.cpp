@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshopproxy.cpp
+ *  @brief WorkshopProxy implementation. Constructor wires every signal/slot pair between
+ *         WorkshopModel and AggregatorWorkshop (workshop snapshots + craft-list updates
+ *         + trader snapshots + transfer signals); the rest of the file is thin
+ *         pass-through forwarders.
+ */
 #include "workshopproxy.h"
 
 #include "../../base/gamestate.h"
@@ -26,6 +32,9 @@
 #include <QDebug>
 #include <QPainter>
 
+/// @brief Constructs the WorkshopProxy and wires every workshop / craft-list / trader
+///        signal and slot between WorkshopModel and AggregatorWorkshop via queued
+///        connections.
 WorkshopProxy::WorkshopProxy( QObject* parent ) :
 	QObject( parent )
 {

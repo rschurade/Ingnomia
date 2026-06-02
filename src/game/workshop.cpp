@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file workshop.cpp
+ *  Implementation of Workshop, WorkshopProperties, and CraftJob: crafting queue management, job creation, butchering, fishing, and auto-craft logic.
+ */
 #include "workshop.h"
 
 #include "../base/db.h"
@@ -40,6 +43,10 @@
 #include <QDebug>
 #include <QJsonDocument>
 
+/**
+ * @brief Deserializes workshop properties from a saved variant map.
+ * @param in Variant map containing serialized workshop properties.
+ */
 WorkshopProperties::WorkshopProperties( QVariantMap& in )
 {
 	type     = in.value( "Type" ).toString();
@@ -64,7 +71,7 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	acceptGenerated  = in.value( "AcceptGenerated" ).toBool();
 	craftIngredients = in.value( "CraftIngredients" ).toBool();
 
-	sourceItems = in.value( "SourceItems" ).toList();
+	sourceMaterials = SourceMaterial::deserializeList( in.value( "SourceMaterials" ).toList() );
 	itemsToSell = in.value( "ItemsToSell" ).toList();
 
 	auto dbws = DB::workshop( type );
@@ -76,6 +83,10 @@ WorkshopProperties::WorkshopProperties( QVariantMap& in )
 	}
 }
 
+/**
+ * @brief Serializes workshop properties into a variant map for saving.
+ * @param out Variant map to write properties into.
+ */
 void WorkshopProperties::serialize( QVariantMap& out )
 {
 	out.insert( "Type", type );
@@ -100,10 +111,14 @@ void WorkshopProperties::serialize( QVariantMap& out )
 	out.insert( "AcceptGenerated", acceptGenerated );
 	out.insert( "CraftIngredients", craftIngredients );
 
-	out.insert( "SourceItems", sourceItems );
+	out.insert( "SourceMaterials", SourceMaterial::serializeList( sourceMaterials ) );
 	out.insert( "ItemsToSell", itemsToSell );
 }
 
+/**
+ * @brief Deserializes a craft job from a saved variant map, restoring IDs, mode, required items, and fetching DB config.
+ * @param in Variant map containing serialized craft job data.
+ */
 CraftJob::CraftJob( QVariantMap& in )
 {
 	// Restore IDs
@@ -146,6 +161,10 @@ CraftJob::CraftJob( QVariantMap& in )
 	skillID            = row.value( "SkillID" ).toString();
 }
 
+/**
+ * @brief Serializes the craft job into a variant map for saving.
+ * @param out Variant map to write craft job data into.
+ */
 void CraftJob::serialize( QVariantMap& out )
 {
 	out.insert( "JobDefID", id );
@@ -183,6 +202,13 @@ void CraftJob::serialize( QVariantMap& out )
 	out.insert( "Suspended", paused );
 }
 
+/**
+ * @brief Constructs a new workshop from a type definition, computing tile positions and input/output positions based on rotation.
+ * @param type Workshop type string ID matching the DB Workshops table.
+ * @param pos World position of the workshop's origin tile.
+ * @param rotation Rotation (0-3) applied to component and I/O offsets.
+ * @param game Pointer to the owning Game instance.
+ */
 Workshop::Workshop( QString type, Position& pos, int rotation, Game* game ) :
 	WorldObject( game )
 {
@@ -271,6 +297,11 @@ Workshop::~Workshop()
 {
 }
 
+/**
+ * @brief Constructs a workshop from saved game data, restoring tiles, craft queue, and active job references.
+ * @param vals Variant map containing serialized workshop state.
+ * @param game Pointer to the owning Game instance.
+ */
 Workshop::Workshop( QVariantMap vals, Game* game ) :
 	WorldObject( vals, game ),
 	m_properties( vals )
@@ -308,6 +339,10 @@ Workshop::Workshop( QVariantMap vals, Game* game ) :
 	m_spriteComposition = vals.value( "Sprites" ).toList();
 }
 
+/**
+ * @brief Serializes the entire workshop state (properties, tiles, job queue, sprites) into a QVariant for saving.
+ * @return QVariant containing the serialized workshop data.
+ */
 QVariant Workshop::serialize()
 {
 	QVariantMap out;
@@ -338,6 +373,10 @@ QVariant Workshop::serialize()
 	return out;
 }
 
+/**
+ * @brief Per-tick update: handles destruction, checks linked stockpile, finishes completed jobs, processes craft queue, and creates butcher/fisher jobs.
+ * @param tick Current game tick number.
+ */
 void Workshop::onTick( quint64 tick )
 {
 	if ( m_properties.toDestroy )
@@ -459,11 +498,23 @@ void Workshop::onTick( quint64 tick )
 	}
 }
 
+/**
+ * @brief Checks whether the given position is one of this workshop's tiles.
+ * @param pos Position to test.
+ * @return True if the workshop occupies this tile.
+ */
 bool Workshop::isOnTile( const Position& pos )
 {
 	return m_tiles.contains( pos.toInt() );
 }
 
+/**
+ * @brief Adds a new craft job to the workshop's queue, looking up recipe details from the DB.
+ * @param craftID Craft recipe ID from the DB Crafts table.
+ * @param mode Crafting mode (CraftNumber, CraftTo, or Repeat).
+ * @param number Number of items to craft or target count.
+ * @param mats List of material SIDs, one per component in the recipe.
+ */
 void Workshop::addJob( QString craftID, int mode, int number, QStringList mats )
 {
 	CraftJob cj;
@@ -500,6 +551,10 @@ void Workshop::addJob( QString craftID, int mode, int number, QStringList mats )
 	m_jobList.append( cj );
 }
 
+/**
+ * @brief Checks whether required input items for a craft job are available, and auto-generates craft orders for missing ingredients.
+ * @param cj The craft job whose required items to check.
+ */
 void Workshop::checkAutoGenerate( CraftJob cj )
 {
 	if ( !m_active || m_properties.noAutoGenerate )
@@ -520,6 +575,12 @@ void Workshop::checkAutoGenerate( CraftJob cj )
 	}
 }
 
+/**
+ * @brief Moves a craft job within the queue by command string (Top, Up, Down, Bottom).
+ * @param jobDefID Unique ID of the craft job to move.
+ * @param moveCmd Direction command: "Top", "Up", "Down", or "Bottom".
+ * @return True if the job was found and moved.
+ */
 bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 {
 	for ( int i = 0; i < m_jobList.size(); ++i )
@@ -565,11 +626,25 @@ bool Workshop::moveJob( unsigned int jobDefID, QString moveCmd )
 	return false;
 }
 
+/**
+ * @brief Moves a craft job from one queue position to another by index.
+ * @param pos Current index in the job list.
+ * @param newPos Target index in the job list.
+ */
 void Workshop::moveJob( int pos, int newPos )
 {
 	m_jobList.move( pos, newPos );
 }
 
+/**
+ * @brief Updates parameters of an existing craft job in the queue.
+ * @param craftJobID Unique ID of the craft job.
+ * @param mode New crafting mode.
+ * @param numToCraft New target item count.
+ * @param suspended Whether the job should be paused.
+ * @param moveBack Whether to move the job to the back of the queue when one item finishes.
+ * @return True if the craft job was found and updated.
+ */
 bool Workshop::setJobParams( unsigned int craftJobID, int mode, int numToCraft, bool suspended, bool moveBack )
 {
 	for ( auto& cj : m_jobList )
@@ -586,6 +661,11 @@ bool Workshop::setJobParams( unsigned int craftJobID, int mode, int numToCraft, 
 	return false;
 }
 
+/**
+ * @brief Sets the suspended (paused) state of a craft job.
+ * @param jobDefID Unique ID of the craft job.
+ * @param suspended True to pause, false to resume.
+ */
 void Workshop::setJobSuspended( unsigned int jobDefID, bool suspended )
 {
 	for ( auto& cj : m_jobList )
@@ -598,6 +678,10 @@ void Workshop::setJobSuspended( unsigned int jobDefID, bool suspended )
 	}
 }
 
+/**
+ * @brief Cancels and removes a craft job from the queue, also canceling any active gnome job for it.
+ * @param jobDefID Unique ID of the craft job to cancel.
+ */
 void Workshop::cancelJob( unsigned int jobDefID )
 {
 	for ( int i = 0; i < m_jobList.size(); ++i )
@@ -620,6 +704,12 @@ void Workshop::cancelJob( unsigned int jobDefID )
 	}
 }
 
+/**
+ * @brief Checks whether this workshop can craft the specified item with the given material.
+ * @param itemSID Item string ID to craft.
+ * @param materialSID Material string ID, or "any" for any material.
+ * @return True if the workshop type supports crafting this item/material combination.
+ */
 bool Workshop::canCraft( QString itemSID, QString materialSID )
 {
 	if ( !m_active )
@@ -656,6 +746,13 @@ bool Workshop::canCraft( QString itemSID, QString materialSID )
 	return true;
 }
 
+/**
+ * @brief Creates an auto-generated craft job for the specified item, queued separately and merged on next tick.
+ * @param itemSID Item string ID to craft.
+ * @param materialSID Material string ID, or "any".
+ * @param amount Number of items to craft.
+ * @return True if the job was successfully created.
+ */
 bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 {
 	if ( !m_active )
@@ -731,6 +828,12 @@ bool Workshop::autoCraft( QString itemSID, QString materialSID, int amount )
 	return true;
 }
 
+/**
+ * @brief Checks whether this workshop already has a craft job (queued or auto-generated) for the given item and material.
+ * @param itemSID Item string ID to check.
+ * @param materialSID Material string ID, or "any" to match any material.
+ * @return True if a matching craft job exists in the queue or auto-craft list.
+ */
 bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 {
 	if( materialSID == "any" )
@@ -784,6 +887,11 @@ bool Workshop::hasCraftJob( const QString& itemSID, const QString& materialSID )
 	return false;
 }
 
+/**
+ * @brief Creates an actual gnome job from a craft job definition and submits it to the job manager.
+ * @param cj The craft job to create a gnome job from.
+ * @return True if the job was successfully created.
+ */
 bool Workshop::createJobFromCraftJob( CraftJob& cj )
 {
 	auto jobID = g->jm()->addJob( "CraftAtWorkshop", m_properties.pos, m_properties.rotation, true );
@@ -812,6 +920,10 @@ bool Workshop::createJobFromCraftJob( CraftJob& cj )
 	return false;
 }
 
+/**
+ * @brief Creates a butcher job for animals marked for butchering in connected pastures, excess tame animals, or corpses.
+ * @return Shared pointer to the created job, or nullptr if no butcherable target was found.
+ */
 QSharedPointer<Job> Workshop::createButcherJob()
 {
 	for ( auto& pasture : g->fm()->allPastures() )
@@ -904,6 +1016,10 @@ QSharedPointer<Job> Workshop::createButcherJob()
 	return nullptr;
 }
 
+/**
+ * @brief Creates a job to dye an animal from the workshop's to-dye list.
+ * @return Shared pointer to the created job, or nullptr if no dyeable animal was found.
+ */
 QSharedPointer<Job> Workshop::createDyeSheepJob()
 {
 	for ( auto pair : m_toDye )
@@ -933,6 +1049,10 @@ QSharedPointer<Job> Workshop::createDyeSheepJob()
 	return nullptr;
 }
 
+/**
+ * @brief Creates a fishing job if there is sufficient water near the input tile.
+ * @return Shared pointer to the created job, or nullptr if water level is too low.
+ */
 QSharedPointer<Job> Workshop::createFisherJob()
 {
 	Position pos   = m_properties.posIn;
@@ -964,6 +1084,10 @@ QSharedPointer<Job> Workshop::createFisherJob()
 	return nullptr;
 }
 
+/**
+ * @brief Creates a job to process (butcher) a caught fish into food items.
+ * @return Shared pointer to the created job, or nullptr if no fish are available.
+ */
 QSharedPointer<Job> Workshop::createFishButcherJob()
 {
 	if ( g->inv()->itemCount( "Fish", "any" ) == 0 )
@@ -991,6 +1115,11 @@ QSharedPointer<Job> Workshop::createFishButcherJob()
 	return nullptr;
 }
 
+/**
+ * @brief Checks whether all required input items for a craft job are available in the inventory. Auto-generates craft orders for missing craftable items.
+ * @param cj The craft job to check item availability for.
+ * @return True if all required items are available in sufficient quantity.
+ */
 bool Workshop::checkItemsAvailable( CraftJob& cj )
 {
 	// restrictions are already determined at CraftJob creation
@@ -1041,6 +1170,11 @@ bool Workshop::checkItemsAvailable( CraftJob& cj )
 	return allFound;
 }
 
+/**
+ * @brief Handles completion of a craft job: updates crafted count, re-queues if repeating or not yet done, and triggers auto-generate for ingredients.
+ * @param craftJobID Unique ID of the completed craft job.
+ * @return True if the craft job was found and processed.
+ */
 bool Workshop::finishJob( unsigned int craftJobID )
 {
 	if ( !m_jobList.empty() )
@@ -1105,6 +1239,9 @@ bool Workshop::finishJob( unsigned int craftJobID )
 	return false;
 }
 
+/**
+ * @brief Marks the workshop for destruction, clearing the job list and canceling active jobs.
+ */
 void Workshop::destroy()
 {
 	m_jobList.clear();
@@ -1122,6 +1259,10 @@ void Workshop::destroy()
 	m_properties.toDestroy = true;
 }
 
+/**
+ * @brief Returns whether the workshop can be safely deleted (all jobs finished after destroy was called).
+ * @return True if the workshop is ready to be deleted.
+ */
 bool Workshop::canDelete()
 {
 	return m_properties.canDelete;
@@ -1279,17 +1420,22 @@ int Workshop::rotation()
 
 void Workshop::setSourceItems( QVariantList items )
 {
-	for ( auto item : items )
+	for ( const auto& item : items )
 	{
-		g->inv()->pickUpItem( item.toUInt(), m_id );
-		g->inv()->setConstructed( item.toUInt(), true );
+		unsigned int uid = item.toUInt();
+		m_properties.sourceMaterials.append( SourceMaterial(
+			g->inv()->itemSID( uid ),
+			g->inv()->materialSID( uid ),
+			g->inv()->quality( uid )
+		) );
+		// Do NOT pickUpItem or setConstructed.
+		// canwork.cpp post-loop will destroy these items automatically.
 	}
-	m_properties.sourceItems = items;
 }
 
-QVariantList Workshop::sourceItems()
+const QList<SourceMaterial>& Workshop::getSourceMaterials() const
 {
-	return m_properties.sourceItems;
+	return m_properties.sourceMaterials;
 }
 
 bool Workshop::noAutoGenerate()

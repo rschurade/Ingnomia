@@ -27,6 +27,13 @@
 
 #include <QDebug>
 
+/** @file inventorymodel.cpp
+ *  @brief InventoryModel and Inv*Item implementations. Each tree-row class wraps a Gui*Info
+ *         payload, exposes its name and counts, and forwards checkbox toggles to the
+ *         InventoryProxy. The tri-state UpdateState() helpers compute partial-check states
+ *         from the children's individual states. Trivial Get/Set accessors are XAML plumbing.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
@@ -35,6 +42,7 @@ using namespace NoesisApp;
 #pragma region MaterialItem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief Builds a leaf material row from a GuiInventoryMaterial payload.
 IngnomiaGUI::InvMaterialItem::InvMaterialItem( const GuiInventoryMaterial& mat, InventoryProxy* proxy ) :
 	m_proxy( proxy ),
 	m_sid( mat.id ),
@@ -59,6 +67,7 @@ bool IngnomiaGUI::InvMaterialItem::GetChecked() const
 	return m_active;
 }
 
+/// @brief Toggles the watch flag for this material via the proxy.
 void IngnomiaGUI::InvMaterialItem::SetChecked( bool value )
 {
 	if ( m_active != value )
@@ -84,6 +93,7 @@ const char* IngnomiaGUI::InvMaterialItem::getInStock() const
 #pragma region ItemItem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief Builds an item row and recursively constructs InvMaterialItem children.
 IngnomiaGUI::InvItemItem::InvItemItem( const GuiInventoryItem& gii, InventoryProxy* proxy ) :
 	m_proxy( proxy ),
 	m_sid( gii.id ),
@@ -123,6 +133,8 @@ bool IngnomiaGUI::InvItemItem::getExpanded() const
 	return !GetState().HasValue();
 }
 
+/// @brief Tri-state checkbox setter: when fully checked or unchecked, propagates the new
+///        state to every child material via the proxy.
 void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
@@ -131,6 +143,8 @@ void IngnomiaGUI::InvItemItem::SetState( const Noesis::Nullable<bool>& value )
 	m_proxy->setActive( active, gwi );
 }
 
+/// @brief Recomputes the tri-state checkbox value by counting how many child materials are
+///        currently watched (none → unchecked, all → checked, mix → partial).
 void IngnomiaGUI::InvItemItem::UpdateState()
 {
 	bool allChecked   = false;
@@ -179,6 +193,7 @@ const char* IngnomiaGUI::InvItemItem::getInStock() const
 #pragma region GroupItem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief Builds a group row and recursively constructs InvItemItem children.
 IngnomiaGUI::InvGroupItem::InvGroupItem( const GuiInventoryGroup& gig, InventoryProxy* proxy ) :
 	m_proxy( proxy ),
 	m_sid( gig.id ),
@@ -217,6 +232,7 @@ bool IngnomiaGUI::InvGroupItem::getExpanded() const
 	return !GetState().HasValue();
 }
 
+/// @brief Tri-state checkbox setter for the group level: cascades changes to every child item.
 void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	bool active = value.HasValue() && value.GetValue();
@@ -225,6 +241,7 @@ void IngnomiaGUI::InvGroupItem::SetState( const Noesis::Nullable<bool>& value )
 	m_proxy->setActive( active, gwi );
 }
 
+/// @brief Recomputes the group's tri-state from its child items' states.
 void IngnomiaGUI::InvGroupItem::UpdateState()
 {
 	bool allChecked   = false;
@@ -278,6 +295,7 @@ const char* IngnomiaGUI::InvGroupItem::getInStock() const
 #pragma region CategoryItem
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief Builds a category row and recursively constructs InvGroupItem children.
 IngnomiaGUI::InvCategoryItem::InvCategoryItem( const GuiInventoryCategory& gic, InventoryProxy* proxy ) :
 	m_proxy( proxy ),
 	m_sid( gic.id )
@@ -314,6 +332,7 @@ bool IngnomiaGUI::InvCategoryItem::getExpanded() const
 	return !GetState().HasValue();
 }
 
+/// @brief Tri-state checkbox setter for the category level: cascades changes to every child group.
 void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value )
 {
 	//qDebug() << value.HasValue() << value.GetValue() << m_state.HasValue() << m_state.GetValue();
@@ -327,6 +346,7 @@ void IngnomiaGUI::InvCategoryItem::SetState( const Noesis::Nullable<bool>& value
 	m_proxy->setActive( active, gwi );
 }
 
+/// @brief Recomputes the category's tri-state from its child groups' states.
 void IngnomiaGUI::InvCategoryItem::UpdateState()
 {
 	bool allChecked   = false;
@@ -380,6 +400,8 @@ const char* IngnomiaGUI::InvCategoryItem::getInStock() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the InventoryModel: instantiates the proxy and an empty category collection,
+///        then asks the proxy to push the initial category tree.
 InventoryModel::InventoryModel()
 {
 	m_proxy = new InventoryProxy;
@@ -390,6 +412,7 @@ InventoryModel::InventoryModel()
 	m_proxy->requestCategories();
 }
 
+/// @brief Replaces the m_categories observable collection with fresh InvCategoryItem rows.
 void InventoryModel::updateCategories( const QList<GuiInventoryCategory>& categories )
 {
 	m_categories->Clear();

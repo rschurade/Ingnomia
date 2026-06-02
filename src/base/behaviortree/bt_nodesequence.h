@@ -15,10 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodesequence.h
+ *  @brief Composite node implementing sequence (AND) logic.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Sequence composite -- ticks children until one fails.
+ *
+ *  Each tick iterates children from index 0.  Returns FAILURE as soon as any
+ *  child fails, RUNNING if a child is still running, or SUCCESS only when
+ *  all children have succeeded.  Does not remember which child was running
+ *  between ticks (stateless); see BT_NodeSequenceStar for the variant with
+ *  memory.
+ */
 class BT_NodeSequence final : public BT_Node
 {
 public:

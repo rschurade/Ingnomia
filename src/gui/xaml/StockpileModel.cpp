@@ -15,6 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file StockpileModel.cpp
+ *  @brief StockpileModel implementation. Constructor creates the proxy and empty
+ *         collections; onUpdateInfo rebuilds the filter tree and basic flags from a
+ *         fresh snapshot, onUpdateContent refreshes the summary/limit lists. The helper
+ *         classes (CategoryItem/GroupItem/ItemItem/MaterialItem) propagate tri-state
+ *         check toggles up and down the tree. Trivial Get/Set property accessors are
+ *         XAML binding plumbing and forward writes to the proxy.
+ */
 #include "StockpileModel.h"
 
 #include "../../base/filter.h"
@@ -378,6 +386,8 @@ const char* SpPriority::GetName() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the StockpileModel, creates the proxy, initialises the priority
+///        dropdown and empty filter/summary/limit collections.
 StockpileModel::StockpileModel()
 {
 	m_proxy = new StockpileProxy;
@@ -397,6 +407,9 @@ StockpileModel::StockpileModel()
 	m_limitItems = *new ObservableCollection<GuiLimitItem>();
 }
 
+/// @brief Replaces the view model's top-level info with a fresh snapshot. Rebuilds the
+///        category/group/item/material filter tree, resets basic flags and priority,
+///        and raises PropertyChanged for every bound property.
 void StockpileModel::onUpdateInfo( const GuiStockpileInfo& info )
 {
 	m_blockSignals = true;
@@ -466,6 +479,8 @@ void StockpileModel::setBasicOptions()
 	}
 }
 
+/// @brief Refreshes the per-stockpile content lists (currently-stocked summary and limits)
+///        from a fresh snapshot, without rebuilding the filter tree.
 void StockpileModel::onUpdateContent( const GuiStockpileInfo& info )
 {
 	bool isSameStockpile = ( m_stockpileID == info.stockpileID );

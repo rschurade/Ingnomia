@@ -15,6 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file TileInfoModel.cpp
+ *  @brief TileInfoModel implementation. Constructor creates the proxy, commands, and
+ *         empty collections; onUpdateTileInfo rebuilds every tab (terrain/items/creatures/
+ *         automatons) plus the designation/job/mechanism panels from a fresh snapshot;
+ *         updateMiniStockpile refreshes the mini-stockpile panel. OnCmdTab switches the
+ *         currently displayed facet. Trivial Get/Set property accessors are XAML binding
+ *         plumbing and forward writes through ProxyTileInfo.
+ */
 
 #include "TileInfoModel.h"
 
@@ -149,6 +157,8 @@ void AutomatonTabItem::setRefuel( bool value )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the TileInfoModel, creates the proxy and all delegate commands,
+///        initialises the tab-item pointers and empty collections.
 TileInfoModel::TileInfoModel()
 {
 	m_proxy = new ProxyTileInfo;
@@ -158,9 +168,12 @@ TileInfoModel::TileInfoModel()
 
 	_tabItems = *new ObservableCollection<TITabItem>();
 
+	_tabItemElements.ta = MakePtr<TITabItem>( "A", "A" );
+	_tabItems->Add( _tabItemElements.ta );
+	_tabItemElements.ta->setActive( true );
+
 	_tabItemElements.tt = MakePtr<TITabItem>( "T", "T" );
 	_tabItems->Add( _tabItemElements.tt );
-	_tabItemElements.tt->setActive( true );
 
 	_tabItemElements.tc = MakePtr<TITabItem>( "C", "C" );
 	_tabItemElements.ti = MakePtr<TITabItem>( "I", "I" );
@@ -186,8 +199,20 @@ TileInfoModel::TileInfoModel()
 	_cmdMechToggleInvert.SetExecuteFunc( MakeDelegate( this, &TileInfoModel::OnCmdMechToggleInvert ) );
 }
 
+/// @brief Applies a fresh GuiTileInfo snapshot. Rebuilds the left-bar tab-item list,
+///        populates each per-tab collection, updates the designation/job/room/mechanism
+///        panels, and raises PropertyChanged for every bound property.
 void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 {
+	// Switching to a new tile resets the facet to the overview ("All"); without this the
+	// previous tile's selected tab (e.g. Designation after clicking Manage on a pasture)
+	// stays sticky and keeps showing stale content on the next click. Refreshes of the
+	// same tile preserve whatever tab the user had open.
+	if ( m_tileID != tileInfo.tileID )
+	{
+		_mode = TileInfoMode::All;
+	}
+
 	m_tileIDString  = Noesis::String( std::to_string( tileInfo.tileID ).c_str() );
 	m_tileID        = tileInfo.tileID;
 	m_designationID = tileInfo.designationID;
@@ -198,12 +223,16 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 	auto flags        = tileInfo.flags;
 	m_designationFlag = tileInfo.designationFlag;
 	
+	// Remove conditional tabs, re-add based on content
+	_tabItems->Remove( _tabItemElements.tc );
+	_tabItems->Remove( _tabItemElements.ti );
 	_tabItems->Remove( _tabItemElements.td );
-	_tabItemElements.td->setActive( false );
+	_tabItems->Remove( _tabItemElements.tj );
 
 	if ( tileInfo.designationID )
 	{
 		m_designationName = tileInfo.designationName.toStdString().c_str();
+		_tabItems->Add( _tabItemElements.td );
 
 		if ( flags & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE ) )
 		{
@@ -227,23 +256,14 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 			m_roomValue	   = QString::number( tileInfo.roomValue ).toStdString().c_str();
 		}
 	}
-	else
-	{
-		_mode = TileInfoMode::Terrain;
-	}
 
 	m_hasJob = ( flags & ( TileFlag::TF_JOB_FLOOR + TileFlag::TF_JOB_WALL + TileFlag::TF_JOB_BUSY_WALL + TileFlag::TF_JOB_BUSY_FLOOR ) );
-	
-	bool anyChecked = false;
-	for ( int i = 0; i < _tabItems->Count(); ++i )
+	if ( m_hasJob )
 	{
-		anyChecked |= _tabItems->Get( i )->GetChecked();
+		_tabItems->Add( _tabItemElements.tj );
 	}
-	if ( !anyChecked )
-	{
-		_tabItems->Get( 0 )->setActive( true );
-		_mode = TileInfoMode::Terrain;
-	}
+
+	// Tabs for creatures and items are added after populating their lists (below)
 
 	QString action1;
 	QString action2;
@@ -326,6 +346,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 		{
 			_itemTabItems->Add( MakePtr<ItemTabItem>( git.text, git.id ) );
 		}
+		_tabItems->Add( _tabItemElements.ti );
 	}
 
 	_creatureTabItems->Clear();
@@ -343,6 +364,7 @@ void TileInfoModel::onUpdateTileInfo( const GuiTileInfo& tileInfo )
 				_creatureTabItems->Add( MakePtr<CreatureTabItem>( gct.text, gct.id ) );
 			}
 		}
+		_tabItems->Add( _tabItemElements.tc );
 	}
 
 	_possibleTennants->Clear();
@@ -491,19 +513,21 @@ const NoesisApp::DelegateCommand* TileInfoModel::GetCmdTab() const
 	return &_cmdTab;
 }
 
+/// @brief Command handler for clicking a left-bar tab: switches which facet the window
+///        is currently showing (terrain / items / creatures / job / designation / …).
 void TileInfoModel::OnCmdTab( BaseComponent* param )
 {
 	QString tab = param->ToString().Str();
-	if ( tab == "T" )
+	if ( tab == "A" )
+		_mode = TileInfoMode::All;
+	else if ( tab == "T" )
 		_mode = TileInfoMode::Terrain;
-	/*
 	else if ( tab == "I" )
 		_mode = TileInfoMode::Items;
 	else if ( tab == "C" )
 		_mode = TileInfoMode::Creatures;
 	else if ( tab == "D" )
 	{
-		// if designation is workshop or stock pile, open window
 		switch ( m_designationFlag )
 		{
 			case TileFlag::TF_WORKSHOP:
@@ -531,14 +555,17 @@ void TileInfoModel::OnCmdTab( BaseComponent* param )
 	{
 		_tabItems->Get( i )->setActive( tab == _tabItems->Get( i )->GetID() );
 	}
-	*/
+
 	OnPropertyChanged( "ShowTerrain" );
 	OnPropertyChanged( "ShowItems" );
 	OnPropertyChanged( "ShowCreatures" );
+	OnPropertyChanged( "ShowAutomatons" );
 	OnPropertyChanged( "ShowDesignation" );
+	OnPropertyChanged( "ShowDesignationSimple" );
 	OnPropertyChanged( "ShowDesignationRoom" );
 	OnPropertyChanged( "ShowJob" );
 	OnPropertyChanged( "ShowMiniStockpile" );
+	OnPropertyChanged( "ShowMechanism" );
 }
 
 void TileInfoModel::OnCmdTerrain( BaseComponent* param )
@@ -563,7 +590,7 @@ void TileInfoModel::OnCmdManage( BaseComponent* param )
 
 const char* TileInfoModel::GetShowTerrain() const
 {
-	if ( _mode == TileInfoMode::Terrain )
+	if ( _mode == TileInfoMode::Terrain || _mode == TileInfoMode::All )
 	{
 		return "Visible";
 	}
@@ -572,7 +599,7 @@ const char* TileInfoModel::GetShowTerrain() const
 
 const char* TileInfoModel::GetShowItems() const
 {
-	if ( _itemTabItems->Count() > 0 )
+	if ( _itemTabItems->Count() > 0 && ( _mode == TileInfoMode::Items || _mode == TileInfoMode::All ) )
 	{
 		return "Visible";
 	}
@@ -581,7 +608,7 @@ const char* TileInfoModel::GetShowItems() const
 
 const char* TileInfoModel::GetShowCreatures() const
 {
-	if ( _creatureTabItems->Count() > 0 )
+	if ( _creatureTabItems->Count() > 0 && ( _mode == TileInfoMode::Creatures || _mode == TileInfoMode::All ) )
 	{
 		return "Visible";
 	}
@@ -590,7 +617,7 @@ const char* TileInfoModel::GetShowCreatures() const
 
 const char* TileInfoModel::GetShowAutomatons() const
 {
-	if ( _automatonTabItems->Count() > 0 )
+	if ( _automatonTabItems->Count() > 0 && ( _mode == TileInfoMode::Creatures || _mode == TileInfoMode::All ) )
 	{
 		return "Visible";
 	}
@@ -608,17 +635,18 @@ const char* TileInfoModel::GetShowDesignation() const
 
 const char* TileInfoModel::GetShowDesignationSimple() const
 {
-	if ( m_designationFlag & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_WORKSHOP ) )
+	bool hasDesignation = m_designationFlag & ( TileFlag::TF_GROVE + TileFlag::TF_FARM + TileFlag::TF_PASTURE + TileFlag::TF_WORKSHOP );
+	if ( hasDesignation && ( _mode == TileInfoMode::All || _mode == TileInfoMode::Designation ) )
 	{
 		return "Visible";
 	}
 	return "Collapsed";
 }
 
-
 const char* TileInfoModel::GetShowDesignationRoom() const
 {
-	if ( m_designationFlag & TileFlag::TF_ROOM )
+	bool hasRoom = m_designationFlag & TileFlag::TF_ROOM;
+	if ( hasRoom && ( _mode == TileInfoMode::All || _mode == TileInfoMode::Room ) )
 	{
 		return "Visible";
 	}
@@ -627,7 +655,7 @@ const char* TileInfoModel::GetShowDesignationRoom() const
 
 const char* TileInfoModel::GetShowJob() const
 {
-	if ( m_hasJob )
+	if ( m_hasJob && ( _mode == TileInfoMode::Job || _mode == TileInfoMode::All ) )
 	{
 		return "Visible";
 	}
@@ -636,13 +664,16 @@ const char* TileInfoModel::GetShowJob() const
 
 const char* TileInfoModel::GetShowMiniSP() const
 {
-	if ( m_designationFlag & TileFlag::TF_STOCKPILE )
+	bool hasSP = m_designationFlag & TileFlag::TF_STOCKPILE;
+	if ( hasSP && ( _mode == TileInfoMode::All || _mode == TileInfoMode::Stockpile ) )
 	{
 		return "Visible";
 	}
 	return "Collapsed";
 }
 
+/// @brief Refreshes the mini-stockpile panel content (name + stocked-items list) when the
+///        currently viewed tile is part of a stockpile.
 void TileInfoModel::updateMiniStockpile( const GuiStockpileInfo& info )
 {
 	m_miniStockpileName = info.name.toStdString().c_str();
@@ -780,7 +811,7 @@ const char* TileInfoModel::GetReserved() const
 
 const char* TileInfoModel::GetShowMechanism() const
 {
-	if ( m_hasMechanism )
+	if ( m_hasMechanism && ( _mode == TileInfoMode::Terrain || _mode == TileInfoMode::All ) )
 	{
 		return "Visible";
 	}

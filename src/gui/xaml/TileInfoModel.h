@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file TileInfoModel.h
+ *  @brief View model and helper-component types for the TileInfo window. Exposes the
+ *         mixed list of terrain / items / creatures / automatons on a tile, plus the
+ *         current job, designation, mini-stockpile, room, and mechanism info.
+ */
 #ifndef __TileInfoModel_H__
 #define __TileInfoModel_H__
 
@@ -46,6 +51,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Generic left-bar tab item (Terrain / Items / Creatures / …) with an active flag.
 class TITabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -69,6 +75,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the terrain tab (ground / wall / construction). May carry up to two
+///        clickable actions (e.g. "dig", "remove ramp").
 class TerrainTabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -105,6 +113,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the items tab (one item lying on this tile).
 class ItemTabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -122,6 +131,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the creatures tab (one gnome/animal on this tile).
 class CreatureTabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -144,6 +154,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One row in the automaton tab. Holds the core-item dropdown and a refuel flag.
 class AutomatonTabItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -178,25 +189,32 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Which facet of the tile the window is currently showing.
 enum class TileInfoMode
 {
-	Terrain,
-	Items,
-	Creatures,
-	Designation,
-	Job,
-	Stockpile,
-	Room
+	All,         ///< Full overview (all tabs visible).
+	Terrain,     ///< Only terrain tab.
+	Items,       ///< Only items tab.
+	Creatures,   ///< Only creatures tab.
+	Designation, ///< Only the designation panel.
+	Job,         ///< Only the job panel.
+	Stockpile,   ///< Only the mini-stockpile panel.
+	Room         ///< Only the room panel.
 
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief TileInfo window view model. Composes the left-bar tabs, per-tab content lists,
+///        and the designation / job / room / mechanism / mini-stockpile panels for the
+///        tile currently under the cursor. Talks to the game side via ProxyTileInfo.
 class TileInfoModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	TileInfoModel();
 
+	/// @brief Replaces the displayed tile info with a fresh snapshot (all tabs + designation).
 	void onUpdateTileInfo( const GuiTileInfo& tileInfo );
+	/// @brief Refreshes the mini-stockpile content panel when the tile holds a stockpile.
 	void updateMiniStockpile( const GuiStockpileInfo& info );
 
 private:
@@ -321,10 +339,11 @@ private:
 	Noesis::String m_itemCount;
 	Noesis::String m_reserved;
 
-	TileInfoMode _mode = TileInfoMode::Terrain;
+	TileInfoMode _mode = TileInfoMode::All;
 
 	struct
 	{
+		Noesis::Ptr<TITabItem> ta;
 		Noesis::Ptr<TITabItem> tt;
 		Noesis::Ptr<TITabItem> tc;
 		Noesis::Ptr<TITabItem> ti;

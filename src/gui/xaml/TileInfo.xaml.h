@@ -15,7 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+/** @file TileInfo.xaml.h
+ *  @brief XAML code-behind for the TileInfo window UserControl. Thin wrapper — all logic
+ *         lives in TileInfoModel.
+ */
 #ifndef __TileInfo_H__
 #define __TileInfo_H__
 
@@ -25,6 +28,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the TileInfo XAML UserControl.
 class TileInfo final : public Noesis::UserControl
 {
 public:

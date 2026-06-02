@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file mainwindow.h
+ *  @brief MainWindow: the QWindow + QOpenGLContext that hosts the Noesis GUI and the
+ *         MainWindowRenderer. Handles keyboard/mouse input, fullscreen toggling, and
+ *         routes events between Qt, Noesis, and the game.
+ */
 #pragma once
 
 #include "../base/position.h"
@@ -23,16 +28,19 @@
 #include <NsGui/IView.h>
 
 #include <QElapsedTimer>
-#include <QOpenGLWindow>
+#include <QWindow>
 #include <QTimer>
 
+class QOpenGLContext;
+
+/// @brief Bitfield tracking which WASD-style camera keys are currently held.
 enum class KeyboardMove : unsigned char
 {
-	None  = 0,
-	Up    = 0x01,
-	Down  = 0x02,
-	Left  = 0x04,
-	Right = 0x08
+	None  = 0,     ///< No keys held.
+	Up    = 0x01,  ///< Up/W.
+	Down  = 0x02,  ///< Down/S.
+	Left  = 0x04,  ///< Left/A.
+	Right = 0x08   ///< Right/D.
 };
 
 inline KeyboardMove operator+( KeyboardMove a, KeyboardMove b )
@@ -61,10 +69,12 @@ inline KeyboardMove& operator-=( KeyboardMove& a, KeyboardMove b )
 }
 
 struct Position;
-class QOpenGLTexture;
 class MainWindowRenderer;
 
-class MainWindow : public QOpenGLWindow
+/// @brief Top-level game window. A bare QWindow with a manual QOpenGLContext (since the
+///        Qt6 port replaced QOpenGLWindow/Qt5::OpenGL with GLAD). Hosts a Noesis::IView
+///        plus a MainWindowRenderer that actually draws the game world.
+class MainWindow : public QWindow
 {
 	Q_OBJECT
 
@@ -77,10 +87,15 @@ public:
 
 	MainWindowRenderer* renderer();
 
+	/// @brief Returns the owned QOpenGLContext.
+	QOpenGLContext* context() const { return m_context; }
+	void makeCurrent();
+	void doneCurrent();
+
 protected:
-	void paintGL() override;
-	void resizeGL( int w, int h ) override;
-	void initializeGL() override;
+	bool event( QEvent* event ) override;
+	void exposeEvent( QExposeEvent* event ) override;
+	void resizeEvent( QResizeEvent* event ) override;
 
 	void keyPressEvent( QKeyEvent* event ) override;
 	void keyReleaseEvent( QKeyEvent* event ) override;
@@ -92,6 +107,10 @@ protected:
 	void focusOutEvent( QFocusEvent* e ) override;
 
 private:
+	void initializeGL();
+	void paintGL();
+	void resizeGL( int w, int h );
+
 	void noesisInit();
 
 	void keyboardZPlus( bool shift = false, bool ctrl = false );
@@ -102,33 +121,33 @@ private:
 	void registerComponents();
 
 	void toggleFullScreen();
-	bool m_isFullScreen = false;
+	bool m_isFullScreen = false;                 ///< True when the window is currently fullscreen.
 
 	void onExit();
 
-	QTimer* m_timer = nullptr;
-	QElapsedTimer m_keyboardMovementTimer;
+	QOpenGLContext* m_context = nullptr;         ///< Owned GL context.
+	bool m_glInitialized = false;                ///< True once initializeGL() has run.
 
-	Noesis::IView* m_view          = nullptr;
-	MainWindowRenderer* m_renderer = nullptr;
+	QTimer* m_timer = nullptr;                   ///< Menu-mode frame timer (16 ms tick).
+	QElapsedTimer m_keyboardMovementTimer;       ///< Measures time between keyboardMove ticks.
 
-	// Global position of last mouse click
-	int m_clickX = 0;
-	int m_clickY = 0;
-	// Local position of last mouse click
-	int m_mouseX = 0;
-	int m_mouseY = 0;
-	// Global position of last mouse event during drag
-	int m_moveX = 0;
-	int m_moveY = 0;
+	Noesis::IView* m_view          = nullptr;    ///< Noesis GUI view hosted on top of the world.
+	MainWindowRenderer* m_renderer = nullptr;    ///< Game world renderer.
 
-	bool m_leftDown  = false;
-	bool m_rightDown = false;
-	bool m_isMove    = false;
+	int m_clickX = 0;                            ///< Global X of last mouse click.
+	int m_clickY = 0;                            ///< Global Y of last mouse click.
+	int m_mouseX = 0;                            ///< Window-local X of last mouse click.
+	int m_mouseY = 0;                            ///< Window-local Y of last mouse click.
+	int m_moveX = 0;                             ///< Global X of last mouse drag event.
+	int m_moveY = 0;                             ///< Global Y of last mouse drag event.
 
-	bool m_pendingUpdate = false;
+	bool m_leftDown  = false;                    ///< True while the left mouse button is pressed.
+	bool m_rightDown = false;                    ///< True while the right mouse button is pressed.
+	bool m_isMove    = false;                    ///< True when the current drag is classified as a camera pan.
 
-	KeyboardMove m_keyboardMove = KeyboardMove::None;
+	bool m_pendingUpdate = false;                ///< True when a QEvent::UpdateRequest is already queued.
+
+	KeyboardMove m_keyboardMove = KeyboardMove::None; ///< Current held-key bitfield for camera panning.
 
 public slots:
 	void redraw();
@@ -140,10 +159,16 @@ public slots:
 
 	void onInitViewAfterLoad();
 
+	/// @brief Broadcasts the renderer's current camera params to interested aggregators
+	///        (selection, sound, …) by emitting signalRenderParams. Used by paths that
+	///        change camera state without going through wheelEvent / onInitViewAfterLoad
+	///        (e.g. onCenterCameraPosition on a fresh new-game embark).
+	void pushRenderParams();
+
 signals:
 	void signalWindowSize( int w, int h );
 	void signalViewLevel( int level );
-	
+
 
 	void signalKeyPress( int key );
 	void signalUpdateRenderOptions();

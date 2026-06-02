@@ -107,30 +107,30 @@
 
 						<ScrollViewer x:Name="SVSchedHeaders" HorizontalScrollBarVisibility="Hidden" CanContentScroll="True" Grid.Row="0" Grid.Column="1">
 							<StackPanel Orientation="Horizontal">
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="0" Command="{Binding CmdSetHourForAll}" CommandParameter="0" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="1" Command="{Binding CmdSetHourForAll}" CommandParameter="1" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="2" Command="{Binding CmdSetHourForAll}" CommandParameter="2" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="3" Command="{Binding CmdSetHourForAll}" CommandParameter="3" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="4" Command="{Binding CmdSetHourForAll}" CommandParameter="4" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="5" Command="{Binding CmdSetHourForAll}" CommandParameter="5" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="6" Command="{Binding CmdSetHourForAll}" CommandParameter="6" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="7" Command="{Binding CmdSetHourForAll}" CommandParameter="7" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="8" Command="{Binding CmdSetHourForAll}" CommandParameter="8" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="9" Command="{Binding CmdSetHourForAll}" CommandParameter="9" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="10" Command="{Binding CmdSetHourForAll}" CommandParameter="10" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="11" Command="{Binding CmdSetHourForAll}" CommandParameter="11" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="12" Command="{Binding CmdSetHourForAll}" CommandParameter="12" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="13" Command="{Binding CmdSetHourForAll}" CommandParameter="13" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="14" Command="{Binding CmdSetHourForAll}" CommandParameter="14" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="15" Command="{Binding CmdSetHourForAll}" CommandParameter="15" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="16" Command="{Binding CmdSetHourForAll}" CommandParameter="16" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="17" Command="{Binding CmdSetHourForAll}" CommandParameter="17" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="18" Command="{Binding CmdSetHourForAll}" CommandParameter="18" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="19" Command="{Binding CmdSetHourForAll}" CommandParameter="19" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="20" Command="{Binding CmdSetHourForAll}" CommandParameter="20" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="21" Command="{Binding CmdSetHourForAll}" CommandParameter="21" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="22" Command="{Binding CmdSetHourForAll}" CommandParameter="22" />
-								<Button Style="{StaticResource GnomeScheduleButtonStyle}" Content="23" Command="{Binding CmdSetHourForAll}" CommandParameter="23" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="0" Command="{Binding CmdSetHourForAll}" CommandParameter="0" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="1" Command="{Binding CmdSetHourForAll}" CommandParameter="1" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="2" Command="{Binding CmdSetHourForAll}" CommandParameter="2" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="3" Command="{Binding CmdSetHourForAll}" CommandParameter="3" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="4" Command="{Binding CmdSetHourForAll}" CommandParameter="4" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="5" Command="{Binding CmdSetHourForAll}" CommandParameter="5" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="6" Command="{Binding CmdSetHourForAll}" CommandParameter="6" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="7" Command="{Binding CmdSetHourForAll}" CommandParameter="7" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="8" Command="{Binding CmdSetHourForAll}" CommandParameter="8" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="9" Command="{Binding CmdSetHourForAll}" CommandParameter="9" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="10" Command="{Binding CmdSetHourForAll}" CommandParameter="10" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="11" Command="{Binding CmdSetHourForAll}" CommandParameter="11" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="12" Command="{Binding CmdSetHourForAll}" CommandParameter="12" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="13" Command="{Binding CmdSetHourForAll}" CommandParameter="13" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="14" Command="{Binding CmdSetHourForAll}" CommandParameter="14" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="15" Command="{Binding CmdSetHourForAll}" CommandParameter="15" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="16" Command="{Binding CmdSetHourForAll}" CommandParameter="16" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="17" Command="{Binding CmdSetHourForAll}" CommandParameter="17" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="18" Command="{Binding CmdSetHourForAll}" CommandParameter="18" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="19" Command="{Binding CmdSetHourForAll}" CommandParameter="19" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="20" Command="{Binding CmdSetHourForAll}" CommandParameter="20" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="21" Command="{Binding CmdSetHourForAll}" CommandParameter="21" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="22" Command="{Binding CmdSetHourForAll}" CommandParameter="22" />
+								<Button Style="{StaticResource GnomeScheduleHeaderButtonStyle}" Content="23" Command="{Binding CmdSetHourForAll}" CommandParameter="23" />
 							</StackPanel>
 						</ScrollViewer>
 

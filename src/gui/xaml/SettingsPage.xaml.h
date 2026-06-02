@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file SettingsPage.xaml.h
+ *  @brief XAML code-behind for the Settings page UserControl. Thin wrapper — all logic
+ *         lives in SettingsModel.
+ */
 #ifndef __SettingsPage_H__
 #define __SettingsPage_H__
 
@@ -25,6 +29,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the SettingsPage XAML UserControl.
 class SettingsPage final : public Noesis::UserControl
 {
 public:

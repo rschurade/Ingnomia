@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file stockpile.h
+ *  Individual stockpile instance: item filter, field capacity, container support, hauling jobs, and item limit thresholds.
+ */
 #pragma once
 
 #include "../base/filter.h"
@@ -30,21 +33,29 @@
 #include <QThread>
 #include <QtGlobal>
 
+#include "../game/sourcematerial.h"
+
 class Game;
 
+/** @brief A single tile within a stockpile, tracking position, capacity, stored items, reserved items, and optional container. */
 struct InventoryField
 {
 	Position pos;
 	bool isFull              = false;
 	unsigned char capacity   = 1;
 	unsigned char stackSize  = 1;
-	unsigned int containerID = 0;
 	QSet<unsigned int> items;
 	QSet<unsigned int> reservedItems;
 
 	bool requireSame = false;
+
+	// Container properties (empty containerSID = no container)
+	SourceMaterial container;
+	bool hasContainer() const { return !container.itemSID.isEmpty(); }
+	QStringList allowedItems; // cached list of item types allowed in this container
 };
 
+/** @brief Per-item-type limits for a stockpile, with thresholds to suspend/activate hauling. */
 struct StockpileItemLimit
 {
 	StockpileItemLimit() {};
@@ -63,6 +74,7 @@ struct StockpileItemLimit
 
 class Job;
 
+/** @brief Represents a single stockpile designation with item filtering, hauling job creation, container support, and item count limits. */
 class Stockpile : public WorldObject
 {
 	Q_DISABLE_COPY_MOVE( Stockpile )
@@ -97,8 +109,8 @@ public:
 	bool insertItem( Position pos, unsigned int item );
 	bool removeItem( Position pos, unsigned int item );
 
-	void addContainer( unsigned int containerID, Position& pos );
-	void removeContainer( unsigned int containerID, Position& pos );
+	void addContainer( const SourceMaterial& source, unsigned char capacity, bool requireSame, const QStringList& allowedItems, Position& pos );
+	void removeContainer( Position& pos );
 
 	void setCheckState( bool state, QString category, QString group = "", QString item = "", QString material = "" );
 

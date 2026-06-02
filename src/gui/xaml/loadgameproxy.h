@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file loadgameproxy.h
+ *  @brief Qt-side proxy bridging LoadGameModel with AggregatorLoadGame.
+ */
 #pragma once
 
 #include "../aggregatorloadgame.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards Load Game window requests (list kingdoms / list saves) to AggregatorLoadGame
+///        and pushes the resulting GuiSaveInfo lists back to LoadGameModel.
 class LoadGameProxy : public QObject
 {
 	Q_OBJECT
@@ -34,7 +39,7 @@ public:
 	void requestSaveGames( const QString path );
 
 private:
-	IngnomiaGUI::LoadGameModel* m_parent = nullptr;
+	IngnomiaGUI::LoadGameModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 private slots:
 	void onKingdoms( const QList<GuiSaveInfo>& kingdoms );

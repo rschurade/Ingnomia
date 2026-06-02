@@ -16,12 +16,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file NewGamePage.xaml.cpp
+ *  @brief NewGamePage user-control implementation: loads NewGamePage.xaml on construction.
+ */
 #include "NewGamePage.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the NewGamePage and registers the Loaded delegate.
 NewGamePage::NewGamePage()
 {
 	Loaded() += MakeDelegate( this, &NewGamePage::OnLoaded );
@@ -29,16 +33,19 @@ NewGamePage::NewGamePage()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the NewGamePage.xaml resource.
 void NewGamePage::InitializeComponent()
 {
 	GUI::LoadComponent( this, "NewGamePage.xaml" );
 }
 
+/// @brief Noesis event-connection callback. NewGamePage has no code-behind events.
 bool NewGamePage::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; NewGameModel handles state.
 void NewGamePage::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

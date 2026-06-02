@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file itemhistory.cpp
+ *  @brief Implementation of ItemHistory -- daily item creation/destruction tracking.
+ */
 #include "itemhistory.h"
 
 #include "../base/gamestate.h"
@@ -22,15 +25,22 @@
 
 #include <QDebug>
 
+/** @brief Construct an ItemHistory tracker.
+ *  @param parent Parent QObject for ownership.
+ */
 ItemHistory::ItemHistory( QObject* parent ) :
 	QObject( parent )
 {
 }
 
+/** @brief Destructor. */
 ItemHistory::~ItemHistory()
 {
 }
 
+/** @brief Serialize all history data (items present, past days, current day) into a map.
+ *  @param out QVariantMap to populate with serialized history.
+ */
 void ItemHistory::serialize( QVariantMap& out )
 {
 	QVariantList items;
@@ -112,6 +122,9 @@ void ItemHistory::serialize( QVariantMap& out )
 	out.insert( "Days", days );
 }
 
+/** @brief Restore history state from a saved QVariantMap.
+ *  @param in Map containing "Items" and "Days" keys with serialized history data.
+ */
 void ItemHistory::deserialize( const QVariantMap& in )
 {
 	reset();
@@ -200,6 +213,7 @@ void ItemHistory::deserialize( const QVariantMap& in )
 	}
 }
 
+/** @brief Clear all history data and re-enter startup mode. */
 void ItemHistory::reset()
 {
 	m_data.clear();
@@ -207,11 +221,15 @@ void ItemHistory::reset()
 	init();
 }
 
+/** @brief Initialize the current day's data, clearing any accumulated values. */
 void ItemHistory::init()
 {
 	m_currentDay.dayData.data.clear();
 }
 
+/** @brief Called each game tick. Rolls over to a new day record when the day changes.
+ *  @param dayChanged True if the in-game day just changed.
+ */
 void ItemHistory::onTick( bool dayChanged )
 {
 	if ( dayChanged )
@@ -220,6 +238,7 @@ void ItemHistory::onTick( bool dayChanged )
 	}
 }
 
+/** @brief Archive the current day and start a new day record with carried-over totals. */
 void ItemHistory::newDay()
 {
 	m_data.push_back( m_currentDay );
@@ -243,6 +262,10 @@ void ItemHistory::newDay()
 	}
 }
 
+/** @brief Record the creation of one item. Increments total and (after startup) the plus counter.
+ *  @param itemSID Item type string ID.
+ *  @param materialSID Material string ID.
+ */
 void ItemHistory::plusItem( QString itemSID, QString materialSID )
 {
 	if ( m_currentDay.dayData.data.contains( itemSID ) )
@@ -292,6 +315,10 @@ void ItemHistory::plusItem( QString itemSID, QString materialSID )
 	}
 }
 
+/** @brief Record the destruction of one item. Decrements total and (after startup) increments minus.
+ *  @param itemSID Item type string ID.
+ *  @param materialSID Material string ID.
+ */
 void ItemHistory::minusItem( QString itemSID, QString materialSID )
 {
 	if ( m_currentDay.dayData.data.contains( itemSID ) )
@@ -309,6 +336,10 @@ void ItemHistory::minusItem( QString itemSID, QString materialSID )
 	}
 }
 
+/** @brief Build per-material history vectors for a given item type across all recorded days.
+ *  @param itemSID Item type string ID.
+ *  @return Map of material SID (plus "all") to vectors of daily IH_values.
+ */
 QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 {
 	QMap<QString, QVector<IH_values>> out;
@@ -395,6 +426,10 @@ QMap<QString, QVector<IH_values>> ItemHistory::getHistory( QString itemSID )
 	return out;
 }
 
+/** @brief Generate random placeholder history data for UI testing/demo purposes.
+ *  @param itemSID Unused; random data is generated regardless.
+ *  @return Map of fake material names to vectors of random IH_values.
+ */
 QMap<QString, QVector<IH_values>> ItemHistory::getRandomHistory( QString itemSID )
 {
 	QMap<QString, QVector<IH_values>> out;

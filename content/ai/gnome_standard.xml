@@ -207,6 +207,24 @@
         </BB_Precondition>
     </BehaviorTree>
     <!--  ===================================  -->
+    <BehaviorTree ID="JobHaulToSite">
+        <BB_Precondition expected="HaulToSite" key="JobType">
+            <Fallback>
+                <SequenceStar>
+                    <Action ID="InitJob"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <Action ID="GetHaulTarget"/>
+                    <Action ID="Move"/>
+                    <Action ID="DropItem"/>
+                    <Action ID="NotifyParentJob"/>
+                    <Action ID="FinishJob"/>
+                </SequenceStar>
+                <Action ID="AbortJob"/>
+            </Fallback>
+        </BB_Precondition>
+    </BehaviorTree>
+    <!--  ===================================  -->
     <BehaviorTree ID="Jobs">
         <SequenceStar>
             <Fallback>
@@ -219,10 +237,82 @@
                 <SubTree ID="JobLeadAnimalToPasture"/>
                 <SubTree ID="JobHarvestAnimal"/>
                 <SubTree ID="JobTameAnimal"/>
+                <SubTree ID="JobHaulToSite"/>
                 <SubTree ID="JobHaulMultiple"/>
                 <SubTree ID="JobStandard"/>
             </FallbackStar>
         </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="CriticalNeeds">
+        <FallbackStar name="CriticalNeeds">
+            <SubTree ID="CriticalHunger"/>
+            <SubTree ID="CriticalThirst"/>
+            <SubTree ID="CriticalSleep"/>
+        </FallbackStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="CriticalHunger">
+        <SequenceStar>
+            <Condition ID="IsHungry"/>
+            <Sequence>
+                <SequenceStar name="CriticalHunger">
+                    <Action ID="FindFood"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <ForceSuccess>
+                        <SequenceStar>
+                            <Action ID="FindDining"/>
+                            <Action ID="Move"/>
+                        </SequenceStar>
+                    </ForceSuccess>
+                    <Action ID="Eat"/>
+                </SequenceStar>
+                <Condition ID="IsFull"/>
+            </Sequence>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="CriticalThirst">
+        <SequenceStar>
+            <Condition ID="IsThirsty"/>
+            <Sequence>
+                <SequenceStar name="CriticalThirst">
+                    <Action ID="FindDrink"/>
+                    <Action ID="Move"/>
+                    <Action ID="PickUpItem"/>
+                    <ForceSuccess>
+                        <SequenceStar>
+                            <Action ID="FindDining"/>
+                            <Action ID="Move"/>
+                        </SequenceStar>
+                    </ForceSuccess>
+                    <Action ID="Drink"/>
+                </SequenceStar>
+                <Condition ID="IsDrinkFull"/>
+            </Sequence>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="CriticalSleep">
+        <SequenceStar>
+            <Condition ID="IsSleepy"/>
+            <ForceSuccess>
+                <SequenceStar>
+                    <Action ID="FindBed"/>
+                    <Action ID="Move"/>
+                </SequenceStar>
+            </ForceSuccess>
+            <Action ID="Sleep"/>
+        </SequenceStar>
+    </BehaviorTree>
+    <!--  ===================================  -->
+    <BehaviorTree ID="NonCriticalNeeds">
+        <FallbackStar name="NonCriticalNeeds">
+            <SubTree ID="Hunger"/>
+            <SubTree ID="Thirst"/>
+            <SubTree ID="Sleepy"/>
+        </FallbackStar>
     </BehaviorTree>
     <!--  ===================================  -->
     <BehaviorTree ID="MainTree">
@@ -230,11 +320,7 @@
             <SubTree ID="AlarmTree"/>
             <SubTree ID="Combat"/>
             <SubTree ID="Mission"/>
-            <FallbackStar name="Needs">
-                <SubTree ID="Hunger"/>
-                <SubTree ID="Thirst"/>
-                <SubTree ID="Sleepy"/>
-            </FallbackStar>
+            <SubTree ID="CriticalNeeds"/>
             <FallbackStar name="GnomeStandard">
                 <FallbackStar>
                     <SubTree ID="PickUpBandages"/>
@@ -242,6 +328,7 @@
                     <SubTree ID="Trainer"/>
                 </FallbackStar>
                 <SubTree ID="Jobs"/>
+                <SubTree ID="NonCriticalNeeds"/>
                 <Action ID="RandomMove"/>
             </FallbackStar>
         </Fallback>

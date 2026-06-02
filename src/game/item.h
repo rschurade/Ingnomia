@@ -15,31 +15,56 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file item.h
+ *  @brief Individual item instance with material, quality, sprite, position, and
+ *         location/claim state machine for ownership tracking.
+ */
 #pragma once
 
 #include "object.h"
 
+/** @brief Where the item physically exists in the world. */
+enum class ItemLocation : uint8_t
+{
+	Ground,    // on a tile, in position index + octree
+	Carried,   // held by a creature, not in position index
+};
+
+/** @brief Reservation/claim state for an item. */
+enum class ItemClaim : uint8_t
+{
+	None,      // free to be claimed
+	Job,       // reserved for a job
+	Equipped,  // equipped by a creature
+};
+
+/** @brief Pair of item-type UID and material UID, used for component tracking. */
 struct ItemMaterial
 {
 	unsigned int itemUID;
 	unsigned int materialUID;
 };
 
+/** @brief Optional extra data for items that have components, food/drink values, or color.
+ *
+ *  Allocated on demand to save memory for simple items.
+ */
 struct ItemExtraData
 {
-
 	QList<ItemMaterial> components;
-	QSet<unsigned int> containedItems;
 
 	unsigned char nutritionalValue = 0;
 	unsigned char drinkValue       = 0;
 
 	unsigned int color = 0;
-
-	bool requireSame       = false;
-	unsigned char capacity = 0;
 };
 
+/** @brief A single item instance in the game world.
+ *
+ *  Tracks item type and material (as DB UIDs), ownership via a location/claim
+ *  state machine, value, quality, optional components, and food/drink values.
+ *  Inherits position and sprite from Object.
+ */
 class Item : public Object
 {
 public:
@@ -60,72 +85,62 @@ public:
 	QString materialSID() const;
 	QString combinedSID() const;
 
-	bool insertItem( unsigned int itemID );
-	bool removeItem( unsigned int itemID );
-
 	int distanceSquare( const Position& pos, int zWeight = 1 ) const;
 
-	virtual bool isContainer() const;
+	// Ownership
+	ItemLocation location() const { return m_location; }
+	unsigned int locationOwner() const { return m_locationOwner; }
+	ItemClaim claim() const { return m_claim; }
+	unsigned int claimOwner() const { return m_claimOwner; }
+	void setLocation( ItemLocation loc, unsigned int owner = 0 );
+	void setClaim( ItemClaim cl, unsigned int owner = 0 );
 
-	unsigned int isInStockpile() const;
-	void setInStockpile( unsigned int stockpile );
+	// Legacy API — delegates to location/claim
+	unsigned int isInStockpile() const { return m_stockpileID; }
+	void setInStockpile( unsigned int stockpile ) { m_stockpileID = stockpile; }
 	unsigned int isInJob() const;
 	void setInJob( unsigned int job );
-	unsigned int isInContainer() const;
-	void setInContainer( unsigned int container );
+	unsigned int isInContainer() const { return m_containerID; }
+	void setInContainer( unsigned int container ) { m_containerID = container; }
 	unsigned int isHeldBy() const;
 	void setHeldBy( unsigned int creatureID );
 	unsigned int isUsedBy() const;
 	void setUsedBy( unsigned int creatureID );
-
-	bool isConstructed() const;
-	void setIsConstructed( bool value );
+	bool isFree() const;
 
 	unsigned char stackSize() const;
-
 	unsigned short value() const;
 	void setValue( unsigned short value );
 	unsigned int madeBy() const;
 	void setMadeBy( unsigned int creatureID );
 
-	const QSet<unsigned int>& containedItems() const;
-	unsigned char capacity() const;
-	bool requireSame() const;
-
 	void addComponent( ItemMaterial im );
-
 	QList<ItemMaterial> components() const;
-
 	unsigned char quality() const;
 	void setQuality( unsigned char quality );
-
 	unsigned char nutritionalValue() const;
 	void setNutritionalValue( unsigned char value );
-
 	unsigned char drinkValue() const;
 	void setDrinkValue( unsigned char value );
-
 	int attackValue() const;
 	bool isWeapon() const;
-
 	bool isTool() const;
-
 	unsigned int color() const;
 	void setColor( QString color );
-
-	bool isFree() const;
 
 private:
 	unsigned short m_materialUID = 0;
 	unsigned short m_itemUID     = 0;
 
-	bool m_isConstructed = false;
+	// Ownership state
+	ItemLocation m_location      = ItemLocation::Ground;
+	unsigned int m_locationOwner = 0;
+	ItemClaim m_claim            = ItemClaim::None;
+	unsigned int m_claimOwner    = 0;
 
-	unsigned int m_isInStockpile = 0;
-	unsigned int m_isInContainer = 0;
-	unsigned int m_isInJob       = 0;
-	unsigned int m_isHeldBy      = 0; // indicates the item is carried or equipped by a creature
-	unsigned int m_isUsedBy      = 0;
+	// Auxiliary tracking (not part of location/claim state machine)
+	unsigned int m_stockpileID = 0;
+	unsigned int m_containerID = 0;
 
 	unsigned short m_value = 0;
 	unsigned int m_madeBy  = 0;

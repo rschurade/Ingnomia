@@ -28,6 +28,13 @@
 
 #include <QDebug>
 
+/** @file PopulationModel.cpp
+ *  @brief PopulationModel and helper-component implementations. Constructors wrap the
+ *         Gui*Info payloads; update* helpers refresh the nested observable collections
+ *         after aggregator-side changes; command handlers route user edits back through
+ *         PopulationProxy. Trivial Get/Set accessors are standard XAML plumbing.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
@@ -51,6 +58,7 @@ void ProfItem::SetName( const char* name )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// @brief Builds a skill cell row from a GuiSkillInfo payload.
 GnomeSkill::GnomeSkill( const GuiSkillInfo& skill, unsigned int gnomeID, PopulationProxy* proxy ) :
 	m_gnomeID( gnomeID ),
 	m_proxy( proxy )
@@ -83,9 +91,15 @@ bool GnomeSkill::GetChecked() const
 	return m_checked;
 }
 
+/// @brief Toggles the skill-active flag on this gnome via the proxy.
 void GnomeSkill::SetChecked( bool value )
 {
+	if( m_checked == value )
+	{
+		return;
+	}
 	m_checked = value;
+	OnPropertyChanged( "Checked" );
 	if( m_proxy )
 	{
 		m_proxy->setSkillActive( m_gnomeID, m_skillID.Str(), value );
@@ -97,7 +111,24 @@ const char* GnomeSkill::GetColor() const
 	return m_color.Str();
 }
 
+void GnomeSkill::applyUpdate( const GuiSkillInfo& skill )
+{
+	Noesis::String newLevel = QString::number( skill.level ).toStdString().c_str();
+	if( m_level != newLevel )
+	{
+		m_level = newLevel;
+		OnPropertyChanged( "Level" );
+	}
+	if( m_checked != skill.active )
+	{
+		m_checked = skill.active;
+		OnPropertyChanged( "Checked" );
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a skill-grid row: name, profession dropdown (shared collection), and
+///        per-skill GnomeSkill cells.
 GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions, PopulationProxy* proxy ) :
 	m_proxy( proxy )
 {
@@ -125,6 +156,38 @@ GnomeRow::GnomeRow( const GuiGnomeInfo& gnome, Noesis::Ptr<Noesis::ObservableCol
 	}
 }
 
+void GnomeRow::applyUpdate( const GuiGnomeInfo& gnome )
+{
+	Noesis::String newName = gnome.name.toStdString().c_str();
+	if( m_name != newName )
+	{
+		m_name = newName;
+		OnPropertyChanged( "Name" );
+	}
+
+	if( m_professionName != gnome.profession )
+	{
+		m_professionName = gnome.profession;
+		for( int i = 0; i < m_professions->Count(); ++i )
+		{
+			if( m_professions->Get( i )->GetName() == m_professionName )
+			{
+				SetProfession( m_professions->Get( i ) );
+				break;
+			}
+		}
+	}
+
+	const int skillCount = m_skills->Count();
+	const int incoming = gnome.skills.size();
+	for( int i = 0; i < skillCount && i < incoming; ++i )
+	{
+		m_skills->Get( i )->applyUpdate( gnome.skills[i] );
+	}
+}
+
+/// @brief Rebinds this row's profession dropdown to a new shared collection and re-selects
+///        the ProfItem that matches m_professionName.
 void GnomeRow::updateProfessionList( Noesis::Ptr<Noesis::ObservableCollection<ProfItem>> professions )
 {
 	m_professions = professions;
@@ -158,6 +221,7 @@ Noesis::ObservableCollection<ProfItem>* GnomeRow::GetProfessions() const
 	return m_professions;
 }
 	
+/// @brief Forwards a profession change on this gnome to the proxy.
 void GnomeRow::SetProfession( ProfItem* item )
 {
 	if ( item && m_selectedProfession != item )
@@ -176,6 +240,8 @@ ProfItem* GnomeRow::GetProfession() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a schedule cell for the given gnome, hour, and initial activity. Registers
+///        the click command that cycles the activity.
 GnomeScheduleEntry::GnomeScheduleEntry( unsigned int id, int hour, ScheduleActivity activity, PopulationProxy* proxy ) :
 	m_proxy( proxy ),
 	m_id( id ),
@@ -206,6 +272,7 @@ const char* GnomeScheduleEntry::GetActivity() const
 	return m_activityString.Str();
 }
 
+/// @brief Click handler: cycles the activity of this hour cell and forwards it to the proxy.
 void GnomeScheduleEntry::onSetHourCmd( BaseComponent* param )
 {
 	m_proxy->setSchedule( m_id, m_hour, m_activity );
@@ -213,6 +280,7 @@ void GnomeScheduleEntry::onSetHourCmd( BaseComponent* param )
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a schedule row with 24 GnomeScheduleEntry hour cells.
 GnomeScheduleRow::GnomeScheduleRow( const GuiGnomeScheduleInfo& gnome, PopulationProxy* proxy  ) :
 	m_proxy( proxy )
 {
@@ -247,6 +315,8 @@ const char* GnomeScheduleRow::GetID() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the PopulationModel: instantiates the proxy, registers every
+///        DelegateCommand, and asks the proxy for the initial gnome list.
 PopulationModel::PopulationModel()
 {
 	m_proxy = new PopulationProxy;
@@ -278,6 +348,8 @@ PopulationModel::PopulationModel()
 	m_professions = *new ObservableCollection<ProfItem>();
 }
 
+/// @brief Rebuilds the shared profession dropdown collection and rebinds every gnome row's
+///        selection so existing rows pick up the new items.
 void PopulationModel::updateProfessionList( const QStringList& professions )
 {
 	m_professions->Clear();
@@ -298,13 +370,43 @@ void PopulationModel::updateProfessionList( const QStringList& professions )
 	OnPropertyChanged( "Professions" );
 }
 
+/// @brief Replaces the skill-grid rows with fresh GnomeRow rows from a full info payload.
+///        If the incoming gnome IDs match the existing rows 1:1 (the common case — e.g.
+///        toggling one skill on every gnome), updates each row in place so virtualized
+///        containers keep their DataContext and no transient binding errors fire.
+///        Otherwise falls back to Clear+rebuild.
 void PopulationModel::updateInfo( const GuiPopulationInfo& info )
 {
-	m_gnomes->Clear();
-
-	for( const auto& gnome : info.gnomes )
+	const int existing = m_gnomes->Count();
+	const int incoming = info.gnomes.size();
+	bool sameRoster = ( existing == incoming );
+	if( sameRoster )
 	{
-		m_gnomes->Add( MakePtr<GnomeRow>( gnome, m_professions, m_proxy ) );
+		for( int i = 0; i < existing; ++i )
+		{
+			if( m_gnomes->Get( i )->gnomeID() != info.gnomes[i].id )
+			{
+				sameRoster = false;
+				break;
+			}
+		}
+	}
+
+	if( sameRoster )
+	{
+		for( int i = 0; i < existing; ++i )
+		{
+			m_gnomes->Get( i )->applyUpdate( info.gnomes[i] );
+		}
+	}
+	else
+	{
+		m_gnomes->Clear();
+		for( const auto& gnome : info.gnomes )
+		{
+			m_gnomes->Add( MakePtr<GnomeRow>( gnome, m_professions, m_proxy ) );
+		}
+		OnPropertyChanged( "Gnomes" );
 	}
 
 	if( m_skills->Count() == 0 )
@@ -316,13 +418,12 @@ void PopulationModel::updateInfo( const GuiPopulationInfo& info )
 			{
 				m_skills->Add( MakePtr<GnomeSkill>( skill, 0, m_proxy ) );
 			}
+			OnPropertyChanged( "SkillHeaders" );
 		}
 	}
-
-	OnPropertyChanged( "Gnomes" );
-	OnPropertyChanged( "SkillHeaders" );
 }
 
+/// @brief Refreshes a single gnome row in the skill grid (matched by UID).
 void PopulationModel::updateSingleGnome( const GuiGnomeInfo& gnome )
 {
 	for( int i = 0; i < m_gnomes->Count(); ++i )
@@ -339,32 +440,39 @@ void PopulationModel::updateSingleGnome( const GuiGnomeInfo& gnome )
 }
 
 
+/// @brief "Activate this skill for all gnomes" button handler.
 void PopulationModel::onAllGnomesCmd( BaseComponent* param )
 {
 	m_proxy->setSkillForAllGnomes( param->ToString().Str(), true );
 }
 
+/// @brief "Deactivate this skill for all gnomes" button handler.
 void PopulationModel::onRemoveAllGnomesCmd( BaseComponent* param )
 {
 	m_proxy->setSkillForAllGnomes( param->ToString().Str(), false );
 }
 
 
+/// @brief "Activate all skills for this gnome" button handler.
 void PopulationModel::onAllSkillsCmd( BaseComponent* param )
 {
 	m_proxy->setAllSkillsForGnome( QString(param->ToString().Str() ).toUInt(), true );
 }
 
+/// @brief "Deactivate all skills for this gnome" button handler.
 void PopulationModel::onRemoveAllSkillsCmd( BaseComponent* param )
 {
 	m_proxy->setAllSkillsForGnome( QString(param->ToString().Str() ).toUInt(), false );
 }
 
+/// @brief Column header sort click. Forwards the column key to the proxy so the grid rebuilds
+///        in the new order.
 void PopulationModel::onSortCmd( BaseComponent* param )
 {
 	m_proxy->sortGnomes( param->ToString().Str() );
 }
 
+/// @brief Tab switcher: parses @p param to switch between Skills, Schedule, and ProfEdit tabs.
 void PopulationModel::onPageCmd( BaseComponent* param )
 {
 	m_state = PopState::Skills;
@@ -411,6 +519,7 @@ const char* PopulationModel::GetShowProfEdit() const
 	return "Hidden";
 }
 
+/// @brief Replaces the schedule grid with fresh GnomeScheduleRow rows.
 void PopulationModel::updateSchedules( const GuiScheduleInfo& info )
 {
 	m_scheduleGnomes->Clear();
@@ -422,6 +531,7 @@ void PopulationModel::updateSchedules( const GuiScheduleInfo& info )
 	OnPropertyChanged( "Schedules" );
 }
 
+/// @brief Refreshes a single schedule row (matched by UID).
 void PopulationModel::updateScheduleSingleGnome( const GuiGnomeScheduleInfo& gnome )
 {
 	for( int i = 0; i < m_scheduleGnomes->Count(); ++i )
@@ -437,6 +547,7 @@ void PopulationModel::updateScheduleSingleGnome( const GuiGnomeScheduleInfo& gno
 	}
 }
 
+/// @brief Handler for the "set activity" button in the ProfEdit tab.
 void PopulationModel::onSetActivityCmd( BaseComponent* param )
 {
 	QString qParam = param->ToString().Str();
@@ -468,11 +579,13 @@ const char* PopulationModel::GetScheduleActivity() const
 	}
 }
 
+/// @brief "Set all 24 hours to activity X for this gnome" button handler.
 void PopulationModel::onSetAllHoursCmd( BaseComponent* param )
 {
 	m_proxy->setAllHours( QString( param->ToString().Str() ).toUInt(), m_scheduleActivity );
 }
 
+/// @brief "Set this hour to activity X on all gnomes" button handler.
 void PopulationModel::onSetHoursForAllCmd( BaseComponent* param )
 {
 	m_proxy->setHourForAll( QString( param->ToString().Str() ).toInt(), m_scheduleActivity );
@@ -483,6 +596,7 @@ Noesis::ObservableCollection<ProfItem>* PopulationModel::GetProfessions() const
 	return m_professions;
 }
 	
+/// @brief Setter for the profession editor's profession selector. Opens the picked profession.
 void PopulationModel::SetProfession( ProfItem* item )
 {
 	if ( item && m_selectedProfession != item )
@@ -504,6 +618,7 @@ ProfItem* PopulationModel::GetProfession() const
 	return m_selectedProfession;
 }
 
+/// @brief Populates the profession editor's left-side skill list for the given profession.
 void PopulationModel::updateProfessionSkills( const QString profession, const QList<GuiSkillInfo>& skills )
 {
 	m_profSkills->Clear();
@@ -516,6 +631,7 @@ void PopulationModel::updateProfessionSkills( const QString profession, const QL
 	OnPropertyChanged( "ProfSkills" );
 }
 
+/// @brief Profession editor: moves the picked skill one position up the list.
 void PopulationModel::onProfSkillUpCmd( BaseComponent* param )
 {
 	if( m_lockProfessionEdit ) return;
@@ -534,6 +650,7 @@ void PopulationModel::onProfSkillUpCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Profession editor: moves the picked skill one position down the list.
 void PopulationModel::onProfSkillDownCmd( BaseComponent* param )
 {
 	if( m_lockProfessionEdit ) return;
@@ -552,6 +669,7 @@ void PopulationModel::onProfSkillDownCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Profession editor: adds the picked skill from the available pool into the profession.
 void PopulationModel::onProfSkillAddCmd( BaseComponent* param )
 {
 	if( m_lockProfessionEdit ) return;
@@ -581,6 +699,7 @@ void PopulationModel::onProfSkillAddCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Profession editor: removes the picked skill from the profession and returns it to the pool.
 void PopulationModel::onProfSkillRemoveCmd( BaseComponent* param )
 {
 	if( m_lockProfessionEdit ) return;
@@ -600,6 +719,8 @@ void PopulationModel::onProfSkillRemoveCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Flushes pending profession edits (renamed profession or skill list changes) to
+///        the proxy.
 void PopulationModel::sendModifiedProfession()
 {
 	if( m_selectedProfession )
@@ -635,6 +756,7 @@ const char* PopulationModel::GetProfName() const
 	return m_profName.Str();
 }
 
+/// @brief Profession editor: sets the profession name text field and schedules a modified-flush.
 void PopulationModel::SetProfName( const char* value )
 {
 	if( strcmp( value, m_profName.Str() ) != 0 )
@@ -662,11 +784,13 @@ void PopulationModel::SetProfName( const char* value )
 }
 
 
+/// @brief Creates a new empty profession and opens it in the editor.
 void PopulationModel::onNewProfCmd( BaseComponent* param )
 {
 	m_proxy->newProfession();
 }
 
+/// @brief Deletes the selected profession and removes it from the dropdown.
 void PopulationModel::onDeleteProfCmd( BaseComponent* param )
 {
 	if( m_selectedProfession )
@@ -676,6 +800,7 @@ void PopulationModel::onDeleteProfCmd( BaseComponent* param )
 	}
 }
 
+/// @brief Switches the profession editor to show the profession named @p name.
 void PopulationModel::selectEditProfession( const QString name )
 {
 	for( int i = 0; i < m_professions->Count(); ++i )

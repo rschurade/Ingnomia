@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file octree.h
+ * @brief 3D spatial index for fast item lookup by position.
+ */
+
 #pragma once
 
 #include <QList>
@@ -22,6 +26,12 @@
 
 #include <functional>
 
+/**
+ * @brief Octree spatial index for storing and querying items by 3D position.
+ *
+ * Recursively subdivides the world volume into octants. Leaf nodes store item IDs directly.
+ * Used for spatial queries like "find items near this position".
+ */
 class Octree
 {
 public:

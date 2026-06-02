@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file config.cpp
+ * @brief Implementation of the Config class.
+ */
+
 #include "config.h"
 
 #include "../base/io.h"
@@ -26,6 +30,14 @@
 #include <QJsonDocument>
 #include <QStandardPaths>
 
+/**
+ * @brief Constructs the Config and loads settings from disk.
+ *
+ * Creates required folders via IO::createFolders(), loads config.json from the
+ * user data folder, falls back to the original bundled config if not found.
+ * Ensures default values exist for XpMod, fow, AutoSaveInterval, uiscale.
+ * Sets dataPath to the application's content directory.
+ */
 Config::Config()
 {
 	QMutexLocker lock( &m_mutex );
@@ -36,7 +48,7 @@ Config::Config()
 	bool ok        = true;
 	QJsonDocument jd;
 
-	if ( !IO::loadFile( folder + "settings/config.json", jd ) )
+	if ( !IO::loadFile( folder + "/settings/config.json", jd ) )
 	{
 		if( !IO::loadOriginalConfig( jd ) )
 		{
@@ -86,10 +98,16 @@ Config::Config()
 
 }
 
+/** @brief Destructor. */
 Config::~Config()
 {
 }
 
+/**
+ * @brief Retrieves a configuration value by key.
+ * @param key The setting name to look up.
+ * @return The value associated with the key, or an invalid QVariant if not found.
+ */
 QVariant Config::get( QString key )
 {
 	QMutexLocker lock( &m_mutex );
@@ -104,6 +122,13 @@ QVariant Config::get( QString key )
 	}
 }
 
+/**
+ * @brief Sets a configuration value and persists to disk.
+ *
+ * Only writes if the value actually changed. Logs the change to debug output.
+ * @param key The setting name to set.
+ * @param value The new value.
+ */
 void Config::set( QString key, QVariant value )
 {
 	QMutexLocker lock( &m_mutex );

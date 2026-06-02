@@ -15,31 +15,39 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file eventconnector.h
+ *  @brief The central GUI-side event bus. Owns all Aggregator* instances, forwards
+ *         game-thread signals to the GUI thread, and routes input/command signals from
+ *         the GUI back into the game.
+ */
 #pragma once
 
 #include <QObject>
 
 class GameManager;
 
-class AggregatorTileInfo;     
-class AggregatorStockpile;    
-class AggregatorWorkshop;     
-class AggregatorAgri;         
+class AggregatorTileInfo;
+class AggregatorStockpile;
+class AggregatorWorkshop;
+class AggregatorAgri;
 class AggregatorRenderer;
 class AggregatorPopulation;
 class AggregatorCreatureInfo;
 class AggregatorDebug;
 class AggregatorNeighbors;
-class AggregatorMilitary;   
-class AggregatorSettings;     
-class AggregatorInventory;    
-class AggregatorLoadGame;     
+class AggregatorMilitary;
+class AggregatorSettings;
+class AggregatorInventory;
+class AggregatorLoadGame;
 class AggregatorSelection;
 class AggregatorSound;
 
 
 class Game;
 
+/// @brief Central event-routing object accessible as Global::eventConnector. Holds one
+///        instance of every Aggregator and exposes them to the GUI; acts as the glue between
+///        the game-simulation thread and the Qt GUI thread.
 class EventConnector : public QObject
 {
 	Q_OBJECT
@@ -125,25 +133,25 @@ public:
 
 	Game* game();
 private:
-	GameManager* gm = nullptr;
-	QPointer<Game> g;
-	
+	GameManager* gm = nullptr;        ///< Owning GameManager.
+	QPointer<Game> g;                 ///< Current Game instance (weak ownership).
 
-	AggregatorTileInfo* m_tiAggregator = nullptr;
-	AggregatorStockpile* m_spAggregator = nullptr;
-	AggregatorWorkshop* m_wsAggregator = nullptr;
-	AggregatorAgri* m_acAggregator = nullptr;
-	AggregatorRenderer* m_rAggregator = nullptr;
-	AggregatorPopulation* m_popAggregator = nullptr;
-	AggregatorCreatureInfo* m_creatureInfoAggregator = nullptr;
-	AggregatorDebug* m_debugAggregator = nullptr;
-	AggregatorNeighbors* m_neighborsAggregator = nullptr;
-	AggregatorMilitary* m_militaryAggregator = nullptr;
-	AggregatorSettings* m_settingsAggregator = nullptr;
-	AggregatorInventory* m_inventoryAggregator = nullptr;
-	AggregatorLoadGame* m_loadGameAggregator = nullptr;
-	AggregatorSelection* m_selectionAggregator = nullptr;
-	AggregatorSound* m_soundAggregator = nullptr;
+
+	AggregatorTileInfo* m_tiAggregator = nullptr;                   ///< Tile Info window aggregator.
+	AggregatorStockpile* m_spAggregator = nullptr;                  ///< Stockpile window aggregator.
+	AggregatorWorkshop* m_wsAggregator = nullptr;                   ///< Workshop window aggregator.
+	AggregatorAgri* m_acAggregator = nullptr;                       ///< Agriculture (farm/pasture/grove) aggregator.
+	AggregatorRenderer* m_rAggregator = nullptr;                    ///< Renderer tile/creature data aggregator.
+	AggregatorPopulation* m_popAggregator = nullptr;                ///< Population / schedule aggregator.
+	AggregatorCreatureInfo* m_creatureInfoAggregator = nullptr;     ///< Creature Info window aggregator.
+	AggregatorDebug* m_debugAggregator = nullptr;                   ///< Debug window aggregator.
+	AggregatorNeighbors* m_neighborsAggregator = nullptr;           ///< Neighbors / diplomacy aggregator.
+	AggregatorMilitary* m_militaryAggregator = nullptr;             ///< Military window aggregator.
+	AggregatorSettings* m_settingsAggregator = nullptr;             ///< Settings window aggregator.
+	AggregatorInventory* m_inventoryAggregator = nullptr;           ///< Inventory/Build menu aggregator.
+	AggregatorLoadGame* m_loadGameAggregator = nullptr;             ///< Load Game window aggregator.
+	AggregatorSelection* m_selectionAggregator = nullptr;           ///< Placement cursor / selection aggregator.
+	AggregatorSound* m_soundAggregator = nullptr;                   ///< OpenAL sound effect aggregator.
 
 public slots:
 	void onExit();

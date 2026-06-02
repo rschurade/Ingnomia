@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file IngamePage.xaml.h
+ *  @brief Code-behind for IngamePage.xaml — the wrapper page that hosts the GameGui HUD
+ *         once a game is loaded.
+ */
 #ifndef __IngamePage_H__
 #define __IngamePage_H__
 
@@ -25,6 +29,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the IngamePage Noesis page.
 class IngamePage final : public Noesis::UserControl
 {
 public:

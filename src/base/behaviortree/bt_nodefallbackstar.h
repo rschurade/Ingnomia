@@ -15,10 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodefallbackstar.h
+ *  @brief Composite node implementing fallback (OR) logic with memory.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Fallback composite with memory -- resumes from the last RUNNING child.
+ *
+ *  Unlike BT_NodeFallback, this node remembers which child returned RUNNING
+ *  and resumes from that index on the next tick instead of restarting from
+ *  child 0.  Returns SUCCESS on the first child success, RUNNING while a
+ *  child is running, or FAILURE when all children have failed.
+ */
 class BT_NodeFallbackStar final : public BT_Node
 {
 public:

@@ -16,6 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file gnomeconditions.cpp
+ *  @brief Gnome behavior-tree condition callbacks (hunger, thirst, sleep, combat readiness, etc.).
+ */
 #include "gnome.h"
 #include "gnomemanager.h"
 #include "game.h"
@@ -51,6 +54,9 @@
 
 //#include <QDebug>
 
+/// @brief Returns SUCCESS if the gnome should eat: scheduled Eat hour with Hunger < 90, or Hunger < 30 at any time.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if hungry, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsHungry( bool halt )
 {
 	int hour = qMin( 23, GameState::hour );
@@ -74,6 +80,9 @@ BT_RESULT Gnome::conditionIsHungry( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome is critically hungry (Hunger need below 0).
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if critically hungry, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsVeryHungry( bool halt )
 {
 	if ( m_needs["Hunger"].toFloat() < 0 )
@@ -89,6 +98,9 @@ BT_RESULT Gnome::conditionIsVeryHungry( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome should drink: scheduled Eat hour with Thirst < 90, or Thirst < 30 at any time.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if thirsty, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsThirsty( bool halt )
 {
 	unsigned int hour = qMin( 23, GameState::hour );
@@ -112,6 +124,9 @@ BT_RESULT Gnome::conditionIsThirsty( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome is critically thirsty (Thirst need below 0).
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if critically thirsty, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsVeryThirsty( bool halt )
 {
 	if ( m_needs["Thirst"].toFloat() < 0 )
@@ -127,6 +142,9 @@ BT_RESULT Gnome::conditionIsVeryThirsty( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome should sleep: it is a scheduled Sleep hour, or Sleep need is below 30.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if sleepy, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsSleepy( bool halt )
 {
 
@@ -147,6 +165,10 @@ BT_RESULT Gnome::conditionIsSleepy( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if every item claimed for the current job is already at the job's input position.
+///        Sets m_itemToPickUp and the current movement target for the first out-of-place item, then returns FAILURE.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if all items are at the input position, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 {
 	if ( !m_job || m_itemToPickUp != 0 || !m_carriedItems.isEmpty() )
@@ -171,6 +193,9 @@ BT_RESULT Gnome::conditionAllItemsInPlaceForJob( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief Returns SUCCESS if the gnome's current job is of type "ButcherAnimal".
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if the active job is a butcher job, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsButcherJob( bool halt )
 {
 	if ( m_job )
@@ -183,6 +208,10 @@ BT_RESULT Gnome::conditionIsButcherJob( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS when all items in the haul job have been picked up (carried count equals haul list size).
+///        If items remain, selects the nearest unclaimed item as the next pickup target and returns FAILURE.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if every item is now carried, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 {
 	if ( !m_job )
@@ -220,6 +249,10 @@ BT_RESULT Gnome::conditionAllPickedUp( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns RUNNING while the gnome is eating and Hunger has not reached 100.
+///        Clears m_startedEating and returns SUCCESS once Hunger is at 100 or eating was not started.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::RUNNING while eating, BT_RESULT::SUCCESS when full or not eating.
 BT_RESULT Gnome::conditionIsFull( bool halt )
 {
 	if ( m_needs["Hunger"].toInt() < 100 && m_startedEating )
@@ -230,6 +263,10 @@ BT_RESULT Gnome::conditionIsFull( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief Returns RUNNING while the gnome is drinking and Thirst has not reached 100.
+///        Clears m_startedDrinking and returns SUCCESS once Thirst is at 100 or drinking was not started.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::RUNNING while drinking, BT_RESULT::SUCCESS when satiated or not drinking.
 BT_RESULT Gnome::conditionIsDrinkFull( bool halt )
 {
 	if ( m_needs["Thirst"].toInt() < 100 && m_startedDrinking )
@@ -240,6 +277,9 @@ BT_RESULT Gnome::conditionIsDrinkFull( bool halt )
 	return BT_RESULT::SUCCESS;
 }
 
+/// @brief Returns SUCCESS if the gnome's schedule slot for the current hour is Training.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS during a scheduled training hour, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsTrainingTime( bool halt )
 {
 	unsigned int hour = qMin( 23, GameState::hour );
@@ -251,6 +291,9 @@ BT_RESULT Gnome::conditionIsTrainingTime( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome is assigned to a MeleeTraining workshop (i.e. acts as the trainer).
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if the assigned workshop type is "MeleeTraining", BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsTrainer( bool halt )
 {
 	if ( m_assignedWorkshop )
@@ -268,6 +311,9 @@ BT_RESULT Gnome::conditionIsTrainer( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome belongs to no military role or to a civilian role.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if m_roleID is 0 or the role is civilian, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionIsCivilian( bool halt )
 {
 	bool roleIsCivilian = g->mil()->roleIsCivilian( m_roleID);
@@ -278,6 +324,12 @@ BT_RESULT Gnome::conditionIsCivilian( bool halt )
 	return BT_RESULT::FAILURE;
 }
 
+/// @brief Returns SUCCESS if the gnome's squad has a reachable target matching any non-FLEE priority.
+///        Checks HUNT (any reachable animal), DEFEND (within distance 4, line of sight), and
+///        ATTACK (within distance 100, line of sight). Also returns SUCCESS if a squad-mate
+///        currently has an attack target the gnome can path to.
+/// @param halt Unused halt signal.
+/// @return BT_RESULT::SUCCESS if a valid hunt/attack target exists, BT_RESULT::FAILURE otherwise.
 BT_RESULT Gnome::conditionHasHuntTarget( bool halt )
 {
 	auto squad = g->mil()->getSquadForGnome( m_id );

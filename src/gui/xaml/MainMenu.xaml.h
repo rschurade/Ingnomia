@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file MainMenu.xaml.h
+ *  @brief Code-behind for the in-game pause menu overlay (MainMenu.xaml). The overlay's
+ *         actions (Save, Load, Settings, Exit) are bound via GameModel commands.
+ */
 #ifndef __MAINMENU_H__
 #define __MAINMENU_H__
 
@@ -25,6 +29,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the in-game MainMenu overlay user control.
 class MainMenu final : public Noesis::UserControl
 {
 public:

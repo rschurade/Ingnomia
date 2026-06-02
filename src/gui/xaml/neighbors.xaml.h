@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file neighbors.xaml.h
+ *  @brief Code-behind for the Neighbors / diplomacy window (Neighbors.xaml).
+ */
 #ifndef __NeighborsGui_H__
 #define __NeighborsGui_H__
 
@@ -24,6 +27,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind shell for the NeighborsGui Noesis user control.
 class NeighborsGui final : public Noesis::UserControl
 {
 public:

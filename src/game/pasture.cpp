@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file pasture.cpp
+ *  @brief Animal pasture implementation: animal assignment, capacity management, feeding,
+ *         hay harvesting, trough filling, and animal type configuration.
+ */
 #include "pasture.h"
 
 #include "../base/config.h"
@@ -31,6 +35,8 @@
 
 #include <QDebug>
 
+/// @brief Deserialising constructor — restores pasture configuration from a saved variant map.
+/// @param in Map produced by PastureProperties::serialize().
 PastureProperties::PastureProperties( QVariantMap& in )
 {
 	animalType = in.value( "AnimalType" ).toString();
@@ -48,11 +54,16 @@ PastureProperties::PastureProperties( QVariantMap& in )
 	maxTroughCapacity = in.value( "MaxTroughCapacity" ).toInt();
 	troughContent     = in.value( "TroughContent" ).toInt();
 
-	foodSettings = in.value( "Food" ).toStringList().toSet();
+	{
+		auto list = in.value( "Food" ).toStringList();
+		foodSettings = QSet<QString>( list.begin(), list.end() );
+	}
 
 	animalSize = DB::select( "PastureSize", "Animals", animalType ).toInt();
 }
 
+/// @brief Serialises pasture configuration into an existing variant map.
+/// @param out Map to write keys into (Type, AnimalType, harvest/hay flags, capacity limits, food settings).
 void PastureProperties::serialize( QVariantMap& out ) const
 {
 	out.insert( "Type", "pasture" );
@@ -74,6 +85,9 @@ void PastureProperties::serialize( QVariantMap& out ) const
 	out.insert( "Food", QStringList( foodSettings.values() ) );
 }
 
+/// @brief Constructs a new pasture from a list of tile positions.
+/// @param tiles List of (position, included) pairs; only tiles with second==true are registered.
+/// @param game  Owning game instance.
 Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
 	WorldObject( game )
 {
@@ -98,6 +112,9 @@ Pasture::Pasture( QList<QPair<Position, bool>> tiles, Game* game ) :
 	}
 }
 
+/// @brief Deserialising constructor — restores a pasture from a saved variant map.
+/// @param vals Map produced by Pasture::serialize().
+/// @param game Owning game instance.
 Pasture::Pasture( QVariantMap vals, Game* game ) :
 	WorldObject( vals, game ),
 	m_properties( vals )
@@ -112,7 +129,7 @@ Pasture::Pasture( QVariantMap vals, Game* game ) :
 		{
 			grofi->job = g->jm()->getJob( vfm.value( "Job" ).toUInt() );
 		}
-		grofi->util   = vf.toMap().value( "Util" ).toUInt();
+		grofi->utilSID = vf.toMap().value( "UtilSID" ).toString();
 		m_fields.insert( grofi->pos.toInt(), grofi );
 	}
 	if ( m_fields.size() )
@@ -141,6 +158,8 @@ Pasture::Pasture( const Pasture& other )
 }
 */
 
+/// @brief Serialises the pasture (WorldObject base, properties, fields, and animal ID list).
+/// @return QVariant wrapping a QVariantMap suitable for saving.
 QVariant Pasture::serialize() const
 {
 	QVariantMap out;
@@ -157,7 +176,7 @@ QVariant Pasture::serialize() const
 			QSharedPointer<Job> spJob = field->job.toStrongRef();
 			entry.insert( "Job", spJob->id() );
 		}
-		entry.insert( "Util", field->util );
+		entry.insert( "UtilSID", field->utilSID );
 		tiles.append( entry );
 	}
 	out.insert( "Fields", tiles );
@@ -172,6 +191,7 @@ QVariant Pasture::serialize() const
 	return out;
 }
 
+/// @brief Destructor — frees all PastureField allocations.
 Pasture::~Pasture()
 {
 	for ( const auto& field : m_fields )
@@ -180,6 +200,8 @@ Pasture::~Pasture()
 	}
 }
 
+/// @brief Adds a tile to the pasture, sets its TF_PASTURE flag, and recalculates max animal capacity.
+/// @param pos World position of the tile to add.
 void Pasture::addTile( const Position & pos )
 {
 	PastureField* grofi = new PastureField;
@@ -198,7 +220,11 @@ void Pasture::addTile( const Position & pos )
 	g->w()->setTileFlag( pos, TileFlag::TF_PASTURE );
 }
 
-// farming manager calls this on hour changed
+/// @brief Per-tick update called by the farming manager.
+///        Regrows vegetation on grass tiles, auto-assigns tame animals to open slots,
+///        leads straying animals back, creates HarvestAnimal/FillTrough/HarvestHay jobs as needed.
+/// @param tick   Current game tick.
+/// @param count  Output: total number of animals currently assigned to this pasture.
 void Pasture::onTick( quint64 tick, int& count )
 {
 	for ( auto field : m_fields )
@@ -336,9 +362,9 @@ void Pasture::onTick( quint64 tick, int& count )
 				{
 					for ( auto& field : m_fields )
 					{
-						if ( field->util && !field->job )
+						if ( !field->utilSID.isEmpty() && !field->job )
 						{
-							if ( g->inv()->itemSID( field->util ) == "Trough" )
+							if ( field->utilSID == "Trough" )
 							{
 								auto jobID = g->jm()->addJob( "FillTrough", field->pos, 0, false );
 								auto job = g->jm()->getJob( jobID );
@@ -376,6 +402,9 @@ void Pasture::onTick( quint64 tick, int& count )
 	}
 }
 
+/// @brief Attempts to assign a single tame animal of the correct type and gender to this pasture.
+///        Does nothing if the pasture is inactive, already full, or the animal does not match.
+/// @param animalID UID of the animal to assign.
 void Pasture::addAnimal( unsigned int animalID )
 {
 	if ( !m_active )
@@ -491,6 +520,9 @@ void Pasture::addAnimal( unsigned int animalID )
 			}
 */
 
+/// @brief Removes a tile from the pasture, recalculates capacity, and evicts excess animals.
+/// @param pos Position of the tile to remove.
+/// @return true if this was the last tile and the pasture should be deleted, false otherwise.
 bool Pasture::removeTile( const Position & pos )
 {
 	PastureField* ff = m_fields.value( pos.toInt() );
@@ -538,6 +570,10 @@ bool Pasture::removeTile( const Position & pos )
 	return m_fields.empty();
 }
 
+/// @brief Fills out plot and animal gender counts for UI display.
+/// @param numPlots  Output: total number of field tiles.
+/// @param numMale   Output: number of male animals currently assigned.
+/// @param numFemale Output: number of female animals currently assigned.
 void Pasture::getInfo( int& numPlots, int& numMale, int& numFemale )
 {
 	numPlots  = m_fields.size();
@@ -561,6 +597,8 @@ void Pasture::getInfo( int& numPlots, int& numMale, int& numFemale )
 	}
 }
 
+/// @brief Removes a single animal from the pasture assignment list and clears its pasture reference.
+/// @param animalID UID of the animal to remove.
 void Pasture::removeAnimal( unsigned int animalID )
 {
 	Animal* animal = g->cm()->animal( animalID );
@@ -578,6 +616,7 @@ void Pasture::removeAnimal( unsigned int animalID )
 	getInfo( plots, male, female );
 }
 
+/// @brief Removes all animals from the pasture, clearing their pasture reference and the internal list.
 void Pasture::removeAllAnimals()
 {
 	for ( auto id : m_animals )
@@ -597,27 +636,35 @@ void Pasture::removeAllAnimals()
 	getInfo( plots, male, female );
 }
 
+/// @brief Returns true; pastures can always be deleted by the player.
+/// @return Always true.
 bool Pasture::canDelete()
 {
 	return true;
 }
 
+/// @brief Returns the total number of field tiles in this pasture.
+/// @return Number of fields.
 int Pasture::countTiles()
 {
 	return m_fields.size();
 }
 
-bool Pasture::addUtil( Position pos, unsigned int itemID )
+/// @brief Places a utility object (e.g. Trough, Shed) on the given pasture field tile.
+///        Increases maxTroughCapacity by 20 for each Trough added.
+/// @param pos     Position of the field tile.
+/// @param utilSID String ID of the utility to place.
+/// @return true if the tile exists and was not already occupied, false otherwise.
+bool Pasture::addUtil( Position pos, const QString& utilSID )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
-		if ( pf->util == 0 )
+		if ( pf->utilSID.isEmpty() )
 		{
-			pf->util = itemID;
+			pf->utilSID = utilSID;
 
-			//if item is trough
-			if ( g->inv()->itemSID( itemID ) == "Trough" )
+			if ( utilSID == "Trough" )
 			{
 				m_properties.maxTroughCapacity += 20;
 			}
@@ -628,40 +675,45 @@ bool Pasture::addUtil( Position pos, unsigned int itemID )
 	return false;
 }
 
+/// @brief Removes the utility object from the given pasture field tile.
+///        Decreases maxTroughCapacity by 20 if the removed utility was a Trough.
+/// @param pos Position of the field tile.
+/// @return true if the tile existed and held a utility, false otherwise.
 bool Pasture::removeUtil( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
 
-		if ( pf->util != 0 )
+		if ( !pf->utilSID.isEmpty() )
 		{
-			unsigned int itemID = pf->util;
-
-			pf->util = 0;
-
-			//if item is trough
-			if ( g->inv()->itemSID( itemID ) == "Trough" )
+			if ( pf->utilSID == "Trough" )
 			{
 				m_properties.maxTroughCapacity -= 20;
 			}
 
+			pf->utilSID.clear();
 			return true;
 		}
 	}
 	return false;
 }
 
-unsigned int Pasture::util( Position pos )
+/// @brief Returns the utility SID placed on the field at @p pos, or an empty string if none.
+/// @param pos Position of the field tile to query.
+/// @return Utility string ID, or empty if the tile is absent or has no utility.
+QString Pasture::utilSID( Position pos )
 {
 	if ( m_fields.contains( pos.toInt() ) )
 	{
 		PastureField* pf = m_fields[pos.toInt()];
-		return pf->util;
+		return pf->utilSID;
 	}
-	return 0;
+	return QString();
 }
 
+/// @brief Returns the position of a randomly selected field tile, or an invalid Position if empty.
+/// @return Random field position.
 Position Pasture::randomFieldPos()
 {
 	int random = rand() % m_fields.size();
@@ -676,13 +728,15 @@ Position Pasture::randomFieldPos()
 	return Position();
 }
 
+/// @brief Searches field tiles for a "Shed" utility and returns its position.
+/// @return Position of the first shed tile found, or an invalid Position if none exists.
 Position Pasture::findShed()
 {
 	for ( auto field : m_fields )
 	{
-		if ( field->util )
+		if ( !field->utilSID.isEmpty() )
 		{
-			if ( g->inv()->itemSID( field->util ) == "Shed" )
+			if ( field->utilSID == "Shed" )
 			{
 				return field->pos;
 			}
@@ -691,47 +745,67 @@ Position Pasture::findShed()
 	return Position();
 }
 
+/// @brief Returns a mutable reference to the set of allowed food item+material strings.
+/// @return Reference to the food settings set (entries formatted as "ItemSID_MaterialSID").
 QSet<QString>& Pasture::foodSettings()
 {
 	return m_properties.foodSettings;
 }
 
+/// @brief Adds an allowed food type to the pasture trough settings.
+/// @param itemSID     Item string ID (e.g. "Grain").
+/// @param materialSID Material string ID (e.g. "Wheat").
 void Pasture::addFoodSetting( QString itemSID, QString materialSID )
 {
 	m_properties.foodSettings.insert( itemSID + "_" + materialSID );
 }
 
+/// @brief Removes a food type from the pasture trough settings.
+/// @param itemSID     Item string ID to remove.
+/// @param materialSID Material string ID to remove.
 void Pasture::removeFoodSetting( QString itemSID, QString materialSID )
 {
 	m_properties.foodSettings.remove( itemSID + "_" + materialSID );
 }
 
+/// @brief Credits one food item delivery to the trough (+10 units of content).
+/// @param itemID UID of the delivered food item (currently unused; content is incremented unconditionally).
 void Pasture::addFood( unsigned int itemID )
 {
 	m_properties.troughContent += 10;
 }
 
+/// @brief Returns the maximum hay inventory target for the auto-harvesting threshold.
+/// @return Max hay count.
 int Pasture::maxHay()
 {
 	return m_properties.maxHay;
 }
 
+/// @brief Sets the maximum hay inventory target for the auto-harvesting threshold.
+/// @param value New max hay count.
 void Pasture::setMaxHay( int value )
 {
 	m_properties.maxHay = value;
 }
 
+/// @brief Returns the current food content of all troughs combined.
+/// @return Current trough content units.
 int Pasture::foodLevel()
 {
 	return m_properties.troughContent;
 }
 
+/// @brief Returns the total trough capacity across all installed troughs.
+/// @return Maximum trough content units.
 int Pasture::maxFoodLevel()
 {
 	return m_properties.maxTroughCapacity;
 }
 
 
+/// @brief Consumes one unit of food from the trough when an animal eats.
+/// @return true if food was available and consumed, false if the trough was empty.
 bool Pasture::eatFromTrough()
 {
 	if ( m_properties.troughContent > 0 )
@@ -743,6 +817,9 @@ bool Pasture::eatFromTrough()
 	return false;
 }
 
+/// @brief Changes the animal type assigned to this pasture, evicting all current animals if the type changes.
+///        Recalculates per-gender capacity limits from the new type's PastureSize DB entry.
+/// @param type New animal type string ID.
 void Pasture::setAnimalType( QString type )
 {
 	if ( m_properties.animalType != type )
@@ -784,51 +861,71 @@ void Pasture::setAnimalType( QString type )
 	}
 }
 
+/// @brief Returns the string ID of the animal type this pasture is configured for.
+/// @return Animal type SID.
 QString Pasture::animalType()
 {
 	return m_properties.animalType;
 }
 
+/// @brief Returns whether animal product harvesting (wool, milk, etc.) is enabled.
+/// @return true if harvest is enabled.
 bool Pasture::harvest()
 {
 	return m_properties.harvest;
 }
 
+/// @brief Enables or disables animal product harvesting.
+/// @param harvest true to enable, false to disable.
 void Pasture::setHarvest( bool harvest )
 {
 	m_properties.harvest = harvest;
 }
 
+/// @brief Returns whether automatic hay harvesting from pasture grass is enabled.
+/// @return true if hay harvesting is enabled.
 bool Pasture::harvestHay()
 {
 	return m_properties.harvestHay;
 }
 
+/// @brief Enables or disables automatic hay harvesting.
+/// @param harvest true to enable, false to disable.
 void Pasture::setHarvestHay( bool harvest )
 {
 	m_properties.harvestHay = harvest;
 }
 
+/// @brief Returns whether taming wild animals of the pasture's type is enabled.
+/// @return true if tame-wild mode is active.
 bool Pasture::tameWild()
 {
 	return m_properties.tameWild;
 }
 	
+/// @brief Enables or disables taming wild animals for this pasture.
+/// @param value true to enable, false to disable.
 void Pasture::setTameWild( bool value )
 {
 	m_properties.tameWild = value;
 }
 
+/// @brief Returns the total animal capacity of this pasture (fields / animalSize).
+/// @return Maximum number of animals.
 int Pasture::maxNumber()
 {
 	return m_properties.max;
 }
 
+/// @brief Returns the number of field tiles one animal of this type requires.
+/// @return PastureSize value from the Animals database table.
 int Pasture::animalSize()
 {
 	return m_properties.animalSize;
 }
 
+/// @brief Sets the maximum allowed male animal count, evicting excess males.
+/// @param max New maximum male count.
 void Pasture::setMaxMale( int max )
 {
 	m_properties.maxMale = max;
@@ -861,6 +958,8 @@ void Pasture::setMaxMale( int max )
 	m_animals = newAnimals;
 }
 
+/// @brief Sets the maximum allowed female animal count, evicting excess females.
+/// @param max New maximum female count.
 void Pasture::setMaxFemale( int max )
 {
 	m_properties.maxFemale = max;
@@ -893,6 +992,8 @@ void Pasture::setMaxFemale( int max )
 	m_animals = newAnimals;
 }
 
+/// @brief Returns the cached position of the first registered field tile.
+/// @return First field position, or an invalid Position if the pasture has no tiles.
 Position Pasture::firstPos()
 {
 	if ( m_fields.size() )

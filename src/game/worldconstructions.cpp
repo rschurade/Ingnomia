@@ -16,6 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file worldconstructions.cpp
+ *  @brief Wall, floor, stair, ramp, fence, pipe, item, and workshop construction
+ *         and deconstruction functions (methods on World).
+ *
+ *  Implements the construct() dispatch that routes by construction type to
+ *  type-specific builders (constructWall, constructFloor, constructStairs, etc.),
+ *  as well as deconstruct() which tears down constructions and returns materials.
+ *  Also handles workshop placement, item installation (doors, lights, mechanisms),
+ *  fence/pipe sprite updates, and navigation region updates after changes.
+ */
+
 #include "../base/db.h"
 #include "../base/gamestate.h"
 #include "../base/global.h"
@@ -28,6 +39,7 @@
 #include "../game/inventory.h"
 #include "../game/mechanismmanager.h"
 #include "../game/roommanager.h"
+#include "../game/sourcematerial.h"
 #include "../game/stockpilemanager.h"
 #include "../game/workshopmanager.h"
 #include "../gfx/sprite.h"
@@ -41,6 +53,15 @@ const int ROT_BIT  = 65536;
 const int ANIM_BIT = 262144;
 const int WALL_BIT = 524288;
 
+/**
+ * @brief Dispatches a construction request to the appropriate type-specific builder.
+ * @param constructionSID String ID of the construction from the database.
+ * @param pos World position to build at.
+ * @param rotation Rotation (0-3) for the construction.
+ * @param itemIDs List of inventory item UIDs to consume as building materials.
+ * @param extractTo Position where mined/replaced materials should be placed.
+ * @return True if construction succeeded, false otherwise.
+ */
 bool World::construct( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemIDs, Position extractTo )
 {
 	if ( itemIDs.empty() )
@@ -108,6 +129,17 @@ bool World::construct( QString constructionSID, Position pos, int rotation, QLis
 	return result;
 }
 
+/**
+ * @brief Builds a solid wall construction, replacing any existing wall and updating navigation.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Wall rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs for the wall.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -185,6 +217,17 @@ bool World::constructWall( QVariantMap& con, Position pos, int rotation, QVarian
 	return true;
 }
 
+/**
+ * @brief Builds a floor construction, handling existing floor removal and sunlight propagation.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Floor rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs for the floor.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -280,6 +323,17 @@ bool World::constructFloor( QVariantMap& con, Position pos, int rotation, QVaria
 	return true;
 }
 
+/**
+ * @brief Builds a fence construction (solid or see-through wall segments) and updates neighbor fence sprites.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Fence rotation.
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -348,13 +402,23 @@ bool World::constructFence( QVariantMap& con, Position pos, int rotation, QVaria
 	return true;
 }
 
+/**
+ * @brief Installs a hydraulic pipe, pump, or pipe exit and updates neighbor pipe sprites.
+ * @param itemSID String ID of the pipe item ("Pipe", "PipeExit", or "Pump").
+ * @param pos World position to install at.
+ * @param itemUID Inventory UID of the pipe item being installed.
+ * @return True on success.
+ */
 bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 {
+	SourceMaterial sm( g->inv()->itemSID( itemUID ), g->inv()->materialSID( itemUID ), g->inv()->quality( itemUID ) );
+
 	QVariantMap constr;
 	constr.insert( "ConstructionID", "Item" );
 	constr.insert( "Pos", pos.toString() );
-	constr.insert( "Item", itemUID );
+	constr.insert( "Source", sm.serialize() );
 	constr.insert( "Type", "Hydraulics" );
+	constr.insert( "Group", "Hydraulics" );
 
 	m_wallConstructions.insert( pos.toInt(), constr );
 
@@ -382,9 +446,17 @@ bool World::constructPipe( QString itemSID, Position pos, unsigned int itemUID )
 		g->mcm()->installItem( itemUID, pos, 0 );
 	}
 
+	// Item will be destroyed by canwork post-loop (not marked as constructed)
 	return true;
 }
 
+/**
+ * @brief Removes a pipe construction, restoring the tile and creating a new item from stored material specs.
+ * @param constr Construction data map for the pipe.
+ * @param decPos Position of the pipe to deconstruct.
+ * @param workPos Position where the resulting item should be placed.
+ * @return True on success.
+ */
 bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workPos )
 {
 	Tile& tile         = getTile( decPos );
@@ -397,22 +469,40 @@ bool World::deconstructPipe( QVariantMap constr, Position decPos, Position workP
 	updatePipeSprite( decPos.southOf() );
 	updatePipeSprite( decPos.westOf() );
 
-	unsigned itemID = constr.value( "Item" ).toUInt();
-	g->inv()->setConstructed( itemID, false );
-	g->inv()->moveItemToPos( itemID, workPos );
-
-	QString itemSID = g->inv()->itemSID( constr.value( "Item" ).toUInt() );
+	SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+	unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+	if ( newItem && sm.quality > 0 )
+	{
+		g->inv()->setQuality( newItem, sm.quality );
+	}
 
 	g->flm()->removeAt( decPos );
 
-	if ( itemSID == "Pump" )
+	if ( sm.itemSID == "Pump" )
 	{
-		g->mcm()->uninstallItem( constr.value( "Item" ).toUInt() );
+		// Pump mechanism was already destroyed on install, nothing to uninstall from inventory
+		// MechanismManager tracks it by its own ID
+		auto posID = decPos.toInt();
+		if ( g->mcm()->hasMechanism( decPos ) )
+		{
+			g->mcm()->uninstallItem( g->mcm()->mechanismID( decPos ) );
+		}
 	}
 
 	return true;
 }
 
+/**
+ * @brief Builds a combined wall-and-floor construction from a multi-part sprite definition.
+ * @param con Database row for the construction definition.
+ * @param pos World position to build at.
+ * @param rotation Construction rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -527,6 +617,17 @@ bool World::constructWallFloor( QVariantMap& con, Position pos, int rotation, QV
 	return true;
 }
 
+/**
+ * @brief Builds a staircase construction (bottom stair wall + top stair floor on the level above).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the stair bottom.
+ * @param rotation Stair rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -606,6 +707,17 @@ bool World::constructStairs( QVariantMap& con, Position pos, int rotation, QVari
 	return true;
 }
 
+/**
+ * @brief Builds a ramp construction (ramp bottom wall + ramp top floor on the level above).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the ramp bottom.
+ * @param rotation Ramp rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -709,6 +821,15 @@ bool World::constructRamp( QVariantMap& con, Position pos, int rotation, QVarian
 	return true;
 }
 
+/**
+ * @brief Places a workshop on the world, setting tile types and creating the Workshop object.
+ * @param constructionSID Database ID of the workshop definition.
+ * @param pos World position (origin tile) of the workshop.
+ * @param rotation Workshop rotation (0-3).
+ * @param itemUIDs List of inventory item UIDs consumed as building materials.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True if the workshop was placed successfully, false if the DB entry was not found.
+ */
 bool World::constructWorkshop( QString constructionSID, Position pos, int rotation, QList<unsigned int> itemUIDs, Position extractTo )
 {
 	auto dbws = DB::workshop( constructionSID );
@@ -828,6 +949,17 @@ bool World::constructWorkshop( QString constructionSID, Position pos, int rotati
 	return false;
 }
 
+/**
+ * @brief Builds a ramp corner construction (inner corner ramp piece).
+ * @param con Database row for the construction definition.
+ * @param pos World position of the ramp corner.
+ * @param rotation Corner rotation (0-3).
+ * @param itemUIDs List of item UIDs consumed.
+ * @param materialUIDs List of material UIDs.
+ * @param materialSIDs List of material string IDs for sprite creation.
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success.
+ */
 bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, QVariantList itemUIDs, QVariantList materialUIDs, QStringList materialSIDs, Position extractTo )
 {
 	QList<Position> updateCoords;
@@ -939,6 +1071,18 @@ bool World::constructRampCorner( QVariantMap& con, Position pos, int rotation, Q
 	return true;
 }
 
+/**
+ * @brief Installs an item (door, light, furniture, mechanism, container, etc.) at a position.
+ *
+ * Handles sprite placement, item destruction/preservation, and delegation to
+ * the appropriate manager (RoomManager, StockpileManager, MechanismManager, etc.).
+ * @param itemSID String ID of the item type to install.
+ * @param pos World position to install at.
+ * @param rotation Item rotation (0-3).
+ * @param items List of inventory item UIDs to use (first is the primary item).
+ * @param extractTo Position where displaced materials are placed.
+ * @return True on success, false if the item list is empty.
+ */
 bool World::constructItem( QString itemSID, Position pos, int rotation, QList<unsigned int> items, Position extractTo )
 {
 	if ( items.empty() )
@@ -947,18 +1091,15 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	unsigned int itemID = items.first();
 
 	QVariantMap constr;
+	bool isFromParts = false;
+	QVariantList fromPartsItems;
 
 	if ( g->inv()->itemSID( itemID ) != itemSID )
 	{
 		//qDebug() << "create item from components before installing";
-		auto vItems = Global::util->uintList2Variant( items );
-		itemID      = g->inv()->createItem( pos, itemSID, vItems );
-		constr.insert( "Items", vItems );
-		constr.insert( "FromParts", true );
-		for ( auto item : items )
-		{
-			g->inv()->setConstructed( item, true );
-		}
+		fromPartsItems = Global::util->uintList2Variant( items );
+		itemID         = g->inv()->createItem( pos, itemSID, fromPartsItems );
+		isFromParts    = true;
 	}
 
 	QString type  = DB::select( "Category", "Items", g->inv()->itemSID( itemID ) ).toString();
@@ -977,7 +1118,6 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		tile.wallType      = WallType::WT_CONSTRUCTED;
 		if ( sprite->anim )
 		{
-			//qDebug() << "set anim";
 			tile.wallSpriteUID += ANIM_BIT;
 		}
 	}
@@ -995,7 +1135,45 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 	}
 
-	g->inv()->setConstructed( itemID, true );
+	// Extract SourceMaterial before any potential destruction
+	SourceMaterial sm( g->inv()->itemSID( itemID ), g->inv()->materialSID( itemID ), g->inv()->quality( itemID ) );
+
+	// Determine if this item type can be destroyed after installation
+	// (subsystem caches all needed properties and doesn't query inv() at runtime)
+	//qDebug() << "##" << type << group << itemSID;
+	// TODO remove this workaround
+	if( itemSID == "AlarmBell" )
+	{
+		group = "AlarmBell";
+	}
+
+	bool destroyAfterInstall = false;
+	auto groupEnum = m_constrItemSID2ENUM.value( group );
+	auto typeEnum  = m_constrItemSID2ENUM.value( type );
+
+	switch ( groupEnum )
+	{
+		case CI_DOOR:
+		case CI_LIGHT:
+		case CI_FARMUTIL:
+		case CI_MECHANISM:
+			destroyAfterInstall = true;
+			break;
+		default:
+			break;
+	}
+	switch ( typeEnum )
+	{
+		case CI_STORAGE:
+		case CI_FURNITURE:
+			destroyAfterInstall = true;
+			break;
+		default:
+			break;
+	}
+
+	// All item types in constructItem are now destroyAfterInstall.
+	// Items will be destroyed by canwork post-loop.
 
 	unsigned int nextItem = g->inv()->getFirstObjectAtPosition( pos );
 	if ( nextItem )
@@ -1006,32 +1184,31 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	{
 		setItemSprite( pos, 0 );
 	}
-	//qDebug() << "##" << type << group << itemSID;
-	// TODO remove this workaround
-	if( itemSID == "AlarmBell" )
-	{
-		group = "AlarmBell";
-	}
 
 	addToUpdateList( pos );
-	switch ( m_constrItemSID2ENUM.value( type ) )
+	switch ( typeEnum )
 	{
 		case CI_STORAGE:
-			g->spm()->addContainer( itemID, pos );
+		{
+			unsigned char capacity = DB::select( "Capacity", "Containers", itemSID ).value<unsigned char>();
+			bool reqSame = DB::select( "RequireSame", "Containers", itemSID ).toBool();
+			QStringList allowedItems = Global::allowedInContainer.value( itemSID ).values();
+			g->spm()->addContainer( sm, capacity, reqSame, allowedItems, pos );
+		}
 			break;
 		case CI_FURNITURE:
-			g->rm()->addFurniture( itemID, pos );
+			g->rm()->addFurniture( sm, g->inv()->value( itemID ), pos );
 			break;
 	}
-	switch ( m_constrItemSID2ENUM.value( group ) )
+	switch ( groupEnum )
 	{
 		case CI_DOOR:
 			setTileFlag( pos, TileFlag::TF_DOOR );
-			g->rm()->addDoor( pos, itemID, g->inv()->materialUID( itemID ) );
+			g->rm()->addDoor( pos, sm, sprite->uID );
 			break;
 		case CI_LIGHT:
 		{
-			int intensity = DB::select( "LightIntensity", "Items", g->inv()->itemSID( itemID ) ).toInt();
+			int intensity = DB::select( "LightIntensity", "Items", itemSID ).toInt();
 			constr.insert( "Light", intensity );
 			if ( intensity )
 			{
@@ -1040,7 +1217,7 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 		}
 		break;
 		case CI_ALARMBELL:
-			g->rm()->addFurniture( itemID, pos );
+			g->rm()->addFurniture( sm, g->inv()->value( itemID ), pos );
 			break;
 		case CI_MECHANISM:
 			g->mcm()->installItem( itemID, pos, rotation );
@@ -1049,16 +1226,25 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 			return constructPipe( itemSID, pos, itemID );
 			break;
 		case CI_FARMUTIL:
-			g->fm()->addUtil( pos, itemID );
+			g->fm()->addUtil( pos, sm.itemSID );
 			break;
 	}
 
 	constr.insert( "ConstructionID", "Item" );
 	constr.insert( "Pos", pos.toString() );
 	constr.insert( "Rot", rotation );
-	constr.insert( "Item", itemID );
 	constr.insert( "Type", type );
 	constr.insert( "Group", group );
+
+	if ( destroyAfterInstall )
+	{
+		constr.insert( "Source", sm.serialize() );
+		constr.insert( "SpriteID", sprite->uID );
+	}
+	else
+	{
+		constr.insert( "Item", itemID );
+	}
 
 	if ( location == "Wall" )
 	{
@@ -1073,6 +1259,11 @@ bool World::constructItem( QString itemSID, Position pos, int rotation, QList<un
 	return true;
 }
 
+/**
+ * @brief Expels inhabitants and items from modified tiles, then updates region map connectivity.
+ * @param coords List of positions that were modified by a construction or deconstruction.
+ * @param extractTo Position where expelled items and creatures are moved to.
+ */
 void World::updateNavigation( QList<Position>& coords, Position extractTo )
 {
 	for ( auto p : coords )
@@ -1091,6 +1282,13 @@ void World::updateNavigation( QList<Position>& coords, Position extractTo )
 	}
 }
 
+/**
+ * @brief Deconstructs whatever is built at the given position (wall, workshop, or floor construction).
+ * @param decPos Position to deconstruct.
+ * @param workPos Position where returned materials/items are placed.
+ * @param ignoreGravity If true, skips gravity processing on freed items.
+ * @return True if deconstruction succeeded, false if nothing was found to deconstruct.
+ */
 bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 {
 	QVariantMap constr;
@@ -1102,8 +1300,8 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 	}
 	else if ( g->wsm()->isWorkshop( decPos ) )
 	{
-		Workshop* ws     = g->wsm()->workshopAt( decPos );
-		auto sourceItems = ws->sourceItems();
+		Workshop* ws = g->wsm()->workshopAt( decPos );
+		const auto& sourceMats = ws->getSourceMaterials();
 		ws->destroy();
 
 		QVariantList sprites = ws->sprites();
@@ -1112,7 +1310,7 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 			Position wsPos( spritevm.toMap().value( "Pos" ).toString() );
 			unsigned int tid = wsPos.toInt();
 			Tile& tile       = getTile( tid );
-			
+
 			tile.wallSpriteUID = 0;
 			clearTileFlag( wsPos, TileFlag::TF_WORKSHOP );
 			tile.wallType = WallType::WT_NOWALL;
@@ -1120,10 +1318,15 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 			updateWalkable( wsPos );
 			addToUpdateList( wsPos );
 		}
-		for ( auto vItem : sourceItems )
+
+		// Create fresh items from stored material specs
+		for ( const auto& sm : sourceMats )
 		{
-			g->inv()->putDownItem( vItem.toUInt(), workPos );
-			g->inv()->setConstructed( vItem.toUInt(), false );
+			unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+			if ( newItem && sm.quality > 0 )
+			{
+				g->inv()->setQuality( newItem, sm.quality );
+			}
 		}
 
 		g->wsm()->deleteWorkshop( ws->id() );
@@ -1141,6 +1344,19 @@ bool World::deconstruct( Position decPos, Position workPos, bool ignoreGravity )
 	}
 }
 
+/**
+ * @brief Core deconstruction logic for a single construction record (item, scaffold, fence, or multi-tile).
+ *
+ * Handles item recovery (from stored SourceMaterial or live inventory), manager
+ * cleanup (rooms, stockpiles, mechanisms, lights, etc.), tile restoration, and
+ * sunlight recalculation.
+ * @param constr Construction data map describing what was built.
+ * @param decPos Position being deconstructed.
+ * @param isFloor True if this is a floor construction, false for wall.
+ * @param workPos Position where returned materials are placed.
+ * @param ignoreGravity If true, skips gravity processing.
+ * @return True on success.
+ */
 bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Position workPos, bool ignoreGravity )
 {
 	qDebug() << "deconstruct" << decPos.toString() << isFloor;
@@ -1158,7 +1374,7 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 		switch ( m_constrItemSID2ENUM.value( type ) )
 		{
 			case CI_STORAGE:
-				g->spm()->removeContainer( itemID, decPos );
+				g->spm()->removeContainer( decPos );
 				break;
 			case CI_FURNITURE:
 				g->rm()->removeFurniture( decPos );
@@ -1211,18 +1427,26 @@ bool World::deconstruct2( QVariantMap constr, Position decPos, bool isFloor, Pos
 			tile.wallSpriteUID = 0;
 		}
 
-		if ( constr.value( "FromParts" ).toBool() )
+		if ( constr.contains( "Source" ) )
+		{
+			// Item was destroyed on installation — create fresh item from stored specs
+			SourceMaterial sm = SourceMaterial::deserialize( constr.value( "Source" ).toMap() );
+			unsigned int newItem = g->inv()->createItem( workPos, sm.itemSID, sm.materialSID );
+			if ( newItem && sm.quality > 0 )
+			{
+				g->inv()->setQuality( newItem, sm.quality );
+			}
+		}
+		else if ( constr.value( "FromParts" ).toBool() )
 		{
 			for ( auto vItem : constr.value( "Items" ).toList() )
 			{
-				g->inv()->setConstructed( vItem.toUInt(), false );
 				g->inv()->moveItemToPos( vItem.toUInt(), workPos );
 			}
 			g->inv()->destroyObject( itemID );
 		}
 		else
 		{
-			g->inv()->setConstructed( itemID, false );
 			g->inv()->moveItemToPos( itemID, workPos );
 		}
 

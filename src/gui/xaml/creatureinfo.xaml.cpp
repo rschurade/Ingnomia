@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creatureinfo.xaml.cpp
+ *  @brief CreatureInfo user-control implementation: loads CreatureInfo.xaml on construction.
+ */
 #include "creatureinfo.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the CreatureInfo user control and registers the Loaded delegate.
 CreatureInfo::CreatureInfo()
 {
 	Loaded() += MakeDelegate( this, &CreatureInfo::OnLoaded );
@@ -28,16 +32,19 @@ CreatureInfo::CreatureInfo()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the CreatureInfo.xaml resource into this user control.
 void CreatureInfo::InitializeComponent()
 {
 	GUI::LoadComponent( this, "CreatureInfo.xaml" );
 }
 
+/// @brief Noesis event-connection callback. CreatureInfo has no code-behind events.
 bool CreatureInfo::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; CreatureInfoModel handles state.
 void CreatureInfo::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

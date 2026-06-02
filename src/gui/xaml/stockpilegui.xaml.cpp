@@ -15,7 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+/** @file stockpilegui.xaml.cpp
+ *  @brief StockpileGui code-behind implementation. Thin stub: constructor loads the XAML
+ *         and hooks Loaded; OnLoaded and ConnectEvent are empty because the window binds
+ *         entirely through StockpileModel.
+ */
 #include "stockpilegui.xaml.h"
 
 using namespace IngnomiaGUI;

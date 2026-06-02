@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file militaryproxy.cpp
+ *  @brief MilitaryProxy implementation: connects every signal/slot pair between
+ *         MilitaryModel and AggregatorMilitary. The remaining functions are thin
+ *         pass-throughs that emit signals or relay incoming list updates to the model.
+ */
 #include "militaryproxy.h"
 
 #include "../../base/global.h"
@@ -22,6 +27,7 @@
 
 #include <QDebug>
 
+/// @brief Constructs the MilitaryProxy and wires up all aggregator signal/slot connections.
 MilitaryProxy::MilitaryProxy( QObject* parent ) :
 	QObject( parent )
 {

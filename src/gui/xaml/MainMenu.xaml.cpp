@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file MainMenu.xaml.cpp
+ *  @brief MainMenu user-control implementation: loads MainMenu.xaml on construction.
+ */
 #include "MainMenu.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the MainMenu user control and registers the Loaded delegate.
 MainMenu::MainMenu()
 {
 	Loaded() += MakeDelegate( this, &MainMenu::OnLoaded );
@@ -28,16 +32,19 @@ MainMenu::MainMenu()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the MainMenu.xaml resource into this user control.
 void MainMenu::InitializeComponent()
 {
 	GUI::LoadComponent( this, "MainMenu.xaml" );
 }
 
+/// @brief Noesis event-connection callback. MainMenu has no code-behind events.
 bool MainMenu::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — currently a no-op.
 void MainMenu::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

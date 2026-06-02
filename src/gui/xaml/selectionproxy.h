@@ -15,12 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selectionproxy.h
+ *  @brief Qt-side proxy that pushes SelectionGui info strings from AggregatorSelection
+ *         into SelectionModel. Only has slots — the model never writes back.
+ */
 #pragma once
 
 #include "selectionmodel.h"
 
 #include <QObject>
 
+/// @brief One-way proxy that translates AggregatorSelection signals into SelectionModel
+///        update calls so the XAML info panel stays in sync with the active cursor action.
 class SelectionProxy : public QObject
 {
 	Q_OBJECT
@@ -31,7 +37,7 @@ public:
 
 
 private:
-	IngnomiaGUI::SelectionModel* m_parent = nullptr;
+	IngnomiaGUI::SelectionModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
 
 

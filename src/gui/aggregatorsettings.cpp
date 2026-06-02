@@ -15,22 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorsettings.cpp
+ *  @brief AggregatorSettings implementation: reads values from Global::cfg for the GUI and
+ *         writes edits back. Emits a few specialised signals for changes that the renderer
+ *         needs to react to immediately (UI scale, fullscreen).
+ */
 #include "aggregatorsettings.h"
 
 #include "../base/config.h"
 
 #include <QDebug>
 
+/// @brief Constructs the AggregatorSettings.
+/// @param parent Qt parent object.
 AggregatorSettings::AggregatorSettings( QObject* parent ) :
 	QObject(parent)
 {
 
 }
 
+/// @brief Destructor.
 AggregatorSettings::~AggregatorSettings()
 {
 }
 
+/// @brief Snapshots the current config values into m_settings, populates the language list,
+///        and emits signalUpdateSettings for the GUI to bind to.
 void AggregatorSettings::onRequestSettings()
 {
     m_settings.fullscreen = Global::cfg->get( "fullscreen" ).toBool();
@@ -51,50 +61,67 @@ void AggregatorSettings::onRequestSettings()
     emit signalUpdateSettings( m_settings );
 }
 
+/// @brief Persists the selected language in the config.
+/// @param language Language ID (e.g. "en_US").
 void AggregatorSettings::onSetLanguage( QString language )
 {
     Global::cfg->set( "language", language );
     //emit signalSetLanguage( language );
 }
     
+/// @brief Persists a new UI scale factor and notifies the GUI shell to reflow layouts.
+/// @param scale New scale factor.
 void AggregatorSettings::onSetUIScale( float scale )
 {
     Global::cfg->set( "uiscale", scale );
     emit signalUIScale( scale );
 }
 
+/// @brief Persists the fullscreen flag and notifies the main window.
+/// @param value True for fullscreen.
 void AggregatorSettings::onSetFullScreen( bool value )
 {
     Global::cfg->set( "fullscreen", value );
     emit signalFullScreen( value );
 }
 
+/// @brief Persists the keyboard camera pan speed.
+/// @param value New pan speed in pixels/tick.
 void AggregatorSettings::onSetKeyboardSpeed( int value )
 {
     Global::cfg->set( "keyboardMoveSpeed", value );
 }
 
+/// @brief Persists the minimum light level, stored as a 0–1 float after dividing by 100.
+/// @param value Light-min value in percent (0–100).
 void AggregatorSettings::onSetLightMin( int value )
 {
     Global::cfg->set( "lightMin", (float)value / 100. );
 }
 
+/// @brief Persists whether the mouse wheel cycles z-levels (true) or zooms (false).
+/// @param value New toggle state.
 void AggregatorSettings::onSetToggleMouseWheel( bool value )
 {
     Global::cfg->set( "toggleMouseWheel", value );
 }
 
+/// @brief Emits the current UI scale so the GUI can re-bind to it during startup.
 void AggregatorSettings::onRequestUIScale()
 {
     float scale = Global::cfg->get( "uiscale" ).toFloat();
     emit signalUIScale( scale );
 }
+
+/// @brief Emits the current game version string to the GUI.
 void AggregatorSettings::onRequestVersion()
 {
     QString version = Global::cfg->get( "CurrentVersion" ).toString();
     emit signalVersion( version );
 }
 
+/// @brief Persists the master audio volume.
+/// @param value Volume in percent (0–100).
 void AggregatorSettings::onSetAudioMasterVolume( float value )
 {
 	Global::cfg->set( "AudioMasterVolume", (float)value);

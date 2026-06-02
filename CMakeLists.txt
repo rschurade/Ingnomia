@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo CACHE STRING INTERNAL FORCE)
 
 # Project version, 4 numbers representation
-set(DEFAULT_VERSION "0.8.11.0" CACHE STRING "Version" FORCE)
+set(DEFAULT_VERSION "0.9.0.0" CACHE STRING "Version" FORCE)
 # Set from CI only
 set(BUILD_ID "0" CACHE INTERNAL "")
 set(GIT_REPO "" CACHE INTERNAL "")
@@ -19,7 +19,8 @@ project(Ingnomia
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
-find_package(Qt5 REQUIRED QUIET COMPONENTS Core Xml Sql OpenGL)
+find_package(Qt6 REQUIRED QUIET COMPONENTS Core Xml Sql Gui Widgets)
+find_package(OpenGL REQUIRED)
 
 find_package(Steam REQUIRED)
 find_package(Noesis REQUIRED)
@@ -41,7 +42,7 @@ add_executable(${PROJECT_NAME})
 # C++ version
 set_target_properties(${PROJECT_NAME}
 	PROPERTIES
-		CXX_STANDARD 17
+		CXX_STANDARD 23
 		AUTOMOC ON
 		INTERPROCEDURAL_OPTIMIZATION ON
 		INSTALL_RPATH "$ORIGIN"
@@ -50,13 +51,25 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
 
 add_subdirectory(content) # Deployable content
-# Copy content to target directory
-add_custom_command(TARGET ${PROJECT_NAME}
-	POST_BUILD
-	COMMAND
-		${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_SOURCE_DIR}/content $<TARGET_FILE_DIR:${PROJECT_NAME}>/content
+# Stage content to target directory whenever any content file changes. Using a stamp
+# file with file-level DEPENDS lets ninja/VS re-copy only when content actually changes,
+# without requiring the C++ target to rebuild.
+file(GLOB_RECURSE INGNOMIA_CONTENT_FILES CONFIGURE_DEPENDS
+	"${CMAKE_SOURCE_DIR}/content/*"
 )
+set(INGNOMIA_CONTENT_STAMP "${CMAKE_BINARY_DIR}/content.stamp")
+add_custom_command(
+	OUTPUT ${INGNOMIA_CONTENT_STAMP}
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/content
+		${CMAKE_BINARY_DIR}/$<CONFIG>/content
+	COMMAND ${CMAKE_COMMAND} -E touch ${INGNOMIA_CONTENT_STAMP}
+	DEPENDS ${INGNOMIA_CONTENT_FILES}
+	COMMENT "Staging content to ${CMAKE_BINARY_DIR}/$<CONFIG>/content"
+	VERBATIM
+)
+add_custom_target(stage_content DEPENDS ${INGNOMIA_CONTENT_STAMP})
+add_dependencies(${PROJECT_NAME} stage_content)
 
 if(WIN32)
 	set(RC_SOURCES
@@ -85,10 +98,13 @@ add_subdirectory(3rdparty) # 3rd party dependencies
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
-		Qt5::Core
-		Qt5::Xml
-		Qt5::Sql
-		Qt5::OpenGL
+		Qt6::Core
+		Qt6::Xml
+		Qt6::Sql
+		Qt6::Gui
+		Qt6::Widgets
+		OpenGL::GL
+		glad
 		Steam
 		NoesisApp
 		fastnoise

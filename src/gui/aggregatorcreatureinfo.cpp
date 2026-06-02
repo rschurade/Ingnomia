@@ -15,6 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorcreatureinfo.cpp
+ *  @brief AggregatorCreatureInfo implementation: fills GuiCreatureInfo for gnomes, monsters,
+ *         and animals; encodes per-slot equipment/uniform sprites as PNG byte buffers for the
+ *         Noesis view model to consume.
+ */
 #include "aggregatorcreatureinfo.h"
 
 #include "../base/db.h"
@@ -31,16 +36,21 @@
 
 #include "../gui/strings.h"
 
+/// @brief Constructs the AggregatorCreatureInfo.
+/// @param parent Qt parent object.
 AggregatorCreatureInfo::AggregatorCreatureInfo( QObject* parent ) :
 	QObject(parent)
 {
 }
 
+/// @brief Binds the aggregator to a Game instance.
+/// @param game Game to bind to.
 void AggregatorCreatureInfo::init( Game* game )
 {
 	g = game;
 }
 
+/// @brief Re-sends the current creature payload if a creature is currently being displayed.
 void AggregatorCreatureInfo::update()
 {
 	if( m_currentID != 0 )
@@ -49,6 +59,10 @@ void AggregatorCreatureInfo::update()
 	}
 }
 
+/// @brief Fills GuiCreatureInfo from the given creature (gnome first, then monster, then
+///        animal) and emits signalCreatureUpdate. For gnomes it also rebuilds the per-slot
+///        equipment PNG buffers when the equipment has changed or the creature has switched.
+/// @param id Creature UID to display.
 void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 {
 	if( !g ) return;
@@ -179,12 +193,16 @@ void AggregatorCreatureInfo::onRequestCreatureUpdate( unsigned int id )
 }
 
 
+/// @brief Emits the list of available profession names to the GUI.
 void AggregatorCreatureInfo::onRequestProfessionList()
 {
 	if( !g ) return;
 	emit signalProfessionList( g->gm()->professions() );
 }
 
+/// @brief Assigns a new profession to the given gnome (no-op if it's the current profession).
+/// @param gnomeID    Creature UID of the gnome.
+/// @param profession New profession name.
 void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString profession )
 {
 	if( !g ) return;
@@ -200,6 +218,11 @@ void AggregatorCreatureInfo::onSetProfession( unsigned int gnomeID, QString prof
 	}
 }
 
+/// @brief Builds a PNG byte buffer for a held item (sword, shield, etc.) and stores it in
+///        GuiCreatureInfo::itemPics under @p slot. If the sprite cannot be created, the item
+///        is cleared so the GUI draws the empty-slot icon instead.
+/// @param slot  GUI slot key.
+/// @param eItem Equipment item (may be mutated to clear itemID on failure).
 void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 {
 	if( !g ) return;
@@ -234,6 +257,12 @@ void AggregatorCreatureInfo::createItemImg( QString slot, EquipmentItem& eItem )
 	}
 }
 
+/// @brief Builds a PNG byte buffer for an armour slot by combining the uniform type prefix
+///        ("UI" + uniform type + slot) with the equipped material, storing the result under
+///        @p slot. Clears the equipment item's itemID on sprite-lookup failure.
+/// @param slot  GUI slot key.
+/// @param uItem Uniform definition for this slot.
+/// @param eItem Currently equipped item (may be mutated to clear itemID on failure).
 void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& uItem, EquipmentItem& eItem )
 {
 	if( !g ) return;
@@ -260,6 +289,9 @@ void AggregatorCreatureInfo::createUniformImg( QString slot, const UniformItem& 
 	}
 }
 
+/// @brief Builds a PNG buffer for the given empty-slot placeholder sprite and stores it in
+///        m_emptyPics. Falls back to a fully-transparent 32×32 buffer if sprite creation fails.
+/// @param spriteID Placeholder sprite ID (e.g. "UIEmptySlotHead").
 void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 {
 	if( !g ) return;
@@ -285,6 +317,8 @@ void AggregatorCreatureInfo::createEmptyUniformImg( QString spriteID )
 	}
 }
 
+/// @brief Builds PNG buffers for all empty-slot placeholder sprites (head/chest/arms/hands/
+///        legs/feet/shield/weapon/back/neck/ring) and emits signalEmptyPics.
 void AggregatorCreatureInfo::onRequestEmptySlotImages()
 {
 	if( !g ) return;

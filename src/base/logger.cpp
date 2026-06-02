@@ -15,23 +15,41 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+/** @file logger.cpp
+ *  @brief Implementation of Logger, a thread-safe game event message log.
+ */
+
 #include "logger.h"
 
 #include "../base/gamestate.h"
 
+/** @brief Constructs an empty Logger instance. */
 Logger::Logger()
 {
 }
 
+/** @brief Destructor. */
 Logger::~Logger()
 {
 }
 
+/** @brief Clears all stored log messages. */
 void Logger::reset()
 {
 	m_messages.clear();
 }
 
+/** @brief Adds a timestamped log message to the message list.
+ *
+ *  Creates a LogMessage stamped with the current game tick and appends
+ *  it to the internal message buffer. Access is mutex-protected for
+ *  thread safety.
+ *
+ *  @param lt            The log type/category of the message.
+ *  @param msg           The human-readable log message text.
+ *  @param sourceEntity  The ID of the entity that generated the message (0 if none).
+ */
 void Logger::log( LogType lt, QString msg, unsigned int sourceEntity )
 {
 	LogMessage lm { GameState::tick, "", lt, msg, sourceEntity };

@@ -15,6 +15,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file GameModel.h
+ *  @brief Central view model for the in-game HUD (GameGui.xaml). Exposes time/date,
+ *         kingdom info, render toggles, the action bar (CommandButton / BuildButton /
+ *         BuildItem), the watch list, and window-visibility flags driving every sub-window
+ *         (Tile Info, Stockpile, Workshop, Agriculture, Population, Military, etc.).
+ */
 #ifndef __GameModel_H__
 #define __GameModel_H__
 
@@ -50,6 +56,7 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One button in the left command bar (Dig, Chop, Stockpile, …). Pure data row.
 class CommandButton final : public Noesis::BaseComponent
 {
 public:
@@ -66,6 +73,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One category tab button in the build menu (Workshops, Walls, Furniture, …).
 class BuildButton final : public Noesis::BaseComponent
 {
 public:
@@ -84,6 +92,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One (material, count) entry in the build menu's material dropdown for a required component.
 class AvailableMaterial final : public Noesis::BaseComponent
 {
 public:
@@ -102,6 +111,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One required-component row on a BuildItem: item SID, required amount, and a
+///        dropdown of AvailableMaterial rows with the user's current selection.
 class NRequiredItem final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
@@ -130,6 +141,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief One buildable item (workshop, wall, furniture, …) in the build menu. Holds the
+///        preview bitmap, required-component rows, and a "build" DelegateCommand.
 class BuildItem final : public Noesis::BaseComponent
 {
 public:
@@ -163,43 +176,63 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief A queued event-popup message waiting to be shown in the HUD message overlay.
 struct GuiMessageEvent {
-	unsigned int id;
-	QString title;
-	QString msg;
-	bool pause;
-	bool yesno;
+	unsigned int id;  ///< Event UID (sent back via onAnswer when resolved).
+	QString title;    ///< Event title shown in the overlay header.
+	QString msg;      ///< Event body text.
+	bool pause;       ///< True if the game should pause while the overlay is visible.
+	bool yesno;       ///< True if the event needs a yes/no answer, false for just an "OK".
 };
 
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief The central HUD view model. Receives updates from ProxyGameView, exposes data to
+///        every XAML binding on GameGui.xaml, and routes user actions back through the
+///        proxy. Also owns the event-message queue driving the event popup overlay.
 class GameModel final : public NoesisApp::NotifyPropertyChangedBase
 {
 public:
 	GameModel();
 
+	/// @brief Refreshes the clock strings and sun-status image shown in the top bar.
 	void setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus );
+	/// @brief Refreshes kingdom name + three info lines shown in the top bar.
 	void updateKingdomInfo( QString name, QString info1, QString info2, QString info3 );
+	/// @brief Updates the displayed view level (z coordinate) in the top bar.
 	void setViewLevel( int level );
+	/// @brief Updates the paused indicator when the game state changes externally.
 	void updatePause( bool value );
+	/// @brief Updates the game-speed indicator (normal / fast).
 	void updateGameSpeed( GameSpeed speed );
+	/// @brief Syncs the four render-option checkboxes (designations, jobs, walls, axles).
 	void updateRenderOptions( bool designation, bool jobs, bool walls, bool axles );
 
+	/// @brief Replaces the build menu's item list for the current category.
 	void updateBuildItems( const QList<GuiBuildItem>& items );
+	/// @brief Replaces the watch-list strip with a fresh list of watched item rows.
 	void updateWatchList( const QList<GuiWatchedItem>& list );
 
+	/// @brief Queues a new event popup (or shows immediately if none are open).
 	void eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno );
 
+	/// @brief Enters build mode (shows the build menu and hides other HUD panels).
 	void onBuild();
+	/// @brief Opens the Tile Info sub-window for the given tile.
 	void onShowTileInfo( unsigned tileID );
+	/// @brief Opens the Stockpile sub-window for the given stockpile.
 	void onShowStockpileInfo( unsigned stockpileID );
+	/// @brief Opens the Workshop sub-window for the given workshop.
 	void onShowWorkshopInfo( unsigned workshopID );
+	/// @brief Opens the Agriculture sub-window for the given designation.
 	void onShowAgriculture( unsigned id );
 
+	/// @brief Replaces the currently shown sub-window (enum drives which *Visibility property is "Visible").
 	void setShownInfo( ShownInfo info );
 
+	/// @brief Command handler for the universal "back" button: closes the current sub-window.
 	void OnCmdBack( BaseComponent* param );
 
 private:
@@ -308,7 +341,7 @@ private:
 	Noesis::String m_time;
 	Noesis::String m_level;
 	Noesis::String m_sun;
-	Noesis::String m_timeImagePath;
+	Noesis::String m_timeImagePath = "Images/clock/s00.png";
 
 	Noesis::String m_kingdomName;
 	Noesis::String m_kingdomInfo1;

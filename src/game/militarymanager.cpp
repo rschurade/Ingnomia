@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file militarymanager.cpp
+ *  @brief Military system: roles, uniforms, squads, gnome assignment, target priorities, and alarm coordination.
+ */
 #include "militarymanager.h"
 #include "game.h"
 
@@ -33,6 +36,8 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 
+/// @brief Serialises this uniform item slot (type, item SID, material SID, quality) into a QVariantMap.
+/// @return Map with keys Type, Item, Material, Quality.
 QVariantMap UniformItem::serialize()
 {
 	QVariantMap out;
@@ -44,6 +49,8 @@ QVariantMap UniformItem::serialize()
 	return out;
 }
 
+/// @brief Deserialising constructor — restores a uniform slot from a saved map.
+/// @param in Map produced by UniformItem::serialize().
 UniformItem::UniformItem( const QVariantMap& in )
 {
 	type     = in.value( "Type" ).toString();
@@ -52,6 +59,8 @@ UniformItem::UniformItem( const QVariantMap& in )
 	quality  = (UniformItemQuality)in.value( "Quality" ).toInt();
 }
 
+/// @brief Serialises the full uniform (name, ID, and all nine equipment slots) into a QVariantMap.
+/// @return Map with keys Name, ID, Items (nested slot maps).
 QVariantMap Uniform::serialize()
 {
 	QVariantMap vUni;
@@ -68,6 +77,8 @@ QVariantMap Uniform::serialize()
 	return vUni;
 }
 
+/// @brief Deserialising constructor — restores a uniform from a saved map.
+/// @param in Map produced by Uniform::serialize().
 Uniform::Uniform( const QVariantMap& in )
 {
 	name          = in.value( "Name" ).toString();
@@ -85,6 +96,7 @@ Uniform::Uniform( const QVariantMap& in )
 	parts.insert( "Back", UniformItem( vmItems.value( "Back" ).toMap() ) );
 }
 
+/// @brief Default constructor — creates a uniform with all nine slots empty.
 Uniform::Uniform()
 {
 	parts.insert( "HeadArmor", UniformItem() );
@@ -99,6 +111,8 @@ Uniform::Uniform()
 }
 
 
+/// @brief Serialises the military role (name, ID, uniform, combat flags) into a QVariantMap.
+/// @return Map with keys Name, ID, Uniform, MaintainDist, RetreatBleeding, IsCivilian.
 QVariantMap MilitaryRole::serialize()
 {
 	QVariantMap out;
@@ -112,6 +126,8 @@ QVariantMap MilitaryRole::serialize()
 	return out;
 }
 
+/// @brief Deserialising constructor — restores a military role from a saved map.
+/// @param in Map produced by MilitaryRole::serialize().
 MilitaryRole::MilitaryRole( const QVariantMap& in )
 {
 	name            = in.value( "Name" ).toString();
@@ -122,6 +138,8 @@ MilitaryRole::MilitaryRole( const QVariantMap& in )
 	retreatBleeding = in.value( "RetreatBleeding" ).toBool();
 }
 
+/// @brief Serialises the squad (name, ID, gnome list, and target priorities) into a QVariantMap.
+/// @return Map with keys Name, ID, Gnomes, Priorities.
 QVariantMap Squad::serialize()
 {
 	QVariantMap out;
@@ -142,6 +160,10 @@ QVariantMap Squad::serialize()
 	return out;
 }
 
+/// @brief Deserialising constructor — restores a squad from a saved map.
+///        Adds any creature types missing from the saved priorities with FLEE attitude.
+/// @param tps All known creature type SIDs (from CreatureManager::types()).
+/// @param in  Map produced by Squad::serialize().
 Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 	types( tps )
 {
@@ -180,15 +202,21 @@ Squad::Squad( QList<QString> tps, const QVariantMap& in ) :
 	}
 }
 
+/// @brief Constructs the military manager.
+/// @param parent Owning Game instance.
 MilitaryManager::MilitaryManager( Game* parent ) :
 	g( parent ),
 	QObject( parent )
 {
 }
+
+/// @brief Destructor.
 MilitaryManager::~MilitaryManager()
 {
 }
 
+/// @brief Loads roles and squads from GameState or from the military.json settings file.
+///        Creates a default role and default squad if none exist.
 void MilitaryManager::init()
 {
 	auto mm = GameState::military;
@@ -239,6 +267,7 @@ void MilitaryManager::init()
 	}
 }
 
+/// @brief Persists role definitions (without squad data) to military.json in the data folder.
 void MilitaryManager::save()
 {
 	auto vm = serialize();
@@ -247,6 +276,8 @@ void MilitaryManager::save()
 	IO::saveFile( IO::getDataFolder() + "/settings/military.json", jo );
 }
 
+/// @brief Serialises all roles and squads into a QVariantMap and caches squads in GameState.
+/// @return Map with keys Roles and Squads.
 QVariantMap MilitaryManager::serialize()
 {
 	QVariantMap military;
@@ -268,12 +299,20 @@ QVariantMap MilitaryManager::serialize()
 	return military;
 }
 
+/// @brief Per-tick update hook (currently a no-op stub).
+/// @param tickNumber    Current game tick.
+/// @param seasonChanged Unused.
+/// @param dayChanged    Unused.
+/// @param hourChanged   Unused.
+/// @param minuteChanged Unused.
 void MilitaryManager::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	QElapsedTimer timer;
 	timer.start();
 }
 
+/// @brief Creates a new default military role and inserts it into the role map.
+/// @return UID of the newly created role.
 unsigned int MilitaryManager::addRole()
 {
 	MilitaryRole pos;
@@ -285,6 +324,9 @@ unsigned int MilitaryManager::addRole()
 	return pos.id;
 }
 
+/// @brief Removes the military role with the given UID.
+/// @param id Role UID to remove.
+/// @return true if the role existed and was removed, false otherwise.
 bool MilitaryManager::removeRole( unsigned int id )
 {
 	if ( m_roles.contains( id ) )
@@ -296,6 +338,9 @@ bool MilitaryManager::removeRole( unsigned int id )
 }
 
 
+/// @brief Renames the military role with the given UID.
+/// @param id   Role UID.
+/// @param text New name.
 void MilitaryManager::renameRole( unsigned int id, QString text )
 {
 	if ( m_roles.contains( id ) )
@@ -304,6 +349,9 @@ void MilitaryManager::renameRole( unsigned int id, QString text )
 	}
 }
 
+/// @brief Returns a pointer to the military role with the given UID, or nullptr if absent.
+/// @param id Role UID.
+/// @return Pointer to the MilitaryRole, or nullptr.
 MilitaryRole* MilitaryManager::role( unsigned int id )
 {
 	if ( m_roles.contains( id ) )
@@ -313,6 +361,9 @@ MilitaryRole* MilitaryManager::role( unsigned int id )
 	return nullptr;
 }
 
+/// @brief Returns the display name of the role with the given UID.
+/// @param id Role UID.
+/// @return Role name, or "Position doesn't exist." if not found.
 QString MilitaryManager::roleName( unsigned int id )
 {
 	if ( m_roles.contains( id ) )
@@ -322,6 +373,12 @@ QString MilitaryManager::roleName( unsigned int id )
 	return "Position doesn't exist.";
 }
 
+/// @brief Sets the armor type and material for a specific slot in a role's uniform.
+///        Looks up the item SID from the Uniform_Slots database table.
+/// @param roleID   Role UID to modify.
+/// @param slot     Equipment slot key (e.g. "HeadArmor").
+/// @param type     Armor type string (e.g. "LeatherHelm").
+/// @param material Material SID.
 void MilitaryManager::setArmorType( unsigned int roleID, QString slot, QString type, QString material )
 {
 	if ( m_roles.contains( roleID ) )
@@ -333,6 +390,9 @@ void MilitaryManager::setArmorType( unsigned int roleID, QString slot, QString t
 	}
 }
 
+/// @brief Returns a mutable pointer to the uniform for the given role UID, or nullptr if absent.
+/// @param roleID Role UID.
+/// @return Pointer to the Uniform, or nullptr.
 Uniform* MilitaryManager::uniform( unsigned int roleID )
 {
 	if ( m_roles.contains( roleID ) )
@@ -342,6 +402,9 @@ Uniform* MilitaryManager::uniform( unsigned int roleID )
 	return nullptr;
 }
 
+/// @brief Returns a copy of the uniform for the given role UID, or a default Uniform if absent.
+/// @param roleID Role UID.
+/// @return Copy of the Uniform.
 Uniform MilitaryManager::uniformCopy( unsigned int roleID )
 {
 	if ( m_roles.contains( roleID ) )
@@ -364,6 +427,9 @@ Uniform MilitaryManager::uniformCopy( unsigned int roleID )
 
 
 
+/// @brief Returns a pointer to the squad with the given UID, or nullptr if not found.
+/// @param id Squad UID.
+/// @return Pointer to the Squad, or nullptr.
 Squad* MilitaryManager::squad( unsigned int id )
 {
 	for( int i = 0; i < m_squads.size(); ++i )
@@ -376,6 +442,8 @@ Squad* MilitaryManager::squad( unsigned int id )
 	return nullptr;
 }
 
+/// @brief Creates a new squad with DEFEND attitude for all known creature types.
+/// @return UID of the newly created squad.
 unsigned int MilitaryManager::addSquad()
 {
 	Squad squad( g->m_creatureManager->types() );
@@ -391,6 +459,9 @@ unsigned int MilitaryManager::addSquad()
 	return squad.id;
 }
 
+/// @brief Removes the squad with the given UID.
+/// @param id Squad UID to remove.
+/// @return true if found and removed, false otherwise.
 bool MilitaryManager::removeSquad( unsigned int id )
 {
 	for( int i = 0; i < m_squads.size(); ++i )
@@ -404,6 +475,8 @@ bool MilitaryManager::removeSquad( unsigned int id )
 	return false;
 }
 
+/// @brief Moves the squad with the given UID one position earlier in the squad list.
+/// @param id Squad UID to move.
 void MilitaryManager::moveSquadUp( unsigned int id )
 {
 	for( int i = 1; i < m_squads.size(); ++i )
@@ -416,6 +489,8 @@ void MilitaryManager::moveSquadUp( unsigned int id )
 	}
 }
 
+/// @brief Moves the squad with the given UID one position later in the squad list.
+/// @param id Squad UID to move.
 void MilitaryManager::moveSquadDown( unsigned int id )
 {
 	for( int i = 0; i < m_squads.size() - 1; ++i )
@@ -428,6 +503,9 @@ void MilitaryManager::moveSquadDown( unsigned int id )
 	}
 }
 
+/// @brief Removes @p gnomeID from every squad except @p squadID (used when reassigning a gnome).
+/// @param squadID Squad UID the gnome is being moved into (excluded from removal).
+/// @param gnomeID UID of the gnome to remove from all other squads.
 void MilitaryManager::removeGnomeFromOtherSquad( unsigned int squadID, unsigned int gnomeID )
 {
 	if ( gnomeID )
@@ -442,6 +520,9 @@ void MilitaryManager::removeGnomeFromOtherSquad( unsigned int squadID, unsigned 
 	}
 }
 
+/// @brief Renames the squad with the given UID.
+/// @param id   Squad UID.
+/// @param text New name.
 void MilitaryManager::renameSquad( unsigned int id, QString text )
 {
 	for( int i = 0; i < m_squads.size(); ++i )
@@ -453,6 +534,9 @@ void MilitaryManager::renameSquad( unsigned int id, QString text )
 	}
 }
 
+/// @brief Stub: intended to add a specific target to a squad's target list (currently unimplemented).
+/// @param squadID Squad UID.
+/// @param target  Target creature UID.
 void MilitaryManager::addSquadTarget( unsigned int squadID, unsigned int target )
 {
 	/*
@@ -467,6 +551,9 @@ void MilitaryManager::addSquadTarget( unsigned int squadID, unsigned int target 
 	*/
 }
 
+/// @brief Stub: intended to remove a specific target from a squad's target list (currently unimplemented).
+/// @param squadID Squad UID.
+/// @param target  Target creature UID.
 void MilitaryManager::removeSquadTarget( unsigned int squadID, unsigned int target )
 {
 	/*
@@ -481,6 +568,9 @@ void MilitaryManager::removeSquadTarget( unsigned int squadID, unsigned int targ
 	*/
 }
 
+/// @brief Stub: returns the target list for a squad (currently always returns an empty list).
+/// @param id Squad UID.
+/// @return Empty list (target list logic not yet implemented).
 QList<unsigned int> MilitaryManager::squadTargets( unsigned int id )
 {
 	/*
@@ -492,6 +582,9 @@ QList<unsigned int> MilitaryManager::squadTargets( unsigned int id )
 	return QList<unsigned int>();
 }
 
+/// @brief Returns the squad that contains @p gnomeID, or nullptr if the gnome is unassigned.
+/// @param gnomeID UID of the gnome to look up.
+/// @return Pointer to the gnome's Squad, or nullptr.
 Squad* MilitaryManager::getSquadForGnome( unsigned int gnomeID )
 {
 	if ( m_gnome2Squad.contains( gnomeID ) )
@@ -508,12 +601,19 @@ Squad* MilitaryManager::getSquadForGnome( unsigned int gnomeID )
 	return nullptr;
 }
 
+/// @brief Returns the uniform assigned to @p gnomeID within the given @p squad (stub — always nullptr).
+/// @param gnomeID UID of the gnome.
+/// @param squad   Squad to search within.
+/// @return Always nullptr (uniform per-gnome logic not yet implemented).
 Uniform* MilitaryManager::getGnomeUniform( unsigned int gnomeID, Squad& squad )
 {
-	
+
 	return nullptr;
 }
 
+/// @brief Searches all squads to find the uniform assigned to @p gnomeID.
+/// @param gnomeID UID of the gnome.
+/// @return Pointer to the gnome's Uniform, or nullptr if not found.
 Uniform* MilitaryManager::getGnomeUniform( unsigned int gnomeID )
 {
 	for ( auto& squad : m_squads )
@@ -528,23 +628,34 @@ Uniform* MilitaryManager::getGnomeUniform( unsigned int gnomeID )
 	return nullptr;
 }
 
+/// @brief Hook called when a gnome's equipment or role changes (stub — currently empty).
+/// @param gnomeID UID of the gnome to update.
 void MilitaryManager::updateGnome( unsigned int gnomeID )
 {
-	
+
 }
 
+/// @brief Notification that a gnome died; intended for cleanup (currently a no-op stub).
+/// @param id UID of the dead gnome.
 void MilitaryManager::onGnomeDeath( unsigned int id )
 {
 }
 
+/// @brief Notification that a monster died; intended for target-list cleanup (currently a no-op stub).
+/// @param id UID of the dead monster.
 void MilitaryManager::onMonsterDeath( unsigned int id )
 {
 }
 
+/// @brief Notification that an animal died; intended for target-list cleanup (currently a no-op stub).
+/// @param id UID of the dead animal.
 void MilitaryManager::onAnimalDeath( unsigned int id )
 {
 }
 
+/// @brief Removes @p gnomeID from their current squad and clears the gnome→squad mapping.
+/// @param gnomeID UID of the gnome to remove.
+/// @return true if the gnome was found and removed, false if they were not in any squad.
 bool MilitaryManager::removeGnome( unsigned int gnomeID )
 {
 	auto squad = getSquadForGnome( gnomeID );
@@ -557,6 +668,9 @@ bool MilitaryManager::removeGnome( unsigned int gnomeID )
 	return false;
 }
 	
+/// @brief Moves @p gnomeID from their current squad to the previous squad in the ordered list.
+/// @param gnomeID UID of the gnome to move.
+/// @return true if the gnome was moved, false if they were already in the first squad or unassigned.
 bool MilitaryManager::moveGnomeUp( unsigned int gnomeID )
 {
 	auto squad = getSquadForGnome( gnomeID );
@@ -577,6 +691,10 @@ bool MilitaryManager::moveGnomeUp( unsigned int gnomeID )
 	return false;
 }
 
+/// @brief Moves @p gnomeID from their current squad to the next squad in the ordered list.
+///        If the gnome is unassigned, places them in the first squad.
+/// @param gnomeID UID of the gnome to move.
+/// @return true if the gnome was moved or placed, false if there are no squads.
 bool MilitaryManager::moveGnomeDown( unsigned int gnomeID )
 {
 	auto squad = getSquadForGnome( gnomeID );
@@ -602,6 +720,10 @@ bool MilitaryManager::moveGnomeDown( unsigned int gnomeID )
 	return false;
 }
 
+/// @brief Sets the combat attitude for a given creature type in the specified squad's priority list.
+/// @param squadID  Squad UID.
+/// @param type     Creature type SID.
+/// @param attitude New MilAttitude (FLEE, DEFEND, ATTACK, HUNT).
 void MilitaryManager::onSetAttitude( unsigned int squadID, QString type, MilAttitude attitude )
 {
 	for( auto& squad : m_squads )
@@ -620,6 +742,10 @@ void MilitaryManager::onSetAttitude( unsigned int squadID, QString type, MilAtti
 	}
 }
 
+/// @brief Moves the target priority for @p type one position earlier in @p squadID's priority list.
+/// @param squadID Squad UID.
+/// @param type    Creature type SID whose priority should be increased.
+/// @return true if the entry was found and moved, false otherwise.
 bool MilitaryManager::movePrioUp( unsigned int squadID, QString type )
 {
 	for( auto& squad : m_squads )
@@ -639,6 +765,10 @@ bool MilitaryManager::movePrioUp( unsigned int squadID, QString type )
 	return false;
 }
 
+/// @brief Moves the target priority for @p type one position later in @p squadID's priority list.
+/// @param squadID Squad UID.
+/// @param type    Creature type SID whose priority should be decreased.
+/// @return true if the entry was found and moved, false otherwise.
 bool MilitaryManager::movePrioDown( unsigned int squadID, QString type )
 {
 	for( auto& squad : m_squads )
@@ -658,6 +788,9 @@ bool MilitaryManager::movePrioDown( unsigned int squadID, QString type )
 	return false;
 }
 
+/// @brief Marks or unmarks a role as civilian (civilians do not use military BT branches).
+/// @param roleID Role UID.
+/// @param value  true to mark as civilian, false for military.
 void MilitaryManager::setRoleCivilian( unsigned int roleID, bool value )
 {
 	if ( m_roles.contains( roleID ) )
@@ -666,6 +799,9 @@ void MilitaryManager::setRoleCivilian( unsigned int roleID, bool value )
 	}
 }
 
+/// @brief Returns whether the given role is classified as civilian.
+/// @param roleID Role UID.
+/// @return true if the role is civilian, false if military or not found.
 bool MilitaryManager::roleIsCivilian( unsigned int roleID )
 {
 	if ( m_roles.contains( roleID ) )

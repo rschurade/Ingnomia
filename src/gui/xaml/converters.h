@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file converters.h
+ *  @brief Custom Noesis IValueConverter implementations used by XAML bindings to translate
+ *         a colour-key string from the view model into a SolidColorBrush for the GUI.
+ */
 #pragma once
 
 #include <NsCore/Noesis.h>
@@ -24,20 +28,24 @@
 namespace IngnomiaGUI
 {
 
+/// @brief XAML value converter that maps a colour-key string (e.g. "Combat", "Nature") to
+///        a bright SolidColorBrush, used for normal-weight text/foreground accents.
 class ColorToBrushConverter : public Noesis::BaseValueConverter
 {
 public:
     bool TryConvert( BaseComponent* value, const Noesis::Type* targetType, BaseComponent*, Noesis::Ptr<BaseComponent>& result );
-    
+
 private:
     NS_DECLARE_REFLECTION( ColorToBrushConverter, Noesis::BaseValueConverter )
 };
 
+/// @brief Dark variant of ColorToBrushConverter, returning a darker SolidColorBrush for the
+///        same colour-key strings (used for backgrounds and outlines).
 class ColorToBrushConverterDark : public Noesis::BaseValueConverter
 {
 public:
     bool TryConvert( BaseComponent* value, const Noesis::Type* targetType, BaseComponent*, Noesis::Ptr<BaseComponent>& result );
-    
+
 private:
     NS_DECLARE_REFLECTION( ColorToBrushConverterDark, Noesis::BaseValueConverter )
 };

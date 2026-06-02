@@ -15,10 +15,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodefallback.h
+ *  @brief Composite node implementing selector / fallback (OR) logic.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Fallback (selector) composite -- ticks children until one succeeds.
+ *
+ *  Each tick iterates children from index 0.  Returns SUCCESS as soon as any
+ *  child succeeds, RUNNING if a child is still running, or FAILURE only when
+ *  all children have failed.  Does not remember which child was running between
+ *  ticks (stateless); see BT_NodeFallbackStar for the variant with memory.
+ */
 class BT_NodeFallback final : public BT_Node
 {
 public:

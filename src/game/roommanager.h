@@ -15,11 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file roommanager.h
+ *  Manages all rooms and doors: creation, removal, furniture placement, bed assignment, alarm bells, and access control.
+ */
 #pragma once
 
 
 #include "../base/position.h"
 #include "../game/room.h"
+#include "../game/sourcematerial.h"
 
 #include <QSet>
 
@@ -27,17 +31,19 @@ class Job;
 class Room;
 class Game;
 
+/** @brief A door placed in the world, with per-creature-type blocking settings. */
 struct Door
 {
 	Position pos;
-	QString name             = "Door";
-	unsigned int itemUID     = 0;
-	unsigned int materialUID = 0;
-	bool blockGnomes         = false;
-	bool blockAnimals        = true;
-	bool blockMonsters       = true;
+	QString name         = "Door";
+	SourceMaterial source;
+	unsigned int spriteID = 0;
+	bool blockGnomes     = false;
+	bool blockAnimals    = true;
+	bool blockMonsters   = true;
 };
 
+/** @brief Manages all Room instances and doors: creation, removal, furniture forwarding, bed assignment, alarm jobs, and door access control. */
 class RoomManager : public QObject
 {
 	Q_OBJECT
@@ -53,11 +59,16 @@ public:
 	void addNoPass( Position firstClick, QList<QPair<Position, bool>> fields );
 	void load( QVariantMap vals );
 
-	void addFurniture( unsigned int itemUID, Position pos );
+	void addFurniture( const SourceMaterial& source, unsigned short value, Position pos );
 	void removeFurniture( Position pos );
 
 	void removeRoom( unsigned int id );
 	void removeTile( Position pos );
+
+	Position findFreeBed( unsigned int roomID, unsigned int creatureID );
+	Position findFreeDormBed( unsigned int creatureID );
+	bool claimBed( Position pos, unsigned int creatureID );
+	void releaseBed( unsigned int creatureID );
 
 	bool isRoom( Position pos ) const;
 	bool isDining( Position pos );
@@ -72,7 +83,7 @@ public:
 	QList<unsigned int> getDorms();
 	QList<unsigned int> getDinings();
 
-	void addDoor( Position pos, unsigned int itemID, unsigned int materialUID );
+	void addDoor( Position pos, const SourceMaterial& source, unsigned int spriteID );
 	void removeDoor( Position pos );
 	void loadDoor( QVariantMap vm );
 

@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file selection.h
+ * @brief User tile selection system for build, mine, designate, and job placement commands.
+ */
+
 #pragma once
 
 #include "../base/position.h"
@@ -27,6 +31,7 @@
 
 class Game;
 
+/** @brief Tile requirement flags for validating selection targets. */
 enum enumReqs
 {
 	SEL_NONE,
@@ -61,6 +66,13 @@ enum enumReqs
 	SEL_ANYWALL
 };
 
+/**
+ * @brief Manages user tile selection for placing builds, designations, and jobs.
+ *
+ * Handles click/drag selection, tile validation against requirements (floor, wall,
+ * walkable, etc.), rotation, multi-tile and multi-z selections, and dispatches
+ * the resulting selection to the job manager for job creation.
+ */
 class Selection : public QObject
 {
 	Q_OBJECT

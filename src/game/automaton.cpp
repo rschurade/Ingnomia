@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file automaton.cpp
+ *  @brief Mechanical gnome variant powered by interchangeable fuel cores.
+ */
 #include "automaton.h"
 #include "game.h"
 
@@ -25,6 +28,10 @@
 
 #include <QDebug>
 
+/// @brief Constructs a new automaton at @p pos from the given item definition.
+/// @param pos         World position to place the automaton.
+/// @param automatonItem UID of the physical automaton item that defines body materials.
+/// @param game        Owning game instance.
 Automaton::Automaton( Position pos, unsigned int automatonItem, Game* game ) :
 	Gnome( pos, "Automaton", Gender::UNDEFINED, game ),
 	m_automatonItem( automatonItem )
@@ -34,6 +41,9 @@ Automaton::Automaton( Position pos, unsigned int automatonItem, Game* game ) :
 	init();
 }
 
+/// @brief Deserialising constructor — restores automaton state from a saved map.
+/// @param in   Variant map produced by a previous serialize() call.
+/// @param game Owning game instance.
 Automaton::Automaton( QVariantMap& in, Game* game ) :
 	Gnome( in, game )
 {
@@ -56,6 +66,8 @@ Automaton::Automaton( QVariantMap& in, Game* game ) :
 	init();
 }
 
+/// @brief Serialises automaton-specific state into @p out (delegates base state to Gnome::serialize).
+/// @param out Map to receive the serialised key-value pairs.
 void Automaton::serialize( QVariantMap& out )
 {
 	Gnome::serialize( out );
@@ -70,10 +82,13 @@ void Automaton::serialize( QVariantMap& out )
 	out.insert( "Refuel", m_refuel );
 }
 
+/// @brief Destructor.
 Automaton::~Automaton()
 {
 }
 
+/// @brief Initialises the automaton: loads the behavior tree from the installed core,
+///        removes biological needs, and replaces them with a Fuel need.
 void Automaton::init()
 {
 	initTaskMap();
@@ -109,6 +124,8 @@ void Automaton::init()
 	updateSprite();
 }
 
+/// @brief Rebuilds the automaton's visual sprite from its body-part definitions and component materials.
+///        Eye and flame parts are only included when fuel is above zero.
 void Automaton::updateSprite()
 {
 	QString material = g->inv()->materialSID( m_automatonItem );
@@ -238,6 +255,13 @@ void Automaton::updateSprite()
 	m_renderParamsChanged = true;
 }
 
+/// @brief Per-tick update: consumes one unit of fuel, runs the behavior tree, and moves the automaton.
+/// @param tickNumber   Current absolute game tick.
+/// @param seasonChanged True if the season changed this tick.
+/// @param dayChanged    True if the day changed this tick.
+/// @param hourChanged   True if the hour changed this tick.
+/// @param minuteChanged True if the minute changed this tick.
+/// @return NOFUEL if out of fuel; NOFLOOR if standing over void; JOBCHANGED if job changed; OK otherwise.
 CreatureTickResult Automaton::onTick( quint64 tickNumber, bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged )
 {
 	if ( m_fuel <= 0 )
@@ -286,6 +310,10 @@ CreatureTickResult Automaton::onTick( quint64 tickNumber, bool seasonChanged, bo
 	return CreatureTickResult::OK;
 }
 
+/// @brief Installs a new fuel core into the automaton.
+///        If a core is already installed it is dropped at the automaton's current position first.
+///        Loads the behavior tree and skills defined by the new core's DB row.
+/// @param itemID UID of the core item to install, or 0 to only remove the existing core.
 void Automaton::installCore( unsigned int itemID )
 {
 	if ( m_core )
@@ -329,21 +357,30 @@ void Automaton::installCore( unsigned int itemID )
 	}
 }
 
+/// @brief Returns the UID of the currently installed core item, or 0 if none.
+/// @return Installed core item UID.
 unsigned int Automaton::coreItem()
 {
 	return m_core;
 }
 
+/// @brief Returns whether the automaton should seek refueling when fuel is low.
+/// @return True if auto-refuel is enabled.
 bool Automaton::getRefuelFlag()
 {
 	return m_refuel;
 }
 
+/// @brief Sets whether the automaton should seek refueling when fuel is low.
+/// @param flag True to enable auto-refuel.
 void Automaton::setRefuelFlag( bool flag )
 {
 	m_refuel = flag;
 }
 
+/// @brief Sets the desired core type SID.  If the type is cleared while one was set,
+///        also raises the uninstall flag so the current core gets removed.
+/// @param coreSID Core type string ID, or empty to clear/uninstall.
 void Automaton::setCoreType( QString coreSID )
 {
 	if( !m_coreType.isEmpty() && coreSID.isEmpty() )
@@ -354,28 +391,38 @@ void Automaton::setCoreType( QString coreSID )
 	m_maintJobChanged = true;
 }
 
+/// @brief Returns the desired core type SID.
+/// @return Core type string ID.
 QString Automaton::coreType()
 {
 	return m_coreType;
 }
 
+/// @brief Requests or cancels a core uninstall.  Marks the maintenance job as changed.
+/// @param uninstall True to schedule uninstall, false to cancel.
 void Automaton::uninstallCore( bool uninstall )
 {
 	m_uninstallCore   = uninstall;
 	m_maintJobChanged = true;
 }
 
+/// @brief Returns whether a core uninstall has been requested.
+/// @return True if uninstall is pending.
 bool Automaton::uninstallFlag()
 {
 	return m_uninstallCore;
 }
 
+/// @brief Assigns a maintenance job (core swap / refuel) and marks job-changed.
+/// @param job Shared pointer to the maintenance job.
 void Automaton::setMaintenanceJob( QSharedPointer<Job> job )
 {
 	m_maintenaceJob   = job;
 	m_maintJobChanged = true;
 }
 
+/// @brief Returns the ID of the currently assigned maintenance job, or 0 if none.
+/// @return Maintenance job ID.
 unsigned int Automaton::maintenanceJobID()
 {
 	if( m_maintenaceJob )
@@ -386,6 +433,8 @@ unsigned int Automaton::maintenanceJobID()
 	return 0;
 }
 
+/// @brief Consumes and returns the maintenance-job-changed flag.
+/// @return True if the maintenance job changed since the last call; resets the flag.
 bool Automaton::maintenanceJobChanged()
 {
 	bool out          = m_maintJobChanged;
@@ -393,11 +442,15 @@ bool Automaton::maintenanceJobChanged()
 	return out;
 }
 
+/// @brief Returns the current fuel level.
+/// @return Remaining fuel units.
 int Automaton::getFuelLevel()
 {
 	return m_fuel;
 }
 
+/// @brief Sets the fuel level to @p burnValue and refreshes the sprite.
+/// @param burnValue New fuel amount (maximum capacity of the installed core).
 void Automaton::fillUp( int burnValue )
 {
 	m_fuel = burnValue;

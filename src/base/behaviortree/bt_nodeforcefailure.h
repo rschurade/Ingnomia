@@ -15,10 +15,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeforcefailure.h
+ *  @brief Decorator that forces its child's result to FAILURE.
+ */
 #pragma once
 
 #include "bt_node.h"
 
+/** @brief Decorator that always returns FAILURE regardless of the child's result.
+ *
+ *  Ticks its single child.  If the child returns RUNNING, RUNNING is
+ *  propagated; any other result (SUCCESS or FAILURE) is mapped to FAILURE.
+ *  If there is no child, returns FAILURE immediately.
+ */
 class BT_NodeForceFailure final : public BT_Node
 {
 public:

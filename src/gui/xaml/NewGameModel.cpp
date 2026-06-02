@@ -33,6 +33,14 @@
 
 #include <QDebug>
 
+/** @file NewGameModel.cpp
+ *  @brief NewGameModel and helper-component implementations. Constructors wrap simple
+ *         (name, sid, amount) data; the substantive logic lives in the OnAdd / OnRemove /
+ *         OnRandom command handlers and updateStartingItems()/updateStartingAnimals().
+ *         Trivial Get/Set property accessors are XAML binding plumbing covered by the
+ *         file-level note in the header.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
@@ -142,6 +150,9 @@ StartAnimal::StartAnimal( QString type, QString gender, int amount )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the NewGameModel: registers every DelegateCommand, populates the
+///        item / material / animal / gender / preset dropdowns from NewGameSettings, and
+///        seeds the starting-item / starting-animal lists from the current settings.
 NewGameModel::NewGameModel() :
 	_selectedPreset( nullptr ),
 	_selectedItem( nullptr ),
@@ -278,6 +289,7 @@ const DelegateCommand* NewGameModel::GetRemoveAnimal() const
 	return &_removeAnimal;
 }
 
+/// @brief Asks NewGameSettings to roll a fresh random kingdom name and refreshes the binding.
 void NewGameModel::OnRandomKingdomName( BaseComponent* param )
 {
 	Global::newGameSettings->setRandomName();
@@ -285,6 +297,7 @@ void NewGameModel::OnRandomKingdomName( BaseComponent* param )
 	OnPropertyChanged( "KingdomName" );
 }
 
+/// @brief Asks NewGameSettings to roll a fresh world-generation seed and refreshes the binding.
 void NewGameModel::OnRandomSeed( BaseComponent* param )
 {
 	Global::newGameSettings->setRandomSeed();
@@ -292,6 +305,7 @@ void NewGameModel::OnRandomSeed( BaseComponent* param )
 	OnPropertyChanged( "Seed" );
 }
 
+/// @brief Creates a new embark preset from the current settings and adds it to the dropdown.
 void NewGameModel::OnNewPreset( BaseComponent* param )
 {
 	QString newName = Global::newGameSettings->addPreset();
@@ -302,11 +316,13 @@ void NewGameModel::OnNewPreset( BaseComponent* param )
 	SetSelectedPreset( _presets->Get( _presets->Count() - 1 ) );
 }
 
+/// @brief Saves the current settings into the selected embark preset.
 void NewGameModel::OnSavePreset( BaseComponent* param )
 {
 	Global::newGameSettings->onSavePreset();
 }
 
+/// @brief Removes the selected embark preset from disk and from the dropdown.
 void NewGameModel::OnDeletePreset( BaseComponent* param )
 {
 	//get name from combobox
@@ -326,6 +342,7 @@ void NewGameModel::OnDeletePreset( BaseComponent* param )
 	}
 }
 
+/// @brief Adds the currently selected (item, mat1, mat2, amount) to the starting-items list.
 void NewGameModel::OnAddItem( BaseComponent* param )
 {
 	QString itemSID;
@@ -349,12 +366,14 @@ void NewGameModel::OnAddItem( BaseComponent* param )
 
 	updateStartingItems();
 }
+/// @brief Removes the row identified by @p param from the starting-items list.
 void NewGameModel::OnRemoveItem( BaseComponent* param )
 {
 	Global::newGameSettings->removeStartingItem( param->ToString().Str() );
 	updateStartingItems();
 }
 
+/// @brief Adds the currently selected (animal, gender, amount) to the starting-animals list.
 void NewGameModel::OnAddAnimal( BaseComponent* param )
 {
 	QString type;
@@ -374,6 +393,7 @@ void NewGameModel::OnAddAnimal( BaseComponent* param )
 
 	updateStartingAnimals();
 }
+/// @brief Removes the row identified by @p param from the starting-animals list.
 void NewGameModel::OnRemoveAnimal( BaseComponent* param )
 {
 	Global::newGameSettings->removeStartingAnimal( param->ToString().Str() );
@@ -629,6 +649,7 @@ void NewGameModel::SetSelectedPreset( Preset* preset )
 	}
 }
 
+/// @brief Rebuilds the starting-items observable collection from NewGameSettings.
 void NewGameModel::updateStartingItems()
 {
 	_startingItems->Clear();
@@ -640,6 +661,7 @@ void NewGameModel::updateStartingItems()
 	OnPropertyChanged( "StartingItems" );
 }
 
+/// @brief Rebuilds the starting-animals observable collection from NewGameSettings.
 void NewGameModel::updateStartingAnimals()
 {
 	_startingAnimals->Clear();

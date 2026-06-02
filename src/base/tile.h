@@ -15,10 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file tile.h
+ * @brief Core tile data structures, wall/floor/flag enums, and water flow types.
+ */
+
 #pragma once
 
 #include "../base/position.h"
 
+/** @brief Material definition for terrain generation (walls and floors). */
 struct TerrainMaterial
 {
 	QString key;
@@ -34,6 +39,7 @@ struct TerrainMaterial
 	unsigned int floorSprite     = 0;
 };
 
+/** @brief Material definition for embedded ores/gems in walls. */
 struct EmbeddedMaterial
 {
 	QString key;
@@ -44,6 +50,7 @@ struct EmbeddedMaterial
 	int highest;
 };
 
+/** @brief Bitmask flags describing the type and properties of a tile's wall. */
 enum WallType : unsigned short
 {
 	WT_NOWALL       = 0,
@@ -59,6 +66,7 @@ enum WallType : unsigned short
 };
 Q_DECLARE_TYPEINFO( WallType, Q_PRIMITIVE_TYPE );
 
+/** @brief Bitmask flags describing the type of a tile's floor. */
 enum FloorType : unsigned char
 {
 	FT_NOFLOOR      = 0,
@@ -70,6 +78,7 @@ enum FloorType : unsigned char
 };
 Q_DECLARE_TYPEINFO( FloorType, Q_PRIMITIVE_TYPE );
 
+/** @brief Bitmask flags for tile state — walkability, designations, jobs, water, lighting, etc. */
 enum class TileFlag : quint64
 {
 	TF_NONE              = 0,
@@ -137,6 +146,7 @@ constexpr inline void operator-=( TileFlag& a, const TileFlag& b )
 	a = a - b;
 }
 
+/** @brief Bitmask flags for water/lava flow direction on a tile. */
 enum WaterFlow : unsigned char
 {
 	WF_NOFLOW = 0x00,
@@ -159,6 +169,12 @@ constexpr inline void operator+=( WaterFlow& a, const WaterFlow& b )
 
 Q_DECLARE_TYPEINFO( WaterFlow, Q_PRIMITIVE_TYPE );
 
+/**
+ * @brief Core data for a single world tile — floor, wall, materials, sprites, fluid, lighting.
+ *
+ * Stored in a flat array indexed by Position::toInt(). Kept as a POD struct
+ * for cache-friendly iteration over the world grid.
+ */
 struct Tile
 {
 	TileFlag flags = TileFlag::TF_NONE;
@@ -186,6 +202,7 @@ struct Tile
 };
 Q_DECLARE_TYPEINFO( Tile, Q_PRIMITIVE_TYPE );
 
+/** @brief Rendering data for an axle mechanism tile. */
 struct AxleData
 {
 	unsigned int itemID = 0;

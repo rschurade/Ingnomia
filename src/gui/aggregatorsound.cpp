@@ -15,6 +15,11 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorsound.cpp
+ *  @brief AggregatorSound implementation: OpenAL context bring-up, sound buffer loading,
+ *         per-effect source allocation with pitch variation, listener placement from the
+ *         camera, and line-of-sight occlusion via low-pass filters.
+ */
 #include "aggregatorsound.h"
 
 #include "../base/config.h"
@@ -30,13 +35,17 @@
 #include <QDebug>
 #include <QJsonDocument>
 
+/// @brief Opens the default OpenAL device, creates a context and listener, and pre-builds the
+///        occlusion low-pass filter bank (one filter per occlusion depth up to maxOcclusion).
+///        Catches filter creation failures and falls back to pure volume attenuation.
+/// @param parent Qt parent object.
 AggregatorSound::AggregatorSound( QObject* parent ) :
 	QObject( parent )
 {
 	//sf::SoundBuffer buffer;
 	QString exePath = QCoreApplication::applicationDirPath();
 
-	connect( Global::eventConnector, &EventConnector::signalCameraPosition, this, &AggregatorSound::onCameraPosition );
+	// Camera position connection is made in GameManager::postCreationInit() with QueuedConnection
 	auto device    = std::make_shared<AL::Device>();
 	m_audioContext = std::make_shared<AL::Context>( device );
 	AL::Context::Lock lock( m_audioContext );
@@ -55,10 +64,14 @@ AggregatorSound::AggregatorSound( QObject* parent ) :
 	}
 }
 
+/// @brief Destructor.
 AggregatorSound::~AggregatorSound()
 {
 }
 
+/// @brief Binds the aggregator to a Game instance, sets the master volume from config, and
+///        loads every sound buffer listed in the Sounds DB table into m_buffers.
+/// @param game Game to bind to.
 void AggregatorSound::init( Game* game )
 {
 	g = game;
@@ -85,6 +98,11 @@ void AggregatorSound::init( Game* game )
 	}
 }
 
+/// @brief Plays a positional world-space sound effect. Looks up a buffer by type + material
+///        (falling back to the material-less variant), creates an AL::Source, applies a small
+///        random pitch variation (±1 octave scaled by factor 1.2), and runs the rebalance
+///        pass so occlusion and volume are correct for the current camera.
+/// @param effectRequest Sound request produced by SoundManager.
 void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 {
 	AL::Context::Lock lock( m_audioContext );
@@ -127,6 +145,9 @@ void AggregatorSound::onPlayEffect( const SoundEffect& effectRequest )
 	garbageCollection();
 }
 
+/// @brief Plays a HUD notification sound that is listener-relative (no spatialisation) and
+///        thus audible regardless of where the camera is looking.
+/// @param effectRequest Sound request produced by SoundManager.
 void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 {
 	AL::Context::Lock lock( m_audioContext );
@@ -168,6 +189,12 @@ void AggregatorSound::onPlayNotify( const SoundEffect& effectRequest )
 	garbageCollection();
 }
 
+/// @brief Recomputes attenuation for a single effect by ray-casting from the listener toward
+///        the sound source, counting how many solid floors/walls (and off-view z-levels) sit
+///        in between, and applying either a low-pass filter (if supported) or a volume drop.
+///        Returns false if occlusion is so heavy that the sound should be culled entirely.
+/// @param effect Active effect to rebalance (mutated).
+/// @return true if the effect should keep playing.
 bool AggregatorSound::rebalanceSound( ActiveEffect& effect )
 {
 	//TODO Check if we can get OpenAL band pass and reverb filters somehow working
@@ -225,6 +252,8 @@ bool AggregatorSound::rebalanceSound( ActiveEffect& effect )
 	return true;
 }
 
+/// @brief Refreshes the listener volume from config and prunes any sources that have finished
+///        playing, letting their AL::Source destructors release the OpenAL handles.
 void AggregatorSound::garbageCollection()
 {
 	//TODO Get the slot fed externally!
@@ -243,6 +272,14 @@ void AggregatorSound::garbageCollection()
 	}
 }
 
+/// @brief Updates the OpenAL listener position/orientation from camera parameters. Converts
+///        the tile-space camera offset and rotation index (0–3) into a right-handed 3D
+///        listener basis, then re-runs occlusion rebalancing on all active effects.
+/// @param x     Camera X offset (tile pixels).
+/// @param y     Camera Y offset (tile pixels).
+/// @param z     Camera Z / view level.
+/// @param r     Camera rotation index (0–3).
+/// @param scale Camera zoom factor (affects virtual listener distance).
 void AggregatorSound::onCameraPosition( float x, float y, float z, int r, float scale )
 {
 	AL::Context::Lock lock( m_audioContext );

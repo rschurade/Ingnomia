@@ -15,17 +15,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file bt_nodeforcefailure.cpp
+ *  @brief Implementation of BT_NodeForceFailure -- decorator forcing FAILURE.
+ */
 #include "bt_nodeforcefailure.h"
 
+/** @brief Construct a ForceFailure decorator.
+ *  @param blackboard Shared blackboard reference.
+ */
 BT_NodeForceFailure::BT_NodeForceFailure( QVariantMap& blackboard ) :
 	BT_Node( "ForceFailure", blackboard )
 {
 }
 
+/** @brief Destructor. */
 BT_NodeForceFailure::~BT_NodeForceFailure()
 {
 }
 
+/** @brief Tick the child; propagate RUNNING, otherwise return FAILURE.
+ *  @return RUNNING if the child is running, FAILURE otherwise.
+ */
 BT_RESULT BT_NodeForceFailure::tick()
 {
 	if ( m_children.size() > 0 )

@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file gnome.h
+ *  Player-controlled gnome creature. Extends CanWork with skills, professions,
+ *  needs (hunger/thirst/sleep), schedules, equipment/uniforms, and combat.
+ */
 #pragma once
 
 #include "../base/behaviortree/bt_node.h"
@@ -28,6 +32,12 @@
 
 struct Uniform;
 
+/** @brief Player-controlled gnome with skills, needs, schedules, uniforms, and combat.
+ *
+ *  Gnomes can perform jobs (via CanWork), eat, drink, sleep, train, go on missions,
+ *  manage equipment/uniforms, and engage in combat. Their behavior tree drives all
+ *  autonomous decision-making each tick.
+ */
 class Gnome : public CanWork
 {
 public:
@@ -52,7 +62,7 @@ public:
 	//return true if need needs action
 	bool evalNeeds( bool seasonChanged, bool dayChanged, bool hourChanged, bool minuteChanged );
 
-	void addNeed( QString id, int level );
+	void addNeed( QString id, float level );
 	int need( QString id );
 
 	void selectProfession( QString profession );
@@ -179,6 +189,9 @@ protected:
 	BT_RESULT actionAbortJob( bool halt );
 	BT_RESULT actionFinishJob( bool halt );
 	BT_RESULT actionWork( bool halt );
+
+	BT_RESULT actionGetHaulTarget( bool halt );
+	BT_RESULT actionNotifyParentJob( bool halt );
 
 	BT_RESULT actionInitAnimalJob( bool halt );
 	BT_RESULT actionGrabAnimal( bool halt );

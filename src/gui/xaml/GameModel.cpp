@@ -31,12 +31,20 @@
 #include <QImage>
 #include <QPixmap>
 
+/** @file GameModel.cpp
+ *  @brief GameModel and helper-component implementations. Handles the big "Cmd*"
+ *         dispatchers that drive every command-button → action mapping, the build menu
+ *         pipeline, and the event-popup queue. Trivial Get/Set property accessors are
+ *         standard XAML binding plumbing and covered by the file-level doc in the header.
+ */
+
 using namespace IngnomiaGUI;
 using namespace Noesis;
 using namespace NoesisApp;
 
 #pragma region DataItems
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a command-bar button data row with a display name and internal SID.
 CommandButton::CommandButton( QString name, QString sid )
 {
 	_name = name.toStdString().c_str();
@@ -54,6 +62,7 @@ const char* CommandButton::GetID() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a build-category tab button with a display name, SID, and icon path.
 BuildButton::BuildButton( QString name, QString sid, QString image )
 {
 	_name  = name.toStdString().c_str();
@@ -77,6 +86,8 @@ const char* BuildButton::GetImage() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Builds a buildable-item card from the GuiBuildItem payload, decoding its preview
+///        PNG into a Noesis bitmap source and creating NRequiredItem rows for each component.
 BuildItem::BuildItem( const GuiBuildItem& gbi, ProxyGameView* proxy )
 {
 	m_name = gbi.name.toStdString().c_str();
@@ -145,6 +156,8 @@ const ImageSource* BuildItem::getBitmapSource() const
 	return m_bitmapSource;
 }
 
+/// @brief Build button command handler: gathers the user's selected materials per component
+///        and forwards a build request to the proxy with the chosen item and material list.
 void BuildItem::onCmdBuild( BaseComponent* param )
 {
 	QStringList mats;
@@ -165,6 +178,8 @@ void BuildItem::onCmdBuild( BaseComponent* param )
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a required-component row with an item SID, required amount, and a
+///        material dropdown built from the supplied (material, available count) pairs.
 NRequiredItem::NRequiredItem( QString sid, int amount, const QList<QPair<QString, int>>& mats )
 {
 	_name   = S::s( "$ItemName_" + sid ).toStdString().c_str();
@@ -181,6 +196,8 @@ NRequiredItem::NRequiredItem( QString sid, int amount, const QList<QPair<QString
 	SetSelectedMaterial( _availableMaterials->Get( 0 ) );
 }
 
+/// @brief Constructs a required-component row with no material list (overload used when the
+///        component is fixed to a single material).
 NRequiredItem::NRequiredItem( QString sid, int amount )
 {
 	_name   = S::s( "$ItemName_" + sid ).toStdString().c_str();
@@ -224,6 +241,7 @@ AvailableMaterial* NRequiredItem::GetSelectedMaterial() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs a (material, count) entry for a required-component dropdown.
 AvailableMaterial::AvailableMaterial( QString sid, int amount, QString item )
 {
 	_name   = ( S::s( "$MaterialName_" + sid ) + " " + S::s( "$ItemName_" + item ) ).toStdString().c_str();
@@ -248,6 +266,9 @@ const char* AvailableMaterial::amount() const
 #pragma endregion Buttons
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the GameModel: instantiates the proxy, registers all DelegateCommands,
+///        seeds the command-button bar, and initialises empty observable collections for
+///        the build menu and the watch list.
 GameModel::GameModel()
 {
 	_cmdButtonCommand.SetExecuteFunc( MakeDelegate( this, &GameModel::OnCmdButtonCommand ) );
@@ -285,6 +306,7 @@ GameModel::GameModel()
 	setShowTileInfo( 0 );
 }
 
+/// @brief Refreshes the four kingdom-info bindings (name + three info lines).
 void GameModel::updateKingdomInfo( QString name, QString info1, QString info2, QString info3 )
 {
 	m_kingdomName = name.toStdString().c_str();
@@ -297,6 +319,8 @@ void GameModel::updateKingdomInfo( QString name, QString info1, QString info2, Q
 	OnPropertyChanged( "KingdomInfo3" );
 }
 
+/// @brief Formats minute/hour/day/year/season/sun strings for the top-bar clock and picks
+///        the matching sun-cycle image (sunrise/day/sunset/night).
 void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, int year, QString sunStatus )
 {
 	{
@@ -373,22 +397,26 @@ void GameModel::setTimeAndDate( int minute, int hour, int day, QString season, i
 
 }
 
+/// @brief Updates the displayed view-level z-coordinate string.
 void GameModel::setViewLevel( int level )
 {
 	m_level = ( "Level: " + QString::number( level ) ).toStdString().c_str();
 	OnPropertyChanged( "Level" );
 }
 
+/// @brief Syncs the paused indicator with the game-side paused state.
 void GameModel::updatePause( bool paused )
 {
 	setPaused( paused );
 }
 
+/// @brief Syncs the game-speed indicator (Normal/Fast) with the game-side speed.
 void GameModel::updateGameSpeed( GameSpeed speed )
 {
 	setGameSpeed( speed );
 }
 
+/// @brief Syncs the four render-toggle checkboxes from the game-side Globals.
 void GameModel::updateRenderOptions( bool designation, bool jobs, bool walls, bool axles )
 {
 	setRenderDesignations( designation );
@@ -397,6 +425,8 @@ void GameModel::updateRenderOptions( bool designation, bool jobs, bool walls, bo
 	setRenderAxles( axles );
 }
 
+/// @brief Enters build mode by selecting the Build button on the command bar and switching
+///        the action panel to the build category buttons.
 void GameModel::onBuild()
 {
 	//m_selectedButtons = ButtonSelection::None;
@@ -405,6 +435,7 @@ void GameModel::onBuild()
 	OnPropertyChanged( "ShowCategoryButtons" );
 }
 
+/// @brief Switches the HUD to show the Tile Info sub-window for the given tile.
 void GameModel::onShowTileInfo( unsigned int tileID )
 {
 	if ( m_shownInfo == ShownInfo::None || m_shownInfo == ShownInfo::TileInfo )
@@ -413,16 +444,19 @@ void GameModel::onShowTileInfo( unsigned int tileID )
 	}
 }
 
+/// @brief Switches the HUD to show the Stockpile sub-window for the given stockpile.
 void GameModel::onShowStockpileInfo( unsigned int stockpileID )
 {
 	setShowStockpile( stockpileID );
 }
 
+/// @brief Switches the HUD to show the Workshop sub-window for the given workshop.
 void GameModel::onShowWorkshopInfo( unsigned int workshopID )
 {
 	setShowWorkshop( workshopID );
 }
 
+/// @brief Switches the HUD to show the Agriculture sub-window for the given designation.
 void GameModel::onShowAgriculture( unsigned id )
 {
 	setShowAgriculture( id );
@@ -848,17 +882,23 @@ void GameModel::setRenderAxles( bool value )
 	}
 }
 
+/// @brief Build menu category-tab handler. Switches BuildSelection to the picked category
+///        and asks the proxy to refresh the build-item list for that category.
 void GameModel::OnCmdCategory( BaseComponent* param )
 {
 	setCategory( param->ToString().Str() );
 }
 
+/// @brief Internal helper called by OnCmdCategory: maps the picked category string to a
+///        BuildSelection enum and asks the proxy to push matching build items.
 void GameModel::setCategory( const char* cats )
 {
 	QString cat( cats );
 	m_proxy->requestBuildItems( m_buildSelection, cat );
 }
 
+/// @brief Replaces the build menu's item collection with fresh BuildItem rows wrapped
+///        around the supplied GuiBuildItem payloads.
 void GameModel::updateBuildItems( const QList<GuiBuildItem>& items )
 {
 	_buildItems->Clear();
@@ -871,6 +911,9 @@ void GameModel::updateBuildItems( const QList<GuiBuildItem>& items )
 	OnPropertyChanged( "BuildItems" );
 }
 
+/// @brief Top-level dispatcher for the left command bar (Dig, Build, Workshop, Stockpile,
+///        Designations, Population, …). Each button updates m_selectedButtons and either
+///        opens the relevant sub-window or rebuilds the right-side action sub-list.
 void GameModel::OnCmdButtonCommand( BaseComponent* param )
 {
 	QString cmd( param->ToString().Str() );
@@ -1016,6 +1059,8 @@ const NoesisApp::DelegateCommand* GameModel::GetSimpleCommand() const
 	return &_cmdSimple;
 }
 
+/// @brief Universal back-button handler: returns to the previous HUD state, closing whatever
+///        sub-window or build sub-menu is currently open.
 void GameModel::OnCmdBack( BaseComponent* param )
 {
 	if ( m_shownInfo != ShownInfo::None && m_shownInfo != ShownInfo::TileInfo )
@@ -1052,6 +1097,8 @@ void GameModel::OnCmdBack( BaseComponent* param )
 	m_proxy->propagateEscape();
 }
 
+/// @brief Right command button dispatcher: maps the picked sub-action button to the matching
+///        action string on Global::sel (e.g. "DigStairsDown", "BuildWall").
 void GameModel::CmdRightCommandButton( BaseComponent* param )
 {
 	QString cmd( param->ToString().Str() );
@@ -1083,9 +1130,12 @@ void GameModel::CmdRightCommandButton( BaseComponent* param )
 	else if ( cmd == "Debug" )
 	{
 		setShowDebug( true );
+		m_proxy->requestDebugUpdate();
 	}
 }
 
+/// @brief Left sub-button dispatcher: when a top command button is selected, fills out the
+///        right-side button list with the matching sub-actions (e.g. Dig → Mine/Stairs/Ramp).
 void GameModel::CmdLeftCommandButton( BaseComponent* param )
 {
 	QString cmd( param->ToString().Str() );
@@ -1187,6 +1237,8 @@ const NoesisApp::DelegateCommand* GameModel::GetCmdRightCommandButton() const
 }
 
 
+/// @brief Simple action command handler used by buttons that take no parameters
+///        (e.g. "Save", "ToggleRoof").
 void GameModel::OnCmdSimple( BaseComponent* param )
 {
 	if( param )
@@ -1195,11 +1247,13 @@ void GameModel::OnCmdSimple( BaseComponent* param )
 	}
 }
 
+/// @brief Close-window command for the per-sub-window close (X) buttons.
 void GameModel::onCloseWindowCmd( BaseComponent* param )
 {
 	setShownInfo( ShownInfo::None );
 }
 
+/// @brief Opens the Creature Info sub-window for a gnome whose UID is encoded in @p param.
 void GameModel::onOpenGnomeDetailsCmd( BaseComponent* param )
 {
 	if( param )
@@ -1219,6 +1273,8 @@ const char* GameModel::getShowCreatureInfo() const
 	return "Hidden";
 }
 
+/// @brief Sets the active sub-window enum and notifies XAML so the matching ShowXxx
+///        visibility property switches to "Visible".
 void GameModel::setShownInfo( ShownInfo info )
 {
 	m_shownInfo = info;
@@ -1280,6 +1336,8 @@ const char* GameModel::getMessageText() const
 	return m_messageText.Str();
 }
 
+/// @brief Event-popup button handler. Routes "OK"/"Yes"/"No" answers back to the proxy and
+///        advances to the next queued event message (if any).
 void GameModel::onMessageButtonCmd( BaseComponent* param )
 {
 	if( param )
@@ -1299,6 +1357,8 @@ void GameModel::onMessageButtonCmd( BaseComponent* param )
 	OnPropertyChanged( "ShowMessage" );
 }
 
+/// @brief Queues an event-popup message. If no popup is currently visible, the new message
+///        is shown immediately; otherwise it waits in m_messageQueue.
 void GameModel::eventMessage( unsigned int id, QString title, QString msg, bool pause, bool yesno )
 {
 	if( m_showMessageWindow )
@@ -1347,6 +1407,7 @@ void GameModel::setShowSelection( bool value )
 	}
 }
 
+/// @brief Replaces the watch-list strip with fresh GameItem rows from the inventory aggregator.
 void GameModel::updateWatchList( const QList<GuiWatchedItem>& list )
 {
 	m_watchList->Clear();

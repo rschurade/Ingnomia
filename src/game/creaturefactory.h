@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file creaturefactory.h
+ *  Factory for creating Animal and Monster instances from database templates or serialized data.
+ */
 #pragma once
 
 #include "animal.h"
@@ -25,6 +28,7 @@
 
 class Game;
 
+/** @brief Factory that constructs Animal and Monster creatures from DB templates or saved QVariantMap data. */
 class CreatureFactory
 {
 	Q_DISABLE_COPY_MOVE( CreatureFactory )

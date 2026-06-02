@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file debugproxy.h
+ *  @brief Qt-side proxy bridging DebugModel with AggregatorDebug.
+ */
 #pragma once
 
 #include "../aggregatordebug.h"
@@ -22,6 +25,8 @@
 
 #include <QObject>
 
+/// @brief Forwards Debug GUI commands from DebugModel into AggregatorDebug and pushes
+///        gnome/item/material list refreshes back into the model.
 class DebugProxy : public QObject
 {
 	Q_OBJECT
@@ -31,17 +36,38 @@ public:
 	void setParent( IngnomiaGUI::DebugModel* parent );
 
 	void spawnCreature( QString type );
-
-    void setWindowSize( int width, int height );
+	void setWindowSize( int width, int height );
+	void setNeed( unsigned int gnomeID, QString need, float value );
+	void killGnome( unsigned int gnomeID );
+	void spawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z );
+	void spawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z );
+	void requestGnomeList();
+	void requestItemGroups();
+	void requestItems( QString group );
+	void requestMaterials( QString itemSID );
+	void setNeedDecayMultiplier( float value );
+	void setDisableNeedDecay( QString need, bool disable );
 
 private:
-	IngnomiaGUI::DebugModel* m_parent = nullptr;
+	IngnomiaGUI::DebugModel* m_parent = nullptr;  ///< View model the proxy pushes updates into.
 
-
-
-private slots:
+public slots:
+	void onGnomeList( const QList<QPair<QString, unsigned int>>& gnomes );
+	void onItemGroups( const QStringList& groups );
+	void onItems( const QStringList& items );
+	void onMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 );
 
 signals:
 	void signalSpawnCreature( QString type );
-    void signalSetWindowSize( int width, int height );
+	void signalSetWindowSize( int width, int height );
+	void signalSetNeed( unsigned int gnomeID, QString need, float value );
+	void signalKillGnome( unsigned int gnomeID );
+	void signalSpawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z );
+	void signalSpawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z );
+	void signalRequestGnomeList();
+	void signalRequestItemGroups();
+	void signalRequestItems( QString group );
+	void signalRequestMaterials( QString itemSID );
+	void signalSetNeedDecayMultiplier( float value );
+	void signalSetDisableNeedDecay( QString need, bool disable );
 };

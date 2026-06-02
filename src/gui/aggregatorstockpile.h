@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorstockpile.h
+ *  @brief Data types and aggregator for the Stockpile XAML window: exposes priority, capacity,
+ *         pull/allow-pull flags, the active item filter, and a human-readable content summary.
+ */
 #pragma once
 
 #include "../base/filter.h"
@@ -24,35 +28,39 @@
 
 class Game;
 
+/// @brief One line in the stockpile content summary (item type × material × count).
 struct ItemsSummary
 {
-	QString itemName;
-	QString materialName;
-	int count;
+	QString itemName;      ///< Localised item name.
+	QString materialName;  ///< Localised material name.
+	int count;             ///< Count in this stockpile.
 	//QList<unsigned int> ids;
 };
 
+/// @brief Full state of one stockpile sent to the Stockpile window.
 struct GuiStockpileInfo
 {
-	unsigned int stockpileID = 0;
+	unsigned int stockpileID = 0;  ///< Stockpile UID.
 
-	QString name;
-	int priority           = 1;
-	int maxPriority        = 1;
-	bool suspended         = false;
-	bool allowPullFromHere = false;
-	bool pullFromOthers    = false;
-	int capacity           = 0;
-	int itemCount          = 0;
-	int reserved           = 0;
+	QString name;                  ///< Display name.
+	int priority           = 1;    ///< Current priority index.
+	int maxPriority        = 1;    ///< Priority range upper bound.
+	bool suspended         = false;///< True if the stockpile is paused.
+	bool allowPullFromHere = false;///< True if other stockpiles may pull from this one.
+	bool pullFromOthers    = false;///< True if this stockpile pulls from others.
+	int capacity           = 0;    ///< Total storage slots.
+	int itemCount          = 0;    ///< Items currently stored.
+	int reserved           = 0;    ///< Items in-transit (reserved).
 
-	Filter filter;
+	Filter filter;                 ///< Item filter tree (category → group → item → material).
 
-	QList<ItemsSummary> summary;
+	QList<ItemsSummary> summary;   ///< Aggregated per-line content rows.
 };
 
 Q_DECLARE_METATYPE( GuiStockpileInfo )
 
+/// @brief Bridges the Stockpile XAML window with the game-side StockpileManager. Produces
+///        GuiStockpileInfo payloads and forwards edits (priority, pull flags, filter toggles).
 class AggregatorStockpile : public QObject
 {
 	Q_OBJECT
@@ -64,12 +72,12 @@ public:
 	void init( Game* game );
 
 private:
-	QPointer<Game> g;
+	QPointer<Game> g;                ///< Game instance (weak ownership).
 
-	bool m_infoDirty    = false;
-	bool m_contentDirty = false;
+	bool m_infoDirty    = false;     ///< True when basic info needs re-emit.
+	bool m_contentDirty = false;     ///< True when the content summary needs re-emit.
 
-	GuiStockpileInfo m_info;
+	GuiStockpileInfo m_info;         ///< Cached payload for the currently open stockpile.
 
 	bool aggregate( unsigned int stockpileID );
 

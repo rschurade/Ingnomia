@@ -1,3 +1,7 @@
+/** @file keybindings.cpp
+ *  @brief KeyBindings implementation: builds the string → action lookup table, loads the
+ *         user's keybindings.json, and resolves QKeyEvents to UserKeyboardAction values.
+ */
 #include "keybindings.h"
 
 #include "../base/io.h"
@@ -9,6 +13,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+/// @brief Constructs the KeyBindings and populates the config-string → UserKeyboardAction
+///        lookup table. The reverse table is filled in update() from the JSON settings file.
+/// @param parent Qt parent object.
 KeyBindings::KeyBindings(QObject *parent)
 	: QObject(parent)
 {
@@ -98,10 +105,14 @@ KeyBindings::KeyBindings(QObject *parent)
 
 }
 
+/// @brief Destructor.
 KeyBindings::~KeyBindings()
 {
 }
 
+/// @brief Reloads key bindings from settings/keybindings.json. Each key group contains two
+///        slots (Key1 and Key2) — both are mapped to the same action so users can pick
+///        either a primary or alternate hotkey.
 void KeyBindings::update()
 {
 	QString folder = IO::getDataFolder() + "/settings/";
@@ -127,6 +138,10 @@ void KeyBindings::update()
 	}
 }
 
+/// @brief Resolves a Qt key event to a UserKeyboardAction by hashing the key code plus the
+///        Ctrl/Alt/Shift modifier booleans.
+/// @param event Incoming key event.
+/// @return The bound action, or NoAction if the key combo is unbound.
 UserKeyboardAction KeyBindings::getCommand( QKeyEvent* event )
 {
 	bool ctrl = event->modifiers() & Qt::CTRL;
@@ -144,6 +159,10 @@ UserKeyboardAction KeyBindings::getCommand( QKeyEvent* event )
 	return NoAction;
 }
 
+/// @brief Reverse lookup: returns the config-string key for a given action (used by the
+///        settings GUI to display current bindings).
+/// @param cmd UserKeyboardAction enum value.
+/// @return Config string, or empty string if not found.
 QString KeyBindings::getStringForCommand( UserKeyboardAction cmd )
 {
 	for( auto key : m_stringToCommand.keys() )

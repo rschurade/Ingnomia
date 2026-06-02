@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatortileinfo.h
+ *  @brief Data types and aggregator feeding the Tile Info XAML window: flags, terrain, items,
+ *         creatures, active jobs, room membership, mechanism status, and tennant assignment.
+ */
 #pragma once
 
 #include "../base/tile.h"
@@ -27,76 +31,81 @@
 
 class Game;
 
+/// @brief Creature summary shown on the Tile Info window.
 struct GuiTICreatureInfo
 {
-	QString text;
-	unsigned int id = 0;
-	CreatureType type;
-	bool refuel;
-	QString coreItem;
+	QString text;        ///< Display label ("Jim, Swordsman").
+	unsigned int id = 0; ///< Creature UID.
+	CreatureType type;   ///< Creature kind (gnome/animal/monster/automaton).
+	bool refuel;         ///< Automaton refuel flag (for automatons only).
+	QString coreItem;    ///< Automaton core item ID (for automatons only).
 };
 
+/// @brief Single item row shown on the Tile Info window.
 struct GuiItemInfo
 {
-	QString text;
-	unsigned int id = 0;
-	QString material;
-	unsigned int count = 0;
-	bool inStockpile = false;
-	bool inContainer = false;
+	QString text;              ///< Display label.
+	unsigned int id = 0;       ///< Item UID.
+	QString material;          ///< Material string ID.
+	unsigned int count = 0;    ///< Stack count on this tile.
+	bool inStockpile = false;  ///< True if the item is held by a stockpile.
+	bool inContainer = false;  ///< True if the item is inside a container.
 };
 
+/// @brief Full Tile Info payload.
 struct GuiTileInfo
 {
-	unsigned int tileID = 0;
-	TileFlag flags      = TileFlag::TF_NONE;
+	unsigned int tileID = 0;         ///< Tile ID (Position::toInt()).
+	TileFlag flags      = TileFlag::TF_NONE; ///< Raw tile flags.
 
-	int numGnomes   = 0;
-	int numAnimals  = 0;
-	int numMonsters = 0;
+	int numGnomes   = 0;             ///< Number of gnomes on this tile.
+	int numAnimals  = 0;             ///< Number of animals on this tile.
+	int numMonsters = 0;             ///< Number of monsters on this tile.
 
-	int numItems = 0;
+	int numItems = 0;                ///< Number of items on this tile.
 
-	QString wall;
-	QString floor;
-	QString embedded;
-	QString plant;
-	bool plantIsTree;
-	bool plantIsHarvestable;
-	QString water;
-	QString constructed;
+	QString wall;                    ///< Wall description.
+	QString floor;                   ///< Floor description.
+	QString embedded;                ///< Embedded ore/gem description.
+	QString plant;                   ///< Plant description.
+	bool plantIsTree;                ///< True if the plant is a tree.
+	bool plantIsHarvestable;         ///< True if the plant currently has harvestable produce.
+	QString water;                   ///< Water level description.
+	QString constructed;             ///< Constructed item description.
 
-	QString jobName;
-	QString jobWorker;
-	QString jobPriority;
-	QString requiredSkill;
-	QString requiredTool;
-	QString requiredToolAvailable;
-	QList<GuiItemInfo> requiredItems;
-	QString workPositions;
+	QString jobName;                 ///< Active job name, if any.
+	QString jobWorker;               ///< Name of the gnome assigned to the job.
+	QString jobPriority;             ///< Job priority label.
+	QString requiredSkill;           ///< Required skill for the job.
+	QString requiredTool;            ///< Required tool name.
+	QString requiredToolAvailable;   ///< Availability label for the tool.
+	QList<GuiItemInfo> requiredItems;///< Required component items.
+	QString workPositions;           ///< Work position descriptor.
 
-	QList<GuiTICreatureInfo> creatures;
-	QList<GuiItemInfo> items;
-	QList<GuiTICreatureInfo> possibleTennants;
-	unsigned int tennant = 0;
+	QList<GuiTICreatureInfo> creatures; ///< Creatures on this tile.
+	QList<GuiItemInfo> items;           ///< Items on this tile.
+	QList<GuiTICreatureInfo> possibleTennants; ///< Eligible tennants for a bed/chair.
+	unsigned int tennant = 0;           ///< Currently assigned tennant UID.
 
-	unsigned int designationID = 0;
-	TileFlag designationFlag   = TileFlag::TF_NONE;
-	QString designationName;
+	unsigned int designationID = 0;     ///< UID of a designation containing this tile.
+	TileFlag designationFlag   = TileFlag::TF_NONE; ///< Designation flag identifying its kind.
+	QString designationName;            ///< Designation name.
 
-	RoomType roomType = RoomType::NotSet;
-	bool hasAlarmBell = false;
-	bool isEnclosed   = false;
-	bool hasRoof      = false;
-	QString beds;
-	bool alarm = false;
-	unsigned int roomValue = 0;
+	RoomType roomType = RoomType::NotSet; ///< Room kind (dorm, dining, …) if applicable.
+	bool hasAlarmBell = false;         ///< True if the room has an alarm bell.
+	bool isEnclosed   = false;         ///< True if the room is fully enclosed.
+	bool hasRoof      = false;         ///< True if the room has a roof.
+	QString beds;                      ///< Bed availability description.
+	bool alarm = false;                ///< True if the alarm is currently on.
+	unsigned int roomValue = 0;        ///< Aggregated room value (furniture quality).
 
-	MechanismData mechInfo;
+	MechanismData mechInfo;            ///< Mechanism state if a gear/axle/lever/pressure plate is here.
 };
 
 Q_DECLARE_METATYPE( GuiTileInfo )
 
+/// @brief Bridges the Tile Info XAML window with the game: inspects a clicked tile and
+///        exposes terrain, jobs, creatures, items, rooms, and mechanism state.
 class AggregatorTileInfo : public QObject
 {
 	Q_OBJECT
@@ -108,12 +117,12 @@ public:
 	void init( Game* game );
 
 private:
-    QPointer<Game> g;
+    QPointer<Game> g;                    ///< Game instance (weak ownership).
 
-	unsigned int m_currentTileID = 0;
-	bool m_tileInfoDirty         = false;
-	GuiTileInfo m_tileInfo;
-	GuiStockpileInfo m_spInfo;
+	unsigned int m_currentTileID = 0;    ///< Currently shown tile UID.
+	bool m_tileInfoDirty         = false;///< Reserved for batched refresh.
+	GuiTileInfo m_tileInfo;              ///< Cached payload for the current tile.
+	GuiStockpileInfo m_spInfo;           ///< Cached payload when the tile is a stockpile.
 
 public slots:
 	void onShowTileInfo( unsigned int tileID );

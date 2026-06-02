@@ -15,9 +15,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="styles/mainmenu/styles.xaml" />
-				<!--<ResourceDictionary Source="localization/_.xaml" />-->
 				<ResourceDictionary Source="localization/en_US.xaml" />
-				<!--<ResourceDictionary Source="localization/fr_FR.xaml" />-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -28,79 +26,191 @@
 				<StackPanel>
 					<Button Style="{StaticResource SquareButton}"
 						Command="{Binding PageCmd}"
-						CommandParameter="First">
+						CommandParameter="Gnomes">
 						<StackPanel>
 							<Image Source="buttons/skills.png" Stretch="None" />
-							<TextBlock Text="{StaticResource DebugPage_Misc}"></TextBlock>
+							<TextBlock Text="Gnomes"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
 						Command="{Binding PageCmd}"
-						CommandParameter="Second">
+						CommandParameter="Items">
 						<StackPanel>
 							<Image Source="buttons/schedule.png" Stretch="None" />
-							<TextBlock Text="{StaticResource DebugPage_Stuff}"></TextBlock>
+							<TextBlock Text="Items"></TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Style="{StaticResource SquareButton}"
 						Command="{Binding PageCmd}"
-						CommandParameter="Third">
+						CommandParameter="Game">
 						<StackPanel>
 							<Image Source="buttons/professions.png" Stretch="None" />
-							<TextBlock Text="{StaticResource DebugPage_More}"></TextBlock>
+							<TextBlock Text="Game"></TextBlock>
 						</StackPanel>
 					</Button>
 				</StackPanel>
 			</Border>
 
-			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="1400" MaxWidth="1400" Margin="2">
+			<Border x:Name="TabBorder2" Style="{StaticResource Panel}" MinWidth="800" MaxWidth="800" Margin="2">
 				<Grid>
-					<Grid x:Name="LayoutSkills" Visibility="{Binding ShowFirst}">
+					<!-- Page 1: Gnome Controls -->
+					<Grid x:Name="LayoutGnomes" Visibility="{Binding ShowGnomes}">
 						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
 						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="1*" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Text="{StaticResource DebugPage_DebugFirstPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
-						<StackPanel Grid.Row="1" Grid.Column="0">
-							<Button Content="{StaticResource DebugPage_SpawnGnome}" Command="{Binding SpawnCmd}"	CommandParameter="Gnome" Margin="2" />
-							<Button Content="{StaticResource DebugPage_SpawnTrader}" Command="{Binding SpawnCmd}"	CommandParameter="Trader" Margin="2" />
-							<Button Content="{StaticResource DebugPage_SpawnGoblin}" Command="{Binding SpawnCmd}"	CommandParameter="Goblin" Margin="2" />
-							<ComboBox VerticalAlignment="Center" Margin="2"
+
+						<TextBlock Text="Gnome Controls" FontSize="20" Grid.Row="0" Margin="4" />
+
+						<!-- Gnome selector -->
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="4">
+							<TextBlock Text="Gnome:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
+								ItemsSource="{Binding GnomeList}"
+								SelectedItem="{Binding SelectedGnome, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+
+						<!-- Hunger -->
+						<StackPanel Orientation="Horizontal" Grid.Row="2" Margin="4">
+							<TextBlock Text="Hunger:" VerticalAlignment="Center" Width="80" />
+							<Slider Width="200" Minimum="-100" Maximum="100"
+								Value="{Binding HungerValue, Mode=TwoWay}" SmallChange="1" LargeChange="10" />
+							<TextBlock Text="{Binding HungerText}" VerticalAlignment="Center" Width="40" Margin="4,0" />
+							<Button Content="Set" Command="{Binding SetHungerCmd}" Width="50" />
+						</StackPanel>
+
+						<!-- Thirst -->
+						<StackPanel Orientation="Horizontal" Grid.Row="3" Margin="4">
+							<TextBlock Text="Thirst:" VerticalAlignment="Center" Width="80" />
+							<Slider Width="200" Minimum="-100" Maximum="100"
+								Value="{Binding ThirstValue, Mode=TwoWay}" SmallChange="1" LargeChange="10" />
+							<TextBlock Text="{Binding ThirstText}" VerticalAlignment="Center" Width="40" Margin="4,0" />
+							<Button Content="Set" Command="{Binding SetThirstCmd}" Width="50" />
+						</StackPanel>
+
+						<!-- Sleep -->
+						<StackPanel Orientation="Horizontal" Grid.Row="4" Margin="4">
+							<TextBlock Text="Sleep:" VerticalAlignment="Center" Width="80" />
+							<Slider Width="200" Minimum="-100" Maximum="100"
+								Value="{Binding SleepValue, Mode=TwoWay}" SmallChange="1" LargeChange="10" />
+							<TextBlock Text="{Binding SleepText}" VerticalAlignment="Center" Width="40" Margin="4,0" />
+							<Button Content="Set" Command="{Binding SetSleepCmd}" Width="50" />
+						</StackPanel>
+
+						<!-- Actions -->
+						<StackPanel Orientation="Horizontal" Grid.Row="5" Margin="4">
+							<Button Content="Kill Gnome" Command="{Binding KillGnomeCmd}" Width="100" Margin="0,0,8,0" />
+							<Button Content="Spawn Gnome" Command="{Binding SpawnCmd}" CommandParameter="Gnome" Width="100" Margin="0,0,8,0" />
+							<Button Content="Spawn Trader" Command="{Binding SpawnCmd}" CommandParameter="Trader" Width="100" Margin="0,0,8,0" />
+							<Button Content="Spawn Goblin" Command="{Binding SpawnCmd}" CommandParameter="Goblin" Width="100" />
+						</StackPanel>
+
+						<!-- Window size -->
+						<StackPanel Orientation="Horizontal" Grid.Row="6" Margin="4">
+							<TextBlock Text="Window:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
 								ItemsSource="{Binding WindowSizes}"
 								SelectedItem="{Binding SelectedWindowSize, Mode=TwoWay}"
 								ItemTemplate="{StaticResource ItemTemplate}" />
 						</StackPanel>
 					</Grid>
 
-					<Grid x:Name="LayoutSchedule" Visibility="{Binding ShowSecond}">
+					<!-- Page 2: Item Controls -->
+					<Grid x:Name="LayoutItems" Visibility="{Binding ShowItems}">
 						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
 						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="1*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Text="{StaticResource DebugPage_DebugSecondPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+
+						<TextBlock Text="Item Controls" FontSize="20" Grid.Row="0" Margin="4" />
+
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="4">
+							<TextBlock Text="Group:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
+								ItemsSource="{Binding ItemGroupList}"
+								SelectedItem="{Binding SelectedItemGroup, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="2" Margin="4">
+							<TextBlock Text="Item:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
+								ItemsSource="{Binding ItemList}"
+								SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="3" Margin="4">
+							<TextBlock Text="Material 1:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
+								ItemsSource="{Binding Material1List}"
+								SelectedItem="{Binding SelectedMaterial1, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="4" Margin="4"
+							Visibility="{Binding ShowMaterial2}">
+							<TextBlock Text="Material 2:" VerticalAlignment="Center" Width="80" />
+							<ComboBox Width="200"
+								ItemsSource="{Binding Material2List}"
+								SelectedItem="{Binding SelectedMaterial2, Mode=TwoWay}"
+								ItemTemplate="{StaticResource ItemTemplate}" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="5" Margin="4">
+							<TextBlock Text="Count:" VerticalAlignment="Center" Width="80" />
+							<TextBox Text="{Binding SpawnCount, Mode=TwoWay}" Width="60" />
+							<TextBlock Text="  X:" VerticalAlignment="Center" Width="30" />
+							<TextBox Text="{Binding SpawnX, Mode=TwoWay}" Width="50" />
+							<TextBlock Text="  Y:" VerticalAlignment="Center" Width="30" />
+							<TextBox Text="{Binding SpawnY, Mode=TwoWay}" Width="50" />
+							<TextBlock Text="  Z:" VerticalAlignment="Center" Width="30" />
+							<TextBox Text="{Binding SpawnZ, Mode=TwoWay}" Width="50" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="6" Margin="4">
+							<Button Content="Spawn Items" Command="{Binding SpawnItemCmd}" Width="120" />
+						</StackPanel>
 					</Grid>
 
-					<Grid x:Name="LayoutProfEdit" Visibility="{Binding ShowThird}">
+					<!-- Page 3: Game Controls -->
+					<Grid x:Name="LayoutGame" Visibility="{Binding ShowGame}">
 						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
 						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="1*" />
-							<ColumnDefinition Width="1*" />
-						</Grid.ColumnDefinitions>
 
-						<TextBlock Text="{StaticResource DebugPage_DebugThirdPage}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0" />
+						<TextBlock Text="Game Controls" FontSize="20" Grid.Row="0" Margin="4" />
+
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="4">
+							<TextBlock Text="Need Decay:" VerticalAlignment="Center" Width="100" />
+							<Slider Width="200" Minimum="0" Maximum="10"
+								Value="{Binding NeedDecayMultiplier, Mode=TwoWay}" />
+							<TextBlock Text="{Binding NeedDecayText}" VerticalAlignment="Center" Width="40" Margin="4,0" />
+							<TextBlock Text="x" VerticalAlignment="Center" />
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="2" Margin="4">
+							<CheckBox Content="Disable Sleep Decay" IsChecked="{Binding DisableSleepDecay, Mode=TwoWay}" Margin="0,0,16,0" />
+							<CheckBox Content="Disable Hunger Decay" IsChecked="{Binding DisableHungerDecay, Mode=TwoWay}" Margin="0,0,16,0" />
+							<CheckBox Content="Disable Thirst Decay" IsChecked="{Binding DisableThirstDecay, Mode=TwoWay}" />
+						</StackPanel>
 					</Grid>
 				</Grid>
 			</Border>

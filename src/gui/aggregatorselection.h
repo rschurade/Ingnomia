@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatorselection.h
+ *  @brief Aggregator handling the placement cursor and rectangular selections: tracks mouse
+ *         hover, click, size, and rotation, and emits SelectionData previews to the renderer.
+ */
 #pragma once
 
 #include "aggregatorrenderer.h"
@@ -23,6 +27,9 @@
 
 #include <QObject>
 
+/// @brief Converts mouse input and selection parameters into world-space tile previews for
+///        designation and build commands. Holds a grid of preview SelectionData that the
+///        renderer draws as the placement cursor.
 class AggregatorSelection : public QObject
 {
 	Q_OBJECT
@@ -36,16 +43,16 @@ private:
     void updateSelection();
     unsigned int posToInt( Position pos, quint8 rotation );
 
-    int m_width = 0;
-    int m_height = 0;
-    int m_moveX = 0;
-    int m_moveY = 0;
-    float m_scale = 1.0;
-    int m_rotation = 0;
+    int m_width = 0;       ///< Viewport width in pixels.
+    int m_height = 0;      ///< Viewport height in pixels.
+    int m_moveX = 0;       ///< Camera X offset in pixels.
+    int m_moveY = 0;       ///< Camera Y offset in pixels.
+    float m_scale = 1.0;   ///< Camera zoom factor.
+    int m_rotation = 0;    ///< Camera rotation index (0–3).
 
-    Position m_cursorPos;
+    Position m_cursorPos;  ///< Current world-space cursor tile.
 
-    QMap<unsigned int, SelectionData> m_selectionData;
+    QMap<unsigned int, SelectionData> m_selectionData; ///< Per-tile preview grid keyed by encoded tile+rot ID.
 
 public slots:
     void onActionChanged( const QString action );

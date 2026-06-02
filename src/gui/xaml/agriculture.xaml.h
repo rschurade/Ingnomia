@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** @file agriculture.xaml.h
+ *  @brief Noesis UserControl code-behind for the Agriculture window (Agriculture.xaml).
+ *         Loads the XAML, wires up events, and instantiates the AgricultureModel data context.
+ */
 #ifndef __AgricultureGui_H__
 #define __AgricultureGui_H__
 
@@ -25,6 +29,8 @@ namespace IngnomiaGUI
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Code-behind for the Agriculture XAML window. Owns the InitializeComponent / event
+///        plumbing required by Noesis to bring the user control online.
 class Agriculture final : public Noesis::UserControl
 {
 public:

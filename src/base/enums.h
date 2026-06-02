@@ -15,10 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file enums.h
+ * @brief Game-wide enumerations for connections, skills, creature parts, combat, UI, and more.
+ */
+
 #pragma once
 
 #include <QObject>
 
+/** @brief Bitmask flags for tile connectivity in 3D (8 cardinal + up/down + diagonals). */
 enum Connection : unsigned int
 {
 	noCon     = 0,
@@ -43,6 +48,7 @@ enum Connection : unsigned int
 };
 
 
+/** @brief Gnome schedule time slot activities. */
 enum class ScheduleActivity : unsigned char {
 	None,
 	Eat,
@@ -51,6 +57,7 @@ enum class ScheduleActivity : unsigned char {
 };
 Q_DECLARE_METATYPE( ScheduleActivity )
 
+/** @brief Numeric IDs for all gnome skills, matching database row order. */
 enum DBSkillIds : int
 {
 	SK_Mining,
@@ -101,6 +108,7 @@ enum DBSkillIds : int
 	SK_MagicGeomancy
 };
 
+/** @brief Identifiers for creature body parts, equipment slots, and armor slots. */
 enum CreaturePart : unsigned char
 {
 	KCP_NONE,
@@ -155,6 +163,7 @@ enum CreaturePart : unsigned char
 	CP_RIGHT_HAND_HELD
 };
 
+/** @brief Combat damage types. */
 enum DamageType : unsigned char
 {
 	DT_BLUNT,
@@ -162,6 +171,7 @@ enum DamageType : unsigned char
 	DT_PIERCING
 };
 
+/** @brief Vertical zone of a body part for hit targeting. */
 enum AnatomyHeight : unsigned char
 {
 	AH_LOW,
@@ -169,6 +179,7 @@ enum AnatomyHeight : unsigned char
 	AH_HIGH
 };
 
+/** @brief Bitmask for directional side of a body part. */
 enum AnatomySide : unsigned char
 {
 	AS_CENTER = 0x00,
@@ -178,6 +189,7 @@ enum AnatomySide : unsigned char
 	AS_RIGHT  = 0x08
 };
 
+/** @brief Bitmask flags for creature health status. */
 enum AnatomyStatus : unsigned int
 {
 	AS_HEALTHY     = 0,
@@ -189,6 +201,7 @@ enum AnatomyStatus : unsigned int
 
 };
 
+/** @brief Game simulation speed settings. */
 enum class GameSpeed
 {
 	Normal,
@@ -196,6 +209,7 @@ enum class GameSpeed
 };
 Q_DECLARE_METATYPE( GameSpeed )
 
+/** @brief Top-level toolbar button categories. */
 enum class ButtonSelection
 {
 	None,
@@ -207,6 +221,7 @@ enum class ButtonSelection
 	Magic
 };
 
+/** @brief Sub-categories within the Build toolbar. */
 enum class BuildSelection
 {
 	None,
@@ -222,6 +237,7 @@ enum class BuildSelection
 };
 Q_DECLARE_METATYPE( BuildSelection )
 
+/** @brief Which info panel is currently displayed in the game GUI. */
 enum class ShownInfo
 {
 	None,
@@ -237,6 +253,7 @@ enum class ShownInfo
 	Inventory
 };
 
+/** @brief Type classification for build commands. */
 enum class BuildItemType
 {
 	Workshop,

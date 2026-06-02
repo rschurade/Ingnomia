@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file inventory.xaml.cpp
+ *  @brief InventoryGui user-control implementation: loads InventoryGui.xaml on construction.
+ */
 #include "inventory.xaml.h"
 
 using namespace IngnomiaGUI;
 using namespace Noesis;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructs the InventoryGui user control and registers the Loaded delegate.
 InventoryGui::InventoryGui()
 {
 	Loaded() += MakeDelegate( this, &InventoryGui::OnLoaded );
@@ -28,16 +32,19 @@ InventoryGui::InventoryGui()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Loads the InventoryGui.xaml resource.
 void InventoryGui::InitializeComponent()
 {
 	GUI::LoadComponent( this, "InventoryGui.xaml" );
 }
 
+/// @brief Noesis event-connection callback. InventoryGui has no code-behind events.
 bool InventoryGui::ConnectEvent( BaseComponent* source, const char* event, const char* handler )
 {
 	return false;
 }
 
+/// @brief Loaded event handler — no-op; InventoryModel handles state.
 void InventoryGui::OnLoaded( Noesis::BaseComponent*, const Noesis::RoutedEventArgs& )
 {
 }

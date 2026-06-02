@@ -15,6 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file db.h
+ * @brief Thread-safe static database access layer for the game's SQLite data.
+ */
+
 #pragma once
 
 #include "../base/counter.h"
@@ -31,6 +35,14 @@ typedef DBHelper DBH;
 
 class Item;
 
+/**
+ * @brief Static-only database access layer wrapping an in-memory SQLite database.
+ *
+ * Provides thread-safe query methods for the game's data tables (Items, Materials,
+ * Workshops, Jobs, etc.). Uses per-thread SQLite connections with shared cache.
+ * All public methods are mutex-locked and track access counts for profiling.
+ * Cannot be instantiated — all methods are static.
+ */
 class DB
 {
 public:
@@ -49,7 +61,7 @@ public:
 	static QVariantList select2( QString selectCol, QString table, QString whereCol, float whereVal );
 
 	static QVariant select3( QString selectCol, QString table, QString whereCol, QString whereVal, QString whereCol2, QString whereVal2 );
-	
+
 	static QStringList ids( QString table );
 	static QStringList ids( QString table, QString whereCol, QString whereVal );
 	static int numRows( QString table );
@@ -68,6 +80,7 @@ public:
 	static QStringList tables();
 
 	static bool updateRow( QString table, QVariantMap values );
+
 	static bool addRow( QString table, QVariantMap values );
 	static bool removeRows( QString table, QString id );
 	static bool addTranslation( QString id, QString text );
@@ -79,16 +92,12 @@ public:
 private:
 	static QSqlDatabase& getDB();
 
-	static QMutex m_mutex;
-
-	static int accessCounter;
-
-	static Counter<QString> m_counter;
-
-	static QMap<Qt::HANDLE, QSqlDatabase> m_connections;
-
-	static QHash<QString, QSharedPointer<DBS::Workshop>> m_workshops;
-	static QHash<QString, QSharedPointer<DBS::Job>> m_jobs;
+	static QMutex m_mutex;                       ///< Mutex protecting all DB operations.
+	static int accessCounter;                    ///< Total DB access count (reset on read).
+	static Counter<QString> m_counter;           ///< Per-query string counter for profiling.
+	static QMap<Qt::HANDLE, QSqlDatabase> m_connections; ///< Per-thread database connections.
+	static QHash<QString, QSharedPointer<DBS::Workshop>> m_workshops; ///< Cached Workshop structs.
+	static QHash<QString, QSharedPointer<DBS::Job>> m_jobs;           ///< Cached Job structs.
 
 	DB()  = delete;
 	~DB() = delete;

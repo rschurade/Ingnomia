@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -15,14 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+/** @file aggregatordebug.h
+ *  @brief Aggregator exposing debug/cheat commands to the XAML debug window: spawn creatures
+ *         and items, set needs, kill gnomes, and tune need-decay multipliers.
+ */
 #pragma once
 
 #include "../game/creature.h"
 #include "../game/eventmanager.h"
 
-
 #include <QObject>
 
+class Game;
+
+/// @brief Debug-only bridge between the debug GUI and the game. Most slots mutate game state
+///        directly and are intended for development only.
 class AggregatorDebug : public QObject
 {
 	Q_OBJECT
@@ -31,13 +38,30 @@ public:
 	AggregatorDebug( QObject* parent = nullptr );
 	~AggregatorDebug();
 
-private:
-	
+	void init( Game* game );
+
 public slots:
 	void onSpawnCreature( QString type );
-    void onSetWindowSize( int width, int height );
+	void onSetWindowSize( int width, int height );
+	void onSetNeed( unsigned int gnomeID, QString need, float value );
+	void onKillGnome( unsigned int gnomeID );
+	void onSpawnItem( QString itemSID, QString materialSID, int count, int x, int y, int z );
+	void onSpawnCompositeItem( QString itemSID, QStringList materialSIDs, int count, int x, int y, int z );
+	void onRequestGnomeList();
+	void onRequestItemGroups();
+	void onRequestItems( QString group );
+	void onRequestMaterials( QString itemSID );
+	void onSetNeedDecayMultiplier( float value );
+	void onSetDisableNeedDecay( QString need, bool disable );
 
 signals:
 	void signalTriggerEvent( EventType type, QVariantMap args );
-    void signalSetWindowSize( int width, int height );
+	void signalSetWindowSize( int width, int height );
+	void signalGnomeList( const QList<QPair<QString, unsigned int>>& gnomes );
+	void signalItemGroups( const QStringList& groups );
+	void signalItems( const QStringList& items );
+	void signalMaterials( int componentCount, const QStringList& mats1, const QStringList& mats2 );
+
+private:
+	QPointer<Game> g;  ///< Game instance (weak ownership).
 };
