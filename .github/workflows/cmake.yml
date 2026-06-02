@@ -46,11 +46,8 @@ jobs:
         Get-Dep "$env:DEPS_URL/steamworks_sdk_164.zip"               steam.zip    steamworks_sdk
         Get-Dep "$env:DEPS_URL/NoesisGUI-NativeSDK-win-3.0.12.zip"   noesis.zip   noesis_sdk
         Get-Dep "$env:DEPS_URL/openal-1.25.1.zip"                    openal.zip   openal_sdk
-        Get-Dep "$env:DEPS_URL/BugSplatNative.zip"                   bugsplat.zip bugsplat_sdk
         Get-Dep "$env:DEPS_URL/tilesheet.zip"                        tiles.zip    content
         Get-Dep "$env:DEPS_URL/audio.zip"                            audio.zip    content
-        Write-Host "--- steam layout ---"
-        Get-ChildItem steamworks_sdk/sdk/public/steam/steam_api.h, steamworks_sdk/sdk/redistributable_bin/win64 -ErrorAction Continue | Select-Object FullName
 
     - name: Create build directory
       run: cmake -E make_directory build
@@ -61,8 +58,9 @@ jobs:
       env:
         NOESIS_LICENSE_KEY: ${{ secrets.NOESIS_LICENSE_KEY }}
         NOESIS_LICENSE_NAME: ${{ secrets.NOESIS_LICENSE_NAME }}
-        BUGSPLAT_DB: ${{ secrets.BUGSPLAT_DB }}
       run: |
+        # BugSplat is intentionally disabled: its SDK header uses set_unexpected,
+        # removed in C++23. Matches the local/release build, which omits BUGSPLAT_DB.
         $ws = "${{ github.workspace }}".Replace('\','/')
         cmake -S .. -B . `
           -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE `
@@ -71,10 +69,8 @@ jobs:
           -DSTEAM_SDK_ROOT="$ws/steamworks_sdk/sdk" `
           -DNOESIS_ROOT="$ws/noesis_sdk" `
           -DOPENAL_ROOT="$ws/openal_sdk" `
-          -DBUGSPLAT_SDK_ROOT="$ws/bugsplat_sdk/bugsplat" `
           -DNOESIS_LICENSE_NAME="$env:NOESIS_LICENSE_NAME" `
           -DNOESIS_LICENSE_KEY="$env:NOESIS_LICENSE_KEY" `
-          -DBUGSPLAT_DB="$env:BUGSPLAT_DB" `
           -DGIT_REPO="${{ github.repository }}" `
           -DGIT_REF="${{ github.ref }}" `
           -DGIT_SHA="${{ github.sha }}" `
