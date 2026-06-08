@@ -1,4 +1,4 @@
-/*	
+/*
 	This file is part of Ingnomia https://github.com/rschurade/Ingnomia
     Copyright (C) 2017-2020  Ralph Schurade, Ingnomia Team
 
@@ -49,14 +49,16 @@ void AggregatorSettings::onRequestSettings()
     m_settings.languages.clear();
     m_settings.languages.append( "en_US" );
     m_settings.languages.append( "fr_FR" );
+    m_settings.languages.append( "pt_BR" );
+    m_settings.languages.append( "zh_CN" );
 
     m_settings.language = Global::cfg->get( "language" ).toString();
 
-    m_settings.lightMin = Global::cfg->get( "lightMin" ).toFloat() * 100; 
+    m_settings.lightMin = Global::cfg->get( "lightMin" ).toFloat() * 100;
 
     m_settings.toggleMouseWheel = Global::cfg->get( "toggleMouseWheel" ).toBool();
-	 
-	 m_settings.audioMasterVolume = Global::cfg->get( "AudioMasterVolume" ).toFloat() * 100; 
+
+	 m_settings.audioMasterVolume = Global::cfg->get( "AudioMasterVolume" ).toFloat() * 100;
 
     emit signalUpdateSettings( m_settings );
 }
@@ -68,7 +70,7 @@ void AggregatorSettings::onSetLanguage( QString language )
     Global::cfg->set( "language", language );
     //emit signalSetLanguage( language );
 }
-    
+
 /// @brief Persists a new UI scale factor and notifies the GUI shell to reflow layouts.
 /// @param scale New scale factor.
 void AggregatorSettings::onSetUIScale( float scale )
